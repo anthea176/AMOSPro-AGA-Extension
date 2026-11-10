@@ -11,7 +11,7 @@
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **M10 collisions AABB — R25 PASS WinUAE** | [Contrat et validation R25](M10_RECT_OVERLAP_R25.md) · [Test exact R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
-| **M11 — architecture texte/back buffer AGA** | [Étude et décision](M11_TEXT_COMPAT.md) · [Ancien test écarté avant exécution](../tests/historical/M11_R25_AMOS_TEXT_01.asc) · aucun test actif |
+| **M11 — architecture texte/back buffer AGA** | [Audit source R25 : pointeurs, RastPort et Safe/Disp](M11_BACKBUFFER_R25.md) · [Étude M11](M11_TEXT_COMPAT.md) · aucun test actif ni R26 |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |

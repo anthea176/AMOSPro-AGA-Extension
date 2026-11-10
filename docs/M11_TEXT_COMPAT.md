@@ -8,6 +8,14 @@ Le diagnostic sans valeur ajoutée est classé dans [`tests/historical/M11_R25_A
 
 La bibliothèque **R25 0.9.1** (30 commandes AP20) est conservée sans modification. Les Gates A+B R25 restent validées **pour le scénario R25 archivé**, mais il n'existe **aucune nouvelle Gate M11**. R24, `LAST_GOOD` R10, les tests passés et `examples/` sont protégés.
 
+## Audit source R25 effectué — point d'entrée validé
+
+**11/11/2026 :** [audit technique détaillé du back buffer R25](M11_BACKBUFFER_R25.md), fondé sur la lecture des builders, du 68000 reconstruit et une **comparaison des octets AP20 R23/R25**. Les segments 10 (`Double Buffer`), 11 (`Swap`), 12 (`Back Fill`), 19 (`Blit Copy`) et 20 (`Blit Fill`) sont **identiques** entre les deux binaires.
+
+Le chemin `A5+$1C8 → State+32 → DBState+8 → ScreenBuffer inactif → sb_BitMap(+0)` est connu. `Aga Back Fill` relie **déjà** ce `BitMap` à un `RastPort` temporaire via `InitRastPort` et `RastPort.BitMap(+4)`. **Nouveau point de vigilance :** `Aga Swap` pose `DBState+20=3` (Safe/Disp en attente), tandis que `Aga Wait Vbl` ne consomme pas ces notifications. Le futur rendu texte devra respecter l'accusé **Safe** avant d'écrire sur le back buffer.
+
+**Proposition non approuvée :** une unique fonction texte utilisant `graphics.library/Text`, après validation de la chaîne AMOS et du clipping. **Aucun binaire R26 et aucun test M11 n'ont été créés.** Le détail de la synchronisation, des pointeurs et des gates se trouve dans la [note d'audit](M11_BACKBUFFER_R25.md).
+
 ## Mécanisme à examiner avant de développer
 
 - **AMOS Professional** : `Text`, `Bar`, `Screen Copy` et les outils AMCAF associés utilisent les écrans/banques/états de dessin gérés par AMOS ; ne pas rediriger ses pointeurs privés (`ScOnAd`, `Ec_RastPort`) par hypothèse. Une compatibilité *directe* avec notre écran Intuition ne peut pas être présumée.
@@ -18,7 +26,7 @@ La bibliothèque **R25 0.9.1** (30 commandes AP20) est conservée sans modificat
 
 ## Prochain travail technique pertinent
 
-1. **Inspection source en lecture seule** : localiser la sélection du back buffer R25, sa `BitMap`, le `RastPort` applicable, la séquence `Swap/Wait Vbl` et les règles mémoire. Documenter ces pointeurs/offsets à partir du code réellement généré et des AmigaOS Autodocs ; éviter toute hypothèse sur les écrans AMOS.
+1. **Inspection source R25 : TERMINÉE.** Accès exact au BitMap, RastPort temporaire déjà existant et suivi Safe/Disp documentés dans [l'audit M11](M11_BACKBUFFER_R25.md). Reste à spécifier **la synchronisation sûre** d'une nouvelle routine après `Aga Swap`.
 2. **Contrat d'une primitive éventuelle** : décider si un rendu texte natif vers le back buffer est utile, définir les paramètres (position, couleur indexée, chaîne, fonte), la durée de vie de la fonte, les échecs et le clipping. **Aucune nouvelle commande, signature ou R26 n'est encore approuvée.**
 3. **Validation distincte** : préflight CPU/ABI, puis un véritable test AMOS/WinUAE de texte rendu **par l'extension sur son propre back buffer** ; Compiler et Amiga physique séparément. Un simple `Text` AMOS ne doit plus être utilisé comme test de faisabilité.
 4. **Autres fonctions M11** : palette indexée/RGB AGA pour ne plus charger une mire IFF dans `collide.asc`, copies inter-buffers, Bob/Icon/transparence et primitives Turbo, chacune après un contrat spécifique.
