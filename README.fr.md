@@ -14,7 +14,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Licences distinctes :** le code et la documentation technique sont sous [MIT](LICENSE). **Les illustrations, logos, dessins et scans ne sont pas sous MIT** et ne sont pas librement réutilisables : lire la [licence des éléments graphiques](ASSETS_LICENSE.md).
 
-**Pour commencer :** [Notice d'installation](INSTALL.fr.md) · [Cinq exemples AMOS simples](examples/README.fr.md).
+**Pour commencer :** [Notice d'installation](INSTALL.fr.md) · [Six exemples AMOS simples](examples/README.fr.md).
 
 ## Bibliothèques et tests
 

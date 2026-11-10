@@ -14,7 +14,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 **Separate licenses:** source code and technical documentation are under [MIT](LICENSE). **Artwork, logos, drawings and scans are not covered by MIT**, and are not freely reusable. See the [visual assets license](ASSETS_LICENSE.md).
 
-**Get started:** [Installation guide](INSTALL.md) · [Five simple AMOS examples](examples/README.md).
+**Get started:** [Installation guide](INSTALL.md) · [Six simple AMOS examples](examples/README.md).
 
 ## Libraries and tests
 

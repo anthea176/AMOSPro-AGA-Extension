@@ -16,13 +16,14 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide")
 EXAMPLE_DIR = ROOT / "examples"
 AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+)?")
 FUNCTION_BARE = re.compile(
     r"^\s*Aga\s+(?:"
     r"Copper\s+(?:Clear|Wait|Move|End|On|Off)"
     r"|Mouse\s+(?:X|Y|Buttons|Pressed|Released)"
+    r"|Rect\s+Overlap"
     r"|Double\s+Buffer|Swap|Pic\s+Info|Iff\s+Load"
     r"|Wait\s+Key|Key|Detect|Demo"
     r")\b", re.IGNORECASE,
@@ -69,10 +70,16 @@ def main() -> None:
                 f"Unknown AP20 calls in {source.name}: {used - valid_commands}")
         require(bool(used), f"No AGA calls in {source.name}")
 
-    for name in ("picture", "blitter"):
+    for name in ("picture", "blitter", "collide"):
         text = (EXAMPLE_DIR / f"{name}.asc").read_text("ascii")
         require('Fsel$("**")' in text and "Aga Pic Info" in text,
                 f"{name}.asc must offer file selection and verify dimensions")
+    collide = (EXAMPLE_DIR / "collide.asc").read_text("ascii")
+    require(all(call in collide for call in (
+        "Aga Rect Overlap", "Aga Mouse X", "Aga Mouse Y",
+        "Aga Mouse Pressed", "Aga Blit Clear(0,0,320,256)",
+        "Aga Blit Fill", "Aga Swap", "Aga Wait Vbl")),
+        "collide.asc must demonstrate R25 AABB, mouse and per-frame redraw/VBL")
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
     require(hashlib.sha256(original).digest() == hashlib.sha256(demo).digest()
