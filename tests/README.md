@@ -4,7 +4,7 @@
 
 **Résultat du 10/11/2026 :** mire 320×256×8, `STATIC=1`, `OVERLAP=20`, `PURE=1`, `OPEN=DB=LOAD=SWAP=1`, `FILLS=1/1/1`, `LEFT ID=20`, `RIGHT OUT=1`, `CLOSED=-1`, `PRESS=-1`, `REOPEN=1`, `BASE=0`, `CLOSE2=-1`, **`RESULT=1`**, `CLOSE X2 RETURNED`, fin AMOS ligne 183.
 
-Les compteurs `LEFT COUNT=13` et `RIGHT COUNT=3` sont visibles, sans preuve du nombre de clics physiques. Ce test **ne valide pas** l'unicité des événements. Gate A CPU/CI PASS (402 cas 68000), Gate B WinUAE PASS pour ce scénario. Focus réel, stress, AMOS Compiler et Amiga physique non testés. [Dossier M9](../docs/M9_HOTSPOT_R24.md).
+Les compteurs `LEFT COUNT=13` et `RIGHT COUNT=3` correspondent à **plusieurs clics volontaires**, comme confirmé par l'utilisateur. **Aucune répétition parasite constatée** ; ce scénario ne vérifie toutefois pas l'unicité pour un seul clic physique. Gate A CPU/CI PASS (402 cas 68000), Gate B WinUAE PASS pour ce scénario. Focus réel, stress, AMOS Compiler et Amiga physique non testés. [Dossier M9](../docs/M9_HOTSPOT_R24.md).
 
 ---
 

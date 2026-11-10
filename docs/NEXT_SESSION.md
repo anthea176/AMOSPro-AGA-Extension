@@ -6,7 +6,7 @@
 
 - **Test exact validé** : [`tests/passed/M9_R24_HOTSPOT_HIT_01.asc`](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc), SHA Git `0476f20a81a8bff1bf282a37a7e3b4b710c72022`, **sans aucune modification des octets**. La version corrigée ne contient aucun `Then` et se termine normalement ligne 183. **Aucun `.asc` actif** dans `tests/current/`.
 - **Preuve WinUAE** : `STATIC 1`, `OVERLAP 20`, `PURE 1`, `OPEN/DB/LOAD/SWAP=1`, `FILLS 1/1/1`, `LEFT ID 20`, `RIGHT OUT 1`, `CLOSED=-1`, `PRESS=-1`, `REOPEN 1`, `BASE 0`, `CLOSE2 -1`, **`RESULT 1`** et `CLOSE X2 RETURNED`.
-- **Point non élucidé** : `LEFT COUNT=13`, `RIGHT COUNT=3` sur la capture. Le test valide le choix des zones mais n'établit pas l'unicité des événements par clic physique ; à isoler seulement si la répétition est observée en usage réel.
+- **Compteurs expliqués par l'utilisateur** : `LEFT COUNT=13`, `RIGHT COUNT=3` proviennent de **clics volontairement répétés** pendant le test, pas d'une répétition parasite constatée. La sélection des zones est validée. Ce scénario ne constitue toutefois pas un essai d'unicité sur un seul clic physique.
 - **Bibliothèque courante** : `dist/AMOSPro_AGA.Lib` R24 = archive `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib`, 13 228 octets, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`. R23 et `LAST_GOOD` R10 inchangées.
 - **Hors validation** : focus réel, stress, AMOS Compiler, Amiga physique, position souris au moment exact du clic. L'implémentation M9 reste **stateless** ; un registre de zones, le drag et M10 collisions nécessitent une décision ultérieure. [Rapport R24](M9_HOTSPOT_R24.md).
 

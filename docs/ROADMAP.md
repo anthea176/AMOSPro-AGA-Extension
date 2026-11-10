@@ -2,7 +2,7 @@
 
 **Objectif :** construire des primitives AGA réutilisables dans les programmes AMOS 365, sans imposer de réécriture du moteur des jeux. La roadmap décrit **l'ordre du travail à venir**, pas les anciens essais R1 à R15.
 
-**R24 M9 Hotspot Hit (10/11/2026) : Gate A CPU/CI PASS (402 cas), Gate B AMOS/WinUAE PASS** sur le scénario utilisateur : `STATIC=1`, `OVERLAP=20`, `LEFT ID=20`, `RIGHT OUT=1`, `RESULT=1` et fermeture AMOS correcte ligne 183. [Test corrigé exact archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc). Compteurs LEFT 13 / RIGHT 3 observés, sans conclusion sur le nombre de clics physiques. Focus et stress non vérifiés.
+**R24 M9 Hotspot Hit (10/11/2026) : Gate A CPU/CI PASS (402 cas), Gate B AMOS/WinUAE PASS** sur le scénario utilisateur : `STATIC=1`, `OVERLAP=20`, `LEFT ID=20`, `RIGHT OUT=1`, `RESULT=1` et fermeture AMOS correcte ligne 183. [Test corrigé exact archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc). Compteurs LEFT 13 / RIGHT 3 expliqués par des clics répétés volontairement (confirmation utilisateur) : aucune répétition parasite constatée ; test d'unicité sur clic isolé non réalisé. Focus et stress non vérifiés.
 
 **R23 IDCMP 0.8.7 (10/11/2026) : Gate A CPU/CI PASS 15 cas (CI (archive CI privée, run #42899343161)), Gate B AMOS interprété/WinUAE PASS** sur clics rapides (`PRESSED=RELEASED=3`), FIFO clavier (`KEYS=64/64/-1`, `WAIT=16`, `RESULT=1`), et Ctrl+C : interruption à `_WAITK=Aga Wait Key` avec fermeture correcte de l'écran Intuition. [Test R23 archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) sans modification. Prochains contrôles éventuels : focus réel, stress et saturation. [Contrat R23](M8_IDCMP_R23.md).
 
