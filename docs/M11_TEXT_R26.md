@@ -1,6 +1,6 @@
 # M11 — R26 0.9.2 : contrat de la première fonction de texte AGA
 
-**État : prototype CPU Gate A en préparation, non publié comme bibliothèque courante.** Seule R25 0.9.1 est validée sous WinUAE ; les résultats CPU et le comportement de R26 restent **à établir par la CI**. Le code de la première fonction et son builder sont préparés en mémoire à partir de l'archive figée R25, sans modification de `dist/AMOSPro_AGA.Lib`, des archives ni de `LAST_GOOD`.
+**État : **R26 0.9.2 candidate de test WinUAE**, Gate A native CPU/CI **PASS 64 scénarios 68000** ([run 42921696298](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)), **Gate B AMOS/WinUAE NON TESTÉE**. Binaire `dist/AMOSPro_AGA.Lib` = [archive candidate R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Les 36 entrées précédentes R25 sont conservées (seul `GetP` terminal ajouté au dernier segment). R25 0.9.1 demeure archivée et validée sur son propre scénario ; R24 et `LAST_GOOD` R10 inchangés.
 
 ## API candidate et paramètres
 
@@ -48,4 +48,4 @@ _OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)
 - [`InitRastPort` et structure `RastPort`](https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node02F7.html).
 - [Double Buffer Intuition / SafeMessage](https://wiki.amigaos.net/wiki/Intuition_Screens).
 
-**Pas de changement dans les bibliothèques distribuées sans Gate A reproductible. Pas de nouvelle branche.**
+**Gate A R26 PASS ; candidate distribuée pour un essai WinUAE contrôlé** : [test unique `M11_R26_AGA_TEXT_01.asc`](../tests/current/M11_R26_AGA_TEXT_01.asc). La première validation runtime est encore à réaliser. Aucune autre branche et aucune modification de `LAST_GOOD`.

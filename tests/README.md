@@ -1,8 +1,8 @@
-# M11 — étude d'architecture, aucun test actif
+# M11 — R26 0.9.2 AGA Text : Gate A CPU/CI PASS, Gate B WinUAE à réaliser
 
-L'essai [`M11_R25_AMOS_TEXT_01.asc`](historical/M11_R25_AMOS_TEXT_01.asc) a été **écarté avant exécution WinUAE** et conservé **à l'identique** dans `tests/historical/`, pas dans `tests/passed/`. Il appelait `Text` natif d'AMOS sur un écran Intuition AGA indépendant ; AMOS gère ses propres écrans et cette tentative ne pouvait pas démontrer la compatibilité de notre rendu.
+**Unique test courant :** [`current/M11_R26_AGA_TEXT_01.asc`](current/M11_R26_AGA_TEXT_01.asc), bandeau `M11-R26-AGA-TEXT-01`. **Installer la candidate R26 0.9.2**, pas la R25. Choisir `examples/demo.iff` (PAL 320×256×8). Observer un panneau **bleu** avec `AGA TEXT R26` en **vert**, pendant 220 VBL. Après fermeture, contrôler `CLEAR 1 PANEL 1`, `BAD 0 TEXT 1 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Si le texte est invisible malgré les retours, Gate B reste en échec ou indéterminée ; envoyer la capture et le contexte. **Ce scénario n'est pas encore passé sous WinUAE.**
 
-**`tests/current/` ne contient aucun `.asc`.** Avant une nouvelle expérimentation M11, vérifier la `BitMap` du back buffer R25, le `RastPort` cible et la synchronisation `Aga Swap` ; [étude M11](../docs/M11_TEXT_COMPAT.md). Aucune nouvelle commande ni bibliothèque R26. Le [test R25 validé](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) reste intact.
+La candidate R26 a passé **64 cas CPU 68000 Gate A** ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)). Elle exploite `graphics.library/Text` sur le vrai BitMap arrière via RastPort temporaire, contrairement au diagnostic `Text` AMOS classé [historique sans essai](historical/M11_R25_AMOS_TEXT_01.asc). Le [test R25 PASS](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) demeure archivé octet pour octet ; `LAST_GOOD` inchangée. [Contrat](../docs/M11_TEXT_R26.md).
 
 ---
 

@@ -18,7 +18,7 @@ Le chemin `A5+$1C8 → State+32 → DBState+8 → ScreenBuffer inactif → sb_Bi
 
 ## Prototype R26 en préparation
 
-Un [contrat de première API texte](M11_TEXT_R26.md) et trois scripts de construction/validation en mémoire ont été préparés depuis l'archive figée R25 ; **aucune Gate A R26 encore confirmée à ce stade et aucun binaire distribué changé**. Le verrou Safe est traité **dans la nouvelle primitive seulement** ; les anciens Blitters R25 restent tels quels.
+Un [contrat de première API texte](M11_TEXT_R26.md) et trois scripts de construction/validation en mémoire ont été préparés depuis l'archive figée R25 ; **Gate A R26 confirmée : 64 cas CPU/CI PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)), **candidate R26 0.9.2 publiée** ([archive](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib)). La Gate B WinUAE n'a pas encore été testée. Le verrou Safe est traité **dans la nouvelle primitive seulement** ; les anciens Blitters R25 restent tels quels.
 
 ## Mécanisme à examiner avant de développer
 

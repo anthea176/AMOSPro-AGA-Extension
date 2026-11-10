@@ -18,17 +18,17 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-- **Current library:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **R25 0.9.1**, 13,408 bytes, SHA-256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. **M10 Rect Overlap: Gate A 68000 CPU/CI PASS (704 cases), Gate B interpreted AMOS/WinUAE PASS on the documented visual scenario** (409 frames, `RESULT=1`, clean return to AMOS). R24 0.9.0 remains the preceding [WinUAE-validated archive](dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib). R10 `LAST_GOOD` remains untouched.
+- **Current library:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **R26 0.9.2 M11 AGA Text, 14,044 bytes**, SHA-256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. **Gate A native 68000 CPU/CI PASS (64 text/ABI/Safe cases)** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)); **Gate B AMOS interpreted/WinUAE NOT TESTED**. The [R25 0.9.1 archive](dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib) remains the last WinUAE-validated M10 scenario (704 CPU cases; 409 frames; `RESULT=1`). R24 and R10 `LAST_GOOD` remain unchanged.
 - **Last-good fallback:** `dist/AMOSPro_AGA_LAST_GOOD.Lib` — **R10**, intentionally unchanged.
 - **Validated M6 Blitter tests:** [R13 Copy](tests/passed/M6_R13_BLIT_COPY_01.asc), [R14 Fill](tests/passed/M6_R14_BLIT_FILL_01.asc) and [R15 Clear](tests/passed/M6_R15_BLIT_CLEAR_01.asc). **Validated M7 Copper tests:** [R16 Clear](tests/passed/M7_R16_COPPER_CLEAR_01.asc), [R17 On/Off](tests/passed/M7_R17_COPPER_ON_OFF_01.asc) and [R18 raster](tests/passed/M7_R18_COPPER_RASTER_01.asc).
-- **R25 WinUAE test passed and archived unchanged:** [`M10_R25_RECT_OVERLAP_VISUAL_01.asc`](tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc). Observed `STATIC=PURE=1`, `SEEN FREE=HIT=1`, `FRAMES=409`, `DRAWERR=0`, `RESULT=1` and clean close. **No active `.asc` in `tests/current/`.** The [M11 native AMOS `Text` proposal](tests/historical/M11_R25_AMOS_TEXT_01.asc) was discarded **before runtime testing**: the extension's Intuition AGA screen is separate from AMOS-managed screens. The [shorter `collide.asc` example](examples/collide.asc) is separate from this regression test and has not been independently runtime-validated.
+- **Current R26 WinUAE test (NOT YET RUN):** [`tests/current/M11_R26_AGA_TEXT_01.asc`](tests/current/M11_R26_AGA_TEXT_01.asc). **R25 original PASS** archived byte-for-byte at [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc): `FRAMES=409`, `DRAWERR=0`, `RESULT=1`. Earlier failed assumption that native AMOS `Text` could target the separate Intuition screen is [historical only](tests/historical/M11_R25_AMOS_TEXT_01.asc). The standalone [`collide.asc`](examples/collide.asc) example has not been runtime-tested independently.
 - **Earlier binaries:** `dist/experimental/`; historical stable versions: `archive/`.
 
 Install the library version that matches the test you intend to run. Files on GitHub do not automatically replace libraries installed in AMOS/WinUAE.
 
 ## Main AMOS commands
 
-**Current library API R25 0.9.1** (M5 IFF, M6 Blitter, M7 Copper, and M8 mouse position/buttons/transitions) — **all 30 named AMOS commands exported from the AP20 library**, including two legacy diagnostics. The table specifies exact call syntax, argument order and return values. Graphics coordinates start at the upper-left `(0,0)`; `width` and `height` are **dimensions**, never end coordinates.
+**Current library API R26 0.9.2** (M5 IFF, M6 Blitter, M7 Copper, and M8 mouse position/buttons/transitions) — **all 31 named AMOS commands exported from the AP20 library**, including two legacy diagnostics. The table specifies exact call syntax, argument order and return values. Graphics coordinates start at the upper-left `(0,0)`; `width` and `height` are **dimensions**, never end coordinates.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
@@ -62,8 +62,22 @@ Install the library version that matches the test you intend to run. Files on Gi
 | **`Aga Mouse Released`** (R22+, IDCMP since R23) | `_R=Aga Mouse Released` | No-argument integer function; combinable 1/2/4 bitmask. **R23:** release events remain stored independently of Pressed. Even a complete click between polls can yield both Pressed=1 and Released=1. |
 | **`Aga Hotspot Hit`** (M9 R24) | `_HIT=Aga Hotspot Hit(_PX,_PY,_X,_Y,_W,_H)` | **Point-in-rectangle test (6 integer arguments)**: `PX,PY` = point to test (e.g. mouse position); `X,Y` = rectangle **top-left corner**; `W,H` = **width and height in pixels, NOT right/bottom coordinates**. Returns **1 inside**, **0 outside**, with the right and bottom edges excluded. Does **not** detect a click or draw/store a hotspot; combine with `Aga Mouse Pressed` for buttons. [Detailed example below](#rectangular-hotspots-m9-r24). |
 | **`Aga Rect Overlap`** (M10 R25) | `_C=Aga Rect Overlap(_AX,_AY,_AW,_AH,_BX,_BY,_BW,_BH)` | Stateless **8-argument integer function**: two rectangles, each with origin (X,Y) and width/height (W,H) in logical pixels. Returns **1** for positive-area overlap (even 1 pixel), **0** for disjoint rectangles, touching edges/corners, or nonpositive dimensions. Negative origins allowed; signed 32-bit overflow is rejected safely. No screen, physics or input state required. **R25 WinUAE PASS on the archived scenario.** |
+| **`Aga Text`** (M11 R26) | `_OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)` | **Four arguments:** X in pixels, baseline Y (not text top), indexed colour `0..(2^Depth-1)`, AMOS string (1..128 characters). Draws one line in the **AGA Intuition back buffer**, using a temporary RastPort, system font and transparent `JAM1` background. Returns **1** after draw/WaitBlit; **0** on invalid state, colour, string, text bounds, or when the previous buffer is not yet `Safe` (single nonblocking GetMsg; no ReplyMsg). **Gate A 68000 CPU/CI PASS (64 cases); Gate B WinUAE NOT TESTED**. [Contract](docs/M11_TEXT_R26.md). |
 
 **Copper RGB4** has been available since R18, **Mouse X/Y** since R19, **Mouse Buttons** since R20 (with RMBTRAP in R21), and **Mouse Pressed/Released** since R22. **R23 uses IDCMP events to capture button transitions and protect RAWKEY input**. The quick-click, keyboard FIFO and Ctrl+C WinUAE scenarios passed; focus-switch and stress scenarios remain untested. Sprites, a `Aga Set Colour` command, and comprehensive input-stress validation are outside the current scope.
+
+### AGA Text (M11 R26 candidate; WinUAE not yet tested)
+
+With the R26 library installed and the AGA screen/double buffer already open, the function draws on the **inactive AGA BitMap**, not on a native AMOS screen. Here Y=96 denotes the **font baseline**; the palette index 28 must already have been defined (e.g. by loading `examples/demo.iff`):
+
+```amos
+_TX=Aga Text(40,96,28,"HELLO AGA")
+If _TX=1
+   _SW=Aga Swap
+End If
+```
+
+A result of 0 can mean that the previous front buffer has not yet received its `Safe` notification. Do not spin indefinitely. This R26 safety check does **not** automatically secure pre-existing Blitter commands. [WinUAE test](tests/current/M11_R26_AGA_TEXT_01.asc) · [technical limits](docs/M11_TEXT_R26.md).
 
 ### Rectangular hotspots (M9 R24)
 
@@ -252,4 +266,4 @@ The [`tools/`](tools/README.md) directory contains the active builders, dependen
 - **API/README parity:** [`test_readme_api_coverage.py`](tools/test_readme_api_coverage.py) checks the command table and active library version in **both English and French**. Adding an AMOS instruction or function requires documenting it in both language versions within the same change.
 - **Engineering rules:** [`EXTENSION_SOURCE_RULES.md`](EXTENSION_SOURCE_RULES.md). State and recovery notes: [`docs/NEXT_SESSION.md`](docs/NEXT_SESSION.md), [M8 status](docs/M8_STATUS.md), [architecture](docs/ARCHITECTURE.md) and [roadmap](docs/ROADMAP.md).
 
-**Current status:** **R25 0.9.1 M10 Rect Overlap: Gate A CPU/CI PASS (704 native 68000 cases) and Gate B interpreted AMOS/WinUAE PASS on the [original archived test](tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc)**. User-confirmed results (10 Nov 2026): `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, `RESULT 1`, `CLOSE X2 RETURNED`. Blue fixed rectangle and green/red mobile rectangle were redrawn each frame with `Aga Swap` then `Aga Wait Vbl`. **This does not measure 50 FPS.** The ILBM supplies a palette/video mode; the picture is cleared from the back buffer. **M11 is now an architecture review**, not a WinUAE test. Native AMOS `Text` does not target the extension's separate Intuition screen; any text rendering must explicitly target the AGA **back buffer** (potentially via `graphics.library/Text` and a suitable `RastPort`). [M11 study](docs/M11_TEXT_COMPAT.md). No R26 library has been created. R24 and R10 `LAST_GOOD` unchanged; AMOS Compiler, physical hardware and stress not validated. [M10 report](docs/M10_RECT_OVERLAP_R25.md).
+**Current status:** **M11/R26 0.9.2 AGA Text candidate** is now the distributed test library: **Gate A native CPU/CI PASS 64 cases** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)); **Gate B AMOS/WinUAE pending** on the [single active R26 test](tests/current/M11_R26_AGA_TEXT_01.asc). The 14,044-byte candidate adds one native text function to the Intuition AGA back buffer, using `TextExtent`, a temporary RastPort and a nonblocking `Safe` check. The last confirmed WinUAE scenario remains **R25 0.9.1 M10 Rect Overlap** ([unchanged archive](dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib)). AMOS Compiler, real Amiga and stress tests not performed. R24, R25 archive and R10 `LAST_GOOD` preserved.

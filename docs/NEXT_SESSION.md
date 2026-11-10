@@ -1,14 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M11 — R26 0.9.2 : prototype texte en mémoire, Gate A en cours
+## M11 — R26 0.9.2 candidate AGA Text : Gate A PASS, Gate B WinUAE à tester
 
-**11/11/2026 — nouvel incrément autorisé, aucun binaire R26 promu pour l'instant.** [Contrat et garde-fous R26](M11_TEXT_R26.md) · [audit de référence R25](M11_BACKBUFFER_R25.md).
+**11/11/2026 — Gate A 68000/CI PASS 64 scénarios**, [workflow réussi 42921696298](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298). **Gate B AMOS interprété/WinUAE NON TESTÉE**, Compiler et Amiga physique NON TESTÉS. Ne pas déclarer R26 validée en runtime avant retour utilisateur.
 
-- API envisagée : `_OK=Aga Text(x,baselineY,pen,text$)` ; un seul token fonction, rendu dans le **BitMap arrière de l'extension**, système `InitRastPort/TextExtent/Text`, `JAM1`, couleur indexée, longueur AMOS et clipping mesurés.
-- **Safe non bloquant :** si `DBState+20` indique Safe en attente, un seul `GetMsg(SafePort)` ; retour `0` sans dessin si non prêt ; sinon effacement du seul bit Safe sans `ReplyMsg`, bit Disp conservé. Cette nouvelle primitive ne rend **pas** les Blitters R25 sûrs avant Safe.
-- **À exécuter en CI :** [builder reproductible, R25 figée](../tools/build_m11_text_r26.py), [émission 68000](../tools/m11_text_r26_emit.py), [test 68000 sous Unicorn](../tools/test_m11_text_r26.py). Le builder est **en mémoire**, la bibliothèque distribuée demeure R25 0.9.1. Les tests doivent d'abord confirmer Gate A CPU/ABI ; **aucun PASS R26 annoncé** à ce stade.
-- Après Gate A seulement : publier un candidat `dist/experimental/` et sa copie `dist/AMOSPro_AGA.Lib`, mettre à jour les README EN/FR et un unique test WinUAE. `LAST_GOOD` R10, les archives R25/R24 et les tests passés restent intacts. **`tests/current/` reste sans `.asc`** pour l'instant.
-- Aucun changement de branche : uniquement `main`.
+- **Bibliothèque candidate sur `main` :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [R26 archive versionnée](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`, 37 segments AP20 / 31 tokens nommés.
+- **Base figée R25** : [`dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib`](../dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib), 13 408 octets, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`, Gate A+B PASS **uniquement sur son scénario M10**. R24 et `LAST_GOOD` R10 inchangés.
+- **API :** `_OK=Aga Text(x,baselineY,pen,text$)` ; 1 ligne, 1–128 caractères, fonte système, index palette, fond transparent. Cible le back BitMap Intuition AGA via RastPort temporaire ; `TextExtent` valide les bords des glyphes. `_OK=1` si dessin réalisé ; `0` pour paramètres incorrects ou buffer Safe pas encore disponible. [Contrat](M11_TEXT_R26.md).
+- **Safe** : un `GetMsg(SafePort)` non bloquant si bit0 de `DBState+20` en attente, aucun `ReplyMsg`. Ce mécanisme ne modifie **pas** les Blitters R25 et ne prouve pas leur sûreté hors du scénario déjà testé.
+- **Seul test actif :** [`tests/current/M11_R26_AGA_TEXT_01.asc`](../tests/current/M11_R26_AGA_TEXT_01.asc), bandeau `M11-R26-AGA-TEXT-01`. Importer par `Project → Merge ASCII` sous AMOS avec la **Lib R26** installée, choisir `examples/demo.iff` (320×256×8), observer le **texte vert `AGA TEXT R26` sur fond bleu** pendant 220 VBL, puis lire `BAD 0 TEXT 1 SWAP 1`, `RESULT 1`, `CLOSE RETURNED`. Capture et constat visuel requis ; ce test n'a pas été exécuté sous WinUAE.
+- **Builder/CI :** [builder R26](../tools/build_m11_text_r26.py), [source 68000](../tools/m11_text_r26_emit.py), [CPU tests](../tools/test_m11_text_r26.py), contrôle d'intégrité et reproductibilité de la Lib candidate. Aucun nouveau branchement ; ne pas archiver ce test avant validation utilisateur.
 
 ---
 

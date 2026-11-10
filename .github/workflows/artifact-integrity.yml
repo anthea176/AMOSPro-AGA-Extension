@@ -55,7 +55,7 @@ jobs:
         run: python -B tools/verify_artifacts.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
-      - name: Verify five distribution examples (static syntax, ILBM and packaging)
+      - name: Verify six distribution examples (static syntax, ILBM and packaging)
         run: python -B tools/test_examples.py
       - name: Validate M7 Copper API staging contract (static only)
         run: python -B tools/test_m7_copper_contract.py
@@ -70,19 +70,19 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M11 R26 text in-memory Gate A (native CPU and frozen R25)
+      - name: M11 R26 AGA Text current binary — 68000 CPU and integrity
         run: |
           python -B tools/test_m11_text_r26.py
-          python -B tools/build_m11_text_r26.py
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          python -B tools/build_m11_text_r26.py --emit-base64
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m11_text_r26 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R26 candidate matches',info)"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
 
-      - name: M10 R25 AABB rectangle overlap — 68000 CPU plus current candidate integrity
+      - name: M10 R25 AABB rectangle overlap — frozen 68000 CPU archive regression
         run: |
           python -B tools/test_m10_rect_overlap_r25.py
           python -B tools/build_m10_rect_overlap_r25.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m10_rect_overlap_r25 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R25 candidate matches',info)"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m10_rect_overlap_r25 import build,ARCHIVE; raw,info=build(); assert raw==ARCHIVE.read_bytes(); print('R25 frozen archive matches',info)"
+          sha256sum dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
 
       - name: M9 R24 Hotspot Hit — frozen 68000 archive regression
