@@ -4,21 +4,21 @@
 
 - [Émetteur pur 68000](m9_hotspot_r24_emit.py) : six paramètres, bords fin exclusive, arithmétique 32 bits sans débordement, aucun état ni appel OS.
 - [Builder pur R24](build_m9_hotspot_hit_r24.py) : depuis R23 **archivée et validée**, ajout d'une seule entrée AP20 + séparateur `GetP`. `dist/AMOSPro_AGA.Lib` candidate R24 et son archive sont comparées en CI.
-- [Test CPU préflight](test_m9_hotspot_hit_r24.py) : contrôles 68000 ABI/A3, frontières, zones superposées, int32, R23 inchangée. **Gate A CPU/CI PASS 402 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685)), Gate B WinUAE NON TESTÉE.** [Contrat](../docs/M9_HOTSPOT_R24.md).
+- [Test CPU préflight](test_m9_hotspot_hit_r24.py) : contrôles 68000 ABI/A3, frontières, zones superposées, int32, R23 inchangée. **Gate A CPU/CI PASS 402 cas (CI (archive CI privée, run #42908096685)), Gate B WinUAE NON TESTÉE.** [Contrat](../docs/M9_HOTSPOT_R24.md).
 
 ## M8 — R23 0.8.7 : IDCMP clavier/souris (Gate A + B PASS sur scénarios testés)
 
 - [`m8_idcmp_r23_emit.py`](m8_idcmp_r23_emit.py) : dispatcher 68000 non bloquant des messages `IDCMP_MOUSEBUTTONS` et `RAWKEY`, FIFO clavier 16 places.
 - [`build_m8_idcmp_r23.py`](build_m8_idcmp_r23.py) : builder **pur**, depuis l'archive R22 PASS, reconstruit la candidate R23 sans écrire les archives. Mode `--emit-base64` réservé à la vérification de l'artifact.
 - [`test_m8_idcmp_r23_preflight.py`](test_m8_idcmp_r23_preflight.py) : couverture CPU/emulateur native de la capture des clics courts et de la préservation des touches, sans preuve WinUAE.
-- [Contrat R23](../docs/M8_IDCMP_R23.md) · [test WinUAE exact archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc). **Gate A CPU/CI PASS (15 cas, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)), Gate B WinUAE PASS** sur clics rapides, FIFO clavier et Ctrl+C à `_WAITK=Aga Wait Key` avec fermeture Intuition. Archive R22 et `LAST_GOOD` R10 inchangées ; Compiler/hardware/stress non testés.
+- [Contrat R23](../docs/M8_IDCMP_R23.md) · [test WinUAE exact archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc). **Gate A CPU/CI PASS (15 cas, CI (archive CI privée, run #42899343161)), Gate B WinUAE PASS** sur clics rapides, FIFO clavier et Ctrl+C à `_WAITK=Aga Wait Key` avec fermeture Intuition. Archive R22 et `LAST_GOOD` R10 inchangées ; Compiler/hardware/stress non testés.
 
 ## M8 — R22 0.8.6 : transitions souris natives (CPU + WinUAE PASS sur scénario)
 
 - `m8_mouse_edges_emit.py` : génération déterministe des routines 68000 `Aga Mouse Pressed/Released`, fronts indépendants et contrôle du focus sans toucher à la file clavier.
 - `build_m8_mouse_edges_r22.py` : construction reproductible depuis l'archive R21, deux entrées AP20 nouvelles, petite réinitialisation sur ouverture d'écran ; archives et LAST_GOOD inchangées.
 - `test_m8_mouse_edges_r22.py` : tests CPU 68000, ABI, états sticky, clavier intact, focus, refus et réouverture.
-- [Contrat R22](../docs/M8_MOUSE_EDGES_R22.md) · [test AMOS validé et archivé](../tests/passed/M8_R22_MOUSE_EDGES_01.asc). Gate A/CI PASS (25 scénarios, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42893816454)) ; Gate B WinUAE PASS sur capture utilisateur.
+- [Contrat R22](../docs/M8_MOUSE_EDGES_R22.md) · [test AMOS validé et archivé](../tests/passed/M8_R22_MOUSE_EDGES_01.asc). Gate A/CI PASS (25 scénarios, CI (archive CI privée, run #42893816454)) ; Gate B WinUAE PASS sur capture utilisateur.
 
 ## M8 — R21 0.8.5 RMBTRAP (CPU/CI PASS 11 cas ; WinUAE PASS utilisateur)
 
@@ -36,7 +36,7 @@
 ## M8 — R19 0.8.3 Mouse X/Y, PASS CPU/CI et AMOS interprété/WinUAE
 
 - `build_m8_mouse_position_r19.py` — builder historique R19 (archive figée) depuis l'archive R18 figée ; reproduit R19 sans écraser la bibliothèque R21 de `main`.
-- `test_m8_mouse_position_r19.py` — 76 cas CPU 68000 **PASS et CI générale PASS** ([CI générale #42878271256](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42878271256)) : coordonnées signées, 320/640/1280, fenêtres déplacées, écran fermé, écran étranger, ABI D3/D2/A3/SP.
+- `test_m8_mouse_position_r19.py` — 76 cas CPU 68000 **PASS et CI générale PASS** (CI générale #42878271256 (archive CI privée)) : coordonnées signées, 320/640/1280, fenêtres déplacées, écran fermé, écran étranger, ABI D3/D2/A3/SP.
 - `test_amos_copper_syntax.py` — contrôle statique étendu aux appels nus des fonctions `Aga Mouse X/Y` ; elles doivent être utilisées dans une expression.
 - [`M8_MOUSE_R19.md`](../docs/M8_MOUSE_R19.md), [`M8_STATUS.md`](../docs/M8_STATUS.md) — spécification de l'API et procédure WinUAE.
 

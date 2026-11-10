@@ -6,7 +6,7 @@
 
 **Chantier terminé sur décision utilisateur.** Tests R12 0.6.3 réussis : HAM6, HAM8, SuperHiRes 1280×256, SuperHiRes Lace 1280×512. Jeff-Flag (736×482, NTSC HiRes Lace et position correcte) et EHB avaient déjà été essayés avec succès. **DblPAL et DblNTSC non testés** faute de moniteur, sans caractère bloquant. Ne pas les déclarer compatibles sur cette seule base.
 
-**Portée de la validation :** retour visuel utilisateur sur les nouveaux modes, sans identification précise du `.asc` ni preuve de compilation R12. AMOS Compiler R12, vrai Amiga AGA, stress exhaustif, Fallout sous R12 restent non confirmés ; ils ne rouvrent pas le chantier IFF clos. CI HUNK/AP20/ILBM/CPU [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42838022562).
+**Portée de la validation :** retour visuel utilisateur sur les nouveaux modes, sans identification précise du `.asc` ni preuve de compilation R12. AMOS Compiler R12, vrai Amiga AGA, stress exhaustif, Fallout sous R12 restent non confirmés ; ils ne rouvrent pas le chantier IFF clos. CI HUNK/AP20/ILBM/CPU PASS (archive CI privée, run #42838022562).
 
 **État Git :** PR #4 fusionnée sur `main`. `dist/AMOSPro_AGA.Lib` R12 0.6.3, 8856 octets, SHA256 `b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec`. `dist/AMOSPro_AGA_LAST_GOOD.Lib` = R10 0.6.1, SHA256 `e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3`, **inchangé**.
 
@@ -25,7 +25,7 @@
 
 **Test unique :** `tests/current/R12_JEFF_A0_RETRY.asc`, bandeau `R12-JEFF-NEWSCREEN-A0-01` : d'abord Jeff-Flag 736×482, vérifier position directe en haut + retour AMOS ; si PASS, Fallout PAL avec le même test. Ce programme conserve l'ordre `Amos To Back` du test R10 qui chargeait les images.
 
-**Tests :** contrôle HUNK/AP20, reproductibilité, ILBM et CPU Unicorn 68000 **PASS en CI** ([run 42836826630](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42836826630)). Jeff-Flag **PASS utilisateur** sous WinUAE, sans nombre d'itérations précisé. **R12 compilée, Fallout sous R12 et matériel physique non confirmés.** `tools/verify_artifacts.py` a été adapté ; les anciens builders R9/R10/R11 n'écrasent plus la Lib active.
+**Tests :** contrôle HUNK/AP20, reproductibilité, ILBM et CPU Unicorn 68000 **PASS en CI** (run 42836826630 (archive CI privée)). Jeff-Flag **PASS utilisateur** sous WinUAE, sans nombre d'itérations précisé. **R12 compilée, Fallout sous R12 et matériel physique non confirmés.** `tools/verify_artifacts.py` a été adapté ; les anciens builders R9/R10/R11 n'écrasent plus la Lib active.
 
 Voir `docs/R12_NEWSCREEN_A0.md` et `tests/README.md`. Même branche `codex/intuition-input-r1`, PR #4 Draft, **`main` inchangée**. Ne pas promouvoir R12 dans LAST_GOOD avant validation.
 
@@ -172,7 +172,7 @@ Test IFF isolé préparé : `tests/current/M5_R8_ILBM_SINGLE_SWAP.asc`, à lance
 ## Validation CI R7 — 10/11/2026
 
 **12/12 contrôles CPU dédiés PASS** sur GitHub Actions
-[run 42814094313](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42814094313).
+run 42814094313 (archive CI privée).
 Binaire reproductible : **7 956 octets**,
 SHA256 `e6dd32ceda1181ef3172dfb242a1d4fc93656c6788023d7b1333dc2561ed3dce`.
 

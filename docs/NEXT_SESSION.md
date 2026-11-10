@@ -2,7 +2,7 @@
 
 ## M9 — R24 0.9.0 : Hotspot Hit candidate, Gate A PASS
 
-**R24 est la bibliothèque candidate sur `main`, Gate A CPU/CI PASS (402 scénarios sur 68000, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685)), Gate B AMOS interprété/WinUAE NON TESTÉE.** Elle expose **29 commandes AMOS** (contre 28 en R23) avec la nouvelle fonction `Aga Hotspot Hit(px,py,x,y,w,h)`. Retour 1 dedans, 0 dehors ; bords fin exclusive, point négatif rejeté, origines négatives autorisées, soustraction 32 bits sûre.
+**R24 est la bibliothèque candidate sur `main`, Gate A CPU/CI PASS (402 scénarios sur 68000, CI complète (archive CI privée, run #42908096685)), Gate B AMOS interprété/WinUAE NON TESTÉE.** Elle expose **29 commandes AMOS** (contre 28 en R23) avec la nouvelle fonction `Aga Hotspot Hit(px,py,x,y,w,h)`. Retour 1 dedans, 0 dehors ; bords fin exclusive, point négatif rejeté, origines négatives autorisées, soustraction 32 bits sûre.
 
 - **Binaire candidate :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib`, **13 228 octets**, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`.
 - **Premier incrément limité :** test géométrique stateless sans registre de zones, ni changement du dispatcher IDCMP de R23 ; l'ordre des tests dans AMOS définit les IDs et priorités.
@@ -14,7 +14,7 @@
 
 ## M8 — R23 0.8.7 : Gate A + B PASS, test archivé
 
-**État sur `main` au 10/11/2026 :** R23 0.8.7 validée dans le périmètre AMOS interprété/WinUAE des **clics rapides gauche/droit**, de la **FIFO clavier**, de la **fermeture/réouverture d'écran** et de **Ctrl+C**. Gate A CPU/CI PASS 15 cas ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)), Gate B PASS sur essais utilisateur.
+**État sur `main` au 10/11/2026 :** R23 0.8.7 validée dans le périmètre AMOS interprété/WinUAE des **clics rapides gauche/droit**, de la **FIFO clavier**, de la **fermeture/réouverture d'écran** et de **Ctrl+C**. Gate A CPU/CI PASS 15 cas (CI complète (archive CI privée, run #42899343161)), Gate B PASS sur essais utilisateur.
 
 - **Preuve clavier/souris :** `PRESSED=3 RELEASED=3 AGAIN=0/0`, `KEYS=64/64/-1`, `WAIT=16` (A AZERTY), `RESULT=1`, `OPEN/DB/LOAD/SWAP/REOPEN=1`, fermetures et retour AMOS corrects.
 - **Preuve Ctrl+C séparée :** interruption à `_WAITK=Aga Wait Key` avec fermeture correcte de l'écran Intuition (retour utilisateur). L'arrêt empêche normalement l'affichage du résultat final.
@@ -27,7 +27,7 @@
 
 ## M8 — R22 0.8.6 : Pressed/Released, Gate A + B PASS
 
-**R22 courante sur `main` : CPU/CI PASS (25 tests, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42893816454)) et AMOS interprété/WinUAE PASS sur le scénario utilisateur du 10/11/2026.** [Test exact archivé](../tests/passed/M8_R22_MOUSE_EDGES_01.asc) ; **aucun `.asc` actif** dans `tests/current/`.
+**R22 courante sur `main` : CPU/CI PASS (25 tests, CI (archive CI privée, run #42893816454)) et AMOS interprété/WinUAE PASS sur le scénario utilisateur du 10/11/2026.** [Test exact archivé](../tests/passed/M8_R22_MOUSE_EDGES_01.asc) ; **aucun `.asc` actif** dans `tests/current/`.
 
 - Bibliothèque `dist/AMOSPro_AGA.Lib` = archive R22 `dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib`, 12 852 octets, SHA256 `96e38d478bd97e7a65801e16e96ce08c0bbd4aaacb4a8a6644e4bc1289a0c997`. R21 et `LAST_GOOD` R10 intacts.
 - Nouvelles fonctions `Aga Mouse Pressed/Released` : masques 1/2/4 et historiques de fronts indépendants ; `input.device/PeekQualifier()` sans consommation de la file clavier.
@@ -43,7 +43,7 @@
 
 - **HEAD `main` et règles :** relire le HEAD réel, `EXTENSION_SOURCE_RULES.md`, [statut M8](M8_STATUS.md) et [roadmap](ROADMAP.md) à chaque reprise. Ne créer aucune branche sans demande explicite.
 - **R21 courante :** `dist/AMOSPro_AGA.Lib` et archive `dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib`, **12 016 octets**, SHA256 `a72e3046df64e3ff8ebe12a5b4b0db45efebe27e17056919d31d11ca61e9c644`.
-- **Gate A : PASS** 11 tests natifs CPU 68000 et [CI complète #42887916480](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42887916480). **Gate B : PASS utilisateur** (clic gauche/droit, suppression du menu Intuition, scénario WinUAE). **Gate C Compiler / Gate D matériel : NON TESTÉES** ; ni stress, ni fuite mémoire, ni clic très bref validés.
+- **Gate A : PASS** 11 tests natifs CPU 68000 et CI complète #42887916480 (archive CI privée). **Gate B : PASS utilisateur** (clic gauche/droit, suppression du menu Intuition, scénario WinUAE). **Gate C Compiler / Gate D matériel : NON TESTÉES** ; ni stress, ni fuite mémoire, ni clic très bref validés.
 - **Test R21 archivé octet pour octet :** [`tests/passed/M8_R21_MOUSE_RMBTRAP_01.asc`](../tests/passed/M8_R21_MOUSE_RMBTRAP_01.asc), bandeau `M8-R21-MOUSE-RMBTRAP-01`. Aucun `.asc` actif dans `tests/current/`.
 - **Correction R21 :** `NewWindow.Flags=$00031900` via `WFLG_RMBTRAP`, un seul octet de code changé dans entrée AP20 6 par rapport à R20 ; les 30 autres entrées et tokens conservés. `tools/build_m8_rmbtrap_r21.py`, `tools/test_m8_rmbtrap_r21.py`.
 - **R20 :** boutons fonctionnels mais menu Intuition persistant, [test historique conservé](../tests/historical/M8_R20_MOUSE_BUTTONS_01.asc). **R19 X/Y et R18 Copper archivées et PASS WinUAE** sur leurs scénarios ; `LAST_GOOD` **R10 inchangée**.
@@ -59,7 +59,7 @@
 
 - **Candidat R20 :** `dist/AMOSPro_AGA.Lib` (candidate actuelle sur `main`), **12 016 octets**, SHA256 `9d1e9d6fd13478947c016d3f95973efa2ac766f96c364e091f43c69daa8672fe`, archive `dist/experimental/AMOSPro_AGA_M8_v0.8.4_MOUSE_BUTTONS_R20.Lib` ; nouvelle fonction `Aga Mouse Buttons` (masque 1/2/4 ou -1).
 - **Builder / tests :** `tools/build_m8_mouse_buttons_r20.py`, `tools/test_m8_mouse_buttons_r20.py`, test AMOS unique `tests/current/M8_R20_MOUSE_BUTTONS_01.asc`, bandeau `M8-R20-MOUSE-BUTTONS-01`.
-- **Gates R20 :** A **PASS : 21 cas CPU 68000 / [CI #42883983376](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42883983376)** ; B AMOS interprété/WinUAE NON TESTÉE ; C Compiler / D matériel NON TESTÉES. Aucune validation R20 à déduire du PASS R19.
+- **Gates R20 :** A **PASS : 21 cas CPU 68000 / CI #42883983376 (archive CI privée)** ; B AMOS interprété/WinUAE NON TESTÉE ; C Compiler / D matériel NON TESTÉES. Aucune validation R20 à déduire du PASS R19.
 - **Prochaine action :** installer R20 depuis `main` sous WinUAE ; maintenir bouton gauche, relâcher, puis bouton droit, relâcher, puis touche clavier. Attendu `PRESSED And 3=3`, `RELEASED And 3=3`, `IOERR=0`, retours `CLOSED=-1`.
 - `input.device/PeekQualifier` ne consomme pas les événements clavier mais fournit un instantané **global** et non les événements IDCMP locaux. Fronts calculés dans AMOS, pas une API Pressed/Released native ; clics rapides non garantis.
 - Ne pas déclarer R20 WinUAE PASS ni promouvoir `LAST_GOOD` avant la capture utilisateur ; ne pas toucher R19/R18 ni règles/prompt.
@@ -71,7 +71,7 @@
 **Relire `EXTENSION_SOURCE_RULES.md`, le HEAD réel et les documents courants avant tout travail.** R19 est la bibliothèque courante ; R18 est archivée et `LAST_GOOD` R10 inchangée.
 
 - **R19 0.8.3 :** `dist/AMOSPro_AGA.Lib`, **11 744 octets**, SHA256 `32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295`. Archive reproductible : `dist/experimental/AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib`.
-- **Gate A CPU 68000 PASS 76 cas**, [CI générale PASS #42878271256](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42878271256). **Gate B AMOS interprété/WinUAE PASS** sur scénario de position, capture le 10/11/2026. Compiler et vrai Amiga **NON TESTÉS**.
+- **Gate A CPU 68000 PASS 76 cas**, CI générale PASS #42878271256 (archive CI privée). **Gate B AMOS interprété/WinUAE PASS** sur scénario de position, capture le 10/11/2026. Compiler et vrai Amiga **NON TESTÉS**.
 - **Validation :** premier essai `P1=(112,65), P2=(24,238)`; second essai `P1=(0,0), P2=(319,255)`, `OPEN/DB/LOAD/SWAP/REOPEN=1`, `BEFORE/CLOSED/CLOSED2=-1 -1`, `KEY=64`, `CLOSE X2 RETURNED`, fin AMOS ligne 87.
 - **Test archivé sans modification :** [`tests/passed/M8_R19_MOUSE_POSITION_01.asc`](../tests/passed/M8_R19_MOUSE_POSITION_01.asc). **Aucun `.asc` actif** dans `tests/current/`.
 - **Builder :** `tools/build_m8_mouse_position_r19.py` ; test CPU : `tools/test_m8_mouse_position_r19.py`. [Statut](M8_STATUS.md), [protocole](M8_MOUSE_R19.md).
@@ -90,7 +90,7 @@
 - **Lib courante :** `dist/AMOSPro_AGA.Lib`, R18 0.8.2, 11 480 octets, SHA256 `600b8c2c38486004adef8c0e7924df877f7dd7829e1c622a89bbdc0db9f9808a`. Archive `dist/experimental/AMOSPro_AGA_M7_v0.8.2_COPPER_RASTER_R18.Lib` identique.
 - **Base figée WinUAE :** R17 0.8.1, `dist/experimental/AMOSPro_AGA_M7_v0.8.1_COPPER_ON_OFF_R17.Lib`. R16, R15 et M6 conservées. **LAST_GOOD R10 inchangée**.
 - **Nouvelles fonctions :** `Aga Copper Wait(v,h)`, `Aga Copper Move(register,value)`, `Aga Copper End` (COLOR00–31 RGB4 uniquement, WAIT ordonnés, édition interdite après activation).
-- **Gate A CPU : PASS**, 26 scénarios sur branche préparatoire ([CI #42869523014](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42869523014)). **CI complète : PASS** ([#42870412601](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42870412601)). **Gate B WinUAE : PASS**, captures du raster et de la console utilisateur le 10/11/2026 ; **Gates C/D : NON TESTÉES.**
+- **Gate A CPU : PASS**, 26 scénarios sur branche préparatoire (CI #42869523014 (archive CI privée)). **CI complète : PASS** (#42870412601 (archive CI privée)). **Gate B WinUAE : PASS**, captures du raster et de la console utilisateur le 10/11/2026 ; **Gates C/D : NON TESTÉES.**
 - **Test corrigé et archivé :** [`tests/passed/M7_R18_COPPER_RASTER_01.asc`](../tests/passed/M7_R18_COPPER_RASTER_01.asc). Une syntaxe erronée `Aga Copper Off` isolée a été corrigée par `X=Aga Copper Off` selon l'essai utilisateur. Capture RGB4 rouge/vert/bleu/noir, console `W/M=1`, rejets `BADREG/RGB/WAIT/END2/AFTER=0`, `END/ON/SWAP/OFF/REOPEN/CLEAR2/ON2/OFF3=1`, `KEY 68`, `CLOSE X2 RETURNED`, fin ligne 95. `tests/current/` ne contient aucun `.asc`. Le code exact du fichier local exécuté n'a pas été transféré.
 - **Détails :** [`M7_COPPER_R18.md`](M7_COPPER_R18.md), [`M7_STATUS.md`](M7_STATUS.md), [`ROADMAP.md`](ROADMAP.md). **Prochaine action : M8 (souris sur écran Intuition AGA).** Lire les règles et [la spécification interactions](INTERACTIONS_COLLISIONS.md), vérifier le HEAD et le statut de M7 avant tout développement. Ne pas confondre la validation WinUAE de R18 avec une preuve d'absence de fuite ni une validation AMOS Compiler ou Amiga réel ; conserver LAST_GOOD R10.
 
@@ -106,7 +106,7 @@
 - **LAST_GOOD global R10 0.6.1 inchangée** ; archives M6 R13/R14/R15 intactes.
 - **Builder** : `tools/build_m7_copper_on_off_r17.py`. **Test CPU 68000** : `tools/test_m7_copper_on_off_r17.py`. Tests R16/M6 continuent de tourner en non-régression.
 - **Deux nouvelles commandes** : `Aga Copper On` / `Aga Copper Off`, sans paramètre, retour 1/0. Utilisent `MakeScreen` / `RethinkDisplay` d'Intuition, puis le retrait et la libération de nos propres allocations. R16 `Clear` et les routines antérieures conservées octet pour octet, séparateur AP20 `GetP` excepté.
-- **Gate A CPU/CI : PASS** ([CI #42866614578](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42866614578), 15 scénarios 68000). **Gate B WinUAE : PASS sur le test R17, exécuté 3 fois le 10/11/2026 sans incident.** Gate C Compiler / Gate D matériel : NON TESTÉES.
+- **Gate A CPU/CI : PASS** (CI #42866614578 (archive CI privée), 15 scénarios 68000). **Gate B WinUAE : PASS sur le test R17, exécuté 3 fois le 10/11/2026 sans incident.** Gate C Compiler / Gate D matériel : NON TESTÉES.
 - **Test R17 archivé identique** : [`tests/passed/M7_R17_COPPER_ON_OFF_01.asc`](../tests/passed/M7_R17_COPPER_ON_OFF_01.asc), bandeau `M7-R17-COPPER-ON-OFF-01`, **3 exécutions réussies sur MYGIRL.IFF 320×256×8**. Capture : `C1=ON1=SWAP=OFF1=OFF2=C2=ON2=OFF3=REOPEN=C3=ON3=OFF4=1`, `KEY 67`, `CLOSE X2 RETURNED`, fin AMOS ligne 83. **Aucun `.asc` actif dans `tests/current/`**.
 
 **Prochaine action :** R17 clôturée pour son scénario AMOS/WinUAE et son test archivé sans modification. Le prochain candidat **R18** doit introduire séparément `Aga Copper Wait`, `Move`, `End` et un premier raster, après étude des bornes, de la construction des listes et du cycle de vie. Créer **un seul nouvel `.asc`** lors de ce développement. Le PASS R17 ne prouve pas l'absence de fuite mémoire ni la stabilité du raster sous charge. Ne pas promouvoir `LAST_GOOD` sans décision explicite.

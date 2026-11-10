@@ -30,7 +30,7 @@ Points techniques : `IDCMP_MOUSEMOVE` / `IDCMP_MOUSEBUTTONS`, localisation relat
 
 ## M9 — zones cliquables / hotspots
 
-**R24 0.9.0 — première API native candidate :** `Aga Hotspot Hit(px,py,x,y,w,h)` retourne 1/0 avec bornes finales exclusives, rectangles d'origine négative autorisés, dimensions non positives rejetées, aucun état/registre de zones. **Gate A CPU/CI PASS 402 cas** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685)), **Gate B WinUAE à tester** avec trois rectangles dont deux superposés ([test courant](../tests/current/M9_R24_HOTSPOT_HIT_01.asc)). La priorité/ID est déterminée par l'ordre des `If` dans AMOS. 
+**R24 0.9.0 — première API native candidate :** `Aga Hotspot Hit(px,py,x,y,w,h)` retourne 1/0 avec bornes finales exclusives, rectangles d'origine négative autorisés, dimensions non positives rejetées, aucun état/registre de zones. **Gate A CPU/CI PASS 402 cas** (CI (archive CI privée, run #42908096685)), **Gate B WinUAE à tester** avec trois rectangles dont deux superposés ([test courant](../tests/current/M9_R24_HOTSPOT_HIT_01.asc)). La priorité/ID est déterminée par l'ordre des `If` dans AMOS. 
 
 
 Exemple de **contrat fonctionnel proposé** : une zone `(id,x,y,largeur,hauteur)` est active dans le repère logique de l'écran, avec l'intérieur défini par `x <= px < x+largeur` et `y <= py < y+hauteur`. Les coordonnées négatives, dimensions nulles et dépassements sont traités explicitement ; aucun masquage implicite.

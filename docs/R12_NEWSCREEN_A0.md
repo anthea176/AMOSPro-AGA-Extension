@@ -2,7 +2,7 @@
 
 **Clôture IFF/ILBM 10/11/2026 :** PASS utilisateur HAM6, HAM8, SuperHiRes 1280×256, SuperHiRes Lace 1280×512 ; EHB et Jeff-Flag validés antérieurement. DblPAL/DblNTSC non testés, non bloquants. Compilation R12 et matériel physique non confirmés. R12 et LAST_GOOD R10 inchangés.
 
-**Statut : Jeff-Flag affichée correctement sous WinUAE selon le retour utilisateur du 10/11/2026.** **CI CPU 68000/ILBM/HUNK PASS** ([résultat GitHub Actions](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42836826630)). Non-régression Fallout, compilation R12 et Amiga physique encore à confirmer. Le dernier test R10 avec `Amos To Back` déplacé avant `Aga Screen Open` n'a **strictement rien changé** au défaut de positionnement de Jeff. Il est archivé.
+**Statut : Jeff-Flag affichée correctement sous WinUAE selon le retour utilisateur du 10/11/2026.** **CI CPU 68000/ILBM/HUNK PASS** (résultat GitHub Actions (archive CI privée, run #42836826630)). Non-régression Fallout, compilation R12 et Amiga physique encore à confirmer. Le dernier test R10 avec `Amos To Back` déplacé avant `Aga Screen Open` n'a **strictement rien changé** au défaut de positionnement de Jeff. Il est archivé.
 
 Le contrat officiel Intuition est `OpenScreenTagList(NewScreen=A0, TagList=A1)`. Le premier appel R10 remet A0 à zéro par `SUBA.L A0,A0` (opcode `91C8`), **pas le second** lors du repli NTSC vers PAL. Or A0 est volatil. Un pointeur parasite peut fournir à Intuition une structure `NewScreen` involontaire, avec des paramètres de position non présents dans les tags. Ceci est une **violation ABI démontrée**, et **le retour utilisateur R12 confirme la disparition du mauvais positionnement Jeff sous WinUAE**.
 

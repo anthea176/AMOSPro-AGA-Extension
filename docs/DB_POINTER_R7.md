@@ -123,7 +123,7 @@ Lire aussi `docs/M5_DB_SWAP_CLOSE_INCIDENT.md`.
 ## Validation CI R7 — 10/11/2026
 
 **12/12 contrôles CPU dédiés PASS** sur GitHub Actions
-[run 42814094313](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42814094313).
+run 42814094313 (archive CI privée).
 Binaire reproductible : **7 956 octets**,
 SHA256 `e6dd32ceda1181ef3172dfb242a1d4fc93656c6788023d7b1333dc2561ed3dce`.
 

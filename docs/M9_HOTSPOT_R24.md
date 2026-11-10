@@ -2,7 +2,7 @@
 
 ## Objectif
 
-**R24 0.9.0 candidate publiée sur `main` après Gate A CPU/CI PASS** ([402 scénarios 68000, CI complète verte](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685)). Gate B WinUAE NON TESTÉE. R23 0.8.7 reste l'archive WinUAE validée de référence.
+**R24 0.9.0 candidate publiée sur `main` après Gate A CPU/CI PASS** (402 scénarios 68000, CI complète verte (archive CI privée, run #42908096685)). Gate B WinUAE NON TESTÉE. R23 0.8.7 reste l'archive WinUAE validée de référence.
 
 Le contrat M9 est issu de [`INTERACTIONS_COLLISIONS.md`](INTERACTIONS_COLLISIONS.md) et de la [roadmap](ROADMAP.md) : les rectangles logiques, les bornes finales exclusives et les zones recouvrantes doivent être déterministes. Un registre interne de zones est **volontairement reporté** : aucune preuve de besoin ne justifie encore de modifier l'état d'entrée R23.
 
@@ -48,7 +48,7 @@ Un simple ordre d'appels AMOS permet dès maintenant de tester le survol et de d
 ## Gates
 
 - **Préflight CPU validé (402 scénarios) :** émetteur [`m9_hotspot_r24_emit.py`](../tools/m9_hotspot_r24_emit.py), builder reproductible [`build_m9_hotspot_hit_r24.py`](../tools/build_m9_hotspot_hit_r24.py), [test 68000 natif](../tools/test_m9_hotspot_hit_r24.py), vérification HUNK/AP20 et invariant des segments R23.
-- **Gate A PASS :** 402 scénarios 68000 (géométrie 32 bits, bords, dimensions, recouvrements, A3/D2/SP), [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685) ; `dist/AMOSPro_AGA.Lib` et `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib` identiques, **13 228 octets**, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`.
+- **Gate A PASS :** 402 scénarios 68000 (géométrie 32 bits, bords, dimensions, recouvrements, A3/D2/SP), CI complète (archive CI privée, run #42908096685) ; `dist/AMOSPro_AGA.Lib` et `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib` identiques, **13 228 octets**, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`.
 - **Gate B NON TESTÉE :** [`tests/current/M9_R24_HOTSPOT_HIT_01.asc`](../tests/current/M9_R24_HOTSPOT_HIT_01.asc), unique programme AMOS courant. Mire originale 320×256×8, trois rectangles colorés dont A/B superposés. Clic **gauche** dans l'intersection autour de **(130,100)** → ID **20** ; clic **droit** hors zone autour de **(300,220)** → hors zone `1`. Teste aussi les bornes exclusives, dimensions nulles, origines négatives, fermeture et réouverture. Temps maximal environ 18 secondes (900 VBL), sortie normale et `RESULT=1` attendus. Pour Ctrl+C et test de focus, R23 avait été validée sur son périmètre ; la présente R24 ne revendique pas leur revalidation.
 - **Gates C/D :** AMOS Compiler et vrai Amiga AGA non testés.
 

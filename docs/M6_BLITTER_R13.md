@@ -8,7 +8,7 @@
 
 **Base figée :** archive R12 0.6.3, `LAST_GOOD` = R10 0.6.1 **inchangée**. Builder : `tools/build_m6_blit_copy_r13.py`, qui part de la R12 archivée et génère les deux fichiers R13.
 
-**Gate A (CPU/CI) : PASS** sur le candidat actif ([run #42851646766](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42851646766)). **Gate B AMOS/WinUAE : PASS** du scénario `MYGIRL.IFF`, avec `COPY1=1`, `COPY2=1`, `BAD=0`, `SWAP=1`, `KEY=68` et fermeture. **Gate C Compiler : NON TESTÉ. Gate D matériel : NON TESTÉ.** Test archivé dans `tests/passed/M6_R13_BLIT_COPY_01.asc`.
+**Gate A (CPU/CI) : PASS** sur le candidat actif (run #42851646766 (archive CI privée)). **Gate B AMOS/WinUAE : PASS** du scénario `MYGIRL.IFF`, avec `COPY1=1`, `COPY2=1`, `BAD=0`, `SWAP=1`, `KEY=68` et fermeture. **Gate C Compiler : NON TESTÉ. Gate D matériel : NON TESTÉ.** Test archivé dans `tests/passed/M6_R13_BLIT_COPY_01.asc`.
 
 ---
 

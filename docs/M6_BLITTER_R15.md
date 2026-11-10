@@ -1,6 +1,6 @@
 # M6 R15 0.7.2 — Aga Blit Clear (PASS AMOS/WinUAE)
 
-**Clôturé pour le test AMOS interprété/WinUAE le 10/11/2026 :** `Aga Blit Clear(x,y,w,h)` Gate A (CPU/CI) **PASS** ([GitHub Actions #42857827475](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42857827475)) et Gate B **PASS** sur MYGIRL.IFF. Gate C AMOS Compiler et Gate D Amiga réel **NON TESTÉES**.
+**Clôturé pour le test AMOS interprété/WinUAE le 10/11/2026 :** `Aga Blit Clear(x,y,w,h)` Gate A (CPU/CI) **PASS** (GitHub Actions #42857827475 (archive CI privée)) et Gate B **PASS** sur MYGIRL.IFF. Gate C AMOS Compiler et Gate D Amiga réel **NON TESTÉES**.
 
 ## Artefacts officiels
 
@@ -41,7 +41,7 @@ Le code R15 contient **une routine d'adaptation de 38 octets en 68000**, pas une
 
 ## Validation prévue
 
-**Gate A : PASS** ([CI #42857827475](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42857827475)). Unicorn/Capstone 68000 : **27 scénarios Clear valides + 25 rejets/erreurs** ; A3 +12 octets, SP équilibrée, BSR vers la vraie entrée Fill, 1/2/4/8 plans, coordonnées limites et non alignées, pixels exacts, conservation du contour, rejets sans écriture et échec simulé, régressions Fill R14 et Copy R13. HUNK/AP20, SHA256 et builder reproductible également PASS.
+**Gate A : PASS** (CI #42857827475 (archive CI privée)). Unicorn/Capstone 68000 : **27 scénarios Clear valides + 25 rejets/erreurs** ; A3 +12 octets, SP équilibrée, BSR vers la vraie entrée Fill, 1/2/4/8 plans, coordonnées limites et non alignées, pixels exacts, conservation du contour, rejets sans écriture et échec simulé, régressions Fill R14 et Copy R13. HUNK/AP20, SHA256 et builder reproductible également PASS.
 
 **Gate B : PASS AMOS Professional interprété/WinUAE**, d'après deux captures utilisateur datées du 10/11/2026. Avec **MYGIRL.IFF 320×256×8**, deux rectangles colorés ont leur intérieur effacé et le premier apparaît recopié en bas. Les appels invalides retournent 0. **Sortie observée :**
 

@@ -2,7 +2,7 @@
 
 ## R23 0.8.7 — dispatcher IDCMP, Gate A + B PASS
 
-**Validation du 10/11/2026 :** Gate A **CPU/CI PASS** (15 scénarios 68000, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)) ; Gate B **AMOS interprété/WinUAE PASS sur les scénarios testés**. La capture utilisateur du programme R23 donne `PRESSED=RELEASED=3`, `AGAIN=0/0`, `KEYS=64/64/-1`, `WAIT=16` (touche A sur AZERTY), `RESULT=1`, `OPEN=DB=LOAD=SWAP=REOPEN=1`, fermetures correctes et `CLOSE X2 RETURNED`.
+**Validation du 10/11/2026 :** Gate A **CPU/CI PASS** (15 scénarios 68000, CI complète (archive CI privée, run #42899343161)) ; Gate B **AMOS interprété/WinUAE PASS sur les scénarios testés**. La capture utilisateur du programme R23 donne `PRESSED=RELEASED=3`, `AGAIN=0/0`, `KEYS=64/64/-1`, `WAIT=16` (touche A sur AZERTY), `RESULT=1`, `OPEN=DB=LOAD=SWAP=REOPEN=1`, fermetures correctes et `CLOSE X2 RETURNED`.
 
 **Ctrl+C testé séparément :** l'utilisateur confirme « Programme interrompu » à la ligne `_WAITK=Aga Wait Key`, avec **écran Intuition correctement fermé**. Le test Ctrl+C interrompant volontairement le programme, aucun `RESULT=1` n'est attendu pour cette exécution.
 
@@ -16,7 +16,7 @@
 
 ## R22 0.8.6 — Pressed/Released : Gate A + B PASS
 
-**R22 validée le 10/11/2026 dans le périmètre de son scénario AMOS interprété/WinUAE.** Gate A CPU/CI PASS 25 cas ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42893816454)) ; Gate B PASS sur capture utilisateur. Les fonctions `Aga Mouse Pressed/Released` utilisent des masques de fronts indépendants ; elles n'absorbent pas les messages clavier.
+**R22 validée le 10/11/2026 dans le périmètre de son scénario AMOS interprété/WinUAE.** Gate A CPU/CI PASS 25 cas (CI complète (archive CI privée, run #42893816454)) ; Gate B PASS sur capture utilisateur. Les fonctions `Aga Mouse Pressed/Released` utilisent des masques de fronts indépendants ; elles n'absorbent pas les messages clavier.
 
 - **Binaire courant :** `dist/AMOSPro_AGA.Lib`, archive R22 `dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib`, 12 852 octets, SHA256 `96e38d478bd97e7a65801e16e96ce08c0bbd4aaacb4a8a6644e4bc1289a0c997`. R21/R20/R19/R18 et `LAST_GOOD` R10 inchangés.
 - **Test R22 exact archivé sans modification :** [`tests/passed/M8_R22_MOUSE_EDGES_01.asc`](../tests/passed/M8_R22_MOUSE_EDGES_01.asc). Aucun `.asc` actif dans `tests/current/`.
@@ -27,7 +27,7 @@
 
 ## R21 0.8.5 — RMBTRAP / boutons : Gate A + B PASS
 
-**10/11/2026 : R21 validée par l'utilisateur après test AMOS interprété/WinUAE.** Le clic droit ne déclenche plus la barre de menus Intuition, contrairement à R20 ; les boutons gauche/droit sont utilisables dans le scénario. Gate A **PASS : 11 cas CPU 68000, [CI #42887916480](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42887916480)** ; Gate B **PASS utilisateur pour ce test**. Aucune nouvelle capture chiffrée R21 fournie : ne pas attribuer à R21 les chiffres de la capture R20.
+**10/11/2026 : R21 validée par l'utilisateur après test AMOS interprété/WinUAE.** Le clic droit ne déclenche plus la barre de menus Intuition, contrairement à R20 ; les boutons gauche/droit sont utilisables dans le scénario. Gate A **PASS : 11 cas CPU 68000, CI #42887916480 (archive CI privée)** ; Gate B **PASS utilisateur pour ce test**. Aucune nouvelle capture chiffrée R21 fournie : ne pas attribuer à R21 les chiffres de la capture R20.
 
 - **Lib courante :** `dist/AMOSPro_AGA.Lib` **R21 0.8.5**, archive identique `dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib`, **12 016 octets**, SHA256 `a72e3046df64e3ff8ebe12a5b4b0db45efebe27e17056919d31d11ca61e9c644`.
 - **Code :** `Aga Screen Open` transmet `NewWindow.Flags $00031900` au lieu de `$00021900`, activant `WFLG_RMBTRAP`. Un seul octet de code changé dans l'entrée AP20 #6. Les 30 autres entrées, fonctions `Aga Mouse X/Y/Buttons` et tokens de R20 restent identiques.
@@ -41,7 +41,7 @@
 
 ## R20 0.8.4 — historique avec défaut de barre Intuition — boutons souris : candidat de test
 
-**R20 est archivée après un essai WinUAE avec boutons fonctionnels mais défaut d'interface**. Gate A **PASS : 21 tests CPU 68000 et CI complète verte** ([run #42883983376](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42883983376)), Gate B R20 **partielle (barre Intuition persistante)**.
+**R20 est archivée après un essai WinUAE avec boutons fonctionnels mais défaut d'interface**. Gate A **PASS : 21 tests CPU 68000 et CI complète verte** (run #42883983376 (archive CI privée)), Gate B R20 **partielle (barre Intuition persistante)**.
 
 - Fonction entière ajoutée : `_B=Aga Mouse Buttons`, masque `1=gauche, 2=droit, 4=central`, `0=aucun`, `-1=écran fermé/invalide ou entrée indisponible`.
 - Source : `input.device/PeekQualifier()` V36, avec `OpenDevice/CloseDevice` équilibrés et IOStdReq sur la pile ; aucune consommation d'IDCMP clavier ni état permanent.
@@ -54,7 +54,7 @@
 
 ## R19 0.8.3 — positions X/Y validées sous WinUAE
 
-**10/11/2026 : Gate A CPU 68000 PASS (76 cas), CI générale PASS, Gate B AMOS interprété/WinUAE PASS** pour le scénario de position R19. [CI #42878271256](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42878271256). Gate C AMOS Compiler, Gate D Amiga réel et stress/fuites **NON TESTÉS**.
+**10/11/2026 : Gate A CPU 68000 PASS (76 cas), CI générale PASS, Gate B AMOS interprété/WinUAE PASS** pour le scénario de position R19. CI #42878271256 (archive CI privée). Gate C AMOS Compiler, Gate D Amiga réel et stress/fuites **NON TESTÉS**.
 
 - Fonctions entières : `_X=Aga Mouse X` et `_Y=Aga Mouse Y`. Coordonnées en pixels logiques, `-1` hors écran/fermé. Non bloquantes et sans consommation des événements clavier.
 - Bibliothèque courante : `dist/AMOSPro_AGA.Lib`, **R19 0.8.3, 11 744 octets**, SHA256 `32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295`. Archive identique `dist/experimental/AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib`.
