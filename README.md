@@ -60,10 +60,49 @@ Install the library version that matches the test you intend to run. Files on Gi
 | **`Aga Mouse Buttons`** (R20+, fixed in R21) | `_B=Aga Mouse Buttons` | No arguments. **Integer bitmask 0..7:** 1=left, 2=right, 4=middle; bits can be combined (3=left+right), 0=none. Returns -1 if the screen/window or `input.device` is unavailable. Nonblocking snapshot. |
 | **`Aga Mouse Pressed`** (R22+, IDCMP since R23) | `_P=Aga Mouse Pressed` | No-argument integer function; bitmask 1=left, 2=right, 4=middle, combinable. **R23:** stores `IDCMP_MOUSEBUTTONS` press events between reads; 0 if none, -1 for an invalid screen/focus. Each call consumes the pending presses, even after the button was released. |
 | **`Aga Mouse Released`** (R22+, IDCMP since R23) | `_R=Aga Mouse Released` | No-argument integer function; combinable 1/2/4 bitmask. **R23:** release events remain stored independently of Pressed. Even a complete click between polls can yield both Pressed=1 and Released=1. |
-| **`Aga Hotspot Hit`** (M9 R24) | `_HIT=Aga Hotspot Hit(_PX,_PY,_X,_Y,_W,_H)` | Stateless integer function, **six arguments**: point (`PX,PY`), rectangle origin (`X,Y`), width/height (`W,H`). Returns **1** inside the rectangle with start-inclusive / **end-exclusive** bounds; **0** outside, for negative point coordinates or nonpositive dimensions. Rectangle origins may be negative. No screen required, no clipping or input events consumed. The caller assigns hotspot IDs and overlap priority. **R24 WinUAE PASS on the documented scenario.** |
+| **`Aga Hotspot Hit`** (M9 R24) | `_HIT=Aga Hotspot Hit(_PX,_PY,_X,_Y,_W,_H)` | **Point-in-rectangle test (6 integer arguments)**: `PX,PY` = point to test (e.g. mouse position); `X,Y` = rectangle **top-left corner**; `W,H` = **width and height in pixels, NOT right/bottom coordinates**. Returns **1 inside**, **0 outside**, with the right and bottom edges excluded. Does **not** detect a click or draw/store a hotspot; combine with `Aga Mouse Pressed` for buttons. [Detailed example below](#rectangular-hotspots-m9-r24). |
 | **`Aga Rect Overlap`** (M10 R25) | `_C=Aga Rect Overlap(_AX,_AY,_AW,_AH,_BX,_BY,_BW,_BH)` | Stateless **8-argument integer function**: two rectangles, each with origin (X,Y) and width/height (W,H) in logical pixels. Returns **1** for positive-area overlap (even 1 pixel), **0** for disjoint rectangles, touching edges/corners, or nonpositive dimensions. Negative origins allowed; signed 32-bit overflow is rejected safely. No screen, physics or input state required. **R25 WinUAE NOT TESTED.** |
 
 **Copper RGB4** has been available since R18, **Mouse X/Y** since R19, **Mouse Buttons** since R20 (with RMBTRAP in R21), and **Mouse Pressed/Released** since R22. **R23 uses IDCMP events to capture button transitions and protect RAWKEY input**. The quick-click, keyboard FIFO and Ctrl+C WinUAE scenarios passed; focus-switch and stress scenarios remain untested. Sprites, a `Aga Set Colour` command, and comprehensive input-stress validation are outside the current scope.
+
+### Rectangular hotspots (M9 R24)
+
+`Aga Hotspot Hit(PX,PY,X,Y,W,H)` checks **one point against one rectangle**, not a collision between two rectangles. It returns an **integer** assigned to a variable, never a hotspot ID. The first two values are the **point coordinates**; the remaining four describe the rectangle.
+
+| Argument | Meaning | Example |
+|---|---|---|
+| `PX`, `PY` | X/Y of the tested point (for instance, `Aga Mouse X/Y`) | `60,50` |
+| `X`, `Y` | X/Y of the rectangle's **top-left corner** | `40,30` |
+| `W`, `H` | **Width and height**, not the opposite corner | `80,40` |
+| Result (`_HIT`) | `1` = point inside; `0` = outside/invalid | `1` |
+
+For a rectangle `(X=40,Y=30,W=80,H=40)`, the included pixels are **X=40..119** and **Y=30..69**. X=120 or Y=70 is **outside** (the right and bottom boundaries are excluded). The top and left boundaries are included.
+
+```amos
+_INSIDE=Aga Hotspot Hit(60,50,40,30,80,40)
+_OUTSIDE=Aga Hotspot Hit(120,50,40,30,80,40)
+' _INSIDE=1, _OUTSIDE=0
+```
+
+**Example: trigger a menu action only when the left mouse button is pressed over this rectangle** (run while the AGA screen is open):
+
+```amos
+_SELECTED=0
+_PX=Aga Mouse X
+_PY=Aga Mouse Y
+_HIT=Aga Hotspot Hit(_PX,_PY,40,30,80,40)
+_P=Aga Mouse Pressed
+If _P>=0
+   _LEFT=_P And 1
+   If _LEFT<>0 and _HIT=1
+      _SELECTED=10
+   End If
+End If
+```
+
+Here, `10` is an **application-defined button ID**, not a value returned by `Aga Hotspot Hit`. To test several overlapping buttons, call the function for each rectangle and set the ID in the order you want: the **last matching assignment wins**, as in the [validated R24 test](tests/passed/M9_R24_HOTSPOT_HIT_01.asc).
+
+**Limits:** negative mouse-point coordinates (including the `-1` sentinel from `Aga Mouse X/Y`) and nonpositive `W/H` return 0. Negative rectangle `X/Y` are allowed. The function does not read the mouse, consume input, draw a rectangle or need an open AGA screen. `Aga Mouse Pressed` is a separate event function; the coordinates read with `Aga Mouse X/Y` are their **current sampled values**, not a position saved at the exact click time. See the [technical contract](docs/M9_HOTSPOT_R24.md).
 
 ### AGA mouse details (R19–R23)
 
