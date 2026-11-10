@@ -28,6 +28,7 @@ on:
       - "tools/verify_artifacts.py"
       - "tools/m8_idcmp_r23_emit.py"
       - "tools/m9_hotspot_r24_emit.py"
+      - "tools/m10_rect_overlap_r25_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -66,6 +67,12 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M10 R25 AABB rectangle overlap — CPU 68000 preflight only
+        run: |
+          python -B tools/test_m10_rect_overlap_r25.py
+          python -B tools/build_m10_rect_overlap_r25.py --emit-base64
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
+
       - name: M9 R24 Hotspot Hit — CPU 68000 and active binary integrity
         run: |
           python -B tools/test_m9_hotspot_hit_r24.py

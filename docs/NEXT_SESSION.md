@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M10 — R25 0.9.1 : AABB, préflight CPU en cours
+
+**Chantier approuvé par l'utilisateur :** deux rectangles sur écran AGA 320×256, un fixe et un suivant la souris, **vert hors collision / rouge en collision**. Premier incrément : fonction numérique sans état `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)`. Le contact bord à bord n'est pas une collision ; une surface positive (même 1 pixel) l'est.
+
+- **R24 0.9.0 reste la bibliothèque active et validée CPU/WinUAE.** Aucun binaire R25 distribué avant préflight.
+- [Émetteur 68000](../tools/m10_rect_overlap_r25_emit.py), [builder pur depuis R24](../tools/build_m10_rect_overlap_r25.py), [test CPU signed32 / A3+28](../tools/test_m10_rect_overlap_r25.py), [contrat et recette visuelle](M10_RECT_OVERLAP_R25.md).
+- Après CI CPU PASS : publier candidate R25 avec ses README bilingues synchronisés, puis **un seul test .asc** dans `tests/current/`. La mire AGA possède un index bleu 3, vert 28 et rouge 224, confirmés par son CMAP.
+- Aucun nouvel historique importé. Travail sur `main` seulement, archives R24/R23 et `LAST_GOOD` R10 intacts.
+
+---
+
 ## M9 — R24 0.9.0 : Gate A + B PASS, test archivé
 
 **10/11/2026 — R24 0.9.0 validée sur son scénario AMOS interprété/WinUAE** (Gate A CPU/CI PASS 402 cas 68000, Gate B PASS utilisateur). Nouvelle fonction `Aga Hotspot Hit(px,py,x,y,w,h)` ; 29 commandes AP20 et priorités gérées dans AMOS.
