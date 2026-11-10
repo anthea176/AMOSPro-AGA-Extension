@@ -1,12 +1,10 @@
-# M10 R25 — Rect Overlap : Gate A CPU/CI PASS, Gate B WinUAE à tester
+# M10 R25 — Rect Overlap : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
-**Seul programme AMOS actif :** [`current/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](current/M10_R25_RECT_OVERLAP_VISUAL_01.asc) ; R25 0.9.1 candidate, **704 cas 68000 CPU/CI PASS** ([CI préflight](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294)), **Gate B WinUAE NON TESTÉE**.
+**10/11/2026 :** test R25 validé par l'utilisateur sous AMOS interprété/WinUAE après **704 cas CPU 68000/CI PASS** ([CI R25](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42916575209)). L'original [`M10_R25_RECT_OVERLAP_VISUAL_01.asc`](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) a été **déplacé octet pour octet** dans `tests/passed/` (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Aucun `.asc` actif** dans `tests/current/`.
 
-Installer la bibliothèque [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R25 et relancer AMOS. Choisir l'IFF original [`AGA_TESTCARD_320x256_256C.iff`](../iff-TEST/AGA_TESTCARD_320x256_256C.iff) (320×256×8), puis déplacer la souris **dans le rectangle bleu** et **hors du rectangle**. Le rectangle mobile 32×32 est **vert** hors collision (index palette 28) et **rouge** dans la collision (index 224). Le fixe est bleu (index 3). Double buffer, `Aga Swap` + `Aga Wait Vbl` **à chaque image**.
+**Preuve WinUAE :** `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `LAST HIT 1`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, **`RESULT 1`**, **`CLOSE X2 RETURNED`**. Retour normal à AMOS.
 
-Après avoir vu les deux couleurs, faire un clic gauche pour terminer, ou attendre 900 VBL. Attendu : `STATIC 1`, `PURE 1`, `SEEN FREE 1 HIT 1`, `DRAWERR 0`, `RESULT 1` et `CLOSE X2 RETURNED`. **Un contrôle automatique interdit `Then` dans les blocs AMOS**, et les `If/End If` ainsi que `For/Next` sont équilibrés. Le test ne valide pas le framerate réel tant qu'il n'a pas été exécuté.
-
-[Contrat M10](../docs/M10_RECT_OVERLAP_R25.md). R24 et R23 archivées, `LAST_GOOD` R10 inchangée. Ne pas déplacer le test vers `passed/` avant confirmation utilisateur.
+Le rectangle mobile suit la souris et passe du vert au rouge lorsqu'il chevauche le rectangle bleu ; le back buffer est redessiné à chaque image puis présenté avec `Aga Swap` et `Aga Wait Vbl`. L'IFF apporte palette/mode vidéo mais **pas** ses pixels dans l'animation. La capture ne mesure pas 50 FPS ni un test de stress. Gates C (AMOS Compiler) et D (Amiga AGA physique) **NON TESTÉES**. `LAST_GOOD` R10 et l'archive R24 sont inchangées. [Rapport R25](../docs/M10_RECT_OVERLAP_R25.md).
 
 ---
 

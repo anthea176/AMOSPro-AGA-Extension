@@ -1,15 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M10 — R25 0.9.1 : candidate WinUAE, Gate A CPU/CI PASS
+## M10 — R25 0.9.1 : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
-**R25 0.9.1 est la bibliothèque candidate sur le nouveau `main` (30 commandes AP20).** La [CI de préflight 68000](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294) est verte : **704 cas géométriques/ABI**, comparaisons entières signées 32 bits, invariance des segments R24 et reproductibilité HUNK/AP20. **Gate B AMOS interprété/WinUAE NON TESTÉE.**
+**10/11/2026 — scénario de collision validé par l'utilisateur sous AMOS interprété/WinUAE.** [CI CPU/ABI R25 PASS : 704 cas 68000](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42916575209). Les portes A et B passent **sur le périmètre testé** ; AMOS Compiler, Amiga physique, stress et cadence réelle non validés.
 
-- **Binaire :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib`, **13 408 octets**, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. R24 est la dernière archive validée CPU/WinUAE ; `LAST_GOOD` R10 intacte.
-- **Nouvelle fonction :** `_C=Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` : 1 si chevauchement d'aire positive, 0 si séparation/contact bord/coin ou taille invalide. Huit entiers, `A3+28`, pas d'état partagé.
-- **Test AMOS unique actif :** [`tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc). Charger `iff-TEST/AGA_TESTCARD_320x256_256C.iff` (320×256×8), puis déplacer la souris **dans le rectangle bleu fixe puis hors de celui-ci**. Le rectangle mobile 32×32 est **rouge** dans la collision, **vert** ailleurs. Après avoir vu les deux états, cliquer gauche pour terminer (ou attendre 900 VBL).
-- **Fluidité :** double buffer R25, dessin sur le back buffer, **`_SW=Aga Swap` puis `Aga Wait Vbl` à chaque image**. Palette indexée validée : bleu 3, vert 28, rouge 224. Aucune capture WinUAE R25 reçue.
-- **Attendu :** `STATIC 1`, `PURE 1`, `SEEN FREE 1 HIT 1`, `DRAWERR 0`, `RESULT 1`, `CLOSE X2 RETURNED`. Aucun `Then` dans le test ; blocs If/End If équilibrés. **Ne pas archiver avant le retour WinUAE.**
-- **Gates C/D :** AMOS Compiler, Amiga réel et stress restent NON TESTÉS. Aucun historique ancien réintroduit, archives R24/R23 et R10 intouchées. [Contrat R25](M10_RECT_OVERLAP_R25.md).
+- **Bibliothèque courante sur `main` :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib` ; **13 408 octets**, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. **30 commandes AP20**. Archive R24 WinUAE PASS et `LAST_GOOD` R10 inchangés.
+- **Nouvelle API :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)`, résultat `1` uniquement pour une aire commune positive. Contact bord/coin et dimensions invalides = `0`, origines négatives autorisées, fonction pure sans dépendance à l'écran, ABI `A3+28`.
+- **Test R25 validé, déplacé octet pour octet :** [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Aucun `.asc` actif** dans `tests/current/`.
+- **Capture utilisateur :** `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `LAST HIT 1`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, `RESULT 1`, `CLOSE X2 RETURNED`. Fin normale sous AMOS.
+- **Graphisme :** rectangle fixe bleu index 3, mobile 32×32 vert index 28 hors collision et rouge index 224 lors du recouvrement. Back buffer entièrement effacé/redessiné, puis **un `Aga Swap` et un `Aga Wait Vbl`** à chaque image. La mire IFF fournit les métadonnées du mode et la palette ; ses pixels ne sont pas exploités dans cette animation. **409 images traitées ne prouvent ni 50 FPS ni absence de traces ; pas de chronométrage.**
+- **Exemple distinct :** [`examples/collide.asc`](../examples/collide.asc), version pédagogique courte ajoutée avec `examples/README.md` et `README.fr.md`; scripts vérifiés statiquement par la CI, **exemple autonome non testé sous WinUAE**.
+- **Suite possible M11 :** étudier d'abord la compatibilité AMOS/AMCAF (écran/RastPort, fontes, Bob/Icon, copies, palette) et cadrer **un seul test indépendant** avant toute nouvelle commande ou bibliothèque R26. Ne pas supposer que l'écran Intuition de l'extension est un écran AMOS. Pas de branche nouvelle sans demande. [Contrat R25](M10_RECT_OVERLAP_R25.md).
 
 
 ---

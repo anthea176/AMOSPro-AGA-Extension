@@ -1,6 +1,6 @@
 # Spécification de planification — souris, zones cliquables, collisions
 
-**État au 10/11/2026 : M8 en cours.** R19 X/Y PASS CPU/WinUAE. R20 boutons fonctionnels mais défaut de menu Intuition. **R21 0.8.5 PASS CPU/CI (11 cas) et WinUAE par validation de l'utilisateur** : `WFLG_RMBTRAP` supprime la barre Intuition au clic droit. [Test R21 archivé](../tests/passed/M8_R21_MOUSE_RMBTRAP_01.asc) · [dossier R21](M8_RMBTRAP_R21.md). R22 Pressed/Released est maintenant PASS CPU/WinUAE sur son scénario ; restent les clics rapides et le focus réel, puis M9 hotspots et M10 collisions.
+**État au 10/11/2026 : M10 R25 validée sur scénario WinUAE.** La souris R23 (dispatcher IDCMP et FIFO), les hotspots R24 et la collision AABB R25 ont passé leurs tests AMOS/WinUAE documentés. R25 : `STATIC 1 PURE 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `RESULT 1` et fermeture correcte ; [test archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc). Focus réel, stress et AMOS Compiler restent ouverts ; les anciens paragraphes R19-R22 ci-dessous sont historiques.
 
 **R22 0.8.6, Gate A + B PASS sur son scénario :** `Aga Mouse Pressed/Released` fournissent des masques d'impulsions observées avec `PeekQualifier`. Premier appel = baseline, perte de focus = `-1` et remise à zéro, nouvelle ouverture = remise à zéro ; les deux masques de fronts sont indépendants. **Les appuis/relâchements totalement entre deux lectures restent indétectables.** Les files `IDCMP_MOUSEBUTTONS` et `RAWKEY` demandent une architecture de dispatcher commun dans un futur incrément. [Contrat R22](M8_MOUSE_EDGES_R22.md).
 
@@ -49,7 +49,7 @@ Pour un jeu, la gestion de zones peut aussi rester en AMOS au-dessus d'une simpl
 
 ## M10 — collisions 2D
 
-**R25 0.9.1 — première fonction numérique en préflight :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` renvoie 1 si deux rectangles de dimensions strictement positives ont une aire commune, 0 sinon (contact bord/coin exclus). Entiers 32 bits, origine négative possible, calcul sans `x+w` débordant. Sans registre de zones ni logique physique. **Gate A CPU/CI PASS 704 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294)), Gate B WinUAE en attente**. Test graphique convenu : rectangle fixe bleu, rectangle mobile vert/rouge suivant la souris. [Contrat M10](M10_RECT_OVERLAP_R25.md).
+**R25 0.9.1 — Gate A CPU/CI + Gate B WinUAE PASS sur le scénario testé :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` renvoie 1 pour une aire de chevauchement positive, 0 pour séparation, simple contact ou taille invalide. Entiers signés 32 bits, origines négatives admises ; aucune gestion d'objets/physique. **704 cas CPU/CI PASS** ([CI R25](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42916575209)), et **WinUAE PASS** : rectangle bleu fixe, rectangle mobile vert/rouge, `FRAMES 409`, `DRAWERR 0`, `RESULT 1`, retour correct à AMOS. [Test R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [contrat M10](M10_RECT_OVERLAP_R25.md). L'IFF fournit uniquement palette/mode vidéo ; il ne sert pas au calcul AABB. Les 50 FPS ne sont pas mesurés.
 
 
 **Noyau minimal, réutilisable et déterministe :**
@@ -63,10 +63,10 @@ Pour un jeu, la gestion de zones peut aussi rester en AMOS au-dessus d'une simpl
 
 Cas limites de recette : une dimension nulle, coordonnées négatives, rectangles identiques, inclusion totale, contact bord à bord, chevauchement d'un pixel, valeurs limites d'entier, éléments masqués et off-screen.
 
-**Décision à prendre avant M10 :** simples fonctions géométriques numériques de l'extension ou moteur de collision stockant les objets. La première solution est moins invasive et mieux réutilisable.
+**Décision R25 :** première étape M10 sous forme de fonction géométrique pure, sans état ni registre d'objets. Un moteur de collision avec objets reste une possibilité future à justifier.
 
 ## Gates et dépendances
 
 Le **Copper n'est pas une dépendance fonctionnelle** de la souris ou des collisions. Les chantiers pourront être indépendants à partir de la couche écran + Intuition. Pour chaque API : contrat AMOS/ABI et non-régression des commandes existantes ; test interprété WinUAE ; AMOS Compiler ; matériel lorsque pertinent.
 
-**R19 positions : PASS CPU et WinUAE** pour son scénario archivé. **R20 boutons : **Gate A CPU/CI PASS 21 cas**, WinUAE non testée ;** hotspots/collisions non implémentés.
+**État des validations :** R19-R23 souris et clavier, R24 hotspots, R25 AABB : Gate A CPU/CI et Gate B AMOS/WinUAE PASS **sur leurs scénarios archivés respectifs**. Les limites focus/stress, AMOS Compiler, matériel physique et mesure FPS restent ouvertes ; ne pas réattribuer les réserves historiques R20 à R25.

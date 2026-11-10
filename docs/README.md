@@ -1,21 +1,21 @@
 # Documentation — AMOSPro-AGA-Extension
 
-**Point d'entrée du projet.** Les fichiers de statut décrivent des faits constatés ; la roadmap décrit les prochaines capacités. **Ne pas confondre** documents anciens de R1–R18 et projet actif M8. R23 0.8.7 : **Gate A CPU/CI PASS (15 cas) et Gate B WinUAE PASS** sur clics rapides, FIFO clavier et Ctrl+C, avec fermeture correcte de l'écran Intuition. [Test R23 archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc). R22 0.8.6 est **PASS CPU/CI (25 cas) et AMOS interprété/WinUAE sur le test Pressed/Released archivé** (capture utilisateur du 10/11/2026). R21 0.8.5 reste PASS WinUAE sur son scénario de correction RMBTRAP. R20 est historique avec le défaut de menu ; R19 X/Y reste archivée et validée.
+**Point d'entrée du projet.** **M10/R25 0.9.1 : Gate A CPU/CI PASS 704 cas et Gate B AMOS/WinUAE PASS** sur le test R25 du 10/11/2026 (`FRAMES 409`, `DRAWERR 0`, `RESULT 1`, retour AMOS normal). Le [test original est archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) sans modification ; `tests/current/` ne contient aucun `.asc`. Les docs historiques ne définissent pas l'état courant ; voir [NEXT_SESSION](NEXT_SESSION.md). Le périmètre M11 est à étudier sans extrapoler un quelconque PASS Compiler/hardware.
 
 ## Où commencer ?
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | **[Roadmap actuelle](ROADMAP.md)** — M8 souris en cours, puis M9 zones cliquables et M10 collisions |
-| **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Statut M8](M8_STATUS.md) · [Historique M7](M7_STATUS.md) |
+| **Que développons-nous ensuite ?** | [Roadmap actuelle](ROADMAP.md) — M10/R25 validée ; prochaine phase M11 à cadrer avant toute R26 |
+| **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
-| **M10 collisions AABB — R25 candidate** | [Contrat R25](M10_RECT_OVERLAP_R25.md) · [Test visuel WinUAE R25 actif](../tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
+| **M10 collisions AABB — R25 PASS WinUAE** | [Contrat et validation R25](M10_RECT_OVERLAP_R25.md) · [Test exact R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |
 | **Règles de développement** | [EXTENSION_SOURCE_RULES](../EXTENSION_SOURCE_RULES.md) · [Build](BUILD.md) · [Intégrité](ARTIFACT_INTEGRITY.md) |
-| **Dernier jalon clôturé** | [M6 Blitter : statut](M6_STATUS.md) · [R15 Clear](M6_BLITTER_R15.md) |
+| **Dernier jalon validé en AMOS/WinUAE** | [M10 R25 (AABB)](M10_RECT_OVERLAP_R25.md) ; [M9 R24 (hotspots)](M9_HOTSPOT_R24.md) ; [M6 historique](M6_STATUS.md) |
 
 ## Anciennes études et preuves
 
