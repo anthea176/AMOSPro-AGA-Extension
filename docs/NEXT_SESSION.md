@@ -1,13 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M11 — diagnostic `Text` natif AMOS sur l'écran AGA (sans R26)
+## M11 — correction d'architecture : commandes AMOS ≠ dessin sur écran AGA indépendant
 
-**Après clôture R25 sur `main`**, un seul diagnostic M11 est proposé : [`tests/current/M11_R25_AMOS_TEXT_01.asc`](../tests/current/M11_R25_AMOS_TEXT_01.asc), bandeau `M11-R25-AMOS-TEXT-01`. **Pas de nouvelle bibliothèque ; M11 Gate B WinUAE NON TESTÉE.** R25 reste Gate A+B PASS **sur son scénario archivé**, sans que ce statut valide la compatibilité M11.
+**11/11/2026 — suite du retour utilisateur :** l'essai proposé `Text` natif AMOS sur l'écran Intuition AGA ne répondait pas à une question ouverte ; AMOS gère ses propres écrans et son état graphique. Le Copper affiche les bitplanes, mais ne transforme pas le `RastPort` cible des commandes AMOS. **Test M11 non exécuté, classé dans [`tests/historical/M11_R25_AMOS_TEXT_01.asc`](../tests/historical/M11_R25_AMOS_TEXT_01.asc) sans le déclarer PASS.**
 
-- **Objectif :** déterminer si la commande graphique native AMOS `Text x,y,text$`, appelée pendant l'affichage d'un écran Intuition AGA, écrit visiblement sur cet écran. L'écran AGA n'est pas automatiquement un écran AMOS.
-- **Test :** choisir `examples/demo.iff` (PAL 320×256×8), observer le panneau bleu pendant 300 VBL et noter si `AMOS TEXT VISIBLE?` apparaît **dans le panneau**. Vérifier ensuite `DRAWERR 0` et `CLOSE RETURNED`. Les deux buffers sont préparés ; `Text` est appelé après `Amos To Back`.
-- **Limites :** verdict visuel manuel, aucun support AMCAF/fontes démontré. L'IFF sert uniquement au mode vidéo et à la palette. [Protocole M11](M11_TEXT_COMPAT.md).
-- **Protections :** ne pas modifier R25, R24, `LAST_GOOD` R10 ni les tests archivés. Ne pas archiver M11 avant validation utilisateur ni engager R26 sans contrat technique.
+- **Statut :** M11 = étude d'architecture, **pas de Gate M11, pas de R26, aucun `.asc` actif** dans `tests/current/`.
+- **Direction technique :** inspecter le `BitMap` et la gestion du **back buffer R25** ; étudier `graphics.library/Text()` sur un `RastPort` explicitement associé à ce back buffer, avec synchronisation `Aga Swap`. Ne jamais supposer qu'un `Window.RPort` est le back buffer ni altérer les pointeurs graphiques internes AMOS.
+- **Fontes :** les commandes AMOS/AMCAF (`Text`, `Change Bank Font`, `Scrn Rastport`) ne visent pas automatiquement notre écran Intuition. Les banques de fontes peuvent faire l'objet d'une étude de conversion seulement si le besoin le justifie.
+- **Aucun code de production modifié** : `dist/AMOSPro_AGA.Lib` R25, son archive, R24 et `LAST_GOOD` R10 préservés. Le **PASS R25** porte toujours uniquement sur le test archivé. [Note de conception M11](M11_TEXT_COMPAT.md).
+
 
 ---
 
@@ -21,7 +22,7 @@
 - **Capture utilisateur :** `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `LAST HIT 1`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, `RESULT 1`, `CLOSE X2 RETURNED`. Fin normale sous AMOS.
 - **Graphisme :** rectangle fixe bleu index 3, mobile 32×32 vert index 28 hors collision et rouge index 224 lors du recouvrement. Back buffer entièrement effacé/redessiné, puis **un `Aga Swap` et un `Aga Wait Vbl`** à chaque image. La mire IFF fournit les métadonnées du mode et la palette ; ses pixels ne sont pas exploités dans cette animation. **409 images traitées ne prouvent ni 50 FPS ni absence de traces ; pas de chronométrage.**
 - **Exemple distinct :** [`examples/collide.asc`](../examples/collide.asc), version pédagogique courte ajoutée avec `examples/README.md` et `README.fr.md`; scripts vérifiés statiquement par la CI, **exemple autonome non testé sous WinUAE**.
-- **Suite M11 :** le premier diagnostic `Text` est désormais actif (voir la section M11 en tête). Étudier ensuite la compatibilité AMOS/AMCAF (écran/RastPort, fontes, Bob/Icon, copies, palette) avant toute nouvelle commande ou bibliothèque R26. Pas de nouvelle branche. [Contrat R25](M10_RECT_OVERLAP_R25.md).
+- **Suite M11 :** la tentative `Text` AMOS a été écartée avant WinUAE (voir le nouveau checkpoint M11 en tête). Étudier le rendu natif vers le back buffer propre à l'extension avant de décider d'une commande R26 ; aucune autre branche. [Contrat R25](M10_RECT_OVERLAP_R25.md).
 
 
 ---

@@ -1,9 +1,11 @@
 # Outils Python actifs — R25 0.9.1 M10 (CPU/CI + WinUAE PASS sur scénario)
 
-## M11 — premier diagnostic AMOS `Text` (sans nouvelle Lib)
+## M11 — étude du back buffer et du rendu texte (sans R26)
 
-- [Test AMOS courant](../tests/current/M11_R25_AMOS_TEXT_01.asc) : écran Intuition AGA avec panneau bleu, commande `Text` native AMOS après `Amos To Back`, observation pendant 300 VBL. **Runtime WinUAE M11 NON TESTÉ** ; écran Intuition distinct de l'écran AMOS. [Contrat](../docs/M11_TEXT_COMPAT.md).
-- Aucun builder R26 créé. Préserver intégralement les binaires R25/R24, `LAST_GOOD` R10 et les archives de validation. La CI ne vérifie que la syntaxe statique du diagnostic, pas la visibilité graphique.
+- Le diagnostic [`M11_R25_AMOS_TEXT_01.asc`](../tests/historical/M11_R25_AMOS_TEXT_01.asc), qui supposait que `Text` AMOS viserait notre écran Intuition AGA, a été **écarté avant exécution WinUAE** et classé historique sans modification des octets.
+- **Aucun test actif** dans `tests/current/`. La prochaine étape est une inspection en lecture seule de la source R25 : `BitMap` du back buffer, `RastPort`, `Aga Swap` et cycle de vie. Envisager `graphics.library/Text` seulement avec une cible graphique explicitement liée à ce back buffer. [Étude](../docs/M11_TEXT_COMPAT.md).
+- Aucun builder R26 créé. Binaires R25/R24, `LAST_GOOD` R10 et archives `tests/passed/` intacts.
+
 
 ## M10 — R25 0.9.1 : collisions AABB (Gate A CPU/CI + Gate B WinUAE PASS sur scénario)
 

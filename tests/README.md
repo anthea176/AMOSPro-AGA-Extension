@@ -1,8 +1,8 @@
-# M11 — diagnostic `Text` AMOS natif / écran Intuition AGA (WinUAE à tester)
+# M11 — étude d'architecture, aucun test actif
 
-**Seul test actif :** [`current/M11_R25_AMOS_TEXT_01.asc`](current/M11_R25_AMOS_TEXT_01.asc), bandeau `M11-R25-AMOS-TEXT-01`. Il utilise **la bibliothèque R25 inchangée** : écran AGA 320×256×8, panneau bleu dessiné dans les deux buffers, puis la commande graphique native AMOS `Text` pendant 300 VBL. Observer si `AMOS TEXT VISIBLE?` apparaît **sur le panneau AGA** ; noter `DRAWERR 0` et `CLOSE RETURNED` après fermeture. L'observation visuelle est manuelle ; **M11 Gate B NON TESTÉE**. Voir [protocole M11](../docs/M11_TEXT_COMPAT.md).
+L'essai [`M11_R25_AMOS_TEXT_01.asc`](historical/M11_R25_AMOS_TEXT_01.asc) a été **écarté avant exécution WinUAE** et conservé **à l'identique** dans `tests/historical/`, pas dans `tests/passed/`. Il appelait `Text` natif d'AMOS sur un écran Intuition AGA indépendant ; AMOS gère ses propres écrans et cette tentative ne pouvait pas démontrer la compatibilité de notre rendu.
 
-Le test R25 `Aga Rect Overlap` est **déjà validé et archivé octet pour octet** dans [`passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc). M11 n'est pas une régression native R25.
+**`tests/current/` ne contient aucun `.asc`.** Avant une nouvelle expérimentation M11, vérifier la `BitMap` du back buffer R25, le `RastPort` cible et la synchronisation `Aga Swap` ; [étude M11](../docs/M11_TEXT_COMPAT.md). Aucune nouvelle commande ni bibliothèque R26. Le [test R25 validé](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) reste intact.
 
 ---
 

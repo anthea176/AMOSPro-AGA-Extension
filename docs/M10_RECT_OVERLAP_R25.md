@@ -44,7 +44,7 @@ La souris est échantillonnée à chaque image. Ce test **ne valide pas la vites
 - [Émetteur R25](../tools/m10_rect_overlap_r25_emit.py)
 - [Builder pur R25](../tools/build_m10_rect_overlap_r25.py)
 - [Tests CPU R25](../tools/test_m10_rect_overlap_r25.py)
-- [Test WinUAE R25 validé et archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) — blob Git exact `0eac65e7a92418738d9a3ea6969d131758126cfa` ; aucun `.asc` **R25** dans `tests/current/` (un diagnostic M11 distinct est actif). Aucune modification des octets du test, pas de `Then` en blocs, `If/End If` contrôlés par la CI.
+- [Test WinUAE R25 validé et archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) — blob Git exact `0eac65e7a92418738d9a3ea6969d131758126cfa` ; aucun `.asc` actif dans `tests/current/` après classement historique du diagnostic M11 non exécuté. Aucune modification des octets du test, pas de `Then` en blocs, `If/End If` contrôlés par la CI.
 - [Dernier jalon M9 validé](M9_HOTSPOT_R24.md)
 
 Ne jamais réintroduire l'ancien historique Git. Ne pas modifier `dist/AMOSPro_AGA_LAST_GOOD.Lib` (R10), les archives R24/R23 ni les sources et illustrations du nouveau dépôt. Les deux README (EN/FR) documentent la nouvelle fonction **dans le commit de publication du binaire R25**. R24 et `LAST_GOOD` restent inchangées.
