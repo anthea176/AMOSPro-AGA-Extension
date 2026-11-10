@@ -1,6 +1,6 @@
 # M8 — R21 0.8.5 : RMBTRAP sur la fenêtre Intuition
 
-**Statut R21 0.8.5 : Gate A + B PASS.** Gate A : **11 cas CPU 68000 et [CI complète verte](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42887916480)**. Gate B : **PASS sur le scénario AMOS interprété/WinUAE**, confirmé explicitement par l'utilisateur le **10/11/2026** : les boutons fonctionnent et le clic droit n'affiche plus de barre de menus Intuition. Aucune capture chiffrée supplémentaire R21 n'a été communiquée. Compiler, matériel réel, stress et clics très brefs non testés.
+**Statut R21 0.8.5 : Gate A + B PASS.** Gate A : **11 cas CPU 68000 et CI complète verte (archive CI privée, run #42887916480)**. Gate B : **PASS sur le scénario AMOS interprété/WinUAE**, confirmé explicitement par l'utilisateur le **10/11/2026** : les boutons fonctionnent et le clic droit n'affiche plus de barre de menus Intuition. Aucune capture chiffrée supplémentaire R21 n'a été communiquée. Compiler, matériel réel, stress et clics très brefs non testés.
 
 ## Incident constaté en R20 (10 novembre 2026)
 

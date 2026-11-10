@@ -1,6 +1,6 @@
 # M7 / R18 0.8.2 — Copper Wait / Move / End : premier raster
 
-**Statut : R18 PASS pour le scénario raster sous AMOS interprété/WinUAE le 10/11/2026 — Gate A CPU 68000 PASS (26 scénarios), CI complète PASS** ([#42870412601](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42870412601)) ; **Gate B AMOS/WinUAE : PASS sur les deux captures (raster et console).** Ne pas extrapoler ce résultat à l'AMOS Compiler ni au matériel physique. Le périmètre est celui de la première démonstration raster **RGB4 12 bits, COLOR00 à COLOR31**, sans accès arbitraire aux registres matériels.
+**Statut : R18 PASS pour le scénario raster sous AMOS interprété/WinUAE le 10/11/2026 — Gate A CPU 68000 PASS (26 scénarios), CI complète PASS** (#42870412601 (archive CI privée)) ; **Gate B AMOS/WinUAE : PASS sur les deux captures (raster et console).** Ne pas extrapoler ce résultat à l'AMOS Compiler ni au matériel physique. Le périmètre est celui de la première démonstration raster **RGB4 12 bits, COLOR00 à COLOR31**, sans accès arbitraire aux registres matériels.
 
 ## Fichiers et référence exacte
 
@@ -67,7 +67,7 @@ Les paramètres AMOS suivent la convention du dépôt : sur une fonction à deux
 
 **Retour numérique attendu :** `W1=W2=W3=W4=M1=M2=M3=M4=END=ON=SWAP=OFF=OFF2=REOPEN=CLEAR2=ON2=OFF3=1`; `BADREG=BADRGB=BADWAIT=END2=AFTER=0`; `KEY ... CLOSE X2 RETURNED`. Ces résultats numériques ne remplacent **pas** la capture de l'effet.
 
-**Gate A : PASS.** CPU 68000 **26 scénarios réussis** ([CI préparatoire](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42869523014)) ; HUNK/AP20, SHA, builder reproductible, tests ILBM et non-régression M5/M6/R16/R17 **PASS** ([CI complète #42870412601](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42870412601)). **Gate B WinUAE : PASS (une exécution observée). Gate C Compiler et Gate D matériel : NON TESTÉES.**
+**Gate A : PASS.** CPU 68000 **26 scénarios réussis** (CI préparatoire (archive CI privée, run #42869523014)) ; HUNK/AP20, SHA, builder reproductible, tests ILBM et non-régression M5/M6/R16/R17 **PASS** (CI complète #42870412601 (archive CI privée)). **Gate B WinUAE : PASS (une exécution observée). Gate C Compiler et Gate D matériel : NON TESTÉES.**
 
 ## Résultat utilisateur et correction de syntaxe
 

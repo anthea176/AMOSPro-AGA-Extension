@@ -2,7 +2,7 @@
 
 ## But et périmètre
 
-**R23 0.8.7 — Gate A CPU/CI PASS (15 tests 68000, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)), Gate B AMOS interprété/WinUAE PASS** sur les scénarios clics rapides, FIFO clavier et Ctrl+C. Test AMOS exact [archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) sans modification après confirmation utilisateur du 10/11/2026. AMOS Compiler, matériel Amiga et stress non testés.
+**R23 0.8.7 — Gate A CPU/CI PASS (15 tests 68000, CI (archive CI privée, run #42899343161)), Gate B AMOS interprété/WinUAE PASS** sur les scénarios clics rapides, FIFO clavier et Ctrl+C. Test AMOS exact [archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) sans modification après confirmation utilisateur du 10/11/2026. AMOS Compiler, matériel Amiga et stress non testés.
 
 La R22 calcule les fronts à partir d'instantanés de `input.device/PeekQualifier()`. Un clic complet entre deux lectures est donc perdu. Le contrat R23 conserve **les mêmes instructions AMOS** :
 - `_P=Aga Mouse Pressed`
@@ -51,7 +51,7 @@ La capture souris mémorise les fronts DOWN et UP de façon indépendante. Un ap
 ## Gates
 
 - **Préflight CPU** : **PASS 15 cas 68000** (GitHub Actions #42898784421) : structure HUNK/AP20, registres ABI, FIFO clavier avec saturation, souris DOWN+UP avant une lecture, focus, un ReplyMsg par message, conservation des anciennes branches Ctrl+C. Ce test ne prouve pas le véritable Break sous AMOS.
-- **Gate A candidate** : binaire reproductible **13 088 octets**, SHA256 `899cb283d710fb4096bae4353f301a3ed40d2280b3ca90bf6ab48a323c8bfa23`. Préflight R23 PASS ; **CI complète PASS** ([run #42899343161](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)), avec instantanés des tests IFF synchronisés sur l'inventaire actuel sans restaurer les images supprimées.
+- **Gate A candidate** : binaire reproductible **13 088 octets**, SHA256 `899cb283d710fb4096bae4353f301a3ed40d2280b3ca90bf6ab48a323c8bfa23`. Préflight R23 PASS ; **CI complète PASS** (run #42899343161 (archive CI privée)), avec instantanés des tests IFF synchronisés sur l'inventaire actuel sans restaurer les images supprimées.
 - **Gate B WinUAE : PASS sur les scénarios testés.** [`tests/passed/M8_R23_IDCMP_QUICK_01.asc`](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) : clics rapides gauche/droit avant la lecture, deux ESPACE conservées, `Aga Wait Key` retourne `WAIT=16` (A AZERTY), `RESULT=1` ; fermeture/réouverture conforme. **Ctrl+C testé séparément** à `_WAITK=Aga Wait Key` : interruption propre et écran Intuition fermé. Le rapport ne certifie pas la gestion de tous les événements de focus.
 - **Gate C / D** : AMOS Compiler et Amiga physique non testés.
 

@@ -1,6 +1,6 @@
 # M8 / R19 0.8.3 — Souris Intuition : coordonnées X et Y
 
-**État au 10/11/2026 : R19 PASS Gate A CPU 68000 (76 cas) et Gate B AMOS interprété/WinUAE** sur le scénario X/Y ; [CI générale #42878271256](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42878271256) PASS. M8 reste en cours pour boutons et transitions.
+**État au 10/11/2026 : R19 PASS Gate A CPU 68000 (76 cas) et Gate B AMOS interprété/WinUAE** sur le scénario X/Y ; CI générale #42878271256 (archive CI privée) PASS. M8 reste en cours pour boutons et transitions.
 
 ## Artefacts
 
@@ -30,7 +30,7 @@ _MY=Aga Mouse Y
 
 ## Validation
 
-**Gate A isolée : PASS 76 scénarios CPU 68000** ([CI #42877478472](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42877478472)). Coordonnées 320, 640, 1280, fenêtres décalées, hors limites, état clos, fenêtre étrangère, maintien des registres et reproductibilité HUNK/AP20. **La CI d'intégrité générale a également PASS** ([CI générale #42878271256](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42878271256)) avec les anciennes bibliothèques préservées.
+**Gate A isolée : PASS 76 scénarios CPU 68000** (CI #42877478472 (archive CI privée)). Coordonnées 320, 640, 1280, fenêtres décalées, hors limites, état clos, fenêtre étrangère, maintien des registres et reproductibilité HUNK/AP20. **La CI d'intégrité générale a également PASS** (CI générale #42878271256 (archive CI privée)) avec les anciennes bibliothèques préservées.
 
 **Gate B sous AMOS Professional interprété/WinUAE : PASS** après deux captures utilisateur du 10/11/2026. Test archivé : [`M8_R19_MOUSE_POSITION_01.asc`](../tests/passed/M8_R19_MOUSE_POSITION_01.asc) avec `MYGIRL.IFF` 320×256×8.
 

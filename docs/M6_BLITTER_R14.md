@@ -41,7 +41,7 @@ _OK=Aga Blit Fill(x,y,width,height,colorIndex)
 
 ## Validation
 
-**Gate A (statique / CPU 68000) : PASS** ([CI #42854705517](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42854705517) — 56 scénarios, reproductibilité, conservation R13, R12, LAST_GOOD). Tests : valeurs de 1, 2, 4 et 8 plans, index 0/max, masques par plan, pixels attendus exacts, zones non affectées, deux valeurs de front buffer, limites/états/pointeurs invalides, échec simulé d'un plan, restitution registres/SP/A3 et non-régression de la R13 Copy.
+**Gate A (statique / CPU 68000) : PASS** (CI #42854705517 (archive CI privée) — 56 scénarios, reproductibilité, conservation R13, R12, LAST_GOOD). Tests : valeurs de 1, 2, 4 et 8 plans, index 0/max, masques par plan, pixels attendus exacts, zones non affectées, deux valeurs de front buffer, limites/états/pointeurs invalides, échec simulé d'un plan, restitution registres/SP/A3 et non-régression de la R13 Copy.
 
 **Gate B (AMOS interprété/WinUAE) : PASS le 10/11/2026**, sur **MYGIRL.IFF** 320×256×8. Deux captures utilisateur : trois rectangles uniformes aux index 15, 63 et 0, copie du premier en bas. Sortie avec bandeau `M6-R14-BLIT-FILL-01` : `F1 1 F2 1 F0 1`, `COL 0 RECT 0`, `COPY 1 SWAP 1`, `KEY 64 CLOSE RETURNED`. La boîte AMOS indique `End of program at line 77.` Le fichier `.asc` a été archivé sans changement dans `tests/passed/`.
 

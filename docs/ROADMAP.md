@@ -2,7 +2,7 @@
 
 **Objectif :** construire des primitives AGA réutilisables dans les programmes AMOS 365, sans imposer de réécriture du moteur des jeux. La roadmap décrit **l'ordre du travail à venir**, pas les anciens essais R1 à R15.
 
-**R23 IDCMP 0.8.7 (10/11/2026) : Gate A CPU/CI PASS 15 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42899343161)), Gate B AMOS interprété/WinUAE PASS** sur clics rapides (`PRESSED=RELEASED=3`), FIFO clavier (`KEYS=64/64/-1`, `WAIT=16`, `RESULT=1`), et Ctrl+C : interruption à `_WAITK=Aga Wait Key` avec fermeture correcte de l'écran Intuition. [Test R23 archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) sans modification. Prochains contrôles éventuels : focus réel, stress et saturation. [Contrat R23](M8_IDCMP_R23.md).
+**R23 IDCMP 0.8.7 (10/11/2026) : Gate A CPU/CI PASS 15 cas (CI (archive CI privée, run #42899343161)), Gate B AMOS interprété/WinUAE PASS** sur clics rapides (`PRESSED=RELEASED=3`), FIFO clavier (`KEYS=64/64/-1`, `WAIT=16`, `RESULT=1`), et Ctrl+C : interruption à `_WAITK=Aga Wait Key` avec fermeture correcte de l'écran Intuition. [Test R23 archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc) sans modification. Prochains contrôles éventuels : focus réel, stress et saturation. [Contrat R23](M8_IDCMP_R23.md).
 
 **R22 (10/11/2026) :** `Aga Mouse Pressed/Released` **Gate A CPU/CI PASS (25 cas)** et **Gate B WinUAE PASS** sur le scénario utilisateur (fronts gauche/droit uniques, clavier, fermeture/réouverture, fin normale). [Test R22 archivé](../tests/passed/M8_R22_MOUSE_EDGES_01.asc). Clics très brefs et focus réel restent à valider ; [dossier R22](M8_MOUSE_EDGES_R22.md). R21 et `LAST_GOOD` protégées.
 

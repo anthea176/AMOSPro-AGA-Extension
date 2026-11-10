@@ -38,7 +38,7 @@ _C2=Aga Copper Clear
 
 ## Validation et essai sous AMOS/WinUAE
 
-- **Gate A : PASS** ([CI #42864040653](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42864040653), 13 scénarios 68000) : build reproductible, HUNK/AP20/SHA, préservation registres/SP/A3, aucune écriture directe au matériel, allocation/erreur, listes étrangères, `CINIT/CWAIT/CBump`, conservation des 22 anciennes entrées, régressions R13/R14/R15.
+- **Gate A : PASS** (CI #42864040653 (archive CI privée), 13 scénarios 68000) : build reproductible, HUNK/AP20/SHA, préservation registres/SP/A3, aucune écriture directe au matériel, allocation/erreur, listes étrangères, `CINIT/CWAIT/CBump`, conservation des 22 anciennes entrées, régressions R13/R14/R15.
 - **Gate B : PASS pour le scénario exécuté sous AMOS interprété/WinUAE le 10/11/2026.** Capture finale du test `M7-R16-COPPER-CLEAR-01` avec image déclarée `320 × 256 × 8` : `C1 1 C2 1 C3 1`, `OPEN 1 REOPEN 1`, `SWAP 1 KEY 67`, `CLOSE X2 RETURNED`, fin AMOS normale à la **ligne 74**. Aucune erreur système ni blocage apparent. Cette capture de sortie ne constitue pas une comparaison visuelle avant/après de l'image ni une mesure de fuite mémoire.
 - **Gate C (Compiler) / Gate D (Amiga réel) : NON TESTÉES.**
 

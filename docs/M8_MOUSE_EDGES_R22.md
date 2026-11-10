@@ -1,6 +1,6 @@
 # M8 — R22 0.8.6 : transitions souris natives Pressed/Released
 
-**Statut : Gate A CPU/CI PASS 25 cas ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42893816454)), Gate B AMOS interprété/WinUAE PASS sur le scénario R22 du 10/11/2026.** AMOS Compiler, matériel réel et stress NON TESTÉS.
+**Statut : Gate A CPU/CI PASS 25 cas (CI complète (archive CI privée, run #42893816454)), Gate B AMOS interprété/WinUAE PASS sur le scénario R22 du 10/11/2026.** AMOS Compiler, matériel réel et stress NON TESTÉS.
 
 ## API AP20
 

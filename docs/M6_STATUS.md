@@ -18,7 +18,7 @@
 
 **Implémentation :** `_OK=Aga Blit Clear(x,y,w,h)` remet un rectangle du back buffer à l'index couleur **0** en réutilisant exactement la routine R14 `Aga Blit Fill`. Le nouveau code 68000 est un adaptateur de 38 octets : D3=h, A3 contient (w,y,x), reconstitution de la pile temporaire Fill, `D3=0` (pen), BSR vers Fill, restauration SP et **A3 original +12 octets**. R14 entrées 0..19 inchangées, seule l'entrée 20 reçoit le séparateur `GetP`, nouvelle entrée 21. Les tests CPU vérifient la cible BSR et l'ABI.
 
-**Validation : Gate A statique/CPU/CI PASS** ([CI #42857827475](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42857827475) : 27 scénarios valides, 25 rejetés/erreurs, non-régression Fill/Copy, build reproductible). **Gate B AMOS/WinUAE : PASS pour ce scénario** ; **Gate C AMOS Compiler : NON TESTÉE ; Gate D vrai Amiga : NON TESTÉE**.
+**Validation : Gate A statique/CPU/CI PASS** (CI #42857827475 (archive CI privée) : 27 scénarios valides, 25 rejetés/erreurs, non-régression Fill/Copy, build reproductible). **Gate B AMOS/WinUAE : PASS pour ce scénario** ; **Gate C AMOS Compiler : NON TESTÉE ; Gate D vrai Amiga : NON TESTÉE**.
 
 **PASS utilisateur du 10/11/2026 (deux captures)** : `M6-R15-BLIT-CLEAR-01` avec `MYGIRL.IFF` (320×256, 8 plans) : deux rectangles colorés, chacun avec intérieur effacé à l'index palette 0, copie du premier en bas, **aucune corruption visible**. Capture de sortie : `F1 1 C1 1 F2 1 C2 1`, `NEG 0 EDGE 0 ZERO 0`, `COPY 1 SWAP 1`, `KEY 97 CLOSE RETURNED`, puis boîte AMOS **`End of program at line 79.`**. Ce retour confirme le clavier, la fermeture et le retour à AMOS pour le scénario réalisé.
 
@@ -46,7 +46,7 @@ Voir [`M6_BLITTER_R15.md`](M6_BLITTER_R15.md).
 
 La fonction `Aga Blit Fill(x,y,w,h,pen)` écrit un index de couleur dans le back buffer, à travers un `BltBitMap` par plan (`mask=1<<plane`, minterm `$F0` ou `$00`), suivi de `WaitBlit`. Elle valide toutes les dimensions et tous les pointeurs de plans avant la première modification. **R13 segments 0..18 identiques ; entrée 19 Copy avec seul ajout `GetP` ; entrée 20 nouvelle.**
 
-**Gate A : PASS** ([CI #42854705517](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42854705517) : 56 scénarios CPU R14, non-régression R13 Copy, HUNK/AP20/archives). **Gate B AMOS/WinUAE : PASS pour ce scénario**. Deux captures utilisateur confirment, avec `MYGIRL.IFF` (320×256×8) : trois rectangles remplis (index 15, 63 et 0), copie du premier rectangle en bas, puis `F1 1 F2 1 F0 1`, `COL 0 RECT 0`, `COPY 1 SWAP 1`, `KEY 64 CLOSE RETURNED` et boîte AMOS `End of program at line 77.` **Gate C Compiler : NON TESTÉ. Gate D matériel : NON TESTÉ.**
+**Gate A : PASS** (CI #42854705517 (archive CI privée) : 56 scénarios CPU R14, non-régression R13 Copy, HUNK/AP20/archives). **Gate B AMOS/WinUAE : PASS pour ce scénario**. Deux captures utilisateur confirment, avec `MYGIRL.IFF` (320×256×8) : trois rectangles remplis (index 15, 63 et 0), copie du premier rectangle en bas, puis `F1 1 F2 1 F0 1`, `COL 0 RECT 0`, `COPY 1 SWAP 1`, `KEY 64 CLOSE RETURNED` et boîte AMOS `End of program at line 77.` **Gate C Compiler : NON TESTÉ. Gate D matériel : NON TESTÉ.**
 
 **Test `M6_R14_BLIT_FILL_01.asc` déplacé tel quel vers `tests/passed/`. Aucun `.asc` actif dans `tests/current/`.** Suite M6 : développer **`Aga Blit Clear`** comme sous-jalon séparé, avec builder, tests CPU et nouveau test AMOS unique. **Aucune promotion de `LAST_GOOD`.** Voir [`M6_BLITTER_R14.md`](M6_BLITTER_R14.md).
 
@@ -71,7 +71,7 @@ La fonction `Aga Blit Fill(x,y,w,h,pen)` écrit un index de couleur dans le back
 
 ## Portes de validation
 
-- **Gate A — CPU/CI : PASS** pour le binaire R13 actif, reproductibilité et 47 images ILBM ([CI #42851646766](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42851646766)).
+- **Gate A — CPU/CI : PASS** pour le binaire R13 actif, reproductibilité et 47 images ILBM (CI #42851646766 (archive CI privée)).
 - **Gate B — AMOS/WinUAE : PASS** du scénario Blit Copy R13 sur MYGIRL, copie avec chevauchement, retour d'erreur, Swap, clavier et fermeture confirmés.
 - **Gate C — AMOS Compiler : NON TESTÉ**.
 - **Gate D — vrai AGA : NON TESTÉ**.

@@ -1,6 +1,6 @@
 # Test AMOS actif unique — M9 R24 Hotspot Hit
 
-[`M9_R24_HOTSPOT_HIT_01.asc`](./M9_R24_HOTSPOT_HIT_01.asc) est le **seul `.asc` actif**. Version candidate **R24 0.9.0**, 29 commandes AP20. Gate A CPU/CI PASS (402 scénarios, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42908096685)), Gate B WinUAE NON TESTÉE.
+[`M9_R24_HOTSPOT_HIT_01.asc`](./M9_R24_HOTSPOT_HIT_01.asc) est le **seul `.asc` actif**. Version candidate **R24 0.9.0**, 29 commandes AP20. Gate A CPU/CI PASS (402 scénarios, CI (archive CI privée, run #42908096685)), Gate B WinUAE NON TESTÉE.
 
 Installer [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) R24 dans AMOS et redémarrer. Choisir [`AGA_TESTCARD_320x256_256C.iff`](../../iff-TEST/AGA_TESTCARD_320x256_256C.iff), 320×256×8.
 

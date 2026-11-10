@@ -1,6 +1,6 @@
 # M7 / R17 0.8.1 — Copper On / Off : cycle d'activation Intuition
 
-**Statut : Gate A CPU/CI PASS** ([GitHub Actions #42866614578](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42866614578), 15 scénarios 68000, SHA et reproductibilité HUNK/AP20) ; **Gate B AMOS/WinUAE PASS sur 3 exécutions du test R17 le 10/11/2026.** Ce jalon ajoute uniquement `Aga Copper On` et `Aga Copper Off` pour appliquer et détacher par Intuition la liste vide initialisée par **`Aga Copper Clear` R16**. Aucun effet raster n'est attendu tant que `Wait/Move/End` ne sont pas implémentés.
+**Statut : Gate A CPU/CI PASS** (GitHub Actions #42866614578 (archive CI privée), 15 scénarios 68000, SHA et reproductibilité HUNK/AP20) ; **Gate B AMOS/WinUAE PASS sur 3 exécutions du test R17 le 10/11/2026.** Ce jalon ajoute uniquement `Aga Copper On` et `Aga Copper Off` pour appliquer et détacher par Intuition la liste vide initialisée par **`Aga Copper Clear` R16**. Aucun effet raster n'est attendu tant que `Wait/Move/End` ne sont pas implémentés.
 
 ## Artifacts
 
@@ -40,7 +40,7 @@ Sélectionner `MYGIRL.IFF` **320×256×8**, après avoir installé la nouvelle L
 
 ## Portes de validation
 
-- **Gate A : PASS** ([CI #42866614578](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42866614578)). AP20/HUNK, SHA, reproduction du binaire, 15 scénarios CPU 68000 (Unicorn/Capstone), registres, A3, SP, propriété, erreurs et rollback, anciens tests ILBM/Blitter/Copper Clear.
+- **Gate A : PASS** (CI #42866614578 (archive CI privée)). AP20/HUNK, SHA, reproduction du binaire, 15 scénarios CPU 68000 (Unicorn/Capstone), registres, A3, SP, propriété, erreurs et rollback, anciens tests ILBM/Blitter/Copper Clear.
 - **Gate B : PASS pour les 3 exécutions sous AMOS Professional interprété/WinUAE** du scénario `Clear/On/Swap/Off/Off/Clear/On/Off/Close/Reopen/Clear/On/Off/Close`, et retour AMOS normal ligne 83. Ne pas extrapoler aux listes raster non encore programmées, à l'absence de fuite mémoire ou aux tests prolongés.
 - Gate C AMOS Compiler et Gate D Amiga réel : **NON TESTÉES**.
 

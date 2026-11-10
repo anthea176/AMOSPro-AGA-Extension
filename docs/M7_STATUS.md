@@ -2,7 +2,7 @@
 
 ## R18 0.8.2 — `Aga Copper Wait`, `Move`, `End` : **PASS WinUAE (raster RGB4)**
 
-**10/11/2026 — Gate A CPU 68000 : PASS sur 26 scénarios** ([CI préparatoire #42869523014](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42869523014)) ; **CI complète HUNK/AP20/ILBM/M6/M7 : PASS** ([GitHub Actions #42870412601](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42870412601)). **Gate B AMOS interprété/WinUAE : PASS sur le test R18 corrigé, le 10/11/2026.** Raster COLOR00 rouge/vert/bleu/noir visible, comportement des rejets conforme, retour à AMOS ligne 95. **Gate C Compiler et Gate D Amiga AGA réel : NON TESTÉES.**
+**10/11/2026 — Gate A CPU 68000 : PASS sur 26 scénarios** (CI préparatoire #42869523014 (archive CI privée)) ; **CI complète HUNK/AP20/ILBM/M6/M7 : PASS** (GitHub Actions #42870412601 (archive CI privée)). **Gate B AMOS interprété/WinUAE : PASS sur le test R18 corrigé, le 10/11/2026.** Raster COLOR00 rouge/vert/bleu/noir visible, comportement des rejets conforme, retour à AMOS ligne 95. **Gate C Compiler et Gate D Amiga AGA réel : NON TESTÉES.**
 
 - **Lib R18 courante validée pour ce scénario :** `dist/AMOSPro_AGA.Lib`, R18 **0.8.2**, **11 480 octets**, SHA256 `600b8c2c38486004adef8c0e7924df877f7dd7829e1c622a89bbdc0db9f9808a`.
 - **Archive identique :** `dist/experimental/AMOSPro_AGA_M7_v0.8.2_COPPER_RASTER_R18.Lib`. **Base R17 validée WinUAE 3/3** conservée intacte dans `dist/experimental/AMOSPro_AGA_M7_v0.8.1_COPPER_ON_OFF_R17.Lib`. `LAST_GOOD` reste R10.
@@ -19,7 +19,7 @@
 
 ## Historique — R17 0.8.1 : PASS WinUAE (3/3)
 
-**10/11/2026 — Gate A CPU/CI : PASS** ([CI #42866614578](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42866614578), 15 scénarios 68000 et non-régressions R16/M6). **Gate B AMOS interprété/WinUAE : PASS sur 3 exécutions consécutives du test R17, sans incident signalé.** R16 Copper Clear est également validée pour son scénario et archivée.
+**10/11/2026 — Gate A CPU/CI : PASS** (CI #42866614578 (archive CI privée), 15 scénarios 68000 et non-régressions R16/M6). **Gate B AMOS interprété/WinUAE : PASS sur 3 exécutions consécutives du test R17, sans incident signalé.** R16 Copper Clear est également validée pour son scénario et archivée.
 
 | Élément | Statut |
 |---|---|
@@ -50,7 +50,7 @@ Voir [`M7_COPPER_R17.md`](M7_COPPER_R17.md).
 - **Nouvelle fonction :** `_OK=Aga Copper Clear` sans paramètre, **initialise seulement une UCopList vide terminée par CEND**, rattachée au ViewPort du Screen Intuition et destinée au cleanup `CloseScreen`. **Pas de raster visible, pas encore de `Wait/Move/End/On/Off`.**
 - **Builder reproductible :** `tools/build_m7_copper_clear_r16.py` ; **tests CPU/ABI :** `tools/test_m7_copper_clear_r16.py`. L'ancien préflight `tools/m7_copper_contract.py` reste un modèle Python indépendant.
 - **Test AMOS validé et archivé sans retouche :** [`tests/passed/M7_R16_COPPER_CLEAR_01.asc`](../tests/passed/M7_R16_COPPER_CLEAR_01.asc), blob Git conservé. **Aucun `.asc` dans `tests/current/`.** Capture utilisateur : `M7-R16-COPPER-CLEAR-01`, `IMAGE 320 X 256 PLANES 8`, `C1 1 C2 1 C3 1`, `OPEN 1 REOPEN 1`, `SWAP 1 KEY 67`, `CLOSE X2 RETURNED` puis `End of program at line 74.`
-- **Gate A CPU/HUNK/AP20/CI : PASS** ([CI #42864040653](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42864040653) : 13 scénarios 68000, contrôle ABI/allocations, reproductibilité HUNK, non-régression M6). **Gate B AMOS interprété/WinUAE : PASS pour le scénario R16 Clear/Swap/Close/Reopen décrit ci-dessus. Gate C Compiler / Gate D matériel : NON TESTÉES.**
+- **Gate A CPU/HUNK/AP20/CI : PASS** (CI #42864040653 (archive CI privée) : 13 scénarios 68000, contrôle ABI/allocations, reproductibilité HUNK, non-régression M6). **Gate B AMOS interprété/WinUAE : PASS pour le scénario R16 Clear/Swap/Close/Reopen décrit ci-dessus. Gate C Compiler / Gate D matériel : NON TESTÉES.**
 
 **Périmètre de sécurité :** `ViewPort.UCopIns` et `Screen.UserData` d'un Screen privé, gestion de pointeurs étrangers, aucune écriture Copper matériel, aucune modification des routines R15. **`DBState+20` reste réservé aux notifications Safe/Disp**. Ce candidat ne prouve pas encore la gestion des listes *actives* (On/Off) ; ne pas conclure à la compatibilité de toutes les listes ou du raster.
 
