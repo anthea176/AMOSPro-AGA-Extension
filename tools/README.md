@@ -1,6 +1,14 @@
 # Outils Python actifs — R25 0.9.1 M10 (CPU/CI + WinUAE PASS sur scénario)
 
-## M11 — étude du back buffer et du rendu texte (sans R26)
+## M11 — R26 prototype `Aga Text` (aucun binaire publié)
+
+- [`build_m11_text_r26.py`](build_m11_text_r26.py) : construit en mémoire depuis l'archive R25 figée (13 408 octets ; SHA256 contrôlé), sans écrire dans `dist/` ni `LAST_GOOD` ; `--emit-base64` exporte un candidat seulement après test CPU.
+- [`m11_text_r26_emit.py`](m11_text_r26_emit.py) : nouvelle routine 68000 `TextExtent` + `InitRastPort` + `Text`, sécurité Safe/Disp non bloquante sans `WaitPort` ni `ReplyMsg`.
+- [`test_m11_text_r26.py`](test_m11_text_r26.py) : tests Unicorn CPU ABI, contenu de `BitMap`, droits Safe, clipping, non-régression. **Gate A à confirmer par CI ; Gate B non testée**.
+- [Contrat R26](../docs/M11_TEXT_R26.md). R25 demeure active tant que la CI n'a pas passé le prototype. Aucun `.asc` actif dans `tests/current/`.
+
+### Historique de conception M11 (avant la R26)
+
 
 - Le diagnostic [`M11_R25_AMOS_TEXT_01.asc`](../tests/historical/M11_R25_AMOS_TEXT_01.asc), qui supposait que `Text` AMOS viserait notre écran Intuition AGA, a été **écarté avant exécution WinUAE** et classé historique sans modification des octets.
 - **Aucun test actif** dans `tests/current/`. La prochaine étape est une inspection en lecture seule de la source R25 : `BitMap` du back buffer, `RastPort`, `Aga Swap` et cycle de vie. Envisager `graphics.library/Text` seulement avec une cible graphique explicitement liée à ce back buffer. [Étude](../docs/M11_TEXT_COMPAT.md).

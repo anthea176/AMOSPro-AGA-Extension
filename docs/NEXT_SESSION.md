@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M11 — R26 0.9.2 : prototype texte en mémoire, Gate A en cours
+
+**11/11/2026 — nouvel incrément autorisé, aucun binaire R26 promu pour l'instant.** [Contrat et garde-fous R26](M11_TEXT_R26.md) · [audit de référence R25](M11_BACKBUFFER_R25.md).
+
+- API envisagée : `_OK=Aga Text(x,baselineY,pen,text$)` ; un seul token fonction, rendu dans le **BitMap arrière de l'extension**, système `InitRastPort/TextExtent/Text`, `JAM1`, couleur indexée, longueur AMOS et clipping mesurés.
+- **Safe non bloquant :** si `DBState+20` indique Safe en attente, un seul `GetMsg(SafePort)` ; retour `0` sans dessin si non prêt ; sinon effacement du seul bit Safe sans `ReplyMsg`, bit Disp conservé. Cette nouvelle primitive ne rend **pas** les Blitters R25 sûrs avant Safe.
+- **À exécuter en CI :** [builder reproductible, R25 figée](../tools/build_m11_text_r26.py), [émission 68000](../tools/m11_text_r26_emit.py), [test 68000 sous Unicorn](../tools/test_m11_text_r26.py). Le builder est **en mémoire**, la bibliothèque distribuée demeure R25 0.9.1. Les tests doivent d'abord confirmer Gate A CPU/ABI ; **aucun PASS R26 annoncé** à ce stade.
+- Après Gate A seulement : publier un candidat `dist/experimental/` et sa copie `dist/AMOSPro_AGA.Lib`, mettre à jour les README EN/FR et un unique test WinUAE. `LAST_GOOD` R10, les archives R25/R24 et les tests passés restent intacts. **`tests/current/` reste sans `.asc`** pour l'instant.
+- Aucun changement de branche : uniquement `main`.
+
+---
+
 ## M11 — correction d'architecture : commandes AMOS ≠ dessin sur écran AGA indépendant
 
 **11/11/2026 — suite du retour utilisateur :** l'essai proposé `Text` natif AMOS sur l'écran Intuition AGA ne répondait pas à une question ouverte ; AMOS gère ses propres écrans et son état graphique. Le Copper affiche les bitplanes, mais ne transforme pas le `RastPort` cible des commandes AMOS. **Test M11 non exécuté, classé dans [`tests/historical/M11_R25_AMOS_TEXT_01.asc`](../tests/historical/M11_R25_AMOS_TEXT_01.asc) sans le déclarer PASS.**

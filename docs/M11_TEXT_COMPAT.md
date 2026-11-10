@@ -16,6 +16,10 @@ Le chemin `A5+$1C8 → State+32 → DBState+8 → ScreenBuffer inactif → sb_Bi
 
 **Proposition non approuvée :** une unique fonction texte utilisant `graphics.library/Text`, après validation de la chaîne AMOS et du clipping. **Aucun binaire R26 et aucun test M11 n'ont été créés.** Le détail de la synchronisation, des pointeurs et des gates se trouve dans la [note d'audit](M11_BACKBUFFER_R25.md).
 
+## Prototype R26 en préparation
+
+Un [contrat de première API texte](M11_TEXT_R26.md) et trois scripts de construction/validation en mémoire ont été préparés depuis l'archive figée R25 ; **aucune Gate A R26 encore confirmée à ce stade et aucun binaire distribué changé**. Le verrou Safe est traité **dans la nouvelle primitive seulement** ; les anciens Blitters R25 restent tels quels.
+
 ## Mécanisme à examiner avant de développer
 
 - **AMOS Professional** : `Text`, `Bar`, `Screen Copy` et les outils AMCAF associés utilisent les écrans/banques/états de dessin gérés par AMOS ; ne pas rediriger ses pointeurs privés (`ScOnAd`, `Ec_RastPort`) par hypothèse. Une compatibilité *directe* avec notre écran Intuition ne peut pas être présumée.

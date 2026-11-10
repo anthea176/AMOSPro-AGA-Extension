@@ -29,6 +29,7 @@ on:
       - "tools/m8_idcmp_r23_emit.py"
       - "tools/m9_hotspot_r24_emit.py"
       - "tools/m10_rect_overlap_r25_emit.py"
+      - "tools/m11_text_r26_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -69,6 +70,13 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M11 R26 text in-memory Gate A (native CPU and frozen R25)
+        run: |
+          python -B tools/test_m11_text_r26.py
+          python -B tools/build_m11_text_r26.py
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+          python -B tools/build_m11_text_r26.py --emit-base64
+
       - name: M10 R25 AABB rectangle overlap — 68000 CPU plus current candidate integrity
         run: |
           python -B tools/test_m10_rect_overlap_r25.py
