@@ -1,3 +1,15 @@
+# M10 R25 — Rect Overlap : Gate A CPU/CI PASS, Gate B WinUAE à tester
+
+**Seul programme AMOS actif :** [`current/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](current/M10_R25_RECT_OVERLAP_VISUAL_01.asc) ; R25 0.9.1 candidate, **704 cas 68000 CPU/CI PASS** ([CI préflight](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294)), **Gate B WinUAE NON TESTÉE**.
+
+Installer la bibliothèque [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R25 et relancer AMOS. Choisir l'IFF original [`AGA_TESTCARD_320x256_256C.iff`](../iff-TEST/AGA_TESTCARD_320x256_256C.iff) (320×256×8), puis déplacer la souris **dans le rectangle bleu** et **hors du rectangle**. Le rectangle mobile 32×32 est **vert** hors collision (index palette 28) et **rouge** dans la collision (index 224). Le fixe est bleu (index 3). Double buffer, `Aga Swap` + `Aga Wait Vbl` **à chaque image**.
+
+Après avoir vu les deux couleurs, faire un clic gauche pour terminer, ou attendre 900 VBL. Attendu : `STATIC 1`, `PURE 1`, `SEEN FREE 1 HIT 1`, `DRAWERR 0`, `RESULT 1` et `CLOSE X2 RETURNED`. **Un contrôle automatique interdit `Then` dans les blocs AMOS**, et les `If/End If` ainsi que `For/Next` sont équilibrés. Le test ne valide pas le framerate réel tant qu'il n'a pas été exécuté.
+
+[Contrat M10](../docs/M10_RECT_OVERLAP_R25.md). R24 et R23 archivées, `LAST_GOOD` R10 inchangée. Ne pas déplacer le test vers `passed/` avant confirmation utilisateur.
+
+---
+
 # Test M9 R24 — Hotspot Hit : Gate A + B PASS
 
 [`passed/M9_R24_HOTSPOT_HIT_01.asc`](passed/M9_R24_HOTSPOT_HIT_01.asc) : **test exact validé sous AMOS interprété/WinUAE et archivé octet pour octet** (SHA Git `0476f20a81a8bff1bf282a37a7e3b4b710c72022`). Il s'agit du test AMOS corrigé, **sans `Then` et sans modification après le résultat**. **Aucun `.asc` actif dans `tests/current/`**.

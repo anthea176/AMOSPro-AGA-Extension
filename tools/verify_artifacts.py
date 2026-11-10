@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R24 Hotspot Hit; R23/R22/R21/R20/R19/R18/M6 and R10 frozen."""
+"""Current integrity: R25 AABB; R24/R23/R22/R21/R20/R19/R18/M6 and R10 frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671",
+    "dist/AMOSPro_AGA.Lib": "4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6",
+    "dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib": "4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6",
     "dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib": "cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671",
     "dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib": "899cb283d710fb4096bae4353f301a3ed40d2280b3ca90bf6ab48a323c8bfa23",
     "dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib": "96e38d478bd97e7a65801e16e96ce08c0bbd4aaacb4a8a6644e4bc1289a0c997",
@@ -63,6 +64,7 @@ def main():
     from build_m8_mouse_edges_r22 import build as build_r22, patch_open_reset
     from build_m8_idcmp_r23 import build as build_r23, ENTRY_DISPATCH
     from build_m9_hotspot_hit_r24 import build as build_r24, ENTRY as HOTSPOT_ENTRY
+    from build_m10_rect_overlap_r25 import build as build_r25, ENTRY as RECT_ENTRY
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -72,7 +74,7 @@ def main():
 
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib"]
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert r10 == binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     assert binaries["archive/AMOSPro_AGA_M4b_v0.0.9_R6C_R1_WinUAE_OK.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M4b_v0.0.9_R6C_R1.Lib"]
 
@@ -108,7 +110,9 @@ def main():
     built23, detail23 = build_r23()
     assert built23 == binaries["dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib"] == build_r23()[0], "R23 not reproducible"
     built24, detail24 = build_r24()
-    assert candidate == built24 == build_r24()[0], "R24 not reproducible"
+    assert built24 == binaries["dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib"] == build_r24()[0], "R24 not reproducible"
+    built25, detail25 = build_r25()
+    assert candidate == built25 == build_r25()[0], "R25 not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
@@ -127,7 +131,8 @@ def main():
     tok21, seg21, _ = split(built21)
     tok22, seg22, _ = split(built22)
     tok23, seg23, _ = split(built23)
-    tok24, seg24, _ = split(candidate)
+    tok24, seg24, _ = split(built24)
+    tok25, seg25, _ = split(candidate)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -188,8 +193,14 @@ def main():
     assert seg24[HOTSPOT_ENTRY-1] == seg23[HOTSPOT_ENTRY-1] + b"GetP"
     assert seg24[HOTSPOT_ENTRY-1][-148:-4] == bytes(144), "R23 input state moved"
     assert seg24[HOTSPOT_ENTRY], "R24 hotspot 68000 code missing"
-    assert not inspect(parse(candidate))["issues"], "R24 AP20 malformed"
-    print("PASS: R24 current/archive reproducible; R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen,"
+    assert not inspect(parse(built24))["issues"], "R24 AP20 malformed"
+    assert tok25.startswith(tok24[:-6]) and tok25 != tok24, "R25 token missing"
+    assert len(seg25) == len(seg24) + 1 == RECT_ENTRY + 1 == 36
+    assert seg25[:RECT_ENTRY-1] == seg24[:RECT_ENTRY-1], "R25 moved prior routines"
+    assert seg25[RECT_ENTRY-1] == seg24[RECT_ENTRY-1] + b"GetP", "R24 hotspot modified"
+    assert seg25[RECT_ENTRY], "R25 rect overlap code missing"
+    assert not inspect(parse(candidate))["issues"], "R25 AP20 invalid"
+    print("PASS: R25 current/archive reproducible; R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen,"
           " LAST_GOOD R10 intact")
 
 

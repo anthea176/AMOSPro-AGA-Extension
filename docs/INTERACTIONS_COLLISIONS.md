@@ -49,7 +49,7 @@ Pour un jeu, la gestion de zones peut aussi rester en AMOS au-dessus d'une simpl
 
 ## M10 — collisions 2D
 
-**R25 0.9.1 — première fonction numérique en préflight :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` renvoie 1 si deux rectangles de dimensions strictement positives ont une aire commune, 0 sinon (contact bord/coin exclus). Entiers 32 bits, origine négative possible, calcul sans `x+w` débordant. Sans registre de zones ni logique physique. **Gate A CPU/CI et Gate B WinUAE en attente**. Test graphique convenu : rectangle fixe bleu, rectangle mobile vert/rouge suivant la souris. [Contrat M10](M10_RECT_OVERLAP_R25.md).
+**R25 0.9.1 — première fonction numérique en préflight :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` renvoie 1 si deux rectangles de dimensions strictement positives ont une aire commune, 0 sinon (contact bord/coin exclus). Entiers 32 bits, origine négative possible, calcul sans `x+w` débordant. Sans registre de zones ni logique physique. **Gate A CPU/CI PASS 704 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294)), Gate B WinUAE en attente**. Test graphique convenu : rectangle fixe bleu, rectangle mobile vert/rouge suivant la souris. [Contrat M10](M10_RECT_OVERLAP_R25.md).
 
 
 **Noyau minimal, réutilisable et déterministe :**

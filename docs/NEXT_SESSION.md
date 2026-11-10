@@ -1,13 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M10 — R25 0.9.1 : AABB, préflight CPU en cours
+## M10 — R25 0.9.1 : candidate WinUAE, Gate A CPU/CI PASS
 
-**Chantier approuvé par l'utilisateur :** deux rectangles sur écran AGA 320×256, un fixe et un suivant la souris, **vert hors collision / rouge en collision**. Premier incrément : fonction numérique sans état `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)`. Le contact bord à bord n'est pas une collision ; une surface positive (même 1 pixel) l'est.
+**R25 0.9.1 est la bibliothèque candidate sur le nouveau `main` (30 commandes AP20).** La [CI de préflight 68000](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294) est verte : **704 cas géométriques/ABI**, comparaisons entières signées 32 bits, invariance des segments R24 et reproductibilité HUNK/AP20. **Gate B AMOS interprété/WinUAE NON TESTÉE.**
 
-- **R24 0.9.0 reste la bibliothèque active et validée CPU/WinUAE.** Aucun binaire R25 distribué avant préflight.
-- [Émetteur 68000](../tools/m10_rect_overlap_r25_emit.py), [builder pur depuis R24](../tools/build_m10_rect_overlap_r25.py), [test CPU signed32 / A3+28](../tools/test_m10_rect_overlap_r25.py), [contrat et recette visuelle](M10_RECT_OVERLAP_R25.md).
-- Après CI CPU PASS : publier candidate R25 avec ses README bilingues synchronisés, puis **un seul test .asc** dans `tests/current/`. La mire AGA possède un index bleu 3, vert 28 et rouge 224, confirmés par son CMAP.
-- Aucun nouvel historique importé. Travail sur `main` seulement, archives R24/R23 et `LAST_GOOD` R10 intacts.
+- **Binaire :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib`, **13 408 octets**, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. R24 est la dernière archive validée CPU/WinUAE ; `LAST_GOOD` R10 intacte.
+- **Nouvelle fonction :** `_C=Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` : 1 si chevauchement d'aire positive, 0 si séparation/contact bord/coin ou taille invalide. Huit entiers, `A3+28`, pas d'état partagé.
+- **Test AMOS unique actif :** [`tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc). Charger `iff-TEST/AGA_TESTCARD_320x256_256C.iff` (320×256×8), puis déplacer la souris **dans le rectangle bleu fixe puis hors de celui-ci**. Le rectangle mobile 32×32 est **rouge** dans la collision, **vert** ailleurs. Après avoir vu les deux états, cliquer gauche pour terminer (ou attendre 900 VBL).
+- **Fluidité :** double buffer R25, dessin sur le back buffer, **`_SW=Aga Swap` puis `Aga Wait Vbl` à chaque image**. Palette indexée validée : bleu 3, vert 28, rouge 224. Aucune capture WinUAE R25 reçue.
+- **Attendu :** `STATIC 1`, `PURE 1`, `SEEN FREE 1 HIT 1`, `DRAWERR 0`, `RESULT 1`, `CLOSE X2 RETURNED`. Aucun `Then` dans le test ; blocs If/End If équilibrés. **Ne pas archiver avant le retour WinUAE.**
+- **Gates C/D :** AMOS Compiler, Amiga réel et stress restent NON TESTÉS. Aucun historique ancien réintroduit, archives R24/R23 et R10 intouchées. [Contrat R25](M10_RECT_OVERLAP_R25.md).
+
 
 ---
 

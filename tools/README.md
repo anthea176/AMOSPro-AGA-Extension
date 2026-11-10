@@ -1,10 +1,10 @@
 # Outils Python actifs — R23 0.8.7 validée CPU/CI et WinUAE sur scénario ; archives R22/R21 protégées
 
-## M10 — R25 0.9.1 : collisions AABB, préflight (R24 toujours active)
+## M10 — R25 0.9.1 : collisions AABB (Gate A CPU/CI PASS, WinUAE en attente)
 
 - [Émetteur natif 68000](m10_rect_overlap_r25_emit.py) : huit entiers, `D3=bh` et `A3+28`, aucun état/OS, arithmétique signée 32 bits sans `x+w` dangereux.
 - [Builder reproductible, sans écriture](build_m10_rect_overlap_r25.py) depuis l'archive validée R24 et [préflight CPU](test_m10_rect_overlap_r25.py) : cas de bords, un pixel, inclusions, tailles invalides, extrêmes, symétrie et non-régression R24.
-- [Contrat et recette WinUAE visuelle](../docs/M10_RECT_OVERLAP_R25.md) : rectangle fixe bleu, rectangle mobile vert/rouge. **Pas de PASS CI/WinUAE R25 annoncé avant exécution.**
+- [Test AMOS visuel actuel](../tests/current/M10_R25_RECT_OVERLAP_VISUAL_01.asc) et [contrat WinUAE](../docs/M10_RECT_OVERLAP_R25.md) : rectangle fixe bleu, rectangle mobile vert/rouge. **Gate A CPU/CI PASS 704 cas** ([CI préflight](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42915887294)); **Gate B WinUAE NON TESTÉE**.
 
 ## M9 — R24 0.9.0 : Hotspot Hit (Gate A CPU/CI + Gate B WinUAE PASS)
 

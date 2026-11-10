@@ -58,8 +58,10 @@ jobs:
         run: python -B tools/test_examples.py
       - name: Validate M7 Copper API staging contract (static only)
         run: python -B tools/test_m7_copper_contract.py
-      - name: Check AMOS Copper function syntax in active and archived tests
+      - name: Check AMOS Copper/Mouse/Hotspot/Rect function syntax
         run: python -B tools/test_amos_copper_syntax.py
+      - name: Check AMOS block syntax in the unique active test
+        run: python -B tools/test_current_amos_blocks.py
       - name: Verify safe native 68000 source export (R23 strict)
         run: |
           python -B -m unittest discover -s tests -p 'test_native_source.py' -v
@@ -67,18 +69,20 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M10 R25 AABB rectangle overlap — CPU 68000 preflight only
+      - name: M10 R25 AABB rectangle overlap — 68000 CPU plus current candidate integrity
         run: |
           python -B tools/test_m10_rect_overlap_r25.py
-          python -B tools/build_m10_rect_overlap_r25.py --emit-base64
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
+          python -B tools/build_m10_rect_overlap_r25.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m10_rect_overlap_r25 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R25 candidate matches',info)"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
 
-      - name: M9 R24 Hotspot Hit — CPU 68000 and active binary integrity
+      - name: M9 R24 Hotspot Hit — frozen 68000 archive regression
         run: |
           python -B tools/test_m9_hotspot_hit_r24.py
           python -B tools/build_m9_hotspot_hit_r24.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m9_hotspot_hit_r24 import build,ARCHIVE,DEST; binary, info=build(); assert binary==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R24 candidate matches',info)"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m9_hotspot_hit_r24 import build,ARCHIVE; binary, info=build(); assert binary==ARCHIVE.read_bytes(); print('Frozen R24 archive matches',info)"
+          sha256sum dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
 
       - name: R23 IDCMP mouse + RAWKEY FIFO — frozen archive regression
