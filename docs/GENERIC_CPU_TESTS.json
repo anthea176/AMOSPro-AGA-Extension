@@ -1,0 +1,220 @@
+{
+  "candidate_sha256": "b9bcf0efc444edc6d284988feabebcc33cd7ad88b21f1231ff155380f1b5941a",
+  "files": [
+    {
+      "file": "examples/demo.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_DEMO_320x256_256c.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/AGA_TESTCARD_320x256_256C.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/DBLNTSC_320x200.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/DBLPAL_320x256.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/HAM6_PAL_320x256.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/HAM8_PAL_320x256.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/SHIRES_LACE_PAL_1280x512.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/SHIRES_PAL_1280x256.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TESTCARD_320x256_256C.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/beijita.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/Champoo_aga.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/city_hunter_aga.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/Etoile.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/gohan.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/Infermiere.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/Kyoko.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/lunch.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/miho.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/modoka.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/modoka2.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/ranma-chan&san.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/ranma_&_genma.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/shina.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/shunsuke.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/soyokaze.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/Urusei_yatsura.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/valis decors.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/valis.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    },
+    {
+      "file": "iff-TEST/WBgunnm.iff",
+      "cpu_decode": "PASS",
+      "all_palette_indices": "PASS",
+      "picinfo_fields": "PASS",
+      "open_tags": "PASS"
+    }
+  ],
+  "malformed_cases": 127,
+  "mismatch_cases": 5,
+  "allocation_failures": 3,
+  "synthetic_cases": 12,
+  "limitation": "Mocked AmigaOS calls: not a visual/WinUAE/AMOS Compiler validation."
+}

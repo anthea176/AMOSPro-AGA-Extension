@@ -1,0 +1,19 @@
+{
+  "candidate_sha256": "e6dd32ceda1181ef3172dfb242a1d4fc93656c6788023d7b1333dc2561ed3dce",
+  "candidate_size": 7956,
+  "tests": {
+    "only_ap20_entry_10_changed": "PASS",
+    "generic_ilbm_r2_and_picinfo_identical": "PASS",
+    "ctrl_c_key_window_close_identical": "PASS",
+    "r6_invalid_pointer_opcodes_reproduced": "PASS",
+    "r7_both_dbufinfo_pointers_plus_4": "PASS",
+    "all_local_branches_reassembled": "PASS",
+    "cpu_alloc_screenbuffers_and_ports": "PASS",
+    "cpu_dbufinfo_replyport_writes": "PASS",
+    "cpu_68000_registers_and_abi": "PASS",
+    "cpu_double_buffer_idempotent": "PASS",
+    "cpu_partial_allocation_failure_paths": "PASS",
+    "cpu_no_swap_close_after_allocation": "PASS"
+  },
+  "limitation": "68000 CPU with mocked system calls only. Real WinUAE/AMOS Aga Double Buffer + Close needs validation; Aga Swap/Close remains unsafe pending Safe/Disp notification synchronization."
+}

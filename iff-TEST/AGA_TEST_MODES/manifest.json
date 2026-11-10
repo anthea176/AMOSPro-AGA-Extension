@@ -1,0 +1,102 @@
+[
+  {
+    "file": "HAM6_PAL_320x256.iff",
+    "w": 320,
+    "h": 256,
+    "depth": 6,
+    "camg": "$00021800",
+    "cmap_entries": 16,
+    "compression": "ByteRun1",
+    "form_bytes": 37556,
+    "body_bytes": 37440,
+    "sha256": "6595bd6cc79d6be0d7ad9b4b03b873da04a780a3ca374c55ee19648e929b9af9",
+    "reference_png": "HAM6_PAL_320x256.png",
+    "op_counts": {
+      "0": 16371,
+      "1": 52554,
+      "3": 6500,
+      "2": 6495
+    },
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  },
+  {
+    "file": "HAM8_PAL_320x256.iff",
+    "w": 320,
+    "h": 256,
+    "depth": 8,
+    "camg": "$00021800",
+    "cmap_entries": 64,
+    "compression": "ByteRun1",
+    "form_bytes": 55858,
+    "body_bytes": 55597,
+    "sha256": "a6e4c374952c46287c72651627bed37ca7e521930b4b8d2707c9cf2d848309ac",
+    "reference_png": "HAM8_PAL_320x256.png",
+    "op_counts": {
+      "0": 14065,
+      "1": 46481,
+      "3": 10524,
+      "2": 10850
+    },
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  },
+  {
+    "file": "SHIRES_PAL_1280x256.iff",
+    "w": 1280,
+    "h": 256,
+    "depth": 4,
+    "camg": "$00029020",
+    "cmap_entries": 16,
+    "compression": "ByteRun1",
+    "form_bytes": 23268,
+    "body_bytes": 23152,
+    "sha256": "6e34cf0bf3ae4c34931a31f04609c6e9bb9a56cdb2be644825a82084b11c215c",
+    "reference_png": "SHIRES_PAL_1280x256.png",
+    "op_counts": {},
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  },
+  {
+    "file": "SHIRES_LACE_PAL_1280x512.iff",
+    "w": 1280,
+    "h": 512,
+    "depth": 4,
+    "camg": "$00029024",
+    "cmap_entries": 16,
+    "compression": "ByteRun1",
+    "form_bytes": 46714,
+    "body_bytes": 46597,
+    "sha256": "992f8f541b0c158a527c2a99b7b0bfcfb5aea61091f21e0fa1bb8c018bbccd97",
+    "reference_png": "SHIRES_LACE_PAL_1280x512.png",
+    "op_counts": {},
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  },
+  {
+    "file": "DBLPAL_320x256.iff",
+    "w": 320,
+    "h": 256,
+    "depth": 4,
+    "camg": "$000A1000",
+    "cmap_entries": 16,
+    "compression": "ByteRun1",
+    "form_bytes": 16558,
+    "body_bytes": 16442,
+    "sha256": "c53f8a3824aae227da7f4ac522e2c900b98147ad43bbb947005d06f35b1205c2",
+    "reference_png": "DBLPAL_320x256.png",
+    "op_counts": {},
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  },
+  {
+    "file": "DBLNTSC_320x200.iff",
+    "w": 320,
+    "h": 200,
+    "depth": 4,
+    "camg": "$00091000",
+    "cmap_entries": 16,
+    "compression": "ByteRun1",
+    "form_bytes": 12720,
+    "body_bytes": 12604,
+    "sha256": "eb9fce053d92bbb71cde865944e7f58e7c0130ac882919a4576b7c7b6690b975",
+    "reference_png": "DBLNTSC_320x200.png",
+    "op_counts": {},
+    "status": "structure, ByteRun1, planar indices and HAM decode verified in Python; NOT WinUAE-tested"
+  }
+]

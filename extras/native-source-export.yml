@@ -1,0 +1,35 @@
+name: AGA native assembler source (read-only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tools/generate_aga_native_source.py'
+      - 'tools/decoder68k.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: aga-native-source-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  export-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Export native source, reject unknown code ranges
+        run: |
+          python tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out asm-artifact --baseline auto --strict
+      - name: Validate R19 delta and generic export
+        run: |
+          python -m unittest discover -s tests -p test_native_source.py -v
+      - name: Upload source without changing the repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: aga-native-asm-${{ github.sha }}
+          path: asm-artifact/
+          retention-days: 14

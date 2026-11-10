@@ -1,0 +1,16 @@
+{
+  "candidate_sha256": "729fc13efbaa710a371048353368ffe3dd5af0a23d0043d1e6ee3bcf2e5330d9",
+  "candidate_size": 7948,
+  "status": "R6_STATIC_PASS__68000_CI_PENDING__WINUAE_FRONT_PENDING",
+  "tests": {
+    "hunk_ap20_integrity": "STATIC PASS",
+    "r5_segments_0_to_16_identical": "STATIC PASS",
+    "r5_ctrl_branch_offset_unchanged": "STATIC PASS",
+    "official_amos_wb_instruction_encoding": "STATIC PASS",
+    "r6_aga_key_front_before_break": "CPU CI PENDING",
+    "r6_aga_wait_key_front_before_break": "CPU CI PENDING",
+    "r6_abi_and_idcmp_cleanup": "CPU CI PENDING",
+    "r6_amos_screen_foreground": "WINUAE RUNTIME PENDING"
+  },
+  "note": "R5 Ctrl+C native abort is confirmed by user; Workbench still front. R6 inserts native graphics dispatcher AMOS_WB(1) before R5 Test_PaSaut. Static binary proofs passed; full CPU tests and actual foreground restoration still require execution."
+}

@@ -1,0 +1,156 @@
+{
+  "sha256": "18fdfd059bd6f15f5a0d42eeb9d628a71ee4110849d8bb781a67db9575f93803",
+  "files": [
+    {
+      "file": "examples/demo.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_DEMO_320x256_256c.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/AGA_TESTCARD_320x256_256C.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/DBLNTSC_320x200.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/DBLPAL_320x256.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/HAM6_PAL_320x256.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/HAM8_PAL_320x256.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/SHIRES_LACE_PAL_1280x512.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TEST_MODES/SHIRES_PAL_1280x256.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/AGA_TESTCARD_320x256_256C.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/beijita.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/Champoo_aga.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/city_hunter_aga.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/Etoile.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/gohan.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/Infermiere.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/Kyoko.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/lunch.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/miho.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/modoka.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/modoka2.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/ranma-chan&san.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/ranma_&_genma.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/shina.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/shunsuke.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/soyokaze.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/Urusei_yatsura.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/valis decors.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/valis.iff",
+      "r1_delayed_blit": "last plane erased",
+      "r2_delayed_blit": "PASS"
+    },
+    {
+      "file": "iff-TEST/WBgunnm.iff",
+      "r1_delayed_blit": "not observable (empty last plane)",
+      "r2_delayed_blit": "PASS"
+    }
+  ],
+  "limitation": "Deferred blit model validates ordering; runtime visual validation still required."
+}

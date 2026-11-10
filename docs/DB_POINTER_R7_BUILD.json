@@ -1,0 +1,40 @@
+{
+  "version": "0.5.8",
+  "source": "dist/experimental/AMOSPro_AGA_M5_v0.5.7_INTUITION_INPUT_R6.Lib",
+  "source_sha256": "729fc13efbaa710a371048353368ffe3dd5af0a23d0043d1e6ee3bcf2e5330d9",
+  "size": 7956,
+  "sha256": "e6dd32ceda1181ef3172dfb242a1d4fc93656c6788023d7b1333dc2561ed3dce",
+  "modified_ap20_segments": [
+    10
+  ],
+  "byte_identical_except_db": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "bad_pointer_encoded": "2068 4a80 (MOVEA.L $4A80(A0),A0)",
+  "corrected_pointer_encoded": "2068 0004 2008 4a80 (MOVEA.L 4(A0),A0; MOVE.L A0,D0; TST.L D0)",
+  "screenbuffer_struct_offset": 4,
+  "safe_replyport_offset_from_dbufinfo": 22,
+  "disp_replyport_offset_from_dbufinfo": 54,
+  "generic_ilbm_r2_unchanged": true,
+  "picinfo_unchanged": true,
+  "ctrl_c_and_close_unchanged": true,
+  "warning": "R7 does NOT fix pending Safe/Disp notifications after Aga Swap. Do not run Swap/Close tests until a separate fix.",
+  "runtime": "NOT VALIDATED"
+}

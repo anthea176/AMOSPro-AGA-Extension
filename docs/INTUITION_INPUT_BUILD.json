@@ -1,0 +1,123 @@
+{
+  "base": "dist/experimental/AMOSPro_AGA_M5_v0.5.6_INTUITION_INPUT_R5.Lib",
+  "base_sha256": "3de03160c458f5c6990e18e450ef9d0a34ada950b59d83dd8cc2fbac271f29c5",
+  "sha256": "729fc13efbaa710a371048353368ffe3dd5af0a23d0043d1e6ee3bcf2e5330d9",
+  "size": 7948,
+  "version": "0.5.7",
+  "state_offsets": {
+    "Screen*": 0,
+    "IntuitionBase": 4,
+    "GfxBase": 8,
+    "width": 12,
+    "height": 16,
+    "colors": 20,
+    "ModeID": 24,
+    "depth": 28,
+    "DBState*": 32,
+    "Window*": 36,
+    "size": 40
+  },
+  "commands": {
+    "Aga Key": 17,
+    "Aga Wait Key": 18
+  },
+  "modified_existing_segments": [
+    0,
+    6,
+    8
+  ],
+  "new_segments": [
+    17,
+    18
+  ],
+  "generic_ilbm_integrity": {
+    "Generic ILBM R2": {
+      "segment": 13,
+      "base_sha256": "d5784dcbe1394cf8b20fb6562edc57826bdca597eaa055e6d5d0f9e26d0fe549",
+      "candidate_sha256": "d5784dcbe1394cf8b20fb6562edc57826bdca597eaa055e6d5d0f9e26d0fe549",
+      "byte_for_byte_identical": true
+    },
+    "PicInfo": {
+      "segment": 14,
+      "base_sha256": "8da83c51453fb625c6f321afd8100409922388f7ff054392923f48aeef687f86",
+      "candidate_sha256": "8da83c51453fb625c6f321afd8100409922388f7ff054392923f48aeef687f86",
+      "byte_for_byte_identical": true
+    }
+  },
+  "forbidden_waits": {
+    "Exec Wait": false,
+    "WaitPort": false,
+    "Aga Wait Key uses WaitTOF": true
+  },
+  "ctrl_c": {
+    "rawkey_c": 51,
+    "qualifier_control": 8,
+    "amos_T_Actualise_offset": -168,
+    "amos_BitControl": 8,
+    "propagation": "Window-first full AGA teardown, then native AMOS BitControl; BREAK ON/OFF runtime validation required",
+    "runtime_validation": "REQUIRED"
+  },
+  "register_contracts": {
+    "Aga Key": {
+      "inputs": "none",
+      "outputs": "D3=-1 or raw key-down 0..127; D2=0",
+      "preserved": "D0,D1,D4-D7,A0-A6 (A5 untouched)",
+      "modified": "D2,D3,CCR",
+      "stack": "balanced"
+    },
+    "Aga Wait Key": {
+      "inputs": "none",
+      "outputs": "D3=raw key-down 0..127; D2=0; -1 only if AGA input context vanished",
+      "preserved": "D0,D1,D4-D7,A0-A6 (A5 untouched)",
+      "modified": "D2,D3,CCR",
+      "stack": "balanced"
+    },
+    "OpenWindow helper": {
+      "inputs": "A2=runtime state; D7=ModeID",
+      "outputs": "D3=1 success / 0 failure",
+      "modified": "D3,CCR; all other D/A registers restored locally",
+      "stack": "balanced; 48-byte NewWindow is stack-owned"
+    },
+    "CloseWindow before DB helper": {
+      "inputs": "A2=runtime state",
+      "outputs": "A4=DBState* (may be NULL); Window* cleared after CloseWindow",
+      "modified": "D0,A0,A1,A3,A4,A6,CCR (outer routine preserves)",
+      "stack": "balanced; called before any Double Buffer or Screen free"
+    }
+  },
+  "ap20_issues": [],
+  "r4_delta": {
+    "modified_r3_segments": [
+      18
+    ],
+    "aga_key": "Unchanged; raw Ctrl key-down still returns 99",
+    "aga_wait_key": "Ignores Ctrl-only RAWKEY $63; Ctrl+C uses existing native AMOS break path",
+    "existing_pc_relative_offsets": "Unchanged: branch to append-only stub",
+    "r3_other_segments_identical": true,
+    "runtime_validation": "REQUIRED"
+  },
+  "r5_delta": {
+    "modified_r4_segments": [
+      17,
+      18
+    ],
+    "remaining_segments_identical": true,
+    "control_break_flags": "BitControl ($0100) | BitVBL ($8000)",
+    "amos_native_dispatch": "AP20 Rjsr L_Test_PaSaut (entry 140)",
+    "amos_break_on_off": "Delegated to native AMOS Test_Force",
+    "ctrl_qualifier": "IEQUALIFIER_CONTROL on RAWKEY C",
+    "runtime_validation": "REQUIRED: interpreter and compiled"
+  },
+  "r6_delta": {
+    "modified_r5_segments": [
+      17,
+      18
+    ],
+    "all_other_segments_byte_identical": true,
+    "amos_front_source": "+WEqu.s T_EcVect=-8; +Equ.s AMOS_WB=72",
+    "amos_front_encoding": "7201206dfff84ea80120",
+    "ctrl_c_sequence": "ReplyMsg -> R3 cleanup -> native AMOS_WB(1) -> restore regs -> AMOS Test_PaSaut",
+    "amos_break_runtime": "R5 user-confirmed PASS, Workbench remained front",
+    "amos_front_runtime": "REQUIRES WinUAE confirmation"
+  }
+}

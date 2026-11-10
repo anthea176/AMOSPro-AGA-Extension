@@ -1,0 +1,278 @@
+{
+  "source": "AP20 binary reconstructed using safe 68000 CFG disassembly",
+  "native_reassembly_verified": false,
+  "sha256": "32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295",
+  "size": 11744,
+  "title": "AMOSPro AGA M8 Mouse Position R19 0.8.3 | $VER: AMOSPro_AGA 0.8.3 |",
+  "entries": 30,
+  "decoded_instructions": 2998,
+  "decoded_code_bytes": 10770,
+  "total_segment_code_bytes": 10936,
+  "recognized_percent": 98.48,
+  "warning": "No native vasm/Genam byte-for-byte roundtrip proven. Data and unrecognized opcodes remain dc.b.",
+  "entry_reports": [
+    {
+      "id": 0,
+      "api": [],
+      "size": 636,
+      "decoded_bytes": 596,
+      "getp": false
+    },
+    {
+      "id": 1,
+      "api": [],
+      "size": 4,
+      "decoded_bytes": 0,
+      "getp": true
+    },
+    {
+      "id": 2,
+      "api": [],
+      "size": 16,
+      "decoded_bytes": 12,
+      "getp": true
+    },
+    {
+      "id": 3,
+      "api": [
+        "aga probe"
+      ],
+      "size": 16,
+      "decoded_bytes": 12,
+      "getp": true
+    },
+    {
+      "id": 4,
+      "api": [
+        "aga detect"
+      ],
+      "size": 96,
+      "decoded_bytes": 74,
+      "getp": true
+    },
+    {
+      "id": 5,
+      "api": [
+        "aga demo"
+      ],
+      "size": 334,
+      "decoded_bytes": 294,
+      "getp": true
+    },
+    {
+      "id": 6,
+      "api": [
+        "aga screen open"
+      ],
+      "size": 738,
+      "decoded_bytes": 698,
+      "getp": true
+    },
+    {
+      "id": 7,
+      "api": [
+        "aga screen pattern"
+      ],
+      "size": 150,
+      "decoded_bytes": 146,
+      "getp": true
+    },
+    {
+      "id": 8,
+      "api": [
+        "aga screen close"
+      ],
+      "size": 478,
+      "decoded_bytes": 474,
+      "getp": true
+    },
+    {
+      "id": 9,
+      "api": [
+        "aga wait vbl"
+      ],
+      "size": 30,
+      "decoded_bytes": 26,
+      "getp": true
+    },
+    {
+      "id": 10,
+      "api": [
+        "aga double buffer"
+      ],
+      "size": 290,
+      "decoded_bytes": 286,
+      "getp": true
+    },
+    {
+      "id": 11,
+      "api": [
+        "aga swap"
+      ],
+      "size": 252,
+      "decoded_bytes": 248,
+      "getp": true
+    },
+    {
+      "id": 12,
+      "api": [
+        "aga back fill"
+      ],
+      "size": 158,
+      "decoded_bytes": 154,
+      "getp": true
+    },
+    {
+      "id": 13,
+      "api": [
+        "aga iff load"
+      ],
+      "size": 2204,
+      "decoded_bytes": 2188,
+      "getp": true
+    },
+    {
+      "id": 14,
+      "api": [
+        "aga pic info"
+      ],
+      "size": 1542,
+      "decoded_bytes": 1530,
+      "getp": false
+    },
+    {
+      "id": 15,
+      "api": [],
+      "size": 58,
+      "decoded_bytes": 58,
+      "getp": false
+    },
+    {
+      "id": 16,
+      "api": [],
+      "size": 0,
+      "decoded_bytes": 0,
+      "getp": false
+    },
+    {
+      "id": 17,
+      "api": [
+        "aga key"
+      ],
+      "size": 684,
+      "decoded_bytes": 678,
+      "getp": false
+    },
+    {
+      "id": 18,
+      "api": [
+        "aga wait key"
+      ],
+      "size": 728,
+      "decoded_bytes": 718,
+      "getp": true
+    },
+    {
+      "id": 19,
+      "api": [
+        "aga blit copy"
+      ],
+      "size": 352,
+      "decoded_bytes": 348,
+      "getp": true
+    },
+    {
+      "id": 20,
+      "api": [
+        "aga blit fill"
+      ],
+      "size": 448,
+      "decoded_bytes": 444,
+      "getp": true
+    },
+    {
+      "id": 21,
+      "api": [
+        "aga blit clear"
+      ],
+      "size": 38,
+      "decoded_bytes": 38,
+      "getp": false
+    },
+    {
+      "id": 22,
+      "api": [
+        "aga copper clear"
+      ],
+      "size": 230,
+      "decoded_bytes": 226,
+      "getp": true
+    },
+    {
+      "id": 23,
+      "api": [
+        "aga copper on"
+      ],
+      "size": 172,
+      "decoded_bytes": 168,
+      "getp": true
+    },
+    {
+      "id": 24,
+      "api": [
+        "aga copper off"
+      ],
+      "size": 240,
+      "decoded_bytes": 236,
+      "getp": true
+    },
+    {
+      "id": 25,
+      "api": [
+        "aga copper wait"
+      ],
+      "size": 366,
+      "decoded_bytes": 362,
+      "getp": true
+    },
+    {
+      "id": 26,
+      "api": [
+        "aga copper move"
+      ],
+      "size": 328,
+      "decoded_bytes": 328,
+      "getp": false
+    },
+    {
+      "id": 27,
+      "api": [
+        "aga copper end"
+      ],
+      "size": 216,
+      "decoded_bytes": 212,
+      "getp": true
+    },
+    {
+      "id": 28,
+      "api": [
+        "aga mouse x"
+      ],
+      "size": 112,
+      "decoded_bytes": 108,
+      "getp": true
+    },
+    {
+      "id": 29,
+      "api": [
+        "aga mouse y"
+      ],
+      "size": 108,
+      "decoded_bytes": 108,
+      "getp": false
+    }
+  ],
+  "unclassified_regions": [],
+  "input_file": "/mnt/data/AMOSPro_AGA_R19.lib",
+  "output_file": "/mnt/data/aga_source_true/src/generated/AMOSPro_AGA_R19_NATIVE.s"
+}

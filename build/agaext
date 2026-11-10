@@ -1,0 +1,5 @@
+echo "Digesting AGA extension source"
+c/Library_Digest +AGA.s
+echo "Assembling AMOSPro_AGA.Lib"
+c/Genam FROM +AGA.s TO AMOS/APSystem/AMOSPro_AGA.Lib
+echo "M0 assembly complete - verify errors and output before installing"

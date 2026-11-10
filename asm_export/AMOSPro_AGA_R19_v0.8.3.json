@@ -1,0 +1,489 @@
+{
+  "format": "single-HUNK AP20",
+  "source_kind": "linked builder/checked binary (see build report)",
+  "builder": "F:\\[Github] AMOSPro-AGA-Extension\\tools\\build_m8_mouse_position_r19.py",
+  "sha256": "32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295",
+  "size_bytes": 11744,
+  "title": "AMOSPro AGA M8 Mouse Position R19 0.8.3 | $VER: AMOSPro_AGA 0.8.3 |",
+  "number_of_entries": 30,
+  "tokens": [
+    {
+      "offset": 0,
+      "instruction": 1,
+      "function": 0,
+      "name": "\u0000",
+      "signature": ""
+    },
+    {
+      "offset": 6,
+      "instruction": 3,
+      "function": 1,
+      "name": "aga probe",
+      "signature": "I"
+    },
+    {
+      "offset": 22,
+      "instruction": 1,
+      "function": 4,
+      "name": "aga detect",
+      "signature": "0"
+    },
+    {
+      "offset": 38,
+      "instruction": 1,
+      "function": 5,
+      "name": "aga demo",
+      "signature": "0"
+    },
+    {
+      "offset": 52,
+      "instruction": 1,
+      "function": 6,
+      "name": "aga screen open",
+      "signature": "00,0,0,0"
+    },
+    {
+      "offset": 80,
+      "instruction": 7,
+      "function": 1,
+      "name": "aga screen pattern",
+      "signature": "I"
+    },
+    {
+      "offset": 104,
+      "instruction": 8,
+      "function": 1,
+      "name": "aga screen close",
+      "signature": "I"
+    },
+    {
+      "offset": 126,
+      "instruction": 9,
+      "function": 1,
+      "name": "aga wait vbl",
+      "signature": "I"
+    },
+    {
+      "offset": 144,
+      "instruction": 1,
+      "function": 10,
+      "name": "aga double buffer",
+      "signature": "0"
+    },
+    {
+      "offset": 168,
+      "instruction": 1,
+      "function": 11,
+      "name": "aga swap",
+      "signature": "0"
+    },
+    {
+      "offset": 182,
+      "instruction": 12,
+      "function": 1,
+      "name": "aga back fill",
+      "signature": "I0"
+    },
+    {
+      "offset": 202,
+      "instruction": 1,
+      "function": 13,
+      "name": "aga iff load",
+      "signature": "02"
+    },
+    {
+      "offset": 222,
+      "instruction": 1,
+      "function": 14,
+      "name": "aga pic info",
+      "signature": "02,0"
+    },
+    {
+      "offset": 244,
+      "instruction": 1,
+      "function": 17,
+      "name": "aga key",
+      "signature": "0"
+    },
+    {
+      "offset": 258,
+      "instruction": 1,
+      "function": 18,
+      "name": "aga wait key",
+      "signature": "0"
+    },
+    {
+      "offset": 276,
+      "instruction": 1,
+      "function": 19,
+      "name": "aga blit copy",
+      "signature": "00,0,0,0,0,0"
+    },
+    {
+      "offset": 306,
+      "instruction": 1,
+      "function": 20,
+      "name": "aga blit fill",
+      "signature": "00,0,0,0,0"
+    },
+    {
+      "offset": 334,
+      "instruction": 1,
+      "function": 21,
+      "name": "aga blit clear",
+      "signature": "00,0,0,0"
+    },
+    {
+      "offset": 362,
+      "instruction": 1,
+      "function": 22,
+      "name": "aga copper clear",
+      "signature": "0"
+    },
+    {
+      "offset": 384,
+      "instruction": 1,
+      "function": 23,
+      "name": "aga copper on",
+      "signature": "0"
+    },
+    {
+      "offset": 404,
+      "instruction": 1,
+      "function": 24,
+      "name": "aga copper off",
+      "signature": "0"
+    },
+    {
+      "offset": 424,
+      "instruction": 1,
+      "function": 25,
+      "name": "aga copper wait",
+      "signature": "00,0"
+    },
+    {
+      "offset": 448,
+      "instruction": 1,
+      "function": 26,
+      "name": "aga copper move",
+      "signature": "00,0"
+    },
+    {
+      "offset": 472,
+      "instruction": 1,
+      "function": 27,
+      "name": "aga copper end",
+      "signature": "0"
+    },
+    {
+      "offset": 492,
+      "instruction": 1,
+      "function": 28,
+      "name": "aga mouse x",
+      "signature": "0"
+    },
+    {
+      "offset": 510,
+      "instruction": 1,
+      "function": 29,
+      "name": "aga mouse y",
+      "signature": "0"
+    }
+  ],
+  "segments": [
+    {
+      "index": 0,
+      "offset": 648,
+      "length": 636,
+      "names": [],
+      "getp_at_end": false,
+      "sha256": "c501b69e02cf8c35113685a07562e85e90adb7090f9ee1e6c4d1cc69afa0bb5c"
+    },
+    {
+      "index": 1,
+      "offset": 1284,
+      "length": 4,
+      "names": [],
+      "getp_at_end": true,
+      "sha256": "e593079a9a072f98fb42d609c521d7a073a11850f1fe5c275db4762dba98b31b"
+    },
+    {
+      "index": 2,
+      "offset": 1288,
+      "length": 16,
+      "names": [],
+      "getp_at_end": true,
+      "sha256": "09d81e1837cdd14566824d3edf380d53ab651293c26adcbe9790fdbf62906f66"
+    },
+    {
+      "index": 3,
+      "offset": 1304,
+      "length": 16,
+      "names": [
+        "aga probe [cmd]"
+      ],
+      "getp_at_end": true,
+      "sha256": "09d81e1837cdd14566824d3edf380d53ab651293c26adcbe9790fdbf62906f66"
+    },
+    {
+      "index": 4,
+      "offset": 1320,
+      "length": 96,
+      "names": [
+        "aga detect [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "d2cf1b1d3fa2fc26d2209837dbda3a743bbc3f6fe71f47bfbeb7b67767077d0e"
+    },
+    {
+      "index": 5,
+      "offset": 1416,
+      "length": 334,
+      "names": [
+        "aga demo [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "497cb4f6d98f98179e6024747cd5f482e1d89e51af2ce1b548ad33b1feebda18"
+    },
+    {
+      "index": 6,
+      "offset": 1750,
+      "length": 738,
+      "names": [
+        "aga screen open [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "fc3d03c2e065cb893b383ef07bf10610cb6507280fc3d1d8e8b3de343bf0be8b"
+    },
+    {
+      "index": 7,
+      "offset": 2488,
+      "length": 150,
+      "names": [
+        "aga screen pattern [cmd]"
+      ],
+      "getp_at_end": true,
+      "sha256": "72118e16c951437737bf14173f9bea18607f48d36b8039b8a93b98e810c5bc4f"
+    },
+    {
+      "index": 8,
+      "offset": 2638,
+      "length": 478,
+      "names": [
+        "aga screen close [cmd]"
+      ],
+      "getp_at_end": true,
+      "sha256": "890cd7ef62c92630eeccc312f1d8debdeb72226eff05694e4d022f4b76320435"
+    },
+    {
+      "index": 9,
+      "offset": 3116,
+      "length": 30,
+      "names": [
+        "aga wait vbl [cmd]"
+      ],
+      "getp_at_end": true,
+      "sha256": "0fa4e8fd969bc0766e8159b0eb0df7dfff20a15212e6ab647623e5ce63144444"
+    },
+    {
+      "index": 10,
+      "offset": 3146,
+      "length": 290,
+      "names": [
+        "aga double buffer [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "3aa758e1a396e8bbcd6e489a90b82c37b97651d1b5bf2b81d895cb08289e0f25"
+    },
+    {
+      "index": 11,
+      "offset": 3436,
+      "length": 252,
+      "names": [
+        "aga swap [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "93b34a1d184bdf46cf1e1d43e3fe9654e7298d4d34d325c574f577fb37046bc4"
+    },
+    {
+      "index": 12,
+      "offset": 3688,
+      "length": 158,
+      "names": [
+        "aga back fill [cmd]"
+      ],
+      "getp_at_end": true,
+      "sha256": "0961ce16b96e12aeb338f6ff42298ce1fe8d0d510cd860dbd5c51a39a4bc2b6c"
+    },
+    {
+      "index": 13,
+      "offset": 3846,
+      "length": 2204,
+      "names": [
+        "aga iff load [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "d5784dcbe1394cf8b20fb6562edc57826bdca597eaa055e6d5d0f9e26d0fe549"
+    },
+    {
+      "index": 14,
+      "offset": 6050,
+      "length": 1542,
+      "names": [
+        "aga pic info [fn]"
+      ],
+      "getp_at_end": false,
+      "sha256": "e525530f8387e1166824b766c26c8a4cdc7e567d85b35ddbf22ba7d59595f1b6"
+    },
+    {
+      "index": 15,
+      "offset": 7592,
+      "length": 58,
+      "names": [],
+      "getp_at_end": false,
+      "sha256": "b2283b432564839f5ef5d4fc5686672b48e4a67fda5b9ed09cd6b5afd3b1f0ee"
+    },
+    {
+      "index": 16,
+      "offset": 7650,
+      "length": 0,
+      "names": [],
+      "getp_at_end": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "index": 17,
+      "offset": 7650,
+      "length": 684,
+      "names": [
+        "aga key [fn]"
+      ],
+      "getp_at_end": false,
+      "sha256": "940ee56ece0ae255b7ebb8fba46a5366d67fb242a5ee5f369463a42a1927023e"
+    },
+    {
+      "index": 18,
+      "offset": 8334,
+      "length": 728,
+      "names": [
+        "aga wait key [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "f1f96e53e15f1488e7dc7f0147c81ae7b65e667b4c429ef7e72a73682f4f99ab"
+    },
+    {
+      "index": 19,
+      "offset": 9062,
+      "length": 352,
+      "names": [
+        "aga blit copy [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "24efb206d75256dc6fd9dcf57a84346f0839fe0b287acf4597846f7679aa7efd"
+    },
+    {
+      "index": 20,
+      "offset": 9414,
+      "length": 448,
+      "names": [
+        "aga blit fill [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "3f1b513df6ae5dd02a6fde584653f31cb798d24f982b79638d7a3f593ae46ad2"
+    },
+    {
+      "index": 21,
+      "offset": 9862,
+      "length": 38,
+      "names": [
+        "aga blit clear [fn]"
+      ],
+      "getp_at_end": false,
+      "sha256": "645a8e1e884e4ad49afb8f88ec7f8f0bd1d89c5040fbe64a03afaff1c35fa573"
+    },
+    {
+      "index": 22,
+      "offset": 9900,
+      "length": 230,
+      "names": [
+        "aga copper clear [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "439930bce77d11cf0bafde01f8509a7f8cbc574b8c5120a4d45453ee956fb27e"
+    },
+    {
+      "index": 23,
+      "offset": 10130,
+      "length": 172,
+      "names": [
+        "aga copper on [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "e08f647a51e01ed4809bd102b50bd22b0f7c0ce67667aa160371ab29426b5f95"
+    },
+    {
+      "index": 24,
+      "offset": 10302,
+      "length": 240,
+      "names": [
+        "aga copper off [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "6be48c769954467cd759244d6da190f2651212ec896f1e058ec109e9b5554d0a"
+    },
+    {
+      "index": 25,
+      "offset": 10542,
+      "length": 366,
+      "names": [
+        "aga copper wait [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "a90613b3504f81d926902dac6f9234a71c6761df596316c3b7a0ab5118c5c4c7"
+    },
+    {
+      "index": 26,
+      "offset": 10908,
+      "length": 328,
+      "names": [
+        "aga copper move [fn]"
+      ],
+      "getp_at_end": false,
+      "sha256": "21f0fcb0c74ce055aaa1bb6866a1d0a8204d5dc7f6b059c5d4b40ac3cd9d3249"
+    },
+    {
+      "index": 27,
+      "offset": 11236,
+      "length": 216,
+      "names": [
+        "aga copper end [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "9deba8e6ee0acfb5430c90e282ee966e2c39b8dd4d7a740dfb14e033f5d2c993"
+    },
+    {
+      "index": 28,
+      "offset": 11452,
+      "length": 112,
+      "names": [
+        "aga mouse x [fn]"
+      ],
+      "getp_at_end": true,
+      "sha256": "d2805243eec6c916fabf638e8542edf25b4d8fa7714441e1ce7f10288f1f5cee"
+    },
+    {
+      "index": 29,
+      "offset": 11564,
+      "length": 108,
+      "names": [
+        "aga mouse y [fn]"
+      ],
+      "getp_at_end": false,
+      "sha256": "3a38a715e3f53f0940c9405e8dca2d1b45fafd61646182829457a11fcabab886"
+    }
+  ],
+  "capstone_used": false,
+  "warning": "Disassembly is heuristic. Exact .s uses literal DC.W/DC.B; historical symbols are not recoverable.",
+  "input_lib": "F:\\[Github] AMOSPro-AGA-Extension\\dist\\AMOSPro_AGA.Lib",
+  "in_memory_build_report": "{'mode': 'verified-archive', 'archive': 'F:\\\\[Github] AMOSPro-AGA-Extension\\\\dist\\\\experimental\\\\AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib', 'sha256': '32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295'}"
+}

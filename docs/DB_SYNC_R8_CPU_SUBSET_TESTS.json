@@ -1,0 +1,15 @@
+{
+  "candidate_sha256": "112dce3e7945a235430a0263e309126061639de0d8dcc0d9c319431b0f2f27a2",
+  "candidate_size": 8772,
+  "tests": {
+    "cpu_subset_swap_initial_marks_both_pending": "PASS",
+    "cpu_subset_rejects_swap_while_pending_and_consumes_replies": "PASS",
+    "cpu_subset_failed_changescreenbuffer_no_pending": "PASS",
+    "cpu_subset_no_pending_close_and_ctrl_c_path": "PASS",
+    "cpu_subset_two_immediate_replies_allow_cleanup": "PASS",
+    "cpu_subset_delayed_notifications_waittof_cooperatively": "PASS",
+    "cpu_subset_timeout_does_not_free_or_trigger_ctrl_c": "PASS",
+    "cpu_subset_partial_reply_preserves_missing_disp_pending": "PASS"
+  },
+  "limitation": "CPU instruction-subset test of newly emitted code paths with mocked OS calls. Not independent Unicorn, not real AmigaOS / WinUAE runtime. Existing close and Ctrl+C core are trapped at untouched entry points."
+}

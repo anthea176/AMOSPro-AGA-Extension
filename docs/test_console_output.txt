@@ -1,0 +1,18 @@
+{
+  "candidate_sha256": "112dce3e7945a235430a0263e309126061639de0d8dcc0d9c319431b0f2f27a2",
+  "candidate_size": 8772,
+  "results": {
+    "r7_baseline_sha_and_r8_deterministic": "PASS",
+    "r7_unchanged_all_non_swap_code_and_loader": "PASS",
+    "all_preflight_branches_and_no_waitport": "PASS",
+    "pending_flags_exactly_two_and_no_db_replymsg": "PASS",
+    "model_delayed_replies_failed_swap_and_timeout_fail_closed": "PASS",
+    "model_2000_randomized_swap_and_close_sequences": "PASS"
+  },
+  "critical_limitations": [
+    "Static byte-level and reference state-machine tests only, not actual MC68000 execution.",
+    "Unicorn CPU tests not executed in local environment (unavailable).",
+    "AmigaOS/WinUAE runtime including Ctrl+C with pending swap not tested.",
+    "R8 is not pushed to GitHub until GitHub connector service recovers."
+  ]
+}

@@ -1,0 +1,11 @@
+[INFO] Identical versioned archive: F:\[Github] AMOSPro-AGA-Extension\dist\experimental\AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib
+[INFO] Python builder: F:\[Github] AMOSPro-AGA-Extension\tools\build_m8_mouse_position_r19.py
+[INFO] Exporting checked .Lib without executing build().
+[INFO] To also rebuild in memory: --verify-builder
+OK: F:\[Github] AMOSPro-AGA-Extension\asm_export\AMOSPro_AGA_R19_v0.8.3.s
+OK: F:\[Github] AMOSPro-AGA-Extension\asm_export\AMOSPro_AGA_R19_v0.8.3.lst
+OK: F:\[Github] AMOSPro-AGA-Extension\asm_export\AMOSPro_AGA_R19_v0.8.3.json
+SHA256: 32c99d9d83affda67058fede26731dace6511ebc033b7974330e6f9eef39e295
+[INFO] Capstone not installed; mnemonic listing is hex-only.
+       Optional: py -3 -m pip install capstone
+[INFO] Source is exact DC.W/DC.B, not the original Genam code.

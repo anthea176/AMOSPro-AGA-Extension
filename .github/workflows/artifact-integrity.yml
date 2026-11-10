@@ -1,0 +1,148 @@
+name: Artifact integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artifact-integrity.yml"
+      - "README.md"
+      - "README.fr.md"
+      - "INSTALL.md"
+      - "INSTALL.fr.md"
+      - "examples/**"
+      - "EXTENSION_SOURCE_RULES.md"
+      - "docs/GENERIC_CPU_TESTS.json"
+      - "docs/GENERIC_R2_CPU_TESTS.json"
+      - "docs/GENERIC_R2_VALIDATION.json"
+      - "docs/ILBM_INVENTORY.json"
+      - "docs/ILBM_INVENTORY.md"
+      - "archive/**/*.Lib"
+      - "dist/**/*.Lib"
+      - "tools/build_*.py"
+      - "tools/test_*.py"
+      - "tests/current/*.asc"
+      - "tests/passed/*.asc"
+      - "tools/audit_ap20.py"
+      - "tools/check_no_blocking_waits.py"
+      - "tools/verify_artifacts.py"
+      - "tools/m8_idcmp_r23_emit.py"
+      - "tools/m9_hotspot_r24_emit.py"
+      - "tools/m68k_emit.py"
+      - "tools/validate_ilbm.py"
+      - "tools/decoder68k.py"
+      - "tools/generate_aga_native_source.py"
+      - "tests/test_native_source.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artifact-integrity-main
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify current HUNK files and exact committed artifacts
+        run: python -B tools/verify_artifacts.py
+      - name: Verify every AP20 instruction/function is documented in README
+        run: python -B tools/test_readme_api_coverage.py
+      - name: Verify five distribution examples (static syntax, ILBM and packaging)
+        run: python -B tools/test_examples.py
+      - name: Validate M7 Copper API staging contract (static only)
+        run: python -B tools/test_m7_copper_contract.py
+      - name: Check AMOS Copper function syntax in active and archived tests
+        run: python -B tools/test_amos_copper_syntax.py
+      - name: Verify safe native 68000 source export (R23 strict)
+        run: |
+          python -B -m unittest discover -s tests -p 'test_native_source.py' -v
+          python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-native --baseline none --strict
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+      - name: Install 68000 verification dependencies
+        run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M9 R24 Hotspot Hit — CPU 68000 and active binary integrity
+        run: |
+          python -B tools/test_m9_hotspot_hit_r24.py
+          python -B tools/build_m9_hotspot_hit_r24.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m9_hotspot_hit_r24 import build,ARCHIVE,DEST; binary, info=build(); assert binary==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R24 candidate matches',info)"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
+
+      - name: R23 IDCMP mouse + RAWKEY FIFO — frozen archive regression
+        run: |
+          python -B tools/test_m8_idcmp_r23_preflight.py
+          python -B tools/build_m8_idcmp_r23.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_idcmp_r23 import build,ARCHIVE; binary,info=build(); assert binary==ARCHIVE.read_bytes(); print('Frozen R23 archive matches',info)"
+          sha256sum dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib
+
+      - name: Validate every repository ILBM and execute current CPU tests
+        run: |
+          python -B tools/validate_ilbm.py
+          python -B tools/test_m5_generic.py
+          python -B tools/test_m5_generic_r2.py
+          python -B tools/test_ntsc_pal_r10.py
+          python -B tools/test_newscreen_a0_r12.py
+          python -B tools/check_no_blocking_waits.py
+          git diff --exit-code -- docs/ILBM_INVENTORY.json docs/ILBM_INVENTORY.md docs/GENERIC_CPU_TESTS.json
+          git diff --exit-code -- docs/GENERIC_R2_CPU_TESTS.json docs/GENERIC_R2_VALIDATION.json
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib
+
+      - name: Validate R15 Clear, R14 Fill and R13 Copy regressions on 68000
+        run: |
+          python -B tools/test_m6_blit_copy_r13.py
+          python -B tools/test_m6_blit_fill_r14.py
+          python -B tools/test_m6_blit_clear_r15.py
+
+      - name: Regression R16 Copper Clear native 68000 ABI and ownership
+        run: |
+          python -B tools/test_m7_copper_clear_r16.py
+          python -B tools/build_m7_copper_clear_r16.py
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.0_COPPER_CLEAR_R16.Lib
+
+      - name: Validate frozen R17 Copper On/Off CPU regression
+        run: |
+          python -B tools/test_m7_copper_on_off_r17.py
+          python -B tools/build_m7_copper_on_off_r17.py
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.1_COPPER_ON_OFF_R17.Lib
+
+      - name: Regression R18 native Copper Wait/Move/End (archived)
+        run: |
+          python -B tools/test_m7_copper_raster_r18.py
+          python -B tools/build_m7_copper_raster_r18.py
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.2_COPPER_RASTER_R18.Lib
+
+      - name: Validate frozen R19 native mouse position regression
+        run: |
+          python -B tools/test_m8_mouse_position_r19.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_position_r19 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib
+
+      - name: Regression R20 native mouse buttons, frozen archive
+        run: |
+          python -B tools/test_m8_mouse_buttons_r20.py
+          python -B tools/build_m8_mouse_buttons_r20.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_buttons_r20 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.4_MOUSE_BUTTONS_R20.Lib
+
+      - name: Regression R21 RMBTRAP frozen 68000 code
+        run: |
+          python -B tools/test_m8_rmbtrap_r21.py
+          python -B tools/build_m8_rmbtrap_r21.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_rmbtrap_r21 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib
+
+      - name: Regression R22 frozen mouse edge CPU ABI (archive only)
+        run: |
+          python -B tools/test_m8_mouse_edges_r22.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_edges_r22 import build,ARCHIVE; assert build()[0]==ARCHIVE.read_bytes()"
+          sha256sum dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib
+          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib dist/AMOSPro_AGA.Lib

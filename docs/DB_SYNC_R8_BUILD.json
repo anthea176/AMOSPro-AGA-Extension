@@ -1,0 +1,24 @@
+{
+  "version": "0.5.9",
+  "source_sha256": "e6dd32ceda1181ef3172dfb242a1d4fc93656c6788023d7b1333dc2561ed3dce",
+  "sha256": "112dce3e7945a235430a0263e309126061639de0d8dcc0d9c319431b0f2f27a2",
+  "source_size": 7956,
+  "size": 8772,
+  "changed_ap20_segments": [
+    0,
+    8,
+    11,
+    17,
+    18
+  ],
+  "all_other_segments_byte_identical": true,
+  "generic_ilbm_r2_picinfo_byte_identical": true,
+  "screenbuffer_allocation_r7_byte_identical": true,
+  "safe_disp_replymsg_forbidden": true,
+  "pending_mask_at_dbstate_offset": 20,
+  "pending_safe_bit": 0,
+  "pending_disp_bit": 1,
+  "close_max_cooperative_wait_vbl": 300,
+  "timeout_policy": "fail closed, leave all resources allocated and cancel native Ctrl+C break",
+  "status": "WinUAE single Swap plus Close without IFF 5/5 PASS; repeated Swap, Ctrl+C in-flight, IFF and independent Unicorn CPU still pending"
+}
