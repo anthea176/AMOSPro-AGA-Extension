@@ -2,6 +2,14 @@
 
 **État : R26 0.9.2, Gate A CPU/CI PASS (64 scénarios 68000), Gate B AMOS interprété/WinUAE PASS sur le test graphique R26 archivé.** Binaire courant [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [archive R26 0.9.2](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. CI complète R26 [#42922291061](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). R25 0.9.1 reste archivée, WinUAE PASS sur son propre scénario M10 ; R24 et `LAST_GOOD` R10 inchangées. Compiler et matériel réel NON TESTÉS.
 
+## Diagnostic complémentaire R26 — alternance Safe/Disp (non testé)
+
+**Nouveau programme actif :** [`tests/current/M11_R26_SAFE_SWAP_02.asc`](../tests/current/M11_R26_SAFE_SWAP_02.asc), exécuté avec **la même Lib R26 0.9.2**, sans modification des 37 segments AP20. **WinUAE multi-swap NON TESTÉ** à ce stade ; le PASS R26 documenté plus haut concerne uniquement le premier affichage du [test archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc).
+
+La séquence est volontairement **40 × (sonde texte → effacement/fond/texte → swap)**, en alternant un panneau bleu et un texte/voyant vert ou rouge. La sonde `Aga Text(24,24,28,"SAFE?")` est appelée **avant** les `Aga Blit Clear/Fill` de chaque image, afin de ne pas utiliser les anciens Blitters quand le back buffer n'a pas encore reçu la notification Safe. Une réponse 0 déclenche au plus **12 tentatives**, séparées par un `Aga Wait Vbl` ; chaque `Aga Swap` est également retenté au maximum 12 fois en attendant `Disp`. Il n'y a ni `WaitPort`, ni attente sans borne.
+
+**Critères d'acceptation de ce test distinct :** `DONE 40 PROBEOK 40`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, observation d'images A/B alternées et retour normal à AMOS. `PROBE0` et `SWAP0` ne sont **pas** contraints à une valeur : ils comptent les refus constatés, sans prouver que le motif de chaque retour 0 est exclusivement Safe/Disp. L'essai ne mesure pas 50 FPS et ne prouve pas l'absence de toutes les conditions de course. [Consignes WinUAE et console](../tests/current/README.md).
+
 ## API candidate et paramètres
 
 ```amos

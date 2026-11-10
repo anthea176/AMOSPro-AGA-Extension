@@ -1,3 +1,11 @@
+# M11 R26 — diagnostic Safe/Disp multi-swap (WinUAE à tester)
+
+**Unique `.asc` actif :** [`current/M11_R26_SAFE_SWAP_02.asc`](current/M11_R26_SAFE_SWAP_02.asc), à exécuter avec **la bibliothèque R26 0.9.2 existante**, sans nouvelle version ni modification des binaires. **Gate B spécifique Safe/Disp multi-swap NON TESTÉE.** Le [scénario R26 premier texte](passed/M11_R26_AGA_TEXT_01.asc) reste validé et archivé, et cette nouvelle expérience n'en modifie pas la portée.
+
+Le test présente **40 images alternées** (texte vert FRAME A / texte rouge FRAME B), en sondant d'abord `Aga Text` pour établir que le back buffer est disponible **avant** tout effacement/dessin des anciens Blitters R25. Les tentatives non prêtes sont bornées à **12 VBL** pour le texte et **12 VBL** pour le swap, sans attente infinie. Console attendue : `DONE 40 PROBEOK 40`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. `PROBE0` et `SWAP0` sont des compteurs variables (y compris 0) ; aucune mesure de FPS. [Mode d'emploi détaillé](current/README.md).
+
+---
+
 # M11 R26 0.9.2 — AGA Text : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
 **11/11/2026 — confirmé par l'utilisateur sous AMOS interprété/WinUAE.** [Test original `M11_R26_AGA_TEXT_01.asc`](passed/M11_R26_AGA_TEXT_01.asc) **déplacé octet pour octet** depuis `tests/current/` (Git blob `2cd9acd45f17a07ac77bbd1a340aa14c628a01ad`). **Aucun `.asc` actif dans `tests/current/`.**

@@ -5,7 +5,7 @@
 - [`build_m11_text_r26.py`](build_m11_text_r26.py) : builder **en mémoire** reproductible depuis R25 figée ; candidate `dist/AMOSPro_AGA.Lib` = [archive R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Il ne modifie aucun binaire en étant exécuté.
 - [`m11_text_r26_emit.py`](m11_text_r26_emit.py) : nouvelle routine 68000 `TextExtent` + `InitRastPort` + `Text`, sécurité Safe/Disp non bloquante sans `WaitPort` ni `ReplyMsg`.
 - [`test_m11_text_r26.py`](test_m11_text_r26.py) : **64 cas CPU 68000 PASS** (ABI, back buffer, Safe/Disp, clipping) lors de la [CI R26 complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). **Gate B AMOS/WinUAE PASS** sur le [test R26 original archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc), texte vert visible sur fond bleu, `RESULT 1`, fermeture propre.
-- [Contrat R26](../docs/M11_TEXT_R26.md) · [test WinUAE archivé octet pour octet](../tests/passed/M11_R26_AGA_TEXT_01.asc). `tests/current/` ne contient plus de `.asc`. R25/R24 et `LAST_GOOD` R10 restent protégés ; Compiler et matériel réel non testés.
+- [Contrat R26](../docs/M11_TEXT_R26.md) · [test WinUAE archivé octet pour octet](../tests/passed/M11_R26_AGA_TEXT_01.asc). `tests/current/` contient désormais le [diagnostic Safe/Disp multi-swap R26](../tests/current/M11_R26_SAFE_SWAP_02.asc), **WinUAE NON TESTÉ**, sans nouvelle bibliothèque. R25/R24 et `LAST_GOOD` R10 restent protégés ; Compiler et matériel réel non testés.
 
 ### Historique de conception M11 (avant l'implémentation R26 ; non applicable à l'état courant)
 

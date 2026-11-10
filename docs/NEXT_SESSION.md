@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M11 — R26 Safe/Disp : essai multi-swap préparé, WinUAE NON TESTÉ
+
+**11/11/2026 — poursuivre la validation du binaire R26 0.9.2 déjà confirmé sur le premier affichage de texte.** Aucun nouveau binaire ni changement de branche. [Test multi-swap courant](../tests/current/M11_R26_SAFE_SWAP_02.asc) · [procédure de test](../tests/current/README.md) · [contrat texte R26](M11_TEXT_R26.md).
+
+- **Objectif ciblé :** 40 rendus successifs et 40 `Aga Swap`, alternant **FRAME A - GREEN / FRAME B - RED**. Avant chaque effacement/dessin, une sonde `Aga Text` doit réussir (`1`) pour confirmer la disponibilité du back buffer. Les refus texte ou Swap entraînent des **tentatives bornées à 12 VBL**, jamais une attente infinie.
+- **Résultats attendus, pas encore observés :** `OPEN 1 DB 1 LOAD 1`, `DONE 40 PROBEOK 40`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Les compteurs `PROBE0` et `SWAP0` peuvent valoir zéro ; pas de mesure 50 FPS.
+- **Prudence :** un retour 0 de `Aga Text` ne distingue pas à lui seul « pas encore Safe » des autres erreurs possibles. Le test est à interpréter **avec l'observation visuelle**, les compteurs et l'absence de Guru/gel. L'ancien [test R26 du premier texte](../tests/passed/M11_R26_AGA_TEXT_01.asc) reste PASS et inchangé.
+- **Bibliothèques protégées :** `dist/AMOSPro_AGA.Lib` **R26 0.9.2, 14 044 octets**, archives R26/R25/R24 et `LAST_GOOD` R10. Compiler AMOS et Amiga physique restent hors périmètre.
+
+---
+
 ## M11 — R26 0.9.2 AGA Text : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
 **11/11/2026 — validation graphique sous WinUAE par l'utilisateur, sur le scénario exact M11.** Capture : panneau bleu **avec `AGA TEXT R26` affiché en vert** sur l'écran Intuition AGA indépendant ; retour AMOS normal, fin du programme à la ligne 74. **Gate A 64 scénarios CPU/CI PASS**, [CI R26 complète #42922291061](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). **Gate B PASS pour ce test graphique** ; Compiler, vrai Amiga AGA, alternances rapides Safe/Disp et stress **NON TESTÉS**.
