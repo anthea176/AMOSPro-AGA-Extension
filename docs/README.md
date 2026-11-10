@@ -1,17 +1,17 @@
 # Documentation — AMOSPro-AGA-Extension
 
-**Point d'entrée du projet.** **M11/R26 0.9.2 candidate AGA Text : Gate A CPU/CI PASS 64 cas ; Gate B WinUAE NON TESTÉE.** [Lib candidate](../dist/AMOSPro_AGA.Lib) et [test R26 actif](../tests/current/M11_R26_AGA_TEXT_01.asc) ; [contrat M11](M11_TEXT_R26.md). **M10/R25 0.9.1 reste validée Gate A+B sur son scénario archivé** ([test R25 inchangé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc)). Aucune promotion de `LAST_GOOD`, Compiler et matériel réel non testés. Voir [NEXT_SESSION](NEXT_SESSION.md).
+**Point d'entrée du projet.** **M11/R26 0.9.2 : Gate A CPU/CI PASS 64 cas, Gate B AMOS interprété/WinUAE PASS sur un rendu de texte vert sur panneau bleu.** [Bibliothèque R26](../dist/AMOSPro_AGA.Lib), [test original R26 archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc), [rapport M11](M11_TEXT_R26.md). R25 0.9.1 reste archivée et validée sur M10 ; `LAST_GOOD` R10 inchangée. Aucun test actif ; Compiler, vrai Amiga et stress Safe multi-swap non testés. Voir [NEXT_SESSION](NEXT_SESSION.md).
 
 ## Où commencer ?
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | [Test M11/R26 sous AMOS/WinUAE](../tests/current/M11_R26_AGA_TEXT_01.asc) — candidate prête Gate A, retour utilisateur attendu |
+| **Que développons-nous ensuite ?** | [Roadmap M11 après validation](ROADMAP.md) — option : sécurité Safe/Disp sur swaps répétés ; pas de nouvelle API imposée |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **M10 collisions AABB — R25 PASS WinUAE** | [Contrat et validation R25](M10_RECT_OVERLAP_R25.md) · [Test exact R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
-| **M11 — R26 AGA Text candidate** | [Contrat R26 et Safe](M11_TEXT_R26.md) · [audit R25](M11_BACKBUFFER_R25.md) · [test R26 actif](../tests/current/M11_R26_AGA_TEXT_01.asc) · WinUAE non testé |
+| **M11 — R26 AGA Text : Gates A+B PASS** | [Contrat et résultats](M11_TEXT_R26.md) · [audit R25](M11_BACKBUFFER_R25.md) · [test exact validé et archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc) · `tests/current/` vide |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |

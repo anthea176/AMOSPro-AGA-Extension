@@ -1,6 +1,6 @@
 # M11 — R26 0.9.2 : contrat de la première fonction de texte AGA
 
-**État : **R26 0.9.2 candidate de test WinUAE**, Gate A native CPU/CI **PASS 64 scénarios 68000** ([run 42921696298](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)), **Gate B AMOS/WinUAE NON TESTÉE**. Binaire `dist/AMOSPro_AGA.Lib` = [archive candidate R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Les 36 entrées précédentes R25 sont conservées (seul `GetP` terminal ajouté au dernier segment). R25 0.9.1 demeure archivée et validée sur son propre scénario ; R24 et `LAST_GOOD` R10 inchangés.
+**État : R26 0.9.2, Gate A CPU/CI PASS (64 scénarios 68000), Gate B AMOS interprété/WinUAE PASS sur le test graphique R26 archivé.** Binaire courant [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [archive R26 0.9.2](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. CI complète R26 [#42922291061](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). R25 0.9.1 reste archivée, WinUAE PASS sur son propre scénario M10 ; R24 et `LAST_GOOD` R10 inchangées. Compiler et matériel réel NON TESTÉS.
 
 ## API candidate et paramètres
 
@@ -37,7 +37,7 @@ _OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)
 ## Contrôles avant mise à disposition
 
 - **Gate A** : reproduction binaire AP20 R25→R26, 37 segments, unique segment R26 ajouté, R25 conservée strictement (sauf `GetP` terminal). Décodage Capstone 68000 et tests CPU Unicorn avec interruptions OS simulées : ABI mixte, avant/après Safe, messages Safe absents/présents, bit Disp préservé, bornes réelles des glyphes, pénalités, états invalides, rendu et `WaitBlit` ; vérifier la CI **avant** promotion d'un binaire.
-- **Gate B** : test AMOS interprété sous WinUAE **seulement après Gate A**. Le texte de l'extension doit apparaître sur le back buffer AGA après `Aga Swap`, avec retour AMOS propre. Ne pas confondre avec le `Text` natif AMOS ; le test ne sera créé qu'avec le binaire testable.
+- **Gate B : PASS sur ce scénario précis (11/11/2026).** Le programme [archivé sans modification](../tests/passed/M11_R26_AGA_TEXT_01.asc), bandeau `M11-R26-AGA-TEXT-01`, affiche **`AGA TEXT R26` en vert sur un panneau bleu** via le BitMap AGA, puis revient normalement à AMOS (fin programme ligne 74). Console observée : `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `CLEAR 1 PANEL 1`, `BAD 0 TEXT 1 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Le rejet du texte débordant (`BAD 0`) est confirmé. Ce test affiche **une seule image après un swap** : il ne valide pas la synchronisation Safe sur des alternances rapides.
 - **Gate C** : AMOS Compiler, **Gate D** : vrai Amiga AGA ; tous deux non validés.
 
 ## Références
@@ -48,4 +48,4 @@ _OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)
 - [`InitRastPort` et structure `RastPort`](https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node02F7.html).
 - [Double Buffer Intuition / SafeMessage](https://wiki.amigaos.net/wiki/Intuition_Screens).
 
-**Gate A R26 PASS ; candidate distribuée pour un essai WinUAE contrôlé** : [test unique `M11_R26_AGA_TEXT_01.asc`](../tests/current/M11_R26_AGA_TEXT_01.asc). La première validation runtime est encore à réaliser. Aucune autre branche et aucune modification de `LAST_GOOD`.
+**Clôture du scénario R26 : Gates A+B PASS**, [test original WinUAE archivé octet pour octet](../tests/passed/M11_R26_AGA_TEXT_01.asc) (blob Git `2cd9acd45f17a07ac77bbd1a340aa14c628a01ad`), `tests/current/` sans `.asc`. Ne pas promouvoir `LAST_GOOD` ni prétendre à une validation Compiler/Amiga AGA physique. Pas de nouvelle branche.

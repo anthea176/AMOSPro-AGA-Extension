@@ -1,6 +1,18 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M11 — R26 0.9.2 candidate AGA Text : Gate A PASS, Gate B WinUAE à tester
+## M11 — R26 0.9.2 AGA Text : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
+
+**11/11/2026 — validation graphique sous WinUAE par l'utilisateur, sur le scénario exact M11.** Capture : panneau bleu **avec `AGA TEXT R26` affiché en vert** sur l'écran Intuition AGA indépendant ; retour AMOS normal, fin du programme à la ligne 74. **Gate A 64 scénarios CPU/CI PASS**, [CI R26 complète #42922291061](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). **Gate B PASS pour ce test graphique** ; Compiler, vrai Amiga AGA, alternances rapides Safe/Disp et stress **NON TESTÉS**.
+
+- **Binaire courant** `dist/AMOSPro_AGA.Lib` = [archive R26 0.9.2](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), **14 044 octets**, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. R25 0.9.1 reste [archivée et WinUAE PASS sur M10](../dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib). R24 et `LAST_GOOD` R10 intacts.
+- **Test original** déplacé **octet pour octet** vers [`tests/passed/M11_R26_AGA_TEXT_01.asc`](../tests/passed/M11_R26_AGA_TEXT_01.asc) (Git blob `2cd9acd45f17a07ac77bbd1a340aa14c628a01ad`). **Aucun `.asc` dans `tests/current/`.**
+- **Console observée** : `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `CLEAR 1 PANEL 1`, `BAD 0 TEXT 1 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. La routine graphique rend par `graphics.library/Text` dans le **back buffer AGA** ; `Text` AMOS n'intervient pas.
+- **Portée limitée :** le test vérifie un dessin après le premier swap et un rejet géométrique ; **il ne stresse pas le contrôle non bloquant Safe** lors de changements successifs. R26 n'est pas déclarée compatible avec toutes les fontes et séquences de rendu.
+- **Suite possible :** étude ciblée du rendu multi-image avec notification Safe/Disp, éventuellement petite démonstration texte ; ne pas toucher aux entrées R26 validées sans preuve de besoin, ne créer aucune autre branche. [Contrat et dossier M11](M11_TEXT_R26.md).
+
+---
+
+## Historique — M11 R26 0.9.2 : préparation de la candidate avant validation WinUAE
 
 **11/11/2026 — Gate A 68000/CI PASS 64 scénarios**, [workflow réussi 42921696298](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298). **Gate B AMOS interprété/WinUAE NON TESTÉE**, Compiler et Amiga physique NON TESTÉS. Ne pas déclarer R26 validée en runtime avant retour utilisateur.
 
@@ -31,7 +43,7 @@
 
 - **Bibliothèque courante sur `main` :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib` ; **13 408 octets**, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. **30 commandes AP20**. Archive R24 WinUAE PASS et `LAST_GOOD` R10 inchangés.
 - **Nouvelle API :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)`, résultat `1` uniquement pour une aire commune positive. Contact bord/coin et dimensions invalides = `0`, origines négatives autorisées, fonction pure sans dépendance à l'écran, ABI `A3+28`.
-- **Test R25 validé, déplacé octet pour octet :** [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Le test R25 n'est plus actif** dans `tests/current/` ; un test M11 distinct est le seul `.asc` actuel.
+- **Test R25 validé, déplacé octet pour octet :** [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). La R25 est archivée sans modification ; **plus aucun `.asc` actif dans `tests/current/`** depuis la clôture R26.
 - **Capture utilisateur :** `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `LAST HIT 1`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, `RESULT 1`, `CLOSE X2 RETURNED`. Fin normale sous AMOS.
 - **Graphisme :** rectangle fixe bleu index 3, mobile 32×32 vert index 28 hors collision et rouge index 224 lors du recouvrement. Back buffer entièrement effacé/redessiné, puis **un `Aga Swap` et un `Aga Wait Vbl`** à chaque image. La mire IFF fournit les métadonnées du mode et la palette ; ses pixels ne sont pas exploités dans cette animation. **409 images traitées ne prouvent ni 50 FPS ni absence de traces ; pas de chronométrage.**
 - **Exemple distinct :** [`examples/collide.asc`](../examples/collide.asc), version pédagogique courte ajoutée avec `examples/README.md` et `README.fr.md`; scripts vérifiés statiquement par la CI, **exemple autonome non testé sous WinUAE**.

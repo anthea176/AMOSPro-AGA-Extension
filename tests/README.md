@@ -1,8 +1,20 @@
-# M11 — R26 0.9.2 AGA Text : Gate A CPU/CI PASS, Gate B WinUAE à réaliser
+# M11 R26 0.9.2 — AGA Text : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
-**Unique test courant :** [`current/M11_R26_AGA_TEXT_01.asc`](current/M11_R26_AGA_TEXT_01.asc), bandeau `M11-R26-AGA-TEXT-01`. **Installer la candidate R26 0.9.2**, pas la R25. Choisir `examples/demo.iff` (PAL 320×256×8). Observer un panneau **bleu** avec `AGA TEXT R26` en **vert**, pendant 220 VBL. Après fermeture, contrôler `CLEAR 1 PANEL 1`, `BAD 0 TEXT 1 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Si le texte est invisible malgré les retours, Gate B reste en échec ou indéterminée ; envoyer la capture et le contexte. **Ce scénario n'est pas encore passé sous WinUAE.**
+**11/11/2026 — confirmé par l'utilisateur sous AMOS interprété/WinUAE.** [Test original `M11_R26_AGA_TEXT_01.asc`](passed/M11_R26_AGA_TEXT_01.asc) **déplacé octet pour octet** depuis `tests/current/` (Git blob `2cd9acd45f17a07ac77bbd1a340aa14c628a01ad`). **Aucun `.asc` actif dans `tests/current/`.**
 
-La candidate R26 a passé **64 cas CPU 68000 Gate A** ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42921696298)). Elle exploite `graphics.library/Text` sur le vrai BitMap arrière via RastPort temporaire, contrairement au diagnostic `Text` AMOS classé [historique sans essai](historical/M11_R25_AMOS_TEXT_01.asc). Le [test R25 PASS](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) demeure archivé octet pour octet ; `LAST_GOOD` inchangée. [Contrat](../docs/M11_TEXT_R26.md).
+La capture graphique montre **`AGA TEXT R26` en vert sur un panneau bleu** (écran Intuition AGA, 320×256, 8 bitplanes). La capture console donne exactement :
+
+```text
+M11-R26-AGA-TEXT-01
+IMAGE  320 X  256 PLANES  8
+OPEN  1 DB  1 LOAD  1
+CLEAR  1 PANEL  1
+BAD  0 TEXT  1 SWAP  1
+CLOSED -1 RESULT  1
+CLOSE RETURNED
+```
+
+Le programme termine normalement à la ligne **74**. `BAD 0` confirme le rejet d'une chaîne débordant l'écran ; `TEXT 1`, `SWAP 1` et le rendu visuel confirment la première primitive graphique texte AGA. **Gate A : PASS 64 scénarios CPU 68000** ([CI complète R26](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061)). **Gate B : PASS sur ce scénario unique**, pas de validation du Compiler, du matériel physique, des fontes alternatives, des swaps multiples ou d'un stress de la réponse Safe/Disp. R25/R24 et `LAST_GOOD` R10 inchangés. [Contrat et rapport R26](../docs/M11_TEXT_R26.md).
 
 ---
 

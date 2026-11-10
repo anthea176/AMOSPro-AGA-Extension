@@ -1,5 +1,7 @@
 # M11 — compatibilité graphique AMOS / écran Intuition AGA
 
+**Mise à jour 11/11/2026 :** cette note décrit la décision **antérieure à R26** d'abandonner le test `Text` natif AMOS. L'extension a depuis obtenu **Gate A CPU/CI et Gate B WinUAE PASS sur le test R26 `Aga Text`**, [archivé sans modification](../tests/passed/M11_R26_AGA_TEXT_01.asc). Voir le [rapport de validation](M11_TEXT_R26.md). Les phrases historiques « non implémenté » qui suivent concernent l'état au moment de l'étude, pas l'état courant.
+
 ## Décision d'architecture
 
 **Correction de conception (11/11/2026) : ne pas tester `Text` natif AMOS sur l'écran Intuition AGA indépendant.** L'expérience `M11_R25_AMOS_TEXT_01.asc`, préparée mais **jamais exécutée sous WinUAE**, partait d'une hypothèse déjà invalide : les primitives AMOS ciblent les écrans et données graphiques **propres à AMOS**, pas notre écran Intuition, qui n'est pas enregistré comme écran AMOS courant. Le Copper participe à la présentation des écrans/bitplanes ; il ne redirige pas les appels de dessin d'AMOS vers un autre RastPort.
