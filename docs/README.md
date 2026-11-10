@@ -6,11 +6,12 @@
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | [Roadmap actuelle](ROADMAP.md) — M10/R25 validée ; prochaine phase M11 à cadrer avant toute R26 |
+| **Que développons-nous ensuite ?** | [Roadmap actuelle](ROADMAP.md) — **M11 diagnostic graphique AMOS `Text` actif**, aucune R26 créée |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **M10 collisions AABB — R25 PASS WinUAE** | [Contrat et validation R25](M10_RECT_OVERLAP_R25.md) · [Test exact R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
+| **M11 texte AMOS natif sur AGA — à tester** | [Protocole](M11_TEXT_COMPAT.md) · [Test M11 actif](../tests/current/M11_R25_AMOS_TEXT_01.asc) · R25 utilisée sans modification |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |

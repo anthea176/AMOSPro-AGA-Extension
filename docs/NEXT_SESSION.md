@@ -1,16 +1,27 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M11 — diagnostic `Text` natif AMOS sur l'écran AGA (sans R26)
+
+**Après clôture R25 sur `main`**, un seul diagnostic M11 est proposé : [`tests/current/M11_R25_AMOS_TEXT_01.asc`](../tests/current/M11_R25_AMOS_TEXT_01.asc), bandeau `M11-R25-AMOS-TEXT-01`. **Pas de nouvelle bibliothèque ; M11 Gate B WinUAE NON TESTÉE.** R25 reste Gate A+B PASS **sur son scénario archivé**, sans que ce statut valide la compatibilité M11.
+
+- **Objectif :** déterminer si la commande graphique native AMOS `Text x,y,text$`, appelée pendant l'affichage d'un écran Intuition AGA, écrit visiblement sur cet écran. L'écran AGA n'est pas automatiquement un écran AMOS.
+- **Test :** choisir `examples/demo.iff` (PAL 320×256×8), observer le panneau bleu pendant 300 VBL et noter si `AMOS TEXT VISIBLE?` apparaît **dans le panneau**. Vérifier ensuite `DRAWERR 0` et `CLOSE RETURNED`. Les deux buffers sont préparés ; `Text` est appelé après `Amos To Back`.
+- **Limites :** verdict visuel manuel, aucun support AMCAF/fontes démontré. L'IFF sert uniquement au mode vidéo et à la palette. [Protocole M11](M11_TEXT_COMPAT.md).
+- **Protections :** ne pas modifier R25, R24, `LAST_GOOD` R10 ni les tests archivés. Ne pas archiver M11 avant validation utilisateur ni engager R26 sans contrat technique.
+
+---
+
 ## M10 — R25 0.9.1 : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
 **10/11/2026 — scénario de collision validé par l'utilisateur sous AMOS interprété/WinUAE.** [CI CPU/ABI R25 PASS : 704 cas 68000](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42916575209). Les portes A et B passent **sur le périmètre testé** ; AMOS Compiler, Amiga physique, stress et cadence réelle non validés.
 
 - **Bibliothèque courante sur `main` :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib` ; **13 408 octets**, SHA256 `4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6`. **30 commandes AP20**. Archive R24 WinUAE PASS et `LAST_GOOD` R10 inchangés.
 - **Nouvelle API :** `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)`, résultat `1` uniquement pour une aire commune positive. Contact bord/coin et dimensions invalides = `0`, origines négatives autorisées, fonction pure sans dépendance à l'écran, ABI `A3+28`.
-- **Test R25 validé, déplacé octet pour octet :** [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Aucun `.asc` actif** dans `tests/current/`.
+- **Test R25 validé, déplacé octet pour octet :** [`tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Le test R25 n'est plus actif** dans `tests/current/` ; un test M11 distinct est le seul `.asc` actuel.
 - **Capture utilisateur :** `IMAGE 320 X 256 PLANES 8`, `STATIC 1 PURE 1`, `OPEN 1 DB 1 LOAD 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `LAST HIT 1`, `CLOSED -1 PRESS -1`, `REOPEN 1 BASE 0 CLOSE2 -1`, `RESULT 1`, `CLOSE X2 RETURNED`. Fin normale sous AMOS.
 - **Graphisme :** rectangle fixe bleu index 3, mobile 32×32 vert index 28 hors collision et rouge index 224 lors du recouvrement. Back buffer entièrement effacé/redessiné, puis **un `Aga Swap` et un `Aga Wait Vbl`** à chaque image. La mire IFF fournit les métadonnées du mode et la palette ; ses pixels ne sont pas exploités dans cette animation. **409 images traitées ne prouvent ni 50 FPS ni absence de traces ; pas de chronométrage.**
 - **Exemple distinct :** [`examples/collide.asc`](../examples/collide.asc), version pédagogique courte ajoutée avec `examples/README.md` et `README.fr.md`; scripts vérifiés statiquement par la CI, **exemple autonome non testé sous WinUAE**.
-- **Suite possible M11 :** étudier d'abord la compatibilité AMOS/AMCAF (écran/RastPort, fontes, Bob/Icon, copies, palette) et cadrer **un seul test indépendant** avant toute nouvelle commande ou bibliothèque R26. Ne pas supposer que l'écran Intuition de l'extension est un écran AMOS. Pas de branche nouvelle sans demande. [Contrat R25](M10_RECT_OVERLAP_R25.md).
+- **Suite M11 :** le premier diagnostic `Text` est désormais actif (voir la section M11 en tête). Étudier ensuite la compatibilité AMOS/AMCAF (écran/RastPort, fontes, Bob/Icon, copies, palette) avant toute nouvelle commande ou bibliothèque R26. Pas de nouvelle branche. [Contrat R25](M10_RECT_OVERLAP_R25.md).
 
 
 ---

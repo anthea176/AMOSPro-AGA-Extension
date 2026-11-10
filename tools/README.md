@@ -1,5 +1,10 @@
 # Outils Python actifs — R25 0.9.1 M10 (CPU/CI + WinUAE PASS sur scénario)
 
+## M11 — premier diagnostic AMOS `Text` (sans nouvelle Lib)
+
+- [Test AMOS courant](../tests/current/M11_R25_AMOS_TEXT_01.asc) : écran Intuition AGA avec panneau bleu, commande `Text` native AMOS après `Amos To Back`, observation pendant 300 VBL. **Runtime WinUAE M11 NON TESTÉ** ; écran Intuition distinct de l'écran AMOS. [Contrat](../docs/M11_TEXT_COMPAT.md).
+- Aucun builder R26 créé. Préserver intégralement les binaires R25/R24, `LAST_GOOD` R10 et les archives de validation. La CI ne vérifie que la syntaxe statique du diagnostic, pas la visibilité graphique.
+
 ## M10 — R25 0.9.1 : collisions AABB (Gate A CPU/CI + Gate B WinUAE PASS sur scénario)
 
 - [Émetteur natif 68000](m10_rect_overlap_r25_emit.py) : huit entiers, `D3=bh` et `A3+28`, aucun état/OS, arithmétique signée 32 bits sans `x+w` dangereux.

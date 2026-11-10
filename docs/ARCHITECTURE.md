@@ -42,6 +42,8 @@ Se référer **directement** à [M7_COPPER_DESIGN](M7_COPPER_DESIGN.md) et [M7_S
 
 [Plan souris / zones / collisions](INTERACTIONS_COLLISIONS.md) : R19/R21/R22 ont fourni les positions, boutons et fronts ; **le dispatcher R23 a passé un test WinUAE de clics rapides, FIFO clavier et Ctrl+C**. **M9/R24 hotspots et M10/R25 AABB sont validés sur leurs scénarios respectifs**. La résolution physique et les tests pixel-perfect sont hors du noyau R25 ; les fonctions géométriques ne dépendent pas du Copper.
 
+**M11 — premier diagnostic actif :** [test `Text` AMOS natif sur écran Intuition AGA](../tests/current/M11_R25_AMOS_TEXT_01.asc), avec bibliothèque R25 inchangée ; [contrat et protocole](M11_TEXT_COMPAT.md). **Aucun résultat WinUAE M11 ni nouvelle API R26 à ce stade.**
+
 **Compatibilité graphique AMOS/AMCAF à évaluer :** `Change Bank Font`, `Scrn Rastport`, `Text`, `Text Length`, ainsi que `ScOnAd` et `Ec_RastPort`, utilisent des structures d'écran/RastPort AMOS qui ne sont pas garanties par notre écran Intuition AGA indépendant. Tester les interfaces existantes avant d'ajouter de nouvelles routines. `Aga Blit Copy` ne remplace pas toutes les variantes de `Screen Copy`.
 
 ## 6. Modes et validations

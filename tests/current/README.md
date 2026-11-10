@@ -1,5 +1,7 @@
-# Tests AMOS actifs
+# M11 — test graphique AMOS/AGA actif
 
-**Aucun `.asc` actif.** R25 0.9.1 a passé le scénario AMOS interprété/WinUAE du 10/11/2026 ; le [test original M10 R25](../passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) est archivé octet pour octet dans `tests/passed/` (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`).
+**Unique `.asc` courant :** [`M11_R25_AMOS_TEXT_01.asc`](M11_R25_AMOS_TEXT_01.asc), bandeau `M11-R25-AMOS-TEXT-01`. La bibliothèque reste **R25 0.9.1** inchangée ; **M11 NON TESTÉE sous WinUAE**.
 
-Ne placer ici qu'un seul nouveau test après définition explicite du prochain incrément. Voir [la reprise courante](../../docs/NEXT_SESSION.md).
+Importer par **Project → Merge ASCII**, choisir [`examples/demo.iff`](../../examples/demo.iff) (320×256×8 PAL). Pendant 300 VBL, observer le **panneau bleu** de l'écran Intuition AGA et vérifier si le texte `AMOS TEXT VISIBLE?` apparaît dessus. Le programme ferme ensuite l'écran ; la console doit indiquer `DRAWERR 0` et `CLOSE RETURNED`.
+
+**Ne pas conclure automatiquement à l'impossibilité de compatibilité AMOS/AMCAF si le texte est absent.** L'expérience vérifie uniquement le résultat visible de `Text` natif sur l'écran Intuition AGA. [Rapport et protocole M11](../../docs/M11_TEXT_COMPAT.md). Le [test R25 validé](../passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) reste archivé sans modification.

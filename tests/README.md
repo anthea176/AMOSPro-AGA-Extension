@@ -1,3 +1,11 @@
+# M11 — diagnostic `Text` AMOS natif / écran Intuition AGA (WinUAE à tester)
+
+**Seul test actif :** [`current/M11_R25_AMOS_TEXT_01.asc`](current/M11_R25_AMOS_TEXT_01.asc), bandeau `M11-R25-AMOS-TEXT-01`. Il utilise **la bibliothèque R25 inchangée** : écran AGA 320×256×8, panneau bleu dessiné dans les deux buffers, puis la commande graphique native AMOS `Text` pendant 300 VBL. Observer si `AMOS TEXT VISIBLE?` apparaît **sur le panneau AGA** ; noter `DRAWERR 0` et `CLOSE RETURNED` après fermeture. L'observation visuelle est manuelle ; **M11 Gate B NON TESTÉE**. Voir [protocole M11](../docs/M11_TEXT_COMPAT.md).
+
+Le test R25 `Aga Rect Overlap` est **déjà validé et archivé octet pour octet** dans [`passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc`](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc). M11 n'est pas une régression native R25.
+
+---
+
 # M10 R25 — Rect Overlap : Gate A CPU/CI + Gate B AMOS/WinUAE PASS
 
 **10/11/2026 :** test R25 validé par l'utilisateur sous AMOS interprété/WinUAE après **704 cas CPU 68000/CI PASS** ([CI R25](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42916575209)). L'original [`M10_R25_RECT_OVERLAP_VISUAL_01.asc`](passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) a été **déplacé octet pour octet** dans `tests/passed/` (blob Git `0eac65e7a92418738d9a3ea6969d131758126cfa`). **Aucun `.asc` actif** dans `tests/current/`.
