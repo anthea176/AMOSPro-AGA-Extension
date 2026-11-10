@@ -1,14 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M9 — R24 0.9.0 : Hotspot Hit candidate, Gate A PASS
+## M9 — R24 0.9.0 : Gate A + B PASS, test archivé
 
-**R24 est la bibliothèque candidate sur `main`, Gate A CPU/CI PASS (402 scénarios sur 68000, CI complète (archive CI privée, run #42908096685)), Gate B AMOS interprété/WinUAE NON TESTÉE.** Elle expose **29 commandes AMOS** (contre 28 en R23) avec la nouvelle fonction `Aga Hotspot Hit(px,py,x,y,w,h)`. Retour 1 dedans, 0 dehors ; bords fin exclusive, point négatif rejeté, origines négatives autorisées, soustraction 32 bits sûre.
+**10/11/2026 — R24 0.9.0 validée sur son scénario AMOS interprété/WinUAE** (Gate A CPU/CI PASS 402 cas 68000, Gate B PASS utilisateur). Nouvelle fonction `Aga Hotspot Hit(px,py,x,y,w,h)` ; 29 commandes AP20 et priorités gérées dans AMOS.
 
-- **Binaire candidate :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib`, **13 228 octets**, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`.
-- **Premier incrément limité :** test géométrique stateless sans registre de zones, ni changement du dispatcher IDCMP de R23 ; l'ordre des tests dans AMOS définit les IDs et priorités.
-- **Un seul test WinUAE actif :** [`tests/current/M9_R24_HOTSPOT_HIT_01.asc`](../tests/current/M9_R24_HOTSPOT_HIT_01.asc). Sélectionner `iff-TEST/AGA_TESTCARD_320x256_256C.iff` (320×256×8), cliquer **gauche** dans le recouvrement visible autour de **(130,100)**, puis **droit** hors des trois rectangles autour de **(300,220)**. Le programme affiche un récapitulatif après deux clics ou 900 VBL. Attendu `STATIC=1`, `OVERLAP=20`, `LEFT ID=20`, `RIGHT OUT=1`, `RESULT=1`, fermetures correctes.
-- **Réserves :** aucun PASS WinUAE R24 anticipé ; le contrat ne stocke pas la position exacte au moment du clic (la souris est relue au polling). Focus réel, stress, Compiler et Amiga physique non testés. **Ne pas archiver le test avant retour utilisateur.**
-- R23, R22 et `LAST_GOOD` R10 **archivées et inchangées**. [Rapport M9](M9_HOTSPOT_R24.md) · [Roadmap](ROADMAP.md) · [README EN/FR](../README.md).
+- **Test exact validé** : [`tests/passed/M9_R24_HOTSPOT_HIT_01.asc`](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc), SHA Git `0476f20a81a8bff1bf282a37a7e3b4b710c72022`, **sans aucune modification des octets**. La version corrigée ne contient aucun `Then` et se termine normalement ligne 183. **Aucun `.asc` actif** dans `tests/current/`.
+- **Preuve WinUAE** : `STATIC 1`, `OVERLAP 20`, `PURE 1`, `OPEN/DB/LOAD/SWAP=1`, `FILLS 1/1/1`, `LEFT ID 20`, `RIGHT OUT 1`, `CLOSED=-1`, `PRESS=-1`, `REOPEN 1`, `BASE 0`, `CLOSE2 -1`, **`RESULT 1`** et `CLOSE X2 RETURNED`.
+- **Point non élucidé** : `LEFT COUNT=13`, `RIGHT COUNT=3` sur la capture. Le test valide le choix des zones mais n'établit pas l'unicité des événements par clic physique ; à isoler seulement si la répétition est observée en usage réel.
+- **Bibliothèque courante** : `dist/AMOSPro_AGA.Lib` R24 = archive `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib`, 13 228 octets, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`. R23 et `LAST_GOOD` R10 inchangées.
+- **Hors validation** : focus réel, stress, AMOS Compiler, Amiga physique, position souris au moment exact du clic. L'implémentation M9 reste **stateless** ; un registre de zones, le drag et M10 collisions nécessitent une décision ultérieure. [Rapport R24](M9_HOTSPOT_R24.md).
+
 
 ---
 

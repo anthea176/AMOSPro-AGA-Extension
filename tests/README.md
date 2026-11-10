@@ -1,8 +1,10 @@
-# Test M9 R24 — Hotspot Hit : Gate A CPU/CI PASS, WinUAE NON TESTÉE
+# Test M9 R24 — Hotspot Hit : Gate A + B PASS
 
-**Unique test actif :** [`current/M9_R24_HOTSPOT_HIT_01.asc`](current/M9_R24_HOTSPOT_HIT_01.asc), sur [mire originale](../iff-TEST/AGA_TESTCARD_320x256_256C.iff) 320×256×8. Installer la **Lib R24**, relancer AMOS, choisir l'IFF, puis cliquer **gauche dans le recouvrement des rectangles** autour de `(130,100)` et **droit hors de toutes les zones** autour de `(300,220)`. Les deux premiers rectangles se recouvrent ; la deuxième zone (ID 20) gagne. La fenêtre reste affichée au plus 900 VBL (~18 secondes).
+[`passed/M9_R24_HOTSPOT_HIT_01.asc`](passed/M9_R24_HOTSPOT_HIT_01.asc) : **test exact validé sous AMOS interprété/WinUAE et archivé octet pour octet** (SHA Git `0476f20a81a8bff1bf282a37a7e3b4b710c72022`). Il s'agit du test AMOS corrigé, **sans `Then` et sans modification après le résultat**. **Aucun `.asc` actif dans `tests/current/`**.
 
-Attendu : `STATIC=1`, `OVERLAP=20`, `LEFT ID=20`, `RIGHT OUT=1`, `RESULT=1` et `CLOSE X2 RETURNED`. Les cas de bord, les dimensions nulles et les coordonnées négatives sont également testés sans écran. **Gate A CPU/CI PASS 402 cas** (CI (archive CI privée, run #42908096685)), mais Gate B exige une capture réelle sous WinUAE. R23 et `LAST_GOOD` inchangées. [Contrat](../docs/M9_HOTSPOT_R24.md).
+**Résultat du 10/11/2026 :** mire 320×256×8, `STATIC=1`, `OVERLAP=20`, `PURE=1`, `OPEN=DB=LOAD=SWAP=1`, `FILLS=1/1/1`, `LEFT ID=20`, `RIGHT OUT=1`, `CLOSED=-1`, `PRESS=-1`, `REOPEN=1`, `BASE=0`, `CLOSE2=-1`, **`RESULT=1`**, `CLOSE X2 RETURNED`, fin AMOS ligne 183.
+
+Les compteurs `LEFT COUNT=13` et `RIGHT COUNT=3` sont visibles, sans preuve du nombre de clics physiques. Ce test **ne valide pas** l'unicité des événements. Gate A CPU/CI PASS (402 cas 68000), Gate B WinUAE PASS pour ce scénario. Focus réel, stress, AMOS Compiler et Amiga physique non testés. [Dossier M9](../docs/M9_HOTSPOT_R24.md).
 
 ---
 

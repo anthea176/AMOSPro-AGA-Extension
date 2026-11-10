@@ -2,7 +2,7 @@
 
 ## Objectif
 
-**R24 0.9.0 candidate publiée sur `main` après Gate A CPU/CI PASS** (402 scénarios 68000, CI complète verte (archive CI privée, run #42908096685)). Gate B WinUAE NON TESTÉE. R23 0.8.7 reste l'archive WinUAE validée de référence.
+**R24 0.9.0 : Gate A CPU/CI PASS (402 cas 68000) et Gate B AMOS interprété/WinUAE PASS sur le scénario utilisateur du 10/11/2026.** Test exact archivé dans [`tests/passed/`](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc). R23 0.8.7 reste archivée et validée pour les clics rapides, la FIFO clavier et Ctrl+C.
 
 Le contrat M9 est issu de [`INTERACTIONS_COLLISIONS.md`](INTERACTIONS_COLLISIONS.md) et de la [roadmap](ROADMAP.md) : les rectangles logiques, les bornes finales exclusives et les zones recouvrantes doivent être déterministes. Un registre interne de zones est **volontairement reporté** : aucune preuve de besoin ne justifie encore de modifier l'état d'entrée R23.
 
@@ -22,13 +22,22 @@ Fonction entière **à six paramètres**, retournant :
 Le jeu choisit les IDs et la priorité. Exemple avec trois rectangles, le **dernier déclarant gagnant** en cas de recouvrement :
 
 ```amos
+_HA=Aga Hotspot Hit(_PX,_PY,20,20,150,120)
+_HB=Aga Hotspot Hit(_PX,_PY,100,70,160,110)
+_HC=Aga Hotspot Hit(_PX,_PY,275,15,25,25)
 _ID=0
-If Aga Hotspot Hit(_PX,_PY,20,20,150,120)=1 Then _ID=10
-If Aga Hotspot Hit(_PX,_PY,100,70,160,110)=1 Then _ID=20
-If Aga Hotspot Hit(_PX,_PY,275,15,25,25)=1 Then _ID=30
+If _HA=1
+   _ID=10
+End If
+If _HB=1
+   _ID=20
+End If
+If _HC=1
+   _ID=30
+End If
 ```
 
-À l'interpréteur AMOS, si les appels de fonctions doivent être affectés avant les conditions, employer temporairement `_H=Aga Hotspot Hit(...)` puis `If _H=1` dans le programme de test.
+Les appels sont d'abord affectés à des variables AMOS, puis testés avec `If` / `End If` **sans `Then`**. La dernière zone correspondante écrase l'ID précédent.
 
 ## ABI et isolement
 
@@ -49,8 +58,10 @@ Un simple ordre d'appels AMOS permet dès maintenant de tester le survol et de d
 
 - **Préflight CPU validé (402 scénarios) :** émetteur [`m9_hotspot_r24_emit.py`](../tools/m9_hotspot_r24_emit.py), builder reproductible [`build_m9_hotspot_hit_r24.py`](../tools/build_m9_hotspot_hit_r24.py), [test 68000 natif](../tools/test_m9_hotspot_hit_r24.py), vérification HUNK/AP20 et invariant des segments R23.
 - **Gate A PASS :** 402 scénarios 68000 (géométrie 32 bits, bords, dimensions, recouvrements, A3/D2/SP), CI complète (archive CI privée, run #42908096685) ; `dist/AMOSPro_AGA.Lib` et `dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib` identiques, **13 228 octets**, SHA256 `cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671`.
-- **Gate B NON TESTÉE :** [`tests/current/M9_R24_HOTSPOT_HIT_01.asc`](../tests/current/M9_R24_HOTSPOT_HIT_01.asc), unique programme AMOS courant. Mire originale 320×256×8, trois rectangles colorés dont A/B superposés. Clic **gauche** dans l'intersection autour de **(130,100)** → ID **20** ; clic **droit** hors zone autour de **(300,220)** → hors zone `1`. Teste aussi les bornes exclusives, dimensions nulles, origines négatives, fermeture et réouverture. Temps maximal environ 18 secondes (900 VBL), sortie normale et `RESULT=1` attendus. Pour Ctrl+C et test de focus, R23 avait été validée sur son périmètre ; la présente R24 ne revendique pas leur revalidation.
+- **Gate B PASS — scénario WinUAE du 10/11/2026 :** [test exact `M9_R24_HOTSPOT_HIT_01.asc`](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc), SHA Git `0476f20a81a8bff1bf282a37a7e3b4b710c72022`. Mire originale 320×256×8, zones superposées : `STATIC=1`, `OVERLAP=20`, `PURE=1`, `LEFT ID=20`, `RIGHT OUT=1`, `OPEN=DB=LOAD=SWAP=1`, `FILLS=1/1/1`, `CLOSED=-1`, `PRESS=-1`, `REOPEN=1`, `BASE=0`, `CLOSE2=-1`, **`RESULT=1`** et `CLOSE X2 RETURNED`. Retour AMOS normal, ligne 183. Capture : compteurs `LEFT COUNT=13`, `RIGHT COUNT=3` ; leur origine n'est pas déterminée par cette image, et ce scénario ne valide pas un unique événement par clic physique.
 - **Gates C/D :** AMOS Compiler et vrai Amiga AGA non testés.
+
+**Réserves de Gate B :** la capture finale n'établit pas l'absence de menu Intuition *pendant* le clic droit, ni le nombre d'actions physiques effectué. Le programme calcule les zones au moment du polling, pas à la position mémorisée de l'événement. Focus réel, stress, Compiler et Amiga physique non testés. Aucune promotion de `LAST_GOOD`.
 
 ## Protections
 

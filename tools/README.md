@@ -1,10 +1,10 @@
 # Outils Python actifs — R23 0.8.7 validée CPU/CI et WinUAE sur scénario ; archives R22/R21 protégées
 
-## M9 — R24 0.9.0 : Hotspot Hit (Gate A CPU/CI PASS, WinUAE en attente)
+## M9 — R24 0.9.0 : Hotspot Hit (Gate A CPU/CI + Gate B WinUAE PASS)
 
 - [Émetteur pur 68000](m9_hotspot_r24_emit.py) : six paramètres, bords fin exclusive, arithmétique 32 bits sans débordement, aucun état ni appel OS.
 - [Builder pur R24](build_m9_hotspot_hit_r24.py) : depuis R23 **archivée et validée**, ajout d'une seule entrée AP20 + séparateur `GetP`. `dist/AMOSPro_AGA.Lib` candidate R24 et son archive sont comparées en CI.
-- [Test CPU préflight](test_m9_hotspot_hit_r24.py) : contrôles 68000 ABI/A3, frontières, zones superposées, int32, R23 inchangée. **Gate A CPU/CI PASS 402 cas (CI (archive CI privée, run #42908096685)), Gate B WinUAE NON TESTÉE.** [Contrat](../docs/M9_HOTSPOT_R24.md).
+- [Test CPU préflight](test_m9_hotspot_hit_r24.py) : contrôles 68000 ABI/A3, frontières, zones superposées, int32, R23 inchangée. **Gate A CPU/CI PASS 402 cas (CI (archive CI privée, run #42908096685)), Gate B WinUAE PASS sur le test R24 archivé.** [Contrat](../docs/M9_HOTSPOT_R24.md) · [test WinUAE exact](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc).
 
 ## M8 — R23 0.8.7 : IDCMP clavier/souris (Gate A + B PASS sur scénarios testés)
 

@@ -9,7 +9,7 @@
 | **Que développons-nous ensuite ?** | **[Roadmap actuelle](ROADMAP.md)** — M8 souris en cours, puis M9 zones cliquables et M10 collisions |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Statut M8](M8_STATUS.md) · [Historique M7](M7_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
-| **M9 zones cliquables (candidate R24)** | [R24 Hotspot Hit, Gate A PASS](M9_HOTSPOT_R24.md) · [Test R24 courant](../tests/current/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
+| **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |

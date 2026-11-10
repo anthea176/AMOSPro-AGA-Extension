@@ -18,13 +18,13 @@ L'objectif est une API de haut niveau sûre et réutilisable, pas la réécritur
 | Clavier | `Aga Key`, `Aga Wait Key` | Input Intuition, attention au focus et Ctrl+C |
 | Blitter M6 | `Aga Blit Copy`, `Aga Blit Fill`, `Aga Blit Clear` | Back buffer ; R13/R14/R15 PASS AMOS interprété/WinUAE. |
 | Souris M8/R23 (PASS WinUAE scénario) | `Aga Mouse Pressed/Released`, `Aga Key/Wait Key` | Dispatcher central IDCMP, FIFO RAWKEY 16, Gate A CPU/CI PASS 15 cas ; Gate B WinUAE PASS sur clics rapides, FIFO clavier et Ctrl+C. |
-| Hotspots M9/R24 (candidate) | `Aga Hotspot Hit(px,py,x,y,w,h)` | Géométrie 68000 sans état, bords fin exclusive, 402 scénarios CPU/CI PASS ; WinUAE R24 non testée, registre de zones non implémenté. |
+| Hotspots M9/R24 (PASS WinUAE sur scénario) | `Aga Hotspot Hit(px,py,x,y,w,h)` | Sans état, bornes finales exclusives ; CPU/CI 402 cas PASS et WinUAE PASS (ID 20 recouvrement, hors zone, retour AMOS) ; aucun registre de zones. |
 | Souris M8/R22 (PASS WinUAE sur scénario) | `Aga Mouse Pressed`, `Aga Mouse Released` | Masques 1/2/4, focus contrôlé, historique privé ; CPU/CI PASS (25 cas) et WinUAE PASS sur le test R22 archivé. |
 | Souris M8/R21 (PASS WinUAE) | `Aga Mouse X/Y`, `Aga Mouse Buttons` | R21 0.8.5 : RMBTRAP supprimant la barre Intuition au clic droit ; **CPU/CI 11 cas et WinUAE PASS utilisateur** sur le test archivé. |
 | Souris M8/R20 (historique) | `Aga Mouse Buttons` | 21 cas CPU PASS ; sous WinUAE boutons reconnus, mais barre Intuition persistante sur clic droit. |
 | Souris M8/R19 | `Aga Mouse X`, `Aga Mouse Y` | **PASS CPU 76 cas et AMOS interprété/WinUAE** pour le test R19 archivé. |
 
-Sur `main`, **R23 0.8.7 est la bibliothèque courante, validée Gate A CPU/CI (15 cas) et Gate B AMOS interprété/WinUAE** sur les scénarios clics rapides, clavier FIFO et Ctrl+C (`_WAITK=Aga Wait Key`, écran Intuition fermé). [Test exact archivé](../tests/passed/M8_R23_IDCMP_QUICK_01.asc). R22 et les archives précédentes sont préservées, `LAST_GOOD` R10 inchangée. Focus réel, stress, Compiler et matériel Amiga restent non testés. [Dossier R23](M8_IDCMP_R23.md).
+Sur `main`, **R24 0.9.0 est la bibliothèque courante : Gate A CPU/CI PASS (402 cas) et Gate B AMOS interprété/WinUAE PASS** sur le scénario M9 de hit-test, priorité de recouvrement et fermeture/réouverture. [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc). R23 demeure archivée et validée pour le dispatcher souris/clavier et Ctrl+C ; `LAST_GOOD` R10 inchangée. Focus réel, stress, Compiler et matériel Amiga non testés.
 
 ## 3. ABI, état et ressources
 
