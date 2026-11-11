@@ -82,7 +82,7 @@ jobs:
       - name: M12 R27 validated LAST_GOOD — native 68000 CPU regression and integrity
         run: |
           python -B tools/test_m12_blit_safe_r27.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes(); from pathlib import Path; assert raw==Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes(); print('R27 LAST_GOOD matches validated archive',info)"
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes(); from pathlib import Path; assert raw==Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes(); print('R27 LAST_GOOD matches validated archive',info)"
           sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
 
