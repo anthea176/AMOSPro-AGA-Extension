@@ -34,7 +34,7 @@ TEXT_EXTENT_OFF = 128
 MAX_CHARS = 128
 STATE_PTR = 0x1C8
 
-def emit_text():
+def emit_text(selected_font=False):
     c = Code()
     c.raw("48e7efee")                  # preserve D0,D1,D4..D7,A0..A2,A4..A6
     c.move(D(3), A(4))               # final string descriptor pointer
@@ -124,6 +124,20 @@ def emit_text():
     c.move(M(0, 8), A(6))            # GfxBase
     c.call_os(LVO_INIT_RP)
     c.move(D(2), M(2, RP_BITMAP))   # rp->BitMap = actual back BitMap
+    if selected_font:
+        # R37 only: resolve the private Screen* -> TextFont* and install
+        # it BEFORE TextExtent. Default R26 emission remains byte-identical.
+        c.move(M(5, STATE_PTR), A(0))
+        c.move(M(0), A(0))            # State.Screen*
+        c.word(0x6100)               # BSR.W to R37 private font_query helper
+        c.label("r37_query_operand")  # displacement WORD; linked by R37 builder
+        c.word(0)
+        c.tst(D(0))
+        c.branch(7, "r37_default_font")
+        c.move(D(0), A(0))            # selected TextFont*
+        c.move(A(7), A(1))            # temporary RastPort*
+        c.call_os(-66)               # graphics.library/SetFont
+        c.label("r37_default_font")
     c.move(M(2, RP_FONT), D(0))
     c.tst(D(0)); c.branch(7, "drop")
 
