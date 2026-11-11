@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guard new AMOS tests against mixed single-line IF/THEN and block END IF.
+"""Guard new AMOS tests against block syntax and obvious string type errors.
 
 R24 initially failed under AMOS because single-line THEN was used in a
 block. Check only tests/current/*.asc, not legacy archived examples.
@@ -29,6 +29,13 @@ def scan(path):
         line = strip_comment(raw).strip()
         if not line:
             continue
+        # AMOS Peek$ returns a string and requires a $-typed destination.
+        peek_assignment = re.match(r"(?i)^([A-Za-z_][A-Za-z0-9_]*\$?)\s*=\s*Peek\$\s*\(", line)
+        if peek_assignment and not peek_assignment.group(1).endswith("$"):
+            errors.append(f"{index}: Peek$ returns a string; target needs a $ suffix")
+        # Direct numeric-variable vs quoted-string comparisons are invalid.
+        if re.search(r'(?i)(?<![A-Za-z0-9_$])[A-Za-z_][A-Za-z0-9_]*\s*(?:<>|=)\s*"', line):
+            errors.append(f"{index}: string literal compared with non-$ numeric variable")
         if re.match(r"(?i)^If\s+", line):
             if re.search(r"(?i)\bThen\b", line):
                 errors.append(f"{index}: single-line THEN is not allowed in current block tests")

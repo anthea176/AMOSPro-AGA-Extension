@@ -8,6 +8,8 @@
 
 **Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
 
+**Essai Gate B WinUAE du 11/11/2026 :** le premier ASC R30 s'est arrêté sur `Type mismatch` à `_STILL=Peek$(_PTR,6)` (erreur de typage **dans le test**, chaîne affectée à une variable numérique). L'ASC corrigé utilise `_STILL$` dans l'affectation et dans la comparaison ; un contrôle statique de non-régression est ajouté. **Aucune validation ni défaillance de la bibliothèque R30 n'est établie** à ce stade : test complet à relancer. R29 reste `LAST_GOOD`.
+
 ---
 
 
