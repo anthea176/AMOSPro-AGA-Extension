@@ -6,7 +6,7 @@
 
 ### Procédure WinUAE
 
-1. Sauvegarder la bibliothèque R27 actuelle dans la configuration Amiga, puis installer **une copie de l'archive R28** sous le nom `AMOSPro_AGA.Lib` au chemin d'extension AMOS habituel. **Ne pas remplacer** la bibliothèque R27 du dépôt `dist/AMOSPro_AGA.Lib` ni son archive R27. **Quitter puis relancer AMOS** après avoir remplacé la bibliothèque de l'émulateur : sa table de commandes doit être relue.
+1. Télécharger la [**R28 prête à installer : `AMOSPro_AGA.Lib`**](../../dist/experimental/M13_R28/AMOSPro_AGA.Lib), sauvegarder la bibliothèque R27 dans WinUAE, puis copier ce fichier **tel quel** dans le dossier des extensions AMOS. Aucun renommage nécessaire. **Ne pas remplacer** la bibliothèque R27 du dépôt `dist/AMOSPro_AGA.Lib` ni son archive R27. **Quitter puis relancer AMOS** après avoir remplacé la bibliothèque de l'émulateur : sa table de commandes doit être relue.
 2. Dans AMOS Professional, importer le test avec **Project → Merge ASCII** depuis `tests/current/M13_R28_PALETTE_01.asc`.
 3. Le sélecteur de fichier demande **un IFF palette enregistré avec Personal Paint ou Deluxe Paint** (palette seule : `FORM ILBM` et `CMAP`, `BMHD` éventuellement présent, **aucun `BODY` nécessaire**). En l'absence d'un IFF palette propre, choisir `examples/demo.iff` pour vérifier avec une image IFF complète : **seule sa palette est importée, jamais les pixels**.
 4. Le programme ouvre son propre écran Intuition AGA **320×256 / 256 couleurs / PAL**, trace d'abord un rectangle index 28 et du texte, puis importe `CMAP`. Il fixe la couleur 28 en vert `$00FF00`, la fait évoluer vers `$F80700` en 32 VBL puis la remet en vert sur 32 VBL.
