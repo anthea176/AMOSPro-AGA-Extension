@@ -14,6 +14,8 @@
 
 **Outils R32 :** `m13_agapal_apply_r32_emit.py` (68000), `build_m13_agapal_apply_r32.py` (builder reproductible R31 → R32), `test_m13_agapal_apply_r32.py` (**136 scénarios CPU PASS**). R32 Gate A/CI PASS ; Gate B WinUAE à réaliser avec le test ASC unique. R31 reste `LAST_GOOD`.
 
+**CI de la candidate R32 publiée :** [34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040) après SHA256/AP20, export 68000 strict, test ASC statique, 136 scénarios CPU et régressions historiques. **R31 reste `LAST_GOOD` jusqu'à Gate B WinUAE R32.**
+
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture WinUAE PASS (11/11/2026)
 
 **Gate A :** 107 scénarios CPU 68000 PASS, export 68000 strict PASS, [CI candidate 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027906298). **Gate B AMOS interprété/WinUAE : PASS** sur `CAP0 1 CAP1 1 OVER 1`, `GREEN 255 RED 255 BLUE 255`, `COUNT0 256 COUNT1 256`, `BEFORE 255 AFTER 255`, `BADNEG 0 BAD8 0 BADSIZE 0`, `NOSCREEN 0 SENTINEL 99`, `ABK AGAPAL SIZE 6224`, `RELOAD 255 255 10 56`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED` et fin propre. **Gates C Compiler / D matériel réel NON TESTÉES**.

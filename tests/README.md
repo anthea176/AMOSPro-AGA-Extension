@@ -6,6 +6,8 @@
 
 ---
 
+**CI de la candidate R32 publiée :** [34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040) après SHA256/AP20, export 68000 strict, test ASC statique, 136 scénarios CPU et régressions historiques. **R31 reste `LAST_GOOD` jusqu'à Gate B WinUAE R32.**
+
 **Tests R31 et antérieurs ci-dessous : validations historiques.**
 
 # Tests AMOS — R31 0.10.3 validée WinUAE
