@@ -1,10 +1,21 @@
-# M12 R27 0.9.3 — Blitters Safe : Gate A CPU/CI PASS, Gate B WinUAE à tester
+# M12 R27 0.9.3 — Blitters Safe : Gates A+B PASS
 
-**Unique programme actif :** [`current/M12_R27_SAFE_BLIT_01.asc`](current/M12_R27_SAFE_BLIT_01.asc), à essayer avec la **bibliothèque candidate R27 0.9.3** (14 252 octets), **pas R26**. **403 cas CPU 68000 Gate A PASS**, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). **WinUAE R27 NON TESTÉE**.
+**11/11/2026 — AMOS interprété/WinUAE : Gate B PASS sur le protocole des 40 swaps.** Le [test original `M12_R27_SAFE_BLIT_01.asc`](passed/M12_R27_SAFE_BLIT_01.asc) a été archivé dans `tests/passed/` **octet pour octet** depuis `tests/current/` (Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`). **Aucun `.asc` actif**. Bibliothèque **R27 0.9.3 corrigée**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`, 14 252 octets. **Gate A : 403 cas CPU 68000 PASS**, CI de publication [28/28 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220).
 
-Le test présente **40 images alternées vert/rouge**, avec deux rectangles par image dont un copié par `Aga Blit Copy`. Pour chacune des 40 images, le premier dessin est successivement `Aga Blit Clear`, `Aga Blit Fill` ou `Aga Blit Copy` (respectivement **14/13/13 réussites**) ; chaque routine doit se protéger **directement** contre l'utilisation d'un back buffer non-Safe. **Aucune sonde `Aga Text`.** Retours 0 → reprises bornées à 12 VBL, idem pour `Aga Swap`. Console attendue : `DONE 40 C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. Compteurs de refus variables, aucune mesure de FPS. [Protocole détaillé](current/README.md).
+**Capture utilisateur et observation des rectangles clignotant visiblement :**
 
-**Ne pas déplacer dans `tests/passed/` avant capture WinUAE et validation utilisateur.** Les tests R26 [texte](passed/M11_R26_AGA_TEXT_01.asc) et [40 swaps avec sonde](passed/M11_R26_SAFE_SWAP_02.asc) restent archivés à l'octet près, tout comme R25/R24.
+```text
+M12-R27-SAFE-BLIT-01
+IMAGE 320 X 256 PLANES 8
+OPEN 1 DB 1 LOAD 1
+DONE 40 C 14 F 13 P 13
+C0 13 F0 13 P0 13 SWAP0 0
+SAFEERR 0 SWAPERR 0 DRAWERR 0
+CLOSED -1 RESULT 1
+CLOSE RETURNED
+```
+
+Clear, Fill et Copy ont réussi 14/13/13 opérations respectivement en tant que **premier dessin après Swap**, **sans sonde `Aga Text`** ; chacun a également renvoyé temporairement 0 à 13 reprises, avant la reprise bornée. Les 40 swaps ont réussi sans refus et le programme est revenu normalement dans AMOS à la **ligne 167**. **Le test valide ce scénario** : chaque retour 0 ne constitue pas une preuve individuelle du motif exact Safe ; l'utilisateur a décrit les rectangles comme « clignotants », sans préciser explicitement le détail de leur alternance de couleur. Ni 50 FPS, ni stress exhaustif, ni Compiler, ni matériel AGA physique validés. [Rapport M12/R27](../docs/M12_SAFE_BLITTER_R27.md).
 
 ---
 

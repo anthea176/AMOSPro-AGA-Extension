@@ -1,6 +1,6 @@
 # M12 — R27 0.9.3 : sécurisation Safe des Blitters AGA
 
-**11/11/2026 — R27 0.9.3 candidate WinUAE, Gate A CPU/CI 68000 PASS (403 scénarios), Gate B AMOS/WinUAE NON TESTÉE.** [CI R27 complète 28 étapes PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). [Binaire candidat courant](../dist/AMOSPro_AGA.Lib) = [archive R27](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), **14 252 octets**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. Les archives R26/R25/R24 et `LAST_GOOD` R10 sont conservées à l'identique. **R26 0.9.2 reste la dernière version WinUAE-PASS**, sur ses deux scénarios. Aucune autre branche.
+**11/11/2026 — R27 0.9.3 corrigée : Gates A+B PASS sur leurs périmètres.** **Gate A : 403 scénarios CPU 68000 PASS**, [CI finale binaire 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220). **Gate B : AMOS interprété/WinUAE PASS sur le test de 40 swaps**, original [archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc). [Bibliothèque active](../dist/AMOSPro_AGA.Lib) = [archive R27](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), **14 252 octets**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. R26/R25/R24 et `LAST_GOOD` R10 inchangés.
 
 ## Correction obligatoire des liens R23
 
@@ -53,22 +53,23 @@ La candidate est reconstruite **en mémoire** depuis [l'archive R26](../dist/exp
 - Pour Copy/Fill/Clear et les deux valeurs de `frontIndex` : bit Safe nul, bit Safe en attente avec message absent/présent, bit Disp seul ou combiné, port Safe nul, géométrie invalide, préservation du buffer en cas de refus, `GetMsg` au plus une fois par appel.
 - Vérifier que des appels répétés après consommation du message ne le consomment pas une deuxième fois ; simuler des alternances de 40 images. **PASS : 403 cas CPU natifs et vérifications de structure AP20**, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). La candidate ne fut publiée qu'après cette validation.
 
-**Gate B AMOS interprété/WinUAE : NON TESTÉE.** [Unique test courant M12_R27_SAFE_BLIT_01.asc](../tests/current/M12_R27_SAFE_BLIT_01.asc) (à importer via **Project → Merge ASCII**) ; sélectionner `examples/demo.iff` 320×256×8 PAL. **40 alternances** : panneau bleu, deux rectangles verts puis deux rouges, le second copié par `Aga Blit Copy`. Le **premier dessin** de chaque image alterne **Clear (14 fois), Fill (13), Copy (13)** pour vérifier que chacune des trois commandes sonde directement Safe, **sans appel préalable à `Aga Text`**. Chacune des tentatives est bornée à 12 VBL en cas de retour 0 ; idem pour `Aga Swap`.
+**Gate B AMOS interprété/WinUAE : PASS sur le scénario de 40 swaps (11/11/2026).** [Programme exact `M12_R27_SAFE_BLIT_01.asc` archivé](../tests/passed/M12_R27_SAFE_BLIT_01.asc), blob Git original `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`. Chargement de `examples/demo.iff` en 320×256×8 PAL ; le premier dessin après chaque Swap a successivement utilisé Clear (**14**), Fill (**13**), Copy (**13**), chacune **sans sonde `Aga Text`** ; les retries sont bornés à 12 VBL.
 
-**Résultats attendus, pas encore observés :**
+**Console observée et capture utilisateur :**
 ```text
 M12-R27-SAFE-BLIT-01
 IMAGE 320 X 256 PLANES 8
 OPEN 1 DB 1 LOAD 1
 DONE 40 C 14 F 13 P 13
-C0 <n> F0 <n> P0 <n> SWAP0 <n>
+C0 13 F0 13 P0 13 SWAP0 0
 SAFEERR 0 SWAPERR 0 DRAWERR 0
 CLOSED -1 RESULT 1
 CLOSE RETURNED
 ```
-Les compteurs `C0/F0/P0/SWAP0` sont variables, y compris zéro ; leurs valeurs ne prouvent pas seules la cause exclusive d'un refus. **L'alternance des deux rectangles doit être constatée visuellement en plus de la console.** Ce n'est pas une mesure 50 FPS ni un stress exhaustif.
+
+**Observation visuelle :** l'utilisateur a confirmé « je vois des rectangles qui clignottent ». La capture du panneau de résultat confirme la fermeture et la fin normale d'AMOS **ligne 167** ; elle ne prouve pas, à elle seule, la couleur précise de chaque image. **13 refus temporaires** pour chacun de Clear/Fill/Copy ont été récupérés par la boucle bornée ; **aucun Swap refusé**, aucune erreur finale. **Un retour 0 peut aussi être dû à un paramètre ou état invalide** : ses 13 occurrences ne prouvent pas individuellement la cause Safe. Ce PASS valide le fonctionnement de la protection non bloquante **sur ce scénario de 40 alternances**, sans démontrer une absence universelle de course mémoire.
 
 
 **Gates C/D :** AMOS Compiler et Amiga AGA physique restent NON TESTÉS. Aucune mesure 50 FPS ni validation exhaustive de course mémoire ne découle automatiquement de 40 alternances.
 
-**Règles de projet :** uniquement `main`. La R27 candidate remplace le chemin courant `dist/AMOSPro_AGA.Lib` **après** Gate A PASS, sans toucher à aucune archive R26/R25/R24, ni à `LAST_GOOD` R10, ni aux tests déjà archivés. Ne pas classer le test R27 PASS avant WinUAE utilisateur.
+**Règles de projet :** uniquement `main`. La R27 candidate remplace le chemin courant `dist/AMOSPro_AGA.Lib` **après** Gate A PASS, sans toucher à aucune archive R26/R25/R24, ni à `LAST_GOOD` R10, ni aux tests déjà archivés. Test R27 classé PASS après capture et confirmation utilisateur du 11/11/2026, puis archivé à l'identique.

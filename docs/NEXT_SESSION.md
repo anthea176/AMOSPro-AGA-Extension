@@ -1,16 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M12 — R27 0.9.3 Blitters Safe : Gate A CPU/CI PASS, WinUAE à tester
+## M12 — R27 0.9.3 Blitters Safe : Gates A+B PASS sur scénarios validés
 
-**Correctif R23 intégré avant WinUAE :** la première candidate R27 défectueuse (anciens BSR relatifs) a été retirée. Le nouveau binaire résout les 6 relocalisations nécessaires ; [Gate A complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650) 28 étapes PASS, dont CPU clavier/souris et source strict.
+**11/11/2026 — Gate A CPU 68000/CI PASS 403 cas, Gate B AMOS interprété/WinUAE PASS sur 40 swaps.** [CI finale 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220) · [Contrat et compte-rendu M12](M12_SAFE_BLITTER_R27.md) · [test M12 original archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc), Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`.
 
-**11/11/2026 — candidate R27 disponible après 403 cas CPU 68000 PASS**, [CI R27 complète 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). **Gate B AMOS interprété/WinUAE NON TESTÉE** pour R27 ; ne pas extrapoler les PASS de R26 à cette nouvelle bibliothèque.
-
-- **Bibliothèque active :** `dist/AMOSPro_AGA.Lib` = [archive R27 0.9.3](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), **14 252 octets**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. **R26 0.9.2** demeure [figée et WinUAE PASS](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib) sur les deux scénarios archivés ; R25/R24 et `LAST_GOOD` R10 intacts.
-- **Changement strict :** garde `Safe` commune non bloquante dans les segments 19 `Copy` et 20 `Fill`, wrapper 21 `Clear` redirigé vers Fill via son `BSR.W` recalculé. **31 commandes AP20 identiques, 37 segments, neuf segments modifiés : 19/20/21 Blitters et 6/17/18/31/32/33 relocalisés pour préserver les appels clavier/souris R23**. `Aga Text`, `Aga Swap` et les autres entrées demeurent identiques à R26. Aucun DMA quand Safe est en attente : retour `0`, sans attendre ni consommer `Disp`. [Contrat R27](M12_SAFE_BLITTER_R27.md).
-- **Unique test WinUAE actif :** [`tests/current/M12_R27_SAFE_BLIT_01.asc`](../tests/current/M12_R27_SAFE_BLIT_01.asc). Installer la **R27** dans WinUAE, redémarrer AMOS, importer via `Project → Merge ASCII`, choisir `examples/demo.iff` 320×256×8. Voir **40 alternances de deux rectangles verts / rouges sur panneau bleu**, avec un appel initial Clear/Fill/Copy tournant selon les images (14/13/13), **sans sonde `Aga Text`**.
-- **Console attendue, non observée :** `DONE 40 C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED` ; `C0 F0 P0 SWAP0` variables. **Observation visuelle et capture console nécessaires** avant archivage et déclaration Gate B PASS. Pas de chronométrage FPS.
-- **Réserves :** `Aga Back Fill` historique (segment 12) ne dispose pas de cette garde. Compiler, Amiga AGA physique, longue durée et courses exhaustives non testés. Aucune autre branche.
+- **Bibliothèque active** : `dist/AMOSPro_AGA.Lib` = [archive R27](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), **14 252 octets**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. Versions R26 0.9.2 WinUAE-PASS, R25/R24 et `LAST_GOOD` R10 **intactes**.
+- **R27** : 31 tokens AP20 inchangés, 37 segments ; fonctions `Aga Blit Copy`, `Aga Blit Fill`, `Aga Blit Clear` protégées contre l'usage d'un buffer en attente Safe. **Neuf segments modifiés** : 19/20/21 Blitters et 6/17/18/31/32/33 relocalisés pour conserver les BSR et l'état clavier/souris R23. Première candidate défectueuse retirée **avant WinUAE** ; seule la candidate corrigée a été exécutée.
+- **Capture et observation utilisateur** : `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, fin AMOS **ligne 167**. Rectangles vus **clignoter**, sans détail individuel des couleurs explicitement confirmé. **Pas de sonde `Aga Text`**.
+- **Tests** : `tests/current/` ne contient **aucun `.asc` actif** ; `tests/passed/M12_R27_SAFE_BLIT_01.asc` est archivé **octet pour octet**. La validation vaut pour ce protocole de 40 swaps, pas une garantie de 50 FPS ni une absence exhaustive de courses. Les 13 retours 0 par primitive ne prouvent pas individuellement leur cause.
+- **Restent NON TESTÉS** : AMOS Compiler, Amiga AGA physique, stress prolongé, chronométrage FPS ; `Aga Back Fill` historique ne bénéficie pas du garde R27. Aucun nouveau chantier/branche ouvert.
 
 
 ---

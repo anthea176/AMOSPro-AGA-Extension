@@ -1,19 +1,19 @@
-# Outils Python actifs — R26 0.9.2 M11 (Gate A CPU/CI PASS et Gate B AMOS/WinUAE PASS sur texte initial + 40 swaps)
+# Outils Python actifs — R27 0.9.3 M12 (Gates A+B PASS sur scénarios CPU et AMOS/WinUAE)
 
-## M12 — R27 Safe Blitters (Gate A CPU PASS 403 cas, Gate B WinUAE à tester)
+## M12 — R27 Safe Blitters (Gate A CPU/CI 403 cas PASS et Gate B AMOS/WinUAE 40 swaps PASS)
 
 - [`m12_blit_safe_r27_emit.py`](m12_blit_safe_r27_emit.py) : même garde `GetMsg(SafePort)` non bloquante avant DMA dans Copy/Fill, préserve `D6`/ABI et le bit Disp.
 - [`build_m12_blit_safe_r27.py`](build_m12_blit_safe_r27.py) : builder **en mémoire** reproductible depuis [R26 figée](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib). [Candidate R27 courante](../dist/AMOSPro_AGA.Lib) = [archive versionnée](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), 14 252 octets, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. **Même table de 31 commandes, neuf segments modifiés : 19/20/21 Blitters plus 6/17/18/31/32/33 relocalisés pour R23.**
-- [`test_m12_blit_safe_r27.py`](test_m12_blit_safe_r27.py) : **403 cas CPU 68000 PASS** (Copy/Fill/Clear, Safe/Disp, aucun DMA en refus, ABI, Clear BSR, 40 images simulées), [CI complète R27](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). **Gate B WinUAE NON TESTÉE.**
-- [Contrat M12](../docs/M12_SAFE_BLITTER_R27.md) · [unique test WinUAE actif](../tests/current/M12_R27_SAFE_BLIT_01.asc). R26/R25/R24 et `LAST_GOOD` R10 intacts ; Compiler/matériel non testés.
+- [`test_m12_blit_safe_r27.py`](test_m12_blit_safe_r27.py) : **403 scénarios CPU 68000 PASS** dont Copy/Fill/Clear Safe/Disp, aucun DMA après rejet, ABI, BSR Clear et relocations clavier/souris R23 ; [CI finale 28/28 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220). **Gate B AMOS/WinUAE PASS** sur [40 swaps originaux archivés](../tests/passed/M12_R27_SAFE_BLIT_01.asc).
+- [Rapport M12, captures et réserves](../docs/M12_SAFE_BLITTER_R27.md) · [test WinUAE archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc) : `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, clignotement des rectangles et sortie normale à la ligne 167. **Aucun `.asc` dans `tests/current/`.** R26/R25/R24 et `LAST_GOOD` R10 intacts ; Compiler, matériel et FPS non validés.
 
 
 ## M11 — R26 `Aga Text` 0.9.2 : validation WinUAE initiale et multi-swap 40 images PASS
 
-- [`build_m11_text_r26.py`](build_m11_text_r26.py) : builder **en mémoire** reproductible depuis R25 figée ; candidate `dist/AMOSPro_AGA.Lib` = [archive R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Il ne modifie aucun binaire en étant exécuté.
+- [`build_m11_text_r26.py`](build_m11_text_r26.py) : builder **en mémoire** reproductible depuis R25 figée ; **à la clôture de R26**, la candidate `dist/AMOSPro_AGA.Lib` était égale à [l'archive R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Il ne modifie aucun binaire en étant exécuté.
 - [`m11_text_r26_emit.py`](m11_text_r26_emit.py) : nouvelle routine 68000 `TextExtent` + `InitRastPort` + `Text`, sécurité Safe/Disp non bloquante sans `WaitPort` ni `ReplyMsg`.
 - [`test_m11_text_r26.py`](test_m11_text_r26.py) : **64 cas CPU 68000 PASS** (ABI, back buffer, Safe/Disp, clipping) lors de la [CI R26 complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42922291061). **Gate B AMOS/WinUAE PASS** sur le [test R26 original archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc), texte vert visible sur fond bleu, `RESULT 1`, fermeture propre.
-- [Contrat et résultats R26](../docs/M11_TEXT_R26.md) · [test texte initial PASS](../tests/passed/M11_R26_AGA_TEXT_01.asc) · [test multi-swap PASS archivé](../tests/passed/M11_R26_SAFE_SWAP_02.asc). **40 alternances A/B confirmées**, `PROBE0 39 SWAP0 0`, toutes erreurs nulles, `RESULT 1`. `tests/current/` ne contient aucun `.asc`. La R26 et les archives R25/R24/`LAST_GOOD` R10 restent inchangées ; Compiler, matériel réel et longue durée non testés.
+- [Contrat et résultats R26](../docs/M11_TEXT_R26.md) · [test texte initial PASS](../tests/passed/M11_R26_AGA_TEXT_01.asc) · [test multi-swap PASS archivé](../tests/passed/M11_R26_SAFE_SWAP_02.asc). **40 alternances A/B confirmées**, `PROBE0 39 SWAP0 0`, toutes erreurs nulles, `RESULT 1`. `tests/current/` ne contient aucun `.asc` après archivage du test R27. La R26 et les archives R25/R24/`LAST_GOOD` R10 restent inchangées ; Compiler, matériel réel et longue durée non testés.
 
 ### Historique de conception M11 (avant l'implémentation R26 ; non applicable à l'état courant)
 
