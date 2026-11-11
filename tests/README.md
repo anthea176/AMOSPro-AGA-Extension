@@ -1,3 +1,5 @@
+**AVERTISSEMENT : première candidate R27 retirée avant WinUAE.** Ne pas exécuter le programme R27 tant qu'un binaire corrigé avec relocalisation R23 et Gate A PASS n'est pas publié. [Détails M12](../docs/M12_SAFE_BLITTER_R27.md).
+
 # M12 R27 0.9.3 — Blitters Safe : Gate A CPU/CI PASS, Gate B WinUAE à tester
 
 **Unique programme actif :** [`current/M12_R27_SAFE_BLIT_01.asc`](current/M12_R27_SAFE_BLIT_01.asc), à essayer avec la **bibliothèque candidate R27 0.9.3** (14 252 octets), **pas R26**. **396 cas CPU 68000 Gate A PASS**, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42995303489). **WinUAE R27 NON TESTÉE**.

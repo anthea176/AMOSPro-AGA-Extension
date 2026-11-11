@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R27 Safe Blitters, with R26/R25/R24 and LAST_GOOD frozen."""
+"""Current integrity: R26 text candidate; R25/R24/R23/R22/R21/R20/R19/R18/M6 and R10 frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,8 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "d4b838abede4a8fa489f920f7b1633b501639bab86d00f9070dbaea89ece9409",
-    "dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib": "d4b838abede4a8fa489f920f7b1633b501639bab86d00f9070dbaea89ece9409",
+    "dist/AMOSPro_AGA.Lib": "0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287",
     "dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib": "0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287",
     "dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib": "4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6",
     "dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib": "cc8776e7303c529492fe6761544f4b2be1180063f3787fa840f44129766e3671",
@@ -68,7 +67,6 @@ def main():
     from build_m9_hotspot_hit_r24 import build as build_r24, ENTRY as HOTSPOT_ENTRY
     from build_m10_rect_overlap_r25 import build as build_r25, ENTRY as RECT_ENTRY
     from build_m11_text_r26 import build as build_r26, ENTRY as TEXT_ENTRY
-    from build_m12_blit_safe_r27 import build as build_r27, COPY_ENTRY, FILL_ENTRY, CLEAR_ENTRY
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -78,8 +76,7 @@ def main():
 
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert r10 == binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     assert binaries["archive/AMOSPro_AGA_M4b_v0.0.9_R6C_R1_WinUAE_OK.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M4b_v0.0.9_R6C_R1.Lib"]
@@ -120,9 +117,7 @@ def main():
     built25, detail25 = build_r25()
     assert r25 == built25 == build_r25()[0], "Frozen R25 not reproducible"
     built26, detail26 = build_r26()
-    assert r26 == built26 == build_r26()[0], "Frozen R26 not reproducible"
-    built27, detail27 = build_r27()
-    assert candidate == built27 == build_r27()[0], "R27 not reproducible"
+    assert candidate == built26 == build_r26()[0], "R26 not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
@@ -143,8 +138,7 @@ def main():
     tok23, seg23, _ = split(built23)
     tok24, seg24, _ = split(built24)
     tok25, seg25, _ = split(r25)
-    tok26, seg26, _ = split(r26)
-    tok27, seg27, _ = split(candidate)
+    tok26, seg26, _ = split(candidate)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -218,14 +212,7 @@ def main():
     assert seg26[TEXT_ENTRY-1] == seg25[TEXT_ENTRY-1] + b"GetP", "R25 rect entry altered"
     assert seg26[TEXT_ENTRY], "R26 Text missing"
     assert not inspect(parse(candidate))["issues"], "R26 AP20 invalid"
-    assert tok27 == tok26, "R27 must retain the R26 AMOS token table"
-    assert len(seg27) == len(seg26) == 37
-    assert [i for i in range(37) if seg27[i] != seg26[i]] == [
-        COPY_ENTRY, FILL_ENTRY, CLEAR_ENTRY
-    ], "R27 modified a non-Blitter segment"
-    assert seg27[TEXT_ENTRY] == seg26[TEXT_ENTRY], "R26 AGA Text changed"
-    assert not inspect(parse(candidate))["issues"], "R27 AP20 invalid"
-    print("PASS: R27 current/archive reproducible; R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen,"
+    print("PASS: R26 current/archive reproducible; R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen,"
           " LAST_GOOD R10 intact")
 
 

@@ -182,9 +182,28 @@ def analyze_entries(parsed):
                 golden = parse_lib(frozen)['section']
     for idx,marker in ((17,500),(18,540)):
         is_frozen = sha(parsed['raw']) == R23_SHA
+        current_core = sections[idx]['core']
         is_unchanged = (golden is not None and
-                        sections[idx]['core'] == golden[idx]['core'])
-        if is_frozen or is_unchanged:
+                        current_core == golden[idx]['core'])
+        # M12/R27 grows earlier Copy/Fill entries. The original R23
+        # keyboard BSR.W (at 0x30) MUST be recalculated to entry33 key_next.
+        # Permit the already-audited RTS exit seed ONLY when its entire
+        # keyboard core is byte-exact R23 APART from those two displacement
+        # bytes, and the new BSR targets the exact known private helper.
+        # Never accept arbitrary keyboard changes or a relocated call
+        # pointing anywhere else, even when the exit marker is present.
+        is_relocated = False
+        if (golden is not None and len(sections) > 33 and
+                len(current_core) == len(golden[idx]['core']) and
+                current_core[0x30:0x32] == b'\x61\x00' and
+                current_core[:0x32] == golden[idx]['core'][:0x32] and
+                current_core[0x34:] == golden[idx]['core'][0x34:] and
+                len(sections[33]['core']) > 540 and
+                sections[33]['core'][538:540] == b'\x61\x00'):
+            relative = struct.unpack_from('>h', current_core, 0x32)[0]
+            target = sections[idx]['file_offset'] + 0x32 + relative
+            is_relocated = (target == sections[33]['file_offset'] + 538)
+        if is_frozen or is_unchanged or is_relocated:
             need(sections[idx]['core'][marker:marker+8]
                  ==bytes.fromhex('FE11F700008C4E75'),
                  'Unexpected audited R23 keyboard exit bytes')

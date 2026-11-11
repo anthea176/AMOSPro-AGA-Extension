@@ -231,6 +231,46 @@ class Tests(unittest.TestCase):
             self.assertEqual(report['entries'],35)
         self.assertEqual(r24.read_bytes(),raw)
 
+    def test_r27_relocated_r23_dispatcher_strict_and_tamper_guard(self):
+        # A larger R27 Blitter shifts entry33: R23 keyboard BSR.W calls
+        # have to move too. The strict exporter must recognize the exact
+        # relocation, while still rejecting unrelated keyboard edits.
+        from build_m12_blit_safe_r27 import build
+        candidate, details = build()
+        parsed = x.parse_lib(candidate)
+        self.assertEqual(len(parsed['section']), 37)
+        changed = details['changed_segments']
+        self.assertEqual(changed, (6, 17, 18, 19, 20, 21, 31, 32, 33))
+        key_target = parsed['section'][33]['file_offset'] + 538
+        for idx in (17,18):
+            core = parsed['section'][idx]['core']
+            self.assertEqual(core[0x30:0x32],bytes.fromhex('6100'))
+            disp = __import__('struct').unpack_from('>h',core,0x32)[0]
+            self.assertEqual(parsed['section'][idx]['file_offset']+0x32+disp,
+                             key_target)
+        self.assertFalse(x.unclassified_gaps(parsed))
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            binary=folder/'fixed-r27.Lib'
+            binary.write_bytes(candidate)
+            out=folder/'asm-export'
+            self.assertEqual(x.main(['--lib',str(binary),'--out',str(out),
+                                     '--strict','--baseline','none']),0)
+            report=json.loads(next(out.glob('*.json')).read_text())
+            self.assertEqual(report['unclassified_regions'],[])
+            self.assertEqual(binary.read_bytes(),candidate)
+        modified=bytearray(candidate)
+        pos=parsed['section'][17]['file_offset']+0x32
+        modified[pos+1]^=0x02   # target misses key_next; NOT an audited relocation
+        self.assertTrue(any(p['entry']==17 or p['entry']==33
+                            for p in x.unclassified_gaps(
+                                x.parse_lib(bytes(modified)))))
+        modified=bytearray(candidate)
+        pos=parsed['section'][17]['file_offset']+500
+        modified[pos]^=0x01  # R23 keyboard exit marker tampered
+        self.assertTrue(any(p['entry']==17 for p in x.unclassified_gaps(
+            x.parse_lib(bytes(modified)))))
+
     def test_r24_altered_keyboard_core_does_not_inherit_r23_rts_seed(self):
         path=ROOT/'dist'/'experimental'/'AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib'
         raw=bytearray(path.read_bytes())

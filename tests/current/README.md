@@ -1,3 +1,5 @@
+**ATTENTION :** première candidate R27 retirée avant WinUAE (relocalisation clavier/souris R23 invalide). **Ne pas installer l'ancien R27**. La bibliothèque courante est provisoirement R26 WinUAE-PASS ; ce test R27 reste préparé mais n'est pas exécutable avant correction CPU/CI. [Incident M12](../../docs/M12_SAFE_BLITTER_R27.md).
+
 # M12 — R27 Blitters Safe : essai WinUAE courant
 
 **Unique `.asc` actif :** [`M12_R27_SAFE_BLIT_01.asc`](M12_R27_SAFE_BLIT_01.asc). **Nécessite la candidate R27 0.9.3**, pas l'archive R26. **Gate A 68000/CI PASS 396 cas**, [CI source R27](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42995303489). **Gate B WinUAE NON TESTÉE**.

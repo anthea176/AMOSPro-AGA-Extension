@@ -16,9 +16,14 @@ from audit_ap20 import inspect, parse
 from build_m12_blit_safe_r27 import (
     build, BASE, BASE_SHA256, LAST_GOOD, LAST_GOOD_SHA256,
     COPY_ENTRY, FILL_ENTRY, CLEAR_ENTRY, TEXT_ENTRY, GETP,
+    RELOCATED, _entry_starts,
+
 )
 from build_m6_blit_clear_r15 import emit_clear
 from m12_blit_safe_r27_emit import emit_copy_safe, emit_fill_safe
+from build_m8_idcmp_r23 import KEY_STUB, STATE_ANCHOR
+from m8_idcmp_r23_emit import emit_dispatcher, emit_mouse_reader, IDCMP_RAWKEY, IDCMP_MOUSEBUTTONS
+from test_m8_idcmp_r23_preflight import IdcmpMachine
 from test_m6_blit_copy_r13 import CopyMachine
 from test_m6_blit_fill_r14 import FillMachine
 from test_m6_blit_clear_r15 import ClearMachine
@@ -88,7 +93,7 @@ def run():
     assert tokens==previous_tokens,"R27 must NOT add/remove tokens"
     assert len(previous)==len(parts)==37
     changed=[i for i,(a,b) in enumerate(zip(previous,parts)) if a!=b]
-    assert changed==[COPY_ENTRY,FILL_ENTRY,CLEAR_ENTRY],changed
+    assert changed==list(RELOCATED),changed
     copy,copy_labels=emit_copy_safe()
     fill,fill_labels=emit_fill_safe()
     clear,details=emit_clear(len(fill))
@@ -114,7 +119,49 @@ def run():
     layout=parse(candidate)
     assert layout.starts[CLEAR_ENTRY]+details["call_at"]+2+disp==layout.starts[FILL_ENTRY], "Clear BSR points to wrong Fill"
 
-    cases=0
+    # R27 expands segments 19+20, moving the R23 mouse/keyboard dispatcher
+    # (entry 33) and the private event-state storage anchored at entry 6.
+    # Its four cross-entry BSR.W links MUST be recomputed (not byte-frozen).
+    previous_starts=_entry_starts(previous)
+    starts=_entry_starts(parts)
+    oldstate=previous_starts[33]+meta["r23_dispatcher_relocation"]["labels"]["runtime_state"]-STATE_ANCHOR
+    newstate=starts[33]+meta["r23_dispatcher_relocation"]["labels"]["runtime_state"]-STATE_ANCHOR
+    assert oldstate==meta["r23_dispatcher_relocation"]["old_state_delta"]
+    assert newstate==meta["r23_dispatcher_relocation"]["new_state_delta"]
+    assert newstate>oldstate
+    labels=meta["r23_dispatcher_relocation"]["labels"]
+    for idx in (17,18):
+        call=KEY_STUB+2
+        assert parts[idx][call-2:call]==b"\x61\x00"
+        offs=unpack_from(">h",parts[idx],call)[0]
+        assert starts[idx]+call+offs==starts[33]+labels["key_next"], (
+            "R23 keyboard BSR target lost",idx)
+    for idx,mode in ((31,"pressed"),(32,"released")):
+        code,call=emit_mouse_reader(mode,newstate)
+        assert len(parts[idx])==len(code)+4 and parts[idx].endswith(GETP)
+        assert parts[idx][call-2:call]==b"\x61\x00"
+        offs=unpack_from(">h",parts[idx],call)[0]
+        assert starts[idx]+call+offs==starts[33]+labels["pump"], (
+            "R23 mouse BSR target lost",idx)
+    hpos=len(parts[6])-len(GETP)-18
+    assert unpack_from(">H",parts[6],hpos+6)[0]==newstate
+    dispcode,_=emit_dispatcher(newstate)
+    assert parts[33]==dispcode+GETP and dispcode[-144:]==bytes(144)
+
+    # Execute the relocated R23 dispatcher paths on a real 68000 emulator:
+    # input event queue, mouse press/release and keyboard FIFO/BSR key_next.
+    inp=IdcmpMachine(candidate,newstate)
+    inp.inject(IDCMP_MOUSEBUTTONS,0x68)
+    inp.inject(IDCMP_MOUSEBUTTONS,0xe8)
+    assert inp.pressed()==1 and inp.released()==1
+    assert inp.pressed()==0 and inp.released()==0
+    assert len(inp.replied)==2 and not inp.inflight
+    inp=IdcmpMachine(candidate,newstate)
+    inp.inject(IDCMP_RAWKEY,64)
+    assert inp.key()==64 and inp.key()==-1
+    assert len(inp.replied)==1 and not inp.inflight
+
+    cases=7  # R23 relocation: 4 BSRs, state anchor, mouse and keyboard CPU
     for klass,name,args in SPECS:
         for depth in (1,2,4,8):
             item_args=(args if name!="Fill" else args[:-1]+((1<<depth)-1,))
