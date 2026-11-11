@@ -2,7 +2,7 @@
 
 **Test validé et archivé :** [`passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](passed/M13_R30_AGAPAL_BANK_INIT_01.asc) (blob Git exact `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964`). Sortie AMOS/WinUAE `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. Le `Type mismatch` du premier essai provenait du test, corrigé avant validation.
 
-**Bibliothèques courante, archive et LAST_GOOD :** R30 0.10.2, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, copies strictement identiques. R29 conservée en archive. Gate A : 39 cas CPU + CI [32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43022799794). **Gate B : PASS sur ce scénario. Gates C Compiler/D matériel réel : non testées.** Plus aucun ASC actif dans `tests/current/`.
+**Bibliothèques courante, archive et LAST_GOOD :** R30 0.10.2, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, copies strictement identiques. R29 conservée en archive. Gate A : 39 cas CPU + CI [32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43024446890). **Gate B : PASS sur ce scénario. Gates C Compiler/D matériel réel : non testées.** Plus aucun ASC actif dans `tests/current/`.
 
 ---
 
