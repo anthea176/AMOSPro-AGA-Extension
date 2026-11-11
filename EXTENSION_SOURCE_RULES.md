@@ -21,6 +21,18 @@
 3. **Documentation possible pendant la discussion :** consigner décisions, propositions et points ouverts dans les règles et les documents de suivi, sans transformer un nom envisagé en token déjà disponible ni annoncer un PASS inexistant.
 4. **Après accord**, appliquer toutes les règles de développement, les Gate A/B/C/D et la promotion obligatoire de `LAST_GOOD` ; travail exclusivement sur `main`, aucun autre dépôt ni branche sans demande explicite.
 
+## R30 M13 — structure AGAPAL approuvée (11/11/2026, conception uniquement)
+
+**Accord utilisateur sur l'architecture, sans nouveau token ni binaire R30 :** banque `DATA` native AMOS, enregistrable et rechargeable avec les commandes de banque AMOS dans un fichier **ABK standard**, contenant **plusieurs palettes AGA RGB24**. L'extension gérera un format intérieur `AGAPAL`, distinct du conteneur externe ABK que gère AMOS. Préférer la **Fast RAM** si le système de banques AMOS le permet : vérifier le comportement réel avant de promettre une zone mémoire.
+
+**Organisation acceptée :** en-tête intérieur de **16 octets** (signature ASCII `AGAPAL` sur 6 octets, version, nombre de palettes et champs réservés), index de **8 octets par palette** (offset 32 bits, nombre de couleurs 16 bits, flags 16 bits), et **768 octets fixes par emplacement** (256 couleurs RGB24). **Indices internes à partir de 0.** Taille proposée : `16 + N × (8 + 768)`, soit **6 224 octets pour huit palettes**. Endianness, offsets exacts, représentation des emplacements libres et contrôle des données seront établis avant le code.
+
+**Première fonction proposée :** `_OK=Aga Palette Bank Init(10,8)` après réservation AMOS DATA (exemple de conception : `Reserve As Data 10,6224`), retour attendu **1/0**. Le nom externe ABK de huit octets `AGAPAL  ` **n'est pas garanti** par une réservation DATA ordinaire : vérifier dans les sources/documentation AMOS les champs d'en-tête `AmBk`, le nom de banque et les mécanismes `Save`/`Load`. Une signature AGAPAL interne ne remplace pas l'enveloppe ABK native.
+
+**Vérifications préalables obligatoires :** conventions `Reserve As Data`, allocation Chip/Fast, accès/taille des banques, identité et durée de vie, `Erase`, persistance ABK, ABI 68000 et limites d'allocation. Le premier incrément ne portera que sur `Aga Palette Bank Init` ; les futures commandes de capture, import, application, fades et cycling restent à discuter **individuellement** avant codage. **R29 0.10.1 reste candidate actuelle et LAST_GOOD ; aucun code ni Gate R30 exécuté.**
+
+---
+
 ### M13 — R29 et futures banques/fades : décisions et points à définir
 
 - **R29 accepté dans son principe :** poursuivre par la sauvegarde/export de palettes au **format IFF standard `FORM ILBM` + `CMAP`**, compatible avec les logiciels de dessin, sans format propriétaire. Les appels AMOS précis, le traitement des erreurs, le fichier de sortie et la restauration restent à discuter avant codage.
@@ -922,9 +934,19 @@ Le `README.md` est un **manuel d'utilisation de la version courante**, pas un jo
 - **Garde-fou CI :** `tools/test_readme_api_coverage.py` doit refuser toute introduction autre que le titre, tout en vérifiant les tokens AP20.
 - Relire le README complet pour détecter doublons et statuts périmés. Aucune intervention sur les binaires ou `LAST_GOOD` n'est autorisée par ce nettoyage.
 
+### Règle permanente — DEUX README à CHAQUE instruction ET validation (11/11/2026)
+
+Cette règle complète la documentation de l'API et la promotion de LAST_GOOD. **Elle s'applique à `README.md` (anglais) ET `README.fr.md` (français), sans exception.**
+
+1. **À chaque nouvelle instruction/fonction ou changement d'API :** mettre à jour **les deux README dans le même commit** que la candidate Gate A ; renseigner token AP20 exact, syntaxe AMOS, type/ordre des paramètres, retour et erreurs, limites, exemples, version et **Gates effectivement obtenues**. Ne jamais présenter comme implémentée une fonction encore à l'étude.
+2. **À chaque validation (ou échec) :** mettre à jour **les deux README dès le résultat**, en précisant le test exact, la Gate A CPU/CI, B AMOS/WinUAE, C Compiler ou D Amiga physique (selon le cas), PASS/FAIL, les limites et les liens des preuves. Aucun succès simulé ne vaut validation WinUAE.
+3. **Après Gate B PASS utilisateur :** mise à jour **dans le même commit** que la copie binaire identique vers `dist/AMOSPro_AGA_LAST_GOOD.Lib`, le test original archivé sans modification dans `tests/passed/`, les empreintes/CI et `docs/NEXT_SESSION.md`. En cas d'échec, ne pas promouvoir LAST_GOOD et consigner le défaut.
+4. **Cohérence bloquante :** les deux tableaux publics doivent correspondre aux **mêmes tokens AP20**, signatures, retours, version, taille, SHA256 et statuts. Exécuter `tools/test_readme_api_coverage.py`, relire les deux README complets et vérifier les liens avant livraison ; une divergence bloque le jalon.
+5. **Rester un manuel utilisateur :** éditer les sections existantes sur place, **sans empiler un journal des versions en tête**. L'historique détaillé appartient à `docs/` et `tests/passed/`.
+
 ### Règle permanente — documentation de toute nouvelle instruction AMOS
 
-**Obligation lors de chaque nouvelle commande/fonction/token exporté par l'extension AP20 : mettre à jour le README principal dans le MÊME commit que l'implémentation.** Une note isolée dans `docs/`, un devlog ou une annonce de version ne suffit pas. L'API publique doit être immédiatement visible dans `README.md → Commandes AMOS principales`.
+**Obligation lors de chaque nouvelle commande/fonction/token exporté par l'extension AP20 : mettre à jour `README.md` ET `README.fr.md` dans le MÊME commit que l'implémentation.** Une note isolée dans `docs/`, un devlog ou une annonce de version ne suffit pas. L'API publique doit être immédiatement visible dans `README.md → Commandes AMOS principales`.
 
 Pour chaque commande ajoutée ou modifiée :
 

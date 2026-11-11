@@ -1,5 +1,17 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## R30 M13 — structure AGAPAL approuvée (11/11/2026, conception uniquement)
+
+**Accord utilisateur sur l'architecture, sans nouveau token ni binaire R30 :** banque `DATA` native AMOS, enregistrable et rechargeable avec les commandes de banque AMOS dans un fichier **ABK standard**, contenant **plusieurs palettes AGA RGB24**. L'extension gérera un format intérieur `AGAPAL`, distinct du conteneur externe ABK que gère AMOS. Préférer la **Fast RAM** si le système de banques AMOS le permet : vérifier le comportement réel avant de promettre une zone mémoire.
+
+**Organisation acceptée :** en-tête intérieur de **16 octets** (signature ASCII `AGAPAL` sur 6 octets, version, nombre de palettes et champs réservés), index de **8 octets par palette** (offset 32 bits, nombre de couleurs 16 bits, flags 16 bits), et **768 octets fixes par emplacement** (256 couleurs RGB24). **Indices internes à partir de 0.** Taille proposée : `16 + N × (8 + 768)`, soit **6 224 octets pour huit palettes**. Endianness, offsets exacts, représentation des emplacements libres et contrôle des données seront établis avant le code.
+
+**Première fonction proposée :** `_OK=Aga Palette Bank Init(10,8)` après réservation AMOS DATA (exemple de conception : `Reserve As Data 10,6224`), retour attendu **1/0**. Le nom externe ABK de huit octets `AGAPAL  ` **n'est pas garanti** par une réservation DATA ordinaire : vérifier dans les sources/documentation AMOS les champs d'en-tête `AmBk`, le nom de banque et les mécanismes `Save`/`Load`. Une signature AGAPAL interne ne remplace pas l'enveloppe ABK native.
+
+**Vérifications préalables obligatoires :** conventions `Reserve As Data`, allocation Chip/Fast, accès/taille des banques, identité et durée de vie, `Erase`, persistance ABK, ABI 68000 et limites d'allocation. Le premier incrément ne portera que sur `Aga Palette Bank Init` ; les futures commandes de capture, import, application, fades et cycling restent à discuter **individuellement** avant codage. **R29 0.10.1 reste candidate actuelle et LAST_GOOD ; aucun code ni Gate R30 exécuté.**
+
+---
+
 ## R29 0.10.1 VALIDÉE — Gate A + Gate B AMOS/WinUAE PASS, 11/11/2026
 
 **Preuves utilisateur :** test `M13_R29_PALETTE_SAVE_01.asc` exécuté sous AMOS interprété/WinUAE : `OPEN 1 DB 1`, `DRAW 1 1 1 1`, `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. L'utilisateur confirme également l'ouverture de la palette IFF produite avec ses **256 couleurs dans Cloanto Personal Paint (PPaint)** ; le fichier ne contient pas de pixels `BODY`. Cela établit l'interopérabilité **pour ce fichier et cet essai**, pas tous les éditeurs IFF.
@@ -16,7 +28,7 @@
 
 - **Processus obligatoire :** discuter **chaque nouvelle fonction** avec l'utilisateur, arrêter explicitement son contrat, puis seulement coder/tester. Un feu vert sur le jalon R29 n'est pas une validation de toutes ses commandes.
 - **R29 accepté en principe :** export de palettes au format **IFF standard `FORM ILBM` / `CMAP`**, sans format maison ; nom de commande, arguments, conditions d'erreur et restauration à définir ensemble.
-- **Banques de palettes demandées :** conservation/chargement d'une palette vers une bank mémoire, en **Fast RAM prioritairement si disponible**. Préciser avant implémentation si les banks sont AMOS ou internes à l'extension, leur cycle de vie et la gestion de l'absence de Fast RAM.
+- **Banques de palettes R30 :** conception approuvée ci-dessus : banque DATA native AMOS, signature interne `AGAPAL`, plusieurs palettes RGB24 indexées depuis 0, Fast RAM privilégiée si prise en charge. En-tête ABK réel et ABI à vérifier avant code.
 - **Fades natifs souhaités :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`, **signatures non figées et tokens non implémentés**. Déterminer durée, synchronisation VBL, comportement bloquant ou non et interpolation RGB24 lors de chaque discussion.
 - Puis cycling, M14 fontes et M15 dessin 2D. **R29 Save a passé Gate B et devient `LAST_GOOD` ; aucune nouvelle fonction sans contrat discuté.**
 
