@@ -1,5 +1,20 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## R37 0.10.9 — Aga Font Select : Gate A CPU/CI PASS, Gate B WinUAE en attente (11/11/2026)
+
+**Une seule nouvelle commande :** `_OK=Aga Font Select(FontName$,YSize)`, sélection d'une fonte AmigaOS `OpenDiskFont` (taille 1..255, nom de 1..127 octets), retour 1/0 ; `Aga Font Select("",0)` rétablit la fonte système. `Aga Text` applique la fonte sélectionnée avant `TextExtent` et le dessin sur son propre back buffer AGA. Les fontes sont libérées au remplacement, au reset et à `Aga Screen Close`. Les fontes de banques AMCAF **ne sont pas implémentées** dans R37. [Contrat M14/R37](M14_FONT_SELECT_R37.md).
+
+**Gate A PASS :** 20 groupes de validation natifs CPU 68000 R37, régressions R26 (64 cas) et R36 (106 cas) PASS, export assembleur strict PASS et [CI complète R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541) PASS. **43 commandes AP20.**
+
+**Candidate R37 :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib`, **22 328 octets**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. **R36 reste `LAST_GOOD`**, 21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. [Test WinUAE actif](../tests/current/M14_R37_FONT_SELECT_01.asc) à exécuter dans AMOS interprété ; **Gate B NON TESTÉE** et Gates C Compiler / D matériel AGA réel NON TESTÉES. Ne promouvoir `LAST_GOOD` qu'après confirmation de la Gate B utilisateur.
+
+**Suite M14 :** R38 banques AMCAF `Make Bank Font`, puis R39 fontes 8×8 `Change Print Font` sont des **pistes futures distinctes à contractualiser** ; aucune nouvelle commande ajoutée sans accord. Travail uniquement sur `main` du dépôt `anthea176/AMOSPro-AGA-Extension`.
+
+**Les sections R36 et antérieures ci-dessous sont historiques : leurs mentions d'une bibliothèque « courante » ou d'un `tests/current/` vide décrivent l'état de la version concernée, pas celui de R37.**
+
+---
+
+
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 
 **Une seule commande approuvée :** `_OK=Aga Palette Cycle(First,Last,Direction)`, une rotation RGB32 complète par appel (+1 : dernière couleur vers premier index, -1 : inverse), indices inclus `0<=First<Last<256` dans les pens logiques/ColorMap de l'écran AGA Intuition privé indexé. Un `GetRGB32`, permutation exacte des triplets 32 bits, un `LoadRGB32` sur la plage seulement, **aucun `WaitTOF` implicite** ; aucun pixel, banque, fichier ou couleur hors plage touché. Scratch Exec public `8+12*N` (max 3 080 octets) libéré. Succès 1, invalides/refus atomiques 0 ; AMOS pilote la cadence. [Contrat technique R36](M13_PALETTE_CYCLE_R36.md).

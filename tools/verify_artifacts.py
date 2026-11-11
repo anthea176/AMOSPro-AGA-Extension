@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R36 Gates A/B PASS current/LAST_GOOD; frozen R35 and historical archives."""
+"""Integrity: R37 candidate Gate A PASS; R36 remains immutable WinUAE-PASS LAST_GOOD."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225",
+    "dist/AMOSPro_AGA.Lib": "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a",
+    "dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib": "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib": "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib": "ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib": "89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033",
@@ -87,6 +88,7 @@ def main():
     from build_m13_aga_fade_black_r34 import build as build_r34, ENTRY_BLACK, API as API_R34
     from build_m13_aga_fade_white_r35 import build as build_r35, ENTRY_WHITE, API as API_R35
     from build_m13_palette_cycle_r36 import build as build_r36, ENTRY_CYCLE, API as API_R36
+    from build_m14_font_select_r37 import build as build_r37, ENTRY_FONT_SELECT, API as API_R37
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -107,7 +109,7 @@ def main():
     r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
     r35 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
     r36 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
-    assert candidate == r36, "dist must contain WinUAE-PASS R36 release"
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 Gate-A candidate/archive mismatch"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -386,9 +388,23 @@ def main():
         matched=[row for row in named36 if row["name"]==name]
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
-    assert candidate==r36==built36==build_r36()[0], "R36 current/archive not reproducible"
-    assert candidate!=r35 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r36
-    print("PASS: R36 current/archive/LAST_GOOD 42 AP20 tokens; LAST_GOOD WinUAE-PASS R36;"
+    assert r36==built36==build_r36()[0], "R36 LAST_GOOD archive not reproducible"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r36
+    built37,meta37=build_r37()
+    assert candidate==built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 candidate not reproducible"
+    tok37,seg37,_=split(candidate)
+    assert len(seg37)==49 and len(seg36)==48 and seg37[47]==seg36[47]+b"GetP"
+    assert [i for i in range(48) if seg37[i]!=seg36[i]]==[8,36,47], "R37 changed unrelated AP20 entries"
+    assert tok37.startswith(tok36[:-6]) and tok37!=tok36
+    audit37=inspect(parse(candidate))
+    assert not audit37["issues"], "R37 AP20 invalid"
+    named37=[x for x in audit37["tokens"] if x["name"].startswith("aga ")]
+    assert len(named37)==43 and sum(x["name"]=="aga font select" for x in named37)==1
+    for name,index,sig in API_R37:
+        found=[x for x in named37 if x["name"]==name]
+        assert len(found)==1 and found[0]["function"]==index and found[0]["signature"]==sig
+    assert candidate!=r36 and meta37["sha256"]=="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
+    print("PASS: R37 current/archive Gate A candidate 43 AP20 tokens; R36 LAST_GOOD WinUAE-PASS;"
           " R35 and all historical archives frozen")
 
 

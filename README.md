@@ -2,6 +2,9 @@
 
 **English** | [Français](README.fr.md)
 
+**Current test candidate: R37 v0.10.9 (43 AP20 commands, CPU/CI Gate A PASS).** [Candidate library](dist/AMOSPro_AGA.Lib) · [WinUAE test](tests/current/M14_R37_FONT_SELECT_01.asc) · [Font Select contract](docs/M14_FONT_SELECT_R37.md). **Last WinUAE-validated release: R36 v0.10.8**, preserved in [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib). R37 Gate B, Compiler Gate C and physical AGA Gate D have not been tested.
+
+
 **AMOSPro AGA Extension** extends **AMOS Professional** on AGA-equipped Commodore Amiga computers, adding screen and palette support, IFF/ILBM loading, double buffering, Blitter and Copper operations, and keyboard and mouse input.
 
 Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** for programming, testing and documentation.

@@ -1,5 +1,8 @@
 # M14 / R37 0.10.9 -- Aga Font Select (contrat et candidate)
 
+**Statut réel (11/11/2026) : Gate A native CPU/CI et export source 68000 strict PASS** — [CI R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541). 20 groupes R37 + 64 cas R26 + 106 scénarios R36 PASS. `dist/AMOSPro_AGA.Lib` = archive R37 : 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`, 43 commandes AP20. `dist/AMOSPro_AGA_LAST_GOOD.Lib` = R36 conservée, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. **Gate B AMOS interprété/WinUAE EN ATTENTE** avec `tests/current/M14_R37_FONT_SELECT_01.asc`. Gates C/D non testées. R38/R39 restent hors périmètre de codage.
+
+
 ## Contrat approuve : une seule commande
 
 ```amos

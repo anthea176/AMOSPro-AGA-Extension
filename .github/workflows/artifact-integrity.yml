@@ -146,9 +146,17 @@ jobs:
           python -B tools/test_m13_palette_cycle_r36.py
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R36_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R36_GateA.Lib --out /tmp/amos-aga-r36-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(), 'R36 current/archive/LAST_GOOD mismatch'; print('R36 current/archive/LAST_GOOD:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(), 'R36 archive/LAST_GOOD mismatch'; print('R36 LAST_GOOD preserved:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib
+
+      - name: M14 R37 Gate A candidate Font Select — native CPU, source, binary integrity
+        run: |
+          python -B tools/test_m14_font_select_r37.py
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,DEST,LAST_GOOD,BASE_SHA256; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes() and digest(LAST_GOOD.read_bytes())==BASE_SHA256; print('R37 candidate:',meta['sha256'],meta['size'])"
+          python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-r37-integrity --baseline none --strict
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
 
       - name: M13 R28 frozen IFF palette — native 68000 regression
         run: |
