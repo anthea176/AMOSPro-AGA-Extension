@@ -4,7 +4,7 @@
 
 **Import standard :** choisir un fichier palette exporté par Personal Paint/Deluxe Paint (`FORM ILBM` + `CMAP`), ou `examples/demo.iff` pour un IFF image complet. Le test ouvre l'écran AGA en 320×256×8 plans indépendamment du fichier source, **dessine avant `Aga Palette Load`**, puis teste `Aga Palette Set/Get` et la transition vert → rouge → vert sur 64 VBL. Il n'appelle ni `Aga Pic Info` ni `Aga Iff Load`. [Procédure complète](current/README.md) · [contrat M13](../docs/M13_PALETTE_R28.md).
 
-**Le binaire courant du dépôt reste R27 0.9.3.** Pour exécuter la recette R28, installer une **copie** de l'archive candidate sous le nom `AMOSPro_AGA.Lib` uniquement dans la configuration WinUAE. Ne pas modifier `dist/AMOSPro_AGA.Lib` ou `LAST_GOOD` du dépôt.
+**Le binaire courant du dépôt est [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = R28 0.10.0**, prêt à être installé tel quel (aucun renommage ni sous-dossier). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R27 0.9.3, dernière version WinUAE-PASS** ; R10 archivée. Une version passe en `LAST_GOOD` automatiquement **après confirmation Gate B**, jamais sur CPU/CI seuls.
 
 ---
 

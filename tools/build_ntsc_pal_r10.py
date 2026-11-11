@@ -128,6 +128,6 @@ if __name__ == "__main__":
     assert build()[0] == output, "Non-deterministic R10"
     ARCHIVE.write_bytes(output)
     assert ARCHIVE.read_bytes() == output
-    # R10 is protected LAST_GOOD; the candidate is R12.
-    assert (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes() == output
+    # R10 is preserved by its immutable archive; LAST_GOOD advances after WinUAE PASS.
+    assert ARCHIVE.read_bytes() == output
     print("R10 archive only", info)

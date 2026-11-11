@@ -1,12 +1,12 @@
 # Documentation — AMOSPro-AGA-Extension
 
-**Point d'entrée du projet.** **M12/R27 0.9.3 Blitters Safe : Gates A+B PASS sur leurs scénarios respectifs**, 403 cas CPU et [CI finale 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220) ; test WinUAE à 40 swaps [archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc), clignotement visible, `RESULT 1`, fin AMOS ligne 167. [Bibliothèque R27 active](../dist/AMOSPro_AGA.Lib), [rapport M12](M12_SAFE_BLITTER_R27.md). **Un `.asc` R28 actif, non testé sous WinUAE.** R26/R25/R24 et `LAST_GOOD` R10 préservés. Compiler, Amiga physique, 50 FPS et stress exhaustif non validés. [Reprise](NEXT_SESSION.md).
+**Point d'entrée du projet.** **M12/R27 0.9.3 Blitters Safe : Gates A+B PASS sur leurs scénarios respectifs**, 403 cas CPU et [CI finale 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220) ; test WinUAE à 40 swaps [archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc), clignotement visible, `RESULT 1`, fin AMOS ligne 167. [Bibliothèque R27 validée, désormais LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib), [rapport M12](M12_SAFE_BLITTER_R27.md). **Un `.asc` R28 actif, non testé sous WinUAE.** R26/R25/R24 et `LAST_GOOD` R10 préservés. Compiler, Amiga physique, 50 FPS et stress exhaustif non validés. [Reprise](NEXT_SESSION.md).
 
 ## Où commencer ?
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | [M13/R28 : IFF/ILBM palettes PPaint, Set/Get, Gate A CPU PASS 159 cas](M13_PALETTE_R28.md) · [archive R28 candidate](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) · [test WinUAE actif](../tests/current/M13_R28_PALETTE_01.asc). **R27 reste le dernier binaire WinUAE-PASS**. Fades/cycling/sauvegarde IFF ensuite · [roadmap M14/M15](ROADMAP.md). |
+| **Que développons-nous ensuite ?** | [M13/R28 : IFF/ILBM palettes PPaint, Set/Get, Gate A CPU PASS 159 cas](M13_PALETTE_R28.md) · [archive R28 candidate](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) · [test WinUAE actif](../tests/current/M13_R28_PALETTE_01.asc). **R27 reste le dernier binaire WinUAE-PASS, placé dans `LAST_GOOD` ; R28 est la candidate active dans `dist/AMOSPro_AGA.Lib`**. Fades/cycling/sauvegarde IFF ensuite · [roadmap M14/M15](ROADMAP.md). |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |

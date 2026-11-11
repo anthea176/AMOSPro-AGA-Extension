@@ -10,7 +10,7 @@
 
 **Checkpoint R21 validé (10/11/2026) :** Gate A **PASS 11 cas CPU 68000 et CI verte**, Gate B **PASS utilisateur AMOS interprété/WinUAE** : le clic droit ne provoque plus de barre Intuition. Le test R21 a été archivé sans changement dans [`tests/passed/`](../tests/passed/M8_R21_MOUSE_RMBTRAP_01.asc). R20 conserve son défaut de menu dans les archives, R19 X/Y et R18 Copper restent acquis ; `LAST_GOOD` R10 inchangée. **M8 reste en cours** pour les transitions natives, clics très brefs et gestion du focus. [Statut](M8_STATUS.md) · [R21](M8_RMBTRAP_R21.md).
 
-**État courant au 11/11/2026 : M12/R27 0.9.3, Gate A CPU/CI PASS 403 cas et Gate B AMOS/WinUAE PASS sur le protocole des 40 swaps.** [Binaire courant R27](../dist/AMOSPro_AGA.Lib), 14 252 octets, [test original archivé](../tests/passed/M12_R27_SAFE_BLIT_01.asc), 40 swaps avec Clear/Fill/Copy en premier dessin 14/13/13 fois, chacun avec 13 retours 0 repris, `SWAP0 0`, erreurs nulles, `CLOSED -1 RESULT 1`, ligne 167. Rectangles clignotants confirmés par l'utilisateur, **sans sonde `Aga Text`**. [Contrat M12](M12_SAFE_BLITTER_R27.md). R26/R25/R24 et `LAST_GOOD` R10 inchangés. Pas de Compiler, matériel réel, FPS ni stress exhaustif validés.
+**État courant au 11/11/2026 :** **R28 0.10.0** est la candidate dans [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **Gate A CPU 159 cas PASS, Gate B WinUAE en attente**. **R27 0.9.3**, validée sous AMOS interprété/WinUAE (40 swaps, `RESULT 1`), est désormais la bibliothèque de repli [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib). R10 reste disponible dans l'[archive R10](../dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib). [Contrat M13/R28](M13_PALETTE_R28.md).
 
 ## 1. Vue d'ensemble — ordre des chantiers
 
@@ -70,7 +70,7 @@ Les priorités de compatibilité applicative sont **distinctes** de la roadmap g
 
 ### M13 — Palettes AGA 24 bits (premier chantier)
 
-**Étape en cours :** [M13/R28 Load/Set/Get](M13_PALETTE_R28.md) a obtenu **Gate A 159 cas CPU PASS**. L'[archive candidate R28](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) est distincte de R27, et le [test WinUAE](../tests/current/M13_R28_PALETTE_01.asc) attend validation. Les palettes PPaint/DPaint sont des **IFF/ILBM CMAP standards** : pas de format propriétaire. L'**export IFF**, les fades et le cycling restent à développer après validation de ce socle.
+**Étape en cours :** [M13/R28 Load/Set/Get](M13_PALETTE_R28.md), **Gate A CPU 159 PASS**, disponible sous le nom exact [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (16 208 octets). **Gate B WinUAE attend le test utilisateur**. La bibliothèque R27 0.9.3 validée a été promue dans `LAST_GOOD`. Export IFF, fades et cycling restent à développer après validation.
 
 
 **Fonctions demandées et ordre de travail envisagé**, sans arrêter de noms/signatures AP20 avant analyse du code existant :
@@ -107,7 +107,7 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **Une seule source d'état immédiat :** [`NEXT_SESSION.md`](NEXT_SESSION.md) et le STATUS du jalon ; la roadmap ne reçoit plus les journaux R1→R15 en tête.
 - **Chaque API future (M13 et suivantes) reste « proposée »** tant qu'elle ne figure pas dans un binaire et un scénario de validation identifié. Les commandes existantes M7–M12 sont disponibles uniquement dans le périmètre de leur version et de leurs tests documentés ; ne pas présenter les nouvelles fonctions de palette ou de fonte comme déjà implémentées.
 - **Gates distinctes** : A = structure HUNK/AP20 + CPU/CI ; B = AMOS interprété/WinUAE ; C = AMOS Compiler ; D = Amiga AGA physique. Ne jamais transformer un préflight Python en PASS matériel.
-- **Protection** : `dist/AMOSPro_AGA.Lib` est le candidat de test ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` n'est changé qu'avec validation explicite ; archives et tests passés restent intacts.
+- **Protection** : `dist/AMOSPro_AGA.Lib` = **candidate testable directement à cet emplacement**, pas de sous-répertoire ; après **Gate B WinUAE PASS utilisateur**, copier automatiquement le binaire validé dans `dist/AMOSPro_AGA_LAST_GOOD.Lib` (même contenu, test archivé) ; ne pas promouvoir une simple Gate A. Archives versionnées immuables. [Règle source](../EXTENSION_SOURCE_RULES.md).
 - **Au prochain chantier** : lire [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md), le HEAD réel de `main` et les documents/status du jalon, avant de créer un builder ou un test.
 
 **Navigation :** [index documentaire](README.md) · [architecture actuelle](ARCHITECTURE.md) · [Copper M7](M7_COPPER_DESIGN.md) · [souris / zones / collisions](INTERACTIONS_COLLISIONS.md).

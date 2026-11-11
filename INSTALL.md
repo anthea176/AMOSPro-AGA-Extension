@@ -7,7 +7,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) to the **`APSystem`** directory of your AMOS Professional installation. Keep the exact filename: `AMOSPro_AGA.Lib`. Do **not** copy the archived `LAST_GOOD` or the experimental binaries instead.
+2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R28 test candidate) directly into **`APSystem`**. **Exact name: `AMOSPro_AGA.Lib`, no renaming required.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` (validated R27) is the fallback, not the test candidate.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -16,7 +16,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## 2. Run a first example
 
-1. Copy the five `.asc` files and `demo.iff` from [`examples/`](examples/) into a directory accessible to your Amiga or WinUAE (an Amiga hard disk, mapped host directory or mounted disk image). The script files are **plain ASCII text**, not tokenized `.AMOS` programs.
+1. Copy the seven `.asc` files and `demo.iff` from [`examples/`](examples/) into a directory accessible to your Amiga or WinUAE (an Amiga hard disk, mapped host directory or mounted disk image). The script files are **plain ASCII text**, not tokenized `.AMOS` programs.
 2. In the AMOS editor, start with an **empty program** (**New**) and select **Project → Merge ASCII** (shortcut **Amiga + Shift + M**). Import `examples/screen.asc`.
 3. Run the program **in the interpreter**. The AGA test pattern should appear briefly and then close, returning to the AMOS editor.
 4. Next import `examples/picture.asc` using a fresh empty editor. When the file selector opens (`Fsel$("**")`), pick `examples/demo.iff`. Press any key once the image is displayed to return to AMOS.
@@ -36,7 +36,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-`dist/AMOSPro_AGA.Lib` is currently **R23 0.8.7 (candidate)**. Its click/keyboard test scenario passed under WinUAE, but **Ctrl+C, AMOS Compiler, physical hardware and extended stress tests are not fully validated**. `LAST_GOOD` remains the older R10 fallback, not a substitute for the current APIs.
+**Current installable version:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R28 0.10.0**, IFF/RGB palette candidate (**Gate A 159 CPU tests PASS; WinUAE not yet validated**). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R27 0.9.3**, last user-confirmed AMOS/WinUAE PASS on M12, automatically preserved as fallback. R10 remains in its versioned historical archive. **Promotion rule: after a user-confirmed Gate B PASS, the validated `.Lib` becomes `LAST_GOOD` in the repository.** No manual renaming or subdirectory.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

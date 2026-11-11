@@ -24,6 +24,8 @@ Ce prompt sert uniquement à retrouver le contexte. Il **n'ajoute, ne remplace e
 
 Appliquer **strictement la méthode définie dans `EXTENSION_SOURCE_RULES.md`** : périmètre des modifications, politique de branches et commits, builds reproductibles, protection des versions validées, tests, validations et documentation. Ne pas créer sa propre procédure de livraison, de test ou de promotion.
 
+**Livraison et promotion :** la bibliothèque candidate utilisable doit toujours être `dist/AMOSPro_AGA.Lib`, directement à la racine de `dist`, sans renommage demandé à l'utilisateur ni sous-répertoire arbitraire. Lorsqu'un candidat est **validé sous AMOS/WinUAE (Gate B confirmée par l'utilisateur)**, il devient obligatoirement **`dist/AMOSPro_AGA_LAST_GOOD.Lib`** par copie binaire identique ; ne jamais promouvoir un candidat Gate A/CI seulement. Protéger les archives versionnées et vérifier le SHA256 des deux binaires. Cette règle est rappelée ici sans figer de numéro de version ; la définition complète figure dans `EXTENSION_SOURCE_RULES.md`.
+
 Ne pas entreprendre de chantier supplémentaire sans demande. Lorsqu'un résultat est obtenu, actualiser les **documents de suivi du projet** et les classements de tests prévus par les règles.
 
 ## Pérennité de ce prompt

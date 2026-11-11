@@ -1,5 +1,19 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE PRIORITAIRE — BINAIRES DANS `dist/` ET PROMOTION DE `LAST_GOOD` (11/11/2026)
+
+**Cette règle permanente prévaut sur tous les checkpoints historiques ci-dessous (R10, R12, R23, etc.) qui décrivent les états passés.** Le numéro indiqué dans les anciennes notes n'est plus un état courant.
+
+1. **Candidat à tester :** placer la version la plus récente ayant passé **Gate A (préflight CPU/CI)** directement dans **`dist/AMOSPro_AGA.Lib`**, avec son **nom exact**. Ne pas la placer dans un sous-répertoire et ne jamais demander à l'utilisateur de renommer un fichier `.Lib`. Préserver en parallèle **une archive versionnée distincte** dans `dist/experimental/`.
+2. **Dernière version validée :** dès que l'utilisateur **confirme un test réussi sous AMOS interprété/WinUAE (Gate B)**, recopier **octet pour octet** cette bibliothèque validée dans **`dist/AMOSPro_AGA_LAST_GOOD.Lib`**, dans le même commit que l'archivage du test et la mise à jour du statut. **Cette promotion est obligatoire et ne nécessite pas de nouvelle demande.** Le PASS vaut pour le scénario testé : ne pas prétendre que Compiler/matériel réel ont passé les Gates C/D.
+3. **Une candidate non validée en Gate B ne remplace JAMAIS `LAST_GOOD`.** Un échec CPU/CI ou WinUAE ne change pas la dernière référence validée ; conserver les archives figées, SHA256 et tests réussis.
+4. **Aucun fichier `AMOSPro_AGA.Lib` dans un sous-répertoire arbitraire de `dist/`.** La version à installer est systématiquement `dist/AMOSPro_AGA.Lib`; les autres bibliothèques y ont un **nom versionné d'archive**, jamais besoin d'une manipulation manuelle/renommage par l'utilisateur.
+5. Travailler **uniquement sur `main`**, aucune branche nouvelle, aucun dépôt sans instruction explicite. Mettre à jour ensemble les règles, la CI, les empreintes et les README FR/EN.
+
+**État de référence immédiat :** `dist/AMOSPro_AGA.Lib` = **R28 0.10.0**, candidate palettes, **Gate A PASS 159 scénarios CPU/CI, Gate B en attente** ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R27 0.9.3**, dernière version **confirmée WinUAE PASS** (40 swaps, test `tests/passed/M12_R27_SAFE_BLIT_01.asc`). L'ancienne `LAST_GOOD` **R10** subsiste **sans modification** dans `dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib`. Les R27/R28 restent aussi archivées par version. **Ne pas promouvoir R28 avant Gate B.**
+
+---
+
 ## M6 R13 — règles de travail Blitter (premier candidat)
 
 La validation du loader IFF R12 est clôturée. Le prochain chantier **M6** commence par **`Aga Blit Copy`** uniquement, sur le **back buffer**, via `graphics.library/BltBitMap(-30)` et `WaitBlit(-228)`. **R13 0.7.0 est expérimentale : aucune validation runtime AMOS/WinUAE encore acquise.** Préserver R12 `dist/AMOSPro_AGA.Lib` et R10 `LAST_GOOD` ; ne jamais les écraser pour produire un candidat non testé.
@@ -149,7 +163,7 @@ Pour le comportement actuel du projet, l'ordre de confiance est :
 
 1. **résultat runtime réellement validé** sous AMOS / WinUAE / matériel ;
 2. **builder reproductible** ayant généré le binaire validé ;
-3. **SHA256 + taille + audit AP20** du binaire validé ;
+3. **SHA256 + taille + audit AP20** du binaire validé, puis vérification `LAST_GOOD` = archive du dernier Gate B confirmé ;
 4. `docs/NEXT_SESSION.md` et le STATUS du jalon courant ;
 5. `docs/ARCHITECTURE.md` et `docs/ROADMAP.md` ;
 6. anciens candidats, diagnostics et notes historiques.
@@ -170,16 +184,16 @@ Un commentaire ancien ne l'emporte jamais sur un test runtime plus récent.
 
 ### Fichiers
 
-- `dist/AMOSPro_AGA.Lib` = **candidat courant présenté au test**.
-- `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R10 0.6.1, dernier M5 fonctionnel connu**, promu sur demande explicite le 10/11/2026. Le jalon M4b auparavant protégé demeure dans `archive/`.
-- `dist/experimental/` = candidats versionnés, y compris les versions rejetées ou intermédiaires utiles.
+- `dist/AMOSPro_AGA.Lib` = **candidat courant**, nom exact, **directement dans `dist/`** après Gate A/CI PASS.
+- `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **copie exacte de la dernière version ayant PASS Gate B confirmé par l'utilisateur**. Référence courante : R27 0.9.3, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`.
+- `dist/experimental/` = **archives à nom versionné seulement**, y compris versions rejetées et R10 historique ; pas de copie supplémentaire nommée `AMOSPro_AGA.Lib` dans un sous-dossier.
 - `archive/` = jalons clôturés.
 
 ### Règle critique
 
-`dist/AMOSPro_AGA_LAST_GOOD.Lib` ne doit pas être écrasé simplement parce qu'un sous-jalon plus récent fonctionne.
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` est **promu systématiquement après confirmation utilisateur Gate B PASS** : remplacer son contenu par les octets exacts du candidat validé, et archiver le test à l'identique. Ne pas le modifier après **Gate A seule** ou sur résultat non confirmé.
 
-Au moment de la création de ce fichier :
+**Historique de création (caduc pour l'état courant) :**
 
 - LAST_GOOD global **à la rédaction historique** = M4b R6C-R1 ; depuis le 10/11/2026 le LAST_GOOD actif est R10 0.6.1 (demande explicite) ;
 - candidat M5 validé = M5-R3R1 0.3.1 ;
@@ -1046,7 +1060,8 @@ Après PASS :
 - mettre à jour STATUS ;
 - mettre à jour NEXT_SESSION ;
 - mettre à jour ROADMAP si un sous-jalon est clôturé ;
-- ne promouvoir LAST_GOOD que si le jalon global prévu est réellement clôturé.
+- **promouvoir immédiatement `dist/AMOSPro_AGA_LAST_GOOD.Lib`** en copie byte-identique de la version testée après **Gate B PASS utilisateur**, indépendamment des futurs sous-jalons non commencés ; sinon le laisser intact ;
+- vérifier que `dist/AMOSPro_AGA.Lib` reste le candidat courant à nom exact et qu'aucun sous-répertoire parasite `dist/.../AMOSPro_AGA.Lib` n'a été ajouté.
 
 ---
 

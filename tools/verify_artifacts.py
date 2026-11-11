@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R27 active, R28 M13 palette candidate separate and all frozen artifacts."""
+"""Current integrity: R28 current, R27 latest WinUAE-PASS LAST_GOOD, frozen archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
+    "dist/AMOSPro_AGA.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
     "dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
     "dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib": "0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287",
@@ -24,7 +24,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -79,12 +79,14 @@ def main():
         binaries[relative] = raw
 
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
-    r10 = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
+    r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
+    r27 = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]
+    assert r27 == binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
+    assert candidate == r28, "dist must contain the actual R28 test candidate"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
-    assert r10 == binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
+    assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
     assert binaries["archive/AMOSPro_AGA_M4b_v0.0.9_R6C_R1_WinUAE_OK.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M4b_v0.0.9_R6C_R1.Lib"]
 
     raw_r1, _ = generic_r1()
@@ -125,9 +127,9 @@ def main():
     built26, detail26 = build_r26()
     assert r26 == built26 == build_r26()[0], "Frozen R26 not reproducible"
     built27, detail27 = build_r27()
-    assert candidate == built27 == build_r27()[0], "R27 not reproducible"
+    assert r27 == built27 == build_r27()[0], "LAST_GOOD R27 not reproducible"
     built28, info28 = build_r28()
-    assert r28 == built28 == build_r28()[0], "R28 candidate not reproducible"
+    assert candidate == r28 == built28 == build_r28()[0], "current R28 not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
@@ -149,7 +151,7 @@ def main():
     tok24, seg24, _ = split(built24)
     tok25, seg25, _ = split(r25)
     tok26, seg26, _ = split(r26)
-    tok27, seg27, _ = split(candidate)
+    tok27, seg27, _ = split(r27)
     tok28, seg28, _ = split(r28)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
@@ -245,9 +247,10 @@ def main():
         rows=[r for r in named28 if r["name"]==name]
         assert len(rows)==1 and rows[0]["function"]==index
         assert rows[0]["signature"]==sig
-    assert candidate != r28
-    print("PASS: R27 active/archive frozen; R28 palette candidate reproducible with 34 AP20 tokens;"
-          " R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 and LAST_GOOD R10 intact")
+    assert candidate != r27
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == r27
+    print("PASS: R28 current/archive 34 AP20 tokens; LAST_GOOD is WinUAE-PASS R27;"
+          " R10 historical archive and R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen")
 
 
 if __name__ == "__main__":

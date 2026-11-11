@@ -6,7 +6,7 @@
 
 ### Procédure WinUAE
 
-1. Télécharger la [**R28 prête à installer : `AMOSPro_AGA.Lib`**](../../dist/experimental/M13_R28/AMOSPro_AGA.Lib), sauvegarder la bibliothèque R27 dans WinUAE, puis copier ce fichier **tel quel** dans le dossier des extensions AMOS. Aucun renommage nécessaire. **Ne pas remplacer** la bibliothèque R27 du dépôt `dist/AMOSPro_AGA.Lib` ni son archive R27. **Quitter puis relancer AMOS** après avoir remplacé la bibliothèque de l'émulateur : sa table de commandes doit être relue.
+1. Télécharger directement [**`dist/AMOSPro_AGA.Lib` — R28 0.10.0**](../../dist/AMOSPro_AGA.Lib), sans renommer ni déplacer dans un sous-répertoire du dépôt. Copier ce fichier dans `APSystem` sous le même nom, puis quitter et redémarrer AMOS. **La version validée R27 est sauvegardée par le dépôt dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).** Ne pas remplacer cette dernière avec R28 tant que Gate B n'est pas PASS.
 2. Dans AMOS Professional, importer le test avec **Project → Merge ASCII** depuis `tests/current/M13_R28_PALETTE_01.asc`.
 3. Le sélecteur de fichier demande **un IFF palette enregistré avec Personal Paint ou Deluxe Paint** (palette seule : `FORM ILBM` et `CMAP`, `BMHD` éventuellement présent, **aucun `BODY` nécessaire**). En l'absence d'un IFF palette propre, choisir `examples/demo.iff` pour vérifier avec une image IFF complète : **seule sa palette est importée, jamais les pixels**.
 4. Le programme ouvre son propre écran Intuition AGA **320×256 / 256 couleurs / PAL**, trace d'abord un rectangle index 28 et du texte, puis importe `CMAP`. Il fixe la couleur 28 en vert `$00FF00`, la fait évoluer vers `$F80700` en 32 VBL puis la remet en vert sur 32 VBL.
@@ -14,4 +14,4 @@
 
 **Contrôle visuel :** le rectangle **doit rester dessiné après le chargement de palette** et varier de vert à rouge puis à vert sans chargement d'image ni rafraîchissement du bitmap. Une capture du résultat final et une confirmation de l'animation seront nécessaires pour déclarer Gate B PASS. **Ce test n'est ni un benchmark 50 FPS ni une commande Fade native.**
 
-**R27 reste le dernier binaire validé sous WinUAE** : [test original M12 R27 archivé inchangé](../passed/M12_R27_SAFE_BLIT_01.asc) ; R26/R25/R24 et `LAST_GOOD` R10 inchangées. Aucun autre `.asc` actif, aucune branche supplémentaire.
+**R27 est la dernière bibliothèque validée sous WinUAE, et elle est désormais stockée dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib)**, octet-identique à [l'archive R27](../../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib). R28 dans `dist/AMOSPro_AGA.Lib` attend encore Gate B. **Après une future Gate B PASS**, la candidate validée deviendra automatiquement le nouveau `LAST_GOOD`. R10 et les autres archives figées restent intacts.

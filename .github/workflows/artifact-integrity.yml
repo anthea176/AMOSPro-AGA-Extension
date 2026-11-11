@@ -72,18 +72,18 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M13 R28 standard IFF palette candidate — native 68000 Gate A
+      - name: M13 R28 current IFF palette — native 68000 Gate A
         run: |
           python -B tools/test_m13_palette_r28.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_r28 import build,ARCHIVE,DEST; b,meta=build(); assert b==ARCHIVE.read_bytes(); assert b!=DEST.read_bytes(); print('R28 candidate separate from R27 active:',meta['sha256'],meta['size'])"
-          sha256sum dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_r28 import build,ARCHIVE,DEST; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R28 current/archive match:',meta['sha256'],meta['size'])"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
 
-      - name: M12 R27 Safe Blitter current binary — native 68000 Gate A and integrity
+      - name: M12 R27 validated LAST_GOOD — native 68000 CPU regression and integrity
         run: |
           python -B tools/test_m12_blit_safe_r27.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R27 candidate matches',info)"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes(); from pathlib import Path; assert raw==Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes(); print('R27 LAST_GOOD matches validated archive',info)"
+          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
 
       - name: M11 R26 AGA Text frozen archive — 68000 CPU regression

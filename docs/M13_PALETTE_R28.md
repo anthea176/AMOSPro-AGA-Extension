@@ -1,6 +1,6 @@
 # M13 / R28 0.10.0 — palette AGA 24 bits : premier incrément
 
-**11 novembre 2026 — Gate A CPU/CI PASS : 159 cas 68000 ; Gate B AMOS/WinUAE NON TESTÉE.** M13 doit aboutir à une gestion complète : palettes indépendantes des pixels, couleurs RGB, fades, color cycling, sauvegarde/restauration. **Ce R28 n'est que le socle chargement/écriture/lecture**, pas l'achèvement de M13. Le **binaire courant reste R27 0.9.3** (Gates A+B PASS sur ses scénarios). **R28 est une candidate distincte**, [archive 0.10.0](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) de **16 208 octets**, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. [CI native M13 : 159 tests PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618).
+**11 novembre 2026 — Gate A CPU/CI PASS : 159 cas 68000 ; Gate B AMOS/WinUAE NON TESTÉE.** M13 doit aboutir à une gestion complète : palettes indépendantes des pixels, couleurs RGB, fades, color cycling, sauvegarde/restauration. **Ce R28 n'est que le socle chargement/écriture/lecture**, pas l'achèvement de M13. Le **binaire courant `dist/AMOSPro_AGA.Lib` est R28 0.10.0**, candidate Gate B. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` est R27 0.9.3**, dernière version Gate A+B PASS sur M12. R28 possède aussi une archive versionnée, [archive 0.10.0](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) de **16 208 octets**, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. [CI native M13 : 159 tests PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618).
 
 ## Audit source et ABI AmigaOS
 
@@ -23,7 +23,7 @@ Source primaire à consulter : Amiga NDK39 `graphics/view.h`, les Autodocs `Load
 
 **Périmètre AP20 :** 3 tokens ajoutés après les 31 existants, avec trois segments en fin de HUNK ; les segments 0..35 restent identiques octet pour octet, le segment texte final 36 reçoit uniquement `GetP`, et les segments Palette Load/Set 37/38 reçoivent chacun le séparateur `GetP` requis avant l'entrée suivante. 40 segments au total. **Les liens BSR clavier/souris R23 ne changent pas**, car tout ajout suit le dernier segment existant. Toute différence non prévue doit bloquer Gate A.
 
-**État :** le builder en mémoire produit **à l'octet près** l'archive R28 de 16 208 octets. Le préflight CPU 68000/Capstone/Unicorn **a passé 159 scénarios** dont les variantes **IFF palette seule avec/sans BMHD, avec chunks CRNG, sans BODY**, ainsi que les images ILBM complètes (géométrie source indépendante). [Test WinUAE actif](../tests/current/M13_R28_PALETTE_01.asc) : **aucun PASS réel encore**. Le binaire courant R27, son archive et `LAST_GOOD` sont intacts.
+**État :** le builder en mémoire reproduit **à l'octet près** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) et l'archive R28 versionnée, 16 208 octets. Le préflight CPU 68000/Capstone/Unicorn **a passé 159 scénarios** dont les variantes **IFF palette seule avec/sans BMHD, avec chunks CRNG, sans BODY**, ainsi que les images ILBM complètes (géométrie source indépendante). [Test WinUAE actif](../tests/current/M13_R28_PALETTE_01.asc) : **aucun PASS réel encore**. Le fichier `LAST_GOOD` a été mis à jour vers **R27 validée WinUAE**, comme l'exige la règle de promotion. Son archive versionnée et l'archive R10 sont intactes. **R28 ne sera promue dans LAST_GOOD qu'après Gate B PASS utilisateur.**
 
 ## Gate A — contrôles réalisés en CPU/CI
 
@@ -31,7 +31,7 @@ Source primaire à consulter : Amiga NDK39 `graphics/view.h`, les Autodocs `Load
 - Machine Unicorn 68000 : `D3` résultat, `D2=0`, A3 consommé correctement, hardware SP équilibrée et autres registres sauvegardés. `Set` : 32-bit RGB fractions correctes et header `LoadRGB32` exact. `Get` : lecture des trois fractions et pack RGB8 correct, rejet `-1` sans effet.
 - `Load` : FORM ILBM CMAP sans BMHD/BODY, taille variable de 1 à 256 couleurs, refus des chunks malformés/dupliqués, ressources DOS/Exec libérées sur chaque chemin, **zéro écriture de bitplane**.
 - Profondeurs 1, 2, 4, 8 ; indices invalides, octets RGB hors bornes ; ColorMap/Screen/GfxBase invalides ; HAM/EHB/DualPF refusés. Anciennes régressions R27 et anciens tests archivés restent inchangés.
-- **Gate A PASS :** archive versionnée R28 [disponible séparément](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) et [test WinUAE unique actif](../tests/current/M13_R28_PALETTE_01.asc). Il dessine **avant** de lire une palette IFF, fait Set/Get et 64 étapes RGB par VBL. **Gate B ne sera PASS qu'après exécution et confirmation de la capture utilisateur.** Une transition pilotée par AMOS n'est pas une commande `Fade` native.
+- **Gate A PASS :** candidate R28 dans [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) et archive versionnée [disponible séparément](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) et [test WinUAE unique actif](../tests/current/M13_R28_PALETTE_01.asc). Il dessine **avant** de lire une palette IFF, fait Set/Get et 64 étapes RGB par VBL. **Gate B ne sera PASS qu'après exécution et confirmation de la capture utilisateur.** Une transition pilotée par AMOS n'est pas une commande `Fade` native.
 
 ## Sous-jalons restants de M13
 
@@ -41,4 +41,4 @@ Source primaire à consulter : Amiga NDK39 `graphics/view.h`, les Autodocs `Load
 
 **Interopérabilité :** le format d'import est identifié par la structure **IFF `FORM ILBM` / `CMAP`**, pas par l'extension de fichier. On ignore `BMHD`/`BODY` pour importer les couleurs, et on peut traiter une palette seule. **Un fichier réellement exporté par PPaint n'a pas encore été testé en WinUAE** : compatibilité attendue selon le standard, à confirmer sur un échantillon concret.
 
-**Hors périmètre :** Compiler AMOS et véritable Amiga AGA restent Gates C/D non testées ; les effets Copper RGB4 M7 peuvent surcharger visuellement une palette et devront faire l'objet d'un test de coexistence. Pas de nouvelle branche ni de promotion de `LAST_GOOD`.
+**Hors périmètre :** Compiler AMOS et véritable Amiga AGA restent Gates C/D non testées ; les effets Copper RGB4 M7 peuvent surcharger visuellement une palette et devront faire l'objet d'un test de coexistence. Pas de nouvelle branche. `LAST_GOOD` contient R27 validée, **pas** la candidate R28.

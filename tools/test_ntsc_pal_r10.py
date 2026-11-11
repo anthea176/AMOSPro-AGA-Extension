@@ -105,7 +105,8 @@ def main():
     old = BASE.read_bytes()
     assert output == ARCHIVE.read_bytes()
     from build_ntsc_pal_r10 import ROOT
-    assert (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes() == output
+    # LAST_GOOD now tracks the latest WinUAE-PASS version, not this historical R10.
+    assert (ROOT / "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib").read_bytes() == output
     assert digest(output) == R10_SHA256
     assert audit(parse(output))["issues"] == []
     token0, seg0, _ = split(old)

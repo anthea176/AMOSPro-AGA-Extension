@@ -2,15 +2,17 @@
 
 ## M13 — R28 0.10.0 : archive candidate disponible, Gate A 159 cas PASS, Gate B WinUAE à réaliser
 
-**11/11/2026 — candidat M13 R28 préparé sur `main`**. Ordre décidé : M13 palettes IFF standard / RGB / fades / cycling, puis M14 fontes, M15 Plot/Draw/Box/Circle. **Gate A CPU/CI PASS 159 scénarios 68000** ([run 43004699618](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618)) ; **Gate B AMOS/WinUAE NON TESTÉE.** [Rapport M13](M13_PALETTE_R28.md) · [test actif](../tests/current/M13_R28_PALETTE_01.asc) · [archive R28](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) · [builder](../tools/build_m13_palette_r28.py).
+**11/11/2026 — M13/R28 à tester** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = **R28 0.10.0**, **16 208 octets**, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. **Gate A CPU/CI PASS 159 cas** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43005222352)), **Gate B WinUAE en attente**. [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R27 0.9.3**, dernière version WinUAE PASS (M12). [Règle de promotion](../EXTENSION_SOURCE_RULES.md). Roadmap : M13 palette IFF/RGB/fades/cycling → M14 fontes → M15 Plot/Draw/Box/Circle.
 
 - **Premier incrément M13** : `_OK=Aga Palette Load(file$)` lit le **CMAP standard IFF/ILBM**, palette PPaint/DPaint seule ou image complète, sans charger `BODY`, même sans BMHD ; `_OK=Aga Palette Set(pen,r,g,b)` modifie RGB 24 bits ; `_RGB=Aga Palette Get(pen)` retourne `$00RRGGBB` ou `-1`. Aucun format maison. **Export / sauvegarde future au même format IFF**, après validation du socle.
 - **Sécurité** : couleur indexée, profondeur 1–8, validation ColorMap.Count et des limites, refus explicite HAM/EHB/dual playfield, CMAP valide de 1 à 256 couleurs. `Palette Load` conserve le WaitTOF du loader M5 ; `Palette Set` sans blocage VBL pour permettre animation contrôlée par AMOS.
-- **AP20** : 3 nouvelles fonctions en fin de table (31→34), 37→40 segments ; anciens segments 0..35 inchangés, 36 reçoit uniquement le séparateur `GetP` ; 37/38 reçoivent les séparateurs nécessaires. Binaire R28 candidat **16 208 octets** ; la bibliothèque courante `dist/AMOSPro_AGA.Lib` reste **R27 0.9.3**.
-- **Gates** : CPU/CI Gate A **PASS 159 cas** (dont palettes seules `CMAP`, `BMHD` et `CRNG` optionnels, IFF images ordinaires), **Gate B WinUAE à faire**, Compiler et machine réelle non testés. Pour WinUAE : installer **une copie renommée** de l'archive R28 comme `AMOSPro_AGA.Lib` sur l'Amiga, garder l'ancienne R27 ; charger le test ASC via **Project → Merge ASCII** et choisir un IFF palette PPaint ou `examples/demo.iff`.
-- **Base intouchée** : `dist/AMOSPro_AGA.Lib` = R27 WinUAE-PASS ; toutes les archives R26/R25/R24 et `LAST_GOOD` figées. **Un seul ASC actif R28 dans `tests/current/`**, non exécuté. Pas de branche supplémentaire.
+- **AP20** : candidate R28 **34 commandes, 40 segments**, trois fonctions `Aga Palette Load/Set/Get` ajoutées après R27 ; les anciens segments 0..35 sont préservés, le segment 36 reçoit uniquement `GetP`. [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **est maintenant R28**, l'archive R28 versionnée est conservée dans `dist/experimental/`.
+- **Gates** : R28 **Gate A CPU/CI PASS 159 cas** ; **Gate B WinUAE non testée** ; Compiler/Amiga physique non testés. Importer le test avec `Project → Merge ASCII` depuis [`tests/current/M13_R28_PALETTE_01.asc`](../tests/current/M13_R28_PALETTE_01.asc), sélectionner un IFF palette Personal Paint ou `examples/demo.iff`, observer la transition vert → rouge → vert. **Installer directement `dist/AMOSPro_AGA.Lib` sans renommage**.
+- **Repli validé** : [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = R27 (WinUAE PASS sur M12), **copie octet pour octet de l'archive R27** ; R10 conservée dans son archive historique. **Une seule ASC R28 active** ; aucune branche supplémentaire. À chaque nouvelle Gate B confirmée, promouvoir obligatoirement la bibliothèque correspondante dans `LAST_GOOD`.
 
 ---
+
+**Les sections ci-dessous sont historiques ; elles ne décrivent pas le binaire courant ni la politique actuelle de `LAST_GOOD`.**
 
 ## Décision de roadmap — M13 palettes, M14 fontes, puis M15 dessin 2D (11/11/2026)
 
@@ -20,7 +22,7 @@
 - **M14 ensuite :** développer choix et chargement des fontes, métriques, styles, alignement, multi-ligne et éventuelles banques AMOS/AMCAF. `Aga Text` R26/R27 actuel se limite à une ligne en police système par défaut ; ne pas considérer le moteur de fontes comme terminé.
 - **M15 après M14 :** dessin dans le back buffer AGA Intuition : pixel (`Plot`), trait (`Draw`), rectangle contour (`Box`), cercle (`Circle`). Auditer d'abord la sémantique exacte AMOS/Turbo/AMCAF, notamment `F Plot`/`F Draw` ; vérifier coordonnées, clipping, couleurs indexées, retour Safe et double buffering. **Aucune API M15 ni binaire correspondant n'existe encore.**
 - **M16+ :** sprites matériels, scrolling, dual playfield, Copper avancé et optimisations, sans chantier ouvert.
-- **Base protégée :** R27 0.9.3 Gate A+B PASS sur son test M12, `LAST_GOOD` historique et toutes les archives inchangés ; `tests/current/` sans test actif. L'exemple [`examples/show.asc`](../examples/show.asc) est un exemple de distribution statiquement vérifié, non encore validé de bout en bout sous WinUAE.
+- **Base protégée (état actuel)** : R27 0.9.3 **LAST_GOOD**, archive R27 figée ; R28 0.10.0 candidate active ; R10 reste archivée. Le test R28 est actif et non validé en WinUAE. L'exemple [`examples/show.asc`](../examples/show.asc) reste non validé de bout en bout.
 - **Process :** changements exclusivement sur `main`, pas de nouveau binaire ni de branche durant cette mise à jour documentaire. Les gates CPU/WinUAE/Compiler/matériel restent distinctes.
 
 ---

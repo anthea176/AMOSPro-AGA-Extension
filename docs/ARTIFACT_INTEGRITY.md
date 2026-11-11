@@ -12,4 +12,4 @@ Un incident historique a montré qu'un binaire pouvait être publié tronqué to
 
 **Situation M7 :** les scripts `tools/m7_copper_contract.py` et `tools/test_m7_copper_contract.py` contrôlent la future grammaire Copper et des interdictions de registres. **Ils ne génèrent pas de `.Lib`** et n'installent aucune `UCopList`. Voir [M7_STATUS](M7_STATUS.md).
 
-Archives et `LAST_GOOD` restent inchangées sans décision explicite. Se reporter aux [règles source](../EXTENSION_SOURCE_RULES.md), au [build](BUILD.md) et à l'[état courant](NEXT_SESSION.md).
+Les **archives versionnées restent figées**. `LAST_GOOD` correspond **obligatoirement à la dernière `.Lib` validée en AMOS/WinUAE (Gate B confirmé par l'utilisateur)** et doit être promu dans le même commit que la clôture du test. Une simple Gate A CPU/CI n'autorise pas la promotion. La candidate distribuable est toujours **`dist/AMOSPro_AGA.Lib` directement dans `dist/`**, sans sous-dossier ni renommage, et **R28 est candidate tandis que R27 est `LAST_GOOD`**. Se reporter aux [règles source](../EXTENSION_SOURCE_RULES.md), au [build](BUILD.md) et à l'[état courant](NEXT_SESSION.md).
