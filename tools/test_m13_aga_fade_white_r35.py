@@ -90,7 +90,7 @@ def run():
     report=audit(parse(binary))
     assert not report["issues"],report["issues"]
     named=[t for t in report["tokens"] if t["name"].startswith("aga ")]
-    assert len(named)==40
+    assert len(named)==41
     hit=[t for t in named if t["name"]=="aga fade to white"]
     assert len(hit)==1 and (hit[0]["instruction"],hit[0]["function"],hit[0]["signature"])==(1,ENTRY_WHITE,"00")
     assert any(t["index"]==ENTRY_WHITE and t["parameters"]==1 and t["getp"]
@@ -184,7 +184,7 @@ def run():
     print("M13 R35 Fade To White native 68000 Gate A PASS:",count,"scenarios",flush=True)
     print("R35 deterministic in-memory candidate:",
           {k:v for k,v in meta.items() if k!="labels"},flush=True)
-    print("R35 Gate B AMOS interpreted/WinUAE: USER PASS 2026-11-11 (archived test); Gate C Compiler and D physical AGA: NOT TESTED")
+    print("R35 Gate B interpreted AMOS/WinUAE, Gate C Compiler, Gate D physical AGA: NOT TESTED")
 
 
 if __name__=="__main__":
