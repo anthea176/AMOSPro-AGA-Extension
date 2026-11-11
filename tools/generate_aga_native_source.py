@@ -37,6 +37,10 @@ KNOWN_SEEDS={
  'e525530f8387e1166824b766c26c8a4cdc7e567d85b35ddbf22ba7d59595f1b6':(0x5ec,),
  '940ee56ece0ae255b7ebb8fba46a5366d67fb242a5ee5f369463a42a1927023e':(0x1fa,),
  '771af389042a9199b16cecbaf3d643d65fc5e80755017ac51607083f5efb5185':(0x6c,0x222),
+ # M13 R28 Palette Load: exact audited core. Two MOVE.L #0,D0 instructions
+ # in the inherited M5 file-reader error-return helpers are valid 68000 code,
+ # but unreachable from the naive entrypoint-only CFG. Never trust altered code.
+ '567c652d07ff770b0f72690f766c401dca9595d9830834f8bb08583b6445d620':(1170,1298),
 }
 
 class ExportError(ValueError):pass

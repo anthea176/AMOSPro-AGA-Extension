@@ -271,6 +271,38 @@ class Tests(unittest.TestCase):
         self.assertTrue(any(p['entry']==17 for p in x.unclassified_gaps(
             x.parse_lib(bytes(modified)))))
 
+    def test_r28_palette_exact_core_strict_and_tamper_guard(self):
+        # R28 Palette Load inherits the M5 DOS reader and two valid 68000
+        # MOVE.L #0,D0 error-return instructions after unconditional branches.
+        # This exact hash alone authorizes entrypoint seeds for strict ASM export.
+        from build_m13_palette_r28 import build
+        candidate,_=build()
+        parsed=x.parse_lib(candidate)
+        self.assertEqual(len(parsed['section']),40)
+        load=parsed['section'][37]
+        core=load['core']
+        self.assertEqual(x.sha(core),
+                         '567c652d07ff770b0f72690f766c401dca9595d9830834f8bb08583b6445d620')
+        for pos in (1170,1298):
+            self.assertEqual(core[pos:pos+6],bytes.fromhex('203c00000000'))
+        self.assertFalse(x.unclassified_gaps(parsed))
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            lib=folder/'R28-test.Lib'
+            lib.write_bytes(candidate)
+            export=folder/'asm'
+            self.assertEqual(x.main(['--lib',str(lib),'--out',str(export),
+                                     '--strict','--baseline','none']),0)
+            report=json.loads(next(export.glob('*.json')).read_text())
+            self.assertEqual(report['unclassified_regions'],[])
+            self.assertEqual(lib.read_bytes(),candidate)
+        mutated=bytearray(candidate)
+        at=load['file_offset']+1170+4
+        mutated[at]=0x01  # change MOVE.L immediate while preserving HUNK layout
+        rejected=x.unclassified_gaps(x.parse_lib(bytes(mutated)))
+        self.assertTrue(any(row['entry']==37 for row in rejected),
+                        'Non-exact R28 reader must not inherit vetted code seeds')
+
     def test_r24_altered_keyboard_core_does_not_inherit_r23_rts_seed(self):
         path=ROOT/'dist'/'experimental'/'AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib'
         raw=bytearray(path.read_bytes())
