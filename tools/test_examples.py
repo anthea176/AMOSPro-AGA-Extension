@@ -16,14 +16,14 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show")
 EXAMPLE_DIR = ROOT / "examples"
 AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+)?")
 FUNCTION_BARE = re.compile(
     r"^\s*Aga\s+(?:"
     r"Copper\s+(?:Clear|Wait|Move|End|On|Off)"
     r"|Mouse\s+(?:X|Y|Buttons|Pressed|Released)"
-    r"|Rect\s+Overlap"
+    r"|Rect\s+Overlap|Text|Blit\s+(?:Copy|Fill|Clear)"
     r"|Double\s+Buffer|Swap|Pic\s+Info|Iff\s+Load"
     r"|Wait\s+Key|Key|Detect|Demo"
     r")\b", re.IGNORECASE,
@@ -70,7 +70,7 @@ def main() -> None:
                 f"Unknown AP20 calls in {source.name}: {used - valid_commands}")
         require(bool(used), f"No AGA calls in {source.name}")
 
-    for name in ("picture", "blitter", "collide"):
+    for name in ("picture", "blitter", "collide", "show"):
         text = (EXAMPLE_DIR / f"{name}.asc").read_text("ascii")
         require('Fsel$("**")' in text and "Aga Pic Info" in text,
                 f"{name}.asc must offer file selection and verify dimensions")
@@ -80,6 +80,21 @@ def main() -> None:
         "Aga Mouse Pressed", "Aga Blit Clear(0,0,320,256)",
         "Aga Blit Fill", "Aga Swap", "Aga Wait Vbl")),
         "collide.asc must demonstrate R25 AABB, mouse and per-frame redraw/VBL")
+    showcase = (EXAMPLE_DIR / "show.asc").read_text("ascii")
+    require(all(phrase in showcase for phrase in (
+        "Aga Blit Clear(0,0,320,256)", "Aga Blit Fill",
+        "Aga Blit Copy", "Aga Text", "Aga Rect Overlap",
+        "Aga Mouse X", "Aga Mouse Pressed", "Aga Key",
+        "Aga Swap", "Aga Wait Vbl", "For _TRY=1 To 12",
+        "For _ST=1 To 12", "If _READY=0", "If _SWREADY=0",
+    )), "show.asc must cover R27 Safe, animation, text, copy, collision and input")
+    require("If _READY=0" in showcase and
+            showcase.index("_CLEAR=Aga Blit Clear(0,0,320,256)") <
+            showcase.index("_HEAD=Aga Blit Fill"),
+            "show.asc must guard all subsequent drawing with first Safe-aware Clear")
+    require("_ERR=1" in showcase and "_ERR=2" in showcase and
+            "_ERR=3" in showcase, "show.asc needs bounded failure exits")
+
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
     require(hashlib.sha256(original).digest() == hashlib.sha256(demo).digest()

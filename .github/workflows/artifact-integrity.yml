@@ -56,7 +56,7 @@ jobs:
         run: python -B tools/verify_artifacts.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
-      - name: Verify six distribution examples (static syntax, ILBM and packaging)
+      - name: Verify seven distribution examples (static syntax, ILBM and packaging)
         run: python -B tools/test_examples.py
       - name: Validate M7 Copper API staging contract (static only)
         run: python -B tools/test_m7_copper_contract.py
