@@ -20,19 +20,20 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-- **Current candidate:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R28 0.10.0 M13**, 16,208 bytes, SHA-256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. **Gate A CPU/CI PASS 159 cases; Gate B WinUAE PASS on the documented M13 test.** Use the exact filename `AMOSPro_AGA.Lib` from `dist/`; no subdirectories or renaming. New IFF/ILBM `CMAP` palette Load/Set/Get commands; native fades, cycling and IFF export not yet implemented.
-- **Latest WinUAE-PASS version:** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R28 0.10.0**, 16,208 bytes, SHA-256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`, byte-identical to [its versioned archive](dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib). After user-confirmed Gate B PASS, promote the exact tested version to `LAST_GOOD` in the same commit as the archived test; Gate A alone never promotes it.
+- **Current candidate:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R29 0.10.1 M13**, 17,472 bytes, SHA-256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`. **Gate A 49 native 68000 CPU scenarios PASS; full CI verification in progress at release; Gate B AMOS/WinUAE NOT TESTED.** This candidate adds only `Aga Palette Save`: IFF `FORM ILBM` + `BMHD` + `CMAP` palette export, no pixel BODY, no bank or native fades. Install under its exact name directly from `dist/`, without renaming.
+- **Latest WinUAE-PASS version:** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R28 0.10.0**, 16,208 bytes, SHA-256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`, byte-identical to [R28's immutable archive](dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib). **DO NOT promote R29 until the user confirms Gate B in AMOS/WinUAE.**
 - **Historical R10 fallback:** [R10 versioned archive](dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib) preserved. Latest `LAST_GOOD` is now R28 following M13 WinUAE validation; R27 is preserved as a versioned archive.
+- **R29 WinUAE test pending:** [`M13_R29_PALETTE_SAVE_01.asc`](tests/current/M13_R29_PALETTE_SAVE_01.asc); saves twice to `RAM:M13_R29_PALETTE_TEST.IFF`, reloads and checks RGB values and return to AMOS. R28 stays `LAST_GOOD`.
 - **Validated R28 palette test:** [`M13_R28_PALETTE_01.asc`](tests/passed/M13_R28_PALETTE_01.asc), `RESULT 1`, `FADEERR 0`, palette IFF load, RGB Set/Get and normal return to AMOS. The selected IFF file is not identifiable in the screenshot; standalone PPaint export and full visual fade remain to verify. **Gate C/D untested.**
 - **Validated M6 Blitter tests:** [R13 Copy](tests/passed/M6_R13_BLIT_COPY_01.asc), [R14 Fill](tests/passed/M6_R14_BLIT_FILL_01.asc) and [R15 Clear](tests/passed/M6_R15_BLIT_CLEAR_01.asc). **Validated M7 Copper tests:** [R16 Clear](tests/passed/M7_R16_COPPER_CLEAR_01.asc), [R17 On/Off](tests/passed/M7_R17_COPPER_ON_OFF_01.asc) and [R18 raster](tests/passed/M7_R18_COPPER_RASTER_01.asc).
-- **R27 WinUAE test validated and archived byte-exact:** [`M12_R27_SAFE_BLIT_01.asc`](tests/passed/M12_R27_SAFE_BLIT_01.asc), original Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`. **40 completed swaps**, Clear/Fill/Copy first-draw successes **14/13/13**, temporary rejections **13/13/13**, `SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, normal AMOS return **line 167**. User saw rectangles blinking. **The R28 test is now archived in `tests/passed/`; no `.asc` remains active.** See [M12 report](docs/M12_SAFE_BLITTER_R27.md); no 50 FPS measurement, exhaustive stress, Compiler or physical AGA validation.
+- **R27 WinUAE test validated and archived byte-exact:** [`M12_R27_SAFE_BLIT_01.asc`](tests/passed/M12_R27_SAFE_BLIT_01.asc), original Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`. **40 completed swaps**, Clear/Fill/Copy first-draw successes **14/13/13**, temporary rejections **13/13/13**, `SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, normal AMOS return **line 167**. User saw rectangles blinking. **The R28 test is archived in `tests/passed/`; R29 has one active WinUAE test in `tests/current/`.** See [M12 report](docs/M12_SAFE_BLITTER_R27.md); no 50 FPS measurement, exhaustive stress, Compiler or physical AGA validation.
 - **Earlier binaries:** `dist/experimental/`; historical stable versions: `archive/`.
 
 Install the library version that matches the test you intend to run. Files on GitHub do not automatically replace libraries installed in AMOS/WinUAE.
 
 ## Main AMOS commands
 
-**Current library API R28 0.10.0** — **all 34 named AP20 commands**, the 31 R27 commands plus `Aga Palette Load`, `Aga Palette Set`, and `Aga Palette Get`. The table gives exact AMOS syntax and returns. **R28 Gate B WinUAE PASS for the archived M13 scenario; Compiler and physical AGA not tested.**
+**Current library API R29 0.10.1** — **all 35 named AP20 commands**, R28's 34 plus `Aga Palette Save`. Only the R29 save function remains at **Gate B WinUAE NOT TESTED**; previous R28 palette scenarios passed interpreted WinUAE. AMOS Compiler and physical AGA remain untested.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
@@ -50,6 +51,7 @@ Install the library version that matches the test you intend to run. Files on Gi
 | `Aga Palette Load` (M13 R28) | `_OK=Aga Palette Load(_FILE$)` | Read **standard IFF FORM ILBM** palette `CMAP` only, including palette-only PPaint/DPaint files without `BODY`/`BMHD`. Never copy pixels. Return 1 success or 0 invalid IFF/screen. **R28 Gate A CPU PASS and Gate B WinUAE PASS on M13 scenario.** |
 | `Aga Palette Set` (M13 R28) | `_OK=Aga Palette Set(_PEN,_R,_G,_B)` | Set one indexed palette entry of the private AGA Intuition screen using 8-bit R/G/B components (`0..255`), through `LoadRGB32`. Returns 1 or 0. No VBL wait. HAM/EHB/dual playfield not supported in R28. |
 | `Aga Palette Get` (M13 R28) | `_RGB=Aga Palette Get(_PEN)` | Read active `ColorMap` via `GetRGB32`. Packed RGB24 `$00RRGGBB`, or -1 when invalid; black = 0. No change to bitmap. |
+| `Aga Palette Save` (M13 R29) | `_OK=Aga Palette Save(_FILE$)` | Save the current indexed AGA screen `ColorMap` to an IFF `FORM ILBM` containing `BMHD`+`CMAP`, no `BODY`. Filename: AMOS string (1–255 bytes), ordinary AmigaDOS path. **Overwrites an existing file** (`MODE_NEWFILE`). Returns integer **1** on complete write/close, **0** for invalid screen/file/allocation/write. Reads 1–256 colors, RGB24, no bitmap changes; no HAM/EHB/dual playfield. A write error after overwrite may destroy the old file. Gate A CPU PASS; **Gate B WinUAE pending**. |
 | `Aga Key` | `_K=Aga Key` | No arguments; nonblocking keyboard read. **R23:** preserves RAWKEY key-down events in a 16-item FIFO shared with the IDCMP mouse dispatcher. |
 | `Aga Wait Key` | `_K=Aga Wait Key` | No arguments. Waits for an Intuition-window key and returns a **raw key code**, which need not be ASCII. **R23:** uses the shared dispatcher/FIFO; Ctrl+C break handling returned cleanly to AMOS with the Intuition screen closed under WinUAE. |
 | `Aga Wait Vbl` | `Aga Wait Vbl` | No arguments. Waits for one vertical blank using `WaitTOF`. Does nothing if no AGA screen is open. |
@@ -70,6 +72,17 @@ Install the library version that matches the test you intend to run. Files on Gi
 | **`Aga Hotspot Hit`** (M9 R24) | `_HIT=Aga Hotspot Hit(_PX,_PY,_X,_Y,_W,_H)` | **Point-in-rectangle test (6 integer arguments)**: `PX,PY` = point to test (e.g. mouse position); `X,Y` = rectangle **top-left corner**; `W,H` = **width and height in pixels, NOT right/bottom coordinates**. Returns **1 inside**, **0 outside**, with the right and bottom edges excluded. Does **not** detect a click or draw/store a hotspot; combine with `Aga Mouse Pressed` for buttons. [Detailed example below](#rectangular-hotspots-m9-r24). |
 | **`Aga Rect Overlap`** (M10 R25) | `_C=Aga Rect Overlap(_AX,_AY,_AW,_AH,_BX,_BY,_BW,_BH)` | Stateless **8-argument integer function**: two rectangles, each with origin (X,Y) and width/height (W,H) in logical pixels. Returns **1** for positive-area overlap (even 1 pixel), **0** for disjoint rectangles, touching edges/corners, or nonpositive dimensions. Negative origins allowed; signed 32-bit overflow is rejected safely. No screen, physics or input state required. **R25 WinUAE PASS on the archived scenario.** |
 | **`Aga Text`** (M11 R26, unchanged in R27) | `_OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)` | Four arguments: X pixels, baseline Y, indexed pen, AMOS string (1..128 characters). Draws one line into the AGA Intuition back buffer with temporary RastPort, system font and transparent `JAM1`. Return 1 if rendered, 0 on invalid state/geometry/string or not-`Safe` buffer. **R26 Gate A+B PASS for text and 40-swap archived scenarios.** R27 preserves the entire Text 68000 segment byte-for-byte; its new guards are implemented in Blit Copy/Fill/Clear only. [R26 contract](docs/M11_TEXT_R26.md) · [R27 contract](docs/M12_SAFE_BLITTER_R27.md). |
+
+**Example: save the current AGA palette**, after opening the private AGA screen:
+
+```amos
+_OK=Aga Palette Save("RAM:MENU_PALETTE.IFF")
+If _OK=0
+   Print "PALETTE SAVE FAILED"
+End If
+```
+
+Use [the active R29 test](tests/current/M13_R29_PALETTE_SAVE_01.asc) for save → overwrite → reload. The IFF contains colors but no pixels. Compatibility with direct import into Personal Paint/Deluxe Paint is not yet proven by WinUAE; [R29 contract](docs/M13_PALETTE_R29.md).
 
 **Copper RGB4** has been available since R18, **Mouse X/Y** since R19, **Mouse Buttons** since R20 (with RMBTRAP in R21), and **Mouse Pressed/Released** since R22. **R23 uses IDCMP events to capture button transitions and protect RAWKEY input**. The quick-click, keyboard FIFO and Ctrl+C WinUAE scenarios passed; focus-switch and stress scenarios remain untested. Sprites, a `Aga Set Colour` command, and comprehensive input-stress validation are outside the current scope.
 

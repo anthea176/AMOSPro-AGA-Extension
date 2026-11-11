@@ -2,6 +2,18 @@
 
 ## RÈGLE PRIORITAIRE — DISCUTER ET VALIDER CHAQUE FONCTION AVANT DE CODER (11/11/2026)
 
+## M13 R29 0.10.1 — candidate IFF Save : Gate A 49 cas CPU PASS, Gate B WinUAE EN ATTENTE (11/11/2026)
+
+**Fonction R29 approuvée, implémentée exclusivement :** `_OK=Aga Palette Save(file$)`. Export palette de l'écran AGA Intuition au format IFF standard `FORM ILBM`, `BMHD` + `CMAP` RGB24 (1 à 256 couleurs), sans `BODY`/pixels. Le fichier existant est remplacé (`MODE_NEWFILE`). Résultat entier 1/0 et ressources temporaires libérées. Les 49 tests CPU 68000, dont roundtrip avec le chargeur R28, passent ; cela **ne prouve ni AMOS interprété, ni Compiler, ni Amiga physique**. [Dossier R29](docs/M13_PALETTE_R29.md).
+
+**Bibliothèques :** `dist/AMOSPro_AGA.Lib` = **R29 0.10.1 candidate**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; archive identique `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R28 0.10.0**, WinUAE PASS et SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. Un seul test WinUAE actif : `tests/current/M13_R29_PALETTE_SAVE_01.asc`. Ne pas promouvoir R29 avant Gate B explicite.
+
+**Processus inchangé :** après validation R29, discuter la fonction suivante avec l'utilisateur **avant** code, qu'il s'agisse des banques en Fast RAM ou des fonctions `Aga Fade To Bank/Black/White`. Aucun Fade, aucune bank et aucun cycling ajouté dans R29.
+
+---
+
+
+
 **Demande explicite de l'utilisateur : avant chaque nouvelle fonction ou instruction, échanger sur sa conception, puis obtenir son accord sur le contrat de cette fonction, avant toute implémentation.**
 
 1. **Une fonction à la fois :** présenter son besoin, son nom proposé, sa syntaxe AMOS (instruction ou fonction), ses paramètres, valeurs de retour/erreurs, limites, mémoire et durée de vie, effets sur écran/palette, comportement temporel et protocole de test pertinent. Échanger avec l'utilisateur sur les choix encore ouverts.
@@ -14,7 +26,7 @@
 - **R29 accepté dans son principe :** poursuivre par la sauvegarde/export de palettes au **format IFF standard `FORM ILBM` + `CMAP`**, compatible avec les logiciels de dessin, sans format propriétaire. Les appels AMOS précis, le traitement des erreurs, le fichier de sortie et la restauration restent à discuter avant codage.
 - **Banques de palettes demandées :** pouvoir **charger/conserver une palette dans une bank mémoire**, indépendamment de son application immédiate au `ColorMap`. **Privilégier la Fast RAM lorsqu'elle est disponible**, avec comportement de repli et gestion d'échec mémoire à définir. Vérifier d'abord s'il faut une banque AMOS native ou une banque propre à l'extension, ainsi que son identifiant, son propriétaire, sa taille et sa libération ; aucun contrat d'allocation n'est encore arrêté.
 - **Fades natifs demandés (noms proposés, non exportés) :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`. Discuter **séparément, avant de coder chacune**, les paramètres (banque, durée/étapes), l'interpolation RGB24, le rythme VBL, l'aspect bloquant ou non, les cas limites, l'état final exact et l'interaction avec la palette courante/Copper.
-- Le **color cycling** viendra ensuite selon le même processus de discussion individuelle. **Aucune R29 ni commande Fade nouvelle n'est encore construite ou validée.** R28 0.10.0 demeure la version WinUAE-PASS et `LAST_GOOD` à préserver.
+- Le **color cycling** viendra ensuite selon le même processus de discussion individuelle. **R29 0.10.1 ajoute uniquement `Aga Palette Save` et attend Gate B WinUAE.** Aucune banque/Fade/cycling nouveau n'est implémenté. R28 0.10.0 demeure `LAST_GOOD` à préserver.
 
 ---
 

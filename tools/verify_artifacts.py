@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R28 current, R28 latest WinUAE-PASS LAST_GOOD, frozen archives."""
+"""Current integrity: R29 current, R28 latest WinUAE-PASS LAST_GOOD, frozen archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
+    "dist/AMOSPro_AGA.Lib": "fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1",
+    "dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib": "fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
     "dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
     "dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib": "0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287",
@@ -71,6 +72,7 @@ def main():
     from build_m11_text_r26 import build as build_r26, ENTRY as TEXT_ENTRY
     from build_m12_blit_safe_r27 import build as build_r27, RELOCATED
     from build_m13_palette_r28 import build as build_r28, OLD_ENTRIES, ENTRY_LOAD, ENTRY_SET, ENTRY_GET, GETP, API
+    from build_m13_palette_save_r29 import build as build_r29, ENTRY_SAVE, API as API_R29
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -83,7 +85,8 @@ def main():
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
-    assert candidate == r28, "dist must contain the actual R28 test candidate"
+    r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
+    assert candidate == r29, "dist must contain the actual R29 test candidate"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -129,7 +132,9 @@ def main():
     built27, detail27 = build_r27()
     assert r27 == built27 == build_r27()[0], "Frozen R27 not reproducible"
     built28, info28 = build_r28()
-    assert candidate == r28 == built28 == build_r28()[0], "current R28 not reproducible"
+    assert r28 == built28 == build_r28()[0], "frozen R28 not reproducible"
+    built29, info29 = build_r29()
+    assert candidate == r29 == built29 == build_r29()[0], "current R29 not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
@@ -153,6 +158,7 @@ def main():
     tok26, seg26, _ = split(r26)
     tok27, seg27, _ = split(r27)
     tok28, seg28, _ = split(r28)
+    tok29, seg29, _ = split(r29)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -247,9 +253,20 @@ def main():
         rows=[r for r in named28 if r["name"]==name]
         assert len(rows)==1 and rows[0]["function"]==index
         assert rows[0]["signature"]==sig
-    assert candidate != r27
+    assert len(seg29)==41 and seg29[:39]==seg28[:39], "R29 changed frozen R28 code"
+    assert seg29[39]==seg28[39]+GETP, "R29 must add GetP to R28 final entry only"
+    assert seg29[ENTRY_SAVE] and not seg29[ENTRY_SAVE].endswith(GETP)
+    assert tok29.startswith(tok28[:-6]) and tok29!=tok28
+    audit29=inspect(parse(r29))
+    assert not audit29["issues"], "R29 AP20 invalid"
+    named29=[r for r in audit29["tokens"] if r["name"].startswith("aga ")]
+    assert len(named29)==35
+    for name,index,sig in API_R29:
+        rows=[r for r in named29 if r["name"]==name]
+        assert len(rows)==1 and (rows[0]["instruction"],rows[0]["function"],rows[0]["signature"])==(1,index,sig)
+    assert candidate != r28
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == r28
-    print("PASS: R28 current/archive 34 AP20 tokens; LAST_GOOD is WinUAE-PASS R28;"
+    print("PASS: R29 current/archive 35 AP20 tokens; LAST_GOOD is WinUAE-PASS R28;"
           " R10 historical archive and R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen")
 
 

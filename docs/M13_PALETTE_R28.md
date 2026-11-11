@@ -1,5 +1,7 @@
 # M13 / R28 0.10.0 — palette AGA 24 bits : premier incrément
 
+**État actualisé :** R28 reste la dernière version **validée WinUAE** et `LAST_GOOD`; un nouveau candidat R29 0.10.1 `Aga Palette Save` est disponible après Gate A CPU, test WinUAE non encore réalisé. [Dossier R29](M13_PALETTE_R29.md). Les notes R28 suivantes restent historiques et précisent leurs propres validations.
+
 ## R28 validée — 11/11/2026
 
 M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.

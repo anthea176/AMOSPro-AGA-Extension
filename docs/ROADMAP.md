@@ -1,12 +1,22 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## M13 R29 0.10.1 — candidate IFF Save : Gate A 49 cas CPU PASS, Gate B WinUAE EN ATTENTE (11/11/2026)
+
+**Fonction R29 approuvée, implémentée exclusivement :** `_OK=Aga Palette Save(file$)`. Export palette de l'écran AGA Intuition au format IFF standard `FORM ILBM`, `BMHD` + `CMAP` RGB24 (1 à 256 couleurs), sans `BODY`/pixels. Le fichier existant est remplacé (`MODE_NEWFILE`). Résultat entier 1/0 et ressources temporaires libérées. Les 49 tests CPU 68000, dont roundtrip avec le chargeur R28, passent ; cela **ne prouve ni AMOS interprété, ni Compiler, ni Amiga physique**. [Dossier R29](M13_PALETTE_R29.md).
+
+**Bibliothèques :** `dist/AMOSPro_AGA.Lib` = **R29 0.10.1 candidate**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; archive identique `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R28 0.10.0**, WinUAE PASS et SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. Un seul test WinUAE actif : `tests/current/M13_R29_PALETTE_SAVE_01.asc`. Ne pas promouvoir R29 avant Gate B explicite.
+
+**Processus inchangé :** après validation R29, discuter la fonction suivante avec l'utilisateur **avant** code, qu'il s'agisse des banques en Fast RAM ou des fonctions `Aga Fade To Bank/Black/White`. Aucun Fade, aucune bank et aucun cycling ajouté dans R29.
+
+---
+
 ## M13 — décisions de conception du 11/11/2026 (avant codage R29)
 
 - **Processus obligatoire :** discuter **chaque nouvelle fonction** avec l'utilisateur, arrêter explicitement son contrat, puis seulement coder/tester. Un feu vert sur le jalon R29 n'est pas une validation de toutes ses commandes.
 - **R29 accepté en principe :** export de palettes au format **IFF standard `FORM ILBM` / `CMAP`**, sans format maison ; nom de commande, arguments, conditions d'erreur et restauration à définir ensemble.
 - **Banques de palettes demandées :** conservation/chargement d'une palette vers une bank mémoire, en **Fast RAM prioritairement si disponible**. Préciser avant implémentation si les banks sont AMOS ou internes à l'extension, leur cycle de vie et la gestion de l'absence de Fast RAM.
 - **Fades natifs souhaités :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`, **signatures non figées et tokens non implémentés**. Déterminer durée, synchronisation VBL, comportement bloquant ou non et interpolation RGB24 lors de chaque discussion.
-- Puis cycling, M14 fontes et M15 dessin 2D. **Aucun nouveau binaire R29 ; R28 reste `LAST_GOOD`**.
+- Puis cycling, M14 fontes et M15 dessin 2D. **R29 Save est candidate Gate A CPU ; R28 reste `LAST_GOOD` jusqu'à Gate B.**
 
 ---
 

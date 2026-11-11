@@ -1,4 +1,18 @@
-# Outils Python actifs — R28 M13, LAST_GOOD R28 WinUAE-PASS
+# Outils Python actifs — R29 candidate M13, LAST_GOOD R28 WinUAE-PASS
+
+## M13 R29 0.10.1 — candidate IFF Save : Gate A 49 cas CPU PASS, Gate B WinUAE EN ATTENTE (11/11/2026)
+
+**Fonction R29 approuvée, implémentée exclusivement :** `_OK=Aga Palette Save(file$)`. Export palette de l'écran AGA Intuition au format IFF standard `FORM ILBM`, `BMHD` + `CMAP` RGB24 (1 à 256 couleurs), sans `BODY`/pixels. Le fichier existant est remplacé (`MODE_NEWFILE`). Résultat entier 1/0 et ressources temporaires libérées. Les 49 tests CPU 68000, dont roundtrip avec le chargeur R28, passent ; cela **ne prouve ni AMOS interprété, ni Compiler, ni Amiga physique**. [Dossier R29](../docs/M13_PALETTE_R29.md).
+
+**Bibliothèques :** `dist/AMOSPro_AGA.Lib` = **R29 0.10.1 candidate**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; archive identique `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R28 0.10.0**, WinUAE PASS et SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. Un seul test WinUAE actif : `tests/current/M13_R29_PALETTE_SAVE_01.asc`. Ne pas promouvoir R29 avant Gate B explicite.
+
+**Processus inchangé :** après validation R29, discuter la fonction suivante avec l'utilisateur **avant** code, qu'il s'agisse des banques en Fast RAM ou des fonctions `Aga Fade To Bank/Black/White`. Aucun Fade, aucune bank et aucun cycling ajouté dans R29.
+
+---
+
+
+**Outils R29 :** [`m13_palette_save_r29_emit.py`](m13_palette_save_r29_emit.py) (routines 68000 `Aga Palette Save`), [`build_m13_palette_save_r29.py`](build_m13_palette_save_r29.py) (builder reproductible mémoire depuis R28), [`test_m13_palette_save_r29.py`](test_m13_palette_save_r29.py) (49 scénarios CPU natifs et roundtrip R28). La CI couvre R29 et les régressions R28–R10.
+
 
 ## R28 validée — 11/11/2026
 

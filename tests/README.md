@@ -1,3 +1,13 @@
+# M13 R29 0.10.1 — Palette Save : Gate A CPU 49 PASS, Gate B WinUAE EN ATTENTE
+
+**Un seul test actif :** [`current/M13_R29_PALETTE_SAVE_01.asc`](current/M13_R29_PALETTE_SAVE_01.asc). Depuis R29, `dist/AMOSPro_AGA.Lib` est la candidate (17 472 octets ; SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`), identique à l'archive versionnée R29. Gate A CPU : **49 scénarios PASS**, y compris export IFF exact et rechargement par R28. Gate B **non exécutée** ; R28 0.10.0 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **inchangée et validée WinUAE**.
+
+Importer l'ASC via `Project → Merge ASCII` et exécuter sous AMOS interprété après installation de la candidate `dist/AMOSPro_AGA.Lib` sous son nom exact. Le test écrit deux fois la même palette sur `RAM:M13_R29_PALETTE_TEST.IFF`, restaure les couleurs par `Aga Palette Load`, vérifie `SAVE1 1 SAVE2 1 LOAD 1`, `AFTER 16711680`, `OTHER 795192`, `BLUE 128`, `RESULT 1` et `CLOSE RETURNED`. Un panneau rouge doit rester affiché. [Protocole](current/README.md) · [R29](../docs/M13_PALETTE_R29.md). Compiler et Amiga physique non testés.
+
+---
+
+**Les checkpoints R28 et antérieurs ci-dessous sont historiques :**
+
 # M13 R28 — Gate B WinUAE PASS (11/11/2026)
 
 M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.

@@ -32,6 +32,7 @@ on:
       - "tools/m11_text_r26_emit.py"
       - "tools/m12_blit_safe_r27_emit.py"
       - "tools/m13_palette_r28_emit.py"
+      - "tools/m13_palette_save_r29_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -72,13 +73,18 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M13 R28 current IFF palette — native 68000 Gate A
+      - name: M13 R29 current IFF palette save — native 68000 Gate A
+        run: |
+          python -B tools/test_m13_palette_save_r29.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_save_r29 import build,ARCHIVE,DEST; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R29 current/archive match:',meta['sha256'],meta['size'])"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
+      - name: M13 R28 frozen IFF palette — native 68000 regression and LAST_GOOD
         run: |
           python -B tools/test_m13_palette_r28.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_r28 import build,ARCHIVE,DEST; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R28 current/archive match:',meta['sha256'],meta['size'])"
-          python -B -c "from pathlib import Path; a=Path('dist/AMOSPro_AGA.Lib').read_bytes(); b=Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes(); c=Path('dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib').read_bytes(); assert a==b==c, 'LAST_GOOD must match R28 WinUAE PASS'"
-          sha256sum dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_r28 import build,ARCHIVE; from pathlib import Path; b,meta=build(); assert b==ARCHIVE.read_bytes()==Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes(); print('R28 frozen archive/LAST_GOOD:',meta['sha256'],meta['size'])"
+          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
 
       - name: M12 R27 frozen archive — native 68000 CPU regression and integrity
         run: |
