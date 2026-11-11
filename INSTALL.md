@@ -7,7 +7,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R37 candidate `dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (**v0.10.9**, 43 AP20 commands, **CPU/CI Gate A PASS, WinUAE Gate B PENDING**) directly into **`APSystem`**. Keep its **exact name `AMOSPro_AGA.Lib`**, with no renaming. The previous **R36 v0.10.8** remains available as the unchanged, WinUAE-validated [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib). Compiler Gate C and physical AGA Gate D are untested.
+2. Copy the [validated R37 v0.10.9 library](dist/AMOSPro_AGA.Lib) to **`APSystem`** using its exact name **`AMOSPro_AGA.Lib`**, with no renaming. **CPU/CI Gate A and AMOS/WinUAE Gate B PASS**, 43 AP20 commands. The [R37 LAST_GOOD fallback](dist/AMOSPro_AGA_LAST_GOOD.Lib) is byte-identical to current. The [R36 archive](dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib) remains available. Gates C/D untested.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -36,7 +36,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Current test library:** [R37 v0.10.9](dist/AMOSPro_AGA.Lib), 22,328 bytes, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`, identical to [its archive](dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib). **CPU/CI Gate A PASS**; [active R37 AMOS/WinUAE test](tests/current/M14_R37_FONT_SELECT_01.asc) **not yet run**. **Last validated version:** [R36 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 21,836 bytes, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. Promote R37 into `LAST_GOOD` only after user-confirmed WinUAE success. Gates C/D untested.
+**Current WinUAE-validated version:** [R37 v0.10.9](dist/AMOSPro_AGA.Lib) = [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R37 archive](dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib), **22,328 bytes**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. [Validated archived R37 WinUAE test](tests/passed/M14_R37_FONT_SELECT_01.asc) (`RESULT 1`, `CLOSE RETURNED`, user-confirmed visual correctness). R36 remains archived. Compiler/real Amiga tests unperformed.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

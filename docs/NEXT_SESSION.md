@@ -1,19 +1,20 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R37 0.10.9 — Aga Font Select : Gate A CPU/CI PASS, Gate B WinUAE en attente (11/11/2026)
+## R37 0.10.9 — Aga Font Select : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 
-**Une seule nouvelle commande :** `_OK=Aga Font Select(FontName$,YSize)`, sélection d'une fonte AmigaOS `OpenDiskFont` (taille 1..255, nom de 1..127 octets), retour 1/0 ; `Aga Font Select("",0)` rétablit la fonte système. `Aga Text` applique la fonte sélectionnée avant `TextExtent` et le dessin sur son propre back buffer AGA. Les fontes sont libérées au remplacement, au reset et à `Aga Screen Close`. Les fontes de banques AMCAF **ne sont pas implémentées** dans R37. [Contrat M14/R37](M14_FONT_SELECT_R37.md).
+**Commande approuvée et implémentée :** `_OK=Aga Font Select(FontName$,YSize)`, sélection d'une fonte AmigaOS via `OpenDiskFont` (taille demandée 1..255, nom de 1..127 octets) ; `Aga Font Select("",0)` rétablit la fonte système. `Aga Text` applique `SetFont` avant `TextExtent` sur son RastPort AGA privé. Fonte libérée au remplacement, au reset et à `Aga Screen Close`. Les fontes des banques AMCAF ne sont **pas encore prises en charge**. [Contrat R37](M14_FONT_SELECT_R37.md).
 
-**Gate A PASS :** 20 groupes de validation natifs CPU 68000 R37, régressions R26 (64 cas) et R36 (106 cas) PASS, export assembleur strict PASS et [CI complète R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541) PASS. **43 commandes AP20.**
+**Gate A CPU/CI PASS :** 20 groupes de tests natifs 68000 R37, régressions R26 (64 cas) et R36 (106 scénarios), export assembleur strict PASS. [CI R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541) PASS, **43 commandes AP20**.
 
-**Candidate R37 :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib`, **22 328 octets**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. **R36 reste `LAST_GOOD`**, 21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. [Test WinUAE actif](../tests/current/M14_R37_FONT_SELECT_01.asc) à exécuter dans AMOS interprété ; **Gate B NON TESTÉE** et Gates C Compiler / D matériel AGA réel NON TESTÉES. Ne promouvoir `LAST_GOOD` qu'après confirmation de la Gate B utilisateur.
+**Gate B AMOS interprété/WinUAE PASS :** capture de l'utilisateur sur le test [`M14_R37_FONT_SELECT_01.asc`](../tests/passed/M14_R37_FONT_SELECT_01.asc), Git blob original **`5371c310142f33aa2312e59ed81e2e2d6b90da3d`** conservé octet pour octet. `OPEN 1 DB 1 PALETTE 1 1`, `SEL8 1 TX8 1 SEL9 1 TX9 1`, `BAD0 0 BAD256 0 BADNAME 0`, `KEEP 1 RESET 1 DEFAULT 1`, `SWAP 1 NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`** ; rendu visuel et retour AMOS normal confirmés (« fonctionnement nickel »). Aucune métrique de vitesse mesurée.
 
-**Suite M14 :** R38 banques AMCAF `Make Bank Font`, puis R39 fontes 8×8 `Change Print Font` sont des **pistes futures distinctes à contractualiser** ; aucune nouvelle commande ajoutée sans accord. Travail uniquement sur `main` du dépôt `anthea176/AMOSPro-AGA-Extension`.
+**R37 promue `LAST_GOOD` :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib`, **22 328 octets**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. La version antérieure R36 v0.10.8 reste archivée sans changement, **21 836 octets**, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. **Aucun test actif dans `tests/current/`.** Gates C Compiler et D Amiga réel **NON TESTÉES**.
 
-**Les sections R36 et antérieures ci-dessous sont historiques : leurs mentions d'une bibliothèque « courante » ou d'un `tests/current/` vide décrivent l'état de la version concernée, pas celui de R37.**
+**Suite M14, sans autorisation de codage :** examiner et contractualiser individuellement R38 (banques de fontes AMCAF `Make Bank Font`), puis R39 (fontes bitmap 8×8 de `Change Print Font`). Aucune fonction nouvelle sans accord explicite ; travailler uniquement sur `main` du dépôt `anthea176/AMOSPro-AGA-Extension`, aucune autre branche ni dépôt.
+
+**Les sections R36 et antérieures ci-dessous sont des checkpoints historiques : leurs références aux binaires et `LAST_GOOD` décrivent leur époque, pas l'état de R37.**
 
 ---
-
 
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 

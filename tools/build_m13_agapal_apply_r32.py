@@ -17,7 +17,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib"
 BASE_SHA256="0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256="f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225"
+LAST_GOOD_SHA256="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib"
 API=(("aga palette bank apply",ENTRY_APPLY,"00,0"),)
@@ -26,7 +26,7 @@ VERSION="R32 0.10.4"
 def build():
     original=BASE.read_bytes()
     assert digest(original)==BASE_SHA256,"R31 WinUAE-PASS frozen archive changed"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R35 after promotion"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R37"
     tok,parts,_=split(original)
     assert len(parts)==BASE_ENTRIES and not parts[-1].endswith(GETP)
     baseline=inspect(parse(original))

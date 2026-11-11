@@ -1,4 +1,18 @@
-# Tests AMOS — R36 0.10.8 Gates A/B PASS, WinUAE-LAST_GOOD
+# Tests AMOS — R37 0.10.9 Gates A/B PASS, WinUAE-LAST_GOOD
+
+## R37 0.10.9 — Aga Font Select : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
+
+**43 commandes AP20, 22 328 octets.** `Aga Font Select(FontName$,YSize)` sélectionne une fonte AmigaOS via `OpenDiskFont` pour les prochains appels `Aga Text`. Les fontes sont libérées au changement, reset ou `Aga Screen Close`. [Contrat R37](../docs/M14_FONT_SELECT_R37.md).
+
+**Gate A PASS :** 20 groupes natifs CPU 68000 R37 + régressions R26 64 et R36 106, export strict PASS, [CI R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541) et [CI intégrité](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43076428805) PASS.
+
+**Gate B PASS, capture utilisateur :** test [`M14_R37_FONT_SELECT_01.asc`](passed/M14_R37_FONT_SELECT_01.asc) déplacé depuis `tests/current/` avec Git blob `5371c310142f33aa2312e59ed81e2e2d6b90da3d` identique. `SEL8/TX8/SEL9/TX9=1`, `BAD0/BAD256/BADNAME=0`, `KEEP/RESET/DEFAULT/SWAP=1`, `NOSCREEN=0 CLOSED=-1`, **`RESULT 1`**, **`CLOSE RETURNED`**, retour normal à AMOS et rendu visuel confirmé par l'utilisateur.
+
+**`LAST_GOOD` promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R37, 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. L'archive R36 0.10.8 (21 836 octets) reste inchangée. **Aucun test actif dans `tests/current/`.** Gates C Compiler et D matériel AGA réel non testées. R38/R39 restent à discuter avant codage.
+
+**Les sections R36 et antérieures sont historiques.**
+
+---
 
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 

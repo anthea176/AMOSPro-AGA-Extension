@@ -1,11 +1,9 @@
 # Tests AMOS actifs
 
-**Aucun test `.asc` actif** après validation R36 0.10.8 sous AMOS interprété/WinUAE le 11/11/2026.
+**Aucun test `.asc` actif** après validation de R37 0.10.9 sous AMOS interprété/WinUAE le 11/11/2026.
 
-Le [test exact `M13_R36_PALETTE_CYCLE_01.asc`](../passed/M13_R36_PALETTE_CYCLE_01.asc) a été archivé sans modification dans `tests/passed/` (Git blob `4644236576033f755ac0dc274f6f22f92a2d9201`).
+Le test [`M14_R37_FONT_SELECT_01.asc`](../passed/M14_R37_FONT_SELECT_01.asc) a été déplacé vers `tests/passed/` **à l'octet près** : Git blob `5371c310142f33aa2312e59ed81e2e2d6b90da3d`, inchangé. Capture utilisateur : `OPEN 1 DB 1 PALETTE 1 1`, `SEL8 1 TX8 1 SEL9 1 TX9 1`, `BAD0/BAD256/BADNAME 0`, `KEEP 1 RESET 1 DEFAULT 1`, `SWAP 1 NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fonctionnement visuel confirmé.
 
-Capture : `CYC20 1 RESTORED 16711680 16776960`, `FWD 1 COLOR 16776960 16711680 65280 255`, `REV 1 RESTORE 16711680 16776960`, `NEG 1 COLOR 65280 16711680 POS 1`, invalides à 0, `AFTERBAD 16711680 NOSCREEN 0`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne 138. Cycling visible confirmé, sans mesure FPS ni de durée réelle.
+**R37 v0.10.9 est `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R37, **22 328 octets**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. L'archive R36 v0.10.8 (21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`) est préservée.
 
-**R36 0.10.8 est `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R36, **21 836 octets**, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. Archive R35 0.10.7 intacte.
-
-Gates C Compiler et D Amiga AGA réel non testées. Toute nouvelle fonction (R37) doit être discutée et approuvée avant code ou test.
+Gates C Compiler et D Amiga AGA réel **non testées**. R38 (banques de fontes AMCAF) et R39 (fontes bitmap 8x8) nécessiteront un contrat individuel avant tout code.

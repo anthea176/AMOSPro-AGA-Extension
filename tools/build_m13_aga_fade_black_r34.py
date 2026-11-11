@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib"
 BASE_SHA256="e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256="f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225"
+LAST_GOOD_SHA256="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"
 VERSION="R34 0.10.6"
@@ -27,7 +27,7 @@ API=(("aga fade to black",ENTRY_BLACK,"00"),)
 def build():
     frozen=BASE.read_bytes()
     assert digest(frozen)==BASE_SHA256,"R33 archive mutated"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R36 after Gate B promotion"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R37"
     tok,parts,_=split(frozen)
     assert len(parts)==BASE_ENTRIES and not parts[-1].endswith(GETP)
     base_audit=inspect(parse(frozen))

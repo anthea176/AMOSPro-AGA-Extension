@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   r37_gate_a:
@@ -34,29 +34,7 @@ jobs:
         run: |
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R37_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R37_GateA.Lib --out /tmp/amos-aga-r37-native --baseline none --strict
-      - name: Export R37 candidate bytes for separate post-Gate-A publication
-        run: python -B tools/build_m14_font_select_r37.py --emit-base64
-
-      - name: Publish candidate to main after Gate A PASS, not LAST_GOOD
+      - name: R37 promoted archive and LAST_GOOD reproducibility (read-only)
         run: |
-          python -B - <<'PY'
-          import sys
-          from pathlib import Path
-          sys.path.insert(0,'tools')
-          from build_m14_font_select_r37 import build,DEST,ARCHIVE,LAST_GOOD,BASE_SHA256
-          from ap20_utils import digest
-          assert digest(LAST_GOOD.read_bytes())==BASE_SHA256
-          raw,report=build()
-          assert raw==build()[0]
-          ARCHIVE.parent.mkdir(parents=True,exist_ok=True)
-          DEST.write_bytes(raw)
-          ARCHIVE.write_bytes(raw)
-          assert digest(DEST.read_bytes())==digest(ARCHIVE.read_bytes())
-          assert digest(LAST_GOOD.read_bytes())==BASE_SHA256
-          print('R37 Gate A candidate published, SHA256:',report['sha256'])
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
-          git commit -m "R37: publish Gate-A-tested 0.10.9 candidate on main; keep R36 LAST_GOOD"
-          git push origin HEAD:main
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,DEST,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(); print('R37 LAST_GOOD verified:',meta['sha256'],meta['size'])"
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib

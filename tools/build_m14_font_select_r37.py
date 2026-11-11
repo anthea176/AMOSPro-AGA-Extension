@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BASE_SHA256 = "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225"
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"
 API = (("aga font select", ENTRY_FONT_SELECT, "02,0"),)
@@ -47,7 +47,7 @@ def link_bsr(segment, operand, caller, callee):
 def build():
     frozen = BASE.read_bytes()
     assert digest(frozen) == BASE_SHA256, "R36 archive mutated"
-    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD R36 changed"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD R37 changed"
     token_bytes, original, _ = split(frozen)
     assert len(original) == BASE_ENTRIES == ENTRY_FONT_SELECT == 48
     assert not original[-1].endswith(GETP)
