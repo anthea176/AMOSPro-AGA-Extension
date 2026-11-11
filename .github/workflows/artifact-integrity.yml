@@ -21,6 +21,8 @@ on:
       - "dist/**/*.Lib"
       - "tools/build_*.py"
       - "tools/test_*.py"
+      - "tools/agapal_r30_layout.py"
+      - "tests/design/*.asc"
       - "tests/current/*.asc"
       - "tests/passed/*.asc"
       - "tools/audit_ap20.py"
@@ -56,6 +58,8 @@ jobs:
           python-version: "3.12"
       - name: Verify current HUNK files and exact committed artifacts
         run: python -B tools/verify_artifacts.py
+      - name: R30 AGAPAL in-memory layout and reference ABK envelope (format only)
+        run: python -B tools/test_agapal_r30_layout.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
       - name: Verify seven distribution examples (static syntax, ILBM and packaging)
