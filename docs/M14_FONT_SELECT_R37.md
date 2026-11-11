@@ -1,7 +1,8 @@
-# M14 / R37 0.10.9 -- Aga Font Select (contrat et candidate)
+# M14 / R37 0.10.9 -- Aga Font Select (Gates A/B PASS, LAST_GOOD)
 
-**Statut réel (11/11/2026) : Gate A native CPU/CI et export source 68000 strict PASS** — [CI R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541). 20 groupes R37 + 64 cas R26 + 106 scénarios R36 PASS. `dist/AMOSPro_AGA.Lib` = archive R37 : 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`, 43 commandes AP20. `dist/AMOSPro_AGA_LAST_GOOD.Lib` = R36 conservée, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. **Gate B AMOS interprété/WinUAE EN ATTENTE** avec `tests/current/M14_R37_FONT_SELECT_01.asc`. Gates C/D non testées. R38/R39 restent hors périmètre de codage.
+**Statut validé le 11/11/2026 : Gates A CPU/CI et B AMOS interprété/WinUAE PASS.** [CI R37 Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43075769541) et [CI intégrité R37](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43076428805) PASS. R37 (43 commandes AP20, 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`) est promue **`LAST_GOOD`** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib` à l'octet près.
 
+**Preuve Gate B utilisateur :** [test `M14_R37_FONT_SELECT_01.asc` archivé](../tests/passed/M14_R37_FONT_SELECT_01.asc), Git blob `5371c310142f33aa2312e59ed81e2e2d6b90da3d` strictement conservé. Capture : `OPEN 1 DB 1 PALETTE 1 1` ; `SEL8 1 TX8 1 SEL9 1 TX9 1` ; `BAD0 0 BAD256 0 BADNAME 0` ; `KEEP 1 RESET 1 DEFAULT 1` ; `SWAP 1 NOSCREEN 0 CLOSED -1` ; **`RESULT 1` et `CLOSE RETURNED`**, retour AMOS normal. L'utilisateur confirme « fonctionnement nickel ». La distinction visuelle des fontes est confirmée par l'utilisateur ; ne pas inférer de métriques ou de performance mesurées depuis la capture. **Gates C Compiler et D Amiga AGA réel non testées.** R38/R39 ne sont pas implémentées.
 
 ## Contrat approuve : une seule commande
 
@@ -20,18 +21,17 @@ _OK=Aga Text(24,64,1,"MENU AGA")
 
 ## Construction et preservation des regressions
 
-Base strictement figée : archive R36 `dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib`, 21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. Les **42 commandes anterieures** et `LAST_GOOD` restent conserves ; R37 ajoute la 43e commande.
+Base strictement figée : archive R36 `dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib`, 21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. Les **42 commandes anterieures** et l'archive R36 restent conservees ; R37 ajoute la 43e commande et devient la nouvelle `LAST_GOOD` apres Gate B.
 
 Empreinte de modification des segments AP20 : **8** (`Aga Screen Close`, remplacement sur 4 octets d'un `JSR CloseScreen` par un `BSR.W` vers un helper qui conserve le `CloseScreen`), **36** (`Aga Text`, reemission controlee du 68000 R26 avec selection de fonte avant `TextExtent`), **47** (ajout terminal `GetP`) et **48** (nouvelle fonction et helpers). Tous les autres segments restent strictement inchanges. Aucun autre depot ou branche n'est concerne.
 
 Builder deterministe en memoire : `tools/build_m14_font_select_r37.py`. Emetteur 68000 : `tools/m14_font_select_r37_emit.py`. Regressions CPU 68000 : `tools/test_m14_font_select_r37.py` ; workflow `r37-candidate-gate-a.yml` puis export assembleur strict. Les tests de Gate A ne sont ni une compilation AMOS, ni une execution WinUAE.
 
-## Plan Gate B WinUAE
+## Gate B WinUAE — résultats validés
 
-1. Installer **uniquement apres Gate A PASS** la candidate directe `dist/AMOSPro_AGA.Lib` (pas de renommage utilisateur), puis charger `tests/current/M14_R37_FONT_SELECT_01.asc` dans AMOS interprete.
-2. Verifier la selection visible de `topaz.font` 8 puis 9, le texte systeme apres reset et les refus pour taille 0, 256 et nom vide + taille non nulle.
-3. Confirmer `RESULT 1`, `CLOSE RETURNED`, aucune erreur de memoire ni blocage. Observer le retour a AMOS, la fermeture de l'ecran et la nouvelle tentative de selection refusee apres `Close`.
-4. **Uniquement apres confirmation utilisateur de Gate B**, recopier la candidate dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`, archiver le test execute octet pour octet dans `tests/passed/`, puis mettre a jour les deux README. **Gate C Compiler et D Amiga physique : NON TESTEES**.
+Le test exact `tests/passed/M14_R37_FONT_SELECT_01.asc` a été importé via **Project → Merge ASCII** et exécuté sous AMOS interprété/WinUAE avec la candidate R37 0.10.9 : chargement Topaz 8/9, rendu des quatre lignes, rejet de la taille nulle/256 et du nom vide invalide, conservation de la fonte après échec, retour à la fonte par défaut, échange du double buffer et libération lors de `Aga Screen Close` sans crash. **Tous les codes de retour attendus sont corrects** (`RESULT 1`), avec `CLOSE RETURNED` et retour AMOS normal. Confirmation utilisateur de l'affichage correct.
+
+**Promotion :** l'archive de test conserve son Git blob d'origine `5371c310142f33aa2312e59ed81e2e2d6b90da3d`, le programme est retiré de `tests/current/`, et `LAST_GOOD` reprend exactement les octets de l'archive R37. Le binaire R36 validé reste présent dans son archive dédiée, sans mutation.
 
 ## Suite M14 -- contrats separes
 
