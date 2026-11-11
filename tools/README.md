@@ -1,10 +1,12 @@
-# Outils Python actifs — R33 0.10.5 Gates A/B PASS, WinUAE-LAST_GOOD
+# Outils Python actifs — R34 candidate Gate A PASS, R33 WinUAE-LAST_GOOD
 
-## R34 0.10.6 — Aga Fade To Black : contrat validé, Gate A CPU/CI en préparation (11/11/2026)
+## R34 0.10.6 — Aga Fade To Black : contrat validé, Gate A CPU/CI PASS, Gate B WinUAE en attente (11/11/2026)
 
 **Une seule fonction approuvée :** `_OK=Aga Fade To Black(vbl)`, durée entière 1..255 VBL, 0/négatif/>255 refusé. Fonction bloquante : un `WaitTOF` puis `LoadRGB32` par VBL, interpolation RGB24 à pas fixe signé 8.8 depuis `GetRGB32` ; dernier VBL exactement noir pour tous les pens logiques (1..256). Écran AGA Intuition privé indexé, pas HAM/EHB/dual playfield, ColorMap valide. Aucun argument ou accès à banque AGAPAL, aucune écriture pixels/banques, mémoire temporaire Exec `8+42*N` (max 10 760 octets) libérée. Retour 1 terminé / 0 rejet sans changement. Pas de promesse de durée N/50s si 68000 dépasse une VBL. [Contrat R34](../docs/M13_FADE_BLACK_R34.md).
 
-**Statut initial :** source 68000, builder en mémoire, tests CPU et [test WinUAE R34](../tests/current/M13_R34_FADE_TO_BLACK_01.asc) préparés. **R34 Gate A et Gate B NON encore testées.** N'utiliser l'ASC (150 VBL avec bandes déjà visibles, aucune banque remplacée) qu'après publication de candidate Gate A PASS. **R33 0.10.5 reste `LAST_GOOD` WinUAE-PASS** : 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`. Gates C Compiler/D physique non testées. Une fonction à la fois, aucun autre dépôt ou branche, prochaine fonction à discuter avant code.
+**Gate A CPU/CI PASS (11/11/2026) :** 48 scénarios natifs 68000 PASS, export source 68000 strict PASS, [CI Gate A réussie](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43053032571). Une seule nouvelle commande `Aga Fade To Black(vbl)`, durée 1..255 VBL, fondu RGB24 bloquant jusqu'au noir exact. Aucun accès aux banques AGAPAL ni écriture dans les pixels ; 40 commandes AP20.
+
+**Candidate R34 publiée sur `main` :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib`, **20 752 octets**, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033` (binaires identiques). **Gate B AMOS interprété/WinUAE NON TESTÉE** : [ASC actif `M13_R34_FADE_TO_BLACK_01.asc`](../tests/current/M13_R34_FADE_TO_BLACK_01.asc), scène affichée avant un fondu de 150 VBL ; aucune banque remplacée. **R33 0.10.5 reste dans `LAST_GOOD`**, 20 208 octets, SHA256 `e0db41e282bfb8ac92c53479a7770f2abbff26fb1708894`, identique à son archive figée. Gates C Compiler/D Amiga physique non testées. Toute future commande exige une discussion et un contrat approuvé ; ne travailler que sur `main`.
 
 ---
 ## R33 0.10.5 VALIDÉE — Gates A CPU/CI et B fonctionnelle AMOS/WinUAE PASS (11/11/2026)

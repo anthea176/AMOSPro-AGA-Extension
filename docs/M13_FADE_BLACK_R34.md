@@ -25,15 +25,15 @@ La fonction R34 elle-même est **indépendante des banques** ; le retour AGAPAL 
 
 ## Statut R34
 
-**Contrat approuvé ; source native, builder reproductible et tests CPU Gate A préparés, non encore validés.** R34 n'est pas encore une bibliothèque candidate publiée.
+**R34 Gate A CPU/CI PASS :** 48 scénarios natifs 68000 et export strict de la source 68000 PASS. [CI de Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43053032571). **Gate B WinUAE NON TESTÉE** ; candidate publique à installer uniquement pour ce test.
 
-**Dernier binaire validé : R33 0.10.5**, `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = son archive figée, 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`.
+**Candidate R34 publiée :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib`, **20 752 octets**, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033` (copies identiques). **R33 0.10.5 reste dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`** et son archive figée, 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`.
 
 - Source : `tools/m13_aga_fade_black_r34_emit.py`.
 - Builder : `tools/build_m13_aga_fade_black_r34.py`, déterministe en mémoire, R33 comme base immuable, sans modifier `LAST_GOOD`.
 - Tests CPU : `tools/test_m13_aga_fade_black_r34.py`, vraie exécution 68000 sous Unicorn, ABI, ColorMap, durée, interpolation et dernier noir exact, alloc/free, zéro écriture banque/bitplane, paramètres invalides.
 - Test WinUAE préparé : [`tests/current/M13_R34_FADE_TO_BLACK_01.asc`](../tests/current/M13_R34_FADE_TO_BLACK_01.asc), avec scène affichée AVANT le fondu 150 VBL ; pen28,29,30,224 noirs, 0/256/-1/65536 refusés, cas 1/2 VBL, noir déjà atteint et écran fermé. **Aucune banque remplacée.**
-- Après Gate A CPU et export natif strict PASS, publication candidate `dist/AMOSPro_AGA.Lib` et archive `dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib`. `LAST_GOOD` restera R33 jusqu'à validation utilisateur Gate B.
-- Gates B AMOS interprété/WinUAE, C Compiler et D Amiga AGA réel : **NON TESTÉES** pour R34.
+- **Gate A PASS, publication effectuée :** `dist/AMOSPro_AGA.Lib` et archive R34 sont identiques. `LAST_GOOD` demeure R33 jusqu'à validation utilisateur de Gate B.
+- Gates B AMOS interprété/WinUAE, C Compiler et D Amiga AGA réel : **NON TESTÉES** pour R34. Le test actif est prêt dans `tests/current/`, sans remplacement de banque ni fichier.
 
 Une seule commande ajoutée : segment AP20 45, signature numérique `00` (une entrée entière, retour entier). Les 39 commandes et l'archive R33 restent inchangées (sauf suffixe de chaînage `GetP` dans le segment R33 du binaire candidat R34). La prochaine fonction, par exemple Fade To White, nécessite un contrat et un accord distincts.

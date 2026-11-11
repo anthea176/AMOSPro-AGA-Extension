@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R33 Gates A/B PASS current/LAST_GOOD; frozen R32 and earlier archives."""
+"""Current integrity: R34 Gate A CPU PASS candidate current, R33 WinUAE-PASS LAST_GOOD; frozen historical archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f",
+    "dist/AMOSPro_AGA.Lib": "89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033",
+    "dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib": "89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib": "e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib": "0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib": "0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41",
@@ -81,6 +82,7 @@ def main():
     from build_m13_agapal_capture_r31 import build as build_r31, ENTRY_CAPTURE, API as API_R31
     from build_m13_agapal_apply_r32 import build as build_r32, ENTRY_APPLY, API as API_R32
     from build_m13_agapal_fade_r33 import build as build_r33, ENTRY_FADE, API as API_R33
+    from build_m13_aga_fade_black_r34 import build as build_r34, ENTRY_BLACK, API as API_R34
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -98,7 +100,8 @@ def main():
     r31 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib"]
     r32 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib"]
     r33 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib"]
-    assert candidate == r33, "dist must contain the actual R33 Gate A candidate"
+    r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
+    assert candidate == r34, "dist must contain the actual R34 Gate A candidate"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -175,6 +178,7 @@ def main():
     tok31, seg31, _ = split(r31)
     tok32, seg32, _ = split(r32)
     tok33, seg33, _ = split(r33)
+    tok34, seg34, _ = split(r34)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -332,10 +336,24 @@ def main():
         matches=[row for row in named33 if row["name"]==name]
         assert len(matches)==1 and (matches[0]["instruction"],matches[0]["function"],matches[0]["signature"])==(1,index,sig)
     built33,info33=build_r33()
-    assert candidate==r33==built33==build_r33()[0], "R33 current/archive not reproducible"
-    assert candidate!=r32 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r33
-    print("PASS: R33 current/archive 39 AP20 tokens; LAST_GOOD is WinUAE-PASS R33;"
-          " R32 and all historical archives frozen")
+    assert r33==built33==build_r33()[0], "R33 frozen archive not reproducible"
+    assert r33!=r32
+    assert len(seg34)==46 and seg34[:44]==seg33[:44], "R34 modified frozen R33 segments"
+    assert seg34[44]==seg33[44]+GETP, "R34 changed R33 Fade except GetP"
+    assert seg34[ENTRY_BLACK] and not seg34[ENTRY_BLACK].endswith(GETP), "R34 segment missing"
+    assert tok34.startswith(tok33[:-6]) and tok34!=tok33
+    audit34=inspect(parse(r34))
+    assert not audit34["issues"],"R34 AP20 invalid"
+    named34=[row for row in audit34["tokens"] if row["name"].startswith("aga ")]
+    assert len(named34)==40, "R34 named-command count"
+    for name,index,sig in API_R34:
+        matches=[row for row in named34 if row["name"]==name]
+        assert len(matches)==1 and (matches[0]["instruction"],matches[0]["function"],matches[0]["signature"])==(1,index,sig)
+    built34,info34=build_r34()
+    assert candidate==r34==built34==build_r34()[0], "R34 current/archive not reproducible"
+    assert candidate!=r33 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r33
+    print("PASS: R34 candidate current/archive 40 AP20 tokens; LAST_GOOD is WinUAE-PASS R33;"
+          " R33 and historical archives frozen")
 
 
 if __name__ == "__main__":
