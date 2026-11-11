@@ -1,8 +1,8 @@
 # Tests AMOS actifs
 
-**Un seul ASC actif pour R36 :** [`M13_R36_PALETTE_CYCLE_01.asc`](M13_R36_PALETTE_CYCLE_01.asc). **Gate A CPU/CI et Gate B WinUAE NON TESTÉES à ce stade.** Ne pas exécuter avec la R35 `LAST_GOOD`, qui ne contient pas `Aga Palette Cycle`.
+**Un seul ASC actif pour R36 :** [`M13_R36_PALETTE_CYCLE_01.asc`](M13_R36_PALETTE_CYCLE_01.asc). **Gate A CPU/CI R36 PASS (106 scénarios natifs 68000, export strict, [CI réussie](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43064528445)). Gate B WinUAE NON TESTÉE.** Ne pas exécuter avec la R35 `LAST_GOOD`, qui ne contient pas `Aga Palette Cycle`.
 
-Après PASS de Gate A et publication de la candidate R36 0.10.8 : installer la `.Lib` du dossier `dist/` dans le même slot APSystem, redémarrer AMOS, puis **New → Project → Merge ASCII**.
+Installer la candidate R36 0.10.8 maintenant publiée (21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`) depuis `dist/` dans le même slot APSystem, redémarrer AMOS, puis **New → Project → Merge ASCII**.
 
 Le test dessine quatre bandes rouge, verte, bleue et jaune, les affiche par `Aga Swap` puis `Amos To Back`, effectue **20 rotations avec huit VBL entre les appels**, puis teste les deux sens, les valeurs RGB24 exactes et le refus de paramètres incorrects. **Aucune banque AMOS ni fichier ABK/IFF écrasé.**
 
