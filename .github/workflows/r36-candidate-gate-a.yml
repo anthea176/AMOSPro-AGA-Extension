@@ -1,0 +1,33 @@
+name: R36 Palette Cycle Gate A CPU 68000 and strict native source (in memory)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/m13_palette_cycle_r36_emit.py"
+      - "tools/build_m13_palette_cycle_r36.py"
+      - "tools/test_m13_palette_cycle_r36.py"
+      - ".github/workflows/r36-candidate-gate-a.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  r36_gate_a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install 68000 emulator/disassembler
+        run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: R36 real 68000 CPU Gate A: RGB32 rotation and ABI
+        run: python -B tools/test_m13_palette_cycle_r36.py
+      - name: R36 strict native 68000 source export (memory-only candidate)
+        run: |
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R36_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R36_GateA.Lib --out /tmp/amos-aga-r36-native --baseline none --strict
+      - name: Export reproducible candidate bytes for publication after PASS
+        run: python -B tools/build_m13_palette_cycle_r36.py --emit-base64

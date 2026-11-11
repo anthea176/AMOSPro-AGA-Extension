@@ -1,4 +1,12 @@
-# Tests AMOS — R35 0.10.7 Gates A/B PASS, WinUAE-LAST_GOOD
+# Tests AMOS — R36 en préparation ; R35 WinUAE-LAST_GOOD
+
+## R36 0.10.8 — Aga Palette Cycle : contrat approuvé, Gate A CPU/CI à effectuer (11/11/2026)
+
+**Une seule fonction approuvée :** `_OK=Aga Palette Cycle(First,Last,Direction)`, rotation **une fois par appel, sans VBL implicite**. `First` et `Last` sont les indices inclus, `0<=First<Last<256`, et dans les pens logiques/ColorMap de l'écran AGA Intuition privé indexé. `Direction=1` déplace la dernière couleur vers le premier indice, `-1` la première vers le dernier ; toute autre valeur est refusée. **RGB32 intégral** : une capture `GetRGB32`, une rotation en tampon puis un `LoadRGB32` de la seule plage, aucun pixel, banque ou pen hors plage modifié. Scratch Exec public `8+12*N` (max 3 080 octets) libéré ; refus 0 atomique avant modification, succès 1. Le programme AMOS choisit cadence, pause et arrêt avec `Aga Wait Vbl`. [Contrat R36](../docs/M13_PALETTE_CYCLE_R36.md).
+
+**Statut initial :** émetteur 68000, builder déterministe, tests CPU et [test ASC R36](current/M13_R36_PALETTE_CYCLE_01.asc) préparés ; **Gate A et Gate B R36 PAS encore validées**, aucun binaire R36 publié. L'ASC affiche quatre bandes avant 20 rotations espacées de 8 VBL ; ne remplace aucune banque ni fichier. **R35 0.10.7 WinUAE-PASS reste `dist/AMOSPro_AGA.Lib` et `LAST_GOOD`** (21 300 octets, SHA256 `ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539`). 41 commandes AP20 R35, R36 doit ajouter seulement la 42e. Gates C Compiler et D matériel réel non testées ; aucune nouvelle fonction avant contrat discuté et approuvé, travailler exclusivement sur `main`.
+
+---
 
 ## R35 0.10.7 — Aga Fade To White : Gates A CPU/CI et B AMOS interprété/WinUAE PASS (11/11/2026)
 
