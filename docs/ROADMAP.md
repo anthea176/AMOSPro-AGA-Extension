@@ -27,9 +27,10 @@
 | **M12 — R27 0.9.3 VALIDÉE sur scénario WinUAE** | **Auto-contrôle Safe de `Aga Blit Copy`, `Fill`, `Clear`** sans nouveaux tokens AP20 | **Gate A CPU 403 cas PASS, CI complète 28/28**, [run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220), et **Gate B WinUAE PASS** sur [test M12 exact archivé](../tests/passed/M12_R27_SAFE_BLIT_01.asc) : `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, erreurs finales nulles, `RESULT 1`, clignotement visuel et fermeture AMOS ligne 167. Neuf segments modifiés dont six relocalisations R23 | Conserver R27 et R26 figées ; aucun FPS mesuré ni preuve de sûreté exhaustive. Compiler et Amiga AGA physique à tester seulement dans un chantier dédié |
 | **M13 — PRIORITÉ 1 (à spécifier)** | **Palettes AGA 24 bits : chargement indépendant de l'image, RGB, fondus/fades, color cycling, sauvegarde et restauration** | **Décision de priorité utilisateur le 11/11/2026 ; aucune API M13 implémentée**, aucune candidate R28 créée | Étudier le `ColorMap` Intuition/AGA et le code existant IFF/`SetRGB32` ; définir chargement, états, rythme VBL, sécurité et tests avant les signatures AP20 |
 | **M14 — PRIORITÉ 2 (après M13)** | **Fontes / texte AGA : compléter `Aga Text` R26 (choix/chargement de fontes, mesures, styles, alignement, lignes multiples)** | Le rendu R26 actuel est **une ligne, 1 à 128 caractères, police système**, pas un moteur complet de fontes | Étudier `SetFont`, `TextExtent`, les fontes AmigaOS/diskfont et les banques AMOS/AMCAF sans présumer leur compatibilité ; contrat séparé après les palettes |
-| M15+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et optimisations | En attente de décision après M13 et M14 | Ne pas démarrer ces chantiers ni créer des commandes anticipées |
+| **M15 — PRIORITÉ 3 (après M14)** | **Primitives de dessin AGA : Plot (pixel), Draw (ligne), Box (rectangle contour), Circle (cercle)** | **Priorité demandée par l'utilisateur le 11/11/2026 ; aucune commande M15 implémentée** | Étudier les conventions des fonctions AMOS/Turbo/AMCAF, puis définir coordonnées, clipping, couleurs indexées, usage du back buffer Intuition AGA et protocole Safe avant toute nouvelle API |
+| M16+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et optimisations | En attente de décision après M13, M14 et M15 | Ne pas démarrer ces chantiers ni créer des commandes anticipées |
 
-**Ordre décidé le 11/11/2026 : M13 palettes, puis M14 fontes, puis réexamen des autres extensions M15+.** M8–M12 restent des jalons historiques validés sur leurs scénarios. **M13/M14 sont des priorités approuvées, pas des API ni des builds déjà disponibles** ; leurs signatures et sous-jalons restent à confirmer après audit.
+**Ordre décidé le 11/11/2026 : M13 palettes → M14 fontes → M15 dessin 2D (`Plot`, `Draw`, `Box`, `Circle`) → réexamen de M16+.** M8–M12 restent des jalons historiques validés sur leurs scénarios. **M13/M14/M15 sont des priorités de développement approuvées, pas des API ni des builds déjà disponibles** ; leurs signatures et sous-jalons restent à confirmer après audit.
 
 ## 2. M7 — Copper RGB4, bilan du scénario validé
 
@@ -60,12 +61,12 @@ Les fonctionnalités de l'extension doivent rester **génériques**, indépendan
 1. **Écran/RastPort AMOS et AMCAF :** `Text` AMOS cible l'état graphique d'AMOS, pas notre écran Intuition AGA. **Le rendu natif est désormais disponible avec `Aga Text` R26**, via un `RastPort` temporaire lié au back buffer AGA, [validé sous WinUAE sur les scénarios M11](M11_TEXT_R26.md). **M14 doit compléter les fontes**, pas refaire ce premier rendu. `Change Bank Font`, `Scrn Rastport` et les banques AMOS/AMCAF ne sont pas automatiquement réutilisables ; audit nécessaire avant tout adaptateur. [Étude initiale M11](M11_TEXT_COMPAT.md).
 2. **Blitter/copie :** `Aga Blit Copy` couvre les copies dans un **même back buffer** ; ce n'est pas un remplacement universel de `Screen Copy` (copies inter-écrans, caches ou autres formats). Définir les besoins par des tests.
 3. **Bob/Icon, transparence/masques :** étudier `Paste Bob`, `Paste Icon`, `F 16 Icon` et `Bob Update`, les contraintes Chip RAM et les conversions éventuelles de banques.
-4. **Primitives Turbo :** auditer les sources AMOS/Unity/Turbo de `F Draw` et `F Plot` avant de proposer des équivalents AGA, avec contrats de coordonnées, clipping et bitplanes.
+4. **Primitives graphiques — M15 :** étudier les commandes AMOS `Plot`, `Draw`, `Box`, `Circle`, ainsi que les variantes optimisées Turbo/AMCAF (notamment `F Plot` et `F Draw`) avant de définir des équivalents AGA. **Ne pas recopier leurs conventions par supposition** : vérifier coordonnées (points finaux, inclusivité), épaisseur, clipping, rayon, encre et états graphiques dans les sources/documentations. Rendre sur le **back buffer AGA Intuition**, pas sur l'écran AMOS ; respecter `Safe` et éviter les appels DMA/CPU pendant une présentation non libérée.
 5. **Présentation et palettes :** **M13 est prioritaire** pour piloter le `ColorMap` AGA 24 bits de l'écran Intuition de l'extension, importer une palette sans ses pixels, puis produire fades et cycling. Garder distincts le Copper RGB4 M7 et les commandes `Colour` / `Palette` des écrans AMOS ; ne pas traiter HAM/EHB comme des modes indexés 256 couleurs. Étudier séparément `Autoback` et `Screen Swap`.
 
 Les priorités de compatibilité applicative sont **distinctes** de la roadmap générale de l'extension ; les capacités Copper et souris suivent leurs propres validations.
 
-## 5. Suite décidée : M13 palettes, puis M14 fontes (11/11/2026)
+## 5. Suite décidée : M13 palettes, M14 fontes, puis M15 dessin 2D (11/11/2026)
 
 ### M13 — Palettes AGA 24 bits (premier chantier)
 
@@ -87,7 +88,16 @@ Le prototype `Aga Text` **R26** sait afficher **une ligne**, **1–128 caractèr
 
 Pour M14, étudier dans cet ordre : **sélection/chargement et libération des fontes AmigaOS**, dimensions réelles (`TextExtent`, largeur/hauteur, baseline), styles et alignements, texte sur plusieurs lignes, fond opaque ou transparent et règles de clipping. L'éventuelle **prise en charge des banques de fontes AMOS/AMCAF ou de fontes bitmap personnalisées** demande une étude distincte du format et de la propriété mémoire ; elle n'est pas acquise par `Aga Text`.
 
-**M15+** : sprites matériels, scrolling, dual playfield, extensions Copper et optimisations seront réévalués **après** la palette et les fontes. Aucun développement de ces fonctions n'est engagé par cette décision.
+### M15 — Primitives de dessin AGA (après M14)
+
+**Fonctions demandées :** tracer un pixel (`Plot`), un segment de droite (`Draw`), le contour d'un rectangle (`Box`) et un cercle (`Circle`). L'objectif est d'obtenir de véritables primitives **sur le back buffer de l'écran Intuition AGA indépendant**, et non des appels aux commandes AMOS qui dessinent sur les écrans gérés par AMOS.
+
+- **Avant de définir l'API :** contrôler les signatures et comportements réels des commandes AMOS `Plot`, `Draw`, `Box`, `Circle` et des extensions Turbo/AMCAF, en priorité `F Plot` / `F Draw`. Vérifier spécialement l'inclusivité des bords, les coordonnées hors écran, le rayon, le dessin du dernier pixel et les conventions d'encre ; **ne pas transposer automatiquement** celles de `Screen Copy`, `Bar` ou `Aga Blit Fill`.
+- **Exécution :** dessiner dans le back buffer AGA (bitplanes indexés), avec contrôle du `Safe` introduit en R27, clipping documenté et absence de corruption hors limites. Étudier l'usage correct de `RastPort`/`graphics.library` plutôt que multiplier des implémentations 68000 non justifiées.
+- **Contrats de recette :** points extrêmes, diagonales dans toutes les directions, lignes horizontales/verticales, rectangles partiellement hors champ, cercles tronqués, couleurs et profondeur 1–8 plans, double buffering, swaps répétés et fermeture/reprise AMOS. **Distinguer dessin de contour (`Box`) et remplissage (`Aga Blit Fill`)**.
+- **Extensions possibles, non engagées :** ellipse, rectangle plein de type `Bar`, polylignes, épaisseur/style et remplissage de cercle, uniquement après validation des quatre primitives de base.
+
+**M16+** : sprites matériels, scrolling, dual playfield, extensions Copper et optimisations seront réévalués **après** les palettes, les fontes et le dessin 2D. Aucun développement de ces fonctions n'est engagé par cette décision.
 
 ## 6. Règles de décision, livraison et suivi
 

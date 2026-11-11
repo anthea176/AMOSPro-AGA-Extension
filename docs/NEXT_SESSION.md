@@ -1,11 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## Décision de roadmap — M13 palette, puis M14 fontes (11/11/2026)
+## Décision de roadmap — M13 palettes, M14 fontes, puis M15 dessin 2D (11/11/2026)
 
-**Choix utilisateur confirmé :** priorité à la **gestion des palettes AGA** (chargement indépendant d'une image, édition RGB 24 bits, fades, cycling, sauvegarde/restauration), puis reprise du chantier **fontes**, nettement plus large que le seul `Aga Text` R26. Sprites, scrolling, dual playfield et Copper avancé sont reportés après ces deux priorités. [Roadmap mise à jour et périmètre proposé](ROADMAP.md).
+**Choix utilisateur confirmé :** enchaîner **M13 palettes AGA** (chargement sans pixels, RGB 24 bits, fades, cycling, sauvegarde/restauration), **M14 fontes** (compléter `Aga Text` R26), puis **M15 primitives graphiques 2D** (`Plot`, `Draw`, `Box`, `Circle`). Les sprites matériels, scrolling, dual playfield et Copper avancé passent à **M16+**. [Roadmap et périmètres](ROADMAP.md).
 
 - **M13 prochain chantier, pas encore commencé :** avant tout builder ou binaire, auditer `Aga Iff Load`/CMAP/`SetRGB32`, `ViewPort.ColorMap` Intuition, interactions Copper RGB4 et modes EHB/HAM ; définir le contrat des opérations palette, fades temporels, VBL et validation WinUAE. **Aucune API M13 ni R28 n'est encore implémentée.**
 - **M14 ensuite :** développer choix et chargement des fontes, métriques, styles, alignement, multi-ligne et éventuelles banques AMOS/AMCAF. `Aga Text` R26/R27 actuel se limite à une ligne en police système par défaut ; ne pas considérer le moteur de fontes comme terminé.
+- **M15 après M14 :** dessin dans le back buffer AGA Intuition : pixel (`Plot`), trait (`Draw`), rectangle contour (`Box`), cercle (`Circle`). Auditer d'abord la sémantique exacte AMOS/Turbo/AMCAF, notamment `F Plot`/`F Draw` ; vérifier coordonnées, clipping, couleurs indexées, retour Safe et double buffering. **Aucune API M15 ni binaire correspondant n'existe encore.**
+- **M16+ :** sprites matériels, scrolling, dual playfield, Copper avancé et optimisations, sans chantier ouvert.
 - **Base protégée :** R27 0.9.3 Gate A+B PASS sur son test M12, `LAST_GOOD` historique et toutes les archives inchangés ; `tests/current/` sans test actif. L'exemple [`examples/show.asc`](../examples/show.asc) est un exemple de distribution statiquement vérifié, non encore validé de bout en bout sous WinUAE.
 - **Process :** changements exclusivement sur `main`, pas de nouveau binaire ni de branche durant cette mise à jour documentaire. Les gates CPU/WinUAE/Compiler/matériel restent distinctes.
 
