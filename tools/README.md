@@ -6,7 +6,7 @@
 
 **ABK utilisateur inspecté :** `R31_AGAPAL_CAPTURE.ABK` (6 244 octets) = `AmBk` + `AGAPAL` v1 6 224 octets, 8 emplacements, 0/1 contenant 256 couleurs RGB24 (pen 28 bleu/rouge), 2 à 7 vides, pens 3/224 préservés. SHA256 du fichier fourni : `7a3162969b0d700287ae0852872811dae072c19720a794beb8818d01b93f6cd9`.
 
-**R31 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive versionnée R31, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. Archive R30 conservée, inchangée. ASC de test **archivé octet pour octet** (Git blob `0196fc1ba730345a926f444691be80c16a7fb89c`) dans `tests/passed/M13_R31_AGAPAL_CAPTURE_01.asc` ; **aucun `.asc` actif** dans `tests/current/`. CI de promotion à confirmer. Pas d'autre commande avant discussion et accord utilisateur.
+**R31 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive versionnée R31, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. Archive R30 conservée, inchangée. ASC de test **archivé octet pour octet** (Git blob `0196fc1ba730345a926f444691be80c16a7fb89c`) dans `tests/passed/M13_R31_AGAPAL_CAPTURE_01.asc` ; **aucun `.asc` actif** dans `tests/current/`. [CI de promotion 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43029502969). Pas d'autre commande avant discussion et accord utilisateur.
 
 ---
 
