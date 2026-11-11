@@ -7,7 +7,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R29 0.10.1, WinUAE-validated) directly into **`APSystem`**. **Exact name: `AMOSPro_AGA.Lib`, no renaming required.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` now contains the same WinUAE-validated R29 bytes (a versioned R28 fallback remains archived).
+2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R30 0.10.2 candidate, CPU Gate A PASS; WinUAE NOT TESTED) directly into **`APSystem`**. **Exact name: `AMOSPro_AGA.Lib`, no renaming required.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` remains **R29 0.10.1**, the latest WinUAE-validated fallback, unchanged. Do not promote R30 before user Gate B PASS.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.

@@ -7,7 +7,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier directement [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R29 0.10.1 validée WinUAE) dans **`APSystem`**. **Nom exact : `AMOSPro_AGA.Lib`, aucun renommage.** La version `dist/AMOSPro_AGA_LAST_GOOD.Lib` contient désormais exactement la R29 validée ; R28 reste archivée comme repli historique.
+2. Copier directement [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R30 0.10.2 candidate : Gate A CPU PASS, WinUAE NON TESTÉE) dans **`APSystem`**. **Nom exact : `AMOSPro_AGA.Lib`, aucun renommage.** Le fichier `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste **R29 0.10.1**, dernière version validée WinUAE, inchangée. Ne pas promouvoir R30 avant Gate B utilisateur.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.

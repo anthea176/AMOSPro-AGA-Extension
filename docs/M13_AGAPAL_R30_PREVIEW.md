@@ -1,6 +1,18 @@
-# M13 / R30 — prototype de banque AGAPAL (en attente de l'ABI native)
+# M13 / R30 0.10.2 — candidate AGAPAL native (Gate A PASS, WinUAE en attente)
 
-**11 novembre 2026 — étape de développement R30.** La signature `_OK=Aga Palette Bank Init(Start(10),8)` est approuvée ; code 68000 reproductible et tests CPU ajoutés au dépôt pour la Gate A, **résultat CI à établir avant toute candidate**. Le binaire courant reste R29. Le prototype de banque AMOS native reste indépendant.
+## R30 0.10.2 — AGAPAL Bank Init, candidate Gate A PASS / Gate B WinUAE à tester (11/11/2026)
+
+**API :** `_OK=Aga Palette Bank Init(Start(bank),N)` (deux entiers, retour 1/0). Uniquement sur banque DATA AMOS déjà réservée, de taille exacte `16+776×N`, `N=1..256`, numéro de banque 5..65535. Écrit le nom `AGAPAL  ` et l'en-tête/index, met à zéro les 768 octets RGB24 de chaque emplacement. Réinitialiser efface les couleurs. Le contrôle `TypeOfMem` ne garantit pas que l'adresse appartient à une allocation : transmettre seulement `Start(bank)` d'une banque DATA existante.
+
+**Candidate :** `dist/AMOSPro_AGA.Lib` = R30 **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`. **`LAST_GOOD` reste R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, sans modification. **Gate A : 39 scénarios 68000 PASS**, export strict PASS, [CI de staging 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300). CI du commit candidat à recontrôler. **Gate B interprété/WinUAE, C Compiler et D Amiga réel : NON TESTÉES.**
+
+**Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
+
+---
+
+
+
+**Checkpoint historique avant Gate A :** l'utilisateur a approuvé la signature `Aga Palette Bank Init(Start(10),8)`. Depuis, les 39 tests CPU et l'export strict R30 ont passé Gate A : la candidate est publiée dans `dist/`. R29 reste `LAST_GOOD` ; le prototype en commandes AMOS natives reste indépendant.
 
 **Checkpoint de conception antérieur : prototype de format uniquement.** Les spécifications de la structure sont approuvées. Les fichiers `tools/agapal_r30_layout.py`, `tools/test_agapal_r30_layout.py` et `tests/design/R30_AGAPAL_ABK_PREVIEW_01.asc` permettent d'en tester le modèle et la compatibilité théorique avec les banques AMOS. **Aucune nouvelle instruction AP20 ni aucune bibliothèque R30 n'est produite.** R29 0.10.1 est toujours la version en `dist/AMOSPro_AGA.Lib` et `LAST_GOOD`, validée WinUAE et Personal Paint. Ne pas qualifier le modèle ABK Python de validation runtime.
 
@@ -49,10 +61,14 @@ La signature de départ `_OK=Aga Palette Bank Init(10,8)` utilisait un **numéro
 
 **Règle de sûreté :** ne pas inventer un offset dans A5, ne pas scanner arbitrairement la RAM, ne pas substituer silencieusement une adresse à un numéro de banque et ne pas publier une fonction qui retourne succès sans modifier la banque. Chercher une API AMOS validée de recherche de banque, ou discuter explicitement une autre signature avec l'utilisateur **avant** de produire une version AP20 R30. Aucune nouvelle branche ni aucun autre dépôt.
 
-**Après résolution :** construire UNIQUEMENT `Aga Palette Bank Init`, tester ABI/68000/écrasement/tailles/flags/offsets/ABK, publier Gate A dans `dist/AMOSPro_AGA.Lib`, mettre à jour simultanément `README.md` et `README.fr.md`, demander Gate B WinUAE, puis promouvoir `LAST_GOOD` si l'utilisateur confirme PASS. Les fonctions d'import/capture et les fades seront discutées individuellement plus tard.
+**Résolu pour R30 :** le pointeur `Start(bank)` évite toute recherche interne AMOS. `Aga Palette Bank Init` a passé Gate A CPU et l'export strict ; son binaire et les deux README sont publiés. **La sauvegarde/lecture ABK sous WinUAE est à valider par l'utilisateur**, puis promotion obligatoire de `LAST_GOOD` si PASS. Les fonctions d'import/capture et les fades seront discutées individuellement plus tard.
 
 ## Décision utilisateur sur l'ABI et sources R30
 
 **Signature approuvée :** `_OK=Aga Palette Bank Init(Start(10),8)`. Le premier paramètre est l'adresse de données fournie par la fonction native `Start(bank)` ; le second est le nombre d'emplacements, actuellement limité à 1..256 pour éviter des allocations ou initialisations excessives. Le code vérifie les marqueurs d'une banque DATA native, la taille exacte `16+776N`, le numéro de banque 5..65535, et `TypeOfMem` pour le début/fin du bloc avant écriture. `TypeOfMem` **ne prouve pas la propriété de l'allocation** : passer uniquement une adresse obtenue depuis une banque existante, non libérée. Le résultat entier vaut 1 si initialisée, 0 si rejet sans modification ; ce contrôle est un contrat de Gate A à vérifier.
 
 Sources : `tools/m13_agapal_r30_emit.py` (68000), `tools/build_m13_agapal_r30.py` (construction mémoire depuis R29), `tools/test_m13_agapal_r30.py` (Unicorn 68000). `dist/` et `LAST_GOOD` restent R29 jusqu'à Gate A validée puis Gate B utilisateur. Ce développement ne comprend pas encore capture, import/export IFF, fade ou cycling.
+
+## Gate B : test de la candidate R30
+
+Installer [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R30 0.10.2 dans `APSystem`, relancer AMOS et importer [`tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc) via **Project → Merge ASCII** depuis un programme vide. **Le test remplace les banques 10/11 et `RAM:R30_AGAPAL_TEST.ABK`.** Il vérifie l'initialisation (8 palettes), offsets 80/5456, rejets 0/257 et mauvaise taille, réinitialisation, sauvegarde/chargement ABK AMOS. Attendu : `INIT 1 REINIT 1`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. Le `TypeOfMem` de la fonction filtre des adresses absurdes, mais seul un vrai `Start(bank)` d'une banque réservée est admissible.

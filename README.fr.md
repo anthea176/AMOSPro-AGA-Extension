@@ -20,8 +20,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-- **Bibliothèque courante validée :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R29 0.10.1 M13**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`. Gate A **49 scénarios CPU 68000 PASS** ; [CI 30/30 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43016176793) ; **Gate B AMOS interprété/WinUAE PASS** sur sauvegarde → écrasement → rechargement. La palette IFF 256 couleurs générée est également chargée dans Personal Paint. Gates C Compiler et D Amiga réel non testées. Pas encore de banque, fade natif ou cycling.
-- **Dernière version WinUAE-PASS :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, **strictement identique** à [l'archive R29](dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib) et à `dist/AMOSPro_AGA.Lib`. R28 demeure archivée, sans modification. Promotion après validation WinUAE utilisateur.
+- **Bibliothèque candidate à tester :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R30 0.10.2 M13**, 17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. **Gate A : 39 scénarios CPU 68000 PASS** ; [CI complète de préparation 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300) avec export source strict R30. **Gate B AMOS interprété/WinUAE NON TESTÉE** ; Gates Compiler et Amiga réel non testées. Une seule commande ajoutée : `Aga Palette Bank Init` sur banque DATA AMOS préallouée, via `Start(bank)`. Aucun fade/cycling/capture ajouté. Installer directement depuis `dist/` sans renommer.
+- **Dernière version WinUAE-PASS :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, identique à [l'archive figée R29](dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib). **Ne pas promouvoir R30 avant ton retour WinUAE Gate B PASS.**
 - **Archives historiques conservées :** [R10](dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib), [R27](dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), [R28](dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib). `LAST_GOOD` = R29 après essais WinUAE/PPaint.
 - **Test R29 validé sous WinUAE :** [`M13_R29_PALETTE_SAVE_01.asc`](tests/passed/M13_R29_PALETTE_SAVE_01.asc), Git blob original `b80baabe5533288cac3285a78c232827cce94085`, archivé octet pour octet : `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Chargement de la palette 256 couleurs dans PPaint confirmé. Aucun test `.asc` actif.
 - **Test palettes R28 validé :** [`M13_R28_PALETTE_01.asc`](tests/passed/M13_R28_PALETTE_01.asc), `RESULT 1`, `FADEERR 0`, chargement palette IFF, Set/Get RGB et retour normal à AMOS. Le fichier IFF choisi n'est pas identifiable sur la capture ; export PPaint palette seule et déroulé visuel complet du fade restent à vérifier. **Gates C/D non testées.**
@@ -33,7 +33,7 @@ Pour un essai, utiliser la bibliothèque correspondant au test. Les fichiers pr�
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R29 0.10.1** — **35 commandes nommées AP20**, les 34 de R28 et `Aga Palette Save`. La nouvelle fonction Save a réussi sa **Gate B WinUAE** ; les scénarios palettes R28 précédents sont validés sous AMOS interprété. Gates Compiler et Amiga physique non testées.
+**API de la bibliothèque courante R30 0.10.2** — **36 commandes nommées AP20**, les 35 de R29 et `Aga Palette Bank Init`. R30 Init : **Gate A CPU PASS, Gate B WinUAE NON TESTÉE**. Les commandes R29 précédentes conservent leurs validations WinUAE séparées ; Compiler et Amiga réel non testés.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -52,6 +52,7 @@ Pour un essai, utiliser la bibliothèque correspondant au test. Les fichiers pr�
 | `Aga Palette Set` (M13 R28) | `_OK=Aga Palette Set(_PEN,_R,_G,_B)` | Définit un index de palette du `ColorMap` Intuition AGA avec R/V/B sur 8 bits (`0..255`) via `LoadRGB32` ; retour 1 ou 0, sans attente VBL. HAM/EHB/dual playfield non pris en charge par R28. |
 | `Aga Palette Get` (M13 R28) | `_RGB=Aga Palette Get(_PEN)` | Lit le `ColorMap` par `GetRGB32`. Renvoie le RGB24 empaqueté `$00RRGGBB` ou -1 en cas d'erreur ; noir = 0. Aucun pixel modifié. |
 | `Aga Palette Save` (M13 R29) | `_OK=Aga Palette Save(_FILE$)` | Sauvegarde le `ColorMap` indexé de l'écran AGA Intuition en IFF `FORM ILBM` avec `BMHD` et `CMAP`, **sans BODY**. Chaîne AMOS de 1 à 255 octets (chemin AmigaDOS). **Écrase le fichier existant** via `MODE_NEWFILE`. Résultat entier 1 si écriture/fermeture réussies, 0 si écran/fichier/mémoire/écriture invalides. 1 à 256 couleurs RGB24, sans modifier les pixels ; HAM/EHB/dual playfield refusés. Un échec après ouverture peut détruire l'ancien fichier. **Gates A CPU et B WinUAE PASS sur le scénario archivé ; import PPaint confirmé.** |
+| `Aga Palette Bank Init` (M13 R30) | `_OK=Aga Palette Bank Init(Start(_B),_N)` | Initialise une **banque DATA AMOS existante de taille exacte**, à l'adresse donnée par `Start(_B)` (pas le numéro de banque). `_B` doit être une banque encore réservée 5–65535 ; `_N` vaut 1 à 256 palettes, taille **16+776×_N octets**. Écrit le nom natif `AGAPAL  `, un en-tête interne de 16 octets, un index à entrées de 8 octets et 768 octets RGB24 par palette (initialement zéro, compte 0). Retour **1** réussite, **0** si nombre/type/taille ou zone mémoire rejetés ; une nouvelle initialisation efface les palettes existantes. Aucune allocation ni modification d'écran ; banque DATA en Fast RAM prioritaire, repli Chip par AMOS. **Transmettre exclusivement `Start(bank)` d'une banque DATA valide et non libérée : adresse arbitraire ou périmée potentiellement dangereuse.** Gate A CPU PASS, **Gate B WinUAE en attente**. |
 | `Aga Key` | `_K=Aga Key` | Sans argument ; lecture non bloquante. **R23 :** conserve les touches RAWKEY dans une FIFO de 16 éléments avec le dispatcher IDCMP, sans les perdre lors d'une lecture souris. |
 | `Aga Wait Key` | `_K=Aga Wait Key` | Sans argument ; attend une touche de la fenêtre Intuition et renvoie un **code clavier**, pas forcément un ASCII. **R23 :** utilise le même dispatcher/FIFO ; Ctrl+C vérifié sous WinUAE : arrêt à `_WAITK=Aga Wait Key` et fermeture correcte de l'écran Intuition. |
 | `Aga Wait Vbl` | `Aga Wait Vbl` | Sans argument ; attend une VBL (`WaitTOF`) ; ne fait rien si aucun écran n'est ouvert. |
@@ -83,6 +84,18 @@ End If
 ```
 
 Le [test R29 archivé](tests/passed/M13_R29_PALETTE_SAVE_01.asc) sauvegarde, remplace puis recharge la palette sans pixel. Import de la palette 256 couleurs validé dans Personal Paint ; Deluxe Paint reste non testé ; [contrat R29](docs/M13_PALETTE_R29.md).
+
+**Initialiser une banque AGAPAL native sous R30** (avec une banque DATA AMOS valide) :
+
+```amos
+Reserve As Data 10,6224
+_OK=Aga Palette Bank Init(Start(10),8)
+If _OK=1
+   Save "RAM:MENU_PALETTES.ABK",10
+End If
+```
+
+Le fichier ABK est enregistré avec la commande **`Save` native AMOS**, pas avec `Aga Palette Save` qui génère un IFF. Les huit emplacements RGB24 sont vides jusqu'aux futures fonctions de capture/import, à discuter séparément. [Test WinUAE R30](tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc). Aucune couleur écran modifiée.
 
 **Copper RGB4** est disponible depuis R18, **Mouse X/Y** depuis R19, **Mouse Buttons** depuis R20 et RMBTRAP depuis R21. **R22 a ajouté `Aga Mouse Pressed/Released` (PASS WinUAE) ; R23 change leur source vers IDCMP_MOUSEBUTTONS, avec Gate A CPU/CI PASS et Gate B WinUAE PASS sur son scénario.** Capture garantie des clics très courts, sprites et `Aga Set Colour` restent hors de ce périmètre.
 
@@ -285,8 +298,8 @@ Sous AMOS, utiliser la syntaxe `If condition` / `End If` (sans `Then`) et fermer
 La racine de [`tools/`](tools/README.md) regroupe les builders, leurs dépendances, les tests CPU et les utilitaires d'intégrité. Les anciens outils sont conservés dans `tools/obsolete/` lorsqu'ils ne sont plus actifs.
 
 - **Builder courant R23 :** [`build_m8_idcmp_r23.py`](tools/build_m8_idcmp_r23.py) depuis l'archive R22 figée ; [préflight CPU](tools/test_m8_idcmp_r23_preflight.py) **PASS 15 scénarios** ; la vérification de la nouvelle bibliothèque et sa validation WinUAE restent distinctes. R22 et R21 archivées.
-- **R30 AGAPAL — prototype de format (PAS une instruction disponible) :** [Structure et essai ABK avec commandes AMOS natives](docs/M13_AGAPAL_R30_PREVIEW.md) · [script AMOS](tests/design/R30_AGAPAL_ABK_PREVIEW_01.asc). Palettes RGB24 indexées depuis 0, en-tête 16 octets, entrées 8 octets, blocs de 768 octets. Le modèle Python est contrôlé statiquement ; l'essai AMOS Save/Load et la future commande `Aga Palette Bank Init` **ne sont pas encore validés sous WinUAE ni implémentés dans l'extension**. R29 reste la version courante.
-- **R30, sources en préparation (commande ABSENTE de la R29 installable) :** signature approuvée `_OK=Aga Palette Bank Init(Start(bank),nombre)` pour banque DATA native AMOS. Émetteur/Builder/Test CPU 68000 ajoutés en vue de Gate A ; aucune candidate R30 ni validation WinUAE. [Contrat et limites mémoire](docs/M13_AGAPAL_R30_PREVIEW.md).
+- **R30 AGAPAL :** [format et contrat ABK](docs/M13_AGAPAL_R30_PREVIEW.md), [test R30 actif](tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc), [prototype AMOS natif historique](tests/design/R30_AGAPAL_ABK_PREVIEW_01.asc). Le token R30 est présent dans la candidate et passe Gate A ; **Gate B WinUAE reste à réaliser**.
+- **Commande AP20 R30 :** `_OK=Aga Palette Bank Init(Start(bank),nombre)` est exportée par la **candidate R30** ; Gate A CPU PASS, Gate B WinUAE non testée. R29 demeure `LAST_GOOD`. [Contrat et sécurité mémoire](docs/M13_AGAPAL_R30_PREVIEW.md).
 - **Archives M8 :** [R20 boutons](docs/M8_MOUSE_BUTTONS_R20.md), [R19 X/Y](docs/M8_MOUSE_R19.md) et [R21 RMBTRAP](docs/M8_RMBTRAP_R21.md), avec leurs tests AMOS respectifs.
 - **Vérification des binaires :** [`verify_artifacts.py`](tools/verify_artifacts.py), audit HUNK/AP20, SHA-256, reproductibilité et [CI GitHub Actions](.github/workflows/artifact-integrity.yml).
 - **Concordance API / README EN/FR :** [`test_readme_api_coverage.py`](tools/test_readme_api_coverage.py) vérifie la présence de toutes les commandes AP20 dans les deux tableaux publics (anglais et français), ainsi que la version active. Le contrôle s'exécute en CI à chaque modification du README, des règles, des scripts de test ou du binaire.

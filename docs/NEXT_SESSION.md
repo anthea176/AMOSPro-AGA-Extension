@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-**R30 source en cours :** l'utilisateur a validé `_OK=Aga Palette Bank Init(Start(10),8)`. Émetteur CPU/Builder/Test ajoutés, **Gate A CI non encore passée**, **pas de candidate R30 dans `dist/`**. R29 0.10.1 reste courante et `LAST_GOOD`. Aucun fade ni cycling. Voir [spécification R30](M13_AGAPAL_R30_PREVIEW.md).
+## R30 0.10.2 — AGAPAL Bank Init, candidate Gate A PASS / Gate B WinUAE à tester (11/11/2026)
+
+**API :** `_OK=Aga Palette Bank Init(Start(bank),N)` (deux entiers, retour 1/0). Uniquement sur banque DATA AMOS déjà réservée, de taille exacte `16+776×N`, `N=1..256`, numéro de banque 5..65535. Écrit le nom `AGAPAL  ` et l'en-tête/index, met à zéro les 768 octets RGB24 de chaque emplacement. Réinitialiser efface les couleurs. Le contrôle `TypeOfMem` ne garantit pas que l'adresse appartient à une allocation : transmettre seulement `Start(bank)` d'une banque DATA existante.
+
+**Candidate :** `dist/AMOSPro_AGA.Lib` = R30 **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`. **`LAST_GOOD` reste R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, sans modification. **Gate A : 39 scénarios 68000 PASS**, export strict PASS, [CI de staging 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300). CI du commit candidat à recontrôler. **Gate B interprété/WinUAE, C Compiler et D Amiga réel : NON TESTÉES.**
+
+**Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
+
+---
+
+**Checkpoint historique avant publication :** la signature Start(bank) était validée et la Gate A était en attente. R30 est maintenant candidate Gate A PASS dans `dist/`, R29 reste `LAST_GOOD`. Voir [spécification R30](M13_AGAPAL_R30_PREVIEW.md).
 
 **R30 — état technique après recherche :** l'enveloppe ABK native `AmBk` et la banque `DATA` Fast-prioritaire sont confirmées. Un **modèle de format Python et un prototype de sauvegarde/chargement ABK utilisant seulement les commandes AMOS** sont préparés : [`docs/M13_AGAPAL_R30_PREVIEW.md`](M13_AGAPAL_R30_PREVIEW.md). **Aucun nouveau token AP20**, aucune candidate R30, aucune Gate A CPU pour l'extension ni Gate B R30. La résolution du numéro de banque vers `Start(bank)` depuis A5 reste à établir à partir d'une interface AMOS documentée, sans offset supposé. **R29 0.10.1 reste la version courante validée et `LAST_GOOD`**.
 

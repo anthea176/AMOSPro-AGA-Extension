@@ -1,3 +1,11 @@
+# M13 R30 — Gate A 39 CPU PASS / Gate B WinUAE EN ATTENTE
+
+**Test actif :** [`current/M13_R30_AGAPAL_BANK_INIT_01.asc`](current/M13_R30_AGAPAL_BANK_INIT_01.asc). Installe la candidate R30 `dist/AMOSPro_AGA.Lib` (17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`) puis valide son initialisation AGAPAL, les refus, et le `Save`/`Load` du véritable ABK. **La banque 10/11 et le fichier RAM:R30_AGAPAL_TEST.ABK sont remplacés.** [Gate A CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300) ; Gate B non testée, Gates C/D non testées. **R29 reste `LAST_GOOD`.**
+
+---
+
+**R29 et états antérieurs ci-dessous sont historiques.**
+
 # M13 R29 0.10.1 — Palette Save : Gate A + Gate B WinUAE PASS (11/11/2026)
 
 **Test utilisateur archivé à l'octet près :** [`passed/M13_R29_PALETTE_SAVE_01.asc`](passed/M13_R29_PALETTE_SAVE_01.asc), Git blob `b80baabe5533288cac3285a78c232827cce94085`. Sortie WinUAE : `OPEN 1 DB 1`, `DRAW 1 1 1 1`, `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. **Personal Paint a chargé la palette IFF 256 couleurs**, sans données pixels BODY.

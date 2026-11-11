@@ -1,4 +1,16 @@
-# Outils Python actifs — R29 M13 validée, LAST_GOOD R29 WinUAE-PASS
+# Outils Python actifs — R30 candidate Gate A, LAST_GOOD R29 WinUAE-PASS
+
+## R30 0.10.2 — AGAPAL Bank Init, candidate Gate A PASS / Gate B WinUAE à tester (11/11/2026)
+
+**API :** `_OK=Aga Palette Bank Init(Start(bank),N)` (deux entiers, retour 1/0). Uniquement sur banque DATA AMOS déjà réservée, de taille exacte `16+776×N`, `N=1..256`, numéro de banque 5..65535. Écrit le nom `AGAPAL  ` et l'en-tête/index, met à zéro les 768 octets RGB24 de chaque emplacement. Réinitialiser efface les couleurs. Le contrôle `TypeOfMem` ne garantit pas que l'adresse appartient à une allocation : transmettre seulement `Start(bank)` d'une banque DATA existante.
+
+**Candidate :** `dist/AMOSPro_AGA.Lib` = R30 **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`. **`LAST_GOOD` reste R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, sans modification. **Gate A : 39 scénarios 68000 PASS**, export strict PASS, [CI de staging 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300). CI du commit candidat à recontrôler. **Gate B interprété/WinUAE, C Compiler et D Amiga réel : NON TESTÉES.**
+
+**Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
+
+---
+
+
 
 ## R29 0.10.1 VALIDÉE — Gate A + Gate B AMOS/WinUAE PASS, 11/11/2026
 
@@ -11,6 +23,8 @@
 **Suite M13 :** fonctions de banques de palettes (Fast RAM privilégiée) et fades natifs `Aga Fade To Bank/Black/White`, puis cycling. **Avant chaque nouvelle fonction, discuter et valider son contrat avec l'utilisateur ; aucune implémentation anticipée.**
 
 ---
+
+**Outils R30 :** `m13_agapal_r30_emit.py` (68000), `build_m13_agapal_r30.py` (reproductible depuis R29), `test_m13_agapal_r30.py` (39 scénarios CPU). La candidate R30 est à tester sous WinUAE ; R29 reste `LAST_GOOD`.
 
 **Outils R29 :** [`m13_palette_save_r29_emit.py`](m13_palette_save_r29_emit.py) (routines 68000 `Aga Palette Save`), [`build_m13_palette_save_r29.py`](build_m13_palette_save_r29.py) (builder reproductible mémoire depuis R28), [`test_m13_palette_save_r29.py`](test_m13_palette_save_r29.py) (49 scénarios CPU natifs et roundtrip R28). La CI couvre R29 et les régressions R28–R10.
 

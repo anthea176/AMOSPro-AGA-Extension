@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R29 current, R29 latest WinUAE-PASS LAST_GOOD, frozen archives."""
+"""Current integrity: R30 current, R29 latest WinUAE-PASS LAST_GOOD, frozen archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1",
+    "dist/AMOSPro_AGA.Lib": "446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e",
+    "dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib": "446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib": "fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
     "dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
@@ -73,6 +74,7 @@ def main():
     from build_m12_blit_safe_r27 import build as build_r27, RELOCATED
     from build_m13_palette_r28 import build as build_r28, OLD_ENTRIES, ENTRY_LOAD, ENTRY_SET, ENTRY_GET, GETP, API
     from build_m13_palette_save_r29 import build as build_r29, ENTRY_SAVE, API as API_R29
+    from build_m13_agapal_r30 import build as build_r30, ENTRY_INDEX as ENTRY_INIT, API as API_R30
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -86,7 +88,8 @@ def main():
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
-    assert candidate == r29, "dist must contain the actual R29 test candidate"
+    r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
+    assert candidate == r30, "dist must contain the actual R30 test candidate"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -159,6 +162,7 @@ def main():
     tok27, seg27, _ = split(r27)
     tok28, seg28, _ = split(r28)
     tok29, seg29, _ = split(r29)
+    tok30, seg30, _ = split(r30)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -264,9 +268,22 @@ def main():
     for name,index,sig in API_R29:
         rows=[r for r in named29 if r["name"]==name]
         assert len(rows)==1 and (rows[0]["instruction"],rows[0]["function"],rows[0]["signature"])==(1,index,sig)
-    assert candidate != r28
+    assert len(seg30)==42 and seg30[:40]==seg29[:40], "R30 modified inherited R29 entries"
+    assert seg30[40]==seg29[40]+GETP, "R30 changed R29 Save instead of adding GetP"
+    assert seg30[ENTRY_INIT] and not seg30[ENTRY_INIT].endswith(GETP), "R30 Init missing"
+    assert tok30.startswith(tok29[:-6]) and tok30!=tok29
+    audit30=inspect(parse(r30))
+    assert not audit30["issues"], "R30 AP20 invalid"
+    named30=[r for r in audit30["tokens"] if r["name"].startswith("aga ")]
+    assert len(named30)==36, "R30 named command count"
+    for name,index,sig in API_R30:
+        rows=[r for r in named30 if r["name"]==name]
+        assert len(rows)==1 and (rows[0]["instruction"],rows[0]["function"],rows[0]["signature"])==(1,index,sig)
+    built30,info30=build_r30()
+    assert candidate==r30==built30==build_r30()[0], "R30 candidate not reproducible"
+    assert candidate != r29
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == r29
-    print("PASS: R29 current/archive 35 AP20 tokens; LAST_GOOD is WinUAE-PASS R29;"
+    print("PASS: R30 current/archive 36 AP20 tokens; LAST_GOOD is WinUAE-PASS R29;"
           " R10 historical archive and R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen")
 
 

@@ -1,7 +1,7 @@
-# Tests AMOS en cours
+# Test AMOS courant — M13 R30 0.10.2 AGAPAL Bank Init
 
-**Aucun test `.asc` actif** après validation de R29 0.10.1 dans AMOS interprété/WinUAE et ouverture de la palette IFF dans Personal Paint le 11/11/2026.
+**Un seul fichier actif :** [`M13_R30_AGAPAL_BANK_INIT_01.asc`](M13_R30_AGAPAL_BANK_INIT_01.asc). Gate A 39 scénarios CPU PASS, export strict PASS et [CI de staging 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300). **Gate B WinUAE NON TESTÉE** ; Compiler et Amiga réel NON TESTÉS.
 
-Le test exact [`M13_R29_PALETTE_SAVE_01.asc`](../passed/M13_R29_PALETTE_SAVE_01.asc) (Git blob `b80baabe5533288cac3285a78c232827cce94085`) est archivé octet pour octet dans `tests/passed/`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont **R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; R28 reste dans son archive figée.
+Copier [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) R30 0.10.2 (17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`) dans `APSystem` sous son nom exact, relancer AMOS, créer un programme vide et faire **Project → Merge ASCII** avec le test. **Attention : écrase banques 10 et 11, et `RAM:R30_AGAPAL_TEST.ABK`.**
 
-**Prochaine étape :** discuter et valider individuellement le contrat de la prochaine fonction de banques de palettes / fades avant tout code ou nouveau test. [Règles permanentes](../../EXTENSION_SOURCE_RULES.md).
+Attendu : `INIT 1 REINIT 1`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. La banque est sauvée/rechargée avec `Save`/`Load` natifs AMOS. `LAST_GOOD` reste R29 jusqu'à confirmation d'un PASS sous WinUAE.
