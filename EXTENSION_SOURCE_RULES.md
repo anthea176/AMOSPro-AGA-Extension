@@ -1,5 +1,13 @@
 # EXTENSION_SOURCE_RULES.md
 
+## R31 0.10.3 — Capture AGAPAL approuvée (source CPU/CI, pas encore candidate)
+
+L'utilisateur a validé **uniquement** `_OK=Aga Palette Bank Capture(Start(bank),index)` : enregistrer la `ColorMap` RGB24 de l'écran AGA Intuition actif dans un emplacement AGAPAL indexé à partir de zéro, sans modifier l'écran, ses pixels ou les autres emplacements. Remplacement autorisé de l'emplacement sélectionné, compte de couleurs réel, octets inutilisés remis à zéro ; renvoyer 1/0 et refuser sans modifier la banque en cas d'erreur. `Start(bank)` doit provenir d'une banque DATA AMOS vivante, initialisée par R30 ; pas de recherche interne du numéro de banque.
+
+**État réel :** code 68000, builder et tests Gate A préparés mais **non encore validés** sous CPU/CI, aucune bibliothèque R31 en distribution, aucun test R31 WinUAE créé. Les trois binaires R30 0.10.2 (courant, `LAST_GOOD`, archive) restent strictement inchangés, WinUAE PASS. [Contrat et sécurité](docs/M13_AGAPAL_CAPTURE_R31.md). Les autres commandes (import, application, fade et cycling) ne sont pas autorisées avant discussion fonction par fonction.
+
+---
+
 ## R30 0.10.2 VALIDÉE — AGAPAL Bank Init, Gate A + Gate B AMOS/WinUAE PASS (11/11/2026)
 
 **Preuve Gate B utilisateur :** capture du test corrigé `M13_R30_AGAPAL_BANK_INIT_01.asc` sous AMOS Professional interprété/WinUAE : `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED` et sortie normale AMOS ligne 101. **Succès limité à ce scénario Gate B ; Gates C Compiler et D matériel physique NON TESTÉES.**
