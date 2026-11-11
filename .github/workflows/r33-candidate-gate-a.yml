@@ -1,0 +1,34 @@
+name: R33 candidate CPU and strict source (in-memory)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/m13_agapal_fade_r33_emit.py"
+      - "tools/build_m13_agapal_fade_r33.py"
+      - "tools/test_m13_agapal_fade_r33.py"
+      - ".github/workflows/r33-candidate-gate-a.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  r33_gate_a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install native 68000 dependencies
+        run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: R33 in-memory native 68000 Gate A
+        run: python -B tools/test_m13_agapal_fade_r33.py
+      - name: R33 strict 68000 native source export
+        run: |
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R33_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R33_GateA.Lib --out /tmp/amos-aga-r33-native --baseline none --strict
+      - name: Emit exact deterministic candidate bytes for promotion only after Gate A PASS
+        run: |
+          python -B tools/build_m13_agapal_fade_r33.py --emit-base64

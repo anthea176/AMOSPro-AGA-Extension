@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## R33 0.10.5 — Aga Fade To Bank : contrat approuvé, Gate A en préparation (11/11/2026)
+
+**Accord utilisateur explicite :** `_OK=Aga Fade To Bank(Start(bank),index,vbl)`. Une seule nouvelle fonction. `vbl` entier 1..255 (0 refusé), appel **bloquant**, interpolation RGB24 linéaire de la palette courante vers le slot AGAPAL sélectionné avec `WaitTOF` puis `LoadRGB32` à chaque VBL ; dernière image exactement identique au RGB24 cible. Seuls les pens 0..(count-1) de la palette non vide sont modifiés ; banque/pixels intacts. Rejets 0 sans changement, succès 1 ; écran AGA indexé privé, pas HAM/EHB/dualPF ; banque DATA vivante et vraie adresse `Start(bank)`. Allocation temporaire Exec (Fast possible), libérée en sortie. Pas de timing 50 FPS garanti sur 68000 si l'interpolation d'une trame déborde. [Contrat technique détaillé](M13_AGAPAL_FADE_R33.md).
+
+**Statut :** source R33, builder et test Gate A CPU 68000 en cours de validation ; **R33 n'est pas encore une bibliothèque installable**, ni un PASS Gate A/B. [Test AMOS R33 à exécuter uniquement après Gate A](../tests/current/M13_R33_AGAPAL_FADE_01.asc) (remplace banques 10/11 et `RAM:R33_AGAPAL_FADE.ABK`). R32 0.10.4 est toujours `dist/AMOSPro_AGA.Lib` et `LAST_GOOD`, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. Gates Compiler/Amiga physique non testées. Aucune implémentation Fade Black/White/Import/Cycling sans nouvelle discussion.
+
+---
 ## R32 0.10.4 VALIDÉE — Gates A CPU/CI et B AMOS interprété/WinUAE PASS (11/11/2026)
 
 **Fonction ajoutée seule :** `_OK=Aga Palette Bank Apply(Start(bank),index)` applique une palette RGB24 AGAPAL non vide (1..256 couleurs) à l'écran AGA privé par `graphics.library/LoadRGB32`, immédiatement sans VBL implicite. Retour entier 1/0, aucun changement des banques/pixels, seuls les pens 0..compte-1 remplacés. Exiger un vrai `Start(bank)` d'une banque DATA vivante, jamais un numéro brut ou une adresse périmée.

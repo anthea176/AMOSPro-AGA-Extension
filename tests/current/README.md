@@ -1,5 +1,7 @@
-# Tests AMOS actifs
+# Test AMOS actif — M13 R33 0.10.5 Fade To Bank
 
-**Aucun test `.asc` actif.** R32 0.10.4 a passé Gate A CPU/CI et Gate B AMOS interprété/WinUAE le 11/11/2026. Le programme exact [`M13_R32_AGAPAL_APPLY_01.asc`](../passed/M13_R32_AGAPAL_APPLY_01.asc) est archivé sans modification dans `tests/passed/`. `dist/AMOSPro_AGA_LAST_GOOD.Lib` est maintenant R32 0.10.4 (SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`).
+**Seul ASC actif :** [`M13_R33_AGAPAL_FADE_01.asc`](M13_R33_AGAPAL_FADE_01.asc), à exécuter sous AMOS interprété/WinUAE uniquement après publication de la candidate R33 et PASS Gate A CPU/CI.
 
-Toute nouvelle fonction doit être discutée et approuvée avant codage. Gates C Compiler et D Amiga physique non testées.
+**R33 Gate A non encore validée ; Gate B non testée.** Le programme remplace les banques 10/11 et `RAM:R33_AGAPAL_FADE.ABK`. Captures AGAPAL de vert/bleu, fade bloquant 12/1/2 VBL, palette partielle 4 couleurs, refus des durées 0/256/-1, index/banques invalides, Save/Load ABK, fermeture et retour propre. Attendu `RESULT 1`, `CLOSE RETURNED`.
+
+**Ne pas utiliser R32 pour ce test :** la fonction R33 n'y existe pas. `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure R32 0.10.4 validée WinUAE. Gates C/D non testées.
