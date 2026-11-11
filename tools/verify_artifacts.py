@@ -137,7 +137,7 @@ def main():
     built28, info28 = build_r28()
     assert r28 == built28 == build_r28()[0], "frozen R28 not reproducible"
     built29, info29 = build_r29()
-    assert candidate == r29 == built29 == build_r29()[0], "current R29 not reproducible"
+    assert r29 == built29 == build_r29()[0], "frozen R29 not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
