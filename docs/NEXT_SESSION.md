@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Décision utilisateur — processus de développement M13/R29 (11/11/2026)
+
+**Avant toute nouvelle fonction : discussion technique avec l'utilisateur et accord explicite sur SON contrat avant code, builder, test ou binaire.** Cette règle est désormais prioritaire dans [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md). Une validation générale de R29 ou de M13 ne suffit pas à figer les API successives.
+
+**R29 approuvée sur le principe :** sauvegarder/exporter les palettes au format **IFF standard `FORM ILBM` / `CMAP`**, sans format propriétaire. **Proposition à cadrer :** charger/conserver aussi des palettes dans une bank mémoire, de préférence **Fast RAM** si disponible ; compatibilité avec banques AMOS, allocation, libération et repli restent à choisir avant code.
+
+**Futurs fades natifs à discuter une par une :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`. Le contrat doit encore définir les paramètres, VBL/durée, interpolation et mode d'exécution. Color cycling ensuite. **Aucune R29 ni nouvelle fonction/bibliothèque/test .asc créée par cette décision documentaire.** `dist/AMOSPro_AGA.Lib` et `LAST_GOOD` restent R28 0.10.0 ; R27 archivée.
+
+---
+
 ## R28 validée — 11/11/2026
 
 M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.

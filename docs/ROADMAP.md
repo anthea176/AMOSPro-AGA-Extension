@@ -1,5 +1,15 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## M13 — décisions de conception du 11/11/2026 (avant codage R29)
+
+- **Processus obligatoire :** discuter **chaque nouvelle fonction** avec l'utilisateur, arrêter explicitement son contrat, puis seulement coder/tester. Un feu vert sur le jalon R29 n'est pas une validation de toutes ses commandes.
+- **R29 accepté en principe :** export de palettes au format **IFF standard `FORM ILBM` / `CMAP`**, sans format maison ; nom de commande, arguments, conditions d'erreur et restauration à définir ensemble.
+- **Banques de palettes demandées :** conservation/chargement d'une palette vers une bank mémoire, en **Fast RAM prioritairement si disponible**. Préciser avant implémentation si les banks sont AMOS ou internes à l'extension, leur cycle de vie et la gestion de l'absence de Fast RAM.
+- **Fades natifs souhaités :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`, **signatures non figées et tokens non implémentés**. Déterminer durée, synchronisation VBL, comportement bloquant ou non et interpolation RGB24 lors de chaque discussion.
+- Puis cycling, M14 fontes et M15 dessin 2D. **Aucun nouveau binaire R29 ; R28 reste `LAST_GOOD`**.
+
+---
+
 ## R28 validée — 11/11/2026
 
 M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.

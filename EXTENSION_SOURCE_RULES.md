@@ -1,5 +1,23 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE PRIORITAIRE — DISCUTER ET VALIDER CHAQUE FONCTION AVANT DE CODER (11/11/2026)
+
+**Demande explicite de l'utilisateur : avant chaque nouvelle fonction ou instruction, échanger sur sa conception, puis obtenir son accord sur le contrat de cette fonction, avant toute implémentation.**
+
+1. **Une fonction à la fois :** présenter son besoin, son nom proposé, sa syntaxe AMOS (instruction ou fonction), ses paramètres, valeurs de retour/erreurs, limites, mémoire et durée de vie, effets sur écran/palette, comportement temporel et protocole de test pertinent. Échanger avec l'utilisateur sur les choix encore ouverts.
+2. **Pas de code avant accord explicite sur la fonction discutée :** ne pas modifier de source 68000, builder, tests `.asc`, binaire `.Lib` ni API publique pour cette nouvelle fonction tant que la discussion et la validation du contrat ne sont pas terminées. La validation d'une roadmap ou d'un jalon entier (par exemple « OK pour R29 ») **n'autorise pas automatiquement toutes les fonctions suivantes**. À l'issue d'une fonction, présenter et discuter la suivante avant de la coder.
+3. **Documentation possible pendant la discussion :** consigner décisions, propositions et points ouverts dans les règles et les documents de suivi, sans transformer un nom envisagé en token déjà disponible ni annoncer un PASS inexistant.
+4. **Après accord**, appliquer toutes les règles de développement, les Gate A/B/C/D et la promotion obligatoire de `LAST_GOOD` ; travail exclusivement sur `main`, aucun autre dépôt ni branche sans demande explicite.
+
+### M13 — R29 et futures banques/fades : décisions et points à définir
+
+- **R29 accepté dans son principe :** poursuivre par la sauvegarde/export de palettes au **format IFF standard `FORM ILBM` + `CMAP`**, compatible avec les logiciels de dessin, sans format propriétaire. Les appels AMOS précis, le traitement des erreurs, le fichier de sortie et la restauration restent à discuter avant codage.
+- **Banques de palettes demandées :** pouvoir **charger/conserver une palette dans une bank mémoire**, indépendamment de son application immédiate au `ColorMap`. **Privilégier la Fast RAM lorsqu'elle est disponible**, avec comportement de repli et gestion d'échec mémoire à définir. Vérifier d'abord s'il faut une banque AMOS native ou une banque propre à l'extension, ainsi que son identifiant, son propriétaire, sa taille et sa libération ; aucun contrat d'allocation n'est encore arrêté.
+- **Fades natifs demandés (noms proposés, non exportés) :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`. Discuter **séparément, avant de coder chacune**, les paramètres (banque, durée/étapes), l'interpolation RGB24, le rythme VBL, l'aspect bloquant ou non, les cas limites, l'état final exact et l'interaction avec la palette courante/Copper.
+- Le **color cycling** viendra ensuite selon le même processus de discussion individuelle. **Aucune R29 ni commande Fade nouvelle n'est encore construite ou validée.** R28 0.10.0 demeure la version WinUAE-PASS et `LAST_GOOD` à préserver.
+
+---
+
 ## RÈGLE PRIORITAIRE — BINAIRES DANS `dist/` ET PROMOTION DE `LAST_GOOD` (11/11/2026)
 
 **Cette règle permanente prévaut sur tous les checkpoints historiques ci-dessous (R10, R12, R23, etc.) qui décrivent les états passés.** Le numéro indiqué dans les anciennes notes n'est plus un état courant.
