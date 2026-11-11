@@ -150,7 +150,7 @@ def emit_bank_select():
     c.move(A(4),D(0)); c.imm('add',NAME_AT,D(0)); c.move(D(0),M(4,34))
     c.move(A(4),D(0)); c.alu('add',D(4),0); c.move(D(0),M(4,58))
     c.move(A(4),D(0)); c.alu('add',D(5),0); c.move(D(0),M(4,64))
-    c.move(I(0),M(4,14))           # no stale TextFontExtension
+    c.move(I(0),M(4,38))           # no stale TextFontExtension: FONT payload offset24 + TextFont offset14
     c.move(I(0,'w'),M(4,54),'w')   # tf_Accessors 0
     c.move(I(0),M(4,68)); c.move(I(0),M(4,72))
     c.move(I(0),D(0)); c.move(M(4,47),D(0),'b')

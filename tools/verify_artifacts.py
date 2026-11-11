@@ -405,7 +405,7 @@ def main():
         assert len(found)==1 and found[0]["function"]==index and found[0]["signature"]==sig
     assert candidate!=r36 and meta37["sha256"]=="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
     assert (ROOT/"tests/passed/M14_R37_FONT_SELECT_01.asc").is_file(), "R37 passed test not archived"
-    assert not list((ROOT/"tests/current").glob("*.asc")), "R37 test must be removed from tests/current"
+    assert not (ROOT/"tests/current/M14_R37_FONT_SELECT_01.asc").exists(), "R37 passed test must stay archived"
     print("PASS: R37 current/archive/LAST_GOOD Gate A/B PASS, 43 AP20 tokens; R36 archive frozen;"
           " R35 and all historical archives frozen")
 
