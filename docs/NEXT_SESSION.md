@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**R30 source en cours :** l'utilisateur a validé `_OK=Aga Palette Bank Init(Start(10),8)`. Émetteur CPU/Builder/Test ajoutés, **Gate A CI non encore passée**, **pas de candidate R30 dans `dist/`**. R29 0.10.1 reste courante et `LAST_GOOD`. Aucun fade ni cycling. Voir [spécification R30](M13_AGAPAL_R30_PREVIEW.md).
+
 **R30 — état technique après recherche :** l'enveloppe ABK native `AmBk` et la banque `DATA` Fast-prioritaire sont confirmées. Un **modèle de format Python et un prototype de sauvegarde/chargement ABK utilisant seulement les commandes AMOS** sont préparés : [`docs/M13_AGAPAL_R30_PREVIEW.md`](M13_AGAPAL_R30_PREVIEW.md). **Aucun nouveau token AP20**, aucune candidate R30, aucune Gate A CPU pour l'extension ni Gate B R30. La résolution du numéro de banque vers `Start(bank)` depuis A5 reste à établir à partir d'une interface AMOS documentée, sans offset supposé. **R29 0.10.1 reste la version courante validée et `LAST_GOOD`**.
 
 ## R30 M13 — structure AGAPAL approuvée (11/11/2026, conception uniquement)

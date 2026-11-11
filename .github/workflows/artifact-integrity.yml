@@ -35,6 +35,7 @@ on:
       - "tools/m12_blit_safe_r27_emit.py"
       - "tools/m13_palette_r28_emit.py"
       - "tools/m13_palette_save_r29_emit.py"
+      - "tools/m13_agapal_r30_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -83,6 +84,11 @@ jobs:
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_save_r29 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(); print('R29 current/archive/LAST_GOOD match:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
+      - name: M13 R30 AGAPAL Bank Init — native 68000 Gate A (in-memory builder only)
+        run: |
+          python -B tools/test_m13_agapal_r30.py
+          python -B tools/build_m13_agapal_r30.py --emit-base64
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: M13 R28 frozen IFF palette — native 68000 regression
         run: |
           python -B tools/test_m13_palette_r28.py
