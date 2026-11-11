@@ -144,7 +144,7 @@ def run():
         (ENTRY_GET,emit_get()),
     )
     for index,(blob,labels) in code_entries:
-        assert parts[index]==blob
+        assert parts[index]==(blob+GETP if index!=ENTRY_GET else blob)
         end=labels.get("dosname",len(blob))
         ins=list(md.disasm(blob[:end],0))
         assert sum(i.size for i in ins)==end,("invalid 68000",index)

@@ -55,10 +55,15 @@ def build():
     assert all(len(x)>16 and len(x)%2==0 for x in (load,setter,getter))
     parts=list(old)
     parts[-1]+=GETP
-    parts.extend((load,setter,getter))
+    # Every parameterized AP20 entry needs a GetP separator in the
+    # immediately preceding segment, not only before the first new entry.
+    parts.extend((load+GETP,setter+GETP,getter))
     assert len(parts)==40
     assert parts[:36]==old[:36]
     assert parts[36]==old[36]+GETP
+    assert parts[ENTRY_LOAD]==load+GETP
+    assert parts[ENTRY_SET]==setter+GETP
+    assert parts[ENTRY_GET]==getter
     tokens=tok0[:-6]+b"".join(token(name,1,index,sig)
                                  for name,index,sig in API)+bytes(6)
     title=b"AMOSPro AGA M13 Palette Base R28 0.10.0\0$VER: AMOSPro_AGA 0.10.0\0"
