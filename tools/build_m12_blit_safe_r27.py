@@ -3,7 +3,7 @@
 
 Build *in memory* from the immutable R26 0.9.2 WinUAE-PASS archive.
 The live library, R26/R25/R24 archives and LAST_GOOD are never written.
-LAST_GOOD may advance after a newer WinUAE PASS (R31 in M13).
+LAST_GOOD may advance after a newer WinUAE PASS (R32 in M13).
 Segments 19/20 are guarded and Clear 21's internal BSR is recalculated.
 This shifts later code: R23 dispatcher BSRs (17/18/31/32) plus its
 screen-open state anchor (6) and dispatcher (33) MUST be relocated too.
@@ -30,7 +30,7 @@ DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BASE_SHA256="0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287"
-LAST_GOOD_SHA256="0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41"
+LAST_GOOD_SHA256="0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894"
 COPY_ENTRY=19
 FILL_ENTRY=20
 CLEAR_ENTRY=21
