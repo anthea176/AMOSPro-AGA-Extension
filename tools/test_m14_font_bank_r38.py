@@ -110,9 +110,9 @@ class BankMachine(FontMachine):
             ptr,rp=self.a(0),self.a(1)
             if ptr in (x+FONT_AT for x in self.allocations):
                 assert STACK-1024<=rp<STACK
-                assert self.get(ptr+34)==ptr-FONT_AT+NAME_AT
-                assert self.get(ptr+58)>ptr
-                assert self.get(ptr+64)>ptr
+                assert self.get(ptr+10)==ptr-FONT_AT+NAME_AT
+                assert self.get(ptr+34)>ptr
+                assert self.get(ptr+40)>ptr
                 assert self.get(ptr+14)==0
                 self.fonts[ptr]=unpack_from('>H',uc.mem_read(ptr+20,2))[0]
                 self.put(rp+52,ptr)
@@ -189,10 +189,10 @@ def run():
     assert bytes(m.uc.mem_read(BANK,len(m.payload)))==initial
     private=bytes(m.uc.mem_read(alloc,len(m.payload)))
     assert private[:24]==initial[:24]
-    assert m.get(ptr+58)==alloc+info.bitmap_at
-    assert m.get(ptr+64)==alloc+info.loc_at
-    assert m.get(ptr+34)==alloc+NAME_AT
-    assert m.get(ptr+14)==0 and m.get(ptr+68)==m.get(ptr+72)==0
+    assert m.get(ptr+34)==alloc+info.bitmap_at
+    assert m.get(ptr+40)==alloc+info.loc_at
+    assert m.get(ptr+10)==alloc+NAME_AT
+    assert m.get(ptr+14)==0 and m.get(ptr+44)==m.get(ptr+48)==0
     assert private[info.bitmap_at:info.loc_at]==initial[info.bitmap_at:info.loc_at]
     assert private[info.loc_at:]==initial[info.loc_at:]
     m.uc.mem_write(BANK,b'\0'*len(m.payload))    # Erase 10 in AMOS
