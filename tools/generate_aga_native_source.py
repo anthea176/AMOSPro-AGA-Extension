@@ -41,6 +41,10 @@ KNOWN_SEEDS={
  # in the inherited M5 file-reader error-return helpers are valid 68000 code,
  # but unreachable from the naive entrypoint-only CFG. Never trust altered code.
  '567c652d07ff770b0f72690f766c401dca9595d9830834f8bb08583b6445d620':(1170,1298),
+  # M13 R29 Save: one source-confirmed but unreachable MOVE.L #0,D0 in
+  # the cleanup_save helper's generic failure-return epilogue. Exact core
+  # SHA only; altered code must still fail --strict, as for R28.
+  '36feed62fafa7f66065b36b2bec2c12275331af7d75599abc68ac19e0ffd5d3f':(1206),
 }
 
 class ExportError(ValueError):pass

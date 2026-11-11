@@ -303,6 +303,35 @@ class Tests(unittest.TestCase):
         self.assertTrue(any(row['entry']==37 for row in rejected),
                         'Non-exact R28 reader must not inherit vetted code seeds')
 
+    def test_r29_palette_save_exact_core_strict_and_tamper_guard(self):
+        # Source-confirmed unreachable MOVE.L #0,D0 in cleanup helper.
+        # Only this exact R29 entry-40 hash may inherit the code seed.
+        from build_m13_palette_save_r29 import build
+        candidate,_=build()
+        parsed=x.parse_lib(candidate)
+        self.assertEqual(len(parsed['section']),41)
+        save=parsed['section'][40]
+        core=save['core']
+        self.assertEqual(x.sha(core),
+                         '36feed62fafa7f66065b36b2bec2c12275331af7d75599abc68ac19e0ffd5d3f')
+        self.assertEqual(core[1206:1212],bytes.fromhex('203c00000000'))
+        self.assertFalse(x.unclassified_gaps(parsed))
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            lib=folder/'R29-test.Lib'
+            lib.write_bytes(candidate)
+            export=folder/'asm'
+            self.assertEqual(x.main(['--lib',str(lib),'--out',str(export),
+                                     '--strict','--baseline','none']),0)
+            report=json.loads(next(export.glob('*.json')).read_text())
+            self.assertEqual(report['unclassified_regions'],[])
+            self.assertEqual(lib.read_bytes(),candidate)
+        mutated=bytearray(candidate)
+        mutated[save['file_offset']+1206+4]^=0x01
+        rejected=x.unclassified_gaps(x.parse_lib(bytes(mutated)))
+        self.assertTrue(any(row['entry']==40 for row in rejected),
+                        'Non-exact R29 cleanup must not inherit audited seed')
+
     def test_r24_altered_keyboard_core_does_not_inherit_r23_rts_seed(self):
         path=ROOT/'dist'/'experimental'/'AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib'
         raw=bytearray(path.read_bytes())
