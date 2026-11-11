@@ -1,8 +1,21 @@
-# M11 R26 — diagnostic Safe/Disp multi-swap (WinUAE à tester)
+# M11 R26 — Safe/Disp multi-swap 40 images : Gate B WinUAE PASS
 
-**Unique `.asc` actif :** [`current/M11_R26_SAFE_SWAP_02.asc`](current/M11_R26_SAFE_SWAP_02.asc), à exécuter avec **la bibliothèque R26 0.9.2 existante**, sans nouvelle version ni modification des binaires. **Gate B spécifique Safe/Disp multi-swap NON TESTÉE.** Le [scénario R26 premier texte](passed/M11_R26_AGA_TEXT_01.asc) reste validé et archivé, et cette nouvelle expérience n'en modifie pas la portée.
+**11/11/2026 — validation utilisateur sous AMOS interprété/WinUAE.** Le [test original `M11_R26_SAFE_SWAP_02.asc`](passed/M11_R26_SAFE_SWAP_02.asc), Git blob `d0306efe728032cd85d126338ecc97ec674ad2c4`, a été **déplacé octet pour octet** de `tests/current/` à `tests/passed/`. La même bibliothèque **R26 0.9.2** a été utilisée ; **aucun `.asc` actif** dans `tests/current/`.
 
-Le test présente **40 images alternées** (texte vert FRAME A / texte rouge FRAME B), en sondant d'abord `Aga Text` pour établir que le back buffer est disponible **avant** tout effacement/dessin des anciens Blitters R25. Les tentatives non prêtes sont bornées à **12 VBL** pour le texte et **12 VBL** pour le swap, sans attente infinie. Console attendue : `DONE 40 PROBEOK 40`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. `PROBE0` et `SWAP0` sont des compteurs variables (y compris 0) ; aucune mesure de FPS. [Mode d'emploi détaillé](current/README.md).
+Le programme a alterné visuellement **40 images A/B (vert / rouge)**, confirmation explicite de l'utilisateur. La capture console montre :
+
+```text
+M11-R26-SAFE-SWAP-02
+IMAGE 320 X 256 PLANES 8
+OPEN 1 DB 1 LOAD 1
+DONE 40 PROBEOK 40
+PROBE0 39 SWAP0 0
+SAFEERR 0 SWAPERR 0 DRAWERR 0
+CLOSED -1 RESULT 1
+CLOSE RETURNED
+```
+
+Le programme termine normalement à la **ligne 140**. Les 39 refus temporaires de la sonde `Aga Text` ont exercé les tentatives bornées (12 VBL au maximum par image). Les 40 appels à `Aga Swap` ont réussi sans refus. **Les 39 retours 0 ne démontrent pas individuellement qu'un message Safe était leur seule cause** : la sonde peut renvoyer 0 pour plusieurs raisons. **Gate B PASS pour ce protocole de 40 swaps**, en complément du [test de texte initial](passed/M11_R26_AGA_TEXT_01.asc) déjà PASS. Pas de mesure 50 FPS, de stress exhaustif, de validation Compiler ou d'essai sur Amiga AGA physique. Le [rapport M11](../docs/M11_TEXT_R26.md) précise ces réserves ; R26/R25/R24 et `LAST_GOOD` R10 restent inchangées.
 
 ---
 

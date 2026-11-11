@@ -1,17 +1,17 @@
 # Documentation — AMOSPro-AGA-Extension
 
-**Point d'entrée du projet.** **R26 0.9.2 Gate A CPU/CI PASS (64 cas) et Gate B AMOS/WinUAE PASS sur le premier affichage texte**, [test archivé intact](../tests/passed/M11_R26_AGA_TEXT_01.asc). **Diagnostic complémentaire Safe/Disp à 40 swaps : WinUAE NON TESTÉ**, [test actif](../tests/current/M11_R26_SAFE_SWAP_02.asc). R25 0.9.1 archivée et validée M10, `LAST_GOOD` R10 inchangée ; pas de nouveau binaire. Compiler, Amiga physique et stress exhaustif non testés. [Reprise](NEXT_SESSION.md) · [Contrat R26](M11_TEXT_R26.md).
+**Point d'entrée du projet.** **R26 0.9.2 Gate A CPU/CI PASS (64 cas), Gate B AMOS/WinUAE PASS sur le texte initial ET le test Safe/Disp à 40 swaps**. Résultat : `DONE 40`, `PROBEOK 40`, `PROBE0 39`, `SWAP0 0`, erreurs nulles, `RESULT 1`, alternance vert/rouge confirmée. [Test multi-swap archivé à l'identique](../tests/passed/M11_R26_SAFE_SWAP_02.asc), [test texte initial](../tests/passed/M11_R26_AGA_TEXT_01.asc). Aucun `.asc` actif, aucun nouveau binaire ; R25/R24 et `LAST_GOOD` conservés. Compiler, Amiga physique, cadence et stress exhaustif non testés. [Reprise](NEXT_SESSION.md) · [Contrat R26](M11_TEXT_R26.md).
 
 ## Où commencer ?
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | [Valider Safe/Disp sous WinUAE](../tests/current/M11_R26_SAFE_SWAP_02.asc) (40 alternances, résultat encore inconnu) ; ne pas ouvrir de nouvelle API |
+| **Que développons-nous ensuite ?** | [Roadmap R26 après validation de deux scénarios](ROADMAP.md) — éventuel contrat de protection commune des Blitters et tests plus longs, sans nouvelle version engagée |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **M10 collisions AABB — R25 PASS WinUAE** | [Contrat et validation R25](M10_RECT_OVERLAP_R25.md) · [Test exact R25 archivé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) · [Roadmap](ROADMAP.md) |
-| **M11 — R26 AGA Text : Gates A+B PASS** | [Contrat et résultats](M11_TEXT_R26.md) · [audit R25](M11_BACKBUFFER_R25.md) · [test exact validé et archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc) · `tests/current/` vide |
+| **M11 — R26 AGA Text : Gates A+B PASS sur deux tests** | [Contrat et résultats Safe/Disp](M11_TEXT_R26.md) · [test texte archivé](../tests/passed/M11_R26_AGA_TEXT_01.asc) · [test multi-swap archivé](../tests/passed/M11_R26_SAFE_SWAP_02.asc) · `tests/current/` vide |
 | **Souris X/Y et suite interactions** | [R23 IDCMP PASS WinUAE](M8_IDCMP_R23.md) · [R22 Pressed/Released PASS WinUAE](M8_MOUSE_EDGES_R22.md) · [R21 RMBTRAP PASS WinUAE](M8_RMBTRAP_R21.md) · [R20 boutons](M8_MOUSE_BUTTONS_R20.md) · [R19 X/Y PASS](M8_MOUSE_R19.md) · [Interactions M8–M10](INTERACTIONS_COLLISIONS.md) |
 | **Architecture de l'extension** | [Architecture technique actuelle](ARCHITECTURE.md) |
 | **API et exemples AMOS** | [README principal](../README.md) |

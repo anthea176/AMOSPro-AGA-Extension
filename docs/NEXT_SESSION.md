@@ -1,13 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M11 — R26 Safe/Disp : essai multi-swap préparé, WinUAE NON TESTÉ
+## M11 — R26 0.9.2 : tests texte et Safe/Disp multi-swap PASS sous WinUAE
 
-**11/11/2026 — poursuivre la validation du binaire R26 0.9.2 déjà confirmé sur le premier affichage de texte.** Aucun nouveau binaire ni changement de branche. [Test multi-swap courant](../tests/current/M11_R26_SAFE_SWAP_02.asc) · [procédure de test](../tests/current/README.md) · [contrat texte R26](M11_TEXT_R26.md).
+**11/11/2026 — deuxième validation WinUAE utilisateur.** Avec la bibliothèque **R26 0.9.2 inchangée**, le programme [`M11_R26_SAFE_SWAP_02.asc` archivé sans modifier un octet](../tests/passed/M11_R26_SAFE_SWAP_02.asc) a présenté **40 alternances visuelles A/B vert/rouge**, avec retour correct à AMOS **ligne 140**. Ce PASS s'ajoute au test [texte initial R26](../tests/passed/M11_R26_AGA_TEXT_01.asc) et au Gate A CPU/CI PASS (64 cas 68000, [CI complète R26](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42923706360)).
 
-- **Objectif ciblé :** 40 rendus successifs et 40 `Aga Swap`, alternant **FRAME A - GREEN / FRAME B - RED**. Avant chaque effacement/dessin, une sonde `Aga Text` doit réussir (`1`) pour confirmer la disponibilité du back buffer. Les refus texte ou Swap entraînent des **tentatives bornées à 12 VBL**, jamais une attente infinie.
-- **Résultats attendus, pas encore observés :** `OPEN 1 DB 1 LOAD 1`, `DONE 40 PROBEOK 40`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Les compteurs `PROBE0` et `SWAP0` peuvent valoir zéro ; pas de mesure 50 FPS.
-- **Prudence :** un retour 0 de `Aga Text` ne distingue pas à lui seul « pas encore Safe » des autres erreurs possibles. Le test est à interpréter **avec l'observation visuelle**, les compteurs et l'absence de Guru/gel. L'ancien [test R26 du premier texte](../tests/passed/M11_R26_AGA_TEXT_01.asc) reste PASS et inchangé.
-- **Bibliothèques protégées :** `dist/AMOSPro_AGA.Lib` **R26 0.9.2, 14 044 octets**, archives R26/R25/R24 et `LAST_GOOD` R10. Compiler AMOS et Amiga physique restent hors périmètre.
+- **Résultats observés :** `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 PROBEOK 40`, `PROBE0 39 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Alternance visuelle confirmée par l'utilisateur.
+- **Signification :** 39 sondes ont renvoyé `0` avant une tentative réussie ; les reprises bornées ont donc bien été exercées, sans échec final. **La cause de chaque retour 0 n'est pas identifiable individuellement** (Safe ou autre rejet) et le test ne prouve pas toute la sûreté mémoire du moteur hors du protocole de sondage. Aucun 50 FPS mesuré.
+- **Archivage :** test original déplacé octet pour octet vers [`tests/passed/M11_R26_SAFE_SWAP_02.asc`](../tests/passed/M11_R26_SAFE_SWAP_02.asc), Git blob `d0306efe728032cd85d126338ecc97ec674ad2c4`. **`tests/current/` sans `.asc`**. R26/R25/R24, `LAST_GOOD` R10 et tous les tests archivés existants inchangés.
+- **Suite ouverte :** éventuelle sécurisation partagée des Blitters pour des séquences de rendu arbitraires et essais de robustesse plus longs, uniquement après définition d'un contrat distinct. **AMOS Compiler, Amiga AGA physique et stress prolongé toujours NON TESTÉS.** Aucune nouvelle R27 engagée ni nouvelle branche. [Rapport M11](M11_TEXT_R26.md).
+
 
 ---
 
