@@ -1,3 +1,13 @@
+# M12 R27 0.9.3 — Blitters Safe : Gate A CPU/CI PASS, Gate B WinUAE à tester
+
+**Unique programme actif :** [`current/M12_R27_SAFE_BLIT_01.asc`](current/M12_R27_SAFE_BLIT_01.asc), à essayer avec la **bibliothèque candidate R27 0.9.3** (14 252 octets), **pas R26**. **396 cas CPU 68000 Gate A PASS**, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42995303489). **WinUAE R27 NON TESTÉE**.
+
+Le test présente **40 images alternées vert/rouge**, avec deux rectangles par image dont un copié par `Aga Blit Copy`. Pour chacune des 40 images, le premier dessin est successivement `Aga Blit Clear`, `Aga Blit Fill` ou `Aga Blit Copy` (respectivement **14/13/13 réussites**) ; chaque routine doit se protéger **directement** contre l'utilisation d'un back buffer non-Safe. **Aucune sonde `Aga Text`.** Retours 0 → reprises bornées à 12 VBL, idem pour `Aga Swap`. Console attendue : `DONE 40 C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. Compteurs de refus variables, aucune mesure de FPS. [Protocole détaillé](current/README.md).
+
+**Ne pas déplacer dans `tests/passed/` avant capture WinUAE et validation utilisateur.** Les tests R26 [texte](passed/M11_R26_AGA_TEXT_01.asc) et [40 swaps avec sonde](passed/M11_R26_SAFE_SWAP_02.asc) restent archivés à l'octet près, tout comme R25/R24.
+
+---
+
 # M11 R26 — Safe/Disp multi-swap 40 images : Gate B WinUAE PASS
 
 **11/11/2026 — validation utilisateur sous AMOS interprété/WinUAE.** Le [test original `M11_R26_SAFE_SWAP_02.asc`](passed/M11_R26_SAFE_SWAP_02.asc), Git blob `d0306efe728032cd85d126338ecc97ec674ad2c4`, a été **déplacé octet pour octet** de `tests/current/` à `tests/passed/`. La même bibliothèque **R26 0.9.2** a été utilisée ; **aucun `.asc` actif** dans `tests/current/`.

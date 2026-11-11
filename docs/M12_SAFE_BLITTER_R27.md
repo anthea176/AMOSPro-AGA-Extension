@@ -1,6 +1,6 @@
 # M12 — R27 0.9.3 : sécurisation Safe des Blitters AGA
 
-**11/11/2026 — prototype source uniquement, Gate A CPU/CI à confirmer, Gate B WinUAE NON TESTÉE.** La bibliothèque active reste **R26 0.9.2**, archivée et validée sous WinUAE pour le texte AGA et les 40 swaps [M11](M11_TEXT_R26.md). Aucune archive ni binaire courant, notamment `LAST_GOOD`, n'est modifié par cette étape.
+**11/11/2026 — R27 0.9.3 candidate WinUAE, Gate A CPU/CI 68000 PASS (396 scénarios), Gate B AMOS/WinUAE NON TESTÉE.** [CI R27 complète 28 étapes PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42995303489). [Binaire candidat courant](../dist/AMOSPro_AGA.Lib) = [archive R27](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), **14 252 octets**, SHA256 `d4b838abede4a8fa489f920f7b1633b501639bab86d00f9070dbaea89ece9409`. Les archives R26/R25/R24 et `LAST_GOOD` R10 sont conservées à l'identique. **R26 0.9.2 reste la dernière version WinUAE-PASS**, sur ses deux scénarios. Aucune autre branche.
 
 ## Problème vérifié dans R26
 
@@ -45,10 +45,24 @@ Les segments **0–18 et 22–36** sont conservés octet pour octet : écran, `A
 - [Émetteur des fonctions Copy/Fill](../tools/m12_blit_safe_r27_emit.py), [builder HUNK en mémoire](../tools/build_m12_blit_safe_r27.py) et [tests CPU Unicorn](../tools/test_m12_blit_safe_r27.py).
 - Vérifier l'identité de la table de tokens, la différence limitée aux trois segments, le `BSR.W` exact de Clear, les instructions 68000 (Capstone), ABI `D2/D3/A3/SP` et les registres non volatils.
 - Pour Copy/Fill/Clear et les deux valeurs de `frontIndex` : bit Safe nul, bit Safe en attente avec message absent/présent, bit Disp seul ou combiné, port Safe nul, géométrie invalide, préservation du buffer en cas de refus, `GetMsg` au plus une fois par appel.
-- Vérifier que des appels répétés après consommation du message ne le consomment pas une deuxième fois ; simuler des alternances de 40 images. Ne pas écrire de `R27.Lib` avant un Gate A **PASS**.
+- Vérifier que des appels répétés après consommation du message ne le consomment pas une deuxième fois ; simuler des alternances de 40 images. **PASS : 396 cas CPU natifs et vérifications de structure AP20**, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42995303489). La candidate ne fut publiée qu'après cette validation.
 
-**Gate B (à venir, WinUAE) :** créer un unique `.asc` après Gate A et l'installation d'une **candidate R27**, sans sonde `Aga Text` avant les anciens Blitters : **40 images vert/rouge** en sonde par `Aga Blit Clear`, puis Fill/Copy, Swap et VBL bornés. Contrôler une alternance visuelle, les compteurs de refus/reprises, absence d'écriture avant Safe, fermeture correcte à AMOS. **Ne pas demander d'essai WinUAE de R27 tant que la candidate n'a pas été vérifiée en CPU.**
+**Gate B AMOS interprété/WinUAE : NON TESTÉE.** [Unique test courant M12_R27_SAFE_BLIT_01.asc](../tests/current/M12_R27_SAFE_BLIT_01.asc) (à importer via **Project → Merge ASCII**) ; sélectionner `examples/demo.iff` 320×256×8 PAL. **40 alternances** : panneau bleu, deux rectangles verts puis deux rouges, le second copié par `Aga Blit Copy`. Le **premier dessin** de chaque image alterne **Clear (14 fois), Fill (13), Copy (13)** pour vérifier que chacune des trois commandes sonde directement Safe, **sans appel préalable à `Aga Text`**. Chacune des tentatives est bornée à 12 VBL en cas de retour 0 ; idem pour `Aga Swap`.
+
+**Résultats attendus, pas encore observés :**
+```text
+M12-R27-SAFE-BLIT-01
+IMAGE 320 X 256 PLANES 8
+OPEN 1 DB 1 LOAD 1
+DONE 40 C 14 F 13 P 13
+C0 <n> F0 <n> P0 <n> SWAP0 <n>
+SAFEERR 0 SWAPERR 0 DRAWERR 0
+CLOSED -1 RESULT 1
+CLOSE RETURNED
+```
+Les compteurs `C0/F0/P0/SWAP0` sont variables, y compris zéro ; leurs valeurs ne prouvent pas seules la cause exclusive d'un refus. **L'alternance des deux rectangles doit être constatée visuellement en plus de la console.** Ce n'est pas une mesure 50 FPS ni un stress exhaustif.
+
 
 **Gates C/D :** AMOS Compiler et Amiga AGA physique restent NON TESTÉS. Aucune mesure 50 FPS ni validation exhaustive de course mémoire ne découle automatiquement de 40 alternances.
 
-**Règles de projet :** travailler uniquement sur `main` ; ne pas ouvrir de branche, ne pas remplacer R26/R25/R24, ne pas promouvoir `LAST_GOOD` R10, ne pas modifier les tests déjà archivés.
+**Règles de projet :** uniquement `main`. La R27 candidate remplace le chemin courant `dist/AMOSPro_AGA.Lib` **après** Gate A PASS, sans toucher à aucune archive R26/R25/R24, ni à `LAST_GOOD` R10, ni aux tests déjà archivés. Ne pas classer le test R27 PASS avant WinUAE utilisateur.
