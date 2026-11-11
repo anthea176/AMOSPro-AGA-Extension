@@ -10,7 +10,9 @@
 4. **Aucun fichier `AMOSPro_AGA.Lib` dans un sous-répertoire arbitraire de `dist/`.** La version à installer est systématiquement `dist/AMOSPro_AGA.Lib`; les autres bibliothèques y ont un **nom versionné d'archive**, jamais besoin d'une manipulation manuelle/renommage par l'utilisateur.
 5. Travailler **uniquement sur `main`**, aucune branche nouvelle, aucun dépôt sans instruction explicite. Mettre à jour ensemble les règles, la CI, les empreintes et les README FR/EN.
 
-**État de référence immédiat :** `dist/AMOSPro_AGA.Lib` = **R28 0.10.0**, candidate palettes, **Gate A PASS 159 scénarios CPU/CI, Gate B en attente** ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R27 0.9.3**, dernière version **confirmée WinUAE PASS** (40 swaps, test `tests/passed/M12_R27_SAFE_BLIT_01.asc`). L'ancienne `LAST_GOOD` **R10** subsiste **sans modification** dans `dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib`. Les R27/R28 restent aussi archivées par version. **Ne pas promouvoir R28 avant Gate B.**
+**Clôture M13/R28 11/11/2026 :** Gate B PASS sur capture `M13-R28-PALETTE-01`, `RESULT 1`, `FADEERR 0`, `CLOSE RETURNED`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont identiques à l'archive R28 (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`). Test original archivé octet pour octet dans `tests/passed/`. R27 reste dans son archive immuable (SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`). Gates C/D non testées ; fichier IFF choisi et animation complète non établis par la seule capture. Les états antérieurs « R28 en attente / LAST_GOOD R27 » ci-dessous sont historiques. 
+
+**État de référence immédiat (historique avant ce PASS) :** `dist/AMOSPro_AGA.Lib` = **R28 0.10.0**, candidate palettes, **Gate A PASS 159 scénarios CPU/CI, Gate B en attente** ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R27 0.9.3**, dernière version **confirmée WinUAE PASS** (40 swaps, test `tests/passed/M12_R27_SAFE_BLIT_01.asc`). L'ancienne `LAST_GOOD` **R10** subsiste **sans modification** dans `dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib`. Les R27/R28 restent aussi archivées par version. **Ne pas promouvoir R28 avant Gate B.**
 
 ---
 
@@ -185,7 +187,7 @@ Un commentaire ancien ne l'emporte jamais sur un test runtime plus récent.
 ### Fichiers
 
 - `dist/AMOSPro_AGA.Lib` = **candidat courant**, nom exact, **directement dans `dist/`** après Gate A/CI PASS.
-- `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **copie exacte de la dernière version ayant PASS Gate B confirmé par l'utilisateur**. Référence courante : R27 0.9.3, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`.
+- `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **copie exacte de la dernière version ayant PASS Gate B confirmé par l'utilisateur**. Référence courante : R28 0.10.0, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`.
 - `dist/experimental/` = **archives à nom versionné seulement**, y compris versions rejetées et R10 historique ; pas de copie supplémentaire nommée `AMOSPro_AGA.Lib` dans un sous-dossier.
 - `archive/` = jalons clôturés.
 

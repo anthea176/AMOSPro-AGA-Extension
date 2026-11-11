@@ -1,3 +1,13 @@
+# M13 R28 — Gate B WinUAE PASS (11/11/2026)
+
+M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.
+
+Test exact : [`passed/M13_R28_PALETTE_01.asc`](passed/M13_R28_PALETTE_01.asc) (Git blob original `1004a700484be2407e860ce7233826825471e91b`). `tests/current/` ne contient plus d'ASC. `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R28 (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`). R27 conservée dans son archive versionnée.
+
+---
+
+**Checkpoint historique ci-dessous (avant validation de R28) :**
+
 # M13 R28 0.10.0 — palette IFF/ILBM CMAP (Gate A PASS, Gate B WinUAE NON TESTÉE)
 
 **Test courant :** [`M13_R28_PALETTE_01.asc`](current/M13_R28_PALETTE_01.asc). La candidate [R28 0.10.0](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`) passe **159 cas CPU 68000 Gate A** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618)), dont les variantes IFF palettes seules avec `BMHD` et `CRNG`, sans `BODY`. **Aucune validation WinUAE R28 n'a été effectuée.**

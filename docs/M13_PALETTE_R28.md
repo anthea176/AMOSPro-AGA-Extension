@@ -1,5 +1,17 @@
 # M13 / R28 0.10.0 — palette AGA 24 bits : premier incrément
 
+## R28 validée — 11/11/2026
+
+M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B AMOS interprété/WinUAE PASS sur la capture M13-R28-PALETTE-01 du 11/11/2026. Résultats : OPEN/DB/IFF CMAP/SET/DRAW/SWAP = 1 ; BAD 0 BADG -1 ; PEAK 16254720 ($F80700), FINAL 65280 ($00FF00), FADEERR 0, CLOSED -1, RESULT 1, CLOSE RETURNED. Le test AMOS sélectionne un IFF sans que son chemin soit connu depuis la capture ; la compatibilité d'un export palette seule PPaint/DPaint réel n'est donc pas établie. Le résultat numérique n'atteste pas à lui seul l'observation visuelle complète des 64 transitions. Gate C Compiler et Gate D Amiga réel non testées.
+
+**Bibliothèques :** `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont des copies binaires identiques de l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib` : 16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. R27 reste figée dans `dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib` (SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`). Test original déplacé octet pour octet : `tests/passed/M13_R28_PALETTE_01.asc`; aucun test ASC actif.
+
+**Suite autorisée M13 :** palette sauvegardable au format standard IFF FORM ILBM/CMAP, sauvegarde/restauration, fade natif, puis cycling ; incréments séparés et Gate A avant toute nouvelle candidate. M14 fontes et M15 dessin 2D restent ultérieurs.
+
+---
+
+**Les sections ci-dessous décrivent la préparation historique de R28, avant Gate B.**
+
 **11 novembre 2026 — Gate A CPU/CI PASS : 159 cas 68000 ; Gate B AMOS/WinUAE NON TESTÉE.** M13 doit aboutir à une gestion complète : palettes indépendantes des pixels, couleurs RGB, fades, color cycling, sauvegarde/restauration. **Ce R28 n'est que le socle chargement/écriture/lecture**, pas l'achèvement de M13. Le **binaire courant `dist/AMOSPro_AGA.Lib` est R28 0.10.0**, candidate Gate B. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` est R27 0.9.3**, dernière version Gate A+B PASS sur M12. R28 possède aussi une archive versionnée, [archive 0.10.0](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) de **16 208 octets**, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. [CI native M13 : 159 tests PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618).
 
 ## Audit source et ABI AmigaOS

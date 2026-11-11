@@ -296,7 +296,7 @@ def run():
     print("M13 R28 native 68000 Gate A PASS:",count,
           "Palette Load/Set/Get, no pixel edits, ABI, leaks and malformed CMAP")
     print("M13 R28 in-memory candidate:",report)
-    print("M13 R28 WinUAE/AMOS Compiler/real AGA: NOT TESTED")
+    print("M13 R28 WinUAE: PASS user screenshot 2026-11-11 (M13-R28-PALETTE-01); AMOS Compiler/real AGA: NOT TESTED")
 
 if __name__=="__main__":
     run()
