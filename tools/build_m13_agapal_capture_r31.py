@@ -2,7 +2,7 @@
 """R31 0.10.3 in-memory AP20 builder, solely AGAPAL palette capture.
 
 R31 0.10.3 has passed native CPU Gate A and interpreted AMOS/WinUAE
-Gate B. Its exact published bytes are frozen in the R31 archive (R33 is LAST_GOOD); the WinUAE-PASS
+Gate B. Its exact published bytes are frozen in the R31 archive (R34 is LAST_GOOD); the WinUAE-PASS
 R30 base remains frozen as a versioned archive.
 """
 import argparse
@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"
 BASE_SHA256="446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256="e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f"
+LAST_GOOD_SHA256="89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib"
 API=(("aga palette bank capture",ENTRY_CAPTURE,"00,0"),)
@@ -27,7 +27,7 @@ VERSION="R31 0.10.3"
 def build():
     original=BASE.read_bytes()
     assert digest(original)==BASE_SHA256,"frozen R30 archive changed"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match validated R33"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match validated R34"
     tok,parts,_=split(original)
     assert len(parts)==BASE_ENTRIES and not parts[-1].endswith(GETP)
     audit0=inspect(parse(original))

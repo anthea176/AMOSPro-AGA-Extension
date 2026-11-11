@@ -1,11 +1,9 @@
-# Test AMOS actif — R34 Fade To Black
+# Tests AMOS actifs
 
-**Un seul ASC actif :** [`M13_R34_FADE_TO_BLACK_01.asc`](M13_R34_FADE_TO_BLACK_01.asc).
+**Aucun test `.asc` actif** après la validation R34 sous AMOS interprété/WinUAE le 11/11/2026.
 
-**Gate A CPU/CI R34 PASS : 48 scénarios natifs 68000 et export strict PASS** ([CI Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43053032571)). **Gate B WinUAE NON TESTÉE.** Ne pas exécuter avec R33 : la fonction n'y existe pas. Installer la candidate R34 0.10.6, 20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033` dans APSystem (même slot, redémarrage AMOS), puis **New → Project → Merge ASCII**.
+Le programme exact [`M13_R34_FADE_TO_BLACK_01.asc`](../passed/M13_R34_FADE_TO_BLACK_01.asc) a été déplacé dans `tests/passed/` **sans modification** (Git blob `5fe2f819048cd3706eedaf363f3415a00270406a`). Résultats utilisateur : `FADE150 1 BLACK 0 0 0 0`, `BAD0 0 BAD256 0 BADNEG 0 BADL 0`, `FADE1 1 ONE 0 FADE2 1 TWO 0`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Fondu visuellement confirmé ; cadence/FPS non mesurés.
 
-Test : écran AGA 320×256×256, trois grandes bandes colorées affichées avec `Aga Swap` puis `Amos To Back` **avant** un fondu de 150 VBL. Vérifier les pens 28, 29, 30 et 224 noirs, les durées invalides (0/256/-1/65536), durées 1/2 VBL, noir déjà atteint, fermeture et retour sans erreur. **Aucune banque AMOS ni fichier ABK/IFF n'est remplacé.**
+**R34 0.10.6 est la version `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R34 (20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`). R33 reste dans son archive intacte.
 
-Résultats attendus : `FADE150 1 BLACK 0 0 0 0`, `BAD0 0 BAD256 0 BADNEG 0 BADL 0`, `BEFOREBAD 7915560 AFTERBAD 7915560`, `FADE1 1 ONE 0 FADE2 1 TWO 0`, `SAME 1 SAME28 0`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**.
-
-**R33 0.10.5 reste la dernière version WinUAE-validée et `LAST_GOOD` ; `dist/AMOSPro_AGA.Lib` est maintenant la candidate R34.** Gates Compiler et Amiga réel non testées.
+Gates C Compiler et D Amiga AGA physique non testées. Ne pas créer de nouveau test actif avant discussion et approbation du contrat d'une future fonction.

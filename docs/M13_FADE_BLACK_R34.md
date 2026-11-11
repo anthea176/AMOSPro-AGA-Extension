@@ -23,17 +23,21 @@ _OK=Aga Fade To Bank(Start(10),0,100)
 
 La fonction R34 elle-même est **indépendante des banques** ; le retour AGAPAL n'est qu'un exemple optionnel.
 
-## Statut R34
+## Statut R34 — Gates A/B PASS, promotion confirmée (11/11/2026)
 
-**R34 Gate A CPU/CI PASS :** 48 scénarios natifs 68000 et export strict de la source 68000 PASS. [CI de Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43053032571). **Gate B WinUAE NON TESTÉE** ; candidate publique à installer uniquement pour ce test.
+**Gate A PASS :** 48 scénarios natifs CPU 68000, export 68000 strict, [CI candidate publiée 36/36 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43053552010). API R34 : 40 commandes AP20.
 
-**Candidate R34 publiée :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib`, **20 752 octets**, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033` (copies identiques). **R33 0.10.5 reste dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`** et son archive figée, 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`.
+**Gate B PASS — capture utilisateur AMOS interprété/WinUAE :** `OPEN 1 DB 1 DRAW 1 1 1`, `FADE150 1 BLACK 0 0 0 0`, `BAD0 0 BAD256 0 BADNEG 0 BADL 0`, `BEFOREBAD 7915560 AFTERBAD 7915560`, `FADE1 1 ONE 0 FADE2 1 TWO 0`, `SAME 1 SAME28 0`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin normale **ligne 113**. L'utilisateur a répondu « nickel » après le test visuel des trois bandes affichées avant le fondu de 150 VBL. **Fonctionnement et effet visuel confirmés** ; cadence/FPS et durée réelle non mesurées, il ne s'agit pas d'un benchmark.
+
+**Promotion sans recompilation ni changement de contenu :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib`, **20 752 octets**, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`, **mêmes octets**. L'archive R33 WinUAE-PASS 0.10.5 reste strictement inchangée (20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`).
+
+**Test WinUAE figé dans `tests/passed/` :** [`M13_R34_FADE_TO_BLACK_01.asc`](../tests/passed/M13_R34_FADE_TO_BLACK_01.asc) (Git blob `5fe2f819048cd3706eedaf363f3415a00270406a`, copie exacte du test exécuté). Aucun ASC actif sous `tests/current/`. Le scénario n'a remplacé aucune banque AMOS ni aucun fichier.
 
 - Source : `tools/m13_aga_fade_black_r34_emit.py`.
-- Builder : `tools/build_m13_aga_fade_black_r34.py`, déterministe en mémoire, R33 comme base immuable, sans modifier `LAST_GOOD`.
-- Tests CPU : `tools/test_m13_aga_fade_black_r34.py`, vraie exécution 68000 sous Unicorn, ABI, ColorMap, durée, interpolation et dernier noir exact, alloc/free, zéro écriture banque/bitplane, paramètres invalides.
-- Test WinUAE préparé : [`tests/current/M13_R34_FADE_TO_BLACK_01.asc`](../tests/current/M13_R34_FADE_TO_BLACK_01.asc), avec scène affichée AVANT le fondu 150 VBL ; pen28,29,30,224 noirs, 0/256/-1/65536 refusés, cas 1/2 VBL, noir déjà atteint et écran fermé. **Aucune banque remplacée.**
-- **Gate A PASS, publication effectuée :** `dist/AMOSPro_AGA.Lib` et archive R34 sont identiques. `LAST_GOOD` demeure R33 jusqu'à validation utilisateur de Gate B.
-- Gates B AMOS interprété/WinUAE, C Compiler et D Amiga AGA réel : **NON TESTÉES** pour R34. Le test actif est prêt dans `tests/current/`, sans remplacement de banque ni fichier.
+- Builder déterministe : `tools/build_m13_aga_fade_black_r34.py`, base figée R33 et contrôle du `LAST_GOOD` R34, sans écriture de fichier.
+- Tests CPU : `tools/test_m13_aga_fade_black_r34.py`, vérifications ABI, RGB32 exact, durées, rejets atomiques et mémoire.
+- Gates C Compiler et D Amiga AGA physique : **NON TESTÉES**.
+- Prochaine fonction (par exemple Fade To White) : contrat à discuter et approuver séparément avant tout codage.
 
-Une seule commande ajoutée : segment AP20 45, signature numérique `00` (une entrée entière, retour entier). Les 39 commandes et l'archive R33 restent inchangées (sauf suffixe de chaînage `GetP` dans le segment R33 du binaire candidat R34). La prochaine fonction, par exemple Fade To White, nécessite un contrat et un accord distincts.
+
+Une seule commande ajoutée : segment AP20 45, signature numérique `00` (une entrée entière, retour entier). Les 39 commandes et l'archive R33 restent inchangées (sauf suffixe de chaînage `GetP` dans le segment R33 du binaire R34 publié). La prochaine fonction, par exemple Fade To White, nécessite un contrat et un accord distincts.
