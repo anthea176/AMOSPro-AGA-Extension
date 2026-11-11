@@ -184,7 +184,7 @@ def run():
     print("M13 R35 Fade To White native 68000 Gate A PASS:",count,"scenarios",flush=True)
     print("R35 deterministic in-memory candidate:",
           {k:v for k,v in meta.items() if k!="labels"},flush=True)
-    print("R35 Gate B interpreted AMOS/WinUAE, Gate C Compiler, Gate D physical AGA: NOT TESTED")
+    print("R35 Gate B interpreted AMOS/WinUAE: USER PASS 2026-11-11 (exact archived test); Gate C Compiler and D physical AGA: NOT TESTED")
 
 
 if __name__=="__main__":

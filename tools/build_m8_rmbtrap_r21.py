@@ -24,7 +24,7 @@ DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 
 BASE_SHA256 = "9d1e9d6fd13478947c016d3f95973efa2ac766f96c364e091f43c69daa8672fe"
-LAST_GOOD_SHA256="89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033"
+LAST_GOOD_SHA256="ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539"
 R21_SHA256 = "a72e3046df64e3ff8ebe12a5b4b0db45efebe27e17056919d31d11ca61e9c644"
 
 ENTRY_SCREEN_OPEN = 6
@@ -39,7 +39,7 @@ NEW_FLAGS = OLD_FLAGS | RMBTRAP_FLAG
 def build():
     original = BASE.read_bytes()
     assert digest(original) == BASE_SHA256, "R20 archive modified"
-    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD mismatch (latest WinUAE-PASS R34)"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD mismatch (latest WinUAE-PASS R35)"
     tokens, parts, old_title = split(original)
     assert len(parts) == 31, "R20 AP20 entries changed"
     before = parts[ENTRY_SCREEN_OPEN]
