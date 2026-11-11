@@ -20,8 +20,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-- **R31 approuvée, sources uniquement (commande ABSENTE de la R30 installable) :** `Aga Palette Bank Capture(Start(bank),index)` copiera la `ColorMap` de l'écran AGA Intuition privé vers un emplacement AGAPAL RGB24, sans toucher aux autres. CPU/CI et WinUAE non encore validés ; R30 demeure courante et `LAST_GOOD`. [Contrat R31](docs/M13_AGAPAL_CAPTURE_R31.md).
-- **Bibliothèque courante validée :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R30 0.10.2 M13**, 17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. Gate A **39 scénarios CPU 68000 PASS**, export strict et [CI de promotion 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43024446890). **Gate B AMOS interprété/WinUAE PASS** sur `Aga Palette Bank Init`. La fonction initialise des palettes RGB24 indexées dans une banque DATA AMOS existante via `Start(bank)`. **Gates C Compiler et D Amiga réel NON TESTÉES** ; aucune capture/import, fade ou cycling ajouté.
+- **R31 implémentée et validée Gate A :** `Aga Palette Bank Capture(Start(bank),index)` copie la `ColorMap` RGB24 de l'écran AGA Intuition privé actif dans un emplacement AGAPAL, en ne remplaçant que cet emplacement. **107 scénarios CPU 68000 PASS**, export strict et [CI source 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394). Candidate distribuée, Gate B AMOS/WinUAE à réaliser. [Contrat](docs/M13_AGAPAL_CAPTURE_R31.md).
+- **Bibliothèque candidate à tester :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R31 0.10.3 M13**, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`, identique à [l'archive versionnée R31](dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib). **Gate A : 107 scénarios CPU PASS**, export strict et [CI source 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394) ; CI de publication à confirmer. **Gate B AMOS/WinUAE NON TESTÉE**, Compiler et Amiga réel NON TESTÉS. Une seule commande ajoutée : `Aga Palette Bank Capture`. Aucun chargement depuis banque, fade ni cycling. Installer directement dans `APSystem` sous son nom exact.
 - **Test R30 validé WinUAE :** [`M13_R30_AGAPAL_BANK_INIT_01.asc`](tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc), ASC corrigé archivé sans modification (Git blob `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964`). Capture : `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, **`RESULT 1` et `CLOSE RETURNED`**. Le premier `Type mismatch` provenait du test `Peek$` ; correction sans changer le binaire R30.
 - **Dernière version WinUAE-PASS :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = **R30 0.10.2**, 17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, strictement identique à [l'archive R30](dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib) et au fichier courant `dist/AMOSPro_AGA.Lib`. R29 0.10.1 reste intacte dans [son archive](dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib).
 - **Archives historiques conservées :** [R10](dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib), [R27](dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), [R28](dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib). `LAST_GOOD` = R30 après validation du test AGAPAL sous WinUAE.
@@ -35,7 +35,7 @@ Pour un essai, utiliser la bibliothèque correspondant au test. Les fichiers pr�
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R30 0.10.2** — **36 commandes nommées AP20**, les 35 de R29 et `Aga Palette Bank Init`. R30 Init : **Gates A CPU et B AMOS/WinUAE PASS** sur le test archivé. Les commandes R29 précédentes conservent leurs validations WinUAE séparées ; Compiler et Amiga réel non testés.
+**API de la bibliothèque courante R31 0.10.3** — **37 commandes nommées AP20**, les 36 de R30 et `Aga Palette Bank Capture`. R31 Capture : **Gate A CPU PASS, Gate B AMOS/WinUAE NON TESTÉE**. R30 Init et les commandes R29 conservent leurs validations WinUAE distinctes ; Compiler et Amiga réel non testés.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -55,6 +55,7 @@ Pour un essai, utiliser la bibliothèque correspondant au test. Les fichiers pr�
 | `Aga Palette Get` (M13 R28) | `_RGB=Aga Palette Get(_PEN)` | Lit le `ColorMap` par `GetRGB32`. Renvoie le RGB24 empaqueté `$00RRGGBB` ou -1 en cas d'erreur ; noir = 0. Aucun pixel modifié. |
 | `Aga Palette Save` (M13 R29) | `_OK=Aga Palette Save(_FILE$)` | Sauvegarde le `ColorMap` indexé de l'écran AGA Intuition en IFF `FORM ILBM` avec `BMHD` et `CMAP`, **sans BODY**. Chaîne AMOS de 1 à 255 octets (chemin AmigaDOS). **Écrase le fichier existant** via `MODE_NEWFILE`. Résultat entier 1 si écriture/fermeture réussies, 0 si écran/fichier/mémoire/écriture invalides. 1 à 256 couleurs RGB24, sans modifier les pixels ; HAM/EHB/dual playfield refusés. Un échec après ouverture peut détruire l'ancien fichier. **Gates A CPU et B WinUAE PASS sur le scénario archivé ; import PPaint confirmé.** |
 | `Aga Palette Bank Init` (M13 R30) | `_OK=Aga Palette Bank Init(Start(_B),_N)` | Initialise une **banque DATA AMOS existante de taille exacte**, à l'adresse donnée par `Start(_B)` (pas le numéro de banque). `_B` doit être une banque encore réservée 5–65535 ; `_N` vaut 1 à 256 palettes, taille **16+776×_N octets**. Écrit le nom natif `AGAPAL  `, un en-tête interne de 16 octets, un index à entrées de 8 octets et 768 octets RGB24 par palette (initialement zéro, compte 0). Retour **1** réussite, **0** si nombre/type/taille ou zone mémoire rejetés ; une nouvelle initialisation efface les palettes existantes. Aucune allocation ni modification d'écran ; banque DATA en Fast RAM prioritaire, repli Chip par AMOS. **Transmettre exclusivement `Start(bank)` d'une banque DATA valide et non libérée : adresse arbitraire ou périmée potentiellement dangereuse.** **Gates A CPU et B AMOS/WinUAE PASS** sur sauvegarde/rechargement ABK 8 palettes. |
+| `Aga Palette Bank Capture` (M13 R31) | `_OK=Aga Palette Bank Capture(Start(_B),_INDEX)` | Capture la `ColorMap` RGB24 de l'écran AGA Intuition privé actif dans l'emplacement AGAPAL `_INDEX` (indice 0 à N-1). La banque DATA AMOS `_B` doit être vivante et initialisée auparavant par `Aga Palette Bank Init` ; transmettre exclusivement **`Start(_B)`**, jamais le numéro brut ni un pointeur périmé. Lit 1 à 256 couleurs par `GetRGB32`, enregistre trois octets par couleur, le nombre réel de couleurs et remet à zéro les octets inutilisés du **seul** emplacement de 768 octets sélectionné ; une nouvelle capture l'écrase. Aucun autre index, pixel ni couleur écran modifié. Retour entier **1** réussite, **0** rejet sans modification de banque. Rejette en-tête/taille/index invalides, écran absent/incompatible, échec d'allocation temporaire ; tampon libéré. Aucun VBL implicite, fade ou cycling. **Gate A CPU 68000 PASS, Gate B WinUAE en attente.** |
 | `Aga Key` | `_K=Aga Key` | Sans argument ; lecture non bloquante. **R23 :** conserve les touches RAWKEY dans une FIFO de 16 éléments avec le dispatcher IDCMP, sans les perdre lors d'une lecture souris. |
 | `Aga Wait Key` | `_K=Aga Wait Key` | Sans argument ; attend une touche de la fenêtre Intuition et renvoie un **code clavier**, pas forcément un ASCII. **R23 :** utilise le même dispatcher/FIFO ; Ctrl+C vérifié sous WinUAE : arrêt à `_WAITK=Aga Wait Key` et fermeture correcte de l'écran Intuition. |
 | `Aga Wait Vbl` | `Aga Wait Vbl` | Sans argument ; attend une VBL (`WaitTOF`) ; ne fait rien si aucun écran n'est ouvert. |
@@ -98,6 +99,17 @@ End If
 ```
 
 Le fichier ABK est enregistré avec la commande **`Save` native AMOS**, pas avec `Aga Palette Save` qui génère un IFF. Les huit emplacements RGB24 sont vides jusqu'aux futures fonctions de capture/import, à discuter séparément. [Test WinUAE R30](tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). Aucune couleur écran modifiée.
+
+**R31 : capturer la palette de l'écran indexé actif dans l'emplacement AGAPAL 0** (après `Aga Screen Open` et l'initialisation R30 de la banque) :
+
+```amos
+_CAPTURE=Aga Palette Bank Capture(Start(10),0)
+If _CAPTURE=1
+   Save "RAM:MENU_PALETTES.ABK",10
+End If
+```
+
+Le fichier ABK natif contient la palette RGB24 de l'écran, pas une image IFF ; la capture **n'applique aucune palette à l'écran**. [Test actif R31 WinUAE](tests/current/M13_R31_AGAPAL_CAPTURE_01.asc).
 
 **Copper RGB4** est disponible depuis R18, **Mouse X/Y** depuis R19, **Mouse Buttons** depuis R20 et RMBTRAP depuis R21. **R22 a ajouté `Aga Mouse Pressed/Released` (PASS WinUAE) ; R23 change leur source vers IDCMP_MOUSEBUTTONS, avec Gate A CPU/CI PASS et Gate B WinUAE PASS sur son scénario.** Capture garantie des clics très courts, sprites et `Aga Set Colour` restent hors de ce périmètre.
 

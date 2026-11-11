@@ -3,7 +3,8 @@
 Public design contract: AMOS DATA bank in Fast RAM when available; on
 disk, AMOS Save writes its own native 20-byte AmBk header. AGAPAL is the
 inner DATA payload, not a standalone alternative ABK format.
-The only currently approved operation is initializing an empty palette set.
+R30 initializes empty slots; R31 captures screen colors into one slot.
+This is a format model only, not proof of real AMOS/WinUAE behavior.
 
 All offsets are in bytes, big endian, relative to AMOS Start(bank).
 The builder is a deterministic model for static tests and review, not proof

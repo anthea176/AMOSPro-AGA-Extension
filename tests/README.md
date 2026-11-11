@@ -1,3 +1,13 @@
+# M13 R31 0.10.3 — AGAPAL Capture, Gate A CPU PASS / Gate B WinUAE EN ATTENTE
+
+**Test actif unique :** [`current/M13_R31_AGAPAL_CAPTURE_01.asc`](current/M13_R31_AGAPAL_CAPTURE_01.asc). Captures AGAPAL index0/index1 et écrasement index0, palettes RGB24 vert/rouge/bleu, contrôle autres couleurs, compte 256 et sauvegarde/rechargement ABK AMOS. Les index invalides et l'absence d'écran doivent renvoyer 0 sans modification. **Écrase banques 10 et 11 ainsi que `RAM:R31_AGAPAL_CAPTURE.ABK`.**
+
+`dist/AMOSPro_AGA.Lib` est la candidate **R31 0.10.3**, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41` ; **Gate A 107 scénarios CPU et [CI complète de source 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394)**, export strict PASS. **Gate B WinUAE NON TESTÉE ; Gates C/D NON TESTÉES.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R30 0.10.2 WinUAE PASS, sans modification.
+
+---
+
+**Les tests R30 et antérieurs ci-dessous sont historiques.**
+
 # Tests AMOS — R30 0.10.2, Gate A + Gate B WinUAE PASS
 
 **Test validé et archivé :** [`passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](passed/M13_R30_AGAPAL_BANK_INIT_01.asc) (blob Git exact `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964`). Sortie AMOS/WinUAE `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. Le `Type mismatch` du premier essai provenait du test, corrigé avant validation.

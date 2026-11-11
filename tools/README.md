@@ -1,4 +1,14 @@
-# Outils Python actifs — R30 validée WinUAE et LAST_GOOD
+# Outils Python actifs — R31 candidate Gate A ; R30 LAST_GOOD WinUAE-PASS
+
+## R31 0.10.3 — candidate AGAPAL Capture : Gate A CPU PASS / Gate B WinUAE en attente (11/11/2026)
+
+**Nouvelle instruction unique :** `_OK=Aga Palette Bank Capture(Start(bank),index)` ; index 0..N-1. Lecture `GetRGB32` de la `ColorMap` de l'écran AGA Intuition privé actif, conversion en RGB24 (octet de poids fort de chaque composante), écriture du seul emplacement AGAPAL sélectionné (768 octets et nombre réel 1..256). Un nouvel appel écrase cet emplacement et remet les octets inutilisés à zéro, sans modifier les autres palettes ni l'affichage. Retour entier 1/0 ; rejet avant écriture sur index, banque, en-tête AGAPAL, écran ou allocation temporaires invalides. **Fournir uniquement le `Start(bank)` d'une banque DATA AMOS vivante et déjà initialisée par R30**, jamais un pointeur libre/arbitraire.
+
+**Candidat publiable Gate A :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib`, **R31 0.10.3**, **18 520 octets**, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. **107 scénarios natifs CPU 68000 PASS**, export 68000 strict PASS et [CI source complète 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394); résultat CI du commit de publication à contrôler séparément. **Gate B AMOS/WinUAE NON TESTÉE**, Gates C Compiler/D Amiga réel NON TESTÉES.
+
+**Protection R30 :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure la **R30 0.10.2 validée WinUAE**, 17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive figée R30. Le test unique à exécuter via `Project → Merge ASCII` est [`tests/current/M13_R31_AGAPAL_CAPTURE_01.asc`](../tests/current/M13_R31_AGAPAL_CAPTURE_01.asc) ; il remplace banques AMOS 10/11 et `RAM:R31_AGAPAL_CAPTURE.ABK`. **Aucune promotion de `LAST_GOOD` avant un PASS explicite WinUAE utilisateur.** Aucune autre commande (import/apply/fades/cycling) n'est autorisée sans discussion séparée.
+
+---
 
 ## R30 0.10.2 — AGAPAL Bank Init validée Gate B AMOS/WinUAE
 
@@ -24,6 +34,8 @@
 **Suite M13 :** fonctions de banques de palettes (Fast RAM privilégiée) et fades natifs `Aga Fade To Bank/Black/White`, puis cycling. **Avant chaque nouvelle fonction, discuter et valider son contrat avec l'utilisateur ; aucune implémentation anticipée.**
 
 ---
+
+**Outils R31 :** `m13_agapal_capture_r31_emit.py` (68000), `build_m13_agapal_capture_r31.py` (candidate reproductible depuis R30), `test_m13_agapal_capture_r31.py` (107 scénarios CPU). R31 en Gate A PASS ; test WinUAE actif, R30 toujours `LAST_GOOD`.
 
 **Outils R30 :** `m13_agapal_r30_emit.py` (68000), `build_m13_agapal_r30.py` (reproductible depuis R29), `test_m13_agapal_r30.py` (39 scénarios CPU). La candidate R30 est à tester sous WinUAE ; R29 reste `LAST_GOOD`.
 
