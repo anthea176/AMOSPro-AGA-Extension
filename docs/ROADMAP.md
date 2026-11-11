@@ -1,5 +1,12 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## R34 0.10.6 — Aga Fade To Black : contrat validé, Gate A CPU/CI en préparation (11/11/2026)
+
+**Une seule fonction approuvée :** `_OK=Aga Fade To Black(vbl)`, durée entière 1..255 VBL, 0/négatif/>255 refusé. Fonction bloquante : un `WaitTOF` puis `LoadRGB32` par VBL, interpolation RGB24 à pas fixe signé 8.8 depuis `GetRGB32` ; dernier VBL exactement noir pour tous les pens logiques (1..256). Écran AGA Intuition privé indexé, pas HAM/EHB/dual playfield, ColorMap valide. Aucun argument ou accès à banque AGAPAL, aucune écriture pixels/banques, mémoire temporaire Exec `8+42*N` (max 10 760 octets) libérée. Retour 1 terminé / 0 rejet sans changement. Pas de promesse de durée N/50s si 68000 dépasse une VBL. [Contrat R34](M13_FADE_BLACK_R34.md).
+
+**Statut initial :** source 68000, builder en mémoire, tests CPU et [../tests/current/M13_R34_FADE_TO_BLACK_01.asc WinUAE R34](ASC) préparés. **R34 Gate A et Gate B NON encore testées.** N'utiliser l'ASC (150 VBL avec bandes déjà visibles, aucune banque remplacée) qu'après publication de candidate Gate A PASS. **R33 0.10.5 reste `LAST_GOOD` WinUAE-PASS** : 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`. Gates C Compiler/D physique non testées. Une fonction à la fois, aucun autre dépôt ou branche, prochaine fonction à discuter avant code.
+
+---
 ## R33 0.10.5 VALIDÉE — Gates A CPU/CI et B fonctionnelle AMOS/WinUAE PASS (11/11/2026)
 
 **Nouvelle fonction :** `_OK=Aga Fade To Bank(Start(bank),index,vbl)`. Fondu RGB24 **bloquant** sur 1..255 VBL ; `WaitTOF` puis `LoadRGB32` par image, interpolation 8.8 signée, **dernière image RGB24 exacte**. Uniquement les pens 0..compte-1 sont modifiés ; banques/pixels et pens supérieurs restent inchangés. `vbl=0` refusé ; pour une application immédiate utiliser `Aga Palette Bank Apply`. Requiert une banque DATA AGAPAL **vivante** (`Start(bank)` réel), une palette non vide et un écran AGA indexé privé. Scratch Exec temporaire `8+42*N` (10 760 octets max), libéré. Les VBL ne garantissent pas une durée réelle stricte si le calcul dépasse une trame.

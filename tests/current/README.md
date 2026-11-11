@@ -1,7 +1,11 @@
-# Tests AMOS actifs
+# Test AMOS actif — R34 Fade To Black
 
-**Aucun test `.asc` actif** : la Gate A CPU/CI (**51 scénarios 68000** et [CI de publication 35/35 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43045308067)) et la Gate B fonctionnelle AMOS interprété/WinUAE ont passé R33 0.10.5 le 11/11/2026. Le programme de régression exact [`M13_R33_AGAPAL_FADE_01.asc`](../passed/M13_R33_AGAPAL_FADE_01.asc) est archivé **sans modification** dans `tests/passed/`. Capture : `FADE0 1 GREEN 65280`, `FADE1 1 BLUE 255 SAME 1 255`, `PART 1 PEN3 660510 PEN28 16711680`, `RELOAD 1 BLUE 255`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin normale ligne 141.
+**Un seul ASC actif :** [`M13_R34_FADE_TO_BLACK_01.asc`](M13_R34_FADE_TO_BLACK_01.asc).
 
-**Attention : le test fonctionnel ne montre presque pas le fondu à l'écran.** Il réalise `Aga Swap` et `Amos To Back` après les transitions de 12/1/2 VBL. Une [démo visuelle distincte](../../examples/fade_to_bank_r33.asc), confirmée visible et fonctionnelle par l'utilisateur sous WinUAE le 11/11/2026, présente l'écran avant les fondus, des transitions de 150 VBL et des pauses. La démo écrase la banque 12.
+**Gate A CPU/CI R34 en préparation, Gate B WinUAE NON TESTÉE.** Ne pas exécuter avec R33 : la fonction n'existe pas encore dans cette bibliothèque. Installer uniquement la candidate R34 après Gate A PASS (même slot APSystem, redémarrage AMOS), puis **New → Project → Merge ASCII**.
 
-`dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R33, 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`. R32 reste figée en archive. Le fondu visible a été confirmé dans la démo WinUAE ; cadence/FPS et durée réelle non mesurées, Gate C Compiler et Gate D Amiga physique non testées.
+Test : écran AGA 320×256×256, trois grandes bandes colorées affichées avec `Aga Swap` puis `Amos To Back` **avant** un fondu de 150 VBL. Vérifier les pens 28, 29, 30 et 224 noirs, les durées invalides (0/256/-1/65536), durées 1/2 VBL, noir déjà atteint, fermeture et retour sans erreur. **Aucune banque AMOS ni fichier ABK/IFF n'est remplacé.**
+
+Résultats attendus : `FADE150 1 BLACK 0 0 0 0`, `BAD0 0 BAD256 0 BADNEG 0 BADL 0`, `BEFOREBAD 7915560 AFTERBAD 7915560`, `FADE1 1 ONE 0 FADE2 1 TWO 0`, `SAME 1 SAME28 0`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**.
+
+**R33 0.10.5 reste la dernière version validée et LAST_GOOD.** Gates Compiler et Amiga réel non testées.
