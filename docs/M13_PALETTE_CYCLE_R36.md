@@ -23,16 +23,22 @@ For _I=1 To 60
 Next _I
 ~~~
 
-Le test [`M13_R36_PALETTE_CYCLE_01.asc`](../tests/current/M13_R36_PALETTE_CYCLE_01.asc) présente quatre bandes colorées **avant** le début du cycling, puis 20 rotations espacées de huit VBL chacune. Il vérifie les deux sens, une inversion qui restaure la palette, les couleurs RGB24 attendues, les invalides et le retour propre à AMOS. **Aucune banque AMOS ni aucun fichier ABK/IFF écrasé.**
+Le test [`M13_R36_PALETTE_CYCLE_01.asc`](../tests/passed/M13_R36_PALETTE_CYCLE_01.asc) présente quatre bandes colorées **avant** le début du cycling, puis 20 rotations espacées de huit VBL chacune. Il vérifie les deux sens, une inversion qui restaure la palette, les couleurs RGB24 attendues, les invalides et le retour propre à AMOS. **Aucune banque AMOS ni aucun fichier ABK/IFF écrasé.**
 
-## État de la version : Gate A CPU/CI PASS, Gate B WinUAE en attente
+## Statut R36 — Gates A CPU/CI et B AMOS interprété/WinUAE PASS (11/11/2026)
 
-**Gate A PASS :** **106 scénarios CPU 68000 natifs** (RGB32 exact, rotation +1/-1, 256 pens, couleurs hors plage inchangées, boucles inverses, absence `WaitTOF`, ABI et rejets atomiques), export natif 68000 strict PASS, [CI Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43064528445). **42 tokens AP20.**
+**Gate A PASS :** 106 scénarios réels CPU 68000 (RGB32 exact, sens +/-1, 256 pens, indices hors plage préservés, rotations inverses, ABI, sans WaitTOF), export source 68000 strict et [CI candidate complète 38/38 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43064975345), **42 commandes AP20**.
 
-**Candidate R36 publique :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib`, **21 836 octets**, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`, copies strictement identiques. Générée de manière déterministe à partir de l'archive R35 WinUAE-PASS. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R35 0.10.7** (21 300 octets, SHA256 `ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539`), inchangée.
+**Gate B PASS — capture de l'utilisateur sous AMOS interprété/WinUAE :** quatre bandes affichées avant 20 rotations espacées de huit VBL. `OPEN 1 DB 1 DRAW 1 1 1 1`, `CYC20 1 RESTORED 16711680 16776960`, `FWD 1 COLOR 16776960 16711680 65280 255`, `REV 1 RESTORE 16711680 16776960`, `NEG 1 COLOR 65280 16711680 POS 1`, `RESET 16711680 16776960`, `BADFIRST 0 BADEQ 0 BADORDER 0`, `BADLAST 0 DIR0 0 DIR2 0 DIRN 0`, `AFTERBAD 16711680 NOSCREEN 0`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin normale à la ligne **138**. L'utilisateur confirme « fct nickel ! » ; cycling visuellement fonctionnel. Pas de mesure FPS ni de durée réelle.
 
-**Gate B WinUAE NON TESTÉE :** [`tests/current/M13_R36_PALETTE_CYCLE_01.asc`](../tests/current/M13_R36_PALETTE_CYCLE_01.asc) affiche 4 bandes avant le cycling (20 rotations, pause 8 VBL), confirme le sens des rotations, les couleurs exactes, rejets et fermeture propre. **Aucune banque AMOS ni fichier écrasé.** Installer la candidate dans `APSystem`, même slot, redémarrer AMOS, importer par **New → Project → Merge ASCII**.
+**Promotion sans recompilation :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib`, **21 836 octets**, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`, binaires octet pour octet identiques. Archive R35 0.10.7 préservée intacte, 21 300 octets, SHA256 `ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539`.
 
-Après confirmation utilisateur, promouvoir **sans recompilation** dans `LAST_GOOD`, archiver l'ASC exact à l'octet et actualiser les deux README, docs et CI dans le même commit. Gates C Compiler/D matériel non testées.
+**Test original archivé à l'octet près :** [`tests/passed/M13_R36_PALETTE_CYCLE_01.asc`](../tests/passed/M13_R36_PALETTE_CYCLE_01.asc), blob Git `4644236576033f755ac0dc274f6f22f92a2d9201`, identique au fichier de `tests/current/` exécuté par l'utilisateur ; **aucun ASC actif après archivage**. Aucune banque AMOS ni fichier ABK/IFF remplacé.
 
-- Gates C Compiler et D Amiga AGA physique restent **NON TESTÉES**. Toute fonction R37 doit faire l'objet d'une discussion et d'une approbation distinctes.
+- Émetteur : `tools/m13_palette_cycle_r36_emit.py`.
+- Builder déterministe : `tools/build_m13_palette_cycle_r36.py` (base archive R35 figée, pas de modification des octets après test).
+- Régressions natives : `tools/test_m13_palette_cycle_r36.py`.
+- **Gates C Compiler et D Amiga AGA réel NON TESTÉES**. Toute fonction R37 exige discussion et accord explicite ; rester sur `main`.
+
+
+

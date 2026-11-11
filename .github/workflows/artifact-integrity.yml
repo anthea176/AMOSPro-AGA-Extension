@@ -132,21 +132,21 @@ jobs:
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib
 
-      - name: M13 R35 frozen Fade To White — Gate A CPU 68000 + LAST_GOOD archive
+      - name: M13 R35 frozen Fade To White — Gate A CPU 68000 archive
         run: |
           python -B tools/test_m13_aga_fade_white_r35.py
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R35_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R35_GateA.Lib --out /tmp/amos-aga-r35-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build,ARCHIVE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(), 'R35 frozen archive/LAST_GOOD mismatch'; print('R35 frozen archive/LAST_GOOD:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R35 frozen archive mismatch'; print('R35 frozen archive:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib
 
-      - name: M13 R36 Palette Cycle — Gate A CPU 68000 candidate, R35 LAST_GOOD protected
+      - name: M13 R36 validated Palette Cycle — Gate A CPU 68000 + LAST_GOOD
         run: |
           python -B tools/test_m13_palette_cycle_r36.py
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R36_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R36_GateA.Lib --out /tmp/amos-aga-r36-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build,ARCHIVE,DEST,LAST_GOOD,BASE; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(), 'R36 current/archive mismatch'; assert LAST_GOOD.read_bytes()==BASE.read_bytes(), 'R35 LAST_GOOD changed'; print('R36 candidate/archive, R35 LAST_GOOD:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(), 'R36 current/archive/LAST_GOOD mismatch'; print('R36 current/archive/LAST_GOOD:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib
 

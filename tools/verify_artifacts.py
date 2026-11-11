@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R36 Gate A CPU candidate current, R35 WinUAE-PASS LAST_GOOD; frozen historical archives."""
+"""Current integrity: R36 Gates A/B PASS current/LAST_GOOD; frozen R35 and historical archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -32,7 +32,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -97,7 +97,7 @@ def main():
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -107,7 +107,7 @@ def main():
     r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
     r35 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
     r36 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
-    assert candidate == r36, "dist must contain Gate-A-PASS R36 candidate"
+    assert candidate == r36, "dist must contain WinUAE-PASS R36 release"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -373,7 +373,7 @@ def main():
         assert len(matches)==1 and (matches[0]["instruction"],matches[0]["function"],matches[0]["signature"])==(1,index,sig)
     built35,info35=build_r35()
     assert r35==built35==build_r35()[0], "R35 frozen archive not reproducible"
-    assert r35!=r34 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r35
+    assert r35!=r34
     assert len(seg36)==48 and seg36[:46]==seg35[:46], "R36 changed frozen R35 code"
     assert seg36[46]==seg35[46]+GETP, "R36 changed R35 White except GetP"
     assert seg36[ENTRY_CYCLE] and not seg36[ENTRY_CYCLE].endswith(GETP), "R36 Cycle missing"
@@ -387,8 +387,8 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert candidate==r36==built36==build_r36()[0], "R36 current/archive not reproducible"
-    assert candidate!=r35 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r35
-    print("PASS: R36 current/archive 42 AP20 tokens; LAST_GOOD WinUAE-PASS R35;"
+    assert candidate!=r35 and binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r36
+    print("PASS: R36 current/archive/LAST_GOOD 42 AP20 tokens; LAST_GOOD WinUAE-PASS R36;"
           " R35 and all historical archives frozen")
 
 

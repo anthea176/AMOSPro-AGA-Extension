@@ -1,24 +1,11 @@
 # Tests AMOS actifs
 
-**Un seul ASC actif pour R36 :** [`M13_R36_PALETTE_CYCLE_01.asc`](M13_R36_PALETTE_CYCLE_01.asc). **Gate A CPU/CI R36 PASS (106 scénarios natifs 68000, export strict, [CI réussie](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43064528445)). Gate B WinUAE NON TESTÉE.** Ne pas exécuter avec la R35 `LAST_GOOD`, qui ne contient pas `Aga Palette Cycle`.
+**Aucun test `.asc` actif** après validation R36 0.10.8 sous AMOS interprété/WinUAE le 11/11/2026.
 
-Installer la candidate R36 0.10.8 maintenant publiée (21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`) depuis `dist/` dans le même slot APSystem, redémarrer AMOS, puis **New → Project → Merge ASCII**.
+Le [test exact `M13_R36_PALETTE_CYCLE_01.asc`](../passed/M13_R36_PALETTE_CYCLE_01.asc) a été archivé sans modification dans `tests/passed/` (Git blob `4644236576033f755ac0dc274f6f22f92a2d9201`).
 
-Le test dessine quatre bandes rouge, verte, bleue et jaune, les affiche par `Aga Swap` puis `Amos To Back`, effectue **20 rotations avec huit VBL entre les appels**, puis teste les deux sens, les valeurs RGB24 exactes et le refus de paramètres incorrects. **Aucune banque AMOS ni fichier ABK/IFF écrasé.**
+Capture : `CYC20 1 RESTORED 16711680 16776960`, `FWD 1 COLOR 16776960 16711680 65280 255`, `REV 1 RESTORE 16711680 16776960`, `NEG 1 COLOR 65280 16711680 POS 1`, invalides à 0, `AFTERBAD 16711680 NOSCREEN 0`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne 138. Cycling visible confirmé, sans mesure FPS ni de durée réelle.
 
-Principaux résultats attendus :
+**R36 0.10.8 est `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R36, **21 836 octets**, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`. Archive R35 0.10.7 intacte.
 
-~~~text
-CYC20 1 RESTORED 16711680 16776960
-FWD 1 COLOR 16776960 16711680 65280 255
-REV 1 RESTORE 16711680 16776960
-NEG 1 COLOR 65280 16711680 POS 1
-RESET 16711680 16776960
-BADFIRST 0 BADEQ 0 BADORDER 0
-BADLAST 0 DIR0 0 DIR2 0 DIRN 0
-AFTERBAD 16711680 NOSCREEN 0 CLOSED -1
-RESULT 1
-CLOSE RETURNED
-~~~
-
-**R35 0.10.7 demeure `LAST_GOOD` WinUAE-PASS** jusqu'à validation explicite de la Gate B R36. Gates C Compiler et D Amiga physique non testées.
+Gates C Compiler et D Amiga AGA réel non testées. Toute nouvelle fonction (R37) doit être discutée et approuvée avant code ou test.

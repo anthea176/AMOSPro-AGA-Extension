@@ -263,7 +263,7 @@ def run():
           cases,"scenarios",flush=True)
     print("R36 deterministic in-memory candidate:",
           {k:v for k,v in meta.items() if k!="labels"},flush=True)
-    print("Gate B interpreted AMOS/WinUAE, Gate C Compiler, Gate D physical AGA: NOT TESTED")
+    print("R36 Gate B interpreted AMOS/WinUAE: USER PASS 2026-11-11 (exact test archived); Gate C Compiler and D physical AGA: NOT TESTED")
 
 
 if __name__=="__main__":
