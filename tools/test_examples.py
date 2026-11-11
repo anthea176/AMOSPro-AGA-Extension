@@ -96,8 +96,11 @@ def main() -> None:
             "_ERR=3" in showcase, "show.asc needs bounded failure exits")
 
     fade = (EXAMPLE_DIR / "fade_to_bank_r33.asc").read_text("ascii")
-    require(fade.index("_SWAP=Aga Swap") < fade.index("Amos To Back") <
-            fade.index("_GREEN=Aga Fade To Bank"),
+    instructions = [line.strip() for line in fade.splitlines()
+                    if line.strip() and not line.lstrip().startswith("'")]
+    require(instructions.index("_SWAP=Aga Swap") <
+            instructions.index("Amos To Back") <
+            instructions.index("_GREEN=Aga Fade To Bank(_PTR,1,150)"),
             "R33 visual fade must present scene BEFORE animating ColorMap")
     require(all(fragment in fade for fragment in (
         "_GREEN=Aga Fade To Bank(_PTR,1,150)",
