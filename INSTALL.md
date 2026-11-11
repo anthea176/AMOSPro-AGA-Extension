@@ -36,7 +36,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R38 test candidate:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R38 archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib), **23,256 bytes**, SHA256 `948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5`. **CPU/CI Gate A PASS; WinUAE Gate B NOT TESTED.** [R38 test](tests/current/M14_R38_FONT_BANK_01.asc) — put your own `AMCAF_FONT9.abk` in `RAM:` (Topaz bank not redistributed). **Last validated:** [R37 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 22,328 bytes, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. R36 and all earlier archives unchanged.
+**R38 test candidate:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R38 archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib), **23,380 bytes**, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`. **CPU/CI Gate A PASS; WinUAE Gate B NOT TESTED.** [R38 test](tests/current/M14_R38_FONT_BANK_01.asc) — put your own `AMCAF_FONT9.abk` in `RAM:` (Topaz bank not redistributed). **Last validated:** [R37 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 22,328 bytes, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. R36 and all earlier archives unchanged.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

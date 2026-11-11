@@ -7,8 +7,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
-    "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
+    "dist/AMOSPro_AGA.Lib": "09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366",
+    "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib": "09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366",
+    "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38_FAILED_BANK0.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
     "dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib": "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib": "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib": "ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539",
@@ -422,7 +423,7 @@ def main():
     for name,index,sig in API_R38:
         found=[x for x in named38 if x["name"]==name]
         assert len(found)==1 and found[0]["function"]==index and found[0]["signature"]==sig
-    assert meta38["sha256"]=="948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5" and meta38["size"]==23256
+    assert meta38["sha256"]=="09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366" and meta38["size"]==23380
     assert (ROOT/"tests/current/M14_R38_FONT_BANK_01.asc").is_file(), "R38 WinUAE test must be active"
     print("PASS: R38 current/archive Gate A candidate 44 AP20 tokens; R37 LAST_GOOD WinUAE-PASS;"
           " R36 and all historical archives frozen")

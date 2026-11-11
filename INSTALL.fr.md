@@ -36,7 +36,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**Candidate R38 à tester :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib), **23 256 octets**, SHA256 `948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5`. **Gate A CPU/CI PASS ; Gate B WinUAE non encore testée.** [Test R38](tests/current/M14_R38_FONT_BANK_01.asc) — copier son propre `AMCAF_FONT9.abk` dans `RAM:` (la fonte Topaz n'est pas distribuée ici). **Dernière version validée :** [R37 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. R36 et autres archives intactes.
+**Candidate R38 à tester :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib), **23 380 octets**, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`. **Gate A CPU/CI PASS ; Gate B WinUAE non encore testée.** [Test R38](tests/current/M14_R38_FONT_BANK_01.asc) — copier son propre `AMCAF_FONT9.abk` dans `RAM:` (la fonte Topaz n'est pas distribuée ici). **Dernière version validée :** [R37 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. R36 et autres archives intactes.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 
