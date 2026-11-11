@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M13 — R28 0.10.0 palettes RGB : source CPU/CI en vérification
+
+**11/11/2026 — début d'implémentation M13**. Ordre décidé : M13 palettes (chargement, Set/Get, puis fades/cycling), M14 fontes, M15 Plot/Draw/Box/Circle. **R28 en source uniquement, sans nouvelle Lib publiée ni WinUAE testé.** [Contrat M13/R28](M13_PALETTE_R28.md) · [émetteur](../tools/m13_palette_r28_emit.py) · [builder en mémoire](../tools/build_m13_palette_r28.py) · [tests CPU 68000](../tools/test_m13_palette_r28.py).
+
+- **Premier incrément M13** : \`_OK=Aga Palette Load(file$)\` charge uniquement CMAP dans le ColorMap du ViewPort Intuition sans écrire BODY/bitplanes ; \`_OK=Aga Palette Set(pen,r,g,b)\` via \`LoadRGB32\` ; \`_RGB=Aga Palette Get(pen)\` via \`GetRGB32\`, retour \`$00RRGGBB\` ou \`-1\`.
+- **Sécurité** : couleur indexée, profondeur 1–8, validation ColorMap.Count et des limites, refus explicite HAM/EHB/dual playfield, CMAP valide de 1 à 256 couleurs. \`Palette Load\` conserve le WaitTOF du loader M5 ; \`Palette Set\` sans blocage VBL pour permettre animation contrôlée par AMOS.
+- **AP20** : **3 nouvelles commandes en fin de table** (31→34), **37→40 segments**. Segments 0..35 de R27 identiques et segment 36 \`Aga Text\` identique hormis \`GetP\` de séparation. Aucun lien clavier/souris déplacé : ajouts en fin de code. Vérifier sous Unicorn et via export strict avant binaire.
+- **Gates** : source et préflight CPU en cours ; **aucune candidate R28 publiée** avant Gate A complète. La suite palette fades/cycling est prévue après validation de ce socle, pas considérée implémentée.
+- **Base intouchée** : \`dist/AMOSPro_AGA.Lib\` est toujours **R27 0.9.3 WinUAE-PASS**, archives et \`LAST_GOOD\` préservés ; \`tests/current/\` reste vide. Aucune autre branche.
+
+---
+
 ## Décision de roadmap — M13 palettes, M14 fontes, puis M15 dessin 2D (11/11/2026)
 
 **Choix utilisateur confirmé :** enchaîner **M13 palettes AGA** (chargement sans pixels, RGB 24 bits, fades, cycling, sauvegarde/restauration), **M14 fontes** (compléter `Aga Text` R26), puis **M15 primitives graphiques 2D** (`Plot`, `Draw`, `Box`, `Circle`). Les sprites matériels, scrolling, dual playfield et Copper avancé passent à **M16+**. [Roadmap et périmètres](ROADMAP.md).

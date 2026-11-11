@@ -1,5 +1,12 @@
 # Outils Python actifs — R27 0.9.3 M12 (Gates A+B PASS sur scénarios CPU et AMOS/WinUAE)
 
+## M13 — R28 palette AGA RGB (source en préflight, aucun binaire R28)
+
+- [\`m13_palette_r28_emit.py\`](m13_palette_r28_emit.py) : charge CMAP sans modifier BODY, \`Palette Set\` par \`LoadRGB32\`, \`Palette Get\` par \`GetRGB32\` ; contrôles ColorMap/count/bitplanes, RGB8 et modes HAM/EHB.
+- [\`build_m13_palette_r28.py\`](build_m13_palette_r28.py) : builder **en mémoire** depuis l'archive R27 WinUAE-PASS, 3 fonctions AP20 ajoutées en fin de HUNK, ancien code conservé ; \`--emit-base64\` pour audit après PASS.
+- [\`test_m13_palette_r28.py\`](test_m13_palette_r28.py) : CPU 68000 Unicorn/Capstone, ABI/ressources, IFF palettes seuls, plages et refus, absence d'écriture bitplane ; **Gate A CI en cours, Gate B WinUAE NON TESTÉE**.
+- [Contrat M13](../docs/M13_PALETTE_R28.md). **Fades, cycling et sauvegarde restent à réaliser.** Lib courante R27 0.9.3 inchangée.
+
 ## M12 — R27 Safe Blitters (Gate A CPU/CI 403 cas PASS et Gate B AMOS/WinUAE 40 swaps PASS)
 
 - [`m12_blit_safe_r27_emit.py`](m12_blit_safe_r27_emit.py) : même garde `GetMsg(SafePort)` non bloquante avant DMA dans Copy/Fill, préserve `D6`/ABI et le bit Disp.

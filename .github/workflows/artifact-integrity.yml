@@ -31,6 +31,7 @@ on:
       - "tools/m10_rect_overlap_r25_emit.py"
       - "tools/m11_text_r26_emit.py"
       - "tools/m12_blit_safe_r27_emit.py"
+      - "tools/m13_palette_r28_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -71,6 +72,12 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M13 R28 palette base — in-memory 68000 CPU Gate A
+        run: |
+          python -B tools/test_m13_palette_r28.py
+          python -B tools/build_m13_palette_r28.py --emit-base64
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
+
       - name: M12 R27 Safe Blitter current binary — native 68000 Gate A and integrity
         run: |
           python -B tools/test_m12_blit_safe_r27.py
