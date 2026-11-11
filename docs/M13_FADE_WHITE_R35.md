@@ -23,17 +23,15 @@ _OK=Aga Fade To White(_VBL)
 _OK=Aga Fade To White(100)
 ```
 
-## État du développement
+## Statut R35 : Gate A CPU/CI PASS, Gate B AMOS/WinUAE en attente
 
-**Contrat approuvé, Gate A CPU/CI et Gate B WinUAE encore non testées pour R35.** R35 n'est pas encore une bibliothèque installable ; le builder n'écrit qu'en mémoire.
+**Gate A :** 50 scénarios CPU natifs 68000 PASS (vraies instructions 68000 Unicorn, registre ABI AMOS, interp RGB24, blanc final exact, durées 1..255 et invalides, mémoires conservées), export source 68000 strict PASS, [CI dédiée R35 Gate A réussie](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43057199711). 41 commandes AP20.
 
-**R34 0.10.6 est la version validée WinUAE et `LAST_GOOD`**, 20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`, identique à son archive figée.
+**Candidate publique :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib`, **21 300 octets**, SHA256 `ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539` (copies binaires identiques). Le binaire est le résultat déterministe du builder R35 depuis l'archive immuable R34. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R34 0.10.6 WinUAE-PASS**, 20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`, conservée exactement.
 
-- Émetteur R35 : `tools/m13_aga_fade_white_r35_emit.py`.
-- Builder : `tools/build_m13_aga_fade_white_r35.py` (base figée : archive R34, 40 commandes AP20), ajoute le token 41 `aga fade to white`, signature `00`, segment AP20 46.
-- Test CPU 68000 : `tools/test_m13_aga_fade_white_r35.py`, exécution des véritables octets avec Unicorn/Capstone, RGB32 blanc exact, pas DDA, ABI, LVO, durée, mémoire, écrans et invalides.
-- Test AMOS pour la Gate B : [`tests/current/M13_R35_FADE_TO_WHITE_01.asc`](../tests/current/M13_R35_FADE_TO_WHITE_01.asc), grandes bandes affichées avec `Aga Swap` et `Amos To Back` **avant le fondu visible de 150 VBL**. Vérifie les pens 28/29/30/224 blancs à 16777215, refus durées invalides 0/256/-1/65536, durée 1/2, appel sur écran déjà blanc, fermeture écran, `RESULT 1` et `CLOSE RETURNED`. **Aucune banque AMOS remplacée**.
-- Après PASS de Gate A et export source strict, publication de la candidate en `dist/AMOSPro_AGA.Lib` et archive `dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib`, avec **R34 toujours dans `LAST_GOOD`**.
-- La Gate B ne sera déclarée PASS **qu'après ton test AMOS interprété/WinUAE** ; les Gates C Compiler/D Amiga physique resteront non testées en l'absence de preuve.
+**Gate B NON TESTÉE :** [`tests/current/M13_R35_FADE_TO_WHITE_01.asc`](../tests/current/M13_R35_FADE_TO_WHITE_01.asc), scène dessinée et affichée par `Aga Swap` puis `Amos To Back` **avant** le fondu de 150 VBL ; contrôle des pens 28/29/30/224 tous à **16777215**, durées invalides, appel 1/2 VBL, déjà blanc, fermeture et retour AMOS. **Aucune banque AMOS ni fichier remplacé**. Installer candidate R35 dans `APSystem`, même slot, redémarrer AMOS puis **New → Project → Merge ASCII**.
+
+**Une fois Gate B validée par l'utilisateur**, promotion octet pour octet dans `LAST_GOOD`, archivage de l'ASC exact dans `tests/passed/`, mise à jour des deux README et CI complète. Gates C Compiler et D Amiga réel : **NON TESTÉES**.
+
 
 Aucune autre fonction n'est ajoutée à R35. Le contrat de R36 devra être discuté et approuvé avant tout développement.
