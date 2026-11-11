@@ -1,5 +1,12 @@
 # Outils Python actifs — R26 0.9.2 M11 (Gate A CPU/CI PASS et Gate B AMOS/WinUAE PASS sur texte initial + 40 swaps)
 
+## M12 — R27 Blitters Safe (prototype source sans nouveau binaire)
+
+- [`m12_blit_safe_r27_emit.py`](m12_blit_safe_r27_emit.py) : ajoute le même garde `Safe` non bloquant avant DMA dans Copy et Fill, préserve `D6`/ABI et ne lit jamais le port Disp.
+- [`build_m12_blit_safe_r27.py`](build_m12_blit_safe_r27.py) : reconstruit **en mémoire** depuis l'archive R26 figée (SHA vérifié), 37 segments/31 tokens inchangés, seuls 19/20/21 différents ; `BSR.W` du wrapper Clear recalculé.
+- [`test_m12_blit_safe_r27.py`](test_m12_blit_safe_r27.py) : tests 68000 Capstone/Unicorn Copy/Fill/Clear, refus pré-DMA, Safe/Disp, absence de port, ABI et 40 cycles simulés. **Gate A en attente de CI, Gate B WinUAE NON TESTÉE**.
+- [Contrat M12](../docs/M12_SAFE_BLITTER_R27.md). Aucun binaire R27 ni test `.asc` actif ; R26 reste l'actuelle bibliothèque distribuée.
+
 ## M11 — R26 `Aga Text` 0.9.2 : validation WinUAE initiale et multi-swap 40 images PASS
 
 - [`build_m11_text_r26.py`](build_m11_text_r26.py) : builder **en mémoire** reproductible depuis R25 figée ; candidate `dist/AMOSPro_AGA.Lib` = [archive R26](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib), SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`. Il ne modifie aucun binaire en étant exécuté.

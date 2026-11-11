@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M12 — R27 0.9.3, Blitters auto-protégés Safe : Gate A en préparation
+
+**11/11/2026 — incrément R27 autorisé, prototype 68000 et tests CPU ajoutés, aucun binaire R27 publié pour l'instant.** [Contrat M12/R27](M12_SAFE_BLITTER_R27.md) · [builder en mémoire](../tools/build_m12_blit_safe_r27.py) · [émetteur avec garde Safe partagée](../tools/m12_blit_safe_r27_emit.py) · [test CPU Unicorn](../tools/test_m12_blit_safe_r27.py).
+
+- **Fonctions visées :** `Aga Blit Copy`, `Aga Blit Fill` et, via son wrapper vers Fill, `Aga Blit Clear`. Elles doivent consulter `DBState+20` et traiter `GetMsg(SafePort)` **avant tout DMA**. Si Safe en attente, retour `0` sans dessin, sans blocage ni consommation de `Disp`.
+- **ABI maintenue :** aucune nouvelle commande ni nouveau token ; 37 segments AP20, 31 commandes AMOS. Les segments **19/20** gagnent le même garde CPU ; le segment **21** recalcule le saut `BSR.W` vers Fill. Tous les autres segments (dont `Aga Text` R26 et `Aga Swap`) doivent rester identiques.
+- **Gate A non encore validée :** nouvelle étape GitHub Actions de préflight CPU 68000 couvrant Copy/Fill/Clear, états Safe/Disp, refus sans DMA, port manquant, ABI et 40 alternances simulées. **Ne pas publier de binaire de test avant le PASS**.
+- **Binaire actuel inchangé :** `dist/AMOSPro_AGA.Lib` = **R26 0.9.2**, 14 044 octets, SHA256 `0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287`, Gate A+B PASS sur texte/40 swaps. R25/R24, `LAST_GOOD` R10 et tests validés immuables. **Aucun `.asc` actif**.
+- **Hors périmètre :** `Aga Back Fill` historique (entrée 12) n'est pas modifiée, pas de mesure de FPS, pas de Compiler ni matériel AGA physique. Aucune nouvelle branche.
+
+---
+
 ## M11 — R26 0.9.2 : tests texte et Safe/Disp multi-swap PASS sous WinUAE
 
 **11/11/2026 — deuxième validation WinUAE utilisateur.** Avec la bibliothèque **R26 0.9.2 inchangée**, le programme [`M11_R26_SAFE_SWAP_02.asc` archivé sans modifier un octet](../tests/passed/M11_R26_SAFE_SWAP_02.asc) a présenté **40 alternances visuelles A/B vert/rouge**, avec retour correct à AMOS **ligne 140**. Ce PASS s'ajoute au test [texte initial R26](../tests/passed/M11_R26_AGA_TEXT_01.asc) et au Gate A CPU/CI PASS (64 cas 68000, [CI complète R26](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42923706360)).
