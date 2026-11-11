@@ -1,5 +1,17 @@
 # EXTENSION_SOURCE_RULES.md
 
+## R38 0.11.0 — `Aga Font Bank Select` : Gate A CPU/CI PASS, Gate B WinUAE à tester (12/11/2026)
+
+**Contrat approuvé par l'utilisateur :** `_OK=Aga Font Bank Select(Start(bank),Length(bank))`. Sélectionne depuis AMOS une banque de fonte **AMCAF `BankFont` monochrome** créée par `Make Bank Font`, compatible avec les prochains `Aga Text` sur l'écran AGA privé. Source `Start`/taille `Length` de la banque AMOS vivante ; validations bornées de l'enveloppe native, signature `FONT`, métriques, bitmap et table `CharLoc`. Copie autonome en **Chip RAM** et reconstruction des pointeurs `TextFont` pour rester utilisable après `Erase bank`. Gestion du remplacement entre R37 AmigaOS et R38 AMCAF : `CloseFont` pour les fontes disque, `StripFont`/`FreeVec` pour les banques ; reset et fermeture propres. Fonte couleur et bitmap `Change Print Font` **hors R38**. [Contrat technique](docs/M14_FONT_BANK_R38.md).
+
+**Gate A native 68000/CI PASS :** **38 groupes** CPU de validation BankFont, mauvais pointeurs, corruptions, copie et durée de vie ; régressions R37 (20 groupes), R26 (64 cas) et R36 (106 scénarios) PASS ; export source 68000 strict PASS. [Workflow R38](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43120232970). **44 commandes AP20**, une seule nouvelle fonction.
+
+**Candidate R38 à tester :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib` à l'octet près, **23 256 octets**, SHA256 `948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5`. **R37 v0.10.9 demeure `LAST_GOOD`**, 22 328 octets, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. Test AMOS/WinUAE actif [`M14_R38_FONT_BANK_01.asc`](tests/current/M14_R38_FONT_BANK_01.asc) : l'utilisateur doit copier son propre fichier `AMCAF_FONT9.abk` dans `RAM:` avant `Load`. **Ne jamais distribuer la banque Topaz propriétaire** avec le dépôt. Modèle de test CPU à glyphes synthétiques originaux. Gate B **NON TESTÉE** ; Gates C Compiler et D Amiga réel **NON TESTÉES**. **Interdiction de promouvoir `LAST_GOOD` avant confirmation utilisateur de Gate B.**
+
+**Prochain sujet R39 :** fontes AMCAF 8×8 de `Change Print Font` encore **non approuvées et non codées**. Travailler exclusivement sur `main` de `anthea176/AMOSPro-AGA-Extension`, aucune autre branche ni dépôt. **Les sections R37 et antérieures ci-dessous sont historiques**, leurs anciennes mentions de « version courante » ne décrivent pas la candidate R38.
+
+---
+
 ## R37 0.10.9 — Aga Font Select : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 
 **Commande approuvée et implémentée :** `_OK=Aga Font Select(FontName$,YSize)`, sélection d'une fonte AmigaOS via `OpenDiskFont` (taille demandée 1..255, nom de 1..127 octets) ; `Aga Font Select("",0)` rétablit la fonte système. `Aga Text` applique `SetFont` avant `TextExtent` sur son RastPort AGA privé. Fonte libérée au remplacement, au reset et à `Aga Screen Close`. Les fontes des banques AMCAF ne sont **pas encore prises en charge**. [Contrat R37](docs/M14_FONT_SELECT_R37.md).

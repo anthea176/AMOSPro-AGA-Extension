@@ -1,5 +1,7 @@
 # M14 / R38 v0.11.0 — AMCAF BankFont selection
 
+**Implementation status: Gate A native 68000 CPU/CI PASS, WinUAE Gate B PENDING.** [Full R38 Gate A CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43120232970): 38 BankFont lifecycle and rejection groups PASS, R37 20 / R26 64 / R36 106 regression cases PASS; strict m68k native source export PASS. Candidate `dist/AMOSPro_AGA.Lib` = versioned R38 archive, **23,256 bytes**, SHA256 `948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5`, 44 named AP20 commands. R37 `LAST_GOOD` frozen at SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. Do not promote before user-confirmed Gate B. Compiler Gate C and physical AGA Gate D not tested.
+
 **User-approved contract:** `_OK=Aga Font Bank Select(Start(bank),Length(bank))`.
 This document describes the test **candidate**; R37 v0.10.9 remains WinUAE-PASS `LAST_GOOD` until R38 Gate B succeeds. R38 only adds one public AP20 command (44 commands total). Compiler Gate C and real AGA Gate D are not tested.
 

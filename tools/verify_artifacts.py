@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R37 Gate A/B PASS and promoted LAST_GOOD; R36 and older archives frozen."""
+"""Integrity: R38 Gate A candidate, R37 Gate A/B WINUAE-PASS LAST_GOOD; previous archives frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a",
+    "dist/AMOSPro_AGA.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
+    "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
     "dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib": "bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib": "f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225",
     "dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib": "ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539",
@@ -89,6 +90,7 @@ def main():
     from build_m13_aga_fade_white_r35 import build as build_r35, ENTRY_WHITE, API as API_R35
     from build_m13_palette_cycle_r36 import build as build_r36, ENTRY_CYCLE, API as API_R36
     from build_m14_font_select_r37 import build as build_r37, ENTRY_FONT_SELECT, API as API_R37
+    from build_m14_font_bank_r38 import build as build_r38, ENTRY_INDEX as ENTRY_BANK_FONT, API as API_R38
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -109,7 +111,7 @@ def main():
     r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
     r35 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
     r36 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 Gate-A candidate/archive mismatch"
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib"], "R38 Gate-A candidate/archive mismatch"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -389,25 +391,41 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"]
     built37,meta37=build_r37()
-    assert candidate==built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 candidate not reproducible"
-    tok37,seg37,_=split(candidate)
+    assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
+    tok37,seg37,_=split(built37)
     assert len(seg37)==49 and len(seg36)==48 and seg37[47]==seg36[47]+b"GetP"
     assert [i for i in range(48) if seg37[i]!=seg36[i]]==[8,36,47], "R37 changed unrelated AP20 entries"
     assert tok37.startswith(tok36[:-6]) and tok37!=tok36
-    audit37=inspect(parse(candidate))
+    audit37=inspect(parse(built37))
     assert not audit37["issues"], "R37 AP20 invalid"
     named37=[x for x in audit37["tokens"] if x["name"].startswith("aga ")]
     assert len(named37)==43 and sum(x["name"]=="aga font select" for x in named37)==1
     for name,index,sig in API_R37:
         found=[x for x in named37 if x["name"]==name]
         assert len(found)==1 and found[0]["function"]==index and found[0]["signature"]==sig
-    assert candidate!=r36 and meta37["sha256"]=="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
+    assert built37!=r36 and meta37["sha256"]=="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
     assert (ROOT/"tests/passed/M14_R37_FONT_SELECT_01.asc").is_file(), "R37 passed test not archived"
     assert not (ROOT/"tests/current/M14_R37_FONT_SELECT_01.asc").exists(), "R37 passed test must stay archived"
-    print("PASS: R37 current/archive/LAST_GOOD Gate A/B PASS, 43 AP20 tokens; R36 archive frozen;"
-          " R35 and all historical archives frozen")
+    built38,meta38=build_r38()
+    assert candidate==built38==build_r38()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib"], "R38 build not reproducible"
+    tok38,seg38,_=split(candidate)
+    assert len(seg38)==50 and len(seg37)==49, "R38 AP20 segment count"
+    assert seg38[:48]==seg37[:48] and seg38[48][:-4]!=seg37[48], "R38 modified frozen R37 entries"
+    assert seg38[48][-4:]==b"GetP" and seg38[49], "R38 missing segment delimiter"
+    assert tok38.startswith(tok37[:-6]) and tok38!=tok37
+    audit38=inspect(parse(candidate))
+    assert not audit38["issues"], "R38 AP20 invalid"
+    named38=[x for x in audit38["tokens"] if x["name"].startswith("aga ")]
+    assert len(named38)==44 and sum(x["name"]=="aga font bank select" for x in named38)==1
+    for name,index,sig in API_R38:
+        found=[x for x in named38 if x["name"]==name]
+        assert len(found)==1 and found[0]["function"]==index and found[0]["signature"]==sig
+    assert meta38["sha256"]=="948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5" and meta38["size"]==23256
+    assert (ROOT/"tests/current/M14_R38_FONT_BANK_01.asc").is_file(), "R38 WinUAE test must be active"
+    print("PASS: R38 current/archive Gate A candidate 44 AP20 tokens; R37 LAST_GOOD WinUAE-PASS;"
+          " R36 and all historical archives frozen")
 
 
 if __name__ == "__main__":

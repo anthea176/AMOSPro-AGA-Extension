@@ -4,6 +4,8 @@
 
 **État actuel M14/R37 :** `Aga Font Select(FontName$,YSize)` s'appuie sur `diskfont.library/OpenDiskFont` et `graphics.library/SetFont` sur le RastPort temporaire de `Aga Text`. Les fontes ouvertes sont détenues dans un état privé de l'extension et libérées au remplacement, au reset ou à `Aga Screen Close`. **Gates A CPU/CI et B AMOS/WinUAE PASS** (20 groupes natifs R37, régressions R26 64 et R36 106, export 68000 strict, validation visuelle utilisateur). `dist/AMOSPro_AGA.Lib`, `dist/AMOSPro_AGA_LAST_GOOD.Lib` et l'archive R37 sont strictement identiques (22 328 octets) ; R36 reste dans son archive versionnée. Pas de fonte AMCAF prise en charge à ce stade. [Contrat](M14_FONT_SELECT_R37.md).
 
+**Candidate M14/R38 :** `Aga Font Bank Select(Start(bank),Length(bank))` (44e commande AP20) sélectionne une fonte AMCAF monochrome `BankFont` depuis une copie privée Chip RAM, sans modifier la banque AMOS, avec nettoyage `StripFont`/`FreeVec` au remplacement, reset ou `Aga Screen Close`. `Aga Text` et les protections Safe/Disp restent inchangés par rapport à R37. **Gate A native 68000/CI PASS**, **Gate B WinUAE en attente**. Candidate R38 23 256 octets ; `LAST_GOOD` reste R37 WinUAE-PASS, inchangée. [Contrat](M14_FONT_BANK_R38.md).
+
 ## 1. Vue d'ensemble
 
 `AMOS Professional 365` → appels extension `AP20 / HUNK` → état partagé extension → `Intuition` / `graphics.library` → écran AGA, bitplanes et buffers. La couche AGA est indépendante des écrans historiques gérés par AMOS ; **ne pas supposer** que les commandes natives AMOS dessinent automatiquement sur l'écran Intuition de l'extension.
