@@ -1,18 +1,18 @@
 # EXTENSION_SOURCE_RULES.md
 
-## RÈGLE PRIORITAIRE — DISCUTER ET VALIDER CHAQUE FONCTION AVANT DE CODER (11/11/2026)
+## R29 0.10.1 VALIDÉE — Gate A + Gate B AMOS/WinUAE PASS, 11/11/2026
 
-## M13 R29 0.10.1 — candidate IFF Save : Gate A 49 cas CPU PASS, Gate B WinUAE EN ATTENTE (11/11/2026)
+**Preuves utilisateur :** test `M13_R29_PALETTE_SAVE_01.asc` exécuté sous AMOS interprété/WinUAE : `OPEN 1 DB 1`, `DRAW 1 1 1 1`, `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. L'utilisateur confirme également l'ouverture de la palette IFF produite avec ses **256 couleurs dans Cloanto Personal Paint (PPaint)** ; le fichier ne contient pas de pixels `BODY`. Cela établit l'interopérabilité **pour ce fichier et cet essai**, pas tous les éditeurs IFF.
 
-**Fonction R29 approuvée, implémentée exclusivement :** `_OK=Aga Palette Save(file$)`. Export palette de l'écran AGA Intuition au format IFF standard `FORM ILBM`, `BMHD` + `CMAP` RGB24 (1 à 256 couleurs), sans `BODY`/pixels. Le fichier existant est remplacé (`MODE_NEWFILE`). Résultat entier 1/0 et ressources temporaires libérées. Les 49 tests CPU 68000, dont roundtrip avec le chargeur R28, passent ; [CI complète 30/30 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43015949869) ; cela **ne prouve ni AMOS interprété, ni Compiler, ni Amiga physique**. [Dossier R29](docs/M13_PALETTE_R29.md).
+**Promotion obligatoire :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`, **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, octet pour octet. L'archive R28 est figée et conservée. Le fichier de test original (Git blob `b80baabe5533288cac3285a78c232827cce94085`) est déplacé **sans modification** dans `tests/passed/M13_R29_PALETTE_SAVE_01.asc` ; **aucun `.asc` actif** dans `tests/current/`.
 
-**Bibliothèques :** `dist/AMOSPro_AGA.Lib` = **R29 0.10.1 candidate**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; archive identique `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R28 0.10.0**, WinUAE PASS et SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`. Un seul test WinUAE actif : `tests/current/M13_R29_PALETTE_SAVE_01.asc`. Ne pas promouvoir R29 avant Gate B explicite.
+**Validation :** Gate A CPU 68000 **49 scénarios PASS**, [CI R29 avant promotion **30/30 PASS**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43016176793) ; Gate B interprété/WinUAE **PASS** sur le test et PPaint précités. **Gates C (Compiler) et D (matériel réel) NON TESTÉES**. La validation sous PPaint ne démontre pas l'affichage des pixels puisque le format est volontairement sans `BODY`.
 
-**Processus inchangé :** après validation R29, discuter la fonction suivante avec l'utilisateur **avant** code, qu'il s'agisse des banques en Fast RAM ou des fonctions `Aga Fade To Bank/Black/White`. Aucun Fade, aucune bank et aucun cycling ajouté dans R29.
+**Suite M13 :** fonctions de banques de palettes (Fast RAM privilégiée) et fades natifs `Aga Fade To Bank/Black/White`, puis cycling. **Avant chaque nouvelle fonction, discuter et valider son contrat avec l'utilisateur ; aucune implémentation anticipée.**
 
 ---
 
-
+## RÈGLE PRIORITAIRE — DISCUTER ET VALIDER CHAQUE FONCTION AVANT DE CODER (11/11/2026)
 
 **Demande explicite de l'utilisateur : avant chaque nouvelle fonction ou instruction, échanger sur sa conception, puis obtenir son accord sur le contrat de cette fonction, avant toute implémentation.**
 
@@ -26,7 +26,7 @@
 - **R29 accepté dans son principe :** poursuivre par la sauvegarde/export de palettes au **format IFF standard `FORM ILBM` + `CMAP`**, compatible avec les logiciels de dessin, sans format propriétaire. Les appels AMOS précis, le traitement des erreurs, le fichier de sortie et la restauration restent à discuter avant codage.
 - **Banques de palettes demandées :** pouvoir **charger/conserver une palette dans une bank mémoire**, indépendamment de son application immédiate au `ColorMap`. **Privilégier la Fast RAM lorsqu'elle est disponible**, avec comportement de repli et gestion d'échec mémoire à définir. Vérifier d'abord s'il faut une banque AMOS native ou une banque propre à l'extension, ainsi que son identifiant, son propriétaire, sa taille et sa libération ; aucun contrat d'allocation n'est encore arrêté.
 - **Fades natifs demandés (noms proposés, non exportés) :** `Aga Fade To Bank`, `Aga Fade To Black`, `Aga Fade To White`. Discuter **séparément, avant de coder chacune**, les paramètres (banque, durée/étapes), l'interpolation RGB24, le rythme VBL, l'aspect bloquant ou non, les cas limites, l'état final exact et l'interaction avec la palette courante/Copper.
-- Le **color cycling** viendra ensuite selon le même processus de discussion individuelle. **R29 0.10.1 ajoute uniquement `Aga Palette Save` et attend Gate B WinUAE.** Aucune banque/Fade/cycling nouveau n'est implémenté. R28 0.10.0 demeure `LAST_GOOD` à préserver.
+- Le **color cycling** viendra ensuite selon le même processus de discussion individuelle. **R29 0.10.1 est validée Gate B et promue dans `LAST_GOOD`, avec uniquement `Aga Palette Save`.** Aucune banque/Fade/cycling supplémentaire n'est implémentée. R28 0.10.0 demeure son archive immuable.
 
 ---
 
@@ -40,7 +40,7 @@
 4. **Aucun fichier `AMOSPro_AGA.Lib` dans un sous-répertoire arbitraire de `dist/`.** La version à installer est systématiquement `dist/AMOSPro_AGA.Lib`; les autres bibliothèques y ont un **nom versionné d'archive**, jamais besoin d'une manipulation manuelle/renommage par l'utilisateur.
 5. Travailler **uniquement sur `main`**, aucune branche nouvelle, aucun dépôt sans instruction explicite. Mettre à jour ensemble les règles, la CI, les empreintes et les README FR/EN.
 
-**Clôture M13/R28 11/11/2026 :** Gate B PASS sur capture `M13-R28-PALETTE-01`, `RESULT 1`, `FADEERR 0`, `CLOSE RETURNED`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont identiques à l'archive R28 (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`). Test original archivé octet pour octet dans `tests/passed/`. R27 reste dans son archive immuable (SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`). Gates C/D non testées ; fichier IFF choisi et animation complète non établis par la seule capture. Les états antérieurs « R28 en attente / LAST_GOOD R27 » ci-dessous sont historiques. 
+**Clôture historique M13/R28 11/11/2026 (avant R29) :** Gate B PASS sur capture `M13-R28-PALETTE-01`, `RESULT 1`, `FADEERR 0`, `CLOSE RETURNED`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont identiques à l'archive R28 (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`). Test original archivé octet pour octet dans `tests/passed/`. R27 reste dans son archive immuable (SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`). Gates C/D non testées ; fichier IFF choisi et animation complète non établis par la seule capture. Les états antérieurs « R28 en attente / LAST_GOOD R27 » ci-dessous sont historiques. 
 
 **État de référence immédiat (historique avant ce PASS) :** `dist/AMOSPro_AGA.Lib` = **R28 0.10.0**, candidate palettes, **Gate A PASS 159 scénarios CPU/CI, Gate B en attente** ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R27 0.9.3**, dernière version **confirmée WinUAE PASS** (40 swaps, test `tests/passed/M12_R27_SAFE_BLIT_01.asc`). L'ancienne `LAST_GOOD` **R10** subsiste **sans modification** dans `dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib`. Les R27/R28 restent aussi archivées par version. **Ne pas promouvoir R28 avant Gate B.**
 

@@ -1,12 +1,12 @@
-# M13 R29 0.10.1 — Palette Save : Gate A CPU 49 PASS, Gate B WinUAE EN ATTENTE
+# M13 R29 0.10.1 — Palette Save : Gate A + Gate B WinUAE PASS (11/11/2026)
 
-**Un seul test actif :** [`current/M13_R29_PALETTE_SAVE_01.asc`](current/M13_R29_PALETTE_SAVE_01.asc). Depuis R29, `dist/AMOSPro_AGA.Lib` est la candidate (17 472 octets ; SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`), identique à l'archive versionnée R29. Gate A CPU : **49 scénarios PASS**, y compris export IFF exact et rechargement par R28 ; [CI complète 30/30 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43015949869). Gate B **non exécutée** ; R28 0.10.0 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **inchangée et validée WinUAE**.
+**Test utilisateur archivé à l'octet près :** [`passed/M13_R29_PALETTE_SAVE_01.asc`](passed/M13_R29_PALETTE_SAVE_01.asc), Git blob `b80baabe5533288cac3285a78c232827cce94085`. Sortie WinUAE : `OPEN 1 DB 1`, `DRAW 1 1 1 1`, `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. **Personal Paint a chargé la palette IFF 256 couleurs**, sans données pixels BODY.
 
-Importer l'ASC via `Project → Merge ASCII` et exécuter sous AMOS interprété après installation de la candidate `dist/AMOSPro_AGA.Lib` sous son nom exact. Le test écrit deux fois la même palette sur `RAM:M13_R29_PALETTE_TEST.IFF`, restaure les couleurs par `Aga Palette Load`, vérifie `SAVE1 1 SAVE2 1 LOAD 1`, `AFTER 16711680`, `OTHER 795192`, `BLUE 128`, `RESULT 1` et `CLOSE RETURNED`. Un panneau rouge doit rester affiché. [Protocole](current/README.md) · [R29](../docs/M13_PALETTE_R29.md). Compiler et Amiga physique non testés.
+**Bibliothèques :** `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R29 0.10.1, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1` ; R28 conservée dans son archive. **Gate A : 49 scénarios CPU PASS et [CI 30/30 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43016176793). Gate B : PASS sur le scénario ci-dessus. Gates C/D non testées.** Aucun `.asc` actif dans `tests/current/`.
 
 ---
 
-**Les checkpoints R28 et antérieurs ci-dessous sont historiques :**
+**Les rapports R28 et antérieurs ci-dessous sont historiques ; ne pas interpréter leur statut de `LAST_GOOD` comme courant.**
 
 # M13 R28 — Gate B WinUAE PASS (11/11/2026)
 

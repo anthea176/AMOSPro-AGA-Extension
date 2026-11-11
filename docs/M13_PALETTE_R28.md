@@ -1,6 +1,6 @@
 # M13 / R28 0.10.0 — palette AGA 24 bits : premier incrément
 
-**État actualisé :** R28 reste la dernière version **validée WinUAE** et `LAST_GOOD`; un nouveau candidat R29 0.10.1 `Aga Palette Save` est disponible après Gate A CPU, test WinUAE non encore réalisé. [Dossier R29](M13_PALETTE_R29.md). Les notes R28 suivantes restent historiques et précisent leurs propres validations.
+**État actualisé :** R28 est une ancienne version **validée WinUAE**, conservée comme archive ; R29 0.10.1 `Aga Palette Save` a réussi la Gate A CPU et la Gate B WinUAE, la palette exportée est chargée dans Personal Paint. R29 a été promue en `LAST_GOOD`. [Dossier R29](M13_PALETTE_R29.md). Les notes R28 suivantes restent historiques et précisent leurs propres validations.
 
 ## R28 validée — 11/11/2026
 

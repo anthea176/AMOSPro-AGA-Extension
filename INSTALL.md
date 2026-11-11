@@ -7,7 +7,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R29 0.10.1 test candidate) directly into **`APSystem`**. **Exact name: `AMOSPro_AGA.Lib`, no renaming required.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` (validated R28) is the fallback, not the test candidate.
+2. Copy [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) (R29 0.10.1, WinUAE-validated) directly into **`APSystem`**. **Exact name: `AMOSPro_AGA.Lib`, no renaming required.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` now contains the same WinUAE-validated R29 bytes (a versioned R28 fallback remains archived).
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -36,7 +36,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Current installable version:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R28 0.10.0**, IFF/RGB palette candidate (**Gate A 159 CPU tests PASS; WinUAE not yet validated**). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R27 0.9.3**, last user-confirmed AMOS/WinUAE PASS on M12, automatically preserved as fallback. R10 remains in its versioned historical archive. **Promotion rule: after a user-confirmed Gate B PASS, the validated `.Lib` becomes `LAST_GOOD` in the repository.** No manual renaming or subdirectory.
+**Current installable version:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = **R29 0.10.1**, validated under AMOS interpreted/WinUAE (Save → overwrite → Load: `RESULT 1`, clean return) and PPaint palette import. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R29**, byte-identical to current and archived R29 (17,472 bytes, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`). R28 remains in its versioned archive. Gates Compiler/physical AGA untested.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

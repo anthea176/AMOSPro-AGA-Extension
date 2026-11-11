@@ -20,7 +20,7 @@ DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BASE_SHA256="ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c"
-LAST_GOOD_SHA256=BASE_SHA256
+LAST_GOOD_SHA256="fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1"
 OLD_ENTRIES=40
 ENTRY_SAVE=40
 GETP=b"GetP"
@@ -30,7 +30,7 @@ VERSION="R29 0.10.1"
 def build():
     raw=BASE.read_bytes()
     assert digest(raw)==BASE_SHA256,"R28 frozen archive changed"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"R28 LAST_GOOD changed"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD changed"
     tokens,old,_=split(raw)
     assert len(old)==OLD_ENTRIES and old[-1].endswith(bytes.fromhex("74004e75"))
     assert not old[-1].endswith(GETP)
