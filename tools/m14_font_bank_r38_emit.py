@@ -1,4 +1,4 @@
-"""R38 v0.11.0: AMCAF V1.31+ monochrome BankFont -> private AGA TextFont.
+"""R38 v0.11.0: AMCAF V1.31+ fixed/proportional monochrome BankFont -> private AGA TextFont.
 
 One AP20 integer-result command: Aga Font Bank Select(Start(bank),Length(bank)).
 Consumes the previous argument at (A3)+, length arrives in D3. The caller
@@ -63,7 +63,7 @@ def emit_bank_select():
     c.imm('cmp',5,D(0)); c.branch(5,'fail')
     c.imm('cmp',65535,D(0)); c.branch(2,'fail')
     c.move(I(0),D(0)); c.move(M(4,-12),D(0),'w')
-    c.imm('and',0xfffd,D(0),'w'); c.tst(D(0)); c.branch(6,'fail')
+    c.imm('and',0xfffc,D(0),'w'); c.tst(D(0)); c.branch(6,'fail') # flags 0..3: WORK/DATA, FAST/CHIP
     c.move(M(4,-8),D(0)); c.imm('cmp',0x42616e6b,D(0)); c.branch(6,'fail') # Bank
     c.move(M(4,-4),D(0)); c.imm('cmp',0x466f6e74,D(0)); c.branch(6,'fail') # Font
     c.move(M(4),D(0)); c.imm('cmp',0x464f4e54,D(0)); c.branch(6,'fail') # FONT
@@ -94,9 +94,16 @@ def emit_bank_select():
     c.move(I(0),D(0)); c.move(M(4,56),D(0),'b') # lo
     c.alu('sub',D(0),6); c.branch(5,'fail')
     c.quick(2,D(6))                 # glyphs including fallback
+    # Fixed font: CharLoc[n] (4*n). Proportional font (FPF_PROPORTIONAL):
+    # CharLoc[n] (4*n), CharSpace[n] (2*n), CharKern[n] (2*n).
     c.move(D(6),D(0)); c.shift(0,2,left=True)
     c.alu('add',D(5),0); c.branch(5,'fail')
-    c.alu('cmp',D(7),0); c.branch(6,'fail') # table reaches end exactly
+    c.move(I(0),D(1)); c.move(M(4,47),D(1),'b')
+    c.imm('and',0x20,D(1),'b'); c.tst(D(1),'b'); c.branch(7,'table_end')
+    c.move(D(6),D(1)); c.shift(1,2,left=True)
+    c.alu('add',D(1),0); c.branch(5,'fail')
+    c.label('table_end')
+    c.alu('cmp',D(7),0); c.branch(6,'fail') # all tables end at Length(bank)
 
     c.move(I(0),D(1)); c.move(M(4,62),D(1),'w') # modulo bytes
     c.tst(D(1)); c.branch(7,'fail')
@@ -125,6 +132,12 @@ def emit_bank_select():
 
     # Validate bounded CharLoc table (offset & width for all glyphs).
     c.move(A(4),D(0)); c.alu('add',D(5),0); c.move(D(0),A(1))
+    # For proportional fonts tf_XSize is the nominal advance, NOT the
+    # (often wider) monochrome bitmap glyph width from CharLoc.
+    c.move(I(0),D(0)); c.move(M(4,47),D(0),'b')
+    c.imm('and',0x20,D(0),'b'); c.tst(D(0),'b'); c.branch(7,'charloc_loop')
+    c.move(I(256),D(3))            # safe upper bound for proportional glyphs
+    c.label('charloc_loop')
     c.label('check_loc')
     c.move(I(0),D(0)); c.move(POST(1),D(0),'w')
     c.move(I(0),D(1)); c.move(POST(1),D(1),'w')
@@ -152,7 +165,22 @@ def emit_bank_select():
     c.move(A(4),D(0)); c.alu('add',D(5),0); c.move(D(0),M(4,64))
     c.move(I(0),M(4,38))           # no stale TextFontExtension: FONT payload offset24 + TextFont offset14
     c.move(I(0,'w'),M(4,54),'w')   # tf_Accessors 0
+    c.move(I(0),D(0)); c.move(M(4,47),D(0),'b')
+    c.imm('and',0x20,D(0),'b'); c.tst(D(0),'b')
+    c.branch(6,'prop_pointers')
     c.move(I(0),M(4,68)); c.move(I(0),M(4,72))
+    c.branch(0,'pointers_done')
+    c.label('prop_pointers')
+    # CharSpace = CharLoc + 4*n; CharKern = CharSpace + 2*n.
+    # Their saved disk pointers are stale; both are now within private CHIP RAM.
+    c.move(I(0),D(0)); c.move(M(4,57),D(0),'b')
+    c.move(I(0),D(1)); c.move(M(4,56),D(1),'b')
+    c.alu('sub',D(1),0); c.quick(2,D(0)); c.shift(0,2,left=True)
+    c.move(A(4),D(1)); c.alu('add',D(5),1); c.alu('add',D(0),1)
+    c.move(D(1),M(4,68))
+    c.shift(0,1,left=False); c.alu('add',D(0),1)
+    c.move(D(1),M(4,72))
+    c.label('pointers_done')
     c.move(I(0),D(0)); c.move(M(4,47),D(0),'b')
     c.imm('and',0xfc,D(0),'b')     # unset ROM/disk flags for heap-owned font
     c.move(D(0),M(4,47),'b')

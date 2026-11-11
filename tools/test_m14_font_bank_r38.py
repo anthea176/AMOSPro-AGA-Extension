@@ -202,6 +202,53 @@ def run():
     assert m.stripped==[ptr] and m.freed==[alloc] and not m.allocations
     groups+=1
 
+    # Regression for user-reported WinUAE BANK=0 on TWO actual .abk fonts:
+    # AMOS LOAD creates DATA banks (flags 1/3); previous code accepted only
+    # WORK banks (flags 0/2). Test real 1-bit fixed and proportional banks.
+    real_banks=(
+        'AMCAF_FONT9.abk',
+        'examples/Amcaf Fonts/Hwarf1250S.abk',
+        'examples/Amcaf Fonts/Hwarf1252S.abk',
+        'examples/Amcaf Fonts/Pix3M-1250L.abk',
+        'examples/Amcaf Fonts/Pix3M-1252L.abk',
+    )
+    for relpath in real_banks:
+        abk=(ROOT/relpath).read_bytes()
+        disk_bank,desc=read_abk(abk)
+        assert disk_bank in (10,25),relpath
+        assert desc.proportional==('AMCAF_FONT9.abk' not in relpath),relpath
+        for flags in (0,1,2,3):  # WORK/DATA, FAST/CHIP
+            m=BankMachine(raw,payload=abk[20:],flags=flags)
+            assert m.select_bank()==1,(relpath,flags)
+            ptr,alloc=m.bank_state()
+            assert ptr==alloc+FONT_AT
+            assert m.get(ptr+34)==alloc+desc.bitmap_at
+            assert m.get(ptr+40)==alloc+desc.loc_at
+            if desc.proportional:
+                assert m.get(ptr+44)==alloc+desc.loc_at+4*desc.glyphs,(relpath,flags,'CharSpace')
+                assert m.get(ptr+48)==alloc+desc.loc_at+6*desc.glyphs,(relpath,flags,'CharKern')
+            else:
+                assert m.get(ptr+44)==m.get(ptr+48)==0
+            assert m.text(value=b'BANK BEFORE ERASE')==1,(relpath,flags)
+            m.uc.mem_write(BANK,b'\0'*len(m.payload))  # AMOS Erase bank
+            assert m.text(value=b'BANK AFTER ERASE')==1,(relpath,flags)
+            assert m.select(b'',0)==1 and m.bank_state()==(0,0)
+            assert m.stripped==[ptr] and m.freed==[alloc] and not m.allocations
+            groups+=1
+
+    # Both layouts must be validated, including bounded extra tables for
+    # proportional fonts (CharSpace and CharKern after CharLoc).
+    prop=bytearray((ROOT/'examples/Amcaf Fonts/Hwarf1252S.abk').read_bytes()[20:])
+    variants=[
+        prop[:-2],                          # missing final kerning word
+        prop[:47]+bytes([prop[47]&~0x20])+prop[48:], # improper fixed-width flag
+        prop[:14]+b'\xff\xff'+prop[16:], # table offset outside payload
+    ]
+    for bad in variants:
+        m=BankMachine(raw,payload=bad,flags=3)
+        assert m.select_bank()==0 and not m.allocations
+        groups+=1
+
     # R37 diskfont selection -> R38 bank -> R37 selection must CloseFont/StripFont correctly.
     m=BankMachine(raw)
     assert m.select(b'topaz.font',8)==1
