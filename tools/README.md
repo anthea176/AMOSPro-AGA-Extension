@@ -1,14 +1,15 @@
-# Outils Python actifs — R30 candidate Gate A, LAST_GOOD R29 WinUAE-PASS
+# Outils Python actifs — R30 validée WinUAE et LAST_GOOD
 
-## R30 0.10.2 — AGAPAL Bank Init, candidate Gate A PASS / Gate B WinUAE à tester (11/11/2026)
+## R30 0.10.2 — AGAPAL Bank Init validée Gate B AMOS/WinUAE
 
-**API :** `_OK=Aga Palette Bank Init(Start(bank),N)` (deux entiers, retour 1/0). Uniquement sur banque DATA AMOS déjà réservée, de taille exacte `16+776×N`, `N=1..256`, numéro de banque 5..65535. Écrit le nom `AGAPAL  ` et l'en-tête/index, met à zéro les 768 octets RGB24 de chaque emplacement. Réinitialiser efface les couleurs. Le contrôle `TypeOfMem` ne garantit pas que l'adresse appartient à une allocation : transmettre seulement `Start(bank)` d'une banque DATA existante.
+**Gate B PASS confirmé par capture utilisateur le 11/11/2026 :** `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Fonction `_OK=Aga Palette Bank Init(Start(bank),N)` validée sur le scénario : banque DATA AMOS et rechargement ABK natif, aucun changement d'écran. **Gates C Compiler et D Amiga physique : non testées**.
 
-**Candidate :** `dist/AMOSPro_AGA.Lib` = R30 **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`. **`LAST_GOOD` reste R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, sans modification. **Gate A : 39 scénarios 68000 PASS**, export strict PASS, [CI de publication 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021754766). CI du commit de publication **32/32 PASS**. **Gate B interprété/WinUAE, C Compiler et D Amiga réel : NON TESTÉES.**
+**R30 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. Archive R29 conservée sans changement. Test corrigé archivé **sans modification**, blob Git `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964` : [`tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). `tests/current/` ne contient plus de test actif. Gate A 39 cas 68000 et [CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43022799794). CI de promotion à vérifier.
 
-**Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
+**Rappel :** l'erreur `Type mismatch` du premier essai était dans l'ASC de test ; elle a été corrigée en remplaçant `_STILL` par `_STILL$`. La R30 binaire n'a pas changé. Capture/import de palettes, fades et cycling sont encore **à discuter individuellement avant programmation**.
 
 ---
+
 
 
 

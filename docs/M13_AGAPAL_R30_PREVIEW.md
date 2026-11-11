@@ -1,16 +1,15 @@
-# M13 / R30 0.10.2 — candidate AGAPAL native (Gate A PASS, WinUAE en attente)
+# M13 / R30 0.10.2 — AGAPAL Bank Init validée WinUAE
 
-## R30 0.10.2 — AGAPAL Bank Init, candidate Gate A PASS / Gate B WinUAE à tester (11/11/2026)
+## R30 0.10.2 — AGAPAL Bank Init validée Gate B AMOS/WinUAE
 
-**API :** `_OK=Aga Palette Bank Init(Start(bank),N)` (deux entiers, retour 1/0). Uniquement sur banque DATA AMOS déjà réservée, de taille exacte `16+776×N`, `N=1..256`, numéro de banque 5..65535. Écrit le nom `AGAPAL  ` et l'en-tête/index, met à zéro les 768 octets RGB24 de chaque emplacement. Réinitialiser efface les couleurs. Le contrôle `TypeOfMem` ne garantit pas que l'adresse appartient à une allocation : transmettre seulement `Start(bank)` d'une banque DATA existante.
+**Gate B PASS confirmé par capture utilisateur le 11/11/2026 :** `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Fonction `_OK=Aga Palette Bank Init(Start(bank),N)` validée sur le scénario : banque DATA AMOS et rechargement ABK natif, aucun changement d'écran. **Gates C Compiler et D Amiga physique : non testées**.
 
-**Candidate :** `dist/AMOSPro_AGA.Lib` = R30 **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, identique à l'archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`. **`LAST_GOOD` reste R29 0.10.1**, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, sans modification. **Gate A : 39 scénarios 68000 PASS**, export strict PASS, [CI de publication 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021754766). CI du commit de publication **32/32 PASS**. **Gate B interprété/WinUAE, C Compiler et D Amiga réel : NON TESTÉES.**
+**R30 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. Archive R29 conservée sans changement. Test corrigé archivé **sans modification**, blob Git `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964` : [`tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). `tests/current/` ne contient plus de test actif. Gate A 39 cas 68000 et [CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43022799794). CI de promotion à vérifier.
 
-**Test actif unique :** `tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc` (initialisation 8 palettes, refus, `Save`/`Erase`/`Load` ABK). Aucune capture/import de couleurs ni aucun fade/cycling ajouté ; discussion obligatoire pour toute fonction suivante.
-
-**Essai Gate B WinUAE du 11/11/2026 :** le premier ASC R30 s'est arrêté sur `Type mismatch` à `_STILL=Peek$(_PTR,6)` (erreur de typage **dans le test**, chaîne affectée à une variable numérique). L'ASC corrigé utilise `_STILL$` dans l'affectation et dans la comparaison ; un contrôle statique de non-régression est ajouté. **Aucune validation ni défaillance de la bibliothèque R30 n'est établie** à ce stade : test complet à relancer. R29 reste `LAST_GOOD`.
+**Rappel :** l'erreur `Type mismatch` du premier essai était dans l'ASC de test ; elle a été corrigée en remplaçant `_STILL` par `_STILL$`. La R30 binaire n'a pas changé. Capture/import de palettes, fades et cycling sont encore **à discuter individuellement avant programmation**.
 
 ---
+
 
 
 
@@ -71,6 +70,6 @@ La signature de départ `_OK=Aga Palette Bank Init(10,8)` utilisait un **numéro
 
 Sources : `tools/m13_agapal_r30_emit.py` (68000), `tools/build_m13_agapal_r30.py` (construction mémoire depuis R29), `tools/test_m13_agapal_r30.py` (Unicorn 68000). `dist/` et `LAST_GOOD` restent R29 jusqu'à Gate A validée puis Gate B utilisateur. Ce développement ne comprend pas encore capture, import/export IFF, fade ou cycling.
 
-## Gate B : test de la candidate R30
+## Protocole historique : test de la R30 validée
 
 Installer [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R30 0.10.2 dans `APSystem`, relancer AMOS et importer [`tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/current/M13_R30_AGAPAL_BANK_INIT_01.asc) via **Project → Merge ASCII** depuis un programme vide. **Le test remplace les banques 10/11 et `RAM:R30_AGAPAL_TEST.ABK`.** Il vérifie l'initialisation (8 palettes), offsets 80/5456, rejets 0/257 et mauvaise taille, réinitialisation, sauvegarde/chargement ABK AMOS. Attendu : `INIT 1 REINIT 1`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. Le `TypeOfMem` de la fonction filtre des adresses absurdes, mais seul un vrai `Start(bank)` d'une banque réservée est admissible.

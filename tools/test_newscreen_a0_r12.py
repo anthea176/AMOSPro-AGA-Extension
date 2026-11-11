@@ -46,7 +46,7 @@ def main():
     data, report = build()
     r10 = BASE.read_bytes()
     assert data == ARCHIVE.read_bytes() == DEST.read_bytes()
-    # R10 is the frozen source archive. LAST_GOOD tracks latest WinUAE-PASS (R29).
+    # R10 is the frozen source archive. LAST_GOOD tracks latest WinUAE-PASS (R30).
     assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256
     assert digest(data) == R12_SHA256
     assert not audit(parse(data))["issues"]

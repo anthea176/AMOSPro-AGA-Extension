@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """R30 0.10.2: deterministic AP20 candidate in memory, one new function.
 
-Base R29 is WinUAE-validated and protected in LAST_GOOD. The new entry
+Base R29 is frozen in its versioned archive; R30 is the current LAST_GOOD. The new entry
 accepts a trusted AMOS Start(bank) DATA pointer and a palette slot count.
 Does not write dist files unless a separate Gate A-approved release step
 explicitly publishes the emitted bytes.
@@ -19,7 +19,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"
 BASE_SHA256="fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256=BASE_SHA256
+LAST_GOOD_SHA256="446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"
 GETP=b"GetP"
@@ -29,7 +29,7 @@ VERSION="R30 0.10.2"
 def build():
     original=BASE.read_bytes()
     assert digest(original)==BASE_SHA256,"frozen R29 archive changed"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"R29 LAST_GOOD changed"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD changed"
     tokens,parts,_=split(original)
     assert len(parts)==BASE_ENTRIES
     assert not parts[-1].endswith(GETP)

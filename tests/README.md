@@ -1,10 +1,11 @@
-# M13 R30 — Gate A 39 CPU PASS / Gate B WinUAE EN ATTENTE
+# Tests AMOS — R30 0.10.2, Gate A + Gate B WinUAE PASS
 
-**Retour WinUAE :** premier essai interrompu par un `Type mismatch` du programme de test (`_STILL=Peek$(...)`). Le fichier `.asc` est corrigé en `_STILL$`, et un contrôle statique empêche cette erreur de typage. **Gate B non validée**, R30 et R29 `LAST_GOOD` inchangées.
+**Test validé et archivé :** [`passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](passed/M13_R30_AGAPAL_BANK_INIT_01.asc) (blob Git exact `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964`). Sortie AMOS/WinUAE `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, `RESULT 1`, `CLOSE RETURNED`. Le `Type mismatch` du premier essai provenait du test, corrigé avant validation.
 
-**Test actif :** [`current/M13_R30_AGAPAL_BANK_INIT_01.asc`](current/M13_R30_AGAPAL_BANK_INIT_01.asc). Installe la candidate R30 `dist/AMOSPro_AGA.Lib` (17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`) puis valide son initialisation AGAPAL, les refus, et le `Save`/`Load` du véritable ABK. **La banque 10/11 et le fichier RAM:R30_AGAPAL_TEST.ABK sont remplacés.** [Gate A CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021754766) ; Gate B non testée, Gates C/D non testées. **R29 reste `LAST_GOOD`.**
+**Bibliothèques courante, archive et LAST_GOOD :** R30 0.10.2, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`, copies strictement identiques. R29 conservée en archive. Gate A : 39 cas CPU + CI [32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43022799794). **Gate B : PASS sur ce scénario. Gates C Compiler/D matériel réel : non testées.** Plus aucun ASC actif dans `tests/current/`.
 
 ---
+
 
 **R29 et états antérieurs ci-dessous sont historiques.**
 

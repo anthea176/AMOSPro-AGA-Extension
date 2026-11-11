@@ -1,5 +1,7 @@
 # M13 / R29 0.10.1 — sauvegarde de palette AGA au format IFF
 
+**État actuel au 11/11/2026 :** R30 0.10.2 `Aga Palette Bank Init` a passé Gate B WinUAE et remplacé R29 dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`. La R29 validée reste conservée, octet pour octet, dans `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. Les notes ci-dessous documentent la validation historique de R29, pas la bibliothèque actuelle.
+
 ## R29 0.10.1 VALIDÉE — Gate A + Gate B AMOS/WinUAE PASS, 11/11/2026
 
 **Preuves utilisateur :** test `M13_R29_PALETTE_SAVE_01.asc` exécuté sous AMOS interprété/WinUAE : `OPEN 1 DB 1`, `DRAW 1 1 1 1`, `SAVE1 1 SAVE2 1 LOAD 1`, `BEFORE 65280 BLACK 0 AFTER 16711680`, `OTHER 795192 BLUE 128 SWAP 1`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. L'utilisateur confirme également l'ouverture de la palette IFF produite avec ses **256 couleurs dans Cloanto Personal Paint (PPaint)** ; le fichier ne contient pas de pixels `BODY`. Cela établit l'interopérabilité **pour ce fichier et cet essai**, pas tous les éditeurs IFF.
@@ -20,7 +22,7 @@
 
 - **Binaire candidat à tester :** `dist/AMOSPro_AGA.Lib` = **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`.
 - **Archive versionnée identique :** `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`.
-- **Dernière WinUAE-PASS protégée (état actuel) :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, copie identique à l'archive R29. R28 reste archivèe.
+- **État historique lors de la clôture R29 :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` était **R29 0.10.1**, 17 472 octets, SHA256 `fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1`, copie identique à l'archive R29. R28 reste archivèe.
 - **Builder reproductible en mémoire :** `tools/build_m13_palette_save_r29.py` ; émetteur CPU 68000 : `tools/m13_palette_save_r29_emit.py` ; préflight et tests Unicorn/Capstone : `tools/test_m13_palette_save_r29.py`.
 - **Test WinUAE validé et archivé :** [`tests/passed/M13_R29_PALETTE_SAVE_01.asc`](../tests/passed/M13_R29_PALETTE_SAVE_01.asc), contenu original inchangé.
 

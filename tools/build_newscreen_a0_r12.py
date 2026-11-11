@@ -17,14 +17,14 @@ LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib"
 DEST = ARCHIVE  # R12 is frozen: never overwrite the active R13 candidate
 BASE_SHA256 = "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3"
-LAST_GOOD_SHA256 = "fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1"
+LAST_GOOD_SHA256 = "446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e"
 R12_SHA256 = "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec"
 
 
 def build():
     raw = BASE.read_bytes()
     assert digest(raw) == BASE_SHA256
-    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD changed (expected latest validated R29)"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD changed (expected latest validated R30)"
     tokens, parts, title = split(raw)
     assert len(parts) == 19 and len(parts[6]) == 736
     assert title.startswith(b"AMOSPro AGA M5 NTSC-PAL R10 0.6.1")
