@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib"
 BASE_SHA256="0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256=BASE_SHA256
+LAST_GOOD_SHA256="e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib"
 VERSION="R33 0.10.5"
@@ -27,7 +27,7 @@ API=(("aga fade to bank",ENTRY_FADE,"00,0,0"),)
 def build():
     frozen=BASE.read_bytes()
     assert digest(frozen)==BASE_SHA256,"R32 archive mutated"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must remain WinUAE-PASS R32 until R33 Gate B"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R33 after Gate B promotion"
     tok,parts,_=split(frozen)
     assert len(parts)==BASE_ENTRIES and not parts[-1].endswith(GETP)
     base_audit=inspect(parse(frozen))
@@ -65,7 +65,7 @@ def build():
     return binary,{"version":VERSION,"size":len(binary),"sha256":digest(binary),
                    "named_commands":len(named),"segments":len(updated),
                    "new_command":API[0],"labels":labels,
-                   "Gate_A":"REQUIRES_CPU_CI","Gate_B":"NOT_TESTED"}
+                   "Gate_A":"REQUIRES_CPU_CI","Gate_B":"WINUAE_PASS_SCENARIO"}
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)

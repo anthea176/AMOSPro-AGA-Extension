@@ -16,9 +16,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33")
 EXAMPLE_DIR = ROOT / "examples"
-AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+)?")
+AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+){0,3}")
 FUNCTION_BARE = re.compile(
     r"^\s*Aga\s+(?:"
     r"Copper\s+(?:Clear|Wait|Move|End|On|Off)"
@@ -94,6 +94,26 @@ def main() -> None:
             "show.asc must guard all subsequent drawing with first Safe-aware Clear")
     require("_ERR=1" in showcase and "_ERR=2" in showcase and
             "_ERR=3" in showcase, "show.asc needs bounded failure exits")
+
+    fade = (EXAMPLE_DIR / "fade_to_bank_r33.asc").read_text("ascii")
+    require(fade.index("_SWAP=Aga Swap") < fade.index("Amos To Back") <
+            fade.index("_GREEN=Aga Fade To Bank"),
+            "R33 visual fade must present scene BEFORE animating ColorMap")
+    require(all(fragment in fade for fragment in (
+        "_GREEN=Aga Fade To Bank(_PTR,1,150)",
+        "_BLUE=Aga Fade To Bank(_PTR,2,150)",
+        "_RED=Aga Fade To Bank(_PTR,0,150)",
+        "Aga Palette Bank Init(_PTR,8)",
+        "Aga Palette Bank Capture(_PTR,0)",
+        "Aga Palette Bank Capture(_PTR,1)",
+        "Aga Palette Bank Capture(_PTR,2)",
+        "Reserve As Data _B,6224",
+        "Print \"CLOSE RETURNED\"",
+    )), "R33 demo must cover three slow colour transitions and cleanup")
+    require(fade.count("Aga Fade To Bank(")==3,
+            "R33 demo should have exactly three blocking fades")
+    require("Save " not in fade and "Load " not in fade,
+            "R33 visual demo must not touch files")
 
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()

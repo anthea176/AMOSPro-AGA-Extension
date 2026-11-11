@@ -233,7 +233,7 @@ def run():
           trials,"scenarios",flush=True)
     print("R33 in-memory candidate:",
           {k:v for k,v in metadata.items() if k!="labels"},flush=True)
-    print("Gate B WinUAE, Gate C Compiler, Gate D physical AGA: NOT TESTED")
+    print("Gate B interpreted AMOS/WinUAE: USER PASS 2026-11-11 (archived test); Gate C Compiler, Gate D physical AGA: NOT TESTED")
 
 
 if __name__=="__main__":

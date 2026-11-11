@@ -66,7 +66,7 @@ jobs:
         run: python -B tools/test_agapal_r30_layout.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
-      - name: Verify seven distribution examples (static syntax, ILBM and packaging)
+      - name: Verify eight distribution examples (static syntax, ILBM and packaging)
         run: python -B tools/test_examples.py
       - name: Validate M7 Copper API staging contract (static only)
         run: python -B tools/test_m7_copper_contract.py
@@ -103,20 +103,20 @@ jobs:
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R31 frozen archive mismatch'; print('R31 frozen archive match:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
-      - name: M13 R32 validated AGAPAL Apply — native 68000 Gate A + LAST_GOOD
+      - name: M13 R32 frozen AGAPAL Apply — native 68000 Gate A archive
         run: |
           python -B tools/test_m13_agapal_apply_r32.py
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_apply_r32 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R32_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R32_GateA.Lib --out /tmp/amos-aga-r32-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_apply_r32 import build,ARCHIVE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(), 'R32 frozen archive/LAST_GOOD mismatch'; print('R32 frozen archive/LAST_GOOD match:',meta['sha256'],meta['size'])"
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_apply_r32 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R32 frozen archive mismatch'; print('R32 frozen archive match:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib
-      - name: M13 R33 AGAPAL Fade To Bank candidate — native CPU 68000 Gate A
+      - name: M13 R33 validated Fade To Bank — native CPU 68000 Gate A + LAST_GOOD
         run: |
           python -B tools/test_m13_agapal_fade_r33.py
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R33_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R33_GateA.Lib --out /tmp/amos-aga-r33-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build,ARCHIVE,DEST,LAST_GOOD,BASE; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(), 'R33 current/archive mismatch'; assert LAST_GOOD.read_bytes()==BASE.read_bytes(), 'R32 LAST_GOOD changed'; print('R33 current/archive, R32 LAST_GOOD:',meta['sha256'],meta['size'])"
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(), 'R33 current/archive/LAST_GOOD mismatch'; print('R33 current/archive/LAST_GOOD:',meta['sha256'],meta['size'])"
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib
 
