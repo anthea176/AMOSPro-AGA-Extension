@@ -1,5 +1,13 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## R32 0.10.4 — AGAPAL Apply, contrat validé (sources Gate A en préparation ; 11/11/2026)
+
+**Accord utilisateur sur une seule fonction :** `_OK=Aga Palette Bank Apply(Start(bank),index)` pour appliquer immédiatement à l'écran AGA Intuition privé actif une palette RGB24 non vide (1..256 couleurs) préalablement enregistrée dans AGAPAL. Recopie des composantes sous forme de fractions RGB32 AmigaOS, via `LoadRGB32`, avec tampon temporaire Exec. Les couleurs au-delà du nombre enregistré restent intactes ; aucun VBL implicite, aucune modification de pixels ni banque. Refus 0 sans écran modifié si index, banque, version, emplacement, nombre de couleurs, capacité de l'écran ou allocation invalides ; succès 1. **Ne pas tronquer une palette trop longue.**
+
+**Statut réel :** émetteur 68000, builder mémoire reproductible et tests CPU ajoutés uniquement **en sources** ; Gate A CPU/CI et export strict **NON ENCORE TESTÉS**. Aucune candidate R32 publiée, aucune Gate B WinUAE, Gates C Compiler/D Amiga réel non testées. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` restent **R31 0.10.3 WinUAE-PASS**, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. [Contrat, limites et protocole](M13_AGAPAL_APPLY_R32.md). Aucun fade/import/cycling implémenté ni autorisé sans discussion séparée.
+
+---
+
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture, Gate A CPU + Gate B AMOS/WinUAE PASS (11/11/2026)
 
 **Preuve Gate B utilisateur :** capture de l'exécution du test `M13_R31_AGAPAL_CAPTURE_01.asc` sous AMOS interprété/WinUAE : `INIT 1 OPEN 1 DB 1`, `CAP0 1 CAP1 1 OVER 1`, `GREEN 255 RED 255 BLUE 255`, `COUNT0 256 COUNT1 256`, `BEFORE 255 AFTER 255`, `BADNEG 0 BAD8 0 BADSIZE 0`, `NOSCREEN 0 SENTINEL 99`, `ABK AGAPAL SIZE 6224`, `RELOAD 255 255 10 56`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED` et fin AMOS normale ligne 141. **PASS uniquement pour ce scénario interprété/WinUAE ; Gates C Compiler et D matériel Amiga réel NON TESTÉES.**
