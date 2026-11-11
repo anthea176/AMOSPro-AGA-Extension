@@ -7,7 +7,7 @@ Palette Load (ILBM CMAP only), Set (RGB8), Get (packed 00RRGGBB).
 No existing entry is recompiled/repatched; no R23 cross-entry relocation
 required because all growth follows its private dispatcher and R26 Text.
 No file is written by this builder (including when --emit-base64 is used).
-LAST_GOOD is the latest WinUAE-confirmed R31, not the historical R10.
+LAST_GOOD is the latest WinUAE-confirmed R32, not the historical R10.
 """
 from pathlib import Path
 from struct import pack
@@ -24,7 +24,7 @@ DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BASE_SHA256="64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe"
-LAST_GOOD_SHA256="0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41"
+LAST_GOOD_SHA256="0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894"
 OLD_ENTRIES=37
 ENTRY_LOAD=37
 ENTRY_SET=38

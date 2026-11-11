@@ -15,7 +15,7 @@ L'objectif est une API de haut niveau sûre et réutilisable, pas la réécritur
 | Chipset / écran | `Aga Detect`, `Aga Screen Open`, `Aga Screen Close`, `Aga Screen Pattern` | Gestion d'écran Intuition AGA ; modes selon capacité AmigaOS |
 | Présentation | `Aga Double Buffer`, `Aga Swap`, `Aga Back Fill`, `Aga Wait Vbl` | Double buffering et attente TOF |
 | IFF/ILBM | `Aga Pic Info`, `Aga Iff Load` | Métadonnées, chargement image/palette ; M5 clos sur modes testés |
-| Palettes M13 | `Aga Palette Load/Set/Get/Save`, `Aga Palette Bank Init/Capture/Apply` | RGB24 IFF et banques AGAPAL DATA/ABK ; R31 validée WinUAE, R32 Apply Gate A PASS et WinUAE en attente ; pas de fade/cycling natifs |
+| Palettes M13 | `Aga Palette Load/Set/Get/Save`, `Aga Palette Bank Init/Capture/Apply` | RGB24 IFF et banques AGAPAL DATA/ABK ; R31 Capture et R32 Apply validées sous AMOS interprété/WinUAE sur leurs scénarios ; fades/cycling natifs non implémentés ; pas de fade/cycling natifs |
 | Clavier | `Aga Key`, `Aga Wait Key` | Input Intuition, attention au focus et Ctrl+C |
 | Blitter M6 | `Aga Blit Copy`, `Aga Blit Fill`, `Aga Blit Clear` | Back buffer ; R13/R14/R15 PASS AMOS interprété/WinUAE. |
 | Souris M8/R23 (PASS WinUAE scénario) | `Aga Mouse Pressed/Released`, `Aga Key/Wait Key` | Dispatcher central IDCMP, FIFO RAWKEY 16, Gate A CPU/CI PASS 15 cas ; Gate B WinUAE PASS sur clics rapides, FIFO clavier et Ctrl+C. |
@@ -26,7 +26,7 @@ L'objectif est une API de haut niveau sûre et réutilisable, pas la réécritur
 | Souris M8/R20 (historique) | `Aga Mouse Buttons` | 21 cas CPU PASS ; sous WinUAE boutons reconnus, mais barre Intuition persistante sur clic droit. |
 | Souris M8/R19 | `Aga Mouse X`, `Aga Mouse Y` | **PASS CPU 76 cas et AMOS interprété/WinUAE** pour le test R19 archivé. |
 
-Sur `main`, **R32 0.10.4 est la candidate Gate A CPU/CI** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 19 244 octets, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. Une seule nouvelle fonction : `Aga Palette Bank Apply(Start(bank),index)`, application immédiate des couleurs RGB24 AGAPAL à la `ColorMap` de l'écran AGA privé via `LoadRGB32`. **Gate A : 136 scénarios CPU/CI PASS**, export strict ; **Gate B AMOS/WinUAE NON TESTÉE**. La dernière bibliothèque réellement validée sous WinUAE reste **R31 0.10.3** dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), intacte avec son archive. R30 Init, R29 Save, R28 Set/Get/Load sont archivées. **La promotion LAST_GOOD ne se fait qu'après PASS utilisateur WinUAE ; Gates C Compiler et D matériel AGA réel non testées.**
+Sur `main`, **R32 0.10.4 a passé Gate A CPU/CI (136 scénarios CPU 68000) et Gate B AMOS interprété/WinUAE (capture utilisateur)**. [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = archive R32, 19 244 octets, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. `Aga Palette Bank Apply(Start(bank),index)` applique immédiatement AGAPAL RGB24 à la ColorMap AGA via `LoadRGB32` ; [test R32 archivé](../tests/passed/M13_R32_AGAPAL_APPLY_01.asc), `RESULT 1`, `CLOSE RETURNED` et fin propre ligne 161. **R31 0.10.3 reste dans son archive intacte** ; Gates C Compiler/D Amiga AGA réel non testées.
 
 ## 3. ABI, état et ressources
 

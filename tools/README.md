@@ -1,20 +1,24 @@
-# Outils Python actifs — R32 candidate Gate A, R31 WinUAE-LAST_GOOD
+# Outils Python actifs — R32 Gate A/B PASS, WinUAE-LAST_GOOD
 
-## R32 0.10.4 — AGAPAL Apply, candidate Gate A PASS / Gate B WinUAE en attente (11/11/2026)
+## R32 0.10.4 VALIDÉE — Gates A CPU/CI et B AMOS interprété/WinUAE PASS (11/11/2026)
 
-**Instruction ajoutée seule :** `_OK=Aga Palette Bank Apply(Start(bank),index)`, indice 0..N-1, pour appliquer une palette RGB24 non vide (1..256 couleurs) de la banque DATA AGAPAL v1 à l'écran AGA Intuition privé actif. Conversion RGB24 en fractions RGB32 répétées, un appel immédiat `graphics.library/LoadRGB32` (aucune attente VBL), seules les couleurs 0..compte-1 sont modifiées, aucune écriture banque/bitmap. Rejette avec résultat 0 sans modifier l'écran les index/banques/modes invalides, palettes vides ou trop grandes pour le `ColorMap`, et échecs d'allocation. Succès : 1. **Le pointeur doit être un véritable `Start(bank)` d'une banque DATA AMOS vivante**, jamais le numéro de banque brut ni un pointeur périmé.
+**Fonction ajoutée seule :** `_OK=Aga Palette Bank Apply(Start(bank),index)` applique une palette RGB24 AGAPAL non vide (1..256 couleurs) à l'écran AGA privé par `graphics.library/LoadRGB32`, immédiatement sans VBL implicite. Retour entier 1/0, aucun changement des banques/pixels, seuls les pens 0..compte-1 remplacés. Exiger un vrai `Start(bank)` d'une banque DATA vivante, jamais un numéro brut ou une adresse périmée.
 
-**Candidate publiée Gate A :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib`, **R32 0.10.4**, **19 244 octets**, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. **136 scénarios natifs CPU 68000 PASS**, export strict 68000 PASS et [CI complète de sources 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43031427255); CI du commit candidat à vérifier séparément. **Gate B AMOS interprété/WinUAE NON TESTÉE ; Gates C Compiler/D Amiga réel NON TESTÉES.**
+**Gate A :** 136 scénarios CPU 68000 PASS, export source 68000 strict PASS, [CI candidate 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040), [CI documentaire 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032630960).
 
-**Protection :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste **R31 0.10.3 WinUAE-PASS** (18 520 octets ; SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`), identique à l'archive R31. Le **seul test AMOS actif** est [`tests/current/M13_R32_AGAPAL_APPLY_01.asc`](../tests/current/M13_R32_AGAPAL_APPLY_01.asc), qui remplace les banques 10/11 et `RAM:R32_AGAPAL_APPLY.ABK`. Pas de promotion R32 avant PASS utilisateur WinUAE. Aucune fonction Fade/Import/Cycling implémentée ni autorisée sans accord spécifique.
+**Gate B PASS — capture utilisateur de `M13_R32_AGAPAL_APPLY_01.asc` :** `INIT 1 OPEN 1 DB 1`, `CAP0 1 CAP1 1`, `AP0 1 AP1 1 PART 1`, `GREEN 65280 RED 16711680 BLUE 255`, `PEN224 795192 PART3 660510 PART28 255`, `BADNEG 0 BAD8 0 EMPTY 0`, `BADSIZE 0 BADCOUNT 0`, `AFTERBAD 255 AFTERCOUNT 255`, `ABK AGAPAL SIZE 6224`, `COUNT0 4 COUNT1 256`, `RELOAD 1 16711680 PART 1`, `REST3 660510 REST28 16711680`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, et fin propre `End of program at line 161`. PASS limité à ce scénario AMOS interprété/WinUAE ; Compiler et vrai Amiga AGA non testés.
+
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib`, **19 244 octets**, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894` (octet pour octet). R31 0.10.3 est préservée en archive versionnée (18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`). ASC validé archivé **sans modification** dans [`tests/passed/M13_R32_AGAPAL_APPLY_01.asc`](../tests/passed/M13_R32_AGAPAL_APPLY_01.asc). **Aucun ASC actif** dans `tests/current/`. Gates C Compiler/D matériel réel **NON TESTÉES**.
+
+**Suite :** aucune fonction Import/Fade/Cycling sans échange et accord explicite sur son contrat ; travailler seulement sur `main`, aucun autre dépôt ni branche.
 
 ---
 
 
 
-**Outils R32 :** `m13_agapal_apply_r32_emit.py` (68000), `build_m13_agapal_apply_r32.py` (builder reproductible R31 → R32), `test_m13_agapal_apply_r32.py` (**136 scénarios CPU PASS**). R32 Gate A/CI PASS ; Gate B WinUAE à réaliser avec le test ASC unique. R31 reste `LAST_GOOD`.
+**Outils R32 :** `m13_agapal_apply_r32_emit.py`, `build_m13_agapal_apply_r32.py` (base archive R31), `test_m13_agapal_apply_r32.py` (136 scénarios CPU PASS). Gate B AMOS interprété/WinUAE PASS, test ASC archivé ; R32 est `LAST_GOOD`.
 
-**CI de la candidate R32 publiée :** [34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040) après SHA256/AP20, export 68000 strict, test ASC statique, 136 scénarios CPU et régressions historiques. **R31 reste `LAST_GOOD` jusqu'à Gate B WinUAE R32.**
+**CI candidate R32 :** [34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040), [CI documentaire 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032630960). La promotion actualise les assertions sur `LAST_GOOD` sans modifier les archives ni le code 68000.
 
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture WinUAE PASS (11/11/2026)
 

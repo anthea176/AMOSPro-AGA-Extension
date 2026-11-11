@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R32 candidate current, R31 WinUAE-PASS LAST_GOOD, R30 archive frozen."""
+"""Current integrity: R32 WinUAE-PASS current/LAST_GOOD; frozen R31 and earlier archives."""
 from pathlib import Path
 import hashlib
 import struct
@@ -28,7 +28,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -89,7 +89,7 @@ def main():
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -316,8 +316,8 @@ def main():
     built32,info32=build_r32()
     assert candidate==r32==built32==build_r32()[0], "R32 current/archive not reproducible"
     assert candidate!=r31
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r31
-    print("PASS: R32 current/archive 38 AP20 tokens; LAST_GOOD is WinUAE-PASS R31;"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==r32
+    print("PASS: R32 current/archive 38 AP20 tokens; LAST_GOOD is WinUAE-PASS R32;"
           " R10 historical archive and R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen")
 
 

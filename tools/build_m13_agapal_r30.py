@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """R30 0.10.2: deterministic AP20 candidate in memory, one new function.
 
-Base R29 is frozen in its versioned archive; R30 is now a frozen WinUAE-PASS versioned archive; R31 is LAST_GOOD. The new entry
+Base R29 is frozen in its versioned archive; R30 is now a frozen WinUAE-PASS versioned archive; R32 is LAST_GOOD. The new entry
 accepts a trusted AMOS Start(bank) DATA pointer and a palette slot count.
 Does not write dist files unless a separate Gate A-approved release step
 explicitly publishes the emitted bytes.
@@ -19,7 +19,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"
 BASE_SHA256="fa00e153a12b32f1f1ee22435e46acc4cf42dd61bdf540de121071b040cd99c1"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256="0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41"
+LAST_GOOD_SHA256="0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"
 GETP=b"GetP"

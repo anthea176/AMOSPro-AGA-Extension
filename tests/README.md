@@ -1,10 +1,11 @@
-# Tests AMOS — R32 0.10.4 Gate A PASS / Gate B WinUAE en attente
+# Tests AMOS — R32 0.10.4 validée Gates A/B (11/11/2026)
 
-**Test unique actif :** [`current/M13_R32_AGAPAL_APPLY_01.asc`](current/M13_R32_AGAPAL_APPLY_01.asc). Il vérifie l'application immédiate des palettes AGAPAL index 0/1, la capture de référence, le pen 28 vert/rouge/bleu, le pen 224 conservé, l'application partielle de 4 couleurs, les refus d'index/banque/couleurs/écran fermé, et Save/Load du véritable ABK AMOS. Il remplace **banques 10/11 et `RAM:R32_AGAPAL_APPLY.ABK`**.
+**Gate B WinUAE confirmée par capture utilisateur :** le test [`passed/M13_R32_AGAPAL_APPLY_01.asc`](passed/M13_R32_AGAPAL_APPLY_01.asc) est archivé sans modification de son contenu. Résultats observés : `INIT 1 OPEN 1 DB 1`, `CAP0 1 CAP1 1`, `AP0 1 AP1 1 PART 1`, `GREEN 65280 RED 16711680 BLUE 255`, `PEN224 795192 PART3 660510 PART28 255`, `BADNEG 0 BAD8 0 EMPTY 0`, `BADSIZE 0 BADCOUNT 0`, `AFTERBAD 255 AFTERCOUNT 255`, `ABK AGAPAL SIZE 6224`, `COUNT0 4 COUNT1 256`, `RELOAD 1 16711680 PART 1`, `REST3 660510 REST28 16711680`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin normale ligne 161.
 
-**R32 candidate :** `dist/AMOSPro_AGA.Lib` **R32 0.10.4**, 19 244 octets, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`, identique à l'archive R32. **Gate A : 136 cas natifs CPU 68000, export strict et [CI sources 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43031427255).** **Gate B AMOS/WinUAE NON TESTÉE ; Gates C/D non testées.** `LAST_GOOD` reste R31 0.10.3 validée, inchangée.
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R32 0.10.4, **19 244 octets**, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. Gate A 136 scénarios CPU 68000 PASS et [CI candidate 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040). **Gates C Compiler et D matériel réel NON TESTÉES.** R31 conservée dans son archive. Aucun `.asc` actif sous `tests/current/`.
 
 ---
+
 
 **CI de la candidate R32 publiée :** [34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43032230040) après SHA256/AP20, export 68000 strict, test ASC statique, 136 scénarios CPU et régressions historiques. **R31 reste `LAST_GOOD` jusqu'à Gate B WinUAE R32.**
 
