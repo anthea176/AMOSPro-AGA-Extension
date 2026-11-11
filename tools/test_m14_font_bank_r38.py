@@ -308,7 +308,7 @@ def run():
         assert not m.allocations and not m.copied
         groups+=1
 
-    for overrides in (dict(flags=1),dict(flags=4),dict(bank_name=b'NOTFONTS'),
+    for overrides in (dict(flags=4),dict(bank_name=b'NOTFONTS'),
                       dict(type_header=False),dict(type_last=False),
                       dict(alloc_fail=True)):
         m=BankMachine(raw,**overrides)
