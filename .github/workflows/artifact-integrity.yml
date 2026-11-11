@@ -71,18 +71,18 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M12 R27 Safe Blitter in-memory native 68000 Gate A
+      - name: M12 R27 Safe Blitter current binary — native 68000 Gate A and integrity
         run: |
           python -B tools/test_m12_blit_safe_r27.py
-          python -B tools/build_m12_blit_safe_r27.py
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
-          python -B tools/build_m12_blit_safe_r27.py --emit-base64
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R27 candidate matches',info)"
+          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
 
-      - name: M11 R26 AGA Text current binary — 68000 CPU and integrity
+      - name: M11 R26 AGA Text frozen archive — 68000 CPU regression
         run: |
           python -B tools/test_m11_text_r26.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m11_text_r26 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes(); print('R26 candidate matches',info)"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m11_text_r26 import build,ARCHIVE; raw,info=build(); assert raw==ARCHIVE.read_bytes(); print('R26 archive matches',info)"
+          sha256sum dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
 
       - name: M10 R25 AABB rectangle overlap — frozen 68000 CPU archive regression

@@ -1,11 +1,12 @@
 # Outils Python actifs — R26 0.9.2 M11 (Gate A CPU/CI PASS et Gate B AMOS/WinUAE PASS sur texte initial + 40 swaps)
 
-## M12 — R27 Blitters Safe (relocalisation R23, code source seulement)
+## M12 — R27 Safe Blitters (Gate A CPU PASS 403 cas, Gate B WinUAE à tester)
 
-- [`m12_blit_safe_r27_emit.py`](m12_blit_safe_r27_emit.py) : ajoute le même garde `Safe` non bloquant avant DMA dans Copy et Fill, préserve `D6`/ABI et ne lit jamais le port Disp.
-- [`build_m12_blit_safe_r27.py`](build_m12_blit_safe_r27.py) : reconstruit **en mémoire** depuis l'archive R26 figée (SHA vérifié), 37 segments/31 tokens inchangés, segments 6/17/18/19/20/21/31/32/33 modifiés par la garde et les relocalisations R23 ; `BSR.W` du wrapper Clear recalculé.
-- [`test_m12_blit_safe_r27.py`](test_m12_blit_safe_r27.py) : tests 68000 Capstone/Unicorn Copy/Fill/Clear, refus pré-DMA, Safe/Disp, absence de port, ABI et 40 cycles simulés. **Gate A en attente de CI, Gate B WinUAE NON TESTÉE**.
-- [Contrat M12](../docs/M12_SAFE_BLITTER_R27.md). Aucun binaire R27 ni test `.asc` actif ; R26 reste l'actuelle bibliothèque distribuée.
+- [`m12_blit_safe_r27_emit.py`](m12_blit_safe_r27_emit.py) : même garde `GetMsg(SafePort)` non bloquante avant DMA dans Copy/Fill, préserve `D6`/ABI et le bit Disp.
+- [`build_m12_blit_safe_r27.py`](build_m12_blit_safe_r27.py) : builder **en mémoire** reproductible depuis [R26 figée](../dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib). [Candidate R27 courante](../dist/AMOSPro_AGA.Lib) = [archive versionnée](../dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib), 14 252 octets, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`. **Même table de 31 commandes, neuf segments modifiés : 19/20/21 Blitters plus 6/17/18/31/32/33 relocalisés pour R23.**
+- [`test_m12_blit_safe_r27.py`](test_m12_blit_safe_r27.py) : **403 cas CPU 68000 PASS** (Copy/Fill/Clear, Safe/Disp, aucun DMA en refus, ABI, Clear BSR, 40 images simulées), [CI complète R27](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997093650). **Gate B WinUAE NON TESTÉE.**
+- [Contrat M12](../docs/M12_SAFE_BLITTER_R27.md) · [unique test WinUAE actif](../tests/current/M12_R27_SAFE_BLIT_01.asc). R26/R25/R24 et `LAST_GOOD` R10 intacts ; Compiler/matériel non testés.
+
 
 ## M11 — R26 `Aga Text` 0.9.2 : validation WinUAE initiale et multi-swap 40 images PASS
 
