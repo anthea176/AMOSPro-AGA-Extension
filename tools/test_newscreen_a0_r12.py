@@ -2,7 +2,7 @@
 """R12: Unicorn CPU 68000 regression enforcing A0=NULL at OpenScreenTagList."""
 from test_ntsc_pal_r10 import OpenMachine, NTSC, PAL, FALLOUT
 from test_m5_generic import INTUI, SCREEN, STATE
-from build_newscreen_a0_r12 import build, BASE, ARCHIVE, DEST, LAST_GOOD, R12_SHA256
+from build_newscreen_a0_r12 import build, BASE, ARCHIVE, DEST, LAST_GOOD, LAST_GOOD_SHA256, R12_SHA256
 from ap20_utils import split, digest
 from audit_ap20 import parse, inspect as audit
 
@@ -46,7 +46,9 @@ def main():
     data, report = build()
     r10 = BASE.read_bytes()
     assert data == ARCHIVE.read_bytes() == DEST.read_bytes()
-    assert LAST_GOOD.read_bytes() == r10 and digest(data) == R12_SHA256
+    # R10 is the frozen source archive. LAST_GOOD tracks latest WinUAE-PASS (R27).
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256
+    assert digest(data) == R12_SHA256
     assert not audit(parse(data))["issues"]
     t0,p0,_ = split(r10)
     t1,p1,_ = split(data)

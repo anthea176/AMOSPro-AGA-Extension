@@ -17,13 +17,14 @@ LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib"
 DEST = ARCHIVE  # R12 is frozen: never overwrite the active R13 candidate
 BASE_SHA256 = "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3"
+LAST_GOOD_SHA256 = "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe"
 R12_SHA256 = "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec"
 
 
 def build():
     raw = BASE.read_bytes()
     assert digest(raw) == BASE_SHA256
-    assert digest(LAST_GOOD.read_bytes()) == BASE_SHA256, "R10 LAST_GOOD changed"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "LAST_GOOD changed (expected latest validated R27)"
     tokens, parts, title = split(raw)
     assert len(parts) == 19 and len(parts[6]) == 736
     assert title.startswith(b"AMOSPro AGA M5 NTSC-PAL R10 0.6.1")
@@ -59,7 +60,7 @@ def build():
     assert t == tokens and p == updated and name == title_new
     return output, {"version":"0.6.3", "size":8856,
                     "sha256":R12_SHA256, "changed_ap20":[6],
-                    "last_good_r10_preserved":True, "winuae":"NOT_TESTED"}
+                    "historical_r10_archive_preserved":True, "winuae":"NOT_TESTED"}
 
 
 if __name__ == "__main__":
@@ -67,5 +68,5 @@ if __name__ == "__main__":
     assert build()[0] == output
     ARCHIVE.write_bytes(output)
     assert ARCHIVE.read_bytes() == output
-    assert digest(LAST_GOOD.read_bytes()) == BASE_SHA256
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256
     print("R12 candidate", report)
