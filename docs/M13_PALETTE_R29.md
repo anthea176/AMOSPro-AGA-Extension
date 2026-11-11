@@ -1,6 +1,6 @@
 # M13 / R29 0.10.1 — sauvegarde de palette AGA au format IFF
 
-**11/11/2026 : Gate A native 68000 PASS (49 scénarios) ; Gate B AMOS interprété/WinUAE EN ATTENTE.** Version candidate réservée à la première fonction R29 explicitement validée par l'utilisateur. Aucune bank de palette, Fade ou cycling nouveau n'est implémenté.
+**11/11/2026 : Gate A CPU native PASS (49 scénarios) ; [CI complète 30/30 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43015949869) ; Gate B AMOS interprété/WinUAE EN ATTENTE.** Version candidate réservée à la première fonction R29 explicitement validée par l'utilisateur. Aucune bank de palette, Fade ou cycling nouveau n'est implémenté.
 
 ## Bibliothèques et sources
 
