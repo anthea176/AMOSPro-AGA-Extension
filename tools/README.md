@@ -1,4 +1,18 @@
-# Outils Python actifs — R31 validée WinUAE et LAST_GOOD
+# Outils Python actifs — R32 candidate Gate A, R31 WinUAE-LAST_GOOD
+
+## R32 0.10.4 — AGAPAL Apply, candidate Gate A PASS / Gate B WinUAE en attente (11/11/2026)
+
+**Instruction ajoutée seule :** `_OK=Aga Palette Bank Apply(Start(bank),index)`, indice 0..N-1, pour appliquer une palette RGB24 non vide (1..256 couleurs) de la banque DATA AGAPAL v1 à l'écran AGA Intuition privé actif. Conversion RGB24 en fractions RGB32 répétées, un appel immédiat `graphics.library/LoadRGB32` (aucune attente VBL), seules les couleurs 0..compte-1 sont modifiées, aucune écriture banque/bitmap. Rejette avec résultat 0 sans modifier l'écran les index/banques/modes invalides, palettes vides ou trop grandes pour le `ColorMap`, et échecs d'allocation. Succès : 1. **Le pointeur doit être un véritable `Start(bank)` d'une banque DATA AMOS vivante**, jamais le numéro de banque brut ni un pointeur périmé.
+
+**Candidate publiée Gate A :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib`, **R32 0.10.4**, **19 244 octets**, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. **136 scénarios natifs CPU 68000 PASS**, export strict 68000 PASS et [CI complète de sources 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43031427255); CI du commit candidat à vérifier séparément. **Gate B AMOS interprété/WinUAE NON TESTÉE ; Gates C Compiler/D Amiga réel NON TESTÉES.**
+
+**Protection :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste **R31 0.10.3 WinUAE-PASS** (18 520 octets ; SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`), identique à l'archive R31. Le **seul test AMOS actif** est [`tests/current/M13_R32_AGAPAL_APPLY_01.asc`](../tests/current/M13_R32_AGAPAL_APPLY_01.asc), qui remplace les banques 10/11 et `RAM:R32_AGAPAL_APPLY.ABK`. Pas de promotion R32 avant PASS utilisateur WinUAE. Aucune fonction Fade/Import/Cycling implémentée ni autorisée sans accord spécifique.
+
+---
+
+
+
+**Outils R32 :** `m13_agapal_apply_r32_emit.py` (68000), `build_m13_agapal_apply_r32.py` (builder reproductible R31 → R32), `test_m13_agapal_apply_r32.py` (**136 scénarios CPU PASS**). R32 Gate A/CI PASS ; Gate B WinUAE à réaliser avec le test ASC unique. R31 reste `LAST_GOOD`.
 
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture WinUAE PASS (11/11/2026)
 

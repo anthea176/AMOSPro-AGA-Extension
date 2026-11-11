@@ -1,12 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
-## R32 0.10.4 — AGAPAL Apply, contrat validé (sources Gate A en préparation ; 11/11/2026)
+## R32 0.10.4 — AGAPAL Apply, candidate Gate A PASS / Gate B WinUAE en attente (11/11/2026)
 
-**Accord utilisateur sur une seule fonction :** `_OK=Aga Palette Bank Apply(Start(bank),index)` pour appliquer immédiatement à l'écran AGA Intuition privé actif une palette RGB24 non vide (1..256 couleurs) préalablement enregistrée dans AGAPAL. Recopie des composantes sous forme de fractions RGB32 AmigaOS, via `LoadRGB32`, avec tampon temporaire Exec. Les couleurs au-delà du nombre enregistré restent intactes ; aucun VBL implicite, aucune modification de pixels ni banque. Refus 0 sans écran modifié si index, banque, version, emplacement, nombre de couleurs, capacité de l'écran ou allocation invalides ; succès 1. **Ne pas tronquer une palette trop longue.**
+**Instruction ajoutée seule :** `_OK=Aga Palette Bank Apply(Start(bank),index)`, indice 0..N-1, pour appliquer une palette RGB24 non vide (1..256 couleurs) de la banque DATA AGAPAL v1 à l'écran AGA Intuition privé actif. Conversion RGB24 en fractions RGB32 répétées, un appel immédiat `graphics.library/LoadRGB32` (aucune attente VBL), seules les couleurs 0..compte-1 sont modifiées, aucune écriture banque/bitmap. Rejette avec résultat 0 sans modifier l'écran les index/banques/modes invalides, palettes vides ou trop grandes pour le `ColorMap`, et échecs d'allocation. Succès : 1. **Le pointeur doit être un véritable `Start(bank)` d'une banque DATA AMOS vivante**, jamais le numéro de banque brut ni un pointeur périmé.
 
-**Statut réel :** émetteur 68000, builder mémoire reproductible et tests CPU ajoutés uniquement **en sources** ; Gate A CPU/CI et export strict **NON ENCORE TESTÉS**. Aucune candidate R32 publiée, aucune Gate B WinUAE, Gates C Compiler/D Amiga réel non testées. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` restent **R31 0.10.3 WinUAE-PASS**, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. [Contrat, limites et protocole](docs/M13_AGAPAL_APPLY_R32.md). Aucun fade/import/cycling implémenté ni autorisé sans discussion séparée.
+**Candidate publiée Gate A :** `dist/AMOSPro_AGA.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib`, **R32 0.10.4**, **19 244 octets**, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`. **136 scénarios natifs CPU 68000 PASS**, export strict 68000 PASS et [CI complète de sources 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43031427255); CI du commit candidat à vérifier séparément. **Gate B AMOS interprété/WinUAE NON TESTÉE ; Gates C Compiler/D Amiga réel NON TESTÉES.**
+
+**Protection :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste **R31 0.10.3 WinUAE-PASS** (18 520 octets ; SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`), identique à l'archive R31. Le **seul test AMOS actif** est [`tests/current/M13_R32_AGAPAL_APPLY_01.asc`](tests/current/M13_R32_AGAPAL_APPLY_01.asc), qui remplace les banques 10/11 et `RAM:R32_AGAPAL_APPLY.ABK`. Pas de promotion R32 avant PASS utilisateur WinUAE. Aucune fonction Fade/Import/Cycling implémentée ni autorisée sans accord spécifique.
 
 ---
+
 
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture, Gate A CPU + Gate B AMOS/WinUAE PASS (11/11/2026)
 

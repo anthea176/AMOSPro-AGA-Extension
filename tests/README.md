@@ -1,3 +1,13 @@
+# Tests AMOS — R32 0.10.4 Gate A PASS / Gate B WinUAE en attente
+
+**Test unique actif :** [`current/M13_R32_AGAPAL_APPLY_01.asc`](current/M13_R32_AGAPAL_APPLY_01.asc). Il vérifie l'application immédiate des palettes AGAPAL index 0/1, la capture de référence, le pen 28 vert/rouge/bleu, le pen 224 conservé, l'application partielle de 4 couleurs, les refus d'index/banque/couleurs/écran fermé, et Save/Load du véritable ABK AMOS. Il remplace **banques 10/11 et `RAM:R32_AGAPAL_APPLY.ABK`**.
+
+**R32 candidate :** `dist/AMOSPro_AGA.Lib` **R32 0.10.4**, 19 244 octets, SHA256 `0a20d014303f77732f25959afa7daa4cc92c53479a7770f2abbff26fb1708894`, identique à l'archive R32. **Gate A : 136 cas natifs CPU 68000, export strict et [CI sources 34/34 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43031427255).** **Gate B AMOS/WinUAE NON TESTÉE ; Gates C/D non testées.** `LAST_GOOD` reste R31 0.10.3 validée, inchangée.
+
+---
+
+**Tests R31 et antérieurs ci-dessous : validations historiques.**
+
 # Tests AMOS — R31 0.10.3 validée WinUAE
 
 ## R31 0.10.3 VALIDÉE — AGAPAL Capture WinUAE PASS (11/11/2026)
