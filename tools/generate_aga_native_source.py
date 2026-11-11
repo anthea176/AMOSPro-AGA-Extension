@@ -44,7 +44,7 @@ KNOWN_SEEDS={
   # M13 R29 Save: one source-confirmed but unreachable MOVE.L #0,D0 in
   # the cleanup_save helper's generic failure-return epilogue. Exact core
   # SHA only; altered code must still fail --strict, as for R28.
-  '36feed62fafa7f66065b36b2bec2c12275331af7d75599abc68ac19e0ffd5d3f':(1206),
+  '36feed62fafa7f66065b36b2bec2c12275331af7d75599abc68ac19e0ffd5d3f':(1206,),
 }
 
 class ExportError(ValueError):pass
