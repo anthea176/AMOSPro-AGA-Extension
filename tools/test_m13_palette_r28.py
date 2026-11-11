@@ -162,7 +162,11 @@ def run():
                 assert m.rgb_writes==1 and m.last_update[0]==pen
                 expected=tuple(x*0x01010101 for x in (red,green,blue))
                 assert m.palette_rgb[pen]==expected,(depth,pen,m.palette_rgb[pen])
-                assert m.get_color(pen)==(red<<16)|(green<<8)|blue
+                got=m.get_color(pen)
+                expected_packed=(red<<16)|(green<<8)|blue
+                assert got==expected_packed, (
+                    "palette readback", depth,pen,(red,green,blue),
+                    hex(got),hex(expected_packed),m.rgb_reads,m.palette_rgb[pen])
                 assert m.rgb_reads==1 and m.plane_writes==0
                 count+=2
 

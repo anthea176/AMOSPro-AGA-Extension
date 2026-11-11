@@ -125,6 +125,10 @@ def emit_get():
     c.move(M(7,0),D(5))
     c.move(M(7,4),D(6))
     c.move(M(7,8),D(7))
+    # RGB32 contains replicated fractions (e.g. 0x12121212), not
+    # a single high-byte value; mask low 24 bits BEFORE shifting.
+    for reg in (5,6,7):
+        c.imm("and",0xff000000,D(reg))
     c.shift(5,8)                 # red high byte -> bits 23:16
     c.shift(6,8);c.shift(6,8)    # green high byte -> bits 15:8
     c.shift(7,8);c.shift(7,8);c.shift(7,8) # blue high byte -> bits 7:0
