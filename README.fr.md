@@ -28,7 +28,7 @@ Pour un essai, utiliser la bibliothèque correspondant au test. Les fichiers pr�
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R26 0.9.2** (M5 IFF, M6 Blitter, M7 Copper et M8 souris X/Y/boutons/transitions) — tableau **exhaustif des 31 commandes AMOS nommées exportées par la bibliothèque AP20**, y compris les deux commandes de diagnostic historiques. Il donne la syntaxe exacte, l'ordre des paramètres et les valeurs de retour. Les coordonnées/dimensions graphiques sont exprimées en pixels, origine `(0,0)` en haut à gauche ; `largeur` et `hauteur` sont des **dimensions**, pas des coordonnées de fin.
+**API de la bibliothèque courante R27 0.9.3** (M5 IFF, M6 Blitter, M7 Copper et M8 souris X/Y/boutons/transitions) — tableau **exhaustif des 31 commandes AMOS nommées exportées par la bibliothèque AP20**, y compris les deux commandes de diagnostic historiques. Il donne la syntaxe exacte, l'ordre des paramètres et les valeurs de retour. Les coordonnées/dimensions graphiques sont exprimées en pixels, origine `(0,0)` en haut à gauche ; `largeur` et `hauteur` sont des **dimensions**, pas des coordonnées de fin.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|

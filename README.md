@@ -28,7 +28,7 @@ Install the library version that matches the test you intend to run. Files on Gi
 
 ## Main AMOS commands
 
-**Current library API R26 0.9.2** (M5 IFF, M6 Blitter, M7 Copper, and M8 mouse position/buttons/transitions) — **all 31 named AMOS commands exported from the AP20 library**, including two legacy diagnostics. The table specifies exact call syntax, argument order and return values. Graphics coordinates start at the upper-left `(0,0)`; `width` and `height` are **dimensions**, never end coordinates.
+**Current library API R27 0.9.3** (M5 IFF, M6 Blitter, M7 Copper, and M8 mouse position/buttons/transitions) — **all 31 named AMOS commands exported from the AP20 library**, including two legacy diagnostics. The table specifies exact call syntax, argument order and return values. Graphics coordinates start at the upper-left `(0,0)`; `width` and `height` are **dimensions**, never end coordinates.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
