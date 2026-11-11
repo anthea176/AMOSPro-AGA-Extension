@@ -1,6 +1,6 @@
 # M13 / R29 0.10.1 — sauvegarde de palette AGA au format IFF
 
-**État actuel au 11/11/2026 :** R30 0.10.2 `Aga Palette Bank Init` a passé Gate B WinUAE et remplacé R29 dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`. La R29 validée reste conservée, octet pour octet, dans `dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib`. Les notes ci-dessous documentent la validation historique de R29, pas la bibliothèque actuelle.
+**État courant au 11/11/2026 :** R31 0.10.3 `Aga Palette Bank Capture` a passé Gate B WinUAE et constitue désormais `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Les versions R30 0.10.2 et R29 0.10.1 restent figées dans leurs archives `dist/experimental/`. Les notes ci-dessous décrivent la validation **historique** de R29.
 
 ## R29 0.10.1 VALIDÉE — Gate A + Gate B AMOS/WinUAE PASS, 11/11/2026
 

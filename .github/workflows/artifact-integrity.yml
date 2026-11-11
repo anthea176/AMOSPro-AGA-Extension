@@ -90,16 +90,16 @@ jobs:
           python -B tools/test_m13_agapal_r30.py
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R30_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R30_GateA.Lib --out /tmp/amos-aga-r30-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build,ARCHIVE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(), 'R30 frozen archive/LAST_GOOD mismatch'; print('R30 frozen archive/LAST_GOOD match:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R30 frozen archive mismatch'; print('R30 frozen archive match:',meta['sha256'],meta['size'])"
+          sha256sum dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib
       - name: M13 R31 current AGAPAL Capture — native 68000 Gate A
         run: |
           python -B tools/test_m13_agapal_capture_r31.py
           python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R31_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R31_GateA.Lib --out /tmp/amos-aga-r31-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build,ARCHIVE,DEST; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes(), 'R31 current/archive mismatch'; print('R31 current/archive match:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(), 'R31 current/archive/LAST_GOOD mismatch'; print('R31 current/archive/LAST_GOOD match:',meta['sha256'],meta['size'])"
+          sha256sum dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
       - name: M13 R28 frozen IFF palette — native 68000 regression
         run: |

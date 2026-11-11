@@ -1,10 +1,15 @@
-# M13 R31 0.10.3 — AGAPAL Capture, Gate A CPU PASS / Gate B WinUAE EN ATTENTE
+# Tests AMOS — R31 0.10.3 validée WinUAE
 
-**Test actif unique :** [`current/M13_R31_AGAPAL_CAPTURE_01.asc`](current/M13_R31_AGAPAL_CAPTURE_01.asc). Captures AGAPAL index0/index1 et écrasement index0, palettes RGB24 vert/rouge/bleu, contrôle autres couleurs, compte 256 et sauvegarde/rechargement ABK AMOS. Les index invalides et l'absence d'écran doivent renvoyer 0 sans modification. **Écrase banques 10 et 11 ainsi que `RAM:R31_AGAPAL_CAPTURE.ABK`.**
+## R31 0.10.3 VALIDÉE — AGAPAL Capture WinUAE PASS (11/11/2026)
 
-`dist/AMOSPro_AGA.Lib` est la candidate **R31 0.10.3**, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41` ; **Gate A 107 scénarios CPU et [CI complète de publication 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027661428)**, export strict PASS. **Gate B WinUAE NON TESTÉE ; Gates C/D NON TESTÉES.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R30 0.10.2 WinUAE PASS, sans modification.
+**Gate A :** 107 scénarios CPU 68000 PASS, export 68000 strict PASS, [CI candidate 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027906298). **Gate B AMOS interprété/WinUAE : PASS** sur `CAP0 1 CAP1 1 OVER 1`, `GREEN 255 RED 255 BLUE 255`, `COUNT0 256 COUNT1 256`, `BEFORE 255 AFTER 255`, `BADNEG 0 BAD8 0 BADSIZE 0`, `NOSCREEN 0 SENTINEL 99`, `ABK AGAPAL SIZE 6224`, `RELOAD 255 255 10 56`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED` et fin propre. **Gates C Compiler / D matériel réel NON TESTÉES**.
+
+**ABK utilisateur inspecté :** `R31_AGAPAL_CAPTURE.ABK` (6 244 octets) = `AmBk` + `AGAPAL` v1 6 224 octets, 8 emplacements, 0/1 contenant 256 couleurs RGB24 (pen 28 bleu/rouge), 2 à 7 vides, pens 3/224 préservés. SHA256 du fichier fourni : `7a3162969b0d700287ae0852872811dae072c19720a794beb8818d01b93f6cd9`.
+
+**R31 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive versionnée R31, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`. Archive R30 conservée, inchangée. ASC de test **archivé octet pour octet** (Git blob `0196fc1ba730345a926f444691be80c16a7fb89c`) dans `passed/M13_R31_AGAPAL_CAPTURE_01.asc` ; **aucun `.asc` actif** dans `tests/current/`. CI de promotion à confirmer. Pas d'autre commande avant discussion et accord utilisateur.
 
 ---
+
 
 **Les tests R30 et antérieurs ci-dessous sont historiques.**
 

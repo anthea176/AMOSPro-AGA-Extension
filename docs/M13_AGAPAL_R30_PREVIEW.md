@@ -1,12 +1,14 @@
 # M13 / R30 0.10.2 — AGAPAL Bank Init validée WinUAE
 
+**État courant :** R31 0.10.3 a passé Gate B WinUAE sur la capture AGAPAL et est maintenant `dist/AMOSPro_AGA_LAST_GOOD.Lib` ; la R30 validée reste figée dans son [archive versionnée](../dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib). La promotion R30 décrite ci-dessous est un **état historique**, non le binaire courant.
+
 ## R30 0.10.2 — AGAPAL Bank Init validée Gate B AMOS/WinUAE
 
 **Gate B PASS confirmé par capture utilisateur le 11/11/2026 :** `INIT 1 REINIT 1`, `HEADER AGAPAL V 1 COUNT 8`, `OFFSET0 80 OFFSET7 5456`, `BAD0 0 BAD257 0 BADSIZE 0`, `SENTINEL 99 ZERO 0`, `ABK RESTORED AGAPAL SIZE 6224`, `REST0 80 REST7 5456 INDEX 1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Fonction `_OK=Aga Palette Bank Init(Start(bank),N)` validée sur le scénario : banque DATA AMOS et rechargement ABK natif, aucun changement d'écran. **Gates C Compiler et D Amiga physique : non testées**.
 
-**R30 promue :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. Archive R29 conservée sans changement. Test corrigé archivé **sans modification**, blob Git `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964` : [`tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). `tests/current/` ne contient plus de test actif. Gate A 39 cas 68000 et [CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43024446890). CI de promotion **32/32 PASS**.
+**Promotion historique R30 (avant R31) :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib`, **17 824 octets**, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`. Archive R29 conservée sans changement. Test corrigé archivé **sans modification**, blob Git `646aa30fb61dfb2ff6b9f5bc5dfe47d8365b2964` : [`tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc`](../tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). `tests/current/` ne contient plus de test actif. Gate A 39 cas 68000 et [CI 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43024446890). CI de promotion **32/32 PASS**.
 
-**Rappel :** l'erreur `Type mismatch` du premier essai était dans l'ASC de test ; elle a été corrigée en remplaçant `_STILL` par `_STILL$`. La R30 binaire n'a pas changé. Capture/import de palettes, fades et cycling sont encore **à discuter individuellement avant programmation**.
+**Rappel :** l'erreur `Type mismatch` du premier essai était dans l'ASC de test ; elle a été corrigée en remplaçant `_STILL` par `_STILL$`. La R30 binaire n'a pas changé. La capture AGAPAL est désormais implémentée et validée en R31 ; import/application, fades et cycling restent **à discuter individuellement avant programmation**.
 
 ---
 
