@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current integrity: R27 Safe Blitters, with R26/R25/R24 and LAST_GOOD frozen."""
+"""Current integrity: R27 active, R28 M13 palette candidate separate and all frozen artifacts."""
 from pathlib import Path
 import hashlib
 import struct
@@ -8,6 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
     "dist/AMOSPro_AGA.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
+    "dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib": "ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c",
     "dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib": "64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe",
     "dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib": "0fa162a9955ab317b25a0de43d6ddc07ed082dc4fac87188d744995bccb4a287",
     "dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib": "4835473771629bea697d64c9213ff1064013597f7dabc519914f4ea013af6da6",
@@ -69,6 +70,7 @@ def main():
     from build_m10_rect_overlap_r25 import build as build_r25, ENTRY as RECT_ENTRY
     from build_m11_text_r26 import build as build_r26, ENTRY as TEXT_ENTRY
     from build_m12_blit_safe_r27 import build as build_r27, RELOCATED
+    from build_m13_palette_r28 import build as build_r28, OLD_ENTRIES, ENTRY_LOAD, ENTRY_SET, ENTRY_GET, GETP, API
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -79,6 +81,7 @@ def main():
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]
     assert candidate == binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
+    r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert r10 == binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
@@ -123,6 +126,8 @@ def main():
     assert r26 == built26 == build_r26()[0], "Frozen R26 not reproducible"
     built27, detail27 = build_r27()
     assert candidate == built27 == build_r27()[0], "R27 not reproducible"
+    built28, info28 = build_r28()
+    assert r28 == built28 == build_r28()[0], "R28 candidate not reproducible"
     assert inspect(parse(candidate))["issues"] == []
     assert inspect(parse(built14))["issues"] == []
     assert inspect(parse(built13))["issues"] == []
@@ -145,6 +150,7 @@ def main():
     tok25, seg25, _ = split(r25)
     tok26, seg26, _ = split(r26)
     tok27, seg27, _ = split(candidate)
+    tok28, seg28, _ = split(r28)
     assert tok10 == tok12
     assert len(seg10) == len(seg12) == 19 and len(seg13) == 20
     assert [i for i in range(19) if seg10[i] != seg12[i]] == [6]
@@ -225,8 +231,23 @@ def main():
     )
     assert seg27[TEXT_ENTRY] == seg26[TEXT_ENTRY], "R26 AGA Text changed"
     assert not inspect(parse(candidate))["issues"], "R27 AP20 invalid"
-    print("PASS: R27 current/archive reproducible; R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 frozen,"
-          " LAST_GOOD R10 intact")
+    assert len(seg28)==40 and OLD_ENTRIES==len(seg27)==37
+    assert seg28[:36]==seg27[:36], "R28 modified frozen R27 entries"
+    assert seg28[36]==seg27[36]+GETP, "R28 modified frozen Aga Text"
+    assert seg28[ENTRY_LOAD].endswith(GETP) and seg28[ENTRY_SET].endswith(GETP)
+    assert seg28[ENTRY_GET] and not seg28[ENTRY_GET].endswith(GETP)
+    assert tok28.startswith(tok27[:-6]) and tok28!=tok27
+    audit28=inspect(parse(r28))
+    assert not audit28["issues"], "R28 AP20 invalid"
+    named28=[r for r in audit28["tokens"] if r["name"].startswith("aga ")]
+    assert len(named28)==34
+    for name,index,sig in API:
+        rows=[r for r in named28 if r["name"]==name]
+        assert len(rows)==1 and rows[0]["function"]==index
+        assert rows[0]["signature"]==sig
+    assert candidate != r28
+    print("PASS: R27 active/archive frozen; R28 palette candidate reproducible with 34 AP20 tokens;"
+          " R26/R25/R24/R23/R22/R21/R20/R19/R18/R17/R16/M6 and LAST_GOOD R10 intact")
 
 
 if __name__ == "__main__":

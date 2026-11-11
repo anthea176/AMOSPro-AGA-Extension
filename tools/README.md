@@ -1,11 +1,11 @@
 # Outils Python actifs — R27 0.9.3 M12 (Gates A+B PASS sur scénarios CPU et AMOS/WinUAE)
 
-## M13 — R28 palette AGA RGB (source en préflight, aucun binaire R28)
+## M13 — R28 0.10.0 standard IFF palette (Gate A CPU 159 PASS ; Gate B non testée)
 
-- [\`m13_palette_r28_emit.py\`](m13_palette_r28_emit.py) : charge CMAP sans modifier BODY, \`Palette Set\` par \`LoadRGB32\`, \`Palette Get\` par \`GetRGB32\` ; contrôles ColorMap/count/bitplanes, RGB8 et modes HAM/EHB.
-- [\`build_m13_palette_r28.py\`](build_m13_palette_r28.py) : builder **en mémoire** depuis l'archive R27 WinUAE-PASS, 3 fonctions AP20 ajoutées en fin de HUNK, ancien code conservé ; \`--emit-base64\` pour audit après PASS.
-- [\`test_m13_palette_r28.py\`](test_m13_palette_r28.py) : CPU 68000 Unicorn/Capstone, ABI/ressources, IFF palettes seuls, plages et refus, absence d'écriture bitplane ; **Gate A CI en cours, Gate B WinUAE NON TESTÉE**.
-- [Contrat M13](../docs/M13_PALETTE_R28.md). **Fades, cycling et sauvegarde restent à réaliser.** Lib courante R27 0.9.3 inchangée.
+- [`m13_palette_r28_emit.py`](m13_palette_r28_emit.py) : charge CMAP sans modifier BODY, `Palette Set` par `LoadRGB32`, `Palette Get` par `GetRGB32` ; contrôles ColorMap/count/bitplanes, RGB8 et modes HAM/EHB.
+- [`build_m13_palette_r28.py`](build_m13_palette_r28.py) : builder **en mémoire** depuis l'archive R27 WinUAE-PASS, 3 fonctions AP20 ajoutées en fin de HUNK, ancien code conservé ; `--emit-base64` pour audit après PASS.
+- [`test_m13_palette_r28.py`](test_m13_palette_r28.py) : **159 cas CPU 68000 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618)) ; IFF palettes seules `FORM ILBM/CMAP` avec ou sans BMHD/CRNG, IFF images ordinaires sans écriture BODY, ABI, RGB32, HUNK AP20 et nettoyage des ressources.
+- [Contrat M13/R28](../docs/M13_PALETTE_R28.md) · [archive candidate](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`) · [test WinUAE actif](../tests/current/M13_R28_PALETTE_01.asc). **R27 reste la bibliothèque courante ; Gate B R28 non testée.** Sauvegarde IFF standard, fades et cycling restent à réaliser.
 
 ## M12 — R27 Safe Blitters (Gate A CPU/CI 403 cas PASS et Gate B AMOS/WinUAE 40 swaps PASS)
 

@@ -1,14 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M13 — R28 0.10.0 palettes RGB : source CPU/CI en vérification
+## M13 — R28 0.10.0 : archive candidate disponible, Gate A 159 cas PASS, Gate B WinUAE à réaliser
 
-**11/11/2026 — début d'implémentation M13**. Ordre décidé : M13 palettes (chargement, Set/Get, puis fades/cycling), M14 fontes, M15 Plot/Draw/Box/Circle. **R28 en source uniquement, sans nouvelle Lib publiée ni WinUAE testé.** [Contrat M13/R28](M13_PALETTE_R28.md) · [émetteur](../tools/m13_palette_r28_emit.py) · [builder en mémoire](../tools/build_m13_palette_r28.py) · [tests CPU 68000](../tools/test_m13_palette_r28.py).
+**11/11/2026 — candidat M13 R28 préparé sur `main`**. Ordre décidé : M13 palettes IFF standard / RGB / fades / cycling, puis M14 fontes, M15 Plot/Draw/Box/Circle. **Gate A CPU/CI PASS 159 scénarios 68000** ([run 43004699618](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618)) ; **Gate B AMOS/WinUAE NON TESTÉE.** [Rapport M13](M13_PALETTE_R28.md) · [test actif](../tests/current/M13_R28_PALETTE_01.asc) · [archive R28](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) · [builder](../tools/build_m13_palette_r28.py).
 
-- **Premier incrément M13** : \`_OK=Aga Palette Load(file$)\` charge uniquement CMAP dans le ColorMap du ViewPort Intuition sans écrire BODY/bitplanes ; \`_OK=Aga Palette Set(pen,r,g,b)\` via \`LoadRGB32\` ; \`_RGB=Aga Palette Get(pen)\` via \`GetRGB32\`, retour \`$00RRGGBB\` ou \`-1\`.
-- **Sécurité** : couleur indexée, profondeur 1–8, validation ColorMap.Count et des limites, refus explicite HAM/EHB/dual playfield, CMAP valide de 1 à 256 couleurs. \`Palette Load\` conserve le WaitTOF du loader M5 ; \`Palette Set\` sans blocage VBL pour permettre animation contrôlée par AMOS.
-- **AP20** : **3 nouvelles commandes en fin de table** (31→34), **37→40 segments**. Segments 0..35 de R27 identiques et segment 36 \`Aga Text\` identique hormis \`GetP\` de séparation. Aucun lien clavier/souris déplacé : ajouts en fin de code. Vérifier sous Unicorn et via export strict avant binaire.
-- **Gates** : source et préflight CPU en cours ; **aucune candidate R28 publiée** avant Gate A complète. La suite palette fades/cycling est prévue après validation de ce socle, pas considérée implémentée.
-- **Base intouchée** : \`dist/AMOSPro_AGA.Lib\` est toujours **R27 0.9.3 WinUAE-PASS**, archives et \`LAST_GOOD\` préservés ; \`tests/current/\` reste vide. Aucune autre branche.
+- **Premier incrément M13** : `_OK=Aga Palette Load(file$)` lit le **CMAP standard IFF/ILBM**, palette PPaint/DPaint seule ou image complète, sans charger `BODY`, même sans BMHD ; `_OK=Aga Palette Set(pen,r,g,b)` modifie RGB 24 bits ; `_RGB=Aga Palette Get(pen)` retourne `$00RRGGBB` ou `-1`. Aucun format maison. **Export / sauvegarde future au même format IFF**, après validation du socle.
+- **Sécurité** : couleur indexée, profondeur 1–8, validation ColorMap.Count et des limites, refus explicite HAM/EHB/dual playfield, CMAP valide de 1 à 256 couleurs. `Palette Load` conserve le WaitTOF du loader M5 ; `Palette Set` sans blocage VBL pour permettre animation contrôlée par AMOS.
+- **AP20** : 3 nouvelles fonctions en fin de table (31→34), 37→40 segments ; anciens segments 0..35 inchangés, 36 reçoit uniquement le séparateur `GetP` ; 37/38 reçoivent les séparateurs nécessaires. Binaire R28 candidat **16 208 octets** ; la bibliothèque courante `dist/AMOSPro_AGA.Lib` reste **R27 0.9.3**.
+- **Gates** : CPU/CI Gate A **PASS 159 cas** (dont palettes seules `CMAP`, `BMHD` et `CRNG` optionnels, IFF images ordinaires), **Gate B WinUAE à faire**, Compiler et machine réelle non testés. Pour WinUAE : installer **une copie renommée** de l'archive R28 comme `AMOSPro_AGA.Lib` sur l'Amiga, garder l'ancienne R27 ; charger le test ASC via **Project → Merge ASCII** et choisir un IFF palette PPaint ou `examples/demo.iff`.
+- **Base intouchée** : `dist/AMOSPro_AGA.Lib` = R27 WinUAE-PASS ; toutes les archives R26/R25/R24 et `LAST_GOOD` figées. **Un seul ASC actif R28 dans `tests/current/`**, non exécuté. Pas de branche supplémentaire.
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Choix utilisateur confirmé :** enchaîner **M13 palettes AGA** (chargement sans pixels, RGB 24 bits, fades, cycling, sauvegarde/restauration), **M14 fontes** (compléter `Aga Text` R26), puis **M15 primitives graphiques 2D** (`Plot`, `Draw`, `Box`, `Circle`). Les sprites matériels, scrolling, dual playfield et Copper avancé passent à **M16+**. [Roadmap et périmètres](ROADMAP.md).
 
-- **M13 prochain chantier, pas encore commencé :** avant tout builder ou binaire, auditer `Aga Iff Load`/CMAP/`SetRGB32`, `ViewPort.ColorMap` Intuition, interactions Copper RGB4 et modes EHB/HAM ; définir le contrat des opérations palette, fades temporels, VBL et validation WinUAE. **Aucune API M13 ni R28 n'est encore implémentée.**
+- **M13 — note historique antérieure au démarrage :** avant tout builder ou binaire, auditer `Aga Iff Load`/CMAP/`SetRGB32`, `ViewPort.ColorMap` Intuition, interactions Copper RGB4 et modes EHB/HAM ; définir le contrat des opérations palette, fades temporels, VBL et validation WinUAE. **Aucune API M13 ni R28 n'est encore implémentée.**
 - **M14 ensuite :** développer choix et chargement des fontes, métriques, styles, alignement, multi-ligne et éventuelles banques AMOS/AMCAF. `Aga Text` R26/R27 actuel se limite à une ligne en police système par défaut ; ne pas considérer le moteur de fontes comme terminé.
 - **M15 après M14 :** dessin dans le back buffer AGA Intuition : pixel (`Plot`), trait (`Draw`), rectangle contour (`Box`), cercle (`Circle`). Auditer d'abord la sémantique exacte AMOS/Turbo/AMCAF, notamment `F Plot`/`F Draw` ; vérifier coordonnées, clipping, couleurs indexées, retour Safe et double buffering. **Aucune API M15 ni binaire correspondant n'existe encore.**
 - **M16+ :** sprites matériels, scrolling, dual playfield, Copper avancé et optimisations, sans chantier ouvert.

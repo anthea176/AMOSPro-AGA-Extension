@@ -1,3 +1,13 @@
+# M13 R28 0.10.0 — palette IFF/ILBM CMAP (Gate A PASS, Gate B WinUAE NON TESTÉE)
+
+**Test courant :** [`M13_R28_PALETTE_01.asc`](current/M13_R28_PALETTE_01.asc). La candidate [R28 0.10.0](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) (16 208 octets, SHA256 `ddda516ba6e155e07381318ba2147320c06f8bbb5256b4a20fe3d6873be2891c`) passe **159 cas CPU 68000 Gate A** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618)), dont les variantes IFF palettes seules avec `BMHD` et `CRNG`, sans `BODY`. **Aucune validation WinUAE R28 n'a été effectuée.**
+
+**Import standard :** choisir un fichier palette exporté par Personal Paint/Deluxe Paint (`FORM ILBM` + `CMAP`), ou `examples/demo.iff` pour un IFF image complet. Le test ouvre l'écran AGA en 320×256×8 plans indépendamment du fichier source, **dessine avant `Aga Palette Load`**, puis teste `Aga Palette Set/Get` et la transition vert → rouge → vert sur 64 VBL. Il n'appelle ni `Aga Pic Info` ni `Aga Iff Load`. [Procédure complète](current/README.md) · [contrat M13](../docs/M13_PALETTE_R28.md).
+
+**Le binaire courant du dépôt reste R27 0.9.3.** Pour exécuter la recette R28, installer une **copie** de l'archive candidate sous le nom `AMOSPro_AGA.Lib` uniquement dans la configuration WinUAE. Ne pas modifier `dist/AMOSPro_AGA.Lib` ou `LAST_GOOD` du dépôt.
+
+---
+
 # M12 R27 0.9.3 — Blitters Safe : Gates A+B PASS
 
 **11/11/2026 — AMOS interprété/WinUAE : Gate B PASS sur le protocole des 40 swaps.** Le [test original `M12_R27_SAFE_BLIT_01.asc`](passed/M12_R27_SAFE_BLIT_01.asc) a été archivé dans `tests/passed/` **octet pour octet** depuis `tests/current/` (Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`). **Aucun `.asc` actif**. Bibliothèque **R27 0.9.3 corrigée**, SHA256 `64647f508e5681a09a8c8b51ec9ba8405caf3a52972b5f50034da40a684f0fbe`, 14 252 octets. **Gate A : 403 cas CPU 68000 PASS**, CI de publication [28/28 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220).
