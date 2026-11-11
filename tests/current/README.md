@@ -1,9 +1,23 @@
-# Tests AMOS actifs
+# Test actif AMOS — R35 Fade To White
 
-**Aucun test `.asc` actif** après la validation R34 sous AMOS interprété/WinUAE le 11/11/2026.
+**Un seul ASC actif :** [`M13_R35_FADE_TO_WHITE_01.asc`](M13_R35_FADE_TO_WHITE_01.asc).
 
-Le programme exact [`M13_R34_FADE_TO_BLACK_01.asc`](../passed/M13_R34_FADE_TO_BLACK_01.asc) a été déplacé dans `tests/passed/` **sans modification** (Git blob `5fe2f819048cd3706eedaf363f3415a00270406a`). Résultats utilisateur : `FADE150 1 BLACK 0 0 0 0`, `BAD0 0 BAD256 0 BADNEG 0 BADL 0`, `FADE1 1 ONE 0 FADE2 1 TWO 0`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Fondu visuellement confirmé ; cadence/FPS non mesurés.
+**Gate A CPU/CI R35 : non testée à ce stade ; Gate B AMOS/WinUAE : NON TESTÉE.** Ne pas utiliser ce test avec la bibliothèque R34, car elle ne contient pas `Aga Fade To White`. Installer la candidate R35 0.10.7 uniquement après sa Gate A PASS, en conservant le slot `APSystem` et en redémarrant AMOS. Importer par **New → Project → Merge ASCII**.
 
-**R34 0.10.6 est la version `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R34 (20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`). R33 reste dans son archive intacte.
+Le test affiche trois grandes bandes rouge, verte et bleue avant le fondu blanc de **150 VBL** (`Aga Swap` puis `Amos To Back` avant `Aga Fade To White`). Il vérifie le blanc exact de tous les pens testés, les durées 0, 256, -1 et 65536 rejetées, les durées 1/2 VBL, le cas déjà blanc et la fermeture de l'écran. **Aucune banque AMOS, aucun fichier ABK ou IFF remplacé.**
 
-Gates C Compiler et D Amiga AGA physique non testées. Ne pas créer de nouveau test actif avant discussion et approbation du contrat d'une future fonction.
+Résultats attendus :
+
+```text
+FADE150 1 WHITE 16777215 16777215
+WHITE2 16777215 16777215
+BAD0 0 BAD256 0 BADNEG 0 BADL 0
+BEFOREBAD 7915560 AFTERBAD 7915560
+FADE1 1 ONE 16777215 FADE2 1 TWO 16777215
+SAME 1 SAME28 16777215
+NOSCREEN 0 CLOSED -1
+RESULT 1
+CLOSE RETURNED
+```
+
+**R34 0.10.6 reste `LAST_GOOD` WinUAE-PASS** jusqu'à validation utilisateur de R35. Gates C Compiler/D Amiga réel non testées.

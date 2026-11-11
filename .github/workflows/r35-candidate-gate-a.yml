@@ -1,0 +1,33 @@
+name: R35 Gate A CPU 68000 and strict native source (candidate in memory)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/m13_aga_fade_white_r35_emit.py"
+      - "tools/build_m13_aga_fade_white_r35.py"
+      - "tools/test_m13_aga_fade_white_r35.py"
+      - ".github/workflows/r35-candidate-gate-a.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  r35_gate_a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CPU emulation and disassembly dependencies
+        run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: R35 actual native 68000 CPU Gate A
+        run: python -B tools/test_m13_aga_fade_white_r35.py
+      - name: R35 strict 68000 source export without modifying repository
+        run: |
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R35_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R35_GateA.Lib --out /tmp/amos-aga-r35-native --baseline none --strict
+      - name: Export identical R35 bytes for Gate A candidate publication
+        run: python -B tools/build_m13_aga_fade_white_r35.py --emit-base64

@@ -1,5 +1,13 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## R35 0.10.7 — Aga Fade To White : contrat approuvé, Gate A CPU/CI en préparation (11/11/2026)
+
+**Fonction unique approuvée :** `_OK=Aga Fade To White(vbl)`, symétrique de R34 Fade To Black : `vbl` entier **1..255**, retour 0 sans effet pour 0/négatifs/>255, appel bloquant, `WaitTOF` et `LoadRGB32` à chaque image, `GetRGB32` initial si vbl>1, interpolation RGB24 linéaire signée 8.8 et dernière image RGB32 **blanc exact (0xFFFFFFFF)** pour tous les pens logiques 1..256 de l'écran AGA privé indexé. Pas de HAM/EHB/dual playfield ; `ColorMap.Count` adéquate, aucune banque AGAPAL nécessaire, aucun pixel ou fichier modifié. Scratch Exec `8+42*N` (max 10 760 octets) libérée. Pas de garantie FPS/temps réel sur un 68000 lent. [Contrat technique R35](M13_FADE_WHITE_R35.md).
+
+**Statut :** source 68000, builder déterministe in-memory et tests natifs Gate A préparés, **Gate A et Gate B R35 NON TESTÉES à ce stade**. Un seul [ASC R35 actif](../tests/current/M13_R35_FADE_TO_WHITE_01.asc) préparé avec bandes affichées avant le fondu 150 VBL et sans banque remplacée ; **ne pas l'exécuter avant publication de la candidate R35 Gate A PASS**. **R34 0.10.6 reste la version WinUAE-PASS `LAST_GOOD`** et `dist/AMOSPro_AGA.Lib`, 20 752 octets, SHA256 `89124519c391d632bd2dec2c41b4959a965c6dc2d6852d5568b97d23586f4033`. Gates C Compiler/D Amiga réel non testées. Aucune autre fonction non approuvée, travailler uniquement sur `main`.
+
+---
+
 ## R34 0.10.6 — Aga Fade To Black : Gates A CPU/CI et B fonctionnelle AMOS/WinUAE PASS (11/11/2026)
 
 **Contrat approuvé et unique fonction ajoutée :** `_OK=Aga Fade To Black(vbl)`, durée entière 1..255 VBL (0, négatifs et >255 refusés). Fondu RGB24 **bloquant** de tous les pens logiques de l'écran AGA Intuition privé indexé vers le **noir exact**, un `graphics.library/WaitTOF` et `LoadRGB32` par étape, interpolation signée 8.8 depuis la capture `GetRGB32` ; dernière étape RGB32 nulle sans erreur d'arrondi. Aucune banque AGAPAL nécessaire, aucune écriture pixels, banques ou fichiers. Scratch Exec `8+42*N` octets (max 10 760) libéré. Refus sans effet ; retour 1 succès, 0 échec. Pas de mesure FPS ni garantie de durée réelle exacte sur 68000. [Contrat technique R34](M13_FADE_BLACK_R34.md).
