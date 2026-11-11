@@ -1,6 +1,6 @@
 # Test AMOS courant — M13 R30 0.10.2 AGAPAL Bank Init
 
-**Un seul fichier actif :** [`M13_R30_AGAPAL_BANK_INIT_01.asc`](M13_R30_AGAPAL_BANK_INIT_01.asc). Gate A 39 scénarios CPU PASS, export strict PASS et [CI de staging 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021205300). **Gate B WinUAE NON TESTÉE** ; Compiler et Amiga réel NON TESTÉS.
+**Un seul fichier actif :** [`M13_R30_AGAPAL_BANK_INIT_01.asc`](M13_R30_AGAPAL_BANK_INIT_01.asc). Gate A 39 scénarios CPU PASS, export strict PASS et [CI de publication 32/32 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43021754766). **Gate B WinUAE NON TESTÉE** ; Compiler et Amiga réel NON TESTÉS.
 
 Copier [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) R30 0.10.2 (17 824 octets, SHA256 `446f00cb6d8d09ce3085a51f8d182be55ae97a2c1eb43f10996009a7c8a4af2e`) dans `APSystem` sous son nom exact, relancer AMOS, créer un programme vide et faire **Project → Merge ASCII** avec le test. **Attention : écrase banques 10 et 11, et `RAM:R30_AGAPAL_TEST.ABK`.**
 
