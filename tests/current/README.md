@@ -1,9 +1,9 @@
 # Tests AMOS actifs
 
-**Aucun test `.asc` actif** après validation de R37 0.10.9 sous AMOS interprété/WinUAE le 11/11/2026.
+**Test R38 en attente de Gate A CPU/CI puis Gate B sous AMOS interprété/WinUAE :** [`M14_R38_FONT_BANK_01.asc`](M14_R38_FONT_BANK_01.asc).
 
-Le test [`M14_R37_FONT_SELECT_01.asc`](../passed/M14_R37_FONT_SELECT_01.asc) a été déplacé vers `tests/passed/` **à l'octet près** : Git blob `5371c310142f33aa2312e59ed81e2e2d6b90da3d`, inchangé. Capture utilisateur : `OPEN 1 DB 1 PALETTE 1 1`, `SEL8 1 TX8 1 SEL9 1 TX9 1`, `BAD0/BAD256/BADNAME 0`, `KEEP 1 RESET 1 DEFAULT 1`, `SWAP 1 NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fonctionnement visuel confirmé.
+La commande proposée et approuvée est `_OK=Aga Font Bank Select(Start(10),Length(10))`. Le test charge dans la banque 10 le fichier **fourni par l'utilisateur** `AMCAF_FONT9.abk` depuis `RAM:`, sélectionne la fonte, efface la banque et vérifie `Aga Text`. **Le fichier réel n'est pas redistribué dans ce dépôt public.** Un modèle de BankFont à glyphes synthétiques originaux sert aux tests CPU.
 
-**R37 v0.10.9 est `LAST_GOOD` WinUAE-PASS** : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R37, **22 328 octets**, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. L'archive R36 v0.10.8 (21 836 octets, SHA256 `f30882fc3d3dd86a0f30bf5c897e102a4892f992efa7e5e349184994d749d225`) est préservée.
+Ne lancer ce test WinUAE **qu'après Gate A PASS et publication de la candidate R38** dans `dist/AMOSPro_AGA.Lib`. Le résultat attendu est `RESULT 1` et `CLOSE RETURNED`, à confirmer visuellement.
 
-Gates C Compiler et D Amiga AGA réel **non testées**. R38 (banques de fontes AMCAF) et R39 (fontes bitmap 8x8) nécessiteront un contrat individuel avant tout code.
+**Version de repli validée : R37 v0.10.9 `LAST_GOOD`**, 43 commandes AP20, SHA256 `bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a`. Son [test original](../passed/M14_R37_FONT_SELECT_01.asc) reste archivé. La Gate B R38, la Gate C Compiler et la Gate D Amiga réel ne sont pas testées.
