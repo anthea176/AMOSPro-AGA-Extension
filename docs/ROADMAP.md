@@ -25,9 +25,11 @@
 | **M10 — R25 VALIDÉ (scénario WinUAE)** | **Collision rectangle/rectangle AABB** | `Aga Rect Overlap(ax,ay,aw,ah,bx,by,bw,bh)` ; **704 cas CPU/CI PASS et Gate B WinUAE PASS** : `STATIC 1 PURE 1`, `SEEN FREE 1 HIT 1`, `FRAMES 409 DRAWERR 0`, `RESULT 1`, fermeture AMOS correcte. [Test archivé inchangé](../tests/passed/M10_R25_RECT_OVERLAP_VISUAL_01.asc) | Pas de mesure de 50 FPS ; Compiler, Amiga réel et stress non testés. Conserver R25 avant toute étape suivante |
 | **M11 — R26 0.9.2 PASS WinUAE (texte + 40 swaps)** | **Rendu texte sur back buffer AGA** via `Aga Text(x,baselineY,pen,text$)` | **Gate A CPU/CI 64 cas PASS**, **Gate B WinUAE PASS sur deux scénarios** : [texte initial](../tests/passed/M11_R26_AGA_TEXT_01.asc) ; [multi-swap Safe/Disp 40 images](../tests/passed/M11_R26_SAFE_SWAP_02.asc) (`PROBE0 39`, `SWAP0 0`, toutes erreurs nulles, `RESULT 1`, alternance A/B confirmée). Les retries sont bornés, mais un retour 0 ne prouve pas à lui seul Safe | Garder R26 figée ; prochaine décision : éventuel contrat de protection des Blitters et tests de robustesse. **Ni Compiler, ni Amiga physique, ni FPS 50, ni stress exhaustif validés** |
 | **M12 — R27 0.9.3 VALIDÉE sur scénario WinUAE** | **Auto-contrôle Safe de `Aga Blit Copy`, `Fill`, `Clear`** sans nouveaux tokens AP20 | **Gate A CPU 403 cas PASS, CI complète 28/28**, [run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220), et **Gate B WinUAE PASS** sur [test M12 exact archivé](../tests/passed/M12_R27_SAFE_BLIT_01.asc) : `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, erreurs finales nulles, `RESULT 1`, clignotement visuel et fermeture AMOS ligne 167. Neuf segments modifiés dont six relocalisations R23 | Conserver R27 et R26 figées ; aucun FPS mesuré ni preuve de sûreté exhaustive. Compiler et Amiga AGA physique à tester seulement dans un chantier dédié |
-| M13+ — EXTENSIONS | Palette AGA 24 bits complète, sprites matériels, scrolling, dual playfield, Copper avancé, optimisations | Planifié ou optionnel selon besoins | Étapes indépendantes, sans retarder les fondamentaux |
+| **M13 — PRIORITÉ 1 (à spécifier)** | **Palettes AGA 24 bits : chargement indépendant de l'image, RGB, fondus/fades, color cycling, sauvegarde et restauration** | **Décision de priorité utilisateur le 11/11/2026 ; aucune API M13 implémentée**, aucune candidate R28 créée | Étudier le `ColorMap` Intuition/AGA et le code existant IFF/`SetRGB32` ; définir chargement, états, rythme VBL, sécurité et tests avant les signatures AP20 |
+| **M14 — PRIORITÉ 2 (après M13)** | **Fontes / texte AGA : compléter `Aga Text` R26 (choix/chargement de fontes, mesures, styles, alignement, lignes multiples)** | Le rendu R26 actuel est **une ligne, 1 à 128 caractères, police système**, pas un moteur complet de fontes | Étudier `SetFont`, `TextExtent`, les fontes AmigaOS/diskfont et les banques AMOS/AMCAF sans présumer leur compatibilité ; contrat séparé après les palettes |
+| M15+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et optimisations | En attente de décision après M13 et M14 | Ne pas démarrer ces chantiers ni créer des commandes anticipées |
 
-**Les jalons M8–M12 sont maintenant associés à des validations ou à du code en cours ; M13+ reste prospectif.** La priorité concrète pourra changer après validation de M7 ; aucun jalon futur ne vaut accord d'implémentation détaillé.
+**Ordre décidé le 11/11/2026 : M13 palettes, puis M14 fontes, puis réexamen des autres extensions M15+.** M8–M12 restent des jalons historiques validés sur leurs scénarios. **M13/M14 sont des priorités approuvées, pas des API ni des builds déjà disponibles** ; leurs signatures et sous-jalons restent à confirmer après audit.
 
 ## 2. M7 — Copper RGB4, bilan du scénario validé
 
@@ -55,18 +57,42 @@ Les hit-tests peuvent être de simples fonctions AMOS/extension sans matériel A
 
 Les fonctionnalités de l'extension doivent rester **génériques**, indépendantes d'un programme particulier. Toute compatibilité avec les primitives graphiques AMOS et AMCAF est à démontrer dans des scénarios reproductibles, pas à déduire de l'existence d'une commande.
 
-1. **Écran/RastPort AMOS et AMCAF :** `Text` AMOS est lié au contexte graphique AMOS, et l'écran Intuition AGA de l'extension est indépendant. **Ne plus proposer le diagnostic d'affichage de `Text` natif sur notre écran**. Étudier plutôt le `RastPort` du back buffer propre à la R25 et le rendu par `graphics.library/Text`. `Change Bank Font`, `Scrn Rastport` et `Text Length` ne sont pas automatiquement réutilisables sans étude des banques/structures. [M11](M11_TEXT_COMPAT.md).
+1. **Écran/RastPort AMOS et AMCAF :** `Text` AMOS cible l'état graphique d'AMOS, pas notre écran Intuition AGA. **Le rendu natif est désormais disponible avec `Aga Text` R26**, via un `RastPort` temporaire lié au back buffer AGA, [validé sous WinUAE sur les scénarios M11](M11_TEXT_R26.md). **M14 doit compléter les fontes**, pas refaire ce premier rendu. `Change Bank Font`, `Scrn Rastport` et les banques AMOS/AMCAF ne sont pas automatiquement réutilisables ; audit nécessaire avant tout adaptateur. [Étude initiale M11](M11_TEXT_COMPAT.md).
 2. **Blitter/copie :** `Aga Blit Copy` couvre les copies dans un **même back buffer** ; ce n'est pas un remplacement universel de `Screen Copy` (copies inter-écrans, caches ou autres formats). Définir les besoins par des tests.
 3. **Bob/Icon, transparence/masques :** étudier `Paste Bob`, `Paste Icon`, `F 16 Icon` et `Bob Update`, les contraintes Chip RAM et les conversions éventuelles de banques.
 4. **Primitives Turbo :** auditer les sources AMOS/Unity/Turbo de `F Draw` et `F Plot` avant de proposer des équivalents AGA, avec contrats de coordonnées, clipping et bitplanes.
-5. **Présentation et palette :** tester `Autoback`, `Screen Swap`, `Colour`, `Palette` et les modes EHB/HAM sans assimiler ces modes à des palettes 256 couleurs indexées.
+5. **Présentation et palettes :** **M13 est prioritaire** pour piloter le `ColorMap` AGA 24 bits de l'écran Intuition de l'extension, importer une palette sans ses pixels, puis produire fades et cycling. Garder distincts le Copper RGB4 M7 et les commandes `Colour` / `Palette` des écrans AMOS ; ne pas traiter HAM/EHB comme des modes indexés 256 couleurs. Étudier séparément `Autoback` et `Screen Swap`.
 
 Les priorités de compatibilité applicative sont **distinctes** de la roadmap générale de l'extension ; les capacités Copper et souris suivent leurs propres validations.
 
-## 5. Règles de décision, livraison et suivi
+## 5. Suite décidée : M13 palettes, puis M14 fontes (11/11/2026)
+
+### M13 — Palettes AGA 24 bits (premier chantier)
+
+**Fonctions demandées et ordre de travail envisagé**, sans arrêter de noms/signatures AP20 avant analyse du code existant :
+
+1. **Audit du socle :** relire le chargement `CMAP` des IFF/ILBM M5, `SetRGB32`, le `ColorMap` du `ViewPort` Intuition et les interactions avec le Copper RGB4 M7. Définir qui possède les couleurs et comment restaurer l'état à la fermeture de l'écran.
+2. **Chargement indépendant des pixels :** importer la palette d'un fichier IFF/ILBM sans remplacer l'image du back buffer ; valider le format, le nombre d'entrées et les bornes. Objectif concret : **les exemples n'ont plus à charger une mire IFF pour simplement obtenir des couleurs**.
+3. **Accès RGB 24 bits :** modifier et lire une entrée de palette par index, avec trois composantes 8 bits (R, G, B) et contrôles de profondeur/plage. Étudier la sauvegarde, la copie et la restauration de palettes ou groupes de couleurs.
+4. **Fades :** fondu vers le noir, apparition depuis le noir, transition **palette A → palette B**, durée paramétrable en images/VBL, interpolation RGB déterministe et état final exact. Déterminer si l'animation est pilotée par des appels successifs ou par une routine dédiée **sans imposer d'attente bloquante**.
+5. **Animations de palette :** color cycling d'une plage d'indices, sens et pas, pause/arrêt puis restauration de l'état initial. Les effets doivent rester compatibles avec la présentation double-buffer et l'écran Intuition.
+
+**Contraintes à vérifier avant implémentation :** chemin système `ColorMap`/`ViewPort` (pas d'écriture directe non justifiée dans `BPLCON3`), synchronisation d'affichage, conflits possibles avec les listes Copper RGB4 actives, mode indexé 1–8 plans contre EHB/HAM, coût CPU et gestion des ressources. La palette n'est pas elle-même un BitMap arrière : son animation et les swaps doivent être testés conjointement. Les gates A/B/C/D restent distinctes.
+
+**Livrable attendu avant R28 :** un contrat technique M13 et un programme de recette WinUAE représentatif (chargement sans pixels, couleur individuelle, fades progressifs et cycling), pas simplement un carré dont la couleur change.
+
+### M14 — Reprendre sérieusement les fontes après M13
+
+Le prototype `Aga Text` **R26** sait afficher **une ligne**, **1–128 caractères**, avec la **fonte système par défaut**, un index de couleur et une coordonnée verticale de **ligne de base**. Il n'expose actuellement **ni choix de fonte, ni chargement de police, ni métriques pour l'appelant**.
+
+Pour M14, étudier dans cet ordre : **sélection/chargement et libération des fontes AmigaOS**, dimensions réelles (`TextExtent`, largeur/hauteur, baseline), styles et alignements, texte sur plusieurs lignes, fond opaque ou transparent et règles de clipping. L'éventuelle **prise en charge des banques de fontes AMOS/AMCAF ou de fontes bitmap personnalisées** demande une étude distincte du format et de la propriété mémoire ; elle n'est pas acquise par `Aga Text`.
+
+**M15+** : sprites matériels, scrolling, dual playfield, extensions Copper et optimisations seront réévalués **après** la palette et les fontes. Aucun développement de ces fonctions n'est engagé par cette décision.
+
+## 6. Règles de décision, livraison et suivi
 
 - **Une seule source d'état immédiat :** [`NEXT_SESSION.md`](NEXT_SESSION.md) et le STATUS du jalon ; la roadmap ne reçoit plus les journaux R1→R15 en tête.
-- **Chaque API future reste « proposée »** tant qu'elle ne figure pas dans un binaire et un scénario de validation identifié. Ne pas présenter les commandes de M7–M12 comme disponibles.
+- **Chaque API future (M13 et suivantes) reste « proposée »** tant qu'elle ne figure pas dans un binaire et un scénario de validation identifié. Les commandes existantes M7–M12 sont disponibles uniquement dans le périmètre de leur version et de leurs tests documentés ; ne pas présenter les nouvelles fonctions de palette ou de fonte comme déjà implémentées.
 - **Gates distinctes** : A = structure HUNK/AP20 + CPU/CI ; B = AMOS interprété/WinUAE ; C = AMOS Compiler ; D = Amiga AGA physique. Ne jamais transformer un préflight Python en PASS matériel.
 - **Protection** : `dist/AMOSPro_AGA.Lib` est le candidat de test ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` n'est changé qu'avec validation explicite ; archives et tests passés restent intacts.
 - **Au prochain chantier** : lire [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md), le HEAD réel de `main` et les documents/status du jalon, avant de créer un builder ou un test.

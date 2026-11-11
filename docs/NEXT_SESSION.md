@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Décision de roadmap — M13 palette, puis M14 fontes (11/11/2026)
+
+**Choix utilisateur confirmé :** priorité à la **gestion des palettes AGA** (chargement indépendant d'une image, édition RGB 24 bits, fades, cycling, sauvegarde/restauration), puis reprise du chantier **fontes**, nettement plus large que le seul `Aga Text` R26. Sprites, scrolling, dual playfield et Copper avancé sont reportés après ces deux priorités. [Roadmap mise à jour et périmètre proposé](ROADMAP.md).
+
+- **M13 prochain chantier, pas encore commencé :** avant tout builder ou binaire, auditer `Aga Iff Load`/CMAP/`SetRGB32`, `ViewPort.ColorMap` Intuition, interactions Copper RGB4 et modes EHB/HAM ; définir le contrat des opérations palette, fades temporels, VBL et validation WinUAE. **Aucune API M13 ni R28 n'est encore implémentée.**
+- **M14 ensuite :** développer choix et chargement des fontes, métriques, styles, alignement, multi-ligne et éventuelles banques AMOS/AMCAF. `Aga Text` R26/R27 actuel se limite à une ligne en police système par défaut ; ne pas considérer le moteur de fontes comme terminé.
+- **Base protégée :** R27 0.9.3 Gate A+B PASS sur son test M12, `LAST_GOOD` historique et toutes les archives inchangés ; `tests/current/` sans test actif. L'exemple [`examples/show.asc`](../examples/show.asc) est un exemple de distribution statiquement vérifié, non encore validé de bout en bout sous WinUAE.
+- **Process :** changements exclusivement sur `main`, pas de nouveau binaire ni de branche durant cette mise à jour documentaire. Les gates CPU/WinUAE/Compiler/matériel restent distinctes.
+
+---
+
 ## M12 — R27 0.9.3 Blitters Safe : Gates A+B PASS sur scénarios validés
 
 **11/11/2026 — Gate A CPU 68000/CI PASS 403 cas, Gate B AMOS interprété/WinUAE PASS sur 40 swaps.** [CI finale 28/28](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/42997575220) · [Contrat et compte-rendu M12](M12_SAFE_BLITTER_R27.md) · [test M12 original archivé sans modification](../tests/passed/M12_R27_SAFE_BLIT_01.asc), Git blob `3b3a6d8c120b1ec066669231d382eae6e0e4bd82`.
