@@ -87,6 +87,8 @@ jobs:
       - name: M13 R30 AGAPAL Bank Init — native 68000 Gate A (in-memory builder only)
         run: |
           python -B tools/test_m13_agapal_r30.py
+          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R30_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R30_GateA.Lib --out /tmp/amos-aga-r30-native --baseline none --strict
           python -B tools/build_m13_agapal_r30.py --emit-base64
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: M13 R28 frozen IFF palette — native 68000 regression
