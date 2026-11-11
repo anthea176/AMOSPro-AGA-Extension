@@ -231,6 +231,7 @@ def run():
                 assert m.get(ptr+44)==m.get(ptr+48)==0
             assert m.text(value=b'BANK BEFORE ERASE')==1,(relpath,flags)
             m.uc.mem_write(BANK,b'\0'*len(m.payload))  # AMOS Erase bank
+            m.drawn=False; m.waits=0  # test harness: allow a second Aga Text draw
             assert m.text(value=b'BANK AFTER ERASE')==1,(relpath,flags)
             assert m.select(b'',0)==1 and m.bank_state()==(0,0)
             assert m.stripped==[ptr] and m.freed==[alloc] and not m.allocations
