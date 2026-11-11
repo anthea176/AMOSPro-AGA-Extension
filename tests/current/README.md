@@ -1,6 +1,6 @@
 # Test AMOS actif — R31 0.10.3 AGAPAL Capture
 
-**Un seul ASC à tester :** [`M13_R31_AGAPAL_CAPTURE_01.asc`](M13_R31_AGAPAL_CAPTURE_01.asc) sous AMOS interprété/WinUAE. **Gate A 107 scénarios CPU PASS**, [CI source 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394) et export 68000 strict PASS. **Gate B WinUAE EN ATTENTE**, Gates C Compiler/D matériel physique NON TESTÉES.
+**Un seul ASC à tester :** [`M13_R31_AGAPAL_CAPTURE_01.asc`](M13_R31_AGAPAL_CAPTURE_01.asc) sous AMOS interprété/WinUAE. **Gate A 107 scénarios CPU PASS**, [CI de publication 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027661428) et export 68000 strict PASS. **Gate B WinUAE EN ATTENTE**, Gates C Compiler/D matériel physique NON TESTÉES.
 
 Installer [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R31 0.10.3** (18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41`) directement dans `APSystem` sous son nom exact ; conserver le slot AMOS, quitter et relancer AMOS. R30 0.10.2 reste protégée dans `dist/AMOSPro_AGA_LAST_GOOD.Lib` : **ce n'est pas la candidate R31**.
 

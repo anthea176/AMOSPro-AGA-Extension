@@ -2,7 +2,7 @@
 
 **Test actif unique :** [`current/M13_R31_AGAPAL_CAPTURE_01.asc`](current/M13_R31_AGAPAL_CAPTURE_01.asc). Captures AGAPAL index0/index1 et écrasement index0, palettes RGB24 vert/rouge/bleu, contrôle autres couleurs, compte 256 et sauvegarde/rechargement ABK AMOS. Les index invalides et l'absence d'écran doivent renvoyer 0 sans modification. **Écrase banques 10 et 11 ainsi que `RAM:R31_AGAPAL_CAPTURE.ABK`.**
 
-`dist/AMOSPro_AGA.Lib` est la candidate **R31 0.10.3**, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41` ; **Gate A 107 scénarios CPU et [CI complète de source 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027092394)**, export strict PASS. **Gate B WinUAE NON TESTÉE ; Gates C/D NON TESTÉES.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R30 0.10.2 WinUAE PASS, sans modification.
+`dist/AMOSPro_AGA.Lib` est la candidate **R31 0.10.3**, 18 520 octets, SHA256 `0b36e65fcc6e6e88fa2a4e6520fd831973e751c8af602cfb8501ec22c7492c41` ; **Gate A 107 scénarios CPU et [CI complète de publication 33/33 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43027661428)**, export strict PASS. **Gate B WinUAE NON TESTÉE ; Gates C/D NON TESTÉES.** `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R30 0.10.2 WinUAE PASS, sans modification.
 
 ---
 
