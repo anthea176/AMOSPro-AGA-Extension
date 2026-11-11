@@ -144,6 +144,17 @@ def run():
             assert b"BODY" not in m.saved
             assert m.saved[-1]==0 if (n&1) else True
             count+=1
+    # Native R28 palette loader must accept each R29 output without BODY.
+    from test_m13_palette_r28 import PaletteMachine as R28Machine
+    for depth in (1,4,8):
+        m,saved_ok=test_machine(candidate,depth=depth)
+        assert saved_ok==1
+        incoming=R28Machine(BASE.read_bytes(),data=m.saved,depth=depth)
+        assert incoming.load()==1,"R29 IFF must reload with frozen R28"
+        expected,cmap=expected_iff(m,depth,1<<depth)
+        assert bytes((x>>24)&255 for triple in incoming.palette_rgb[:1<<depth] for x in triple)==cmap
+        assert incoming.plane_writes==0
+        count+=1
     # Logical palette bound smaller than ColorMap.Count.
     m,result=test_machine(candidate,depth=4,colors=32)
     assert result==1 and m.first_count==16
