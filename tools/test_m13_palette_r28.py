@@ -215,6 +215,39 @@ def run():
                 cm[(n-1)*3]<<16|cm[(n-1)*3+1]<<8|cm[(n-1)*3+2])
             count+=2
 
+    # Standard palette-only IFF/ILBM as saved by Amiga paint software:
+    # optional BMHD, optional range-cycle CRNG, no pixel BODY.
+    # The palette importer must not require PicInfo or a picture.
+    for with_bmhd in (False,True):
+        for with_crng in (False,True):
+            pal_data,cm=make_palette_only(32)
+            parts=b"ILBM"
+            if with_bmhd:
+                bmhd=struct.pack(">HHhhBBBBHBBhh",
+                                 0,0,0,0,0,0,0,0,0,1,1,0,0)
+                parts+=chunk(b"BMHD",bmhd)
+            if with_crng:
+                parts+=chunk(b"CRNG",bytes.fromhex("0000000100000000"))
+            parts+=chunk(b"CMAP",cm)
+            palette_iff=b"FORM"+struct.pack(">I",len(parts))+parts
+            m=PaletteMachine(r28,data=palette_iff)
+            assert m.load()==1,("palette-only IFF",with_bmhd,with_crng)
+            assert m.rgb_writes==1 and m.plane_writes==0
+            assert m.palette_rgb[31]==tuple(
+                cm[31*3+i]*0x01010101 for i in range(3))
+            assert not m.owned and m.open_files==m.open_libraries==0
+            count+=1
+
+    # Ordinary ILBM pictures of unrelated geometry are also legitimate
+    # palette sources; their compressed BODY and BMHD are ignored.
+    for source_depth in (1,2,4,8):
+        picture=fixture(width=17,height=2,depth=source_depth)
+        m=PaletteMachine(r28,data=picture,depth=8)
+        assert m.load()==1,source_depth
+        assert m.rgb_writes==1 and m.plane_writes==0
+        assert m.last_update[0]==0 and len(m.last_update[1])==1<<source_depth
+        count+=1
+
     good,cm=make_palette_only(8)
     valid_form=b"FORM"+struct.pack(">I",len(good)-8)+good[8:]
     assert good==valid_form
