@@ -124,10 +124,13 @@ def run():
     assert m.fade_black(vbl=3)==1
     assert m.screen_palette[:16]==[(0,0,0)]*16
     before=m.get_native()+m.get_payload()
-    n0=m.wait_calls;l0=m.load_calls;r0=m.rgb_calls;a0=m.alloc_calls
+    # Reinitialise mock counters only, retaining the already-black ColorMap.
+    # R33's GetRGB32 mock expects the first sample before a local VBL.
+    m.wait_calls=m.load_calls=m.rgb_calls=m.alloc_calls=0
+    m.frames=[]
     assert m.fade_black(vbl=5)==1
-    assert m.wait_calls==n0+5 and m.load_calls==l0+5
-    assert m.rgb_calls==r0+1 and m.alloc_calls==a0+1
+    assert m.wait_calls==5 and m.load_calls==5
+    assert m.rgb_calls==1 and m.alloc_calls==1
     assert m.screen_palette[:16]==[(0,0,0)]*16
     assert m.get_native()+m.get_payload()==before
     count+=2
