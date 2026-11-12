@@ -15,7 +15,7 @@ Les [sources AMOS Professional 365 du Compiler](https://github.com/marc365/AMOS-
 - **CPU réel 68000 simulé dans Unicorn en CI** : exécute le dispatcher V2 avec appels pseudo-`Rbsr` résolus en **BSR.W** et **JSR absolu**, puis vérifie D0/A0/D2, la pile et le retour depuis la cible. Exécute le code 68000, pas une simple arithmétique Python.
 - Les outils de production restent sur [le dispatcher C1 historique](../tools/compiler_relocation.py), **inchangé**. En particulier `is_compiler_wrapped()` et l'exporteur ne savent **pas encore traiter V2** : **interdiction d'utiliser ce prototype pour une release ou une candidate R58.**
 
-**Statut au dépôt initial : contrôle local statique PASS ; test Unicorn/Capstone en CI à lire dans le workflow "Artifact integrity".** Une CI verte constituera une preuve **Gate A ciblée** des instructions et des structures, pas une preuve **Gate C AMOS Compiler/WinUAE**.
+**Gate A ciblée V2 — CPU 68000 + AP20 PASS sur CI** : [Artifact integrity, run 43299842904](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43299842904), job `verify` et étape `Experimental Compiler V2 68000 bridge Gate A (in-memory only)` **success**. Logs : `STATIC PASS: V2 AP20 offsets [0, 30000, 32766, 32768, 40000, 65496] MAX 65534 R57 REPACK PASS` et `M68000 CPU PASS: 14 68k ABI/stack/call tests, real R57 preserved, no generated files`. La CI complète conclut **success** ; le contrôle final `Ensure no official or historical Lib was written` est PASS. **Cela ne constitue pas une Gate B ou C WinUAE**, ni une validation par le Compiler réel au-delà de 32 Ko.
 
 ## Risques restant à lever avant toute candidate
 
