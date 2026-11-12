@@ -217,6 +217,47 @@ def verified_r44_inherited_seeds(parsed):
     return seeds
 
 
+def verified_r45_inherited_seeds(parsed):
+    """Strict source-backed inheritance from the exact published R44 binary.
+
+    R45 changes only the R44 last GetP delimiter and appends the NEW R45
+    entry. Validate SHA, every former core, the complete emitter output,
+    API token prefix and GetP. Never authorize arbitrary R44 byte changes.
+    Inherited unreachable code seeds are independently verified by the
+    already-audited R44/R43 provenance rules.
+    """
+    sections=parsed["section"]
+    if len(sections)!=56 or b"M16 Image Draw R45 0.12.0" not in parsed["title"]:
+        return {}
+    frozen_path=ROOT/"dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"
+    need(frozen_path.is_file(), "R45 strict source: R44 frozen archive missing")
+    frozen=frozen_path.read_bytes()
+    need(sha(frozen)=="0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc",
+         "R45 strict source: R44 archive SHA changed")
+    original=parse_lib(frozen)
+    old=original["section"]
+    need(len(old)==55, "R45 strict source: wrong R44 archive segment count")
+    for index in range(55):
+        need(sections[index]["core"] == old[index]["core"],
+             f"R45 strict source: inherited core changed at entry {index}")
+        expected_getp=(True if index==54 else old[index]["getp"])
+        need(sections[index]["getp"]==expected_getp,
+             f"R45 strict source: unexpected GetP at entry {index}")
+    from m16_image_draw_r45_emit import emit_image_draw
+    new_core,_=emit_image_draw()
+    need(sections[55]["core"]==new_core and not sections[55]["getp"],
+         "R45 strict source: new CPU entry differs from audited emitter")
+    from audit_ap20 import token
+    from ap20_utils import split
+    old_tokens=split(frozen)[0]
+    new_tokens=parsed["token_data"]
+    expected=(old_tokens[:-6]
+              +token("aga image draw",1,55,"00,0,0,0,0")
+              +bytes(6))
+    need(new_tokens==expected, "R45 strict source: AP20 token ABI changed")
+    return verified_r44_inherited_seeds(original)
+
+
 def analyze_entries(parsed):
     sections=parsed['section']
     base=parsed['code_start']
@@ -225,6 +266,8 @@ def analyze_entries(parsed):
     # Discover cross-entry seeds exclusively from decoded CALL targets.
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
     inherited=verified_r44_inherited_seeds(parsed)
+    for index,extra in verified_r45_inherited_seeds(parsed).items():
+        inherited.setdefault(index,set()).update(extra)
     for index,extra in inherited.items():seeds[index].update(extra)
     # In R23, legacy keyboard exits contain an AMOS Rjsr linking marker
     # (6 bytes of non-CPU data) followed by a real RTS. Seeds must be tied
