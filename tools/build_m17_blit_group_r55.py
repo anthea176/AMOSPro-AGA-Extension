@@ -80,7 +80,8 @@ def build():
     before = [x for x in inspect(parse(stable))["tokens"] if x["name"].startswith("aga ")]
     after = [x for x in inspect(parse(result))["tokens"] if x["name"].startswith("aga ")]
     assert before == after and len(after) == 53
-    assert CURRENT.read_bytes() in (stable, result), "Current dist library must be exact R54 or built R55"
+    # Active version selection/integrity is checked by active_library.py;
+    # historical R55 builder must remain reproducible with an R56 in dist/.
     return result, {
         "version": VERSION, "size": len(result),
         "sha256": sha256(result).hexdigest(),
