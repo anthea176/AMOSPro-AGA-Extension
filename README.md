@@ -30,7 +30,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R55 0.13.0 (unchanged 53 public commands from R54)** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
+**Current library API R55 0.13.0** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
