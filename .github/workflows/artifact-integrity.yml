@@ -163,6 +163,10 @@ jobs:
           python -B tools/build_m17_r57_rastport.py
       - name: Experimental Compiler V2 68000 bridge Gate A (in-memory only)
         run: python -B tools/test_compiler_bridge_v2_probe.py
+      - name: M17/R58 deterministic real 40K Compiler V2 probe Gate A (in memory)
+        run: |
+          python -B tools/test_m17_r58_compiler_bridge.py
+          python -B tools/build_m17_r58_compiler_bridge.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 
