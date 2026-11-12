@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M15/R43 — étude du contrat Aga Circle (non approuvée, 12/11/2026)
+
+La nouvelle fonction envisagée `_OK=Aga Circle(CX,CY,Radius,Pen)` fait l'objet d'un [contrat proposé](M15_CIRCLE_R43.md). **Aucun code R43, aucun nouveau token, aucun test WinUAE ni binaire candidat** n'ont été créés. Attendre l'accord explicite de l'utilisateur sur le contrat avant toute implémentation. Le dernier état validé reste **R42 v0.11.3**, `LAST_GOOD` et Gates A/B PASS ; voir le checkpoint ci-dessous. Travail uniquement sur `main`, aucune autre branche ou dépôt.
+
 ## M15/R42 v0.11.3 — Aga Box : Gates A CPU/CI et B WinUAE PASS, LAST_GOOD (12/11/2026)
 
 **R42 VALIDÉE :** `_OK=Aga Box(X1,Y1,X2,Y2,Pen)`, **47 commandes AP20**, **360 tests CPU 68000 + export source natif strict + CI PASS**, Gate B AMOS interprété/WinUAE **PASS confirmé par l'utilisateur** (« ça marche ! bravo »). Capture : `OPEN 1 DB 1 CLEAR 1`, `BOXES 1 1 1 REV 1`, `CLIPPED 1 1 1 1`, `LINES 1 1 DOT 1`, `OUTSIDE 0 0 0 0`, `WRAP 0 BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne **119** ; rendu validé. [Test original archivé sans retouche](../tests/passed/M15_R42_BOX_01.asc), Git blob `dbf5cefb215cc0ae1359d648ea34c855a92b2012` (**3 264 octets**). **`tests/current/` ne contient aucun ASC actif.**
