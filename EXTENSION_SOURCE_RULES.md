@@ -1,5 +1,7 @@
 # EXTENSION_SOURCE_RULES.md
 
+**Suivi de fuite Chip RAM R38 :** test actif `tests/current/M14_R38_CHIP_RAM_STRESS_01.asc` (500 selections et `Aga Text` entre AMCAF et fonte disque, mesures `Chip Free` et `AvailMem(MEMF_CHIP|MEMF_LARGEST)`). **Non encore valide sous WinUAE ; seule Gate B fonctionnelle initiale est PASS.** Ce test ne modifie ni AP20 ni `LAST_GOOD`. Voir `tests/current/README.md`.
+
 ## R38 0.11.0 — Aga Font Bank Select : Gates A/B PASS, LAST_GOOD (12/11/2026)
 
 **Gate B confirmée par l'utilisateur** (« ca a marché ! »), sous AMOS interprété/WinUAE avec la candidate corrigée après les refus BANK 0 / BANK2 0. La fonction `Aga Font Bank Select(Start(bank),Length(bank))` prend en charge les banques AMCAF `BankFont` monochromes fixes et proportionnelles, DATA/WORK, source CHIP/FAST. Le rendu s'effectue sur une copie privée allouée en **Chip RAM**, et les anciennes fontes sont libérées par `StripFont` puis `FreeVec` au remplacement/reset/fermeture. **Ce succès ne démontre pas encore l'absence de fuite après des centaines de changements de fonte** : aucun suivi réel du plus grand bloc Chip RAM disponible n'a été effectué. La Gate A a validé **60 groupes CPU 68000**, banques réelles Topaz/Hwarf/Pix3M et régressions R37/R26/R36 ; CI intégrité candidate PASS. **44 commandes AP20**.

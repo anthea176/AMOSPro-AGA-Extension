@@ -19,6 +19,9 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
+**Test d'endurance R38 en attente WinUAE :** [500 changements de fontes et mesures Chip RAM](tests/current/M14_R38_CHIP_RAM_STRESS_01.asc) ; Topaz AMCAF / Hwarf / Pix3M / Topaz AmigaOS. Aucun changement du binaire R38 ni de `LAST_GOOD`. [Mode d'emploi](tests/current/README.md).
+
+
 **Dernière version validée : R38 v0.11.0 (12 novembre 2026)** — 44 commandes AMOS AP20 pour les écrans AGA indexés, palettes, IFF/ILBM, Blitter, Copper, entrées et texte.
 
 - **Bibliothèque :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).

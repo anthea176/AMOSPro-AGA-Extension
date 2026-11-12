@@ -19,6 +19,9 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
+**R38 Chip RAM stress test pending WinUAE:** [500 font switches with memory samples](tests/current/M14_R38_CHIP_RAM_STRESS_01.asc), cycling AMCAF Topaz/Hwarf/Pix3M and AmigaOS Topaz. The R38 binary and `LAST_GOOD` remain unchanged. [Instructions](tests/current/README.md).
+
+
 **Latest validated version: R38 v0.11.0 (12 November 2026)** — 44 AMOS AP20 commands covering indexed AGA screens, palettes, IFF/ILBM, Blitter, Copper, input and text.
 
 - **Library:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) and [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) are identical to the [R38 archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).

@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**Suite R38 (12/11/2026) :** programme de stress Chip RAM 500 selections, 500 dessins `Aga Text`, echantillonnage total + bloc libre sur `tests/current/M14_R38_CHIP_RAM_STRESS_01.asc`. Test prepare, **non lance sous WinUAE**, le binaire R38 `LAST_GOOD` n'est pas modifie. [Instructions](../tests/current/README.md).
+
 ## R38 0.11.0 — Aga Font Bank Select : Gates A/B PASS, LAST_GOOD (12/11/2026)
 
 **Gate B confirmée par l'utilisateur** (« ca a marché ! »), sous AMOS interprété/WinUAE avec la candidate corrigée après les refus BANK 0 / BANK2 0. La fonction `Aga Font Bank Select(Start(bank),Length(bank))` prend en charge les banques AMCAF `BankFont` monochromes fixes et proportionnelles, DATA/WORK, source CHIP/FAST. Le rendu s'effectue sur une copie privée allouée en **Chip RAM**, et les anciennes fontes sont libérées par `StripFont` puis `FreeVec` au remplacement/reset/fermeture. **Ce succès ne démontre pas encore l'absence de fuite après des centaines de changements de fonte** : aucun suivi réel du plus grand bloc Chip RAM disponible n'a été effectué. La Gate A a validé **60 groupes CPU 68000**, banques réelles Topaz/Hwarf/Pix3M et régressions R37/R26/R36 ; CI intégrité candidate PASS. **44 commandes AP20**.
