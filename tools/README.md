@@ -1,16 +1,22 @@
-# Outils Python — R46 v0.12.1-C1 `LAST_GOOD`, AMOS Compiler corrigé
+# Outils Python — R54 v0.12.9 `LAST_GOOD`, base Compiler-safe de M17
 
-## Capture courante — R53 0.12.8
+## Référence actuelle — R54 promue, M17 en diagnostic (12/11/2026)
 
-Builder fonctionnel : `python -B tools/build_m16_capture.py` (mémoire seulement) ; `--publish` écrit la candidate sous son nom exact et son archive si l'empreinte autorisée concorde. `build_aga_current.py --verify` contrôle aussi sa reproductibilité. LAST_GOOD reste R46 C1.
+**Bibliothèque officielle :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 immuable](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes / 60 entrées AP20**, pont Compiler-safe et monolithe de **30 160 octets**. R54 : **Gate A CPU/CI PASS**, **Gate B interprété/WinUAE PASS**, **Gate C nouvel exécutable compilé/WinUAE PASS sur le scénario R54** ; **Gate D Amiga AGA physique NON TESTÉE**. [Test R54 archivé](../tests/passed/M16_R54_BANK_NUMBER_01.asc) · [rapport de clôture](../docs/M16_R54_BANK_NUMBER.md) · [CI du commit final](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43272147778).
 
-Sources actives : `amos_main_abi.py`, `m16_capture_emit.py`, `m16_capture_r47_core_emit.py`, `compiler_relocation.py`. Référence source figée : `tests/fixtures/amos_main_declarations.json`. Tests : `test_amos_main_linkage.py`, `test_m16_capture_build.py`, `test_m16_capture.py`, compresseur et régressions Draw/Compiler. [Preuves et limites](../docs/M16_MAIN_LINKAGE_FIX.md).
+**M17 est ouvert pour diagnostic uniquement**, avec priorité à `Aga Blit Fill` / `Aga Blit Clear`. Aucun nouveau binaire ni token AP20 ; R54 et les archives restent intacts. [Diagnostic M17](../docs/M17_BLITTER_DIAGNOSTIC.md) · [baseline WinUAE V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md).
 
-Les builders/sondes R47–R52 restent historiques et ne servent pas à produire R53. Leur rangement global a été rejeté par l'auto-review ; ils sont conservés sans déplacement. Les sections suivantes documentent les états antérieurs.
+**Chaîne de vérification actuelle :** `tools/active_library.py` protège le SHA de R54 ; `python -B tools/build_aga_current.py --verify` contrôle R54 via `tools/build_m16_bank_api_r54.py` tout en reconstruisant séparément le pont historique R46 C1. `tools/compiler_relocation.py` contient les outils de désenveloppement/ré-enveloppement indispensables à une future candidate M17. Le builder R53 `tools/build_m16_capture.py` reste historique.
 
-**Diagnostic temporaire R48 (`Aga Image Capture`) :** `python -B tools/test_m16_r48_token_probe.py` et `python -B tools/build_m16_r48_token_probe.py`. Reproduction contrôlée de la signature R47 à 6 paramètres et de sa taille 32 012 octets, mais routine sans effet de bord. [Binaire expérimental](../dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib) · [procédure](../docs/M16_R48_TOKEN_ABI_PROBE.md). **CI/CPU Gate A PASS, WinUAE Gate B non testée, aucune capture réellement implémentée par R48.** R46 C1 reste officielle et `LAST_GOOD`.
+## Historique — R53 capture et sondes R47–R52
 
-**M16 Capture (développement en cours, modèle hôte seulement) :** `python -B tools/test_m16_agapic_capture_model.py` valide l'extraction planaire, le masque, la compression AGAPIC v1, le refus des captures hors écran et des numéros de banque déjà occupés et le repli mémoire simulé. **Ce test ne valide ni le code 68000, ni AMOS interprété, ni le Compiler ; R46 C1 `LAST_GOOD` reste figée.** Voir [contrat](../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
+Lors de la préparation de R53 0.12.8, `python -B tools/build_m16_capture.py` reconstruisait la candidate en mémoire ; l'option `--publish` concernait cette version, **pas la R54 actuelle**. À cette époque, `LAST_GOOD` était encore R46 C1. Sources de cette étape : `amos_main_abi.py`, `m16_capture_emit.py`, `m16_capture_r47_core_emit.py`, `compiler_relocation.py`, fixture `tests/fixtures/amos_main_declarations.json`. [Preuves historiques](../docs/M16_MAIN_LINKAGE_FIX.md).
+
+Les builders et sondes R47–R52 sont conservés pour la reproductibilité, sans servir de base courante. Les paragraphes suivants décrivent des états **historiques**, non des candidates à installer aujourd'hui.
+
+**Diagnostic temporaire R48 (`Aga Image Capture`) :** `python -B tools/test_m16_r48_token_probe.py` et `python -B tools/build_m16_r48_token_probe.py`. Reproduction contrôlée de la signature R47 à 6 paramètres et de sa taille 32 012 octets, mais routine sans effet de bord. [Binaire expérimental](../dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib) · [procédure](../docs/M16_R48_TOKEN_ABI_PROBE.md). **CI/CPU Gate A PASS, WinUAE Gate B non testée, aucune capture réellement implémentée par R48.** R46 C1 était encore officielle et `LAST_GOOD` à cette date (état historique).
+
+**M16 Capture (modèle hôte historique, avant la R53 validée) :** `python -B tools/test_m16_agapic_capture_model.py` valide l'extraction planaire, le masque, la compression AGAPIC v1, le refus des captures hors écran et des numéros de banque déjà occupés et le repli mémoire simulé. **Ce test ne valide ni le code 68000, ni AMOS interprété, ni le Compiler ; R46 C1 était `LAST_GOOD` lors de cette étude.** Voir [contrat](../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
 
 ## CI : vérification quotidienne rapide / régression complète manuelle
 
@@ -19,11 +25,12 @@ Les builders/sondes R47–R52 restent historiques et ne servent pas à produire 
 - Les workflows R33–R38 restent archivés et déclenchés seulement par modification de leurs fichiers respectifs ou manuellement. **La rapidité de la CI ne réduit pas le contrat de validation des nouvelles commandes ni les Gates B/C/D.**
 - **Ne pas confondre :** cette séparation diminue le temps des workflows GitHub, pas le temps d'exécution des programmes sur Amiga. Aucun binaire ni archive historique modifiés par cette optimisation.
 
-## Construction OBLIGATOIRE pour R46 et les futures versions (12/11/2026)
+## Construction Compiler-safe obligatoire — R54 courante, R46 C1 figée
 
-La **bibliothèque officielle installable** est [R46 C1](../dist/AMOSPro_AGA.Lib) = [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive d'essai C1 figée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, 50 commandes / **57 entrées AP20**, Gates A/B + Gate C WinUAE **test intégré PASS** (`RESULT 1`, 500 curseur/0, `CHIP DROP 0`). Gate D matérielle non testée. L'[ancienne R46 native, 29 288 octets / 56 segments](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib) reste **historique**, non installable en compilé : elle contient les branches inter-segments responsables du Guru.
+**Courant :** [R54 0.12.9](../dist/AMOSPro_AGA.Lib) est la bibliothèque installable et `LAST_GOOD` validée sur Gates A/B/C (scénarios R54) ; **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes / 60 entrées AP20**. La référence antérieure [R46 C1](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) demeure figée, **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, 50 commandes / 57 entrées AP20. L'ancienne [R46 native](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib) (29 288 octets) reste une **archive historique non Compiler-safe**, et ne doit pas remplacer R54.
 
-**Point d'entrée pour les builds courants :**
+**Vérifier l'officielle et son pont :**
+
 ```sh
 python -B tools/build_aga_current.py --verify
 python -B tools/test_aga_compiler_bridge_r46.py
@@ -31,28 +38,13 @@ python -B tools/test_compiler_relocation.py
 python -B tools/verify_artifacts.py
 ```
 
-**Pour la R47 et toutes les versions suivantes :** ne JAMAIS publier directement la sortie d'un ancien builder natif R44/R45/R46. Partir de `dist/AMOSPro_AGA_LAST_GOOD.Lib` **C1**, extraire les parties natives en mémoire, appliquer les changements de fonctionnalités puis **envelopper obligatoirement le candidat final** avec `wrap_native_ap20` :
+`build_aga_current.py` vérifie la reproductibilité de R54 **et** celle de R46 C1 depuis son archive. Il ne génère pas une nouvelle version M17. Les anciens scripts R40–R46 restent dédiés aux références historiques.
 
-```python
-from pathlib import Path
-from compiler_relocation import native_from_promoted, wrap_native_ap20
-from audit_ap20 import parse, inspect
+**Toute candidate postérieure à R54** doit partir du `LAST_GOOD` R54 en vigueur : extraire en mémoire les parties natives via `compiler_relocation.native_from_promoted()`, modifier uniquement les fonctions auditées dans un builder reproductible, et terminer par `compiler_relocation.wrap_native_ap20()`. Auditer l'AP20, l'ABI, les branches et les cibles relogeables avant tout binaire installable. Il n'y a **aucun retour automatique** à une bibliothèque native non Compiler-safe.
 
-last_good = Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-native_title = b"AMOSPro AGA R47 native 0.12.2\0$VER: AMOSPro_AGA 0.12.2\0"
-native_title += bytes(len(native_title) % 2)
-native = native_from_promoted(last_good, native_title)
-# Modifier les segments et tokens NATIFS dans le futur builder, pas la C1 enveloppee.
-# Apres construction du nouveau candidat natif valide (AP20, CPU, ABI) :
-release_title = b"AMOSPro AGA R47 compiler-safe 0.12.2\0$VER: AMOSPro_AGA 0.12.2\0"
-release_title += bytes(len(release_title) % 2)
-candidate = wrap_native_ap20(native_candidate, release_title)
-assert not inspect(parse(candidate))["issues"]
-```
+**Limite de taille à surveiller pour M17 :** le monolithe R54 est de **30 160 octets**, contre la limite stricte de **32 768 octets** par routine copiée (marge arithmétique : **2 608 octets**, avant autres contraintes d'offset et de structure). Le builder doit refuser un dépassement ; ne pas engager une modularisation de l'AP20 sans audit et recette Compiler dédiés. Aucune nouvelle candidate, aucun nouveau test runtime ni aucune promotion ne sont affirmés ici.
 
-Cette séquence est testée avec **une entrée supplémentaire simulée**, vérification inverse et garde de dépassement 32 Kio. Si le code natif dépasse la limite de déplacement du pont monolithique (environ 32 Kio, 27 888 utilisés aujourd'hui), **le builder doit échouer** : implémenter/valider une relocation modulaire avant toute nouvelle version. **Aucun fallback silencieux vers le binaire 56 segments.** Les 56 segments restent nécessaires uniquement comme entrées de génération/source historique ; **les sorties publiables doivent comporter le pont**.
-
-Le [script historique `build_m16_image_draw_r46.py`](build_m16_image_draw_r46.py) et son émetteur conservent la génération exacte du **code natif R46 de référence** pour les tests CPU ; ce n'est **plus** le builder de l'officielle. L'ancien `build_aga_compiler_compat.py` (R44/R45, seulement quatre branchements corrigés) est un **diagnostic incomplet**, jamais un modèle de build final. Le script `generate_aga_native_source.py --strict` opère sur **l'archive native R46**, tandis que les [tests du pont](test_compiler_relocation.py) auditent le binaire installé C1. [Règles permanentes](../EXTENSION_SOURCE_RULES.md) · [rapport Compiler](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). **Branche `main` seulement** ; ne pas toucher aux archives figées.
+[Instructions impératives](../EXTENSION_SOURCE_RULES.md) · [diagnostic M17](../docs/M17_BLITTER_DIAGNOSTIC.md) · [relocalisation C1 historique](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). Travail exclusivement sur `main`, archives et `tests/passed/` immuables.
 
 ## Historique : M16/R46 native avant promotion C1
 

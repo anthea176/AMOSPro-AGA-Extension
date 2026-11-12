@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M17 — optimisation Blitter : phase 1 diagnostic, aucun candidat (12/11/2026)
+
+**M16 est clôturée en R54 v0.12.9.** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 figée](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib) (**32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`). R54 conserve **Gates A/B/C PASS sur son scénario** ; Gate D sur Amiga physique non testée. Aucun test `.asc` actif dans `tests/current/`.
+
+**Chantier actif M17 :** diagnostic en lecture seule de `Aga Blit Fill` et `Aga Blit Clear`, puis `Aga Blit Copy` uniquement si le profilage le justifie. Le code hérité de M12 passe par un contrôle non bloquant `Safe`, `BltBitMap` par bitplane et `WaitBlit` après chaque plan ; cette structure est prouvée par la source historique, **pas encore qualifiée comme cause des écarts ni optimisée dans R54**. [Premier rapport M17](M17_BLITTER_DIAGNOSTIC.md) ; [baseline V2 R44/R46 C1](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md), à rejouer à l'identique après une future candidate.
+
+**À ce stade : aucune R55, aucune candidate, aucune modification fonctionnelle, aucune Gate M17 revendiquée.** Préserver R54 `LAST_GOOD`, les archives figées, les résultats et sources de benchmark et `tests/passed/`. En cas de développement ultérieur : inspection du binaire R54 réel, contrat minimal Fill/Clear, tests CPU/CI puis Gate B WinUAE interprétée et Gate C Compiler indépendantes ; ne pas déduire un gain de performance de la seule CI. `main` exclusivement.
+
 ## M16/R54 v0.12.9 — PROMUE LAST_GOOD, Gates A/B/C PASS (12/11/2026)
 
 **Bibliothèque officielle :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 figée](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes AMOS / 60 entrées AP20**, pont Compiler-safe, bloc monolithique 30 160 octets. La référence précédente **R46 C1** reste intacte dans [son archive Compiler-safe](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) (29 964 octets, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`). L'archive R53 Image Capture est intacte également.
