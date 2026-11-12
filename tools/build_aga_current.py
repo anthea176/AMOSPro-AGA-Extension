@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible R46 bridge plus verification of current R57/R56/R55 or R54.
+"""Reproducible R46 bridge plus version-pinned verification of current R59/R58/R57.
 
 New versions MUST derive native parts from the compiler-safe LAST_GOOD
 with compiler_relocation.native_from_promoted(), modify the native parts,
@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R58 0.13.3"):
+    if active.startswith("R59 0.13.4"):
+        from build_m17_r59_compact_v2 import build as build_r59
+        candidate,meta=build_r59()
+        assert candidate==current, "R59 candidate not byte-exact to deterministic builder"
+        print("CURRENT M17 R59 COMPACT V2 BUILDER PASS",meta)
+    elif active.startswith("R58 0.13.3"):
         from build_m17_r58_compiler_bridge import build as build_r58
         candidate,meta=build_r58()
         assert candidate==current, "R58 candidate not byte-exact to deterministic builder"
@@ -88,7 +93,7 @@ def main() -> None:
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
     print("Next revision source: native_from_promoted(LAST_GOOD.read_bytes(), native_title)")
-    print("Next revision final: wrap_native_ap20(native_candidate, release_title)")
+    print("Next revision must use an audited Compiler-safe wrapper; R59 uses wrap_native_ap20_v2")
 
 
 if __name__ == "__main__":

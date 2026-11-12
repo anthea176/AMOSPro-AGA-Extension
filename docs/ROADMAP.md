@@ -6,18 +6,19 @@
 
 | Référence | Statut / preuves | Action |
 |---|---|---|
-| **R58 v0.13.3** — M17, candidate en cours | `dist/AMOSPro_AGA.Lib`, **42 264 octets**, **53 commandes / 62 entrées AP20**, code natif 40 038 octets ; **Gates A (CPU/CI), B (interprété WinUAE), C (compilé WinUAE) PASS** sur le test spécifique du pont V2/offset 40 000. **D matériel NON TESTÉE**. | Régression complète sur le HEAD de livraison et **accord explicite de l'auteur** avant toute promotion ; ne pas confondre test du pont et couverture exhaustive des commandes. |
+| **R59 v0.13.4** — M17, candidate active | `dist/AMOSPro_AGA.Lib`, **32 984 octets**, **53 commandes / 60 entrées AP20**, monolithe V2 30 782 octets, sans remplissage artificiel ; **Gate A CPU/CI PASS**, Gates B/C WinUAE en attente, D physique non testée. | Installer et tester `M17_R59_COMPACT_V2_01.asc` en interprété puis nouvel exécutable compilé ; régression complète et accord de l'auteur avant promotion. |
+| **R58 v0.13.3** — témoin V2 historique | 40 000 natifs atteints dans une bibliothèque **42 264 octets**, **Gates A/B/C PASS** sur son scénario ; [ASC archivé](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc). | Preuve de franchissement 32 Ko conservée ; ne pas publier le padding comme release finale. |
 | **R57 v0.13.2** — dernier `LAST_GOOD` promu | `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **32 980 octets**, Gates A/B/C PASS sur les scénarios validés ; Gate D non testée. | **Préserver** ce binaire et les archives. |
 | **M17 — performances** | R57 : benchmark Fill/Clear compilé PASS et diagnostics Copy sous WinUAE. Petit rectangle aligné : `Screen Copy` 35 ticks contre `Aga Blit Copy` 69 ; cause exacte non identifiée. | Poursuivre le diagnostic / comparer les API AmigaOS avant tout changement ; aucune optimisation nouvelle automatiquement approuvée. |
 
-**Source d'état opérationnel :** [NEXT_SESSION.md](NEXT_SESSION.md). [Rapport du pont R58](GATE_C_COMPILER_BRIDGE_V2_PROBE.md) · [Diagnostic Blitter](M17_BLITTER_DIAGNOSTIC.md) · [Historique des validations](LIBRARY_TEST_HISTORY.md). Tout état plus ancien dans les documents conservés est historique, même s'il emploie le mot « courant ».
+**Source d'état opérationnel :** [NEXT_SESSION.md](NEXT_SESSION.md). [Rapport compact R59](M17_R59_COMPACT_V2.md) · [Rapport du témoin R58](GATE_C_COMPILER_BRIDGE_V2_PROBE.md) · [Diagnostic Blitter](M17_BLITTER_DIAGNOSTIC.md) · [Historique des validations](LIBRARY_TEST_HISTORY.md). Tout état plus ancien dans les documents conservés est historique, même s'il emploie le mot « courant ».
 
 ## 2. Ordre des travaux retenus
 
 | Étape | Périmètre | Situation / condition |
 |---|---|---|
-| **M17** | Finaliser qualification de la candidate R58 et diagnostic Blitter/Copy | **En cours** ; pas de promotion sans accord et régression |
-| **Release Aminet** | Paquet public, installation, exemples, licences, readme, tests de non-régression | **À préparer après clôture M17, avant M18** ; publication, tag et version sur décision de l'auteur |
+| **M17** | Valider la candidate compacte R59 et conserver les mesures R57 Blitter/Copy | **En cours** ; Gates B/C R59 et régression à confirmer avant promotion |
+| **Publication Aminet** | Publication initiale signalée comme déjà réalisée par l'auteur | **Déjà faite** ; aucune nouvelle publication imposée pour commencer l'étude M18. Toute nouvelle version reste sur décision de l'auteur. |
 | **M18** | AGAPIC animations/atlas, capture-restauration CBlock, équivalent fonctionnel `F 16 Icon` | **Planifié, non engagé** ; étudier voies CPU Fast→Chip et Blitter Chip→Chip, option AUTO seulement après mesures |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
 | **M20** | Scrolling AGA, caméra, surfaces plus grandes que l'écran | **Planifié, non engagé** ; dépendances avec tilemaps à examiner |

@@ -25,6 +25,7 @@ from compiler_relocation import (
 ROOT = Path(__file__).resolve().parents[1]
 ACTIVE_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'  # Promoted reference R57
 R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
+R59_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'
 LAST_GOOD_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
@@ -103,10 +104,13 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete real R57 fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (ACTIVE_SHA256, R58_SHA256)
+        assert active_hash in (ACTIVE_SHA256, R58_SHA256, R59_SHA256)
         if active_hash == R58_SHA256:
             from build_m17_r58_compiler_bridge import build as build_r58
             assert current_bytes==build_r58()[0]
+        elif active_hash == R59_SHA256:
+            from build_m17_r59_compact_v2 import build as build_r59
+            assert current_bytes==build_r59()[0]
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
         # The reference is the user-promoted R57 LAST_GOOD, never R58.
         source_bytes=protected_bytes
@@ -136,7 +140,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert unwrap_native_parts_v2(extended_v2) == (tokens, extended)
         realistic = far_segments[-1]
         # No generated AP20 is written to disk.
-        assert sha256(active.read_bytes()).hexdigest() in (ACTIVE_SHA256, R58_SHA256)
+        assert sha256(active.read_bytes()).hexdigest() in (ACTIVE_SHA256, R58_SHA256, R59_SHA256)
         assert sha256(last_good.read_bytes()).hexdigest() == LAST_GOOD_SHA256
     print('STATIC PASS: V2 AP20 offsets', offsets, 'MAX', MAX_UNIT_BYTES,
           'R57', 'REPACK PASS' if realistic is not None else 'not mounted', flush=True)
@@ -211,7 +215,7 @@ def cpu_checks(tests: list[tuple[int, bytes]], realistic: bytes | None) -> None:
         emulate(abs_link, realistic, off, absolute=True)
     print('M68000 CPU PASS:', 2 * len(tests) + (2 if realistic is not None else 0),
           '68k ABI/stack/call tests, real R57 preserved, no generated files', flush=True)
-    print('NO AMOS Compiler/WinUAE Gate C claimed; R57 remains installed', flush=True)
+    print('NO new AMOS Compiler/WinUAE Gate C claimed; CPU test only', flush=True)
 
 
 def main() -> None:

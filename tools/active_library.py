@@ -1,6 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R57 is the user-promoted LAST_GOOD on main; preserve its SHA. Future R58 is independent.
+R57 is the user-promoted LAST_GOOD on main; preserve its SHA. R58 proved the
+40K V2 boundary; current R59 removes that artificial test padding.
 """
 from hashlib import sha256
 from pathlib import Path
@@ -10,7 +11,8 @@ C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE
 LAST_GOOD_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # User-promoted R57 0.13.2, Gates A/B/C
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
-R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Compiler V2 40K candidate, sole working Lib
+R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
+R59_SHA="00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"  # M17/R59 v0.13.4 compact V2, candidate (Gate A only)
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # R57 current Gate A binary in dist/AMOSPro_AGA.Lib
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -37,13 +39,16 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha == R58_SHA:
+    if current_sha in (R58_SHA, R59_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
-        assert is_v2_wrapped(cur), "R58 must use audited V2 Compiler bridge"
+        assert is_v2_wrapped(cur), "R58/R59 must use audited V2 Compiler bridge"
     else:
         assert is_compiler_wrapped(cur), "Active library must be Compiler-safe"
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
+    if current_sha==R59_SHA:
+        assert cur!=good, "R59 must not overwrite protected R57 LAST_GOOD"
+        return cur,good,"R59 0.13.4 compact V2 Gate A candidate"
     if current_sha==R58_SHA:
         assert cur!=good, "R58 must not overwrite promoted R57 LAST_GOOD"
         return cur,good,"R58 0.13.3 V2 Gate A candidate"

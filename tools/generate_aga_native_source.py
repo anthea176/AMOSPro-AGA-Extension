@@ -131,22 +131,31 @@ def source_binary_from_input(raw):
     from compiler_relocation import is_compiler_wrapped, native_from_promoted, wrap_native_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2, wrap_native_ap20_v2
     if is_v2_wrapped(raw):
-        # Only accept the exact deterministic R58 output of the SHA-pinned R57
-        # builder. Never decode an arbitrary FE31 entry as native Motorola code.
-        from build_m17_r58_compiler_bridge import build as r58_build
+        # Accept only the exact SHA-pinned, reproducible V2 releases.
+        # R58 is the historical 40K witness; R59 is the compact candidate.
+        # Unknown FE31/dispatcher bytes MUST fail closed.
+        from active_library import R58_SHA, R59_SHA
         from compiler_relocation import repack_ap20
-        expected, meta = r58_build()
+        if sha(raw) == R59_SHA:
+            from build_m17_r59_compact_v2 import build as pinned_build
+            release = 'R59'
+        elif sha(raw) == R58_SHA:
+            from build_m17_r58_compiler_bridge import build as pinned_build
+            release = 'R58'
+        else:
+            raise ExportError('Unsupported V2 compiler wrapper; source audit required')
+        expected, _meta = pinned_build()
         need(raw == expected, 'Unsupported V2 compiler wrapper; source audit required')
         try:
             tokens, parts = unwrap_native_parts_v2(raw)
             native = repack_ap20(raw, tokens, parts, parsed['title'])
         except (AssertionError, ValueError) as exc:
-            raise ExportError('Malformed deterministic R58 V2 source') from exc
+            raise ExportError('Malformed deterministic ' + release + ' V2 source') from exc
         need(wrap_native_ap20_v2(native, parsed['title']) == raw,
-             'R58 V2 source rewrap not byte-exact')
+             release + ' V2 source rewrap not byte-exact')
         return native, {
             'format': 'Compiler-safe AP20 V2 unsigned-offset monolith',
-            'provenance': 'verified deterministic R58 builder from SHA-pinned R57',
+            'provenance': 'verified deterministic ' + release + ' builder from SHA-pinned R57',
             'official_sha256': sha(raw),
             'official_bytes': len(raw),
             'official_entries': len(parsed['section']),
@@ -155,8 +164,8 @@ def source_binary_from_input(raw):
             'native_entries': len(parse_lib(native)['section']),
             'native_archive': None,
             'verified_extract_and_rewrap': True,
-            'warning': 'Native ASM output is NOT an installable .Lib; R58 requires '
-                       'the V2 AP20 bridge (never the historical C1 wrapper).',
+            'warning': 'Native ASM output is NOT an installable .Lib; ' + release +
+                       ' requires the V2 AP20 bridge (never the C1 wrapper).',
         }
     if not is_compiler_wrapped(raw):
         need(not any(sec['core'].startswith(b'\xfe\x31') for sec in parsed['section']),

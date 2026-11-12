@@ -10,6 +10,7 @@ from active_library import C1_ARCHIVE, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
+from build_m17_r59_compact_v2 import build as build_r59
 import generate_aga_native_source as exp
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +55,17 @@ def main() -> None:
     parsed58 = exp.parse_lib(native58)
     assert not exp.unclassified_gaps(parsed58), "R58 strict native source has untrusted gaps"
     print("R58 V2 STRICT NATIVE EXPORT PASS (in memory): 62 -> 61 AP20 entries")
+
+    # R59 compact V2 must also round-trip through the SHA-pinned strict
+    # exporter without inheriting any R58 synthetic padding.
+    compact, meta59 = build_r59()
+    native59, ctx59 = exp.source_binary_from_input(compact)
+    assert ctx59 and ctx59["verified_extract_and_rewrap"]
+    assert ctx59["official_entries"] == 60 and ctx59["native_entries"] == 59
+    assert wrap_native_ap20_v2(native59, exp.parse_lib(compact)["title"]) == compact
+    assert not exp.unclassified_gaps(exp.parse_lib(native59)), "R59 untrusted native gaps"
+    assert meta59["padding_bytes"] == 0 and meta59["compiler_unit_bytes"] == 30782
+    print("R59 V2 STRICT NATIVE EXPORT PASS (in memory): 60 -> 59 AP20 entries")
 
     # A valid AP20 title mutation must never pass the provenance check.
     tampered = bytearray(current)
