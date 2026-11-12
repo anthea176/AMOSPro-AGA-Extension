@@ -1,8 +1,8 @@
-# M16/R45 — Contrat proposé : `Aga Image Draw` depuis banque DATA AGAPIC
+# M16/R45 — Aga Image Draw : candidate native CPU/CI Gate A PASS, WinUAE Gate B en attente
 
-**Statut : conception prête à être discutée / implémentée, mais NON LIVRÉE.** Le conteneur [AGAPIC v1 est validé sous AMOS/WinUAE](M16_AGAPIC_WINUAE_P0_PASS.md) ; le codec et le modèle planaire ont passé leurs tests hôte. **Aucune commande `Aga Image Draw` n'existe dans R44**. Ne pas modifier `LAST_GOOD` avant Gate B du futur R45.
+**Statut : R45 v0.12.0 EXPÉRIMENTALE LIVRÉE pour essai WinUAE ; Gate A CPU/CI PASS.** [AGAPIC P0](M16_AGAPIC_WINUAE_P0_PASS.md) validé sous AMOS pour le conteneur ; le vrai moteur 68000 a passé **127 scénarios Unicorn et l'export assembleur strict** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43218082112)). [Binaire R45](../dist/AMOSPro_AGA.Lib) = [archive R45](../dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib), 29 280 octets, SHA256 `0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7`. **Gate B rendu WinUAE NON TESTÉE**, [test actif](../tests/current/M16_R45_IMAGE_DRAW_01.asc). **R44 reste `LAST_GOOD`, non modifiée.**
 
-## 1. API candidate (une seule fonction AP20)
+## 1. API R45 candidate (une fonction AP20 ajoutée)
 
 ```amos
 _OK=Aga Image Draw(Start(10),Length(10),X,Y,Mode)
@@ -57,6 +57,6 @@ En mode opaque, `masque_visible` contient les bits réellement présents après 
 
 ## 5. Gel et décision
 
-L'étape AGAPIC P0 est **PASS pour le format ABK sous WinUAE**, et pour le codec/modèle CPU **sur hôte uniquement**. Le runtime R45 n'a pas commencé. Les 49 commandes et l'archive de **R44 v0.11.5 `LAST_GOOD` restent inchangées**, de même que les versions antérieures et les tests passés. Le travail reste exclusivement sur `main`.
+L'étape AGAPIC P0 est **PASS pour le format ABK sous WinUAE**. **R45 a une implémentation 68000 validée Gate A (127 cas)** ; la Gate B AMOS/WinUAE **reste à exécuter** sur [`M16_R45_IMAGE_DRAW_01.asc`](../tests/current/M16_R45_IMAGE_DRAW_01.asc). La bibliothèque courante est une candidate R45, tandis que **R44 v0.11.5 `LAST_GOOD` est restée intacte**, de même que toutes les archives précédentes. Travail exclusivement sur `main`.
 
-**Décision à enregistrer au lancement R45 :** nom exact `Aga Image Draw`, signature à cinq entiers, comportement de retour et de Safe, politique profondeur identique, aucune allocation Chip de l'image complète. Aucun contrat ici n'autorise à déclarer une Gate A/B PASS sans le code et les preuves.
+**Décision R45 mise en œuvre :** fonction `Aga Image Draw`, cinq entiers, profondeur image = écran, Safe non bloquant, aucun tampon Chip pour l'image entière. Le code natif existe et Gate A PASS ; **aucune conclusion sur le rendu WinUAE ni sur les performances réelles** tant que Gate B et les mesures Amiga ne sont pas effectuées.

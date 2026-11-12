@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R44 Gates A CPU/CI and B WinUAE user-confirmed PASS, LAST_GOOD promoted; historical archives immutable."""
+"""Integrity: R45 Gate A native CPU/CI candidate, R44 user-confirmed WinUAE LAST_GOOD and archives frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc",
+    "dist/AMOSPro_AGA.Lib": "0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7",
+    "dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib": "0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7",
     "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib": "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib": "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib": "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc",
@@ -102,6 +103,7 @@ def main():
     from build_m15_box_r42 import build as build_r42, ENTRY_INDEX as ENTRY_BOX, API as API_R42
     from build_m15_circle_r43 import build as build_r43, ENTRY_INDEX as ENTRY_CIRCLE, API as API_R43
     from build_m15bis_cursor_r44 import build as build_r44, ENTRY_INDEX as ENTRY_CURSOR, API as API_R44, OWNED_CLOSES
+    from build_m16_image_draw_r45 import build as build_r45, ENTRY_INDEX as ENTRY_IMAGE, API as API_R45
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -109,7 +111,8 @@ def main():
         assert hashlib.sha256(raw).hexdigest() == expected, relative
         binaries[relative] = raw
 
-    candidate = binaries["dist/AMOSPro_AGA.Lib"]
+    candidate = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]  # frozen R44 for inherited historical assertions
+    candidate_r45 = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]
@@ -462,7 +465,7 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert not list((ROOT/"tests/current").glob("*.asc")), "R44 Gate B PASS: no ASC may remain active"
+    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc")) == ["M16_R45_IMAGE_DRAW_01.asc"], "R45 Gate B must have exactly one current ASC"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
@@ -577,6 +580,33 @@ def main():
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built44, "R44 LAST_GOOD promotion mismatch"
     print("PASS: R44 49 AP20 commands / 55 segments, exact R44 LAST_GOOD and original ASC;")
     print("      R43 frozen, R44 native Gate A and user WinUAE Gate B PASS; combined demo user-confirmed")
+    # R45 is a Gate-A-only candidate, NEVER the promoted LAST_GOOD before
+    # explicit WinUAE confirmation; its new segment may not mutate R44.
+    built45,meta45=build_r45()
+    assert candidate_r45 == built45 == build_r45()[0] == binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"], "R45 candidate/archive reproducibility mismatch"
+    assert meta45["sha256"]=="0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7" and meta45["size"]==29280, "R45 candidate size/SHA mismatch"
+    tok45,seg45,_=split(candidate_r45)
+    assert len(seg45)==56 and len(seg44)==55, "R45 segment count"
+    assert seg45[:54]==seg44[:54], "R45 changed frozen R44 segments"
+    assert seg45[54]==seg44[54]+b"GetP", "R45 changed R44 beyond mandatory GetP"
+    assert len(seg45[55])>512, "R45 native draw function absent"
+    assert tok45.startswith(tok44[:-6]) and tok45!=tok44, "R45 token table changed improperly"
+    aud45=inspect(parse(candidate_r45))
+    assert not aud45["issues"], aud45["issues"]
+    named45=[v for v in aud45["tokens"] if v["name"].startswith("aga ")]
+    assert len(named45)==50 and sum(v["name"]=="aga image draw" for v in named45)==1, "R45 named commands"
+    for name,index,sig in API_R45:
+        matches=[v for v in named45 if v["name"]==name]
+        assert len(matches)==1 and (matches[0]["instruction"],matches[0]["function"],matches[0]["signature"])==(1,index,sig)
+    assert any(v["index"]==ENTRY_IMAGE and v["parameters"]==5 and v["getp"] for v in aud45["parameter_checks"]), "R45 GetP absent"
+    test_r45=ROOT/"tests/current/M16_R45_IMAGE_DRAW_01.asc"
+    assert test_r45.is_file() and not (ROOT/"tests/passed/M16_R45_IMAGE_DRAW_01.asc").exists(), "R45 WinUAE pending test state wrong"
+    test_data=test_r45.read_bytes()
+    test_blob=b"blob "+str(len(test_data)).encode("ascii")+bytes([0])+test_data
+    assert len(test_data)==3630 and hashlib.sha1(test_blob).hexdigest()=="fa50cc57fd6e9263b102c4a4c22802d7fa83d7e1", "R45 active ASC mutated"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built44 and candidate_r45!=candidate, "R44 LAST_GOOD must remain untouched"
+    print("PASS: R45 candidate 50 AP20 commands / 56 segments, 29280 B exact;")
+    print("      127 CPU native Gate A cases; R44 LAST_GOOD frozen; R45 Gate B WinUAE NOT TESTED")
 
 
 if __name__ == "__main__":

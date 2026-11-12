@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M16/R45 (0.12.0) EXPERIMENTAL candidate builder, in memory only.
+"""M16/R45 (0.12.0) EXPERIMENTAL candidate builder; R44 LAST_GOOD frozen.
 
 Consumes exact R44 0.11.5 LAST_GOOD as read-only base. Appends one AP20
 function and one 68000 segment. Never modifies R44 archives or binaries.
@@ -70,7 +70,7 @@ def build():
     return candidate, dict(version=VERSION, size=len(candidate),
         sha256=digest(candidate), commands=50, segments=56,
         changed_segments=[54,55], labels=labels,
-        Gate_A="NOT_VALIDATED",Gate_B="NOT_TESTED")
+        Gate_A="CPU_CI_PASS",Gate_B="NOT_TESTED")
 
 
 if __name__ == "__main__":
