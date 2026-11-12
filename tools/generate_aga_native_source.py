@@ -112,6 +112,57 @@ def parse_lib(data):
             'title':data[title_start:end],'section':sections,'code_start':code_start,
             'code_end':title_start,'trailer':data[end:len(data)-4],'end':end}
 
+# R46 C1 adds AMOS Compiler Rbsr ($FE31) entry stubs and a monolithic
+# dispatcher. These are AP20 linker pseudo-operations, not 68000 instructions.
+# Reconstruct the trusted native source layout IN MEMORY, without ever editing
+# official, LAST_GOOD or historical .Lib binaries.
+PROMOTED_R46_C1_SHA = 'd2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b'
+NATIVE_R46_SHA = '5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580'
+NATIVE_R46_ARCHIVE = ROOT/'dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib'
+
+
+def source_binary_from_input(raw):
+    """Recover exact native AP20 segments from the audited official C1 only.
+
+    Unknown/changed Compiler wrappers fail closed until their provenance and
+    relocation handling are reviewed; never decode FE31 as Motorola code.
+    """
+    parsed = parse_lib(raw)
+    from compiler_relocation import is_compiler_wrapped, native_from_promoted, wrap_native_ap20
+    if not is_compiler_wrapped(raw):
+        need(not any(sec['core'].startswith(b'\xfe\x31') for sec in parsed['section']),
+             'Rbsr entry without audited compiler dispatcher: '
+             'refusing to decode AMOS linker words as 68000')
+        return raw, None
+
+    need(sha(raw) == PROMOTED_R46_C1_SHA and len(parsed['section']) == 57,
+         'Unsupported compiler-wrapped AP20 library; explicit source audit required')
+    need(NATIVE_R46_ARCHIVE.is_file(), 'Official C1 export: frozen native R46 archive missing')
+    frozen = NATIVE_R46_ARCHIVE.read_bytes()
+    need(sha(frozen) == NATIVE_R46_SHA, 'Official C1 export: native R46 archive SHA changed')
+    native_title = parse_lib(frozen)['title']
+    try:
+        native = native_from_promoted(raw, native_title)
+    except (ValueError, AssertionError) as exc:
+        raise ExportError('Official C1 export: invalid Rbsr offsets or dispatcher') from exc
+    need(native == frozen, 'Official C1 export: extracted native code differs from frozen R46')
+    need(wrap_native_ap20(native, parsed['title']) == raw,
+         'Official C1 export: native-to-Compiler rewrap is not byte-exact')
+    return native, {
+        'format': 'R46 C1 compiler-safe AP20 Rbsr monolith',
+        'official_sha256': sha(raw),
+        'official_bytes': len(raw),
+        'official_entries': len(parsed['section']),
+        'native_sha256': sha(native),
+        'native_bytes': len(native),
+        'native_entries': len(parse_lib(native)['section']),
+        'native_archive': str(NATIVE_R46_ARCHIVE.relative_to(ROOT)),
+        'verified_extract_and_rewrap': True,
+        'warning': 'Native ASM output is NOT an installable .Lib; the Compiler-safe '
+                   'AP20 bridge must be added again to any release build.'
+    }
+
+
 def sanitize(s):
     if s.lower().startswith('aga '):s=s[4:]
     s=re.sub('[^A-Za-z0-9]+','_',s.strip().title()).strip('_')
@@ -589,15 +640,26 @@ def main(argv=None):
     input_path=Path(args.lib)
     if not input_path.is_absolute():input_path=root/input_path
     try:
-        data=input_path.read_bytes(); parsed=parse_lib(data)
+        data=input_path.read_bytes()
+        source_data,compiler_context=source_binary_from_input(data)
+        parsed=parse_lib(source_data)
         source,report=output(parsed)
+        if compiler_context:
+            source=('; Restored from OFFICIAL C1 Rbsr wrapper, in memory only.\n'
+                    '; Native assembler source is NOT an installable AMOS Compiler library.\n'
+                    '; Production builds MUST apply compiler_relocation.wrap_native_ap20().\n\n'
+                    +source)
+            report['compiler_wrapper']=compiler_context
+        report['input_sha256']=sha(data)
+        report['input_size']=len(data)
         validate_structure(source,parsed)
         unresolved=unclassified_gaps(parsed)
         report['unclassified_regions']=unresolved
         if args.strict and unresolved:
             raise ExportError('Unclassified bytes: '+json.dumps(unresolved[:10])+                              '. A new instruction form/manual source audit is required.')
         m=re.search(r'\bR(\d+)\s+(\d+\.\d+\.\d+)',report['title'],re.I)
-        version='R'+m.group(1) if m else sha(data)[:12]
+        version='R'+m.group(1) if m else sha(source_data)[:12]
+        if compiler_context:version += '_C1'
         target=Path(args.out)
         if not target.is_absolute():target=root/target
         target=target.resolve()
@@ -611,7 +673,7 @@ def main(argv=None):
         report['output_file']=str(path)
         baseline_path=None
         if args.baseline=='auto':
-            baseline_path,builder=find_baseline(root,data)
+            baseline_path,builder=find_baseline(root,source_data)
             report['matched_builder']=str(builder) if builder else None
         elif args.baseline and args.baseline.lower()!='none':baseline_path=Path(args.baseline)
         if baseline_path:
@@ -628,6 +690,10 @@ def main(argv=None):
         print('Manifest:',man)
         print('Recognized code bytes: %d/%d (%.2f%%)'%(report['decoded_code_bytes'],report['total_segment_code_bytes'],report['recognized_percent']))
         print('Input SHA256:',sha(data))
+        if compiler_context:
+            print('Compiler C1: 57 wrapped AP20 entries -> 56 native source entries (verified)')
+            print('Extracted native SHA256:',sha(source_data))
+            print('IMPORTANT: do not install native output; Compiler-safe wrapping is mandatory')
         print('NOTE: native assembly/rebuild not yet proven; do not replace any .Lib')
         if args.verify_vasm:
             binary=target/('AMOSPro_AGA_'+version+'_ASSEMBLED.Lib')
@@ -637,11 +703,20 @@ def main(argv=None):
             if r.returncode:
                 print(r.stdout,r.stderr,file=sys.stderr)
                 raise ExportError('Native assembler reported an error; source not verified')
-            if binary.read_bytes()!=data:
-                raise ExportError('Native assembler output DOES NOT match source library; do not use')
+            if binary.read_bytes()!=source_data:
+                raise ExportError('Native assembler output DOES NOT match extracted source code; do not use')
+            if compiler_context:
+                from compiler_relocation import wrap_native_ap20
+                rewrapped=wrap_native_ap20(binary.read_bytes(),parse_lib(data)['title'])
+                need(rewrapped==data,
+                     'Native assembly succeeds but Compiler rewrap differs from official .Lib')
+                report['compiler_rewrap_verified']=True
             report['native_reassembly_verified']=True
             man.write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
-            print('VERIFIED: native assembly is byte-for-byte identical to input .Lib')
+            if compiler_context:
+                print('VERIFIED: native assembly and Compiler rewrap match official .Lib byte-for-byte')
+            else:
+                print('VERIFIED: native assembly is byte-for-byte identical to input .Lib')
         return 0
     except (OSError,ExportError,ValueError,struct.error) as exc:
         import traceback
