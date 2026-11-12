@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33", "font_bank_r38")
 EXAMPLE_DIR = ROOT / "examples"
 AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+){0,3}")
 FUNCTION_BARE = re.compile(
@@ -117,6 +117,23 @@ def main() -> None:
             "R33 demo should have exactly three blocking fades")
     require("Save " not in fade and "Load " not in fade,
             "R33 visual demo must not touch files")
+
+    font_demo = (EXAMPLE_DIR / "font_bank_r38.asc").read_text("ascii")
+    require(all(fragment in font_demo for fragment in (
+        'Load "Amcaf Fonts/Hwarf1252S.abk",25',
+        'Load "Amcaf Fonts/Pix3M-1252L.abk",25',
+        'Aga Font Bank Select(Start(25),Length(25))',
+        'Aga Text(', 'Erase 25',
+        'Aga Font Select("",0)', 'Aga Swap', 'Aga Wait Key',
+        'Aga Screen Close', 'Amos To Front',
+    )), "R38 font example must load both BankFont files and clean up")
+    require(font_demo.count('Aga Font Bank Select(Start(25),Length(25))') == 2,
+            "R38 example must select exactly two BankFonts")
+    require(font_demo.index('Hwarf1252S.abk') < font_demo.index('Pix3M-1252L.abk'),
+            "R38 example must render Hwarf before Pix3M")
+    for name in ("Hwarf1252S.abk", "Pix3M-1252L.abk"):
+        require((EXAMPLE_DIR / "Amcaf Fonts" / name).is_file(),
+                f"Missing bundled R38 font bank {name}")
 
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
