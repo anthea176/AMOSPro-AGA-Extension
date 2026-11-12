@@ -603,7 +603,7 @@ def main():
     assert test_r45.is_file() and not (ROOT/"tests/passed/M16_R45_IMAGE_DRAW_01.asc").exists(), "R45 WinUAE pending test state wrong"
     test_data=test_r45.read_bytes()
     test_blob=b"blob "+str(len(test_data)).encode("ascii")+bytes([0])+test_data
-    assert len(test_data)==3630 and hashlib.sha1(test_blob).hexdigest()=="fa50cc57fd6e9263b102c4a4c22802d7fa83d7e1", "R45 active ASC mutated"
+    assert len(test_data)==4241 and hashlib.sha1(test_blob).hexdigest()=="993b9b6b4eff2eaa3183437602868bbe2946d26a", "R45 active ASC mutated"
     assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built44 and candidate_r45!=candidate, "R44 LAST_GOOD must remain untouched"
     print("PASS: R45 candidate 50 AP20 commands / 56 segments, 29280 B exact;")
     print("      127 CPU native Gate A cases; R44 LAST_GOOD frozen; R45 Gate B WinUAE NOT TESTED")
