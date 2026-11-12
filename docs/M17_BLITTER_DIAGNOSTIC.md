@@ -1,5 +1,19 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
+## R56 0.13.1 — remplacement Fill/Clear par graphics.library RastPort
+
+**Version de travail :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commandes / 60 entrées AP20, monolithe 31 360 octets. **Un seul test AMOS :** [`tests/current/M17_R56_RAST_FILL_01.asc`](../tests/current/M17_R56_RAST_FILL_01.asc). `main` uniquement ; aucune autre copie R56. `LAST_GOOD` figé R54 inchangé.
+
+**Motif :** le [benchmark compilé R55](../benchmarks/RESULTATS_32C_R55_COMPILER_2026-11-12.md) a mesuré Fill **54/54/54** ticks et Clear **115/116/115** ticks (R46 C1 54 et 117 ticks médians) ; la réduction des appels à `BltBitMap` n'a pas produit d'accélération mesurable robuste.
+
+**Nouveau chemin 68000 :** conserve les gardes pré-DMA R55 (screen, BitMap, dimensions et profondeur 1–8, pointeurs de tous les plans, pen, `Safe` non bloquant), puis utilise un **RastPort temporaire de 128 octets sur la pile** (`InitRastPort`, `rp.BitMap` = bitmap du back buffer). Les appels AmigaOS sont `SetRast(rp,pen)` **uniquement** si X=Y=0, W = `BitMap.BytesPerRow*8`, H = `BitMap.Rows` ; sinon `SetAPen`, `SetDrMd(JAM1)`, `RectFill(rp,x,y,x+w-1,y+h-1)`. `WaitBlit` est systématique avant libération du RastPort. Les appels utilisent les LVO officiels **−198, −234, −306, −342, −354, −228** et les registres documentés. Aucun nouveau token. `Clear` reste le wrapper original de Fill, y compris `BSR.W`.
+
+**Limite de contrat :** `SetRast` et `RectFill` retournent **void**, contrairement au compte de plans de `BltBitMap`. Le `1/0` public confirme ici validation et lancement synchronisé via `WaitBlit`, **pas une détection possible des échecs matériels internes partiels**. Équivalence des pixels et synchronisation soumises à la Gate B. Le helper natif R55 est encore présent mais l'entrée Fill pointe sur R56. Aucun gain de performance revendiqué avant mesure réelle.
+
+**Validation :** [GitHub Actions 43282947214 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214) : **171 scénarios** dans un émulateur CPU 68000 avec appels graphiques simulés (pen/couleurs mixtes, dimensions physiques exactes ou élargies, sous-rectangles, Copy inchangée, ABI/pile A3, Safe/Disp, double buffer, frontières et pointeurs invalides). **Gates B interprété WinUAE / C nouvel exécutable Compiler WinUAE / D Amiga physique : NON TESTÉES R56.** Rejouer le seul test actif, puis le benchmark V2 inchangé.
+
+---
+
 ## R55 — Emplacements uniques imposés par l'auteur (12/11/2026)
 
 **Branche : `main` uniquement. Version courante : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R55 v0.13.0**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes / 60 entrées AP20, monolithe 30 780 octets. **Test actif unique : [`tests/current/M17_R55_BLIT_GROUP_01.asc`](../tests/current/M17_R55_BLIT_GROUP_01.asc)** ; aucun binaire R55 dans `dist/experimental/` et aucun workflow qui y dépose une copie. Les autres ressources historiques sont inchangées.

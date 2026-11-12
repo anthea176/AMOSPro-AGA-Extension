@@ -1,10 +1,10 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
-## M17/R55 — Gates A/B/C PASS sur le test Blitter, benchmark à mesurer (12/11/2026)
+## M17/R56 0.13.1 — RectFill/SetRast, Gate A CPU/CI PASS (12/11/2026)
 
-**Workflow fixé par l'auteur : `main` uniquement ; 1 binaire de travail `dist/AMOSPro_AGA.Lib` + 1 programme `tests/current/M17_R55_BLIT_GROUP_01.asc`, sans doublon R55 ailleurs.** R55 v0.13.0, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes/60 entrées AP20, Fill/Clear groupés ; **Gate A CPU/CI PASS**. **B interprétée PASS (capture `RESULT 1`, `CLOSE RETURNED`, erreurs 0), C compilée PASS (confirmation utilisateur sans capture), D physique NON TESTÉE** ; aucune promotion. R54 reste dans `dist/AMOSPro_AGA_LAST_GOOD.Lib` validée. [Contrat M17](M17_BLITTER_DIAGNOSTIC.md) · [baseline V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md).
+**`main` uniquement ; une seule bibliothèque active : `dist/AMOSPro_AGA.Lib` ; un seul ASC actif : `tests/current/M17_R56_RAST_FILL_01.asc`.** R56 **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 31 360 octets. Remplacement interne du Fill groupé R55 par un RastPort de pile utilisant `RectFill` et `SetRast` exclusivement si largeur/hauteur physiques intégralement couvertes. **Gate A CPU/CI PASS (171 scénarios)** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214)), **B/C WinUAE et D Amiga physique R56 NON TESTÉES**. R54 reste `LAST_GOOD` sans changement et aucune R56 n'est promue.
 
-**Correctif de confort du test actif :** `Wait Key` ajouté après l'impression des résultats pour permettre une capture du nouveau binaire compilé. Les validations B/C ont été rapportées avant cet ajout ; aucun changement `.Lib`. Prochaine mesure : `benchmarks/graphics_32c_v2.asc` inchangé, interprété + compilé, trois essais et profil WinUAE constant.
+**Cause du changement :** la R55 avait les Gates A/B/C PASS mais sans gain significatif sur V2 compilé (Fill médiane 54 ticks, Clear 115 contre 117 avant M17). [Bilan R55](../benchmarks/RESULTATS_32C_R55_COMPILER_2026-11-12.md). Suite : tester le seul ASC R56 puis compiler le [benchmark V2 inchangé](../benchmarks/graphics_32c_v2.asc) pour comparer les trois mesures. [Diagnostic technique](M17_BLITTER_DIAGNOSTIC.md).
 
 ## M16/R54 v0.12.9 — Clôture A/B/C et LAST_GOOD (12/11/2026)
 

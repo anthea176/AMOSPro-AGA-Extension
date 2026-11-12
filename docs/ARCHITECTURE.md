@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État actuel — M17/R55 dans dist, M16/R54 LAST_GOOD (12/11/2026)
+## État actuel — R56 CPU/CI PASS, `LAST_GOOD` R54 (12/11/2026)
 
-**`dist/AMOSPro_AGA.Lib` = R55 0.13.0 en cours de validation**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 30 780 octets. [Unique ASC courant](../tests/current/M17_R55_BLIT_GROUP_01.asc) : Fill/Clear/Copy/40 swaps. Gate A CPU/CI PASS, **B/C/D R55 NON TESTÉES**. Pas de branche, de fichier binaire R55 versionné ni de circuit expérimental supplémentaire.
+**Bibliothèque active unique :** `dist/AMOSPro_AGA.Lib` R56 0.13.1, **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, **53 commandes / 60 entrées AP20**, monolithe Compiler-safe 31 360 octets. Utilise un RastPort temporaire sur le back BitMap : `SetRast` pour totalité de la bitmap physique et `RectFill` pour toute autre région, avec `WaitBlit` ; conventions AMOS/Safe inchangées. [ASC unique en cours](../tests/current/M17_R56_RAST_FILL_01.asc), 40 swaps et opérations Fill/Clear/Copy.
 
-**`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R54 v0.12.9 protégée**, 32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C validées sur leurs scénarios, Gate D physique non testée. Les archives antérieures sont historiques et intouchables. [Règles](../EXTENSION_SOURCE_RULES.md) · [rapport M17](M17_BLITTER_DIAGNOSTIC.md).
+**Gates R56 : A CPU/CI PASS (171 scénarios), B/C/D NON TESTÉES.** [Preuve Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R54 0.12.9** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS scénarios R54). R55 a obtenu A/B/C sur son scénario, mais aucun gain robuste dans le benchmark compilé V2. Un seul binaire actif et un seul ASC dans le dépôt, `main` uniquement. [Diagnostic M17](M17_BLITTER_DIAGNOSTIC.md).
 
 ## Historique — M16/R46 v0.12.1, ancien checkpoint Gates A/B (12/11/2026)
 

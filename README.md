@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R54 v0.12.9** — validated reference [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32,364 bytes, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`; CPU/CI Gate A and WinUAE interpreted/compiled Gates B/C PASS on the R54 scenario, physical AGA Gate D NOT TESTED. **Current development binary: R55 v0.13.0**, [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), 32,988 bytes, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commands / 60 AP20 entries; grouped Fill/Clear, Gate A CPU/CI PASS, **WinUAE B/C and hardware D NOT TESTED**. [One active AMOS test](tests/current/M17_R55_BLIT_GROUP_01.asc). All work on `main`; no duplicate R55 candidates.
+**Latest promoted `LAST_GOOD`: R54 v0.12.9** — validated reference [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32,364 bytes, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`; CPU/CI Gate A and WinUAE interpreted/compiled Gates B/C PASS on the R54 scenario, physical AGA Gate D NOT TESTED. **Current development binary: R56 v0.13.1**, [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), 33,560 bytes, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commands / 60 AP20 entries; RastPort RectFill with full-physical-bitmap SetRast, Gate A CPU/CI PASS, **R56 WinUAE B/C and hardware D NOT TESTED**. [One active AMOS test](tests/current/M17_R56_RAST_FILL_01.asc). All work on `main`; no duplicate R55 candidates.
 
 
 **AGAPIC images in Fast RAM:** compressed images **can be stored in an AMOS DATA bank in Fast RAM**. `Aga Image Draw` reads and decompresses them with the **CPU** into the AGA back buffer in **Chip RAM**, without decompressing the full image into Chip RAM and without Blitter access to the source. AMOS controls the bank's actual placement; the test ABK's Fast/Chip location has not been measured. [AGAPIC format](docs/M16_AGAPIC_FORMAT_DESIGN.md).
@@ -30,7 +30,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R55 0.13.0** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
+**Current library API R56 0.13.1** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

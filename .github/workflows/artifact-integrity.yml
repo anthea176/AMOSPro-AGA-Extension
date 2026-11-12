@@ -152,7 +152,7 @@ jobs:
       - name: M17 R56 RastPort/SetRast native CPU Gate A
         run: |
           python -B tools/test_m17_r56_rastport.py
-          python -B tools/build_m17_r56_rastport.py --emit-base64
+          python -B tools/build_m17_r56_rastport.py
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 

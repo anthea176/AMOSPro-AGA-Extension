@@ -1,12 +1,10 @@
-# Outils Python — R54 v0.12.9 `LAST_GOOD`, base Compiler-safe de M17
+# Outils Python — R56 active, R54 `LAST_GOOD` Compiler-safe
 
-## Référence actuelle — M17/R55 dans dist, R54 `LAST_GOOD` (12/11/2026)
+## R56 — un binaire `dist/AMOSPro_AGA.Lib`, un test `tests/current/`
 
-**Travail : `main` uniquement ; un binaire [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) R55 v0.13.0** (32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, **Gate A CPU/CI PASS**), et un seul ASC [`tests/current/M17_R55_BLIT_GROUP_01.asc`](../tests/current/M17_R55_BLIT_GROUP_01.asc). **R55 Gates B/C/D non testées**. Pas de copie expérimentale ni de second chemin de publication.
+**Actuel : R56 0.13.1**, [bibliothèque unique](../dist/AMOSPro_AGA.Lib) **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`; [test AMOS unique](../tests/current/M17_R56_RAST_FILL_01.asc) avec `Wait Key`. **Gate A CPU/CI PASS** [run 43282947214](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214). **Gates B/C WinUAE et D physique R56 NON TESTÉES**. Pas de version R56 ailleurs, pas de branche autre que `main`.
 
-**Dernière version validée : `dist/AMOSPro_AGA_LAST_GOOD.Lib` R54** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS sur les scénarios R54), archive historique identique dans `dist/experimental/`. Ne pas remplacer le LAST_GOOD avant décision de promotion.
-
-**Vérification :** `python -B tools/build_aga_current.py --verify` reconstruit le binaire R55 depuis R54 `LAST_GOOD` et vérifie que `dist/AMOSPro_AGA.Lib` lui est identique. `python -B tools/test_m17_blit_group_r55.py` couvre la Gate A native CPU. Le builder R55 ne crée aucune autre bibliothèque. [Règle permanente](../EXTENSION_SOURCE_RULES.md) · [rapport R55](../docs/M17_BLITTER_DIAGNOSTIC.md).
+**`LAST_GOOD` : R54 0.12.9** inchangée, 32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS sur les scénarios validés. `tools/build_m17_r56_rastport.py` reproduit le binaire Compiler-safe depuis R55 construit en mémoire et R54 protégé ; `python -B tools/test_m17_r56_rastport.py` simule les octets CPU 68000 avec RastPort, Safe et contrôle des pixels. `python -B tools/build_aga_current.py --verify` compare les octets produits au fichier actif et conserve les vérifications historiques R46 C1.
 
 ## Historique — R53 capture et sondes R47–R52
 
