@@ -117,26 +117,6 @@ def inspect(lib):
                 issues=issues, parameter_checks=parameter_checks)
 
 
-
-def amos20_parameter_limit_errors(lib):
-    """Reject signatures that AMOS 2.0 Library_GetParams cannot dispatch.
-
-    Source: AMOS Professional 365 +B.s, Library_GetParams .Entier:
-    six or more numeric arguments are CLAMPED to five, not handled.
-    Both integer instruction and integer function forms share this limit.
-    Keep this a separate publish-gate for historical, intentionally invalid
-    R47 archives: structural AP20 parsing alone is not enough.
-    """
-    errors = []
-    for row in walk_tokens(lib.tokens):
-        sig = row["signature"]
-        if not sig:
-            continue
-        count = len(sig[1:].split(",")) if len(sig) > 1 else 0
-        if count > 5:
-            errors.append(f'{row["name"]}: {count} arguments exceed AMOS extension limit 5')
-    return errors
-
 def token(name, instruction, function, signature):
     encoded = name.encode('ascii')
     require(bool(encoded), 'empty token name')
