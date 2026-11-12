@@ -184,3 +184,11 @@ Après PASS interprété, compiler un NOUVEL exécutable du même programme et
 le tester séparément. Ne pas réutiliser un ancien exécutable qui embarque
 l'ancienne bibliothèque. Consigner B et C séparément. Ne promouvoir
 LAST_GOOD qu'après validation réelle et décision de l'utilisateur.
+
+## Reprise sur GitHub après synchronisation Codex (12/11/2026)
+
+Le commit de synchronisation `ff61f88` échouait en CI sur une ancienne empreinte SHA256 de `tests/fixtures/amos_main_declarations.json`. La fixture actuelle a été auditée : 770 déclarations, `MainLibrary=500`, `Bnk.GetAdr=797`, `Bnk.Eff=800`, `Bnk.Reserve=816`, `Bnk.Change=819`, `FnOne=822`. Les Git blob SHA des sources `+ILib.s` et `+Lib.s` correspondent à la révision de référence `3e8f53196b80cbb2e01342a89a3545d080bf0de4`. SHA256 exacte de la fixture : `9c5864b7de5bdd9959b0d939a813fb5ea6891ef138c556f5285e900d5094ce90` ; le pin source a été mis à jour sans affaiblir le contrôle de provenance.
+
+La CI rencontrait ensuite des chaînes françaises mal encodées dans `tools/test_readme_api_coverage.py`, corrigées, ainsi qu'une notice d'installation présentant à tort `dist/AMOSPro_AGA.Lib` comme la R46 promue. Les notices anglaise et française précisent maintenant que `dist/` contient **la candidate R53**, tandis que `LAST_GOOD` est indépendante. `tests/current/README.md` référence désormais la vraie capture R53 et non l'ancienne sonde R52. Le programme actif affiche son titre et un repère **avant** l'essai sans écran.
+
+**Résultat :** [CI Artifact integrity complète PASS, run 43265331087](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43265331087), avant mise à jour du présent compte rendu. Les versions archivées et R46 C1 `LAST_GOOD` sont inchangées. R53 : **Gate A PASS**, **Gate B interprétée non testée**, **Gate C Compiler non testée**. Le dernier niveau à valider est donc la vraie exécution AMOS/WinUAE ; le test attendu est [`tests/current/M16_R53_IMAGE_CAPTURE_01.asc`](../tests/current/M16_R53_IMAGE_CAPTURE_01.asc). Aucune promotion automatique.

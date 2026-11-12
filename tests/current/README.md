@@ -2,7 +2,7 @@
 
 **Seul test actif :** [`M16_R53_IMAGE_CAPTURE_01.asc`](M16_R53_IMAGE_CAPTURE_01.asc), correspondant exactement à la candidate **R53 v0.12.8** dans [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), également archivée sous [R53 link fix](../../dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib).
 
-**Gate A : en revalidation CI. Gate B interprété : non testé. Gate C Compiler : non testé.** Il s'agit d'une vraie capture en banque DATA native AMOS, pas d'une sonde factice. Le correctif remplace les mauvais indices `Rjsr` par ceux des vrais services de banques AMOS : 797/800/816/819. Consulter [la preuve de liaison](../../docs/M16_MAIN_LINKAGE_FIX.md).
+**Gate A CPU et CI : PASS** ([vérification](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43265331087)). **Gate B interprété : NON TESTÉ. Gate C Compiler : NON TESTÉ.** Il s'agit d'une vraie capture en banque DATA native AMOS, pas d'une sonde factice. Le correctif remplace les mauvais indices `Rjsr` par ceux des vrais services de banques AMOS : 797/800/816/819. Consulter [la preuve de liaison](../../docs/M16_MAIN_LINKAGE_FIX.md).
 
 Dans une configuration WinUAE **de test**, installer `dist/AMOSPro_AGA.Lib` sous son nom exact dans le slot APSystem habituel, puis **redémarrer complètement AMOS**. Vérifier avec `List Bank` que les banques **11 et 12 sont libres**. Importer le programme par **Project → Merge ASCII** dans un programme vide, lancer **en interprété d'abord**. Le test initialise un écran AGA, capture avec et sans transparence, vérifie refus/absence de destruction, sauvegarde et recharge une banque, dessine les images, et ferme l'écran.
 
