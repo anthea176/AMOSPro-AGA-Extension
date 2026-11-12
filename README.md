@@ -45,7 +45,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current R44 0.11.5 API** — **49 named AP20 commands**, CPU/CI Gate A and WinUAE Gate B PASS; M15/M15bis closed. Gates C/D untested.
+**Current library API R44 0.11.5** — **49 named AP20 commands**, CPU/CI Gate A and WinUAE Gate B PASS; M15/M15bis closed. Gates C/D untested.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

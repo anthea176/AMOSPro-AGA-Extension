@@ -45,7 +45,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API actuelle R44 0.11.5** — **49 commandes AP20**, Gates A/B PASS sous CPU/CI et WinUAE ; M15/M15bis clôturés. Gates C/D non testées.
+**API de la bibliothèque courante R44 0.11.5** — **49 commandes AP20**, Gates A/B PASS sous CPU/CI et WinUAE ; M15/M15bis clôturés. Gates C/D non testées.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
