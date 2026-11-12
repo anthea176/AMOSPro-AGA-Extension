@@ -119,6 +119,8 @@ jobs:
         run: python -B tools/test_m16_capture_r47_core.py
       - name: "M16/R47 experimental AMOS bank capture native wrapper — static and AP20 Compiler bridge only"
         run: python -B tools/test_m16_capture_r47_build.py
+      - name: "M16/R47 experimental complete capture 68000 — Unicorn simulated AMOS bank allocator"
+        run: python -B tools/test_m16_capture_r47_unicorn.py
       - name: M16 R45 failed-image archive — frozen Unicorn Gate A (R44 historical archive)
         run: |
           python -B tools/build_m16_image_draw_r45.py
