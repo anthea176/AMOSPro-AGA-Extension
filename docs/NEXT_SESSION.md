@@ -2,7 +2,7 @@
 
 ## M16 — Capture AGAPIC et exemples : décisions et travaux à prévoir (12/11/2026)
 
-**M16 reste ouvert.** Capture AGAPIC **depuis le back buffer AGA** validée. **Une banque occupée ne doit jamais être remplacée par notre commande de création**, même si elle contient une fonte AMCAF ; refus sans effet. La simplification de `Aga Image Draw` / `Aga Font Bank Select` en arguments `Bank` reste à contractualiser. **Lors de l'implémentation, adapter tous les exemples courants (y compris Compiler, documents FR/EN et ZIP), mais préserver sans modification les exemples/tests historiques déjà validés.** Liste des fichiers et décisions ouvertes : [M16_AGAPIC_CAPTURE_DESIGN.md](M16_AGAPIC_CAPTURE_DESIGN.md). R46 C1 `LAST_GOOD` et les sources exécutables restent inchangées, `main` uniquement.
+**M16 reste ouvert.** Capture AGAPIC **depuis le back buffer AGA** validée ; **tout rectangle débordant l'écran est refusé** (`0`, aucune banque créée, pas de clipping). **Une banque occupée ne doit jamais être remplacée par notre commande de création**, même si elle contient une fonte AMCAF ; refus sans effet. La simplification de `Aga Image Draw` / `Aga Font Bank Select` en arguments `Bank` reste à contractualiser. **Lors de l'implémentation, adapter tous les exemples courants (y compris Compiler, documents FR/EN et ZIP), mais préserver sans modification les exemples/tests historiques déjà validés.** Liste des fichiers et décisions ouvertes : [M16_AGAPIC_CAPTURE_DESIGN.md](M16_AGAPIC_CAPTURE_DESIGN.md). R46 C1 `LAST_GOOD` et les sources exécutables restent inchangées, `main` uniquement.
 
 ## Promotion officielle R46 v0.12.1-C1 — 12/11/2026
 
