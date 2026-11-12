@@ -28,7 +28,7 @@ API = (("aga image draw", ENTRY_INDEX, "00,0,0,0,0"),)
 def build():
     original = BASE.read_bytes()
     assert digest(original) == BASE_SHA256, "R44 LAST_GOOD unexpectedly changed"
-    assert CURRENT.read_bytes() == original, "R44 current binary changed"
+    assert CURRENT.is_file(), "R45 current library missing"
     assert ARCHIVE_R44.read_bytes() == original, "R44 historical archive changed"
     tok, parts, _ = split(original)
     assert len(parts) == ENTRY_INDEX == 55, "R44 segment count changed"
@@ -54,6 +54,7 @@ def build():
     words = pack(">I", len(body)//4)
     candidate = original[:20] + words + original[24:28] + words + body + original[-4:]
     assert split(candidate)[:2] == (new_tokens, new_parts)
+    assert CURRENT.read_bytes() == candidate, "R45 current candidate changed"
     report = inspect(parse(candidate))
     assert not report["issues"], report["issues"]
     api = [x for x in report["tokens"] if x["name"].startswith("aga ")]

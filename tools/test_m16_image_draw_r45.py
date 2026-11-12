@@ -197,7 +197,7 @@ def run():
     candidate,info=build()
     assert candidate==build()[0], "R45 non-deterministic"
     assert digest(BASE.read_bytes())==BASE_SHA256
-    assert BASE.read_bytes()==CURRENT.read_bytes()==ARCHIVE_R44.read_bytes()
+    assert BASE.read_bytes()==ARCHIVE_R44.read_bytes() and candidate==CURRENT.read_bytes(), "R44 frozen or R45 current mismatch"
     oldtok,old,_=split(BASE.read_bytes())
     newtok,new,_=split(candidate)
     assert len(old)==ENTRY_INDEX==55 and len(new)==56
