@@ -258,6 +258,38 @@ def verified_r45_inherited_seeds(parsed):
     return verified_r44_inherited_seeds(original)
 
 
+
+def verified_r46_inherited_seeds(parsed):
+    """Require exact frozen failed R45 provenance before decoding repaired R46.
+
+    No generic whitelisting: 55 old AP20 segments and all token bytes must
+    match the published R45 SHA, with exactly one revised source-backed R46
+    segment 55. Cross-entry seeds are inherited from R45 only after its
+    independent R44/R43 checks pass.
+    """
+    sections=parsed["section"]
+    if len(sections)!=56 or b"M16 Image Draw R46 0.12.1" not in parsed["title"]:
+        return {}
+    old_path=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"
+    need(old_path.is_file(),"R46 strict source: failed R45 frozen archive missing")
+    frozen=old_path.read_bytes()
+    need(sha(frozen)=="0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7",
+         "R46 strict source: R45 failed archive SHA changed")
+    old=parse_lib(frozen)
+    need(len(old["section"])==56,"R46 strict source: R45 segment count changed")
+    for index in range(55):
+        need(sections[index]["core"]==old["section"][index]["core"] and
+             sections[index]["getp"]==old["section"][index]["getp"],
+             f"R46 strict source: inherited AP20 entry {index} changed")
+    from m16_image_draw_r45_emit import emit_image_draw
+    new_core,_=emit_image_draw(accept_loaded_flags_zero=True)
+    need(sections[55]["core"]==new_core and not sections[55]["getp"],
+         "R46 strict source: candidate differs from explicit flags-zero repair emitter")
+    need(parsed["token_data"]==old["token_data"],
+         "R46 strict source: AP20 token/signature changed")
+    return verified_r45_inherited_seeds(old)
+
+
 def analyze_entries(parsed):
     sections=parsed['section']
     base=parsed['code_start']
@@ -266,8 +298,9 @@ def analyze_entries(parsed):
     # Discover cross-entry seeds exclusively from decoded CALL targets.
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
     inherited=verified_r44_inherited_seeds(parsed)
-    for index,extra in verified_r45_inherited_seeds(parsed).items():
-        inherited.setdefault(index,set()).update(extra)
+    for verifier in (verified_r45_inherited_seeds, verified_r46_inherited_seeds):
+        for index,extra in verifier(parsed).items():
+            inherited.setdefault(index,set()).update(extra)
     for index,extra in inherited.items():seeds[index].update(extra)
     # In R23, legacy keyboard exits contain an AMOS Rjsr linking marker
     # (6 bytes of non-CPU data) followed by a real RTS. Seeds must be tied

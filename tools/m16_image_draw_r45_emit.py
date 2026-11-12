@@ -31,7 +31,7 @@ F = dict(mode=0, y=4, x=8, length=12, base=16,
          bytebit=116, planesleft=120, srcbit=124)
 
 
-def emit_image_draw():
+def emit_image_draw(*, accept_loaded_flags_zero=False):
     c = Code()
     def L(name): c.label(name)
     def B(cond,name): c.branch(cond,name)
@@ -85,8 +85,16 @@ def emit_image_draw():
     c.imm("cmp",5,D(0)); B(5,"reject")
     c.imm("cmp",65535,D(0)); B(2,"reject")
     uword(-12)
+    # R45 intentionally accepts only DATA/FAST=1 or DATA/CHIP=3.
+    # WinUAE's genuine, reloaded AGAPIC bank reports FLAGS=0;
+    # R46 permits this observed case, while preserving the exact R45
+    # binary, its failing archive and its original unit-test semantics.
+    if accept_loaded_flags_zero:
+        c.tst(D(0)); B(7,"native_bank_flags_ok")
     c.imm("and",0xfffd,D(0),"w")
     c.imm("cmp",1,D(0)); B(6,"reject")
+    if accept_loaded_flags_zero:
+        L("native_bank_flags_ok")
     c.move(M(0,-8),D(0))
     c.imm("cmp",0x41474150,D(0)); B(6,"reject")
     c.move(M(0,-4),D(0))
