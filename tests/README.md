@@ -1,5 +1,7 @@
 # Tests AMOS — R40 Gate A CPU/CI PASS, R38 LAST_GOOD
 
+**M15/R41 v0.11.2 — Gate A CPU/CI PASS (325 cas), Gate B WinUAE en attente :** [test de lignes clippées](current/M15_R41_DRAW_01.asc), **unique ASC actif**. Nouvelle fonction `Aga Draw(X1,Y1,X2,Y2,Pen)` : lignes rapides dans le bitmap, Bresenham sécurisé pour lignes traversant les limites, rejet des segments invisibles et des coordonnées hors signed16. Binaire R41 candidate de 24 816 octets, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`; R40 v0.11.1 reste `LAST_GOOD` avec son test validé archivé. Gates C/D non testées.
+
 **M15/R40 WinUAE Gate B PASS (12/11/2026) :** [`Aga Plot` — test archivé](passed/M15_R40_PLOT_01.asc) (Git blob `6ab9cf4a91cca9f8097ffba40a32e2b85b049c38`, 2 400 octets). 192 pixels / 0 erreur ; coins, paramètres hors limites, Safe après Swap, `RESULT 1`, `CLOSE RETURNED` (ligne 99). R40 v0.11.1 promue `LAST_GOOD` à l'octet près ; **45 commandes AP20**. Gate A CPU/CI PASS, Gate B WinUAE PASS, Gates C/D non testées. `tests/current/` sans ASC actif.
 
 ## M15/R40 v0.11.1 — Aga Plot : Gates A CPU/CI et B WinUAE PASS (12/11/2026) — détails historiques de la préparation

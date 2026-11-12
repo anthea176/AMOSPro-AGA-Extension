@@ -19,15 +19,17 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**R40 v0.11.1 — dernière version VALIDÉE sous WinUAE (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R40](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) à l'octet près (**23 840 octets**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 commandes AP20** ; `Aga Plot(X,Y,Pen)` a passé **221 scénarios CPU 68000 + CI** et **Gate B AMOS interprété/WinUAE confirmée par l'utilisateur** : 192 pixels sans erreur, quatre coins OK, coordonnées et couleurs invalides refusées, `Safe` après swap, `RESULT 1`, `CLOSE RETURNED`. [Test exact archivé](tests/passed/M15_R40_PLOT_01.asc). Gates C Compiler et D Amiga AGA physique non testées. **R38 reste dans son archive immuable**.
+**R41 v0.11.2 — candidate dessin 2D à tester sous WinUAE :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R41](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 commandes AP20**. Nouveau `Aga Draw(X1,Y1,X2,Y2,Pen)` : lignes intérieures accélérées, clipping logiciel sûr pour les lignes qui dépassent l'écran. **Gate A CPU 68000/CI PASS (325 scénarios), Gate B AMOS/WinUAE NON TESTÉE.** [Test actif](tests/current/M15_R41_DRAW_01.asc) · [Contrat R41](docs/M15_DRAW_R41.md). [R40 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste inchangée, 23 840 octets, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`.
+
+**R40 v0.11.1 — dernière version validée sous WinUAE (12/11/2026) :** [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R40](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) à l'octet près, 23 840 octets, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`. `Aga Plot` et les 44 autres commandes validées sous WinUAE ; test [R40 archivé](tests/passed/M15_R40_PLOT_01.asc).
 
 **Stress Chip RAM R38 validé sous WinUAE (12/11/2026) :** [500 changements de fontes, 0 erreur et 0 octet perdu](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) ; relevés Chip libre **1 582 088 octets** et plus grand bloc **1 320 664 octets** constants à 0/100/200/300/400/500. `RESULT 1`, retour AMOS normal. Binaire R38 / `LAST_GOOD` inchangé.
 
 
 **Dernière version validée : R40 v0.11.1 (12 novembre 2026)** — 45 commandes AP20, dont `Aga Plot`, sur écran AGA indexé ; Gates A CPU/CI et B WinUAE **PASS**.
 
-- **Bibliothèques :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R40](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib). L'archive [R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib) est inchangée.
-- **Validation :** R40 Gate A CPU 68000/CI **PASS**, Gate B AMOS interprété/WinUAE **PASS**, Gates C Compiler et D Amiga AGA réel **non testées**.
+- **Bibliothèques :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) est la **candidate R41** ; [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) est la **R40 validée**. Les archives R40, R38 et antérieures sont immuables.
+- **Validation :** R40 Gates A/B **PASS** ; R41 Gate A CPU 68000/CI **PASS (325 cas)**, Gate B **non testée** ; Gates C Compiler et D Amiga physique **non testées**.
 - **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. Le test d'endurance WinUAE (500 changements) n'a mesuré aucune baisse de Chip RAM libre ni du plus grand bloc disponible.
 - **Preuves et historique :** [rapport technique R38](docs/M14_FONT_BANK_R38.md) · [test R38 validé](tests/passed/M14_R38_FONT_BANK_01.asc) · [historique technique](docs/NEXT_SESSION.md) · [tests validés](tests/passed/).
 
@@ -35,7 +37,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R40 0.11.1** — **45 commandes AP20**, Gates A CPU/CI et B WinUAE **PASS** ; Gates C/D non testées.
+**API de la bibliothèque courante R41 0.11.2** — **46 commandes AP20**. Gate A CPU 68000/CI **PASS**, Gate B WinUAE **à tester**. R40 est conservée dans `LAST_GOOD` (Gates A/B PASS), Gates C/D non testées.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -84,6 +86,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Font Select`** (M14 R37, Gates A/B PASS) | `_OK=Aga Font Select(_FONT$,_YSIZE)` | Charge et sélectionne une fonte AmigaOS `.font` via `diskfont.library` (nom 1..127 caractères, hauteur demandée 1..255). Retour 1 si succès, 0 si refus sans effet. `_OK=Aga Font Select("",0)` restaure la fonte par défaut. Influence `Aga Text` sur l'écran AGA privé ; libération au remplacement/reset/Screen Close. **Gate B WinUAE PASS.** |
 | **`Aga Font Bank Select`** (M14 R38, Gates A/B PASS) | `_OK=Aga Font Bank Select(_START,_LENGTH)` | Sélectionne une fonte monochrome fixe ou proportionnelle provenant d'une banque `BankFont` créée par AMCAF `Make Bank Font`. `_START=Start(n)` et `_LENGTH=Length(n)` désignent la banque AMOS vivante. Retourne 1 en cas de succès, 0 en cas d'échec sans changer la fonte. Copie privée en mémoire Chip (même si la banque source est en Fast) ; fonctionne après `Erase n`, libération au changement/reset/fermeture. **Gate B WinUAE PASS.** |
 | **`Aga Plot`** (M15 R40, Gates A/B PASS) | `_OK=Aga Plot(X,Y,Pen)` | Écrit **un pixel** à `(X,Y)` dans le **back buffer AGA**. X/Y entre zéro et largeur/hauteur moins un, `Pen` indexé 0..2^Depth−1 (1 à 8 plans). `1` si `WritePixel` réussit, `0` sinon (paramètre invalide, écran absent ou buffer non-`Safe`). Pas de clipping hors écran, aucun swap/VBL implicite. **Gates A CPU/CI et B WinUAE PASS.** |
+| **`Aga Draw`** (M15 R41, Gate A PASS) | `_OK=Aga Draw(X1,Y1,X2,Y2,Pen)` | Trace une **ligne d'un pixel** sur le **back buffer AGA**, extrémités incluses. Tracé rapide pour les coordonnées entièrement dans l'écran ; **clipping logiciel sécurisé** par Bresenham en dehors. Coordonnées signées 16 bits, `Pen` indexé selon la profondeur. `1` si au moins un pixel dessiné, `0` sinon. Pas de swap/VBL implicite. **Gate A PASS ; Gate B WinUAE non testée.** |
 
 **Exemple AMOS : sauvegarder la palette active** une fois l'écran AGA Intuition ouvert :
 

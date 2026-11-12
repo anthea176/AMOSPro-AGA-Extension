@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**R40 v0.11.1 — dernière version VALIDÉE sous WinUAE (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R40](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) à l'octet près (**23 840 octets**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 commandes AP20** ; `Aga Plot(X,Y,Pen)` a passé **221 scénarios CPU 68000 + CI** et **Gate B AMOS interprété/WinUAE confirmée par l'utilisateur** : 192 pixels sans erreur, quatre coins OK, coordonnées et couleurs invalides refusées, `Safe` après swap, `RESULT 1`, `CLOSE RETURNED`. [Test exact archivé](tests/passed/M15_R40_PLOT_01.asc). Gates C Compiler et D Amiga AGA physique non testées. **R38 reste dans son archive immuable**.
+**R41 v0.11.2 — candidate WinUAE, Gate A CPU/CI PASS (325 cas), Gate B NON TESTÉE :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R41](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 commandes AP20**, dont `Aga Draw(X1,Y1,X2,Y2,Pen)`. [Test R41](tests/current/M15_R41_DRAW_01.asc) : aucun fichier IFF/ABK nécessaire. **Dernière version validée : R40 v0.11.1**, [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) et archive R40 (23 840 octets, inchangées). Gates C/D non testées.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -10,7 +10,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier la [R40 v0.11.1 validée](dist/AMOSPro_AGA.Lib) dans **`APSystem`** sous le nom exact `AMOSPro_AGA.Lib`. Conserver le slot existant et **redémarrer AMOS**. Sauvegarder l'ancienne Lib au préalable ; la R40 est également disponible dans [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib). Le [test R40 validé](tests/passed/M15_R40_PLOT_01.asc) ne nécessite aucun IFF/ABK.
+2. Copier la [candidate R41 v0.11.2](dist/AMOSPro_AGA.Lib) dans **`APSystem`** sous le nom exact `AMOSPro_AGA.Lib`, **sans changer de slot**, puis **redémarrer AMOS**. Sauvegarder l'ancienne Lib ; la [R40 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) permet de revenir à la version WinUAE-PASS. Importer ensuite le [test R41](tests/current/M15_R41_DRAW_01.asc) via **Project → Merge ASCII** depuis un programme vide.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.
@@ -39,7 +39,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**R40 v0.11.1 — dernière version VALIDÉE sous WinUAE (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R40](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) à l'octet près (**23 840 octets**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 commandes AP20** ; `Aga Plot(X,Y,Pen)` a passé **221 scénarios CPU 68000 + CI** et **Gate B AMOS interprété/WinUAE confirmée par l'utilisateur** : 192 pixels sans erreur, quatre coins OK, coordonnées et couleurs invalides refusées, `Safe` après swap, `RESULT 1`, `CLOSE RETURNED`. [Test exact archivé](tests/passed/M15_R40_PLOT_01.asc). Gates C Compiler et D Amiga AGA physique non testées. **R38 reste dans son archive immuable**.
+**R41 v0.11.2 — candidate WinUAE, Gate A CPU/CI PASS (325 cas), Gate B NON TESTÉE :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R41](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 commandes AP20**, dont `Aga Draw(X1,Y1,X2,Y2,Pen)`. [Test R41](tests/current/M15_R41_DRAW_01.asc) : aucun fichier IFF/ABK nécessaire. **Dernière version validée : R40 v0.11.1**, [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) et archive R40 (23 840 octets, inchangées). Gates C/D non testées.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

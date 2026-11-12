@@ -1,7 +1,13 @@
-# Tests AMOS actifs
+# Test AMOS actif — M15/R41 Aga Draw
 
-**Aucun test `.asc` actif.** Le test fonctionnel **M15/R40 `Aga Plot`** a été validé par l'utilisateur sous AMOS interprété / WinUAE le 12/11/2026, puis archivé **sans modification** dans [`tests/passed/M15_R40_PLOT_01.asc`](../passed/M15_R40_PLOT_01.asc), Git blob `6ab9cf4a91cca9f8097ffba40a32e2b85b049c38`.
+**Seul test `.asc` actif :** [`M15_R41_DRAW_01.asc`](M15_R41_DRAW_01.asc). **Gate A CPU/CI 68000 PASS (325 cas) ; Gate B AMOS interprété/WinUAE NON TESTÉE**. La R40 reste `LAST_GOOD`. Ne PAS déplacer le test dans `tests/passed/` ni promouvoir de binaire sans confirmation utilisateur.
 
-Capture utilisateur : `OPEN 1 DB 1 CLEAR 1`, `PALETTE 1 1 1 1`, `CORNERS 1 1 1 1`, `CENTER 1 PEN0 1`, `DIAG 192 ERR 0`, `BADXY 0 0 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne 99. Le rendu visuel est confirmé verbalement par l'utilisateur (« ça marche nickel »).
+Installer la [candidate R41](../../dist/AMOSPro_AGA.Lib) (**v0.11.2**, 24 816 octets, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`) dans `APSystem`, sous le nom exact `AMOSPro_AGA.Lib`, en conservant le même slot d'extension. Sauvegarder la précédente version et **redémarrer AMOS**. La [R40 `LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) et son archive sont inchangées.
 
-La R40 v0.11.1 (45 commandes AP20, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`) est **`LAST_GOOD`**. Gates A CPU 68000/CI et B WinUAE **PASS** ; Gates C Compiler et D Amiga AGA physique non testées. L'archive R38 v0.11.0 et les essais [R38 précédents](../passed/) sont conservés.
+Dans un programme AMOS **vide**, importer le test avec **Project → Merge ASCII** (pas `Load` des programmes tokenisés). Aucun IFF ni ABK nécessaire. Le test ouvre un écran **320×256×256 couleurs**, dessine un cadre, **huit rayons** dans toutes les directions et **quatre lignes traversant les limites de l'écran**, dont des diagonales. Il vérifie aussi les quatre segments intégralement hors écran, les valeurs 32 bits qui ne rentrent pas dans les coordonnées signées 16 bits, les index de couleur invalides, le point unique, le `Safe` après un swap et le retour à AMOS.
+
+**Affichage attendu :** cadre blanc, étoile colorée à huit branches au centre, deux diagonales, une ligne horizontale et une verticale traversantes (toutes coupées proprement aux bords). Les tracés ne doivent pas déborder sur la mémoire et aucun écran noir / plantage n'est attendu.
+
+**Résultats attendus à la console :** `OPEN 1 DB 1 CLEAR 1`, `BORDER 1 1 1 1`, `CLIPPED 1 1 1 1`, `STAR 8 ERR 0 CENTER 1`, `OUTSIDE 0 0 0 0`, `BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Le résultat numérique `RESULT 1` ne remplace pas la vérification du rendu visuel.
+
+**Gates C Compiler et D Amiga AGA physique NON TESTÉES.** Ancien [test R40 exact et validé](../passed/M15_R40_PLOT_01.asc) conservé dans `tests/passed/`.

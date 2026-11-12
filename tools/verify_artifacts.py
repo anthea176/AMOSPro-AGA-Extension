@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R40 Gate A CPU/CI and Gate B user WinUAE PASS; historical archives frozen."""
+"""Integrity: R41 candidate Gate A CPU/CI PASS; R40 LAST_GOOD WinUAE PASS; archives frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231",
+    "dist/AMOSPro_AGA.Lib": "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc",
+    "dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib": "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib": "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231",
     "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib": "09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366",
     "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38_FAILED_BANK0.Lib": "948b9df308487ad9d8c427a25a04ab713725848a077e97d5966a6b8a393f94c5",
@@ -94,6 +95,7 @@ def main():
     from build_m14_font_select_r37 import build as build_r37, ENTRY_FONT_SELECT, API as API_R37
     from build_m14_font_bank_r38 import build as build_r38, ENTRY_INDEX as ENTRY_BANK_FONT, API as API_R38
     from build_m15_plot_r40 import build as build_r40, ENTRY_INDEX as ENTRY_PLOT, API as API_R40
+    from build_m15_draw_r41 import build as build_r41, ENTRY_INDEX as ENTRY_DRAW, API as API_R41
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -114,7 +116,7 @@ def main():
     r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
     r35 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
     r36 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"], "R40 candidate/archive mismatch"
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"], "R41 candidate/archive mismatch"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -436,15 +438,15 @@ def main():
     assert not (ROOT/"tests/current/M14_R38_CHIP_RAM_STRESS_01.asc").exists(), "R38 WinUAE PASS memory stress test must be removed from current"
 
     built40,meta40=build_r40()
-    assert candidate==built40==build_r40()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"], "R40 candidate not reproducible"
+    assert built40==build_r40()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"], "R40 archived build not reproducible"
     assert meta40["sha256"]=="0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231" and meta40["size"]==23840
-    tok40,seg40,_=split(candidate)
+    tok40,seg40,_=split(built40)
     assert len(seg40)==51 and len(seg38)==50, "R40 segment count"
     assert seg40[:49]==seg38[:49], "R40 modified frozen R38 AP20 entries"
     assert seg40[49]==seg38[49]+b"GetP", "R40 changed R38 BankFont other than GetP"
     assert seg40[50], "R40 missing Plot entry"
     assert tok40.startswith(tok38[:-6]) and tok40!=tok38, "R40 token change invalid"
-    audit40=inspect(parse(candidate))
+    audit40=inspect(parse(built40))
     assert not audit40["issues"], audit40["issues"]
     named40=[x for x in audit40["tokens"] if x["name"].startswith("aga ")]
     assert len(named40)==45 and sum(x["name"]=="aga plot" for x in named40)==1
@@ -454,14 +456,34 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert not list((ROOT/"tests/current").glob("*.asc")), "No active ASC after R40 Gate B"
+    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc"))==["M15_R41_DRAW_01.asc"], "Only R41 Gate B test may be active"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built40, "R40 LAST_GOOD not promoted identically"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==built40, "R40 LAST_GOOD must stay immutable"
 
-    print("PASS: R40 45 AP20 tokens Gate A CPU/CI and user WinUAE Gate B;"
-          " promoted LAST_GOOD and all historical archives frozen")
+    built41,meta41=build_r41()
+    assert candidate==built41==build_r41()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"], "R41 candidate not reproducible"
+    assert meta41["sha256"]=="0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc" and meta41["size"]==24816
+    tok41,seg41,_=split(candidate)
+    assert len(seg41)==52 and len(seg40)==51, "R41 AP20 segment count"
+    assert seg41[:50]==seg40[:50], "R41 changed frozen R40 entries"
+    assert seg41[50]==seg40[50]+b"GetP", "R41 changed R40 Plot beyond final GetP"
+    assert seg41[51], "R41 missing Draw entry"
+    assert tok41.startswith(tok40[:-6]) and tok41!=tok40, "R41 token addition invalid"
+    audit41=inspect(parse(candidate))
+    assert not audit41["issues"], audit41["issues"]
+    named41=[x for x in audit41["tokens"] if x["name"].startswith("aga ")]
+    assert len(named41)==46 and sum(x["name"]=="aga draw" for x in named41)==1
+    for name,index,sig in API_R41:
+        found=[x for x in named41 if x["name"]==name]
+        assert len(found)==1 and (found[0]["instruction"],found[0]["function"],found[0]["signature"])==(1,index,sig)
+    assert any(x["index"]==ENTRY_DRAW and x["parameters"]==5 and x["getp"] for x in audit41["parameter_checks"])
+    assert (ROOT/"tests/current/M15_R41_DRAW_01.asc").is_file(), "R41 active WinUAE test missing"
+    assert not (ROOT/"tests/passed/M15_R41_DRAW_01.asc").exists(), "R41 Gate B unconfirmed"
+
+    print("PASS: R41 candidate 46 AP20 tokens Gate A native CPU/CI; Gate B WinUAE pending;"
+          " R40 LAST_GOOD and all historical archives frozen")
 
 
 if __name__ == "__main__":
