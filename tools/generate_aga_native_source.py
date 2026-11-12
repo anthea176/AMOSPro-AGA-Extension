@@ -406,12 +406,16 @@ def verified_current_compiler_seeds(parsed):
     seeds = {0: {56}, 17: {506}, 18: {546}, 56: {1192}}
     need(sections[56]['core'][1192:1196] == bytes.fromhex('206a0020'),
          'Strict source: R54 image helper moved')
-    link = bytes.fromhex('fe11f700031d')  # R53 Bnk.GetAdr AMOS Rjsr marker
-    for i, offsets in ((56,(586,818,848,1118,1138)),(57,(58,)),(58,(38,))):
-        for offset in offsets:
-            need(sections[i]['core'][offset:offset+6] == link,
-                 f'Strict source: AMOS Rjsr marker moved at entry {i}')
-            seeds.setdefault(i,set()).add(offset+6)
+    # R53 Bnk.GetAdr / Reserve / Change / Eff AMOS linker indices.
+    # Pin the complete 6-byte marker at every position, not just FE11.
+    linked = ((56,586,0x031d),(56,818,0x031d),(56,848,0x0330),
+              (56,1118,0x0333),(56,1138,0x0320),
+              (57,58,0x031d),(58,38,0x031d))
+    for i, offset, index in linked:
+        expected = bytes.fromhex('fe11f700') + struct.pack('>H', index)
+        need(sections[i]['core'][offset:offset+6] == expected,
+             f'Strict source: AMOS Rjsr marker changed at entry {i} +{offset}')
+        seeds.setdefault(i,set()).add(offset+6)
     if raw == good_native:
         need(sections[20]['core'] == original[20]['core'],
              'Strict source: R54 inherited Back Fill changed')
@@ -690,7 +694,9 @@ def unclassified_gaps(parsed):
             # AMOS link markers but not executable Motorola opcodes.
             b=b.replace(bytes.fromhex('FE11F700008C'),b'')
             if trusted_r54_r57:
-                b=b.replace(bytes.fromhex('FE11F700031D'),b'')
+                for index in (0x031d, 0x0330, 0x0333, 0x0320):
+                    b=b.replace(bytes.fromhex('FE11F700') +
+                                struct.pack('>H', index),b'')
             # Report a problematic region once, not once per zero-delimited
             # fragment (the old exporter repeated the R23 250-byte gap).
             fragments=[part for part in b.split(b'\0') if part]
