@@ -1,6 +1,6 @@
 # AMOS Compiler Gate C — R46 C1 experimental single-segment bridge
 
-**12 novembre 2026 — tests utilisateur Compiler/WinUAE C1 : trace Open/Close, benchmark graphique et `Aga Image Draw` fonctionnels. Gate C complète PAS ENCORE VALIDÉE.** La bibliothèque C1 reste expérimentale : aucune promotion ni remplacement des binaires canoniques.
+**12 novembre 2026 — Gate C du test intégré R46 C1 sous AMOS Compiler/WinUAE : PASS sur capture utilisateur (`RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur, Chip drop 0).** C1 reste expérimentale, la couverture totale des 50 commandes n'est pas revendiquée, et aucune bibliothèque officielle n'est promue.
 
 The user-supplied AMOSPro_AGA.Lib is exactly R46 v0.12.1 (29,288 bytes; SHA256 5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580). The GitHub main branch has since promoted the same R46 to LAST_GOOD after interpreted AMOS/WinUAE Gate B PASS. This experimental compiler bridge does not replace that validated R46, historical R44 or frozen R45.
 
@@ -52,17 +52,38 @@ La partie AGA du benchmark utilise trois séries chronométrées, en 320×256×3
 
 **Limite de preuve :** aucune capture ni transcription chiffrée des lignes finales n'a été fournie dans ce retour ; ne pas inventer `ERRORS 0 RESULT 1`, les valeurs de `CLIP`, ni une égalité mesurée entre Chip RAM avant/après. Ne pas refaire cet essai sans modification de code pertinente.
 
-## Test intégré proposé : un seul ASC, toutes les régressions restantes
+## Test intégré réalisé : un seul ASC, régressions graphiques et ressources
 
-Une [archive ZIP unique](../examples/COMPILER_R46_ALL_IN_ONE.zip) et un [dossier autonome `examples/compiler_r46_all_in_one/`](../examples/compiler_r46_all_in_one/) ont été préparés : **un seul programme ASCII** `COMPILER_R46_ALL_IN_ONE.asc`, la banque image AGAPIC (10), la fonte AMCAF Hwarf (25), son attribution et la [procédure FR/EN](../examples/compiler_r46_all_in_one/README.md). Il regroupe les tests AGA 2D, `Aga Image Draw`, clipping, modes invalides, double buffer/Swap/Safe, fontes AMCAF et Topaz, **500 bascules du curseur** et restitution du pointeur lors de `Aga Screen Close`, avec bilan `RESULT` après fermeture. Tous les essais se font avec la **candidate expérimentale C1** déjà installée ; aucune bibliothèque officielle modifiée. **Cet exemple intégré est NON TESTÉ sous AMOS/WinUAE** à sa publication : ne pas marquer Gate C PASS sans retour utilisateur. Attention aux banques AMOS 10 et 25 remplacées. Suivre le dossier pour le répertoire courant AmigaDOS.
+Une [archive ZIP unique](../examples/COMPILER_R46_ALL_IN_ONE.zip) et un [dossier autonome `examples/compiler_r46_all_in_one/`](../examples/compiler_r46_all_in_one/) ont été préparés : **un seul programme ASCII** `COMPILER_R46_ALL_IN_ONE.asc`, la banque image AGAPIC (10), la fonte AMCAF Hwarf (25), son attribution et la [procédure FR/EN](../examples/compiler_r46_all_in_one/README.md). Il regroupe les tests AGA 2D, `Aga Image Draw`, clipping, modes invalides, double buffer/Swap/Safe, fontes AMCAF et Topaz, **500 bascules du curseur** et restitution du pointeur lors de `Aga Screen Close`, avec bilan `RESULT` après fermeture. Tous les essais se font avec la **candidate expérimentale C1** déjà installée ; aucune bibliothèque officielle modifiée. **Cet exemple a désormais été exécuté en compilé sous WinUAE : PASS confirmé et capture des résultats ci-dessous.** Attention aux banques AMOS 10 et 25 remplacées. Suivre le dossier pour le répertoire courant AmigaDOS.
 
-## Prochaines validations ciblées — les essais Open/Close, benchmark et Image Draw sont déjà passés
+## Validation utilisateur du test compilé R46 C1 tout-en-un — 12/11/2026
 
-1. Compiler **sans modifier** [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) avec la **même C1 installée**. Vérifier la disparition/réapparition du pointeur, sa restauration à la fermeture, `RESULT 1`, `CLOSE RETURNED` et l'absence de fuite Chip RAM. Cette recette fait 500 bascules ; conserver l'original archivé.
-2. Ensuite, tester les fontes avec [`tests/passed/M14_R38_FONT_BANK_01.asc`](../tests/passed/M14_R38_FONT_BANK_01.asc) et le fichier `RAM:AMCAF_FONT9.abk`, vérifier le rendu, la libération après `Erase 10`, `RESULT 1` et `CLOSE RETURNED`.
-3. Ne décider d'une intégration définitive qu'après vérification des résultats de ces tests, de la pile/ABI des trampolines et du coût du bloc monolithique (environ 28 Kio copiés par programme compilé utilisant l'extension). Ne pas promouvoir la C1 en `LAST_GOOD` uniquement sur les essais fonctionnels déjà réalisés.
+**PASS confirmé sous WinUAE/AMOS Compiler** avec la bibliothèque expérimentale R46 C1. Source [`COMPILER_R46_ALL_IN_ONE.asc`](../examples/compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc), archivée à l'identique dans [`tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc`](../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc) (Git blob `eded9040e382e9177b3c929bfa19e3c61ee9dd69`, 5 404 octets). **Capture utilisateur fournie et confirmation « c'est parfait ! ».**
 
-Ne pas repasser le test minimal inchangé : il a déjà passé. En cas de Guru, relever le dernier repère et, si possible, le véritable PC de l'exception avant réinitialisation. Pour l'instant, **l'intégration Compiler et les tests de non-régression complets restent à valider**.
+~~~text
+R46 C1 / COMPILER ALL IN ONE
+OPEN 1 DB 1 SWAP 1 BACKSAFE 1
+IMAGE O/M/S 1 1 1
+CLIP L/R/T/B 1 1 1 1
+BAD M/P/L 0 0 0 OUT 1
+2D 1 1 1 1
+FONT BANK 1 BAD 0
+FONT OS 1 RESET 1 TEXT 1 1 1
+CUR 500 ERR 0 SHOW 1 1
+CUR HIDE 1 1 BAD 0
+CHIP BEFORE/END 1847416 1847416 DROP 0
+CLOSED -1 NO IMG/CUR/FONT/BANK 0 0 0 0
+PALETTE ERR 0 RESULT 1
+CLOSE RETURNED
+~~~
+
+**Portée :** ouverture/fermeture, images AGAPIC opaques/masquées/décalées et clipping, rejets invalides, dessin 2D, double buffering/Swap/Safe, fontes AMCAF/Topaz, 500 bascules du curseur, état après fermeture. La mémoire libre Chip est identique **sur cet essai** ; cela ne prouve pas l'absence de toute fuite dans l'ensemble de l'API. **Gate C de la recette intégrée C1 : PASS.**
+
+**Limites :** cette preuve concerne **R46 C1 expérimentale**, pas la bibliothèque canonique à 56 segments. Elle ne valide pas une à une les 50 commandes, ni l'Amiga physique (Gate D). **Ne pas promouvoir automatiquement** C1 en LAST_GOOD. Vérifier le coût d'incorporation d'environ 28 Kio et l'ABI du trampoline avant une décision de production. Ne pas refaire les tests déjà passés sans modification pertinente.
+
+## Suite technique après validation fonctionnelle
+
+La recette Gate C intégrée R46 C1 est PASS. **Ne pas redemander les essais Open/Close, benchmark, Image Draw, curseur ou fontes** inchangés. Restent les contrôles d'ABI/relocation du trampoline, l'incorporation du segment monolithique (~28 Kio) et la décision explicite d'intégration du correctif en production. Gate D matérielle et couverture API exhaustive encore ouvertes.
 
 ## Historique du protocole du premier essai
 
@@ -72,4 +93,4 @@ Ne pas repasser le test minimal inchangé : il a déjà passé. En cas de Guru, 
 4. Execute under WinUAE. Pass criterion for this diagnostic is 06 AFTER AGA SCREEN CLOSE and clean program exit without Guru. If Guru returns, capture the true exception PC and preceding trace; a ROM STOP after reset is not the fault PC.
 5. If the minimal compiler trace passes, verify mouse cursor cleanup, fonts, double buffer and Aga Image Draw in BOTH interpreted and compiled contexts before a promotion or closure.
 
-**Bilan au 12/11/2026 : tests statiques PASS ; compilé/WinUAE : Open/Close PASS, benchmark graphique fonctionnel, `Aga Image Draw` fonctionnel d'après le retour utilisateur.** Les tests curseur et fontes en compilé et la validation ABI/performances restent ouverts. **Ne pas promouvoir C1 en `LAST_GOOD` à ce stade.**
+**Bilan actualisé au 12/11/2026 : Gate C du scénario intégré R46 C1 PASS sous WinUAE, capture utilisateur : `RESULT 1`, `CLOSE RETURNED`, 500 curseur/0 erreur, fontes/image PASS, Chip drop 0.** Audit ABI/coût et couverture API exhaustive restent ouverts. **Ne pas promouvoir C1 en `LAST_GOOD` à ce stade.**

@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Nouveau statut : Gate C R46 C1 test intégré PASS — 12/11/2026
+
+**AMOS Compiler/WinUAE : PASS sur capture utilisateur** de [`COMPILER_R46_ALL_IN_ONE.asc`](../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc), source archivée sans modification. Affichage : `OPEN 1 DB 1 SWAP 1 BACKSAFE 1`, `IMAGE O/M/S 1 1 1`, `CLIP 1 1 1 1`, `2D 1 1 1 1`, `FONT BANK 1 BAD 0`, `FONT OS 1 RESET 1 TEXT 1 1 1`, `CUR 500 ERR 0`, `CHIP BEFORE/END 1847416 1847416 DROP 0`, `CLOSED -1`, `PALETTE ERR 0 RESULT 1`, **`CLOSE RETURNED`**. [Rapport complet](GATE_C_R46_MONOLITH_CANDIDATE.md).
+
+**Suite : ne pas refaire les tests déjà passés.** La Gate C du scénario intégré **R46 C1** est confirmée ; le contrôle ABI/relocation et le coût monolithique ~28 Kio, la couverture API exhaustive et Gate D matérielle restent ouverts. **R46 officielle demeure LAST_GOOD Gates A/B**, C1 expérimentale distincte ; aucune bibliothèque ni archive modifiée. **Branche `main` uniquement**. Les sections datées ci-dessous sont historiques.
+
+
 ## M16/R46 v0.12.1 — Gates A/B PASS, LAST_GOOD (12/11/2026)
 
 **AMOS interprété / WinUAE : PASS sur captures utilisateur** du test `M16-R46-IMAGE-DRAW-01`. Images opaque, masquée et décalée visibles, quatre côtés clippés : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `CHIP BEFORE/END 1801928 1801928`, `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `HEAD AGAPIC V 1`, `STREAM 196 TOTAL 1836`, **`ERRORS 0 RESULT 1`**, **`CLOSE RETURNED`** (ligne 148). La chaîne graphique `R45 - CPU AGAPIC IMAGE` est un ancien libellé dans le test R46, conservé sans retouche.

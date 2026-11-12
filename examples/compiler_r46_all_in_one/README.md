@@ -1,6 +1,6 @@
 # R46 C1 — AMOS Compiler / AGA all-in-one test
 
-**Status: prepared, not yet tested in WinUAE.** This is one AMOS ASCII source file plus the two data banks it needs. No extra AMCAF extension is required to use the embedded AMCAF BankFont.
+**Statut : PASS confirmé sous AMOS Compiler/WinUAE sur R46 C1 le 12/11/2026** (capture : `RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur, Chip drop 0). This is one AMOS ASCII source file plus the two data banks it needs. No extra AMCAF extension is required to use the embedded AMCAF BankFont.
 
 ## Contenu / Contents
 
@@ -23,6 +23,6 @@ Le programme remplace temporairement **les banques AMOS 10 et 25**. Aucune modif
 
 With the experimental R46 C1 library installed, compile the ASCII source in AMOS Professional. Place the compiled executable and both `.abk` files in the same folder, **run it with that folder as the AmigaDOS current directory**, and look for `RESULT 1`, `CLOSE RETURNED`, and the three correctly rendered images. The program also exercises AMCAF and disk fonts, screen cleanup, 500 cursor toggles, and safe double-buffer drawing. Existing release libraries are unchanged.
 
-**Gate C is not automatically fully validated** by generating this example; the user must execute it under WinUAE. See [Compiler diagnostic status](../../docs/GATE_C_R46_MONOLITH_CANDIDATE.md).
+**Gate C de cette recette intégrée : PASS confirmé par l'utilisateur.** Cela ne certifie pas les 50 commandes ni le matériel. [Source exacte archivée](../../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc) · [Rapport détaillé](../../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). `LAST_GOOD` inchangée.
 
 Font image rights are governed by [Hwarf's license](Hwarf-12xxS.licence), not the source MIT license. The AGAPIC sample is supplied for the existing test purposes; see [asset terms](../../ASSETS_LICENSE.md).
