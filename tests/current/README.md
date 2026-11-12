@@ -1,9 +1,11 @@
-# Test AMOS actif — M16/R52 : cible effective de `Rjsr FnOne`
+# Test AMOS actif — M16/R53 : AGAPIC Image Capture
 
-**Seul test actif :** [`M16_R52_FNONE_TARGET_PROBE_01.asc`](M16_R52_FNONE_TARGET_PROBE_01.asc), correspondant a [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R52 v0.12.7, diagnostic uniquement**.
+**Seul test actif :** [`M16_R53_IMAGE_CAPTURE_01.asc`](M16_R53_IMAGE_CAPTURE_01.asc), correspondant exactement à la candidate **R53 v0.12.8** dans [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), également archivée sous [R53 link fix](../../dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib).
 
-Charger avec **Project -> Merge ASCII** dans un programme vierge et lancer en **interprete** sous WinUAE. Aucun ecran ni banque 11 requis. La fonction R52 **saute le `Rjsr`** puis verifie que la cible du `JSR` est localisee dans une memoire reconnue par `exec.library/TypeOfMem` ; elle compare ensuite les six octets attendus de `FnOne` (`7601 7400 4E75`). Aucune banque/aucun ecran n'est modifie.
+**Gate A : en revalidation CI. Gate B interprété : non testé. Gate C Compiler : non testé.** Il s'agit d'une vraie capture en banque DATA native AMOS, pas d'une sonde factice. Le correctif remplace les mauvais indices `Rjsr` par ceux des vrais services de banques AMOS : 797/800/816/819. Consulter [la preuve de liaison](../../docs/M16_MAIN_LINKAGE_FIX.md).
 
-Resultat attendu, selon le chargeur en place : **`RESULT 1`** si les trois instructions sont conformes ; **`RESULT 2`** si elles different ; **`RESULT 3`** si `TypeOfMem` ne reconnait pas la cible (ce qui ne prouve pas systematiquement qu'elle est inaccessible, par exemple zone ROM) ; **`RESULT 4`** si le `JSR` ou le pointeur sont invalides ; **`RESULT 0`** si les arguments ne correspondent pas.
+Dans une configuration WinUAE **de test**, installer `dist/AMOSPro_AGA.Lib` sous son nom exact dans le slot APSystem habituel, puis **redémarrer complètement AMOS**. Vérifier avec `List Bank` que les banques **11 et 12 sont libres**. Importer le programme par **Project → Merge ASCII** dans un programme vide, lancer **en interprété d'abord**. Le test initialise un écran AGA, capture avec et sans transparence, vérifie refus/absence de destruction, sauvegarde et recharge une banque, dessine les images, et ferme l'écran.
 
-R51 a eu **Gate B PASS utilisateur** pour la seule relocation, sans capture reelle. Ancien test R51 archive [ici](../diagnostics/M16_R51_RJSR_RELOCATION_PROBE_01.asc). R52 : **Gate A CPU/CI PASS**, Gate B non testee, Gate C non testee. Ne pas compiler ni promouvoir R52 ; R46 C1 reste `LAST_GOOD`.
+**Résultat attendu :** `CAP 11 12 1 1`, `NOSCREEN 0`, `FLAGS 0 1`, `COLL 0 PRES 1`, `INVALID` tous à 0, `DRAW O/M/RELOAD 1 1 1 RL 1`, `RESULT 1`, `CLOSE RETURNED` et un rendu visuellement correct. En cas de plantage, relever le dernier message affiché ; ne pas compiler. Après Gate B PASS confirmé par l'utilisateur, compiler **un nouvel exécutable** et effectuer Gate C séparément.
+
+**Ne pas promouvoir R53 automatiquement.** [R46 C1 `LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) reste la bibliothèque de référence validée ; les candidats précédents restent archivés.

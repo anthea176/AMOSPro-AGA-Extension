@@ -10,7 +10,7 @@ from pathlib import Path
 from struct import pack
 
 FIXTURE = Path(__file__).resolve().parents[1]/"tests/fixtures/amos_main_declarations.json"
-FIXTURE_SHA = "de7691d1bf86974bcd8b2354fc14dd37ece2a7939f7d0f942e3e5c9067bcfb24"
+FIXTURE_SHA = "9c5864b7de5bdd9959b0d939a813fb5ea6891ef138c556f5285e900d5094ce90"
 
 def declarations():
     raw = FIXTURE.read_bytes()

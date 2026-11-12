@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R53 — reprise après synchronisation Codex (12/11/2026)
+
+Codex a synchronisé sur `main` la **R53 0.12.8** (vraie capture AGAPIC), binaire `dist/AMOSPro_AGA.Lib` et archive `dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib`, SHA256 `4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26`. La table de liaison est désormais résolue depuis `+ILib.s` (Lib_Pos 500) et `+Lib.s` : GetAdr 797, Eff 800, Reserve 816, Change 819, FnOne 822. **Gate B/C R53 non testées ; R46 C1 LAST_GOOD inchangée.**
+
+La première CI de la synchronisation Codex a échoué avant les tests 68000 sur une empreinte de fixture obsolète. Le fichier a été recontrôlé : 770 déclarations, index 797/800/816/819/822, blobs Git `+ILib.s` et `+Lib.s` conformes à la révision source figée. Empreinte SHA256 réelle de la fixture `9c5864b7de5bdd9959b0d939a813fb5ea6891ef138c556f5285e900d5094ce90`. Correctif du garde-fou dans `tools/amos_main_abi.py` en cours de CI ; **ne pas revendiquer Gate A distante PASS avant conclusion de cette CI**. Le test actuel est uniquement `tests/current/M16_R53_IMAGE_CAPTURE_01.asc` ; son README a été aligné et le test signale le contrôle sans écran avant le premier appel natif.
+
 ## M16/R53 — correction fonctionnelle de liaison (12/11/2026)
 
 **Cause prouvée :** le comptage R47 oubliait l'inclusion de +ILib.s et son `Lib_Pos 500`. Les indices de banques deviennent 797/800/816/819 ; FnOne est 822, pas 322. R52 a donné **RESULT 2** selon le retour utilisateur : constat compatible, mais insuffisant seul pour identifier la cible. [Audit complet et protocole](M16_MAIN_LINKAGE_FIX.md).
