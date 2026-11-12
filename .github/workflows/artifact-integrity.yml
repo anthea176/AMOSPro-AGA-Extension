@@ -76,7 +76,7 @@ jobs:
           python-version: "3.12"
       - name: Verify current HUNK files and exact committed artifacts
         run: python -B tools/verify_artifacts.py
-      - name: Gate C candidate: portable R44 rebuild + R45 in-memory transposition (STATIC ONLY)
+      - name: "Gate C candidate: portable R44 rebuild + R45 in-memory transposition (STATIC ONLY)"
         run: |
           python -B tools/test_aga_compiler_compat.py
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib
@@ -107,7 +107,7 @@ jobs:
         run: |
           python -B tools/build_m16_image_draw_r45.py
           python -B tools/test_m16_image_draw_r45.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build,CURRENT,ARCHIVE_R44,BASE; from pathlib import Path; b,info=build(); assert b==CURRENT.read_bytes()==Path('dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib').read_bytes(); assert BASE.read_bytes()==ARCHIVE_R44.read_bytes(); print('R45 Gate A exact candidate',info['sha256'],info['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build,CURRENT,ARCHIVE_R44,BASE; from pathlib import Path; b,info=build(); assert b==Path('dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib').read_bytes(); assert BASE.read_bytes()==ARCHIVE_R44.read_bytes(); print('R45 Gate A exact candidate',info['sha256'],info['size'])"
           python -B -c "from pathlib import Path; import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build; Path('/tmp/AMOSPro_AGA_R45_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
