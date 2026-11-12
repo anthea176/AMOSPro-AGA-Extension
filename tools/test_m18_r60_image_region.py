@@ -106,7 +106,7 @@ def run_case(binary: bytes, payload: bytes, *, layout: str = "interpreted",
     assert [bytes(m.uc.mem_read(a,m.plane_size))
             for a in m.frontplanes]==m.front_before, "front buffer modified"
     assert m.alloc_count==m.free_count==m.reserve_count==m.erase_count==0
-    assert m.main_calls == (["Bnk.GetAdr"] if bank>=5 else []),m.main_calls
+    assert m.main_calls == (["Bnk.GetAdr"] if 5 <= bank <= 65535 else []),m.main_calls
 
     if expect_ok:
         expected=oracle(background,image,sx,sy,width,height,x,y,sw,sh,mode)
