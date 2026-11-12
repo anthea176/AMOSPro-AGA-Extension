@@ -8,6 +8,10 @@
 
 **Historique :** R58 a démontré les appels au-delà de 32 Ko, à l'offset 40 000, Gates A/B/C PASS. [Test R58 archivé](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc) ; [rapport](../docs/GATE_C_COMPILER_BRIDGE_V2_PROBE.md). R57 était le précédent `LAST_GOOD`, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, et reste reproductible avec [son builder](build_m17_r57_rastport.py) ou récupérable dans le [commit antérieur](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/5f29d78e65b666f7260f5a32e28bd4e8bcf59a4a/dist/AMOSPro_AGA_LAST_GOOD.Lib). Les archives historiques restent figées.
 
+## M18 / P0 — atlas AGAPIC v1, modèle hôte (pas de bibliothèque)
+
+[`m18_agapic_atlas_model.py`](m18_agapic_atlas_model.py) propose le rendu partiel par ligne d'une seule banque AGAPIC v1, avec sélection de frames de grille sans allouer une image intermédiaire. [`test_m18_agapic_atlas_model.py`](test_m18_agapic_atlas_model.py) vérifie pixels, masques, clipping, profondeur et erreurs sans écriture. **P0 Python seulement, pas de Gate A CPU native ni Gate B/C WinUAE.** R59 `LAST_GOOD` et les binaires restent inchangés. [Contrat](../docs/M18_AGAPIC_ATLAS_P0.md).
+
 ## Historique R57 — code RastPort (ancien test archivé)
 
 **R57 à son checkpoint historique :** [ancienne référence figée dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/5f29d78e65b666f7260f5a32e28bd4e8bcf59a4a/dist/AMOSPro_AGA_LAST_GOOD.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/passed/M17_R57_RAST_FILL_01.asc`](../tests/passed/M17_R57_RAST_FILL_01.asc) conserve l'ancien test, alors actif, fin `Do / Wait Vbl / Loop`. **Gates A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B AMOS interprété/WinUAE PASS** et **C AMOS Compiler/WinUAE PASS** (captures utilisateur : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, pas de Guru). L'arrêt interprété à la ligne 169 dans `Wait Vbl` est volontaire, sur la boucle d'attente. **D physique non testée**.

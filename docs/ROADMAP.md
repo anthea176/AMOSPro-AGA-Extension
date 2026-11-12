@@ -19,7 +19,7 @@
 |---|---|---|
 | **M17** | Pont Compiler V2 compact R59, résultats Blitter/Copy R57 conservés | **R59 A/B/C + régression PASS, `LAST_GOOD` promue** ; diagnostic Copy différé sans modification du moteur |
 | **Publication Aminet** | Publication initiale signalée comme déjà réalisée par l'auteur | **Déjà faite** ; aucune nouvelle publication imposée pour commencer l'étude M18. Toute nouvelle version reste sur décision de l'auteur. |
-| **M18** | AGAPIC animations/atlas, capture-restauration CBlock, équivalent fonctionnel `F 16 Icon` | **Planifié, non engagé** ; étudier voies CPU Fast→Chip et Blitter Chip→Chip, option AUTO seulement après mesures |
+| **M18** | AGAPIC animations/atlas, capture-restauration CBlock, équivalent fonctionnel `F 16 Icon` | **P0 engagé : modèle hôte de sous-images/frames AGAPIC v1 + tests** ([contrat](M18_AGAPIC_ATLAS_P0.md)). Aucun nouveau token/binaire/ASC ; CPU Fast→Chip et Blitter Chip→Chip à comparer avant AUTO. |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
 | **M20** | Scrolling AGA, caméra, surfaces plus grandes que l'écran | **Planifié, non engagé** ; dépendances avec tilemaps à examiner |
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |

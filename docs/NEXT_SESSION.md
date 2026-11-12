@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18 / P0 — atlas AGAPIC v1, prototype hôte seulement (12/11/2026)
+
+**Chantier M18 autorisé après clôture de M17.** Première tranche : [contrat M18](M18_AGAPIC_ATLAS_P0.md), [modèle de rendu AGAPIC sous-rectangle / frames de grille](../tools/m18_agapic_atlas_model.py) et [tests hôte](../tools/test_m18_agapic_atlas_model.py). Le modèle utilise le format v1 inchangé, sans nouveau token AP20, nouvelle Lib R60 ni test ASC actif. Aucun résultat CPU M68000 Gate A ou WinUAE B/C revendiqué. **CBlock et F 16 Icon restent à auditer** avant de fixer une API. R59 v0.13.4 reste `LAST_GOOD`, les deux fichiers `dist/` sont inchangés ; `main` exclusivement.
+
 ## M17/R59 v0.13.4 — `LAST_GOOD` PROMUE (12/11/2026)
 
 **Binaire installable et référence validée identiques :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **32 984 octets**, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. **53 commandes / 60 entrées AP20, unité Compiler V2 de 30 782 octets** (dispatcher 34 + 30 748 natifs R57). 59 routines natives R57 conservées octet pour octet ; aucun bourrage artificiel 40 Ko, `Aga Probe` revenu à son entrée d'origine.
