@@ -267,15 +267,30 @@ def run():
         (9,b'\x02'),  # reserved flags
         (11,b'\x02'), # unknown compression
         (17,b'\x09'), # depth >8
-        (18,b'\x00'), # group byte width invalid
-        (20,b'\x00'), # table offset invalid
-        (24,b'\x00'), # stream offset invalid
-        (28,b'\x00'), # total length invalid
+        (19,b'\x00'), # group byte width invalid (low byte nonzero)
+        (23,b'\x00'), # table offset invalid (low byte 32 -> 0)
+        (27,b'\x00'), # stream offset invalid (low byte nonzero)
+        (31,b'\x00'), # total length invalid (low byte nonzero)
     ]
     for at,value in malformed:
         blob=bytearray(bad);blob[at:at+len(value)]=value
         total+=rejects(candidate,bytes(blob))
     total+=rejects(candidate,bad[:-1])
+    # Strict row table, packet and last-group padding validation.
+    parsed=parse_payload(bad)
+    blob=bytearray(bad)
+    struct.pack_into(">I",blob,32,0)
+    total+=rejects(candidate,bytes(blob))     # row starts inside header
+    blob=bytearray(bad)
+    struct.pack_into(">I",blob,32+4*7,len(bad)-1)
+    total+=rejects(candidate,bytes(blob))     # last row offset != payload length
+    blob=bytearray(bad)
+    blob[parsed.offsets[0]]=0xff
+    total+=rejects(candidate,bytes(blob))     # RLE repeat count exceeds row
+    blob=bytearray(bad)
+    last_group_start=parsed.offsets[0]+1+10
+    blob[last_group_start+1]|=1
+    total+=rejects(candidate,bytes(blob))     # nonzero padded mask bit
     print("M16/R45 native CPU preliminary Gate A PASS:",total,"cases")
     print("AP20 50 commands / 56 segments, R44 byte-frozen, A3+16, D2=0")
     print("Exact opaque/masked output, right/left/top/bottom clipping, bad bank early refusal")
