@@ -167,6 +167,56 @@ def token_lines(tok_data,tokens):
     if p<len(tok_data):o+=list(col(tok_data[p:]))
     return o
 
+def verified_r44_inherited_seeds(parsed):
+    """Carry R43 CFG seeds across ONLY the four source-proven R44 BSR hooks.
+
+    Source provenance is checked against the immutable R43 SHA, exact old
+    entries, the complete new emitter output, exact call-site deltas and BSR
+    targets. This never teaches the decoder to accept arbitrary changed code,
+    nor trusts unverified claims in the binary title or a loose byte pattern.
+    """
+    sections=parsed['section']
+    if len(sections)!=55 or b'M15bis Mouse Cursor R44 0.11.5' not in parsed['title']:
+        return {}
+    reference=ROOT/'dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib'
+    need(reference.is_file(),'R44 strict source: R43 reference archive missing')
+    frozen=reference.read_bytes()
+    need(sha(frozen)=='9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf',
+         'R44 strict source: R43 frozen SHA changed')
+    old=parse_lib(frozen)['section']
+    from m15bis_cursor_r44_emit import emit_cursor
+    from build_m15bis_cursor_r44 import OWNED_CLOSES
+    emitted,labels=emit_cursor()
+    need(sections[54]['core']==emitted,'R44 strict source: new code changed from audited emitter')
+    need(sections[53]['core']==old[53]['core'] and sections[53]['getp'],
+         'R44 strict source: Circle core or GetP delimiter altered')
+    target=sections[54]['file_offset']+labels['close_window_hook']
+    for i in range(53):
+        before=old[i]['core']
+        after=sections[i]['core']
+        if i not in OWNED_CLOSES:
+            need(before==after, f'R44 strict source: unrelated historical entry changed: {i}')
+            continue
+        at=OWNED_CLOSES[i]
+        need(len(before)==len(after) and before[at:at+4]==bytes.fromhex('4eaeffb8')
+             and after[:at]==before[:at] and after[at+4:]==before[at+4:]
+             and after[at:at+2]==bytes.fromhex('6100'),
+             f'R44 strict source: invalid CloseWindow patch entry {i}')
+        delta=struct.unpack_from('>h',after,at+2)[0]
+        need(sections[i]['file_offset']+at+2+delta==target,
+             f'R44 strict source: unexpected cleanup call target in entry {i}')
+    # Known R43 state-bearing entry 0 contains executable secondary code
+    # beyond its first RTS; its exact pre-R44 core is the sole provenance.
+    seeds={0:set(KNOWN_SEEDS.get(sha(old[0]['core']),()))}
+    need(seeds[0], 'R44 strict source: R43 state initialization seed not audited')
+    for idx,marker in ((17,500),(18,540)):
+        need(old[idx]['core'][marker:marker+8]==bytes.fromhex('FE11F700008C4E75')
+             and sections[idx]['core'][marker:marker+8]==bytes.fromhex('FE11F700008C4E75'),
+             'R44 strict source: AMOS keyboard return marker changed')
+        seeds[idx]={marker+6}
+    return seeds
+
+
 def analyze_entries(parsed):
     sections=parsed['section']
     base=parsed['code_start']
@@ -174,6 +224,8 @@ def analyze_entries(parsed):
     # entry. R23 calls IDCMP key_next inside entry 33 from entries 17/18.
     # Discover cross-entry seeds exclusively from decoded CALL targets.
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
+    inherited=verified_r44_inherited_seeds(parsed)
+    for index,extra in inherited.items():seeds[index].update(extra)
     # In R23, legacy keyboard exits contain an AMOS Rjsr linking marker
     # (6 bytes of non-CPU data) followed by a real RTS. Seeds must be tied
     # to the exact audited R23 keyboard CORE, not to the whole HUNK SHA:
