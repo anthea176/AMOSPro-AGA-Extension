@@ -1,5 +1,7 @@
 # Outils Python — R46 v0.12.1-C1 `LAST_GOOD`, AMOS Compiler corrigé
 
+**Diagnostic temporaire R48 (`Aga Image Capture`) :** `python -B tools/test_m16_r48_token_probe.py` et `python -B tools/build_m16_r48_token_probe.py`. Reproduction contrôlée de la signature R47 à 6 paramètres et de sa taille 32 012 octets, mais routine sans effet de bord. [Binaire expérimental](../dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib) · [procédure](../docs/M16_R48_TOKEN_ABI_PROBE.md). **CI/CPU Gate A PASS, WinUAE Gate B non testée, aucune capture réellement implémentée par R48.** R46 C1 reste officielle et `LAST_GOOD`.
+
 **M16 Capture (développement en cours, modèle hôte seulement) :** `python -B tools/test_m16_agapic_capture_model.py` valide l'extraction planaire, le masque, la compression AGAPIC v1, le refus des captures hors écran et des numéros de banque déjà occupés et le repli mémoire simulé. **Ce test ne valide ni le code 68000, ni AMOS interprété, ni le Compiler ; R46 C1 `LAST_GOOD` reste figée.** Voir [contrat](../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
 
 ## CI : vérification quotidienne rapide / régression complète manuelle

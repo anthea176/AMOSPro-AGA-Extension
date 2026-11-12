@@ -106,11 +106,11 @@ jobs:
           python -B tools/test_m16_capture_r47_core.py
           python -B tools/test_m16_capture_r47_build.py
           python -B tools/test_m16_capture_r47_unicorn.py
-      - name: Export candidate M16 R47 binary in CI logs for exact archival (NOT LAST_GOOD)
-        run: python -B tools/build_m16_capture_r47.py --emit-base64
+      - name: Deterministic archived R47 builder (no binary/log export)
+        run: python -B tools/build_m16_capture_r47.py
       - name: M16/R48 safe token ABI probe from C1 with R47-matched size (Gate A only)
         run: |
           python -B tools/test_m16_r48_token_probe.py
-          python -B tools/build_m16_r48_token_probe.py --emit-base64
+          python -B tools/build_m16_r48_token_probe.py
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/

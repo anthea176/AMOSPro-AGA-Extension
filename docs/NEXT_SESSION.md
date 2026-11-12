@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R48 — diagnostic de token/ABI prêt pour Gate B (12/11/2026)
+
+**R48 diagnostic, PAS une implémentation de capture.** Nouveau [binaire de test isolé](../dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib) : **32 012 octets**, SHA256 `c30cfcc33ee50bb1f18c36225ccd7a5a6df7860e11201608d1801a0095687028`, 51 commandes et 58 entrées AP20, **même token, signature à 6 arguments et taille que R47**. R48 ne touche à aucune banque ni aucun écran : le stub ne fait que vérifier les arguments et renvoie 1/0. [CI Gate A PASS (run 43253092738)](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43253092738), [test AMOS interprété](../tests/diagnostics/M16_R48_TOKEN_ABI_PROBE_01.asc) à exécuter **seulement dans la configuration WinUAE de test**, sans compiler. **Gate B en attente**. Si `RESULT 1`, le nom est reconnu et l'ABI fonctionne : investiguer le code d'accès aux banques R47 ; si `Non dimensioned array` persiste, priorité à la tokenisation/chargement en mémoire. **R46 C1 `LAST_GOOD` reste inchangée, M16 ouvert.** Le prototype R48 antérieur à cinq arguments a été annulé : il est distinct de cette nouvelle sonde à six paramètres.
+
 ## M16/R47 — diagnostic consolidé après erreur `Non dimensioned array` (12/11/2026)
 
 **L'utilisateur confirme que la R47 candidate est correctement installée dans WinUAE : ne pas remettre cette affirmation en question sans preuve contraire.** L'essai 00 (sans `Aga Image Capture`) passe : Detect -1, Open/Close 1, RESULT 1. Les essais 01 et 02 avec `Aga Image Capture(11,16,16,16,16,-1)` affichent `Non dimensioned array at line 1` dans AMOS ; le même programme fonctionne lorsque cette instruction est commentée. Le premier grand essai R47 avait provoqué un crash WinUAE natif distinct. **Le défaut est circonscrit à la nouvelle expression, mais la cause exacte n'est pas prouvée.**
