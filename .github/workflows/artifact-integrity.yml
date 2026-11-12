@@ -124,5 +124,9 @@ jobs:
         run: |
           python -B tools/test_m16_r51_relocation_probe.py
           python -B tools/build_m16_r51_relocation_probe.py --emit-base64
+      - name: R52 inspect FnOne JSR target with Exec TypeOfMem guards (Gate A)
+        run: |
+          python -B tools/test_m16_r52_target_probe.py
+          python -B tools/build_m16_r52_target_probe.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
