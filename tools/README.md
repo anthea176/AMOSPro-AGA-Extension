@@ -1,10 +1,10 @@
 # Outils Python — R54 v0.12.9 `LAST_GOOD`, base Compiler-safe de M17
 
-## Référence actuelle — R54 promue, M17 en diagnostic (12/11/2026)
+## Référence actuelle — R54 promue, M17/R55 candidate Gate A PASS (12/11/2026)
 
 **Bibliothèque officielle :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 immuable](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes / 60 entrées AP20**, pont Compiler-safe et monolithe de **30 160 octets**. R54 : **Gate A CPU/CI PASS**, **Gate B interprété/WinUAE PASS**, **Gate C nouvel exécutable compilé/WinUAE PASS sur le scénario R54** ; **Gate D Amiga AGA physique NON TESTÉE**. [Test R54 archivé](../tests/passed/M16_R54_BANK_NUMBER_01.asc) · [rapport de clôture](../docs/M16_R54_BANK_NUMBER.md) · [CI du commit final](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43272147778).
 
-**M17 est ouvert pour diagnostic uniquement**, avec priorité à `Aga Blit Fill` / `Aga Blit Clear`. Aucun nouveau binaire ni token AP20 ; R54 et les archives restent intacts. [Diagnostic M17](../docs/M17_BLITTER_DIAGNOSTIC.md) · [baseline WinUAE V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md).
+**M17/R55 Fill/Clear groupé : Gate A CPU/CI PASS.** [Artefact R55 expérimental pour WinUAE](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835) : **32 988 octets**, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`. Aucune promotion, Gates B/C/D non testées ; R54 et les archives restent intacts. [Diagnostic M17](../docs/M17_BLITTER_DIAGNOSTIC.md) · [baseline WinUAE V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md).
 
 **Chaîne de vérification actuelle :** `tools/active_library.py` protège le SHA de R54 ; `python -B tools/build_aga_current.py --verify` contrôle R54 via `tools/build_m16_bank_api_r54.py` tout en reconstruisant séparément le pont historique R46 C1. `tools/compiler_relocation.py` contient les outils de désenveloppement/ré-enveloppement indispensables à une future candidate M17. Le builder R53 `tools/build_m16_capture.py` reste historique.
 

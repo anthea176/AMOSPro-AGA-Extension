@@ -1,5 +1,11 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
+## R55 — Artefact expérimental WinUAE disponible (12/11/2026)
+
+**CI R55 : PASS** ([run 43276919835](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835)). L'artefact `AMOSPro_AGA_M17_R55_EXPERIMENTAL_GateA_ONLY` contient `AMOSPro_AGA_M17_R55_CANDIDATE.Lib` (**32 988 octets**, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, **60 entrées AP20**, monolithe **30 780 octets**). Fichier expérimental créé hors dépôt après Gate A PASS ; `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` et les archives restent R54.
+
+**Recette WinUAE :** sauvegarder la R54 installée dans `APSystem` et la configuration AMOS ; copier temporairement cette R55 au nom/emplacement attendu puis redémarrer complètement AMOS. Exécuter le [test de sécurité M12 validé](../tests/passed/M12_R27_SAFE_BLIT_01.asc) avec `examples/demo.iff` pour les fonctions Safe/Fill/Clear/Copy, puis le [benchmark V2 inchangé](../benchmarks/graphics_32c_v2.asc) avec AMCAF, PAL 320×256×32, trois passages. Relever `RESULT 1`, `CLOSE RETURNED`, `AGA ERR 0`, les retours et les mesures `BAR 100 G` et `CLEAR 80 G`. Recompiler **après** installation R55 et lancer le nouvel exécutable pour Gate C. Conserver le profil WinUAE/CPU, Chip/Fast, JIT/cycle-exact et versions AMOS/AMCAF. En cas d'échec, restaurer R54 ; aucune promotion avant validation utilisateur.
+
 ## R55 — Première optimisation CPU/CI PASS, candidate non publiée (12/11/2026)
 
 **Statut post-diagnostic : implémentation ciblée effectuée sur `main`, Gate A CPU/CI PASS ; Gates B (AMOS interprété/WinUAE), C (nouvel exécutable Compiler/WinUAE) et D (Amiga physique) NON TESTÉES.** [GitHub Actions Gate A R55 — PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276651112) sur le commit `f27a776934cd5e92762fee892cc02504b45d5a89`. Le builder reste **strictement en mémoire**, sans `.Lib` R55 officielle ni archive candidate publiée. **R54 reste `LAST_GOOD`**, empreinte et archives inchangées. Cette section complète le diagnostic historique conservé plus bas.
