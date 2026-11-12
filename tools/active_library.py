@@ -13,6 +13,8 @@ CANDIDATE_HASHES={
         "c30cfcc33ee50bb1f18c36225ccd7a5a6df7860e11201608d1801a0095687028",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.4_R49_GETADR_PROBE.Lib":
         "c18a0992ee148beb437aecc2c1c865338630b40e34bc989c72dfb26313d5657e",
+    "dist/experimental/AMOSPro_AGA_M16_v0.12.5_R50_RJSR_FNONE_PROBE.Lib":
+        "984cbd5f6485c9f1133eafe356d23c290b2e457902d4f518df3776ffbb5f5eef",
 }
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""

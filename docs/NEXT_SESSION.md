@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R50 — contrôle `Rjsr FnOne` prêt sous WinUAE (12/11/2026)
+
+**Résultat R49 utilisateur : Gate B FAIL (nouveau crash natif WinUAE x64)** après `R49 BANK GETADR PROBE` et `BEFORE GETADR`, avant tout retour. L'unique changement par rapport à la R48 Gate B PASS est `Rjsr Bnk.GetAdr` index 297, donc **le pont ou l'exécution réelle de cette routine est fautif ; l'origine exacte n'est pas prouvée**. Les indices 297/300/316/319 concordent avec `+Lib.s` source officiel, mais cela ne démontre pas le comportement du runtime installé.
+
+**R50 : sonde sans accès mémoire**, dont la seule substitution à R49 est `Rjsr FnOne` index **322** : fonction officielle triviale renvoyant `D3=1`, aucun accès aux banques ou écrans. [Candidate active](../dist/AMOSPro_AGA.Lib), [archive](../dist/experimental/AMOSPro_AGA_M16_v0.12.5_R50_RJSR_FNONE_PROBE.Lib), **32 012 octets**, SHA256 `984cbd5f6485c9f1133eafe356d23c290b2e457902d4f518df3776ffbb5f5eef`. [Test unique actif](../tests/current/M16_R50_FNONE_RJSR_PROBE_01.asc), `RESULT 1` attendu si la liaison `Rjsr` fonctionne. **Gate A CPU/CI PASS** ([run 43257098060](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43257098060)), **Gate B R50 en attente, Gate C non testée**. M16 ouvert. `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure la R46 C1 validée ; aucune promotion de R50. La R48 Gate B PASS reste archivée, R49 Gate B FAIL archivée. Utiliser uniquement `tests/current/` pour cette candidate.
+
 ## M16/R49 — validation du pont `Rjsr Bnk.GetAdr` en attente sous WinUAE (12/11/2026)
 
 **R48 : Gate B PASS confirmé par capture utilisateur** (`AFTER R48 CALL 1`, `RESULT 1`) : le token `Aga Image Capture` et l'ABI des six paramètres fonctionnent réellement en interprété. L'ancienne erreur `Non dimensioned array` vient donc du comportement de la R47, **pas d'une limite à 5 arguments ni d'une mauvaise installation**.
