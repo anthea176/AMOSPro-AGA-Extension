@@ -11,6 +11,8 @@ LAST_GOOD_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib":
         "c30cfcc33ee50bb1f18c36225ccd7a5a6df7860e11201608d1801a0095687028",
+    "dist/experimental/AMOSPro_AGA_M16_v0.12.4_R49_GETADR_PROBE.Lib":
+        "c18a0992ee148beb437aecc2c1c865338630b40e34bc989c72dfb26313d5657e",
 }
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""

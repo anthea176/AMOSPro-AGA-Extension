@@ -15,3 +15,7 @@ Un résultat `Non dimensioned array` **avec R48** renforcerait fortement la pist
 - Utiliser une **configuration WinUAE isolée avec sauvegarde** ; y installer temporairement la R48 à la place de la bibliothèque AGA dans le même slot, quitter puis redémarrer AMOS. Charger [M16_R48_TOKEN_ABI_PROBE_01.asc](../tests/diagnostics/M16_R48_TOKEN_ABI_PROBE_01.asc) par **Project → Merge ASCII** dans un programme vide, lancer en **interprété seulement**. Il n'est pas nécessaire d'ouvrir un écran ou de préparer des banques.
 - **Attendu si token reconnu et ABI correcte** : `BEFORE R48 CALL`, `AFTER R48 CALL 1`, `RESULT 1`. Si `Non dimensioned array` se reproduit, relever cette erreur telle quelle ; elle n'est pas un PASS. Si WinUAE plante, conserver minidump/PC, ne pas compiler.
 - R48 n'effectue **aucune capture** ; même si le diagnostic PASS, **ne pas la promouvoir** et ne pas lancer les exemples de capture réelle avec elle. R46 C1 reste `LAST_GOOD`. M16 ouvert.
+
+## Gate B interprétée — PASS utilisateur (12/11/2026)
+
+Capture WinUAE communiquée : `R48 TOKEN/ABI PROBE`, `BEFORE R48 CALL`, `AFTER R48 CALL 1`, `RESULT 1`. **L'ABI AP20 et le token avec six paramètres sont donc validés sous l'interpréteur.** Cela n'implique aucune capture d'image. La R48 est archivée ; la suite R49 isole l'appel interne `Rjsr Bnk.GetAdr` ; [procédure R49](M16_R49_GETADR_PROBE.md). `LAST_GOOD` R46 C1 inchangée.
