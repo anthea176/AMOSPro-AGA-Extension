@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R46 v0.12.1-C1 — official promoted library (12 Nov 2026):** [installable `AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [validated C1 archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29,964 bytes**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commands / 57 entries AP20**. CPU Gate A, interpreted WinUAE Gate B and compiled WinUAE integrated Gate C PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physical Amiga not tested. Never install the older raw R46 archive for compiled programs.
+**R46 v0.12.1-C1 — official promoted library (12 Nov 2026):** [`LAST_GOOD` R46 C1](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [validated C1 archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29,964 bytes**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commands / 57 entries AP20**. CPU Gate A, interpreted WinUAE Gate B and compiled WinUAE integrated Gate C PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physical Amiga not tested. Never install the older raw R46 archive for compiled programs.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

@@ -39,7 +39,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**R46 v0.12.1-C1 — version officielle promue (12/11/2026) :** [bibliothèque `AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive C1 validée](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrées AP20**. Gates A CPU, B interprété WinUAE et C test intégré compilé WinUAE PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physique non testée. Ne plus installer l'ancienne archive R46 native pour un programme compilé.
+**R46 v0.12.1-C1 — version officielle promue (12/11/2026) :** [`LAST_GOOD` R46 C1](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive C1 validée](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrées AP20**. Gates A CPU, B interprété WinUAE et C test intégré compilé WinUAE PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physique non testée. Ne plus installer l'ancienne archive R46 native pour un programme compilé.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

@@ -26,13 +26,13 @@ READMES = (
         "Current library API",
     ),
     (
-        "FranÃ§ais",
+        "Français",
         ROOT / "README.fr.md",
-        "## BibliothÃ¨ques et tests",
+        "## Bibliothèques et tests",
         "## Commandes AMOS principales",
-        "### DÃ©tail : Souris AGA",
-        "| Commande | Syntaxe exacte | ParamÃ¨tres et comportement |",
-        "API de la bibliothÃ¨que courante",
+        "### Détail : Souris AGA",
+        "| Commande | Syntaxe exacte | Paramètres et comportement |",
+        "API de la bibliothèque courante",
     ),
 )
 
