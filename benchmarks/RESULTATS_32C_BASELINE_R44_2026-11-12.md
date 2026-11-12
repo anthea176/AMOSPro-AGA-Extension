@@ -11,7 +11,7 @@ Référence de performance **avant le chantier M17 (après M16)**. Ce document a
 - Horloge `Timer` AMOS : **1 tick = 20 ms**. Durées inférieures à quelques ticks insuffisantes pour conclure.
 - **V1** : résultats cumulés pour 3 passages par exécution ; **V2 interprété et V2 compilé** : 3 temps individuels par moteur/opération, avec médiane calculée. Les charges et la source [`graphics_32c_v2.asc`](graphics_32c_v2.asc) sont identiques.
 - AMOS/AMCAF dessinent sur l'écran AMOS ; l'extension utilise son **écran privé AGA, back buffer et Safe**. Les charges et les 5 bitplanes sont comparables, **pas les architectures graphiques**.
-- **Bibliothèque de référence dans le dépôt :** R44 v0.11.5, `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 documenté `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. **Empreinte du binaire réellement installé dans WinUAE non relevée** ; ne pas la présenter comme vérifiée.
+- **Référence historique interprétée :** R44 v0.11.5, conservée dans [`dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib`](../dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib), SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. **R46 a depuis été promue `LAST_GOOD`** ; ne pas confondre l'état actuel du dépôt avec la baseline R44. L'empreinte du binaire réellement installé pendant les essais interprétés **n'a pas été relevée**.
 - **Campagne compilée :** candidate expérimentale de compatibilité **R46 C1 monolithique** ([identité du binaire source et protocole](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md)), d'après les essais de réparation Compiler du 12/11/2026. **Aucun SHA256 du fichier effectivement chargé lors de la compilation, ni de l'exécutable obtenu, n'a été relevé.** Ne pas présenter le binaire chargé comme vérifié cryptographiquement.
 - **Configuration WinUAE exacte non relevée :** CPU et fréquence, cycle-exact/JIT, mémoire Chip/Fast, versions précises d'AMOS et d'AMCAF ; on ne peut donc pas garantir l'identité complète de l'environnement entre les deux campagnes. Les relever pour les prochains tests.
 
@@ -129,7 +129,7 @@ Les écarts de 1–2 ticks confortent la reproductibilité sur ce profil, sans r
 
 ## Contrat de re-test obligatoire après M17 (donc après M16)
 
-1. **Ne pas lancer M17 avant clôture de M16.** Sauvegarder R44 `LAST_GOOD` et ses archives figées ; toute optimisation nécessite une candidate séparée.
+1. **Ne pas lancer M17 avant clôture de M16.** Préserver l'archive R44 historique et le `LAST_GOOD` en vigueur (R46 lors de cette mise à jour) ; toute optimisation nécessite une candidate séparée.
 2. Tester Fill/Clear sur tous les nombres de plans 1 à 8, couleur 0/non nulle, limites, refus, back buffer, `Safe`, `Disp`, `Swap`, réouverture et libération mémoire. Garder les Gates distinctes : A CPU/CI, B AMOS interprété/WinUAE, C Compiler, D Amiga réel.
 3. **Rejouer exactement le même [`graphics_32c_v2.asc`](graphics_32c_v2.asc)** dans les **deux modes interprété ET compilé** : même écran, mêmes charges, même profil WinUAE (CPU/JIT/Chip/Fast) **pour chaque mode**, trois passages par moteur, références `R44 interprété` et `R46 C1 compilé` conservées distinctement. Archiver les temps bruts, médianes et comparaison chiffrée **avant/après** dans un **nouveau MD du dossier `benchmarks/`**, lié à ce fichier.
 4. Contrôler le rendu et les non-régressions, sans déclarer un gain sur une simple réduction de ticks non reproductible. Ne promouvoir aucune bibliothèque sans validation utilisateur.
