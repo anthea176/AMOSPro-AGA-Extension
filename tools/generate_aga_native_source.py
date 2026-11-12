@@ -403,7 +403,8 @@ def verified_current_compiler_seeds(parsed):
         need(sections[i]['core'][offset:offset+8] ==
              bytes.fromhex('fe11f700008c4e75'),
              f'Strict source: AMOS keyboard marker changed at entry {i}')
-    seeds = {0: {56}, 17: {506}, 18: {546}, 56: {1192}}
+    # R46 inherited entry 0 has TWO audited helper starts (0x38/0x66).
+    seeds = {0: {56, 102}, 17: {506}, 18: {546}, 56: {1192}}
     need(sections[56]['core'][1192:1196] == bytes.fromhex('206a0020'),
          'Strict source: R54 image helper moved')
     # R53 Bnk.GetAdr / Reserve / Change / Eff AMOS linker indices.
