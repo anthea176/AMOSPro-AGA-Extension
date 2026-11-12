@@ -122,10 +122,10 @@ NATIVE_R46_ARCHIVE = ROOT/'dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_
 
 
 def source_binary_from_input(raw):
-    """Recover exact native AP20 segments from the audited official C1 only.
+    """Recover native AP20 segments from SHA-pinned Compiler-safe releases.
 
-    Unknown/changed Compiler wrappers fail closed until their provenance and
-    relocation handling are reviewed; never decode FE31 as Motorola code.
+    R46 C1 uses its frozen native archive; later releases use the current and
+    LAST_GOOD hashes verified in active_library. Never treat FE31 as 68000.
     """
     parsed = parse_lib(raw)
     from compiler_relocation import is_compiler_wrapped, native_from_promoted, wrap_native_ap20
@@ -135,28 +135,59 @@ def source_binary_from_input(raw):
              'refusing to decode AMOS linker words as 68000')
         return raw, None
 
-    need(sha(raw) == PROMOTED_R46_C1_SHA and len(parsed['section']) == 57,
-         'Unsupported compiler-wrapped AP20 library; explicit source audit required')
-    need(NATIVE_R46_ARCHIVE.is_file(), 'Official C1 export: frozen native R46 archive missing')
-    frozen = NATIVE_R46_ARCHIVE.read_bytes()
-    need(sha(frozen) == NATIVE_R46_SHA, 'Official C1 export: native R46 archive SHA changed')
-    native_title = parse_lib(frozen)['title']
+    is_r46 = sha(raw) == PROMOTED_R46_C1_SHA
+    native_archive = None
+    if is_r46:
+        need(len(parsed['section']) == 57,
+             'Official R46 C1 export: unexpected Compiler entry count')
+        need(NATIVE_R46_ARCHIVE.is_file(), 'Official R46 C1 export: frozen native archive missing')
+        frozen = NATIVE_R46_ARCHIVE.read_bytes()
+        need(sha(frozen) == NATIVE_R46_SHA,
+             'Official R46 C1 export: native archive SHA changed')
+        native_title = parse_lib(frozen)['title']
+        provenance = 'frozen R46 C1 archive'
+        native_archive = str(NATIVE_R46_ARCHIVE.relative_to(ROOT))
+    else:
+        # The protected active/library module pins the exact current and
+        # LAST_GOOD SHA256, preserving the fail-closed policy across releases.
+        from active_library import verify_active
+        try:
+            active, last_good, active_label = verify_active(ROOT)
+        except (OSError, AssertionError, ValueError) as exc:
+            raise ExportError(
+                'Cannot verify SHA-pinned active/LAST_GOOD libraries; '
+                'refusing untrusted Compiler wrapper') from exc
+        if raw == active:
+            provenance = 'verified active library: ' + active_label
+        elif raw == last_good:
+            provenance = 'verified LAST_GOOD library'
+        else:
+            raise ExportError(
+                'Unsupported compiler-wrapped AP20 library: not the pinned '
+                'active, LAST_GOOD or R46 C1 archive; source audit required')
+        native_title = parsed['title']  # preserve title for byte-exact rewrap
+
     try:
         native = native_from_promoted(raw, native_title)
     except (ValueError, AssertionError) as exc:
-        raise ExportError('Official C1 export: invalid Rbsr offsets or dispatcher') from exc
-    need(native == frozen, 'Official C1 export: extracted native code differs from frozen R46')
+        raise ExportError('Compiler wrapper has invalid Rbsr offsets or dispatcher') from exc
+    if is_r46:
+        need(native == frozen,
+             'Official R46 C1 export: native code differs from frozen R46 archive')
+    need(len(parse_lib(native)['section']) + 1 == len(parsed['section']),
+         'Compiler wrapper: native/dispatcher entry count mismatch')
     need(wrap_native_ap20(native, parsed['title']) == raw,
-         'Official C1 export: native-to-Compiler rewrap is not byte-exact')
+         'Compiler wrapper: native-to-Compiler rewrap is not byte-exact')
     return native, {
-        'format': 'R46 C1 compiler-safe AP20 Rbsr monolith',
+        'format': 'Compiler-safe AP20 Rbsr monolith',
+        'provenance': provenance,
         'official_sha256': sha(raw),
         'official_bytes': len(raw),
         'official_entries': len(parsed['section']),
         'native_sha256': sha(native),
         'native_bytes': len(native),
         'native_entries': len(parse_lib(native)['section']),
-        'native_archive': str(NATIVE_R46_ARCHIVE.relative_to(ROOT)),
+        'native_archive': native_archive,
         'verified_extract_and_rewrap': True,
         'warning': 'Native ASM output is NOT an installable .Lib; the Compiler-safe '
                    'AP20 bridge must be added again to any release build.'
@@ -645,7 +676,7 @@ def main(argv=None):
         parsed=parse_lib(source_data)
         source,report=output(parsed)
         if compiler_context:
-            source=('; Restored from OFFICIAL C1 Rbsr wrapper, in memory only.\n'
+            source=('; Restored from SHA-pinned Compiler-safe Rbsr wrapper, in memory only.\n'
                     '; Native assembler source is NOT an installable AMOS Compiler library.\n'
                     '; Production builds MUST apply compiler_relocation.wrap_native_ap20().\n\n'
                     +source)
@@ -691,7 +722,8 @@ def main(argv=None):
         print('Recognized code bytes: %d/%d (%.2f%%)'%(report['decoded_code_bytes'],report['total_segment_code_bytes'],report['recognized_percent']))
         print('Input SHA256:',sha(data))
         if compiler_context:
-            print('Compiler C1: 57 wrapped AP20 entries -> 56 native source entries (verified)')
+            print('Compiler-safe: %d wrapped AP20 entries -> %d native source entries (verified)' %
+                      (compiler_context['official_entries'], compiler_context['native_entries']))
             print('Extracted native SHA256:',sha(source_data))
             print('IMPORTANT: do not install native output; Compiler-safe wrapping is mandatory')
         print('NOTE: native assembly/rebuild not yet proven; do not replace any .Lib')

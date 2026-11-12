@@ -5,7 +5,7 @@ echo.
 echo AMOS Professional AGA - generation source assembleur Motorola 68000
 echo Source active : dist\AMOSPro_AGA.Lib (lecture seule)
 echo Sortie : src\generated\
-echo Pour R46 C1 : reconstruction native en memoire, sans toucher a la Lib officielle.
+echo Reconstruction native depuis la version active verifiee, sans toucher a la Lib officielle.
 echo.
 if not exist "tools\generate_aga_native_source.py" (
   echo [ERREUR] Fichier tools\generate_aga_native_source.py absent.
@@ -33,8 +33,8 @@ if not "%RC%"=="0" (
   exit /b %RC%
 )
 echo.
-echo Export termine. Ouvrir src\generated\AMOSPro_AGA_Rxx_NATIVE.s
-echo Pour R46 C1 : fichier AMOSPro_AGA_R46_C1_NATIVE.s
+echo Export termine. Le fichier .s exact est indique ci-dessus.
+echo Les bibliotheques Compiler-safe sont restaurees en memoire avant export.
 echo IMPORTANT : source native uniquement, NON installable dans AMOS Compiler.
 echo Le .s doit encore etre reassemble, compare a la source native,
 echo puis re-enveloppe avec le pont Compiler avant toute publication.

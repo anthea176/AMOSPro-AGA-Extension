@@ -97,6 +97,8 @@ jobs:
           python -B tools/build_aga_current.py --verify
           python -B tools/test_aga_compiler_bridge_r46.py
           python -B tools/test_compiler_relocation.py
+      - name: Strict native source export for pinned current and LAST_GOOD
+        run: python -B tools/test_generate_current_native_source.py
       - name: Public API examples and safety preflight
         run: |
           python -B tools/test_readme_api_coverage.py
