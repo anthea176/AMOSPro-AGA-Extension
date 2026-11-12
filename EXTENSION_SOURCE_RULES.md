@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE PERMANENTE — suivi des exemples lors des changements d'API (M16)
+
+**Aucune nouvelle signature publique ne peut être déclarée livrée tant que les exemples et les notices ne correspondent pas réellement au binaire installé.** Pour chaque ajout/changement de commande (ex. `Aga Image Draw`, `Aga Image Capture`, `Aga Font Bank Select`) :
+
+1. Inventorier toutes les occurrences de la signature précédente dans `examples/`, les README anglais/français, `INSTALL*`, les exemples Compiler, les bundles et leurs ZIP, ainsi que les tests actifs. Corriger les exemples **de la nouvelle version** et leurs fichiers de ressources `.abk`, puis vérifier qu'ils se chargent en AMOS interprété et dans un **nouvel exécutable** Compiler. Mettre les notices EN/FR à jour ensemble.
+2. **Ne jamais modifier les preuves historiques `tests/passed/`, les anciennes archives de bibliothèques ni les programmes et ZIP explicitement versionnés et déjà validés (R38/R46 C1, etc.)**. Produire de nouveaux fichiers et un nouveau bundle pour la nouvelle API ; identifier clairement les exemples anciens comme étant propres à leur version.
+3. Couvrir les cas d'erreur qui changent de forme lors du passage de `Start(n),Length(n)` à `n` : banque inexistante, mauvais type, mauvais numéro et banque déjà occupée lors d'une **création**. Une ancienne erreur de longueur volontaire ne peut pas être copiée telle quelle dans le nouveau test.
+4. Lors d'une création de banque par notre extension (notamment `Aga Image Capture`), **numéro déjà occupé = refus `0` sans modification de la banque existante**. Ne jamais appeler sans contrôle préalable la routine interne `Bnk.Reserve`, qui efface la banque précédente portant ce numéro. Cette règle ne modifie pas les commandes de l'extension AMCAF tierce.
+5. **Pas de réécriture des exemples exécutables avant validation du contrat, implémentation et tests CPU.** La liste préliminaire des fichiers touchés est consignée dans [M16 capture, ergonomie des banques et exemples](docs/M16_AGAPIC_CAPTURE_DESIGN.md).
+
 ## RÈGLE PERMANENTE — export assembleur depuis une bibliothèque Compiler-safe
 
 L'exporteur `tools/generate_aga_native_source.py` doit distinguer les **marqueurs de liaison AP20 `Rbsr` (`FE31`)** des véritables instructions Motorola 68000. Depuis R46 C1, `dist/AMOSPro_AGA.Lib` contient **57 segments** : 54 stubs `Rbsr`, deux entrées vides/`GetP`, et un segment monolithique avec dispatcher de 32 octets et code natif de 27 856 octets.

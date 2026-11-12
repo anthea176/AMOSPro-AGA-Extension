@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16 — Capture AGAPIC et exemples : décisions et travaux à prévoir (12/11/2026)
+
+**M16 reste ouvert.** Capture AGAPIC **depuis le back buffer AGA** validée. **Une banque occupée ne doit jamais être remplacée par notre commande de création**, même si elle contient une fonte AMCAF ; refus sans effet. La simplification de `Aga Image Draw` / `Aga Font Bank Select` en arguments `Bank` reste à contractualiser. **Lors de l'implémentation, adapter tous les exemples courants (y compris Compiler, documents FR/EN et ZIP), mais préserver sans modification les exemples/tests historiques déjà validés.** Liste des fichiers et décisions ouvertes : [M16_AGAPIC_CAPTURE_DESIGN.md](M16_AGAPIC_CAPTURE_DESIGN.md). R46 C1 `LAST_GOOD` et les sources exécutables restent inchangées, `main` uniquement.
+
 ## Promotion officielle R46 v0.12.1-C1 — 12/11/2026
 
 **R46 C1 est la nouvelle LAST_GOOD installable** apres l'accord explicite de l'utilisateur et la validation du test tout-en-un sous AMOS Compiler / WinUAE : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = [archive C1 validee](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrees AP20**. Gates A natif, B interprete et **Gate C compilee (recette integree) PASS** : `RESULT 1`, `CLOSE RETURNED`, curseur 500/0, `CHIP DROP 0`. **Gate D physique non testee ; couverture des 50 commandes individuellement non revendiquee.**
