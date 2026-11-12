@@ -417,6 +417,15 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 
 **M22 — Copper AGA avancé :** effets raster et couleur plus riches, en respectant le propriétaire Intuition/Copper, les ressources DMA et les transitions d'écran ; contrats et tests séparés.
 
+**Après M22 — étude différée `Aga Blit16 Copy` (faible priorité, sans jalon attribué) :**
+
+- **Idée à conserver pour la fin de la roadmap, sans développement engagé :** envisager une commande spécialisée `Aga Blit16 Copy(SX,SY,DX,DY,W,H)` pour les copies opaques **alignées sur 16 pixels** (X source, X destination et largeur multiples de 16). **Nom et signature seulement proposés** : aucun token AP20 ni version R58/M23 réservés.
+- **Motivation mesurée en R57 :** sous WinUAE, pour 1 200 copies de 64×48, `Screen Copy` AMOS **35 ticks** contre `Aga Blit Copy` **69 ticks** ; avec X source et destination décalés de +1 pixel, les deux atteignent environ **85 ticks**. Les sources AMOS Professional 365 montrent une voie rapide spécifique aux mots alignés, qui programme directement le Blitter ; **cette méthode matérielle n'est pas retenue pour notre extension**. [Mesures Copy/Wait](../benchmarks/RESULTATS_COPY_WAIT_R57_2026-11-12.md) · [Diagnostic M17](M17_BLITTER_DIAGNOSTIC.md).
+- **Contrainte technique non négociable :** rester **sur les API AmigaOS** (par exemple `graphics.library/BltBitMap`, ou une alternative CPU à évaluer via `exec.library/CopyMem` / `CopyMemQuick`), **sans écriture directe aux registres Blitter**. La copie CPU des bitplanes ligne par ligne depuis/vers la Chip RAM peut être **moins rapide** : valider alignement réel, résidence mémoire et coût par bitplane avant de retenir une solution.
+- **Sécurité et compatibilité :** copie sur le back buffer AGA uniquement ; respecter `Safe/Disp`, double buffering, synchronisation, profondeur 1–8 plans, refus sans effet hors limites, équivalence des pixels, superposition source/destination à définir et fermeture propre. Ne pas remplacer ni dégrader `Aga Blit Copy` : la future voie spécialisée serait **facultative**, uniquement si elle apporte un gain vérifié.
+- **Condition préalable à toute implémentation :** benchmark comparatif **AMOS interprété et compilé** sur copies alignées et non alignées, tailles petites/grandes et profondeurs différentes, avec essais CPU 68000 et machines plus rapides si disponibles. **Si aucune API AmigaOS ne bat nettement `BltBitMap`**, conserver la commande actuelle et renoncer à ajouter un token.
+- **Statut : BACKLOG LONG TERME — NON PRIORITAIRE.** Ne lancer ni builder, ni nouveau test actif, ni modification de la bibliothèque avant une demande explicite de l'auteur. `main` uniquement, `LAST_GOOD` protégée.
+
 **Critères communs avant promotion :** tests CPU/CI Gate A, WinUAE interprété Gate B, **AMOS Compiler Gate C** et matériel AGA Gate D séparés ; mémoire Chip/Fast, stress swaps, Ctrl+C, fermeture/réouverture et absence de régression sur la `.Lib` officielle.
 
 ## 6. Règles de décision, livraison et suivi
