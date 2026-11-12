@@ -42,6 +42,7 @@ on:
       - "tools/m13_aga_fade_black_r34_emit.py"
       - "tools/m13_aga_fade_white_r35_emit.py"
       - "tools/m13_palette_cycle_r36_emit.py"
+      - "tools/m15_plot_r40_emit.py"
       - "tools/m68k_emit.py"
       - "tools/validate_ilbm.py"
       - "tools/decoder68k.py"
@@ -84,6 +85,14 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M15 R40 Aga Plot candidate Gate A — native 68000 CPU, integrity, strict source
+        run: |
+          python -B tools/test_m15_plot_r40.py
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_plot_r40 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R40_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R40_GateA.Lib --out /tmp/amos-aga-r40-native --baseline none --strict
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+          python -B tools/build_m15_plot_r40.py --emit-base64
+
       - name: M13 R29 frozen IFF palette save — native 68000 regression
         run: |
           python -B tools/test_m13_palette_save_r29.py

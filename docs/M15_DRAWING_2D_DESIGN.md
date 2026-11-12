@@ -4,6 +4,10 @@
 
 **Socle immuable :** `R38 v0.11.0`, **44 commandes AP20**, `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R38 (23 380 octets ; SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`). Gates A CPU/CI et B AMOS interprété/WinUAE **PASS**, y compris stress de 500 changements de fontes sans perte Chip RAM observée. Gate C (Compiler) et D (Amiga AGA réel) non testées. La dernière CI du dépôt `main` était PASS avant l'ouverture de cette étude. Tous les développements restent strictement dans `anthea176/AMOSPro-AGA-Extension`, branche **`main`**, sans création de branche.
 
+## R40 — décision de développement du 12/11/2026
+
+L'utilisateur a confirmé **« ok go »** pour la première commande M15 : **`_OK=Aga Plot(X,Y,Pen)` seulement**. La construction et les tests CPU 68000 peuvent commencer. Les fonctions `Aga Draw`, `Aga Box` et `Aga Circle` restent proposées, **non autorisées à implémenter tant que chacune n'a pas été discutée**. R39 bitmap 8×8 est reportée.
+
 ## 1. Ce qui est vérifié, pas supposé
 
 ### Code du dépôt actuel
