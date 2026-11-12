@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Active candidate R53 0.12.8:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 32,008 bytes. Local Gate A PASS; real interpreted/compiled WinUAE tests pending. **R46 C1 remains [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib)**. [SHA256, unique capture test and protocol](docs/M16_MAIN_LINKAGE_FIX.md).
+**Active candidate R54 0.12.9:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **32,364 bytes**, Gate A CPU/CI PASS; **R54 WinUAE B/C pending**. Adds bank-number draw/font convenience commands, without modifying the old calls. **R53 Image Capture already passed interpreted and freshly compiled WinUAE tests**. **R46 C1 remains [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib)**. [R54 test and procedure](docs/M16_R54_BANK_NUMBER.md).
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R53 candidate](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib` in the same slot, then **restart AMOS and Compiler**. Keep the previous library/configuration. Run the [active test](tests/current/M16_R53_IMAGE_CAPTURE_01.asc) interpreted first; after success, compile a **new executable** and test it separately.
+2. Copy the [R54 candidate](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib` in the same slot, then **restart AMOS and Compiler**. Keep the previous library/configuration. Run the [active test](tests/current/M16_R54_BANK_NUMBER_01.asc) interpreted first; after success, compile a **new executable** and test it separately.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.

@@ -48,7 +48,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if "IMAGE_CAPTURE_LINK_FIX_R53" in active:
+    if "BANK_NUMBER_R54" in active:
+        from build_m16_bank_api_r54 import build as bank_build
+        candidate,details_candidate=bank_build()
+        assert candidate==current, "R54 candidate does not match its compiler-safe builder"
+        print("ACTIVE R54 BANK NUMBER BUILDER PASS",
+              {k:v for k,v in details_candidate.items() if not k.endswith("_labels")})
+    elif "IMAGE_CAPTURE_LINK_FIX_R53" in active:
         from build_m16_capture import build as capture_build
         candidate,details_candidate=capture_build()
         assert candidate==current, "Active capture is not reproducible"

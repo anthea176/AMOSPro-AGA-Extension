@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R54 — API additive par numero de banque (12/11/2026)
+
+**R53 Image Capture : Gates B et C PASS confirmees par l'utilisateur sous WinUAE** sur le programme `M16_R53_IMAGE_CAPTURE_01.asc` (capture opaque et masquee, refus collision et dimensions invalides, Save/Erase/Load, Image Draw, `RESULT 1`, `CLOSE RETURNED`, Chip Free sans perte nette). L'utilisateur a confirme un **nouvel executable compile** avec succes. Gate D sur Amiga physique NON TESTEE. La R53 historique est conservee dans [`tests/passed`](../tests/passed/M16_R53_IMAGE_CAPTURE_01.asc), source identique a l'original.
+
+**R54 candidate** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [archive immuable](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes, 60 entrees AP20**. Ajouts exclusivement : `Aga Bank Image Draw(Bank,X,Y,Mode)` et `Aga Bank Font Select(Bank)`. Anciens tokens et routines Image Draw/Font Bank Select/Capture sont inchanges a l'octet (seuls marqueurs `GetP` intercalaires pour les nouvelles fonctions). Appels directs de leurs **anciennes routines dans le meme monolithe relogeable Compiler C1**, via BSR.W valide ; recherche native `Bnk.GetAdr` index 797 prouve en R53. **Gate A CPU/CI PASS : 12 cas Unicorn interpreteur et relocation Compiler simulee** ([run 43268287202](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43268287202)). **Gates B/C R54 NON TESTEES**. Test unique [R54](../tests/current/M16_R54_BANK_NUMBER_01.asc) avec banques AGAPIC 10 et AMCAF 25 et comparaison anciennes/nouvelles API. R46 C1 `LAST_GOOD` toujours protegee, pas de promotion automatique. Voir [contrat R54](M16_R54_BANK_NUMBER.md).
+
 ## M16/R53 — reprise après synchronisation Codex (12/11/2026)
 
 Codex a synchronisé sur `main` la **R53 0.12.8** (vraie capture AGAPIC), binaire `dist/AMOSPro_AGA.Lib` et archive `dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib`, SHA256 `4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26`. La table de liaison est désormais résolue depuis `+ILib.s` (Lib_Pos 500) et `+Lib.s` : GetAdr 797, Eff 800, Reserve 816, Change 819, FnOne 822. **Gate B/C R53 non testées ; R46 C1 LAST_GOOD inchangée.**
