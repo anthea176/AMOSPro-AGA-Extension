@@ -17,6 +17,7 @@ from compiler_relocation import (native_from_promoted, unpack_ap20,
                                  repack_ap20, wrap_native_ap20,
                                  unwrap_native_parts, is_compiler_wrapped)
 from m16_capture_r47_emit import emit_capture
+from active_library import verify_active
 
 ROOT=Path(__file__).resolve().parents[1]
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
@@ -30,7 +31,7 @@ NAME="AMOSPro AGA M16 Image Capture R47 0.12.2 experimental"
 def build() -> tuple[bytes,dict]:
     stable=LAST_GOOD.read_bytes()
     assert sha256(stable).hexdigest()==LAST_GOOD_SHA
-    assert CURRENT.read_bytes()==stable, "Do not develop from an unpromoted base"
+    verify_active(ROOT)  # historical R47 is always reconstructed from LAST_GOOD
     old_tokens,old_parts,_=unpack_ap20(stable)
     assert len(old_parts)==57 and is_compiler_wrapped(stable)
     rawtitle=(NAME+" NATIVE INPUT\0$VER: AMOSPro_AGA 0.12.2\0").encode("ascii")

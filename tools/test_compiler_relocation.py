@@ -10,6 +10,7 @@ from struct import pack
 
 from audit_ap20 import parse, inspect
 from build_aga_current import build, LAST_GOOD, CURRENT, HISTORICAL_RAW
+from active_library import verify_active
 from compiler_relocation import (
     unpack_ap20, repack_ap20, is_compiler_wrapped,
     wrap_native_ap20, unwrap_native_parts, native_from_promoted, DISPATCH
@@ -29,7 +30,8 @@ def rejects(call):
 def main():
     raw = HISTORICAL_RAW.read_bytes()
     official, meta = build()
-    assert official == LAST_GOOD.read_bytes() == CURRENT.read_bytes()
+    assert official == LAST_GOOD.read_bytes()
+    verify_active(ROOT)
     assert hashlib.sha256(official).hexdigest() == "d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
     assert is_compiler_wrapped(official) and not is_compiler_wrapped(raw)
     tokens, original, old_title = unpack_ap20(raw)

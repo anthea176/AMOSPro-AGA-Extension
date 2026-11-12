@@ -18,6 +18,7 @@ from audit_ap20 import parse, inspect
 from compiler_relocation import (native_from_promoted, unpack_ap20,
      repack_ap20, wrap_native_ap20, unwrap_native_parts, is_compiler_wrapped)
 from m68k_emit import Code,D,POST,I
+from active_library import verify_active
 
 ROOT=Path(__file__).resolve().parents[1]
 GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
@@ -57,7 +58,7 @@ def native_probe():
 def build():
     stable=GOOD.read_bytes()
     assert hashlib.sha256(stable).hexdigest()==GOOD_SHA
-    assert OFFICIAL.read_bytes()==stable, "Never change the official R46 C1"
+    verify_active(ROOT)  # active candidate allowed; frozen C1 source is LAST_GOOD
     frozen=R47.read_bytes()
     assert hashlib.sha256(frozen).hexdigest()==R47_SHA
     assert len(frozen)==SIZE_R47

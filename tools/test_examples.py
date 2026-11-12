@@ -36,7 +36,7 @@ def require(ok: bool, message: str) -> None:
 
 
 def main() -> None:
-    extension = inspect(parse((ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()))
+    extension = inspect(parse((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()))
     require(not extension["issues"], "Invalid current AP20 library")
     valid_commands = {
         item["name"].casefold() for item in extension["tokens"]

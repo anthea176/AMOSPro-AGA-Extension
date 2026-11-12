@@ -17,6 +17,8 @@ from m16_capture_r47_emit import (
 )
 from compiler_relocation import unpack_ap20, unwrap_native_parts, is_compiler_wrapped
 from audit_ap20 import inspect,parse
+from active_library import verify_active
+from pathlib import Path
 
 BRIDGE=b"\xfe\x11\xf7\x00"
 
@@ -24,7 +26,8 @@ BRIDGE=b"\xfe\x11\xf7\x00"
 def run():
     base=LAST_GOOD.read_bytes()
     before=hashlib.sha256(base).hexdigest()
-    assert base==CURRENT.read_bytes() and len(base)==29964
+    assert len(base)==29964
+    verify_active(Path(__file__).resolve().parents[1])
     asm,labels=emit_capture()
     assert len(asm)%2==0 and len(asm)>700
     assert asm[:4]==bytes.fromhex("48e7efee")
@@ -68,7 +71,7 @@ def run():
     assert not audit["issues"],audit["issues"]
     item=[t for t in audit["tokens"] if t["name"]==API[0]]
     assert len(item)==1 and item[0]["signature"]==API[3]
-    assert CURRENT.read_bytes()==LAST_GOOD.read_bytes()==base
+    assert LAST_GOOD.read_bytes()==base
     assert hashlib.sha256(base).hexdigest()==before
     print("M16/R47 experimental CAPTURE WRAPPER STATIC PASS:",
           len(instructions),"68000 instructions,",len(markers),

@@ -14,7 +14,7 @@ import re
 from audit_ap20 import inspect, parse
 
 ROOT = Path(__file__).resolve().parents[1]
-LIB = ROOT / "dist/AMOSPro_AGA.Lib"
+LIB = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"  # README describes promoted public API, not Gate-A probe
 READMES = (
     (
         "English",
