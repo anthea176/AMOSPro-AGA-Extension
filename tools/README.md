@@ -2,6 +2,13 @@
 
 **M16 Capture (développement en cours, modèle hôte seulement) :** `python -B tools/test_m16_agapic_capture_model.py` valide l'extraction planaire, le masque, la compression AGAPIC v1, le refus des captures hors écran et des numéros de banque déjà occupés et le repli mémoire simulé. **Ce test ne valide ni le code 68000, ni AMOS interprété, ni le Compiler ; R46 C1 `LAST_GOOD` reste figée.** Voir [contrat](../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
 
+## CI : vérification quotidienne rapide / régression complète manuelle
+
+- **Sur chaque push/PR concerné :** [Artifact integrity](../.github/workflows/artifact-integrity.yml) vérifie les SHA256 et HUNK de **toutes les archives** sans exécuter leurs anciens builders, l'AP20 Compiler-safe courant, le build courant, les régressions de relocation, API/exemples et les tests de développement M16/R47. Lanceur léger : `python -B tools/verify_fast.py`.
+- **Sur demande, avant promotion ou livraison Aminet :** [Full artifact regression](../.github/workflows/artifact-regression-full.yml), à lancer manuellement dans **GitHub Actions** sur le commit à publier. Ce workflow conserve **la totalité des anciens tests et reconstructions historiques**, l'export strict du code natif et les vérifications exhaustives, sans tourner à chaque push.
+- Les workflows R33–R38 restent archivés et déclenchés seulement par modification de leurs fichiers respectifs ou manuellement. **La rapidité de la CI ne réduit pas le contrat de validation des nouvelles commandes ni les Gates B/C/D.**
+- **Ne pas confondre :** cette séparation diminue le temps des workflows GitHub, pas le temps d'exécution des programmes sur Amiga. Aucun binaire ni archive historique modifiés par cette optimisation.
+
 ## Construction OBLIGATOIRE pour R46 et les futures versions (12/11/2026)
 
 La **bibliothèque officielle installable** est [R46 C1](../dist/AMOSPro_AGA.Lib) = [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive d'essai C1 figée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, 50 commandes / **57 entrées AP20**, Gates A/B + Gate C WinUAE **test intégré PASS** (`RESULT 1`, 500 curseur/0, `CHIP DROP 0`). Gate D matérielle non testée. L'[ancienne R46 native, 29 288 octets / 56 segments](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib) reste **historique**, non installable en compilé : elle contient les branches inter-segments responsables du Guru.

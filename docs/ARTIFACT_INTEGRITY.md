@@ -6,7 +6,8 @@ Un incident historique a montré qu'un binaire pouvait être publié tronqué to
 2. SHA256 de l'archive de base et du candidat ; reproduction identique du binaire depuis le builder.
 3. Comparaison byte-for-byte des segments précédemment validés sauf delta explicitement autorisé.
 4. Tests CPU/ABI, conservation des registres et pile de paramètres AMOS, contrôles de bornes, synchronisation et chemins d'échec.
-5. Exécution de la CI GitHub `.github/workflows/artifact-integrity.yml` correspondant au HEAD réellement testé.
+5. CI GitHub **rapide** `.github/workflows/artifact-integrity.yml` sur le HEAD réellement testé : SHA256/HUNK de toutes les archives, bibliothèque C1 Compiler-safe, ABI, documentation/exemples et tests du jalon actif.
+6. **Avant promotion ou release Aminet**, exécuter explicitement la CI **complète** `.github/workflows/artifact-regression-full.yml` via **Actions → Full artifact regression (manual pre-release) → Run workflow** sur le HEAD à publier. Elle conserve toutes les reproductions et suites historiques ; un PASS rapide **ne remplace pas** ce PASS complet ni les Gates WinUAE/Compiler/matériel.
 
 **La Gate A ne prouve ni le fonctionnement sous WinUAE ni sur Amiga physique.** Les Gates B (AMOS interprété), C (Compiler) et D (matériel) sont documentées séparément dans le STATUS du jalon. Aucun succès d'un simple modèle Python ne certifie un binaire R16.
 

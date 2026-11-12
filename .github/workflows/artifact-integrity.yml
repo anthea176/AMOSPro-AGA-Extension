@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/artifact-integrity.yml"
+      - ".github/workflows/artifact-regression-full.yml"
       - "README.md"
       - "README.fr.md"
       - "INSTALL.md"
@@ -34,6 +35,7 @@ on:
       - "tools/audit_ap20.py"
       - "tools/check_no_blocking_waits.py"
       - "tools/verify_artifacts.py"
+      - "tools/verify_fast.py"
       - "tools/m8_idcmp_r23_emit.py"
       - "tools/m9_hotspot_r24_emit.py"
       - "tools/m10_rect_overlap_r25_emit.py"
@@ -63,6 +65,8 @@ on:
       - "tools/generate_aga_native_source.py"
       - "tests/test_native_source.py"
 
+  workflow_dispatch:
+
 permissions:
   contents: read
 
@@ -78,298 +82,29 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Verify current HUNK files and exact committed artifacts
-        run: python -B tools/verify_artifacts.py
-      - name: "Promoted R46 C1: deterministic compiler-safe LAST_GOOD + future-build regression"
+      - name: Fast frozen SHA256 HUNK AP20 and compiler-safe artifact integrity
+        run: python -B tools/verify_fast.py
+      - name: Current compiler-safe builder and relocation regressions
         run: |
           python -B tools/build_aga_current.py --verify
           python -B tools/test_aga_compiler_bridge_r46.py
           python -B tools/test_compiler_relocation.py
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib
-      - name: "Historical R44/R45 relocation experiment (STATIC ONLY, not promoted)"
+      - name: Public API examples and safety preflight
         run: |
-          python -B tools/test_aga_compiler_compat.py
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib
-      - name: R30 AGAPAL in-memory layout and reference ABK envelope (format only)
-        run: python -B tools/test_agapal_r30_layout.py
-      - name: M16 AGAPIC P0 host-only planar RLE and reference bank model (NOT AP20 Gate A)
+          python -B tools/test_readme_api_coverage.py
+          python -B tools/test_examples.py
+          python -B tools/test_current_amos_blocks.py
+          python -B tools/check_no_blocking_waits.py
+      - name: M16 AGAPIC image and capture host contract
         run: |
           python -B tools/test_m16_agapic.py
           python -B tools/test_m16_agapic_capture_model.py
-          python -B tools/m16_agapic_sample.py
-      - name: Verify every AP20 instruction/function is documented in README
-        run: python -B tools/test_readme_api_coverage.py
-      - name: Verify all eleven distribution examples (including C1 compiled ZIP)
-        run: python -B tools/test_examples.py
-      - name: Validate M7 Copper API staging contract (static only)
-        run: python -B tools/test_m7_copper_contract.py
-      - name: Check AMOS Copper/Mouse/Hotspot/Rect function syntax
-        run: python -B tools/test_amos_copper_syntax.py
-      - name: Check AMOS block syntax in the unique active test
-        run: python -B tools/test_current_amos_blocks.py
-      - name: Verify native R46 68000 source (strict), and C1 compiler bridge separately
-        run: |
-          python -B -m unittest discover -s tests -p 'test_native_source.py' -v
-          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib --out /tmp/amos-aga-native --baseline none --strict
-          python -B tools/build_aga_current.py --verify
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-      - name: Install 68000 verification dependencies
+      - name: Install current native Gate A dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: "M16/R47 experimental 68000 row RLE encoder — CPU only (no bank/AP20)"
-        run: python -B tools/test_m16_capture_r47_core.py
-      - name: "M16/R47 experimental AMOS bank capture native wrapper — static and AP20 Compiler bridge only"
-        run: python -B tools/test_m16_capture_r47_build.py
-      - name: "M16/R47 experimental complete capture 68000 — Unicorn simulated AMOS bank allocator"
-        run: python -B tools/test_m16_capture_r47_unicorn.py
-      - name: M16 R45 failed-image archive — frozen Unicorn Gate A (R44 historical archive)
+      - name: M16 R47 current native CPU and compiler-safe wrapper tests
         run: |
-          python -B tools/build_m16_image_draw_r45.py
-          python -B tools/test_m16_image_draw_r45.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build,CURRENT,ARCHIVE_R44,BASE; from pathlib import Path; b,info=build(); assert b==Path('dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib').read_bytes(); assert BASE.read_bytes()==ARCHIVE_R44.read_bytes(); print('R45 Gate A exact candidate',info['sha256'],info['size'])"
-          python -B -c "from pathlib import Path; import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build; Path('/tmp/AMOSPro_AGA_R45_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
-
-      - name: M16 raw R46 frozen source — native CPU Gate A (Gate B user-confirmed, C1 promoted)
-        run: |
-          python -B tools/build_m16_image_draw_r46.py --emit-base64
-          python -B tools/test_m16_image_draw_r46.py
-          python -B -c "from pathlib import Path; import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r46 import build; Path('/tmp/AMOSPro_AGA_R46_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R46_GateA.Lib --out /tmp/amos-aga-r46-native --baseline none --strict
-          git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib
-
-      - name: M15 R42 Aga Box frozen — native 68000 CPU, clipping and strict source
-        run: |
-          python -B tools/test_m15_box_r42.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R42_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R42_GateA.Lib --out /tmp/amos-aga-r42-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,BASE,LAST_GOOD,ARCHIVE; b,meta=build(); assert b==build()[0]==ARCHIVE.read_bytes(); print('R42 deterministic in-memory Gate A:',meta['sha256'],meta['size'])"
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R42 historical Gates A/B archive exact:',meta['sha256'],meta['size'])"
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-
-      - name: M15 R43 Aga Circle frozen — 436 CPU cases, strict source, immutable R42
-        run: |
-          python -B tools/test_m15_circle_r43.py
-          python -B tools/build_m15_circle_r43.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes(); assert ARCHIVE.read_bytes()!=LAST_GOOD.read_bytes(); print('R43 frozen Gates A/B archive exact:',meta['sha256'],meta['size'])"
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R43_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R43_GateA.Lib --out /tmp/amos-aga-r43-native --baseline none --strict
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib
-
-      - name: M15bis R44 Aga Mouse Cursor historical archive — 516 CPU cases, strict native source
-        run: |
-          python -B tools/test_m15bis_cursor_r44.py
-          python -B tools/build_m15bis_cursor_r44.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(); assert DEST.read_bytes()!=LAST_GOOD.read_bytes(); assert BASE.read_bytes()!=LAST_GOOD.read_bytes(); print('R44 Gates A/B frozen LAST_GOOD exact:',meta['sha256'],meta['size'])"
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R44_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R44_GateA.Lib --out /tmp/amos-aga-r44-native --baseline none --strict
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
-
-      - name: M15 R41 Aga Draw promoted — native 68000 Gate A, clipping and strict source
-        run: |
-          python -B tools/test_m15_draw_r41.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_draw_r41 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R41_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R41_GateA.Lib --out /tmp/amos-aga-r41-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_draw_r41 import build,BASE,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes() and len(b)>len(BASE.read_bytes()); print('R41 reproducible in-memory Gate A:',meta['sha256'],meta['size'])"
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_draw_r41 import build,DEST,ARCHIVE,LAST_GOOD,BASE; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R41 immutable WinUAE PASS archive exact:',meta['sha256'],meta['size'])"
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-
-      - name: M15 R40 Aga Plot promoted — native 68000 CPU, integrity, strict source
-        run: |
-          python -B tools/test_m15_plot_r40.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_plot_r40 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R40_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R40_GateA.Lib --out /tmp/amos-aga-r40-native --baseline none --strict
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_plot_r40 import build,DEST,ARCHIVE,LAST_GOOD,BASE; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R40 frozen WinUAE-PASS archive exact:',meta['sha256'],meta['size'])"
-
-      - name: M13 R29 frozen IFF palette save — native 68000 regression
-        run: |
-          python -B tools/test_m13_palette_save_r29.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_save_r29 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R29 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib
-      - name: M13 R30 frozen AGAPAL Bank Init — native 68000 regression
-        run: |
-          python -B tools/test_m13_agapal_r30.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R30_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R30_GateA.Lib --out /tmp/amos-aga-r30-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_r30 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R30 frozen archive mismatch'; print('R30 frozen archive match:',meta['sha256'],meta['size'])"
-          sha256sum dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib
-      - name: M13 R31 frozen AGAPAL Capture — native 68000 regression
-        run: |
-          python -B tools/test_m13_agapal_capture_r31.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R31_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R31_GateA.Lib --out /tmp/amos-aga-r31-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_capture_r31 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R31 frozen archive mismatch'; print('R31 frozen archive match:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.3_AGAPAL_BANK_CAPTURE_R31.Lib
-      - name: M13 R32 frozen AGAPAL Apply — native 68000 Gate A archive
-        run: |
-          python -B tools/test_m13_agapal_apply_r32.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_apply_r32 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R32_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R32_GateA.Lib --out /tmp/amos-aga-r32-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_apply_r32 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R32 frozen archive mismatch'; print('R32 frozen archive match:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.4_AGAPAL_BANK_APPLY_R32.Lib
-      - name: M13 R33 frozen Fade To Bank — native CPU 68000 Gate A archive
-        run: |
-          python -B tools/test_m13_agapal_fade_r33.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R33_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R33_GateA.Lib --out /tmp/amos-aga-r33-native --baseline none --strict
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_agapal_fade_r33 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R33 frozen archive mismatch'; print('R33 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib
-
-      - name: M13 R34 frozen Fade To Black — Gate A CPU 68000 archive
-        run: |
-          python -B tools/test_m13_aga_fade_black_r34.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_black_r34 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R34_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R34_GateA.Lib --out /tmp/amos-aga-r34-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_black_r34 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R34 archive mismatch'; print('R34 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib
-
-      - name: M13 R35 frozen Fade To White — Gate A CPU 68000 archive
-        run: |
-          python -B tools/test_m13_aga_fade_white_r35.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R35_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R35_GateA.Lib --out /tmp/amos-aga-r35-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_aga_fade_white_r35 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R35 frozen archive mismatch'; print('R35 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib
-
-      - name: M13 R36 frozen Palette Cycle — Gate A CPU 68000 + immutable archive
-        run: |
-          python -B tools/test_m13_palette_cycle_r36.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R36_GateA.Lib').write_bytes(build()[0])"
-          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R36_GateA.Lib --out /tmp/amos-aga-r36-native --baseline none --strict
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m13_palette_cycle_r36 import build,ARCHIVE,DEST,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes(), 'R36 immutable archive mismatch'; print('R36 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib
-
-      - name: M14 R37 frozen Font Select — Gate A/B CPU, source, archive integrity
-        run: |
-          python -B tools/test_m14_font_select_r37.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes(); print('R37 archive validated:',meta['sha256'],meta['size'])"
-          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib --out /tmp/amos-aga-r37-integrity --baseline none --strict
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
-
-      - name: M14 R38 frozen BankFont — CPU 68000 and immutable archive regression
-        run: |
-          python -B tools/test_m14_font_bank_r38.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import build,ARCHIVE,LAST_GOOD; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes(); print('R38 immutable archive:',meta['sha256'],meta['size'])"
-          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib --out /tmp/amos-aga-r38-integrity --baseline none --strict
-          sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-
-      - name: M13 R28 frozen IFF palette — native 68000 regression
-        run: |
-          python -B tools/test_m13_palette_r28.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m13_palette_r28 import build,ARCHIVE; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R28 frozen archive:',meta['sha256'],meta['size'])"
-          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib
-
-      - name: M12 R27 frozen archive — native 68000 CPU regression and integrity
-        run: |
-          python -B tools/test_m12_blit_safe_r27.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m12_blit_safe_r27 import build,ARCHIVE,DEST; raw,info=build(); assert raw==ARCHIVE.read_bytes(); from pathlib import Path; assert raw==ARCHIVE.read_bytes(); print('R27 frozen archive matches',info)"
-          sha256sum dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
-
-      - name: M11 R26 AGA Text frozen archive — 68000 CPU regression
-        run: |
-          python -B tools/test_m11_text_r26.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m11_text_r26 import build,ARCHIVE; raw,info=build(); assert raw==ARCHIVE.read_bytes(); print('R26 archive matches',info)"
-          sha256sum dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
-
-      - name: M10 R25 AABB rectangle overlap — frozen 68000 CPU archive regression
-        run: |
-          python -B tools/test_m10_rect_overlap_r25.py
-          python -B tools/build_m10_rect_overlap_r25.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m10_rect_overlap_r25 import build,ARCHIVE; raw,info=build(); assert raw==ARCHIVE.read_bytes(); print('R25 frozen archive matches',info)"
-          sha256sum dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib
-
-      - name: M9 R24 Hotspot Hit — frozen 68000 archive regression
-        run: |
-          python -B tools/test_m9_hotspot_hit_r24.py
-          python -B tools/build_m9_hotspot_hit_r24.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m9_hotspot_hit_r24 import build,ARCHIVE; binary, info=build(); assert binary==ARCHIVE.read_bytes(); print('Frozen R24 archive matches',info)"
-          sha256sum dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M9_v0.9.0_HOTSPOT_HIT_R24.Lib
-
-      - name: R23 IDCMP mouse + RAWKEY FIFO — frozen archive regression
-        run: |
-          python -B tools/test_m8_idcmp_r23_preflight.py
-          python -B tools/build_m8_idcmp_r23.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_idcmp_r23 import build,ARCHIVE; binary,info=build(); assert binary==ARCHIVE.read_bytes(); print('Frozen R23 archive matches',info)"
-          sha256sum dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M8_v0.8.7_IDCMP_MOUSE_R23.Lib
-
-      - name: Validate every repository ILBM and execute current CPU tests
-        run: |
-          python -B tools/validate_ilbm.py
-          python -B tools/test_m5_generic.py
-          python -B tools/test_m5_generic_r2.py
-          python -B tools/test_ntsc_pal_r10.py
-          python -B tools/test_newscreen_a0_r12.py
-          python -B tools/check_no_blocking_waits.py
-          git diff --exit-code -- docs/ILBM_INVENTORY.json docs/ILBM_INVENTORY.md docs/GENERIC_CPU_TESTS.json
-          git diff --exit-code -- docs/GENERIC_R2_CPU_TESTS.json docs/GENERIC_R2_VALIDATION.json
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib
-
-      - name: Validate R15 Clear, R14 Fill and R13 Copy regressions on 68000
-        run: |
-          python -B tools/test_m6_blit_copy_r13.py
-          python -B tools/test_m6_blit_fill_r14.py
-          python -B tools/test_m6_blit_clear_r15.py
-
-      - name: Regression R16 Copper Clear native 68000 ABI and ownership
-        run: |
-          python -B tools/test_m7_copper_clear_r16.py
-          python -B tools/build_m7_copper_clear_r16.py
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.0_COPPER_CLEAR_R16.Lib
-
-      - name: Validate frozen R17 Copper On/Off CPU regression
-        run: |
-          python -B tools/test_m7_copper_on_off_r17.py
-          python -B tools/build_m7_copper_on_off_r17.py
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.1_COPPER_ON_OFF_R17.Lib
-
-      - name: Regression R18 native Copper Wait/Move/End (archived)
-        run: |
-          python -B tools/test_m7_copper_raster_r18.py
-          python -B tools/build_m7_copper_raster_r18.py
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M7_v0.8.2_COPPER_RASTER_R18.Lib
-
-      - name: Validate frozen R19 native mouse position regression
-        run: |
-          python -B tools/test_m8_mouse_position_r19.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_position_r19 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib
-
-      - name: Regression R20 native mouse buttons, frozen archive
-        run: |
-          python -B tools/test_m8_mouse_buttons_r20.py
-          python -B tools/build_m8_mouse_buttons_r20.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_buttons_r20 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.4_MOUSE_BUTTONS_R20.Lib
-
-      - name: Regression R21 RMBTRAP frozen 68000 code
-        run: |
-          python -B tools/test_m8_rmbtrap_r21.py
-          python -B tools/build_m8_rmbtrap_r21.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_rmbtrap_r21 import build,ARCHIVE; assert build()[0] == ARCHIVE.read_bytes()"
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib
-
-      - name: Regression R22 frozen mouse edge CPU ABI (archive only)
-        run: |
-          python -B tools/test_m8_mouse_edges_r22.py
-          python -B -c "from sys import path; path.insert(0,'tools'); from build_m8_mouse_edges_r22 import build,ARCHIVE; assert build()[0]==ARCHIVE.read_bytes()"
-          sha256sum dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib
-          git diff --exit-code -- dist/experimental/AMOSPro_AGA_M8_v0.8.6_MOUSE_EDGES_R22.Lib dist/experimental/AMOSPro_AGA_M8_v0.8.5_RMBTRAP_R21.Lib
-          git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib dist/AMOSPro_AGA.Lib
+          python -B tools/test_m16_capture_r47_core.py
+          python -B tools/test_m16_capture_r47_build.py
+          python -B tools/test_m16_capture_r47_unicorn.py
+      - name: Ensure no official or historical Lib was written
+        run: git diff --exit-code -- dist/ archive/

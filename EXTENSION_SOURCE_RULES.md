@@ -58,6 +58,12 @@ Le [pont relogeable C1 de R46](docs/GATE_C_R46_MONOLITH_CANDIDATE.md) conserve l
 
 **Rapports techniques :** [analyse du Guru](docs/GATE_C_R44_COMPILER_DIAGNOSTIC.md), [audit des appels inter-segments](docs/GATE_C_COMPILER_RELOCATION_AUDIT_2026-11-12.md), [résultats et protocole C1](docs/GATE_C_R46_MONOLITH_CANDIDATE.md). Ne pas répéter cette chronologie dans les README publics.
 
+## CI GitHub — séparation des vérifications quotidiennes et de publication
+
+- Chaque push concerné doit passer `.github/workflows/artifact-integrity.yml` (rapide) : SHA256/HUNK des artefacts historiques, AP20 de la bibliothèque courante, pont Compiler et tests du jalon en développement. Le contrôle rapide **ne reconstruit plus toutes les versions antérieures**.
+- Conserver **intégralement** les tests et builders historiques dans `.github/workflows/artifact-regression-full.yml` (déclenchement manuel). **Avant toute promotion de LAST_GOOD ou release Aminet**, lancer ce workflow sur le HEAD exact à livrer et vérifier son PASS. Ne jamais assimiler ce PASS statique/CPU à une Gate B, C WinUAE ou D réelle.
+- Lors du changement de jalon/version, mettre à jour les tests de développement rapides et les SHA/contrôles du builder officiel ; ne supprimer ni figer en silence une vérification nécessaire à la nouvelle API. `main` uniquement.
+
 ## RÈGLE DE BUILD NON NÉGOCIABLE — R46 C1 et toute version ultérieure
 
 **La sortie de production doit être Compiler-safe**. La bibliothèque officielle R46 v0.12.1-C1 est à **57 entrées AP20**, **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. Les 56 segments et 29 288 octets de l'ancienne R46 constituent **exclusivement une archive native**, jamais la copie à installer après promotion C1.
