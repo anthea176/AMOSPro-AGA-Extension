@@ -179,7 +179,7 @@ jobs:
       - name: M18/R60 native AGAPIC region V2 read-only Gate A
         run: |
           python -B tools/test_m18_r60_image_region.py
-          python -B tools/build_m18_r60_image_region.py
+          python -B tools/build_m18_r60_image_region.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 
