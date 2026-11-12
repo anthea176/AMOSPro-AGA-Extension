@@ -19,7 +19,9 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**R41 v0.11.2 — DERNIÈRE VERSION VALIDÉE sous WinUAE (12/11/2026)** : [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R41](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 commandes AP20**. `Aga Draw` validée : 325 tests CPU/CI, puis WinUAE confirmé par l'utilisateur (cadre, 8 directions, 4 lignes clippées, paramètres invalides refusés, `SWAP 1 BACKSAFE 1`, `RESULT 1`, `CLOSE RETURNED`, rendu OK). [Test exact archivé](tests/passed/M15_R41_DRAW_01.asc). Gates C Compiler/D Amiga physique non testées.
+**R42 v0.11.3 — CANDIDATE de dessin 2D à tester sous WinUAE :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive R42](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25 896 octets**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 commandes AP20**. Nouvelle commande `_OK=Aga Box(X1,Y1,X2,Y2,Pen)` : rectangle de contour 1 pixel, **coins inclusifs et inversables, clipping sécurisé des quatre côtés**, sans bordure inventée sur les limites de l'écran. **Gate A CPU 68000/CI PASS (360 cas), Gate B AMOS/WinUAE NON TESTÉE.** [Test R42](tests/current/M15_R42_BOX_01.asc) · [Contrat](docs/M15_BOX_R42.md). **Dernier `LAST_GOOD` : R41 v0.11.2** (24 816 octets, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, inchangée).
+
+**R41 v0.11.2 — dernière version VALIDÉE sous WinUAE (12/11/2026) :** [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R41](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc` ; 46 commandes AP20 dont `Aga Draw`, Gates A et B PASS. [Test exact archivé](tests/passed/M15_R41_DRAW_01.asc).
 
 **R40 v0.11.1 — version précédente validée :** [archive immuable](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib), 23 840 octets, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`. [Test WinUAE archivé](tests/passed/M15_R40_PLOT_01.asc).
 
@@ -28,8 +30,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Dernière version validée : R41 v0.11.2** — 46 commandes AP20, Gates A CPU/CI et B WinUAE PASS.
 
-- **Bibliothèques :** `AMOSPro_AGA.Lib`, `AMOSPro_AGA_LAST_GOOD.Lib` et l'archive R41 sont strictement identiques. L'archive R40 demeure inchangée.
-- **Validation :** R41 Gates A CPU/CI PASS (325 cas) et B WinUAE PASS. Gates C/D non testées.
+- **Bibliothèques :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) est la **candidate R42** ; [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste la **R41 validée**. Toutes les archives antérieures sont inchangées.
+- **Validation :** R41 Gates A/B PASS ; R42 Gate A CPU 68000/CI PASS (360 cas), Gate B WinUAE non testée ; Gates C Compiler et D Amiga AGA réel non testées.
 - **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. Le test d'endurance WinUAE (500 changements) n'a mesuré aucune baisse de Chip RAM libre ni du plus grand bloc disponible.
 - **Preuves et historique :** [rapport technique R38](docs/M14_FONT_BANK_R38.md) · [test R38 validé](tests/passed/M14_R38_FONT_BANK_01.asc) · [historique technique](docs/NEXT_SESSION.md) · [tests validés](tests/passed/).
 
@@ -37,7 +39,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R41 0.11.2** — **46 commandes AP20**, Gates A/B PASS, Gates C/D non testées.
+**API de la bibliothèque courante R42 0.11.3** — **47 commandes AP20**, Gate A CPU/CI PASS, Gate B WinUAE à tester ; R41 reste `LAST_GOOD` (A/B PASS). Gates C/D non testées.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -87,6 +89,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Font Bank Select`** (M14 R38, Gates A/B PASS) | `_OK=Aga Font Bank Select(_START,_LENGTH)` | Sélectionne une fonte monochrome fixe ou proportionnelle provenant d'une banque `BankFont` créée par AMCAF `Make Bank Font`. `_START=Start(n)` et `_LENGTH=Length(n)` désignent la banque AMOS vivante. Retourne 1 en cas de succès, 0 en cas d'échec sans changer la fonte. Copie privée en mémoire Chip (même si la banque source est en Fast) ; fonctionne après `Erase n`, libération au changement/reset/fermeture. **Gate B WinUAE PASS.** |
 | **`Aga Plot`** (M15 R40, Gates A/B PASS) | `_OK=Aga Plot(X,Y,Pen)` | Écrit **un pixel** à `(X,Y)` dans le **back buffer AGA**. X/Y entre zéro et largeur/hauteur moins un, `Pen` indexé 0..2^Depth−1 (1 à 8 plans). `1` si `WritePixel` réussit, `0` sinon (paramètre invalide, écran absent ou buffer non-`Safe`). Pas de clipping hors écran, aucun swap/VBL implicite. **Gates A CPU/CI et B WinUAE PASS.** |
 | **`Aga Draw`** (M15 R41, Gates A/B PASS) | `_OK=Aga Draw(X1,Y1,X2,Y2,Pen)` | Trace une **ligne d'un pixel** sur le **back buffer AGA**, extrémités incluses. Tracé rapide pour les coordonnées entièrement dans l'écran ; **clipping logiciel sécurisé** par Bresenham en dehors. Coordonnées signées 16 bits, `Pen` indexé selon la profondeur. `1` si au moins un pixel dessiné, `0` sinon. Pas de swap/VBL implicite. **Gates A et B PASS.** |
+| **`Aga Box`** (M15 R42, Gate A PASS) | `_OK=Aga Box(X1,Y1,X2,Y2,Pen)` | Dessine **le contour d'un rectangle** de 1 pixel d'épaisseur sur le **back buffer AGA**. Coordonnées des **deux coins inclusives**, dans n'importe quel ordre (pas largeur/hauteur). **Clipping sûr des quatre côtés originaux** sans ajouter de fausse bordure. Coordonnées signées 16 bits, `Pen` couleur indexée ; `1` si au moins un pixel dessiné, sinon `0`. Pas de swap/VBL implicite, pas de remplissage. **Gate A CPU/CI PASS ; Gate B WinUAE à tester.** |
 
 **Exemple AMOS : sauvegarder la palette active** une fois l'écran AGA Intuition ouvert :
 
