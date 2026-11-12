@@ -1,16 +1,12 @@
 # EXTENSION_SOURCE_RULES.md
 
-## M15bis/R44 v0.11.5 — Aga Mouse Cursor : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE (12/11/2026)
+## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
 
-**API approuvée et développée :** `_OK=Aga Mouse Cursor(Visible)` ; `0` masque le pointeur **uniquement dans la fenêtre Intuition de l'écran AGA privé**, `1` rétablit le curseur système pour cette fenêtre. Valeurs autres que 0/1, écran/fenêtre invalide ou allocation refusée retournent `0` sans effet. `1` signifie état de pointeur appliqué (idempotence). Mouse X/Y, boutons et clavier restent actifs.
+**M15 Plot/Draw/Box/Circle et M15bis Aga Mouse Cursor sont clôturés** après la CI Gate A (516 scénarios CPU 68000 R44) et les validations WinUAE utilisateur : test R44 (500 bascules, 0 erreur, CHIP DROP 0, RESULT 1, CLOSE RETURNED) puis démonstration globale `examples/m15_2d_cursor.asc` (« ça marche super »). Le retour global confirme le fonctionnement visuel, sans capture chiffrée fournie pour cette démo. **49 commandes AP20, 55 segments.**
 
-**Gestion locale et mémoire :** sprite transparent 16×16 à deux plans, **72 octets Chip RAM `MEMF_CHIP|MEMF_CLEAR`**, une seule allocation paresseuse par fenêtre au premier masquage. `ClearPointer` avant `CloseWindow`, puis `FreeMem` 72 octets après fermeture ; état privé réinitialisé. Quatre sites de fermeture **0/8/17/18** interceptés par BSR.w vers le cleanup R44 ; la fermeture de la fenêtre auxiliaire de `Aga Palette Save` (segment 40) est strictement conservée. Les offsets de l'état partagé 40 octets ne changent pas.
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive versionnée R44, **27 460 octets**, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. Original `M15BIS_R44_MOUSE_CURSOR_01.asc` archivé octet pour octet en `tests/passed/` (blob Git `099f7125260c340dfbb4819f5770d1dbafd6789d`), `tests/current/` sans ASC actif. **R43** et les versions antérieures demeurent archivées et non modifiées. **Gates C Compiler / D AGA physique NON TESTÉES.**
 
-**Gate A CPU 68000 et CI complète PASS :** **516 scénarios CPU** dont 500 cycles masqué/visible avec une allocation unique, mémoire, OOM, ABI A3, Win/Screen, quatre hooks de fermeture, ordre `ClearPointer→CloseWindow→FreeMem`, HUNK/AP20, export source natif strict. [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398). **49 commandes AP20 / 55 segments.** Candidat binaire R44 déterministe SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, **27 460 octets**.
-
-**Candidate publiée :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib` à l'octet près. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure R43 v0.11.4**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS ; archives antérieures intactes.
-
-**Gate B R44 NON TESTÉE :** unique test actif `tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc` à importer via **Project → Merge ASCII** dans AMOS interprété/WinUAE. Observer visible→masqué→visible→masqué→fermeture, tester le retour Workbench, lire `SWITCHES 500 ERR 0`, `RESULT 1` et `CLOSE RETURNED` ; examiner `CHIP DROP` et `CHIP WARN` sans les présenter comme preuve complète d'absence de fuite. **Ne pas promouvoir `LAST_GOOD` avant confirmation utilisateur explicite.** Gates C Compiler / D Amiga AGA physique NON TESTÉES. [Contrat M15bis](M15BIS_MOUSE_CURSOR_R44_DESIGN.md), branche **`main` uniquement**.
+**Rapport de clôture :** [docs/M15_M15BIS_R44_CLOSURE.md](docs/M15_M15BIS_R44_CLOSURE.md). **Étape suivante éventuelle : M16**, format d'images compressées en Fast RAM avec dessin CPU ; aucun code M16 engagé. **Uniquement `main`**, aucune branche créée. Les sections R43 et antérieures ci-dessous sont des archives historiques de leur époque.
 
 ## M15/R43 v0.11.4 — Aga Circle : Gates A CPU/CI et B AMOS/WinUAE PASS, LAST_GOOD (12/11/2026)
 

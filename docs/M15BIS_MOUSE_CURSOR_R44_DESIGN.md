@@ -1,12 +1,12 @@
-# M15bis/R44 — Aga Mouse Cursor : Gates A et B PASS, exemple global en attente
+# M15bis/R44 — Aga Mouse Cursor : Gates A/B PASS, clôturé et promu LAST_GOOD (12/11/2026)
 
-**Statut : contrat explicitement approuvé par l'utilisateur (« oui ») le 12/11/2026. Gate A CPU/CI entièrement PASS — 516 scénarios natifs 68000, export source strict et [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398).** La candidate R44 v0.11.5 est publiée : `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib` (**27 460 octets**, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`), **49 commandes AP20**. **Gate B WinUAE PASS confirmée par l'utilisateur** ; `LAST_GOOD` reste la R43 WinUAE-PASS (`9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`). Le seul test R44 actif est `tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc`. La R43 v0.11.4 `Aga Circle` reste **la dernière version WinUAE-PASS** : 48 commandes AP20, 27 092 octets, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A et B PASS ; Gates C/D non testées. **R44 v0.11.5 est uniquement un numéro de travail proposé.**
+**Statut final — M15bis/R44 v0.11.5 CLÔTURÉ :** contrat approuvé, 516 scénarios CPU 68000 et CI Gate A PASS, test WinUAE du curseur confirmé (`SWITCHES 500 ERR 0`, `CHIP DROP 0`, `RESULT 1`, `CLOSE RETURNED`), puis démonstration interactive [M15 + M15bis](../examples/m15_2d_cursor.asc) confirmée sous WinUAE (« ça marche super »). **49 commandes AP20 / 55 segments, 27 460 octets**, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. `dist/AMOSPro_AGA.Lib`, `dist/AMOSPro_AGA_LAST_GOOD.Lib` et l'archive R44 sont identiques. Test d'origine archivé dans `tests/passed/` sans modification ; R43 et les versions antérieures restent archivées. [Clôture détaillée](M15_M15BIS_R44_CLOSURE.md). **Gates C/D non testées.**
 
 ## Objectif demandé
 
 Afficher/masquer **uniquement le pointeur de la fenêtre Intuition de l'écran AGA privé** de l'extension. Ne pas masquer la souris dans Workbench, les autres fenêtres ou sur les écrans AMOS natifs. La position, les boutons, le clavier et les événements de souris doivent fonctionner même lorsque le pointeur est invisible. Par défaut, le pointeur reste visible.
 
-## API publique proposée — une seule fonction AMOS
+## API publique validée — une seule fonction AMOS
 
 ```amos
 _OK=Aga Mouse Cursor(Visible)
@@ -28,7 +28,7 @@ _OK=Aga Mouse Cursor(Visible)
 6. **Pas de manipulation globale** : ni `Sprite Off`, ni accès direct `SPR0` / DMA / Copper, ni `SetPrefs`, ni changement des bitplanes, palette, `RMBTRAP`, IDCMP, souris ou pointeur Workbench. Pas de `WaitVbl`/Swap implicite dans cette commande.
 7. **State** : le pointeur Chip et le drapeau caché doivent avoir une propriété/durée de vie explicite. Vérifier la taille et le nettoyage du bloc d'état actuel avant de réserver des offsets ; ne jamais écrire au-delà des **40 octets historiques** supposés sans auditer l'allocation dans le R43 actuel.
 
-## Gates prévues si approuvé
+## Gates et critères du contrat d'origine
 
 - **Gate A CPU/CI** : ABI/token AP20, lecture des arguments LONG, seules valeurs 0/1, vérification Window/Screen, appels `SetPointer / ClearPointer` et paramètres exacts, zéro écriture hors mémoire, structure sprite 72 octets `MEMF_CHIP|MEMF_CLEAR`, OOM sans effet, appels répétés, restauration à toutes les sorties, état fermé/réouvert et Ctrl+C, non-régression des 48 commandes R43, contrôles HUNK/AP20/export strict.
 - **Gate B AMOS interprété / WinUAE** : pointeur visible au démarrage ; masquer/réafficher ; souris X/Y, clics gauche/droit et clavier actifs en mode masqué ; Workbench et autres fenêtres gardent leur pointeur ; retour dans AGA toujours masqué si configuré ; fermeture pendant le masquage, réouverture, Ctrl+C ; alternances prolongées (par exemple 500) et contrôle d'absence de perte progressive de Chip RAM. Un seul test `.asc` actif à la fois et confirmation visuelle utilisateur.
@@ -41,6 +41,6 @@ _OK=Aga Mouse Cursor(Visible)
 - [AmigaOS Intuition Pointer](https://wiki.amigaos.net/wiki/Intuition_Pointer) : `SetPointer / ClearPointer`, format sprite, exigence Chip RAM.
 - [AmigaOS Window Structures and Functions](https://wiki.amigaos.net/wiki/Window_Structures_and_Functions) : visibilité du pointeur associée à la fenêtre active.
 - [Intuition Input R3 historique](../tools/obsolete/build_intuition_input_r3.py) : `Window*` en state+36, taille ancienne 40, helpers `CloseWindow` et Ctrl+C (historique uniquement, à confronter à R43).
-- **Décision reçue** : utilisateur valide le nom, le mode `0=masqué / 1=visible`, la mémoire Chip allouée une fois et la restauration au cleanup. **Gate A réussie, candidate publiée. Gate B visuelle/WinUAE restant à réaliser ; pas de promotion.**
+- **Décision reçue et appliquée** : nom `Aga Mouse Cursor`, mode `0=masqué / 1=visible`, allocation unique 72 octets Chip, restauration automatique. **Gates A/B validées, `LAST_GOOD` R44 promue.** Le test du curseur et la démo globale sont confirmés sous WinUAE ; les critères Compiler/AGA physique restent non testés.
 
-**Retour WinUAE R44 du 12/11/2026 : Gate B PASS confirmée par l'utilisateur (« ça marche super »).** Capture : `SHOW 1 1 1 ; HIDE 1 1 ; BAD 0 0 ; NOSCREEN 0 ; SWITCHES 500 ERR 0 ; CHIP FREE 1631384 / 1631384 DROP 0 ; BIG FREE 1630656 / 1630656 DROP 0 ; CHIP BEFORE/END 1801928 / 1801928 ; CHIP WARN 0 ; CLOSED -1 ; RESULT 1 ; CLOSE RETURNED`. Le rendu du curseur visible/masqué et le retour AMOS sont confirmés ; aucune fuite Chip mesurée pendant ce test (ne prouve pas tous les chemins Ctrl+C). **R44 reste candidate ; ne pas promouvoir `LAST_GOOD` ni clôturer M15/M15bis avant l'essai de la [démo combinée](../examples/m15_2d_cursor.asc).** Gates C/D non testées.
+**Retour WinUAE R44 du 12/11/2026** : capture du test curseur avec `SHOW 1 1 1`, `HIDE 1 1`, `SWITCHES 500 ERR 0`, `CHIP DROP 0`, `BIG DROP 0`, `CHIP BEFORE/END 1801928 / 1801928`, `RESULT 1`, `CLOSE RETURNED`, puis démonstration globale M15/M15bis fonctionnelle selon l'utilisateur. Ces preuves ne couvrent pas AMOS Compiler ni Amiga physique. [Rapport de clôture](M15_M15BIS_R44_CLOSURE.md).
