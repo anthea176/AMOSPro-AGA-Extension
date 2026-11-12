@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible R46 bridge plus verification of current R56/R55 or R54.
+"""Reproducible R46 bridge plus verification of current R57/R56/R55 or R54.
 
 New versions MUST derive native parts from the compiler-safe LAST_GOOD
 with compiler_relocation.native_from_promoted(), modify the native parts,
@@ -49,7 +49,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R56 v0.13.1"):
+    if active.startswith("R57 v0.13.2"):
+        from build_m17_r57_rastport import build as r57_build
+        candidate,meta=r57_build()
+        assert candidate==current,"Current R57 differs from deterministic builder"
+        print("CURRENT M17 R57 IN-PLACE RASTPORT BUILDER PASS",
+              {k:v for k,v in meta.items() if k!="labels"})
+    elif active.startswith("R56 v0.13.1"):
         from build_m17_r56_rastport import build as r56_build
         candidate,meta = r56_build()
         assert candidate == current, "Current R56 differs from deterministic Compiler-safe build"

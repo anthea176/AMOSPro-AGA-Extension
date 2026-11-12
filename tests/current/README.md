@@ -1,7 +1,7 @@
-# Test AMOS actif — M17/R56 RastPort Fill/Clear
+# M17/R57 — test unique
 
-**Seul test actif :** [`M17_R56_RAST_FILL_01.asc`](M17_R56_RAST_FILL_01.asc). Avec `examples/demo.iff` 320×256×8 bitplanes, il vérifie `Aga Blit Fill`, `Aga Blit Clear`, `Aga Blit Copy`, la garde non bloquante `Safe`, les couleurs 3/28/224 et **40 swaps** avec alternance des panneaux. Résultats attendus : **`RESULT 1`**, **`CLOSE RETURNED`**, `DRAWERR 0`, `SAFEERR 0`, `SWAPERR 0`, bon rendu et absence de Guru. `Wait Key` termine le test pour conserver les résultats.
+**Programme :** [`M17_R57_RAST_FILL_01.asc`](M17_R57_RAST_FILL_01.asc), exercice Fill, Clear, Copy, Safe et 40 swaps avec `examples/demo.iff`. Résultat attendu : `RESULT 1`, `CLOSE RETURNED`, compteurs d'erreur 0. La fin est `Do / Wait Vbl / Loop` comme dans le programme réellement utilisé par l'auteur.
 
-**Seul binaire actif :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **R56 0.13.1**, **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commandes / 60 entrées AP20. **Gate A CPU/CI PASS** ([run R56](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214)) ; **Gates B WinUAE interprété, C nouvel exécutable compilé et D machine physique NON TESTÉES pour R56**.
+**Bibliothèque :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), R57 0.13.2, 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. Gate A CPU/CI PASS. **Gates B/C/D R57 NON TESTÉES.** R56 était PASS en benchmark interprété, FAIL compilé (Guru `8000000B`). R57 teste l'hypothèse du placement sans duplication du helper.
 
-**Historique sans revalidation :** R55 0.13.0 a passé les Gates A/B/C sur son propre test utilisateur (Gate C confirmée sans capture) ; le benchmark compilé Fill 54 ticks / Clear 115 ticks a montré l'absence de gain significatif vs R46 C1. R54 0.12.9 reste l'unique `LAST_GOOD` validée dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, intacte.
+**R54 `LAST_GOOD` protégée.** Branche `main` exclusivement.
