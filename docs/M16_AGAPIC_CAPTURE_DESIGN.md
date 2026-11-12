@@ -1,5 +1,7 @@
 # M16 — Capture AGAPIC et ergonomie des banques (contrat en discussion)
 
+**Dernier retour terrain (12/11/2026) : R47 expérimentale Gate B FAIL.** Le processus WinUAE x64 a planté après l'affichage du titre du test AMOS interprété. Minidump Windows produit mais non analysé ; aucun Guru ni PC Amiga fourni, ni preuve que `Aga Image Capture` ait été atteinte. Les preuves CPU/CI antérieures restent Gate A PASS uniquement ; R46 C1 `LAST_GOOD` protégée, Gate C R47 non testée et M16 non clôturé. Voir [rapport de l'essai](M16_R47_GATE_B_PROCEDURE.md).
+
 **12/11/2026. Statut : conception validée et développement commencé par le modèle hôte ; aucun nouveau token AP20 ni commande 68000 livrés.** M16 reste en développement. Référence figée : R46 v0.12.1-C1 `LAST_GOOD` Compiler-safe, sans changement de binaire tant que les contrats ne sont pas approuvés. Branche `main` uniquement.
 
 ## Décisions déjà validées

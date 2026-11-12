@@ -1,6 +1,12 @@
 # M16/R47 — Essai WinUAE expérimental `Aga Image Capture`
 
-**État : préparation de la Gate B sous AMOS interprété. PAS ENCORE TESTÉE.** Version candidate R47 v0.12.2, **32 012 octets** et SHA256 `a550e9662cda1890aa8331c6e849e702300e6070e8e2caaf2fab9918613944d5`. **R46 C1 reste la bibliothèque officielle `LAST_GOOD`**. Le pont Compiler-safe a passé son audit structurel, mais les appels aux routines internes AMOS **n'ont encore jamais été testés sous WinUAE**. Un plantage reste possible ; utiliser **une configuration WinUAE de test / snapshot**, pas un Workbench ou disque de production.
+**État au 12/11/2026 : Gate B FAIL au premier essai utilisateur sous AMOS interprété/WinUAE.** Version candidate R47 v0.12.2, **32 012 octets** et SHA256 `a550e9662cda1890aa8331c6e849e702300e6070e8e2caaf2fab9918613944d5`. **R46 C1 reste la bibliothèque officielle `LAST_GOOD`**. Le pont Compiler-safe a passé son audit structurel, mais les appels aux routines internes AMOS **n'ont encore jamais été testés sous WinUAE**. Un plantage reste possible ; utiliser **une configuration WinUAE de test / snapshot**, pas un Workbench ou disque de production.
+
+## Incident observé : processus WinUAE en crash
+
+La seule sortie visible est le titre AMOS `M16/R47 IMAGE CAPTURE TEST`, puis WinUAE x64 affiche `Crash detected` et indique l'enregistrement d'un minidump Windows `.dmp`. Aucun Guru Amiga ni PC fautif n'est disponible. Le test original ne comporte **aucun repère intermédiaire** entre son titre et ses opérations AGA : il est impossible de prouver que `Aga Image Capture` a été exécutée avant le crash. Les tests CPU/CI PASS restent inchangés, mais ne remplacent pas cette Gate B **FAIL**. Conserver le `.dmp` et les logs WinUAE, ne pas compiler, ne pas réinstaller aveuglément la candidate ; identifier d'abord l'étape réellement fautive. Les indices `Rjsr` concordent avec les définitions numérotées du source AMOS Professional 365, mais cette concordance ne valide pas l'ABI du runtime installé. **R46 C1 reste `LAST_GOOD`.**
+
+La procédure ci-dessous est conservée comme recette expérimentale d'origine : **ne pas la répéter tant que la cause n'est pas cadrée**.
 
 ## Fichiers
 
