@@ -1,5 +1,13 @@
 # M15 — Primitives de dessin 2D sur écran AGA (étude et propositions)
 
+## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
+
+**M15 Plot/Draw/Box/Circle et M15bis Aga Mouse Cursor sont clôturés** après la CI Gate A (516 scénarios CPU 68000 R44) et les validations WinUAE utilisateur : test R44 (500 bascules, 0 erreur, CHIP DROP 0, RESULT 1, CLOSE RETURNED) puis démonstration globale `examples/m15_2d_cursor.asc` (« ça marche super »). Le retour global confirme le fonctionnement visuel, sans capture chiffrée fournie pour cette démo. **49 commandes AP20, 55 segments.**
+
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive versionnée R44, **27 460 octets**, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. Original `M15BIS_R44_MOUSE_CURSOR_01.asc` archivé octet pour octet en `tests/passed/` (blob Git `099f7125260c340dfbb4819f5770d1dbafd6789d`), `tests/current/` sans ASC actif. **R43** et les versions antérieures demeurent archivées et non modifiées. **Gates C Compiler / D AGA physique NON TESTÉES.**
+
+**État courant :** [clôture M15/M15bis R44](M15_M15BIS_R44_CLOSURE.md). L'analyse R43 et les jalons précédents ci-dessous sont historiques ; R44 est maintenant `LAST_GOOD`. Gates C/D non testées.
+
 ## M15/R43 v0.11.4 — Aga Circle : Gates A CPU/CI et B AMOS/WinUAE PASS, LAST_GOOD (12/11/2026)
 
 **R43 VALIDÉE par l'utilisateur (capture « parfait !!! ») :** `_OK=Aga Circle(CX,CY,Radius,Pen)` — cercle de contour d'un pixel par Bresenham midpoint 68000 en arithmétique 32 bits avec clipping sécurisé des huit octants, sans dessin hors écran ni bord inventé. Écran AGA privé, uniquement sur le back buffer après `Safe` non bloquant ; aucune allocation persistante, aucun swap/VBL implicite. **48 commandes AP20, 54 segments ; 436 scénarios CPU 68000 Gate A PASS et CI complète PASS** ([CI candidate](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950)).

@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"
 BASE_SHA256 = "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256 = "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf"
+LAST_GOOD_SHA256 = "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"
 GETP = b"GetP"
@@ -70,7 +70,7 @@ def build():
     return candidate, dict(version=VERSION, sha256=digest(candidate),
         size=len(candidate), named_commands=48, segments=54,
         new_command=API[0], changed_segments=[52, 53],
-        labels=labels, Gate_A="CPU_CI_PASS", Gate_B="NOT_TESTED")
+        labels=labels, Gate_A="CPU_CI_PASS", Gate_B="USER_WinUAE_PASS")
 
 
 if __name__ == "__main__":

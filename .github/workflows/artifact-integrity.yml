@@ -97,20 +97,20 @@ jobs:
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes(); print('R42 historical Gates A/B archive exact:',meta['sha256'],meta['size'])"
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
 
-      - name: M15 R43 Aga Circle promoted — 436 CPU cases, strict source, immutable R42
+      - name: M15 R43 Aga Circle frozen — 436 CPU cases, strict source, immutable R42
         run: |
           python -B tools/test_m15_circle_r43.py
           python -B tools/build_m15_circle_r43.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(); assert BASE.read_bytes()!=LAST_GOOD.read_bytes(); print('R43 Gates A/B LAST_GOOD exact:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes(); assert ARCHIVE.read_bytes()!=LAST_GOOD.read_bytes(); print('R43 frozen Gates A/B archive exact:',meta['sha256'],meta['size'])"
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R43_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R43_GateA.Lib --out /tmp/amos-aga-r43-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib
 
-      - name: M15bis R44 Aga Mouse Cursor candidate — 516 CPU cases, strict native source, R43 LAST_GOOD frozen
+      - name: M15bis R44 Aga Mouse Cursor promoted — 516 CPU cases, strict native source, R43 archive frozen
         run: |
           python -B tools/test_m15bis_cursor_r44.py
           python -B tools/build_m15bis_cursor_r44.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==DEST.read_bytes()==ARCHIVE.read_bytes(); assert BASE.read_bytes()==LAST_GOOD.read_bytes(); print('R44 Gate A candidate exact:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==DEST.read_bytes()==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(); assert BASE.read_bytes()!=LAST_GOOD.read_bytes(); print('R44 Gates A/B LAST_GOOD exact:',meta['sha256'],meta['size'])"
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R44_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R44_GateA.Lib --out /tmp/amos-aga-r44-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib

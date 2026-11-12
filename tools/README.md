@@ -1,14 +1,12 @@
-# Outils Python actifs — R44 v0.11.5 candidate Gates A/B PASS, R43 LAST_GOOD
+# Outils Python — R44 v0.11.5 `LAST_GOOD`, M15 et M15bis clôturés
 
-## M15bis/R44 — Aga Mouse Cursor (Gates A CPU/CI et B WinUAE PASS, démo globale en attente)
+## M15bis/R44 — Aga Mouse Cursor, Gates A CPU/CI et B WinUAE PASS
 
-**Outils actifs :** `m15bis_cursor_r44_emit.py`, `build_m15bis_cursor_r44.py`, `test_m15bis_cursor_r44.py`. **516 scénarios CPU 68000 PASS**, test de 500 alternances avec une allocation Chip unique, quatre fermetures de fenêtre et séquence `ClearPointer` → `CloseWindow` → `FreeMem`, export strict validé et [CI CPU complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398). **Binaire R44 candidat :** `dist/AMOSPro_AGA.Lib` = archive R44, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, 49 commandes AP20/55 segments. **Gate B WinUAE PASS confirmée par utilisateur** ; [test courant conservé jusqu'à la clôture](../tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc). **R43 `LAST_GOOD` intacte**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS. Gates C/D non testées.
+**Outils :** `m15bis_cursor_r44_emit.py`, `build_m15bis_cursor_r44.py`, `test_m15bis_cursor_r44.py`. **516 cas CPU 68000 PASS**, dont 500 bascules de curseur, allocation unique 72 octets Chip, ABI, protections des quatre fermetures et nettoyage ordonné `ClearPointer` → `CloseWindow` → `FreeMem`, export 68000 strict et [CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43209272738). Test curseur WinUAE `RESULT 1`, `CLOSE RETURNED`, Chip DROP 0, et [exemple interactif M15/M15bis](../examples/m15_2d_cursor.asc) confirmés par utilisateur. **R44 `AMOSPro_AGA.Lib` = `LAST_GOOD` = archive versionnée**, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, **49 commandes AP20 / 55 segments**. [Test d'origine archivé](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) sans retouche, `tests/current/` sans ASC actif. **R43 est figée dans son archive**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`. Gates C/D non testées. [Clôture](../docs/M15_M15BIS_R44_CLOSURE.md).
 
-**Démo M15/M15bis :** [exemple utilisateur combiné](../examples/m15_2d_cursor.asc) non encore exécuté sous WinUAE ; aucun changement de binaire, R43 `LAST_GOOD` intacte.
+## M15/R43 — Aga Circle (archive historique)
 
-## M15/R43 — Aga Circle, Gates A CPU/CI et B WinUAE PASS
-
-**Outils R43 :** `m15_circle_r43_emit.py`, `build_m15_circle_r43.py`, `test_m15_circle_r43.py`. **436 tests CPU 68000 PASS** et [CI complète candidate PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950), export source natif strict PASS. **Gate B AMOS/WinUAE PASS confirmé utilisateur**, `RESULT 1`, `CLOSE RETURNED`, rendu OK. `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R43 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`), 48 commandes AP20. [Test R43 original archivé](../tests/passed/M15_R43_CIRCLE_01.asc) sans modification, aucun ASC courant ; R42 archive figée. Gates C/D non testées. Les sections R36 et antérieures ci-dessous sont historiques.
+La bibliothèque R43 v0.11.4 et ses 436 tests CPU/CI + validation WinUAE restent conservés dans `dist/experimental/`. Le test R43 original reste dans `tests/passed/`. Les sections R36 et antérieures ci-dessous sont historiques.
 
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 
