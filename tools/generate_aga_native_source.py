@@ -387,7 +387,12 @@ def verified_current_compiler_seeds(parsed):
          'Strict source: inherited R46 native archive changed')
     original = parse_lib(frozen)['section']
     current_native = native_from_promoted(current, parse_lib(current)['title'])
-    good_native = native_from_promoted(last_good, parse_lib(last_good)['title'])
+    # Reproduce historical R54 from its immutable archive, not the mutable
+    # "LAST_GOOD" pointer: the author promoted R57 after its WinUAE Gates.
+    r54_archive = ROOT/'dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib'
+    r54_blob = r54_archive.read_bytes()
+    need(sha(r54_blob) == 'f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0', 'R54 provenance archive changed')
+    good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     if raw not in (current_native, good_native):
         return {}

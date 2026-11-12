@@ -24,7 +24,7 @@ from compiler_relocation import (
 
 ROOT = Path(__file__).resolve().parents[1]
 ACTIVE_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
-LAST_GOOD_SHA256 = 'f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0'
+LAST_GOOD_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.

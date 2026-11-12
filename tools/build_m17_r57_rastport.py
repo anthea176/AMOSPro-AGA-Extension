@@ -30,7 +30,7 @@ from m17_r56_rastport_emit import emit_fill_r56
 
 ROOT=Path(__file__).resolve().parents[1]
 ACTIVE=ROOT/"dist/AMOSPro_AGA.Lib"
-LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+R54_SOURCE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib"
 SHA_R54="f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"
 SHA_R55="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"
 FILL_ENTRY,CLEAR_ENTRY,LAST_ENTRY=20,21,58
@@ -39,7 +39,7 @@ TITLE+=bytes(len(TITLE)%2)
 
 
 def build():
-    assert sha256(LAST_GOOD.read_bytes()).hexdigest()==SHA_R54, "LAST_GOOD changed"
+    assert sha256(R54_SOURCE.read_bytes()).hexdigest()==SHA_R54, "LAST_GOOD changed"
     stable, r55meta=build_r55()
     assert sha256(stable).hexdigest()==SHA_R55, "R55 base must match user-tested compiler PASS"
     assert is_compiler_wrapped(stable)

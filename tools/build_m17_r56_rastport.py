@@ -23,7 +23,7 @@ from m17_r56_rastport_emit import emit_fill_r56
 
 ROOT=Path(__file__).resolve().parents[1]
 ACTIVE=ROOT/"dist/AMOSPro_AGA.Lib"
-LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+R54_SOURCE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib"
 R54_SHA="f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"
 FILL_ENTRY=20
 CLEAR_ENTRY=21
@@ -34,7 +34,7 @@ TITLE+=bytes(len(TITLE)%2)
 
 def build():
     r55,old_meta=build_r55()
-    assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R54_SHA
+    assert sha256(R54_SOURCE.read_bytes()).hexdigest()==R54_SHA
     assert is_compiler_wrapped(r55)
     tokens,old=unwrap_native_parts(r55)
     assert len(old)==59

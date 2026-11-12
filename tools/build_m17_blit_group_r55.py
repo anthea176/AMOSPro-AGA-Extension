@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R55: deterministic current candidate, based on protected R54 LAST_GOOD.
+"""R55: deterministic historical candidate, based on immutable R54 archive.
 
 The ONLY working binary lives at dist/AMOSPro_AGA.Lib; build() is read-only.
 A forward BRA.W at native Fill entry 20 delegates to a new native helper
@@ -23,7 +23,7 @@ from m12_blit_safe_r27_emit import emit_fill_safe
 from m17_blit_group_r55_emit import emit_fill_grouped
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+BASE = ROOT / "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib"
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 R54_ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib"
 BASE_SHA = "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"

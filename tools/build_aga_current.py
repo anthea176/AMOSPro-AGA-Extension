@@ -49,7 +49,7 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R57 v0.13.2"):
+    if active.startswith(("R57 v0.13.2", "promoted R57 v0.13.2")):
         from build_m17_r57_rastport import build as r57_build
         candidate,meta=r57_build()
         assert candidate==current,"Current R57 differs from deterministic builder"
