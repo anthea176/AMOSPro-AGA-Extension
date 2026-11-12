@@ -1,6 +1,6 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
-## R57 0.13.2 — correctif ciblé, Gate C compilée PASS après Guru R56
+## R57 0.13.2 — Gates B/C WinUAE PASS après Guru R56
 
 **Faits utilisateur :** benchmark V2 R56 sous AMOS interprété **PASS** (`AGA ERR 0`, clôture sans erreur, Bar G 40/41/41, Clear G 59/58/58). En compilé, `Software Failure 8000000B` (Line-F), **Gate C R56 FAIL**. Le programme compilé de l'auteur utilise `Do / Wait Vbl / Loop` et non le `Wait Key` du test historique. Le PC de faute n'est pas disponible.
 
@@ -8,14 +8,14 @@
 
 **R57 :** nouvelle implémentation `RectFill`/`SetRast` de 580 octets **à l'emplacement 30128**, ancien helper R55 de 620 octets remplacé (40 NOP de remplissage). **Saut Fill, BSR de Clear, stubs, dispatcher, offsets et taille du monolithe 30 780 octets = R55**. Aucun nouveau token, 53 commandes / 60 entrées AP20. [Binaire actif](../dist/AMOSPro_AGA.Lib) **32 980 octets**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0` ; [ASC actif unique](../tests/current/M17_R57_RAST_FILL_01.asc) avec boucle VBL. Pas de deuxième bibliothèque ni de branche. `LAST_GOOD` R54 inchangée.
 
-**Validation :** [CI R57 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339) : 111 scénarios CPU, pixels, double buffering, Safe, ABI, branchement de Clear et égalité des stubs Compiler R55. **Gate C R57 compilée/WinUAE PASS sur capture utilisateur du 12/11/2026** : `M17-R57-RAST-FILL-01`, `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, aucun Guru. **Gate B R57 interprétée non confirmée ; Gate D physique non testée.** Le symptôme Line-F compilé de R56 disparaît dans la R57 sur ce scénario, conformément à l'hypothèse de placement, **sans preuve définitive du mécanisme exact**. **Benchmark V2 R57 compilé maintenant PASS**, mesures détaillées dans [`RESULTATS_32C_R57_COMPILER_2026-11-12.md`](../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md) ; ne pas refaire les anciennes validations R54/R55 ni le test compilé R57.
+**Validation :** [CI R57 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339) : 111 scénarios CPU, pixels, double buffering, Safe, ABI, branchement de Clear et égalité des stubs Compiler R55. **Gate C R57 compilée/WinUAE PASS sur capture utilisateur du 12/11/2026** : `M17-R57-RAST-FILL-01`, `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, aucun Guru. **Gate B R57 AMOS interprété/WinUAE PASS** (capture utilisateur du 12/11/2026) : `M17-R57-RAST-FILL-01`, `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Le message de l'éditeur `Program interrupted at line 169` indique l'arrêt manuel dans la boucle finale `Do / Wait Vbl / Loop` (`Wait Vbl` ligne 169), **pas un plantage**. Gate B du test actif et Gate C du test compilé PASS indépendamment. Gate D Amiga physique non testée. **Gate D physique NON TESTÉE.** Le symptôme Line-F compilé de R56 disparaît dans la R57 sur ce scénario, conformément à l'hypothèse de placement, **sans preuve définitive du mécanisme exact**. **Benchmark V2 R57 compilé maintenant PASS**, mesures détaillées dans [`RESULTATS_32C_R57_COMPILER_2026-11-12.md`](../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md) ; ne pas refaire les anciennes validations R54/R55 ni le test compilé R57.
 
 ### Performances R57 compilée (capture utilisateur)
 
 - `BAR 100 G` : **41/40/41 ticks** (médiane **41**) contre R55 compilée **54/54/54** (médiane **54**), **−24,1 %** du temps.
 - `CLEAR 80 G` : **58/58/58 ticks** (médiane **58**) contre R55 compilée **115/116/115** (médiane **115**), **−49,6 %**.
 - `AGA ERR 0` ; `V2 FINISHED - CLOSE RETURNED`. BAR AMOS natif médiane **41**, CLEAR AMCAF **57** ticks.
-- Ces chiffres comparent uniquement les exécutions **compilées** R55/R57, sans revendiquer de gain matériel réel ni de réglages WinUAE strictement identiques documentés. Gate B interprétée R57 non confirmée, Gate D physique non testée. R54 LAST_GOOD inchangée.
+- Ces chiffres comparent uniquement les exécutions **compilées** R55/R57, sans revendiquer de gain matériel réel ni de réglages WinUAE strictement identiques documentés. Gate B interprétée R57 PASS sur son test actif (capture utilisateur), Gate D physique non testée. R54 LAST_GOOD inchangée.
 
 **Bilan :** l'optimisation M17 apporte désormais une accélération Fill/Clear mesurée en compilé. [Tableau complet](../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md).
 

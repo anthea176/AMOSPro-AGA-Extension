@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État actuel — M17/R57 Gates A/C PASS ; R54 LAST_GOOD (12/11/2026)
+## État actuel — M17/R57 Gates A/B/C PASS ; R54 LAST_GOOD (12/11/2026)
 
 **Binaire actif unique `dist/AMOSPro_AGA.Lib` : R57 0.13.2**, 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 30 780 octets (taille R55). La nouvelle routine RastPort Fill/Clear de 580 octets occupe l'ancien créneau de 620 octets R55, complété de 40 NOP ; stubs AP20, dispatcher, branchements externes et offsets inchangés. **[Test ASC unique](../tests/current/M17_R57_RAST_FILL_01.asc)** : Safe, Fill/Clear/Copy, 40 swaps, boucle VBL.
 
-**R57 Gate A CPU/CI PASS et Gate C AMOS Compiler/WinUAE PASS** (capture utilisateur : `RESULT 1`, 40 cycles, erreurs 0, `CLOSE RETURNED`, aucun Guru). **R57 Gate B interprétée non confirmée, D Amiga physique non testée.** R56 avait un benchmark interprété PASS mais plantait en compilé avec `8000000B`. Le retour à l'ancien emplacement R55 élimine le plantage dans ce scénario ; la cause matérielle exacte reste à caractériser. **`LAST_GOOD` R54 0.12.9 reste intacte** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C historiques PASS). [Rapport](M17_BLITTER_DIAGNOSTIC.md).
+**R57 Gates A CPU/CI, B AMOS interprété/WinUAE et C AMOS Compiler/WinUAE PASS** (captures utilisateur : `RESULT 1`, 40 cycles, erreurs 0, `CLOSE RETURNED`, aucun Guru). En interprété, arrêt manuel dans `Wait Vbl` à la ligne 169 de la boucle finale : comportement attendu. **Gate D Amiga physique non testée.** R56 avait un benchmark interprété PASS mais plantait en compilé avec `8000000B`. Le retour à l'ancien emplacement R55 élimine le plantage dans ce scénario ; la cause matérielle exacte reste à caractériser. **`LAST_GOOD` R54 0.12.9 reste intacte** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C historiques PASS). [Rapport](M17_BLITTER_DIAGNOSTIC.md).
 
 ## Historique — M16/R46 v0.12.1, ancien checkpoint Gates A/B (12/11/2026)
 

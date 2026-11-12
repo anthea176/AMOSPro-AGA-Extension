@@ -31,7 +31,7 @@ R57 rejoint **BAR AMOS natif (41 ticks médians)** sur cette charge. Sur **CLEAR
 ## Validation et limites
 
 - **R57 Gate A CPU/CI : PASS.** **Gate C AMOS Compiler/WinUAE : PASS** sur le test fonctionnel R57 (capture antérieure : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, aucun Guru) et le benchmark compilé V2 de cette capture (`AGA ERR 0`).
-- **Gate B R57 interprétée sur l'ASC courant : non confirmée.** La réussite interprétée R56 ne se transfère pas automatiquement à R57. **Gate D matériel Amiga AGA : non testée.**
+- **Gate B R57 interprétée sur l'ASC courant : PASS sur capture utilisateur ultérieure du 12/11/2026** (`RESULT 1`, `CLOSE RETURNED`, erreurs 0, 40 cycles). L'interruption de l'éditeur à la ligne 169 dans `Wait Vbl` correspond à l'arrêt manuel de la boucle finale, **pas à une erreur**. **Gate D matériel Amiga AGA : non testée.**
 - **Conclusion de performance :** accélération Fill et Clear nette et reproductible sur trois passages du programme compilé de référence, sous les conditions WinUAE de l'utilisateur ; pas de garantie universelle de temps ni de comportement sur Amiga physique.
 - Le remplacement en place du helper R55 a éliminé le plantage Line-F du scénario compilé R56, mais le mécanisme exact de l'erreur de placement n'a pas été prouvé.
 - **R54 reste LAST_GOOD**, inchangée, sans promotion automatique.
