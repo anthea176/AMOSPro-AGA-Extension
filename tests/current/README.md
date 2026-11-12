@@ -1,13 +1,9 @@
-# Test AMOS actif — M15/R41 Aga Draw
+# Tests AMOS actifs
 
-**Seul test `.asc` actif :** [`M15_R41_DRAW_01.asc`](M15_R41_DRAW_01.asc). **Gate A CPU/CI 68000 PASS (325 cas) ; Gate B AMOS interprété/WinUAE NON TESTÉE**. La R40 reste `LAST_GOOD`. Ne PAS déplacer le test dans `tests/passed/` ni promouvoir de binaire sans confirmation utilisateur.
+**Aucun test `.asc` actif.** La fonction **M15/R41 `Aga Draw(X1,Y1,X2,Y2,Pen)`** a passé les Gates A (CPU 68000 / CI) et B (AMOS interprété / WinUAE) le **12/11/2026**. [Test `M15_R41_DRAW_01.asc` archivé](../passed/M15_R41_DRAW_01.asc) **sans modification**, Git blob `aa7de64b37a2842db21bc7452c2fab4570413e9f` (3 553 octets).
 
-Installer la [candidate R41](../../dist/AMOSPro_AGA.Lib) (**v0.11.2**, 24 816 octets, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`) dans `APSystem`, sous le nom exact `AMOSPro_AGA.Lib`, en conservant le même slot d'extension. Sauvegarder la précédente version et **redémarrer AMOS**. La [R40 `LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) et son archive sont inchangées.
+**Preuves Gate B :** capture console du test utilisateur `OPEN 1 DB 1 CLEAR 1`, `BORDER 1 1 1 1`, `CLIPPED 1 1 1 1`, `STAR 8 ERR 0 CENTER 1`, `OUTSIDE 0 0 0 0`, `BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, retour normal à AMOS (fin ligne 131). L'utilisateur a confirmé « rendu ok ! ». R41 est maintenant [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-Dans un programme AMOS **vide**, importer le test avec **Project → Merge ASCII** (pas `Load` des programmes tokenisés). Aucun IFF ni ABK nécessaire. Le test ouvre un écran **320×256×256 couleurs**, dessine un cadre, **huit rayons** dans toutes les directions et **quatre lignes traversant les limites de l'écran**, dont des diagonales. Il vérifie aussi les quatre segments intégralement hors écran, les valeurs 32 bits qui ne rentrent pas dans les coordonnées signées 16 bits, les index de couleur invalides, le point unique, le `Safe` après un swap et le retour à AMOS.
+**Version validée : R41 v0.11.2**, **46 commandes AP20**, **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`. `dist/AMOSPro_AGA.Lib`, l'archive R41 et `LAST_GOOD` sont identiques. La [R40 v0.11.1](../../dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) et son [test archivé](../passed/M15_R40_PLOT_01.asc) restent inchangés. Gates C Compiler et D Amiga AGA réel non testées.
 
-**Affichage attendu :** cadre blanc, étoile colorée à huit branches au centre, deux diagonales, une ligne horizontale et une verticale traversantes (toutes coupées proprement aux bords). Les tracés ne doivent pas déborder sur la mémoire et aucun écran noir / plantage n'est attendu.
-
-**Résultats attendus à la console :** `OPEN 1 DB 1 CLEAR 1`, `BORDER 1 1 1 1`, `CLIPPED 1 1 1 1`, `STAR 8 ERR 0 CENTER 1`, `OUTSIDE 0 0 0 0`, `BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Le résultat numérique `RESULT 1` ne remplace pas la vérification du rendu visuel.
-
-**Gates C Compiler et D Amiga AGA physique NON TESTÉES.** Ancien [test R40 exact et validé](../passed/M15_R40_PLOT_01.asc) conservé dans `tests/passed/`.
+Les anciens tests sont conservés dans [`tests/passed/`](../passed/).

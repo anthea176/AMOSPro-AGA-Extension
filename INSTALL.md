@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R41 v0.11.2 — WinUAE test candidate, native 68000 CPU/CI Gate A PASS (325 cases), Gate B NOT TESTED:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24,816 bytes**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 named AP20 commands**, including `Aga Draw(X1,Y1,X2,Y2,Pen)`. [R41 active test](tests/current/M15_R41_DRAW_01.asc) needs no IFF/ABK. **Last validated: R40 v0.11.1**, [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) and immutable R40 archive (23,840 bytes). Gates C/D untested.
+**R41 v0.11.2 — native CPU/CI Gate A and WinUAE Gate B PASS (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24,816 bytes**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc` and **46 named AP20 commands**. `Aga Draw(X1,Y1,X2,Y2,Pen)` passed 325 native 68000 CPU/CI tests and user-confirmed WinUAE rendering (safe clipping, `RESULT 1`, `CLOSE RETURNED`). [Exact passed test archived](tests/passed/M15_R41_DRAW_01.asc). R40 remains in its historical archive; Gates C/D not tested.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R41 v0.11.2 candidate](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib`, **keep the same extension slot**, and **restart AMOS**. Back up your old Lib; [R40 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains the WinUAE-PASS fallback. In an empty program, import the [R41 test](tests/current/M15_R41_DRAW_01.asc) via **Project → Merge ASCII**.
+2. Copy [WinUAE-validated R41 v0.11.2](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib`, **keep the extension slot unchanged**, then **restart AMOS**. Back up the previous library; [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) now contains R41. The [passed R41 test](tests/passed/M15_R41_DRAW_01.asc) is archived.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R41 v0.11.2 — WinUAE test candidate, native 68000 CPU/CI Gate A PASS (325 cases), Gate B NOT TESTED:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24,816 bytes**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, **46 named AP20 commands**, including `Aga Draw(X1,Y1,X2,Y2,Pen)`. [R41 active test](tests/current/M15_R41_DRAW_01.asc) needs no IFF/ABK. **Last validated: R40 v0.11.1**, [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) and immutable R40 archive (23,840 bytes). Gates C/D untested.
+**R41 v0.11.2 — native CPU/CI Gate A and WinUAE Gate B PASS (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24,816 bytes**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc` and **46 named AP20 commands**. `Aga Draw(X1,Y1,X2,Y2,Pen)` passed 325 native 68000 CPU/CI tests and user-confirmed WinUAE rendering (safe clipping, `RESULT 1`, `CLOSE RETURNED`). [Exact passed test archived](tests/passed/M15_R41_DRAW_01.asc). R40 remains in its historical archive; Gates C/D not tested.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

@@ -1,4 +1,12 @@
-# M15/R41 v0.11.2 — Aga Draw : Gate A PASS, Gate B WinUAE à tester
+# M15/R41 v0.11.2 — Aga Draw : Gates A/B PASS, LAST_GOOD
+
+## M15/R41 v0.11.2 — Gates A CPU/CI et B WinUAE PASS, LAST_GOOD (12/11/2026)
+
+**R41 `Aga Draw(X1,Y1,X2,Y2,Pen)` VALIDÉE** : 46 commandes AP20, **325 tests CPU 68000 + export assembleur strict + CI PASS**, puis test AMOS interprété/WinUAE confirmé par l'utilisateur (« rendu ok ! »). Capture : `OPEN 1 DB 1 CLEAR 1`, `BORDER 1 1 1 1`, `CLIPPED 1 1 1 1`, `STAR 8 ERR 0 CENTER 1`, `OUTSIDE 0 0 0 0`, `BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne **131**. [Test exact archivé](../tests/passed/M15_R41_DRAW_01.asc) (Git blob `aa7de64b37a2842db21bc7452c2fab4570413e9f`, 3 553 octets). `tests/current/` ne contient aucun ASC actif.
+
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib` **octet pour octet**, **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`. Archive R40 v0.11.1 préservée (SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`), ainsi que R38 et les archives antérieures. Dessin strictement sur le back buffer AGA : tracé rapide `Move/Draw` uniquement si extrémités valides ; clipping logiciel avec contrôle **avant chaque pixel** hors limites. **Gates C AMOS Compiler et D Amiga AGA réel NON TESTÉES.** R39 fontes bitmap reportée ; R42 `Aga Box` et R43 `Aga Circle` non implémentées. Dépôt `anthea176/AMOSPro-AGA-Extension`, branche **`main` uniquement**.
+
+## Historique de préparation de la candidate (avant validation)
 
 **Candidate v0.11.2 publiée :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [archive R41](../dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`. **46 commandes AP20**. `LAST_GOOD` = **R40**, [fichier](../dist/AMOSPro_AGA_LAST_GOOD.Lib) et [archive](../dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) strictement inchangés. **Gate A native 68000 CPU/CI PASS, 325 cas + export strict** ; [CI intégrité](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43193933457) PASS. [`tests/current/M15_R41_DRAW_01.asc`](../tests/current/M15_R41_DRAW_01.asc) est **le seul test actif** pour Gate B utilisateur. La nouvelle candidate n'a pas encore été exécutée sous AMOS/WinUAE ; Gates C Compiler/D Amiga physique non testées.
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """M15/R41 v0.11.2: deterministic Aga Draw candidate from immutable R40.
 
-The R40 LAST_GOOD and its archive are left untouched. R41 is NOT promoted
-until explicit user-confirmed interpreted AMOS/WinUAE Gate B.
+The R40 LAST_GOOD and its archive are left untouched. R41 was promoted only after explicit user-confirmed WinUAE Gate B.
 """
 import argparse
 import base64
@@ -17,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"
 BASE_SHA256 = "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"
 GETP = b"GetP"
@@ -71,7 +70,7 @@ def build():
     return candidate, dict(version=VERSION, sha256=digest(candidate),
         size=len(candidate), named_commands=46, segments=52,
         new_command=API[0], changed_segments=[50, 51],
-        labels=labels, Gate_A="CPU_CI_PENDING", Gate_B="NOT_TESTED")
+        labels=labels, Gate_A="CPU_CI_PASS", Gate_B="USER_WINUAE_PASS")
 
 
 if __name__ == "__main__":
