@@ -23,6 +23,7 @@ on:
       - "tools/build_*.py"
       - "tools/compiler_relocation.py"
       - "tools/test_*.py"
+      - "tools/m17_blit_group_r55_emit.py"
       - "tools/agapal_r30_layout.py"
       - "tools/m16_agapic.py"
       - "tools/m16_agapic_capture_model.py"
@@ -143,8 +144,22 @@ jobs:
         run: |
           python -B tools/test_m16_bank_api_r54.py
           python -B tools/build_m16_bank_api_r54.py --emit-base64
+      - name: M17 R55 grouped Fill/Clear in-memory CPU Gate A
+        run: |
+          python -B tools/test_m17_blit_group_r55.py
+          python -B tools/build_m17_blit_group_r55.py
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
+      - name: Export checked R55 candidate to runner temporary directory
+        run: |
+          python -B tools/build_m17_blit_group_r55.py --ci-output "${RUNNER_TEMP}/r55/AMOSPro_AGA_M17_R55_CANDIDATE.Lib"
+      - name: Upload R55 experimental WinUAE test artifact (NOT LAST_GOOD)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AMOSPro_AGA_M17_R55_EXPERIMENTAL_GateA_ONLY
+          path: ${{ runner.temp }}/r55/AMOSPro_AGA_M17_R55_CANDIDATE.Lib
+          if-no-files-found: error
+          retention-days: 30
 
   pre_release_r54_full:
     # R54 pre-release and promotion: execute the manually maintained full
