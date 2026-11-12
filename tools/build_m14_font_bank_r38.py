@@ -18,7 +18,7 @@ from m14_font_bank_r38_emit import emit_bank_select, ENTRY_INDEX
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib'
 BASE_SHA256 = 'bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a'
-LAST_GOOD = ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+LAST_GOOD = ROOT / 'dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib'
 LAST_GOOD_SHA256 = '0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc'
 DEST = ROOT / 'dist/AMOSPro_AGA.Lib'
 ARCHIVE = ROOT / 'dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib'

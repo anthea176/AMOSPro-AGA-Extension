@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M7_v0.8.2_COPPER_RASTER_R18.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M8_v0.8.3_MOUSE_POSITION_R19.Lib"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
-LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+LAST_GOOD = ROOT / "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"
 BASE_SHA256 = "600b8c2c38486004adef8c0e7924df877f7dd7829e1c622a89bbdc0db9f9808a"
 LAST_GOOD_SHA256="0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc"
 
