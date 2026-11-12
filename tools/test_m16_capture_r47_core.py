@@ -11,7 +11,7 @@ import struct
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
 from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_MEM_WRITE, UC_HOOK_CODE
 from unicorn.m68k_const import (
-    UC_M68K_REG_PC, UC_M68K_REG_A7, UC_M68K_REG_SR, UC_M68K_REG_D0,
+    UC_M68K_REG_PC, UC_M68K_REG_A7, UC_M68K_REG_SR, UC_CPU_M68K_M68000, UC_M68K_REG_D0,
     UC_M68K_REG_D1, UC_M68K_REG_D2, UC_M68K_REG_D3,
     UC_M68K_REG_D4, UC_M68K_REG_D5, UC_M68K_REG_D6,
     UC_M68K_REG_D7, UC_M68K_REG_A0, UC_M68K_REG_A1,
@@ -55,8 +55,10 @@ def screen(width=43, height=23, depth=4, solid=False):
 
 def execute(code, planes, stride, x, y, width, depth, transparent=-1, capacity=8192):
     uc = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
-    uc.mem_map(0x10000, 0x90000)
+    uc.ctl_set_cpu_model(UC_CPU_M68K_M68000)
+    uc.mem_map(0, 0x1000000)  # same 68000/exception vectors as established CPU harness
     uc.mem_write(CODE, code)
+    uc.mem_write(STOP, bytes.fromhex('4e71'))
     uc.mem_write(STACK, struct.pack(">I", STOP))
     for p, plane in enumerate(planes):
         uc.mem_write(PLANE + p * 0x1000, bytes(plane))
