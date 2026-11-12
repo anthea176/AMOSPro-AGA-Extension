@@ -42,6 +42,7 @@ on:
       - "tools/m13_aga_fade_black_r34_emit.py"
       - "tools/m13_aga_fade_white_r35_emit.py"
       - "tools/m13_palette_cycle_r36_emit.py"
+      - "tools/m15bis_cursor_r44_emit.py"
       - "tools/m15_box_r42_emit.py"
       - "tools/m15_draw_r41_emit.py"
       - "tools/m15_plot_r40_emit.py"
@@ -104,6 +105,14 @@ jobs:
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_circle_r43 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R43_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R43_GateA.Lib --out /tmp/amos-aga-r43-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib
+
+      - name: M15bis R44 Aga Mouse Cursor — native 68000 CPU, closure and reproducible in-memory candidate
+        run: |
+          python -B tools/test_m15bis_cursor_r44.py
+          python -B tools/build_m15bis_cursor_r44.py
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15bis_cursor_r44 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R44_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R44_GateA.Lib --out /tmp/amos-aga-r44-native --baseline none --strict
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
 
       - name: M15 R41 Aga Draw promoted — native 68000 Gate A, clipping and strict source
         run: |

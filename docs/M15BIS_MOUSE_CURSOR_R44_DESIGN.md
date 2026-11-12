@@ -1,6 +1,6 @@
-# M15bis/R44 — Aga Mouse Cursor : proposition de contrat (validation utilisateur attendue)
+# M15bis/R44 — Aga Mouse Cursor : contrat approuvé, Gate A CPU en cours
 
-**Statut : ÉTUDE SEULEMENT (12/11/2026).** Aucun changement de source 68000, de token AP20, de builder, de test `.asc`, de bibliothèque ou de `LAST_GOOD`. La R43 v0.11.4 `Aga Circle` reste **la dernière version WinUAE-PASS** : 48 commandes AP20, 27 092 octets, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A et B PASS ; Gates C/D non testées. **R44 v0.11.5 est uniquement un numéro de travail proposé.**
+**Statut : contrat explicitement approuvé par l'utilisateur (« oui ») le 12/11/2026.** Code 68000, builder déterministe et premiers tests natifs déposés en étude Gate A. **Aucune Gate A/CI R44 encore confirmée, aucune candidate R44 publiée et aucun test WinUAE actif.** La R43 v0.11.4 `Aga Circle` reste **la dernière version WinUAE-PASS** : 48 commandes AP20, 27 092 octets, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A et B PASS ; Gates C/D non testées. **R44 v0.11.5 est uniquement un numéro de travail proposé.**
 
 ## Objectif demandé
 
@@ -41,4 +41,4 @@ _OK=Aga Mouse Cursor(Visible)
 - [AmigaOS Intuition Pointer](https://wiki.amigaos.net/wiki/Intuition_Pointer) : `SetPointer / ClearPointer`, format sprite, exigence Chip RAM.
 - [AmigaOS Window Structures and Functions](https://wiki.amigaos.net/wiki/Window_Structures_and_Functions) : visibilité du pointeur associée à la fenêtre active.
 - [Intuition Input R3 historique](../tools/obsolete/build_intuition_input_r3.py) : `Window*` en state+36, taille ancienne 40, helpers `CloseWindow` et Ctrl+C (historique uniquement, à confronter à R43).
-- **Décision attendue** : validation explicite du nom, du mode `0=masqué / 1=visible`, de l'allocation unique 72 octets Chip et de la restauration automatique au cleanup. **Aucun codage autorisé par cette simple proposition.**
+- **Décision reçue** : utilisateur valide le nom, le mode `0=masqué / 1=visible`, la mémoire Chip allouée une fois et la restauration au cleanup. **Gate A à vérifier avant publication.**
