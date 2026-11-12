@@ -7,3 +7,5 @@
 **R54 `LAST_GOOD` protégée.** Branche `main` exclusivement.
 
 **Preuve compilée (12/11/2026) :** `M17-R57-RAST-FILL-01`, `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`. Aucun Guru. Capture fournie par l'auteur ; ce retour ne constitue pas une mesure de performance. Aucun changement de l'ASC pour enregistrer la validation.
+
+**Performance sur le benchmark V2 compilé R57 (12/11/2026) :** BAR G `41/40/41`, CLEAR G `58/58/58`, `AGA ERR 0`, fin correcte. Médianes Fill/Clear R55 compilée **54/115** → R57 **41/58**, soit **−24,1 % / −49,6 % du temps**. [Rapport](../../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md). Le benchmark historique ne constitue pas un deuxième ASC actif de `tests/current/`.
