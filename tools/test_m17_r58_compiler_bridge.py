@@ -30,7 +30,7 @@ def run() -> None:
     assert native58[:59] == native57, "all R57 native instructions preserved exactly"
     assert len(native58[59]) == 40000-30748 and not any(native58[59])
     assert native58[60] == FAR_PROBE
-    assert tok57[2:] == tok58[2:] and tok57[:2] != tok58[:2], "only Aga Probe index may change"
+    assert tok57[:6] == tok58[:6] and tok57[8:] == tok58[8:] and tok57[6:8] != tok58[6:8], "only Aga Probe index may change"
     assert unpack_from(">H", tok58, 6)[0] == FAR_ENTRY_INDEX
     tokens, entries, _title = unpack_ap20(binary)
     assert tokens == tok58 and len(entries) == 62
