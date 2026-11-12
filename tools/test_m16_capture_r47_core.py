@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import struct
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
-from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_MEM_WRITE
+from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_MEM_WRITE, UC_HOOK_CODE
 from unicorn.m68k_const import (
-    UC_M68K_REG_PC, UC_M68K_REG_A7, UC_M68K_REG_D0,
+    UC_M68K_REG_PC, UC_M68K_REG_A7, UC_M68K_REG_SR, UC_M68K_REG_D0,
     UC_M68K_REG_D1, UC_M68K_REG_D2, UC_M68K_REG_D3,
     UC_M68K_REG_D4, UC_M68K_REG_D5, UC_M68K_REG_D6,
     UC_M68K_REG_D7, UC_M68K_REG_A0, UC_M68K_REG_A1,
@@ -77,13 +77,24 @@ def execute(code, planes, stride, x, y, width, depth, transparent=-1, capacity=8
                 UC_M68K_REG_A5, UC_M68K_REG_A6, UC_M68K_REG_D7):
         uc.reg_write(reg, 0x50000 + reg * 2)
     before = {reg: uc.reg_read(reg) for reg in REGS}
+    uc.reg_write(UC_M68K_REG_SR, 0x2000)
     uc.reg_write(UC_M68K_REG_A7, STACK)
     writes = []
     def memwrite(uc, access, address, size, value, user):
         if PLANE <= address < PLANE + depth * 0x1000:
             writes.append((address, size))
     uc.hook_add(UC_HOOK_MEM_WRITE, memwrite)
-    uc.emu_start(CODE, STOP, count=8000000)
+    trace = []
+    def code_hook(uc, addr, size, user):
+        trace.append((hex(addr),bytes(uc.mem_read(addr,min(size,8))).hex()))
+        if len(trace)>24: trace.pop(0)
+    uc.hook_add(UC_HOOK_CODE, code_hook)
+    try:
+        uc.emu_start(CODE, STOP, count=8000000)
+    except Exception as error:
+        raise AssertionError(('native exception',type(error).__name__,
+            str(error), 'PC', hex(uc.reg_read(UC_M68K_REG_PC)),
+            'trace', trace, 'stack', hex(uc.reg_read(UC_M68K_REG_A7)))) from error
     assert uc.reg_read(UC_M68K_REG_PC) == STOP, "did not RTS"
     assert uc.reg_read(UC_M68K_REG_A7) == STACK + 4, "stack mismatch"
     assert not writes, "source bitplane modified"
