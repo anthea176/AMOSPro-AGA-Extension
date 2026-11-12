@@ -36,6 +36,6 @@ Les données mesurent la **durée observable des instructions depuis AMOS**, pas
 
 `AGA ERR 0` signifie que **le dernier appel de chacune des 12 séries chronométrées** a réussi ; les milliers de retours intermédiaires ne sont pas décomptés, pour éviter un surcoût de contrôle côté AGA uniquement. En cas de refus Safe ou d'échec de préparation, le benchmark affiche une erreur et **ne doit pas être utilisé pour conclure**. Si les ticks sont trop faibles, le nombre d'appels peut être augmenté pour les deux méthodes à l'identique.
 
-**Statut :** préparation du code et contrôle statique des dimensions, bornes et cas de recouvrement ; **non exécuté sous WinUAE** à ce stade. Les Gates A/B/C de R57 restent acquises sur le test fonctionnel précédent.
+**Statut : benchmark exécuté avec succès sous WinUAE, en interprété ET en compilé (captures utilisateur du 12/11/2026).** `AGA ERR 0` et `COPY BENCH FINISHED - CLOSE RETURNED` dans les deux modes. En compilé : **64×48 aligné AMOS 35 / AGA 69 ticks** ; les trois autres charges ont des temps presque identiques. [Mesures brutes des deux modes et interprétation](RESULTATS_COPY_32C_R57_2026-11-12.md). Les Gates A/B/C de R57 restent acquises sur son test fonctionnel distinct, D physique non testée.
 
 Références : [manuel AMOS Screen Copy](https://amospromanual.dev/06-02-using-screens.html) · [manuel AMCAF Blitter Wait](https://www.ultimateamiga.com/HostedProjects/AMOSFactory/AMCAFguide/manual/graphicblitter.html) · [benchmark R57 précédent](RESULTATS_32C_R57_COMPILER_2026-11-12.md).

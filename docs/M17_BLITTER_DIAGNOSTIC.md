@@ -19,6 +19,11 @@
 
 **Bilan :** l'optimisation M17 apporte désormais une accélération Fill/Clear mesurée en compilé. [Tableau complet](../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md).
 
+### Nouvelle mesure M17 — Copy R57 contre AMOS Screen Copy
+
+**Benchmark Copy interprété et compilé PASS**, mêmes quatre géométries sur 3 passages, `AGA ERR 0`, `COPY BENCH FINISHED - CLOSE RETURNED`. [Rapport brut](../benchmarks/RESULTATS_COPY_32C_R57_2026-11-12.md). En **compilé**, médianes AMOS/AGA : aligné **35/69** ticks, non aligné **131/129**, grande zone **206/206**, recouvrement **173/172**. En interprété, petit aligné **35/69** également. L'écart du petit rectangle n'est donc pas principalement lié au mode interprété. **Prochaine phase : diagnostic ciblé de `Aga Blit Copy` / `BltBitMap` / `WaitBlit` et des chemins AMOS alignés**, avant décision de code ; aucune preuve d'une cause unique, ni changement R57 ou `LAST_GOOD`.
+
+
 ---
 
 ## R56 0.13.1 — remplacement Fill/Clear par graphics.library RastPort

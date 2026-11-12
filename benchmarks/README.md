@@ -2,7 +2,7 @@
 
 ## Benchmark cible : Copy (M17/R57)
 
-**[Screen Copy AMOS vs Aga Blit Copy](README_COPY_32C.md)** — [source ASCII `copy_32c_r57.asc`](copy_32c_r57.asc), quatre géométries (alignée, décalée, grande zone et recouvrement), trois passages, PAL 320×256×32, interprété et compilé. **En attente des mesures utilisateur.** Aucun changement de la R57, de `LAST_GOOD` ou de `tests/current/`.
+**[Screen Copy AMOS vs Aga Blit Copy](README_COPY_32C.md)** — [source ASCII `copy_32c_r57.asc`](copy_32c_r57.asc), quatre géométries (alignée, décalée, grande zone et recouvrement), trois passages, PAL 320×256×32, interprété et compilé. **Interprété et compilé PASS sur captures utilisateur.** [Mesures Copy R57 interprétées et compilées](RESULTATS_COPY_32C_R57_2026-11-12.md) : petite copie alignée **AMOS 35 ticks / AGA 69 ticks** dans les deux modes ; trois autres scénarios quasi à égalité en compilé. Aucun changement de la R57, de `LAST_GOOD` ou de `tests/current/`.
 
 **V1 : exécution AMOS interprété / WinUAE confirmée par capture utilisateur (12/11/2026), `AGA ERR 0` et `BENCH FINISHED - CLOSE RETURNED`.** Les durées restent des observations, pas des preuves d'optimisation. Le benchmark ne modifie ni la bibliothèque AGA ni ses archives / tests `LAST_GOOD`.
 
