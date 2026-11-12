@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Current test candidate R40 v0.11.1: 68000 CPU/CI Gate A PASS (221 cases), WinUAE Gate B pending.** New `Aga Plot(X,Y,Pen)`; **45 named AP20 commands**. [R40 candidate](dist/AMOSPro_AGA.Lib) (23,840 bytes; SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). [WinUAE-validated R38](dist/AMOSPro_AGA_LAST_GOOD.Lib) (23,380 bytes; SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`) remains in `LAST_GOOD`. R39 deferred; Compiler Gate C and physical AGA Gate D untested.
+**R40 v0.11.1 — latest WinUAE-validated release (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R40 versioned archive](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) byte-for-byte (**23,840 bytes**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 named AP20 commands**; `Aga Plot(X,Y,Pen)` passed **221 native 68000 CPU test cases and CI**, with **interpreted AMOS/WinUAE Gate B confirmed by the user**: 192 pixels, zero errors, four corners, rejected invalid arguments, `Safe` after swap, `RESULT 1`, `CLOSE RETURNED`. [Exact archived test](tests/passed/M15_R40_PLOT_01.asc). Compiler Gate C and physical AGA Gate D untested. **R38 remains immutable in its versioned archive.**
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R40 v0.11.1 candidate](dist/AMOSPro_AGA.Lib) (**45 commands, CPU/CI Gate A PASS, WinUAE Gate B pending**) to **`APSystem`** as `AMOSPro_AGA.Lib`. Keep the same extension slot as R38 and **restart AMOS**. Back up the previously installed Lib; [R38 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains available for rollback. The [R40 test](tests/current/M15_R40_PLOT_01.asc) needs no external assets.
+2. Copy [WinUAE-validated R40 v0.11.1](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib`, using the existing extension slot, then **restart AMOS**. Back up the previous library first. R40 is also available as [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib). The [passed test](tests/passed/M15_R40_PLOT_01.asc) needs no IFF/ABK.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R40 candidate — Gate A PASS, Gate B not tested:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) is identical to the [R40 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib), **23,840 bytes**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`. [Active WinUAE test](tests/current/M15_R40_PLOT_01.asc). **Latest `LAST_GOOD`: R38 v0.11.0**, [file](dist/AMOSPro_AGA_LAST_GOOD.Lib) and [archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib), SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`, unchanged.
+**R40 v0.11.1 — latest WinUAE-validated release (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R40 versioned archive](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) byte-for-byte (**23,840 bytes**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 named AP20 commands**; `Aga Plot(X,Y,Pen)` passed **221 native 68000 CPU test cases and CI**, with **interpreted AMOS/WinUAE Gate B confirmed by the user**: 192 pixels, zero errors, four corners, rejected invalid arguments, `Safe` after swap, `RESULT 1`, `CLOSE RETURNED`. [Exact archived test](tests/passed/M15_R40_PLOT_01.asc). Compiler Gate C and physical AGA Gate D untested. **R38 remains immutable in its versioned archive.**
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

@@ -3,7 +3,7 @@
 
 Base: immutable R38 WinUAE-PASS archive only. Append one AP20 numeric function,
 leave previous R38 code/data exactly intact apart from final GetP delimiter.
-Do not write DEST or LAST_GOOD; Gate B must be user-confirmed before promotion.
+Does not write DEST or LAST_GOOD; R40 was promoted after user-confirmed Gate B.
 """
 import argparse
 import base64
@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib"
 BASE_SHA256 = "09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"
 GETP = b"GetP"
@@ -29,7 +29,7 @@ VERSION = "R40 0.11.1"
 def build():
     frozen = BASE.read_bytes()
     assert digest(frozen) == BASE_SHA256, "immutable R38 archive changed"
-    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "R38 LAST_GOOD changed"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "R40 LAST_GOOD changed"
     old_tokens, old_segments, _ = split(frozen)
     assert len(old_segments) == ENTRY_INDEX == 50
     assert not old_segments[-1].endswith(GETP)
@@ -72,7 +72,7 @@ def build():
     return candidate, dict(version=VERSION, sha256=digest(candidate),
         size=len(candidate), named_commands=45, segments=51,
         new_command=API[0], changed_segments=[49, 50],
-        plot_labels=labels, Gate_A="REQUIRES_NATIVE_CPU_CI", Gate_B="NOT_TESTED")
+        plot_labels=labels, Gate_A="CPU_CI_PASS", Gate_B="USER_WINUAE_PASS")
 
 
 if __name__ == "__main__":

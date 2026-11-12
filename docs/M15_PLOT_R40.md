@@ -1,6 +1,8 @@
 # M15/R40 v0.11.1 — Aga Plot(X,Y,Pen)
 
-**État du 12/11/2026 : Gate A CPU/CI et export assembleur strict PASS ; Gate B AMOS interprété/WinUAE NON TESTÉE.** Première fonction du chantier M15 dessin 2D, approuvée explicitement par l'utilisateur. R39 bitmap 8×8 non développée.
+**Version R40 v0.11.1 promue `LAST_GOOD` le 12/11/2026 : Gates A CPU/CI et B AMOS interprété / WinUAE PASS.** Capture de l'utilisateur : `CORNERS 1 1 1 1`, `DIAG 192 ERR 0`, `BADXY 0 0 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, `RESULT 1`, `CLOSE RETURNED` (fin ligne 99) ; rendu visuel confirmé. [Test original archivé](../tests/passed/M15_R40_PLOT_01.asc), Git blob `6ab9cf4a91cca9f8097ffba40a32e2b85b049c38`. La bibliothèque `dist/AMOSPro_AGA.Lib`, l'archive R40 et `LAST_GOOD` sont identiques : SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`, 23 840 octets. **Gates C Compiler et D Amiga physique NON TESTÉES.** Le contenu des sections de préparation ci-dessous décrit l'état avant l'essai final.
+
+**État validé le 12/11/2026 : Gate A CPU/CI et export strict PASS ; Gate B AMOS interprété/WinUAE PASS après essai utilisateur.** Première fonction du chantier M15 dessin 2D, approuvée explicitement par l'utilisateur. R39 bitmap 8×8 non développée.
 
 ## Interface publique
 
@@ -27,18 +29,18 @@ _OK=Aga Plot(X,Y,Pen)
 |---|---|---|
 | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) | **Candidate R40 v0.11.1** — 45 commandes AP20, 23 840 octets | SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231` |
 | [`dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib`](../dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) | Archive de la **candidate non encore validée WinUAE** ; strictement identique au fichier courant | SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231` |
-| [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) | **R38 v0.11.0** WinUAE-PASS, inchangée, 23 380 octets | SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366` |
+| [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) | **R40 v0.11.1** WinUAE-PASS, identique à candidate et archive, 23 840 octets | SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231` |
 
 **Gate A CPU 68000 + CI : PASS** — [221 scénarios](../tools/test_m15_plot_r40.py) : profondeur 1/2/4/8, deux buffers, cas limites `(0,0)` / `(319,255)`, couleur 0/max, bitmap physique/logique, plan absent, index invalide, gestion `Safe` (dont bit `Disp`), ABI/registre/pile, retour de `WritePixel`, byte-level vérification des pixels et absence d'écriture parasite. [CI GitHub](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43128576279) **PASS**, export source 68000 strict **PASS**. Les 44 commandes et le `LAST_GOOD` R38 sont protégés par les contrôles d'intégrité.
 
-**Gate B AMOS interprété / WinUAE : EN ATTENTE** — [`tests/current/M15_R40_PLOT_01.asc`](../tests/current/M15_R40_PLOT_01.asc). Aucun matériel réel, rendu écran, absence de fuite sur le vrai Amiga ni compatibilité Compiler ne sont inférés des tests CPU.
+**Gate B AMOS interprété / WinUAE : PASS** — [`tests/passed/M15_R40_PLOT_01.asc`](../tests/passed/M15_R40_PLOT_01.asc). Aucun matériel réel, rendu écran, absence de fuite sur le vrai Amiga ni compatibilité Compiler ne sont inférés des tests CPU.
 
 **Gates C/D :** AMOS Compiler et Amiga AGA physique **NON TESTÉES**.
 
 ## Recette WinUAE prévue (Gate B)
 
 1. Installer uniquement la **candidate R40** `dist/AMOSPro_AGA.Lib` dans `APSystem` et **redémarrer AMOS** sans changer son slot. Préserver l'ancienne Lib et l'archive `LAST_GOOD`.
-2. Importer [le test](../tests/current/M15_R40_PLOT_01.asc) dans un programme AMOS vide via **Project → Merge ASCII**. Aucun IFF ni ABK externe n'est nécessaire.
+2. Importer [le test](../tests/passed/M15_R40_PLOT_01.asc) dans un programme AMOS vide via **Project → Merge ASCII**. Aucun IFF ni ABK externe n'est nécessaire.
 3. Vérifier à l'écran AGA un **X de deux diagonales colorées**, quatre pixels aux coins, et les textes, avant le retour AMOS.
 4. À la console, attendre `CORNERS 1 1 1 1`, `DIAG 192 ERR 0`, `BADXY 0 0 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `RESULT 1`, `CLOSE RETURNED`. Les paramètres invalides doivent tous retourner zéro.
 5. **Seulement après confirmation explicite de ce scénario par l'utilisateur**, déplacer le test original sans modification vers `tests/passed/`, copier exactement le binaire validé vers `dist/AMOSPro_AGA_LAST_GOOD.Lib`, puis publier le statut et les empreintes.

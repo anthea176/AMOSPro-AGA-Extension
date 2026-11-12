@@ -17,7 +17,7 @@ LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib"
 DEST = ARCHIVE  # R12 is frozen: never overwrite the active R13 candidate
 BASE_SHA256 = "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3"
-LAST_GOOD_SHA256="09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366"
+LAST_GOOD_SHA256="0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231"
 R12_SHA256 = "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec"
 
 

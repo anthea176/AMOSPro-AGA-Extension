@@ -1,6 +1,8 @@
 # Tests AMOS — R40 Gate A CPU/CI PASS, R38 LAST_GOOD
 
-## M15/R40 v0.11.1 — Aga Plot : Gate A CPU/CI PASS, Gate B WinUAE à tester (12/11/2026)
+**M15/R40 WinUAE Gate B PASS (12/11/2026) :** [`Aga Plot` — test archivé](passed/M15_R40_PLOT_01.asc) (Git blob `6ab9cf4a91cca9f8097ffba40a32e2b85b049c38`, 2 400 octets). 192 pixels / 0 erreur ; coins, paramètres hors limites, Safe après Swap, `RESULT 1`, `CLOSE RETURNED` (ligne 99). R40 v0.11.1 promue `LAST_GOOD` à l'octet près ; **45 commandes AP20**. Gate A CPU/CI PASS, Gate B WinUAE PASS, Gates C/D non testées. `tests/current/` sans ASC actif.
+
+## M15/R40 v0.11.1 — Aga Plot : Gates A CPU/CI et B WinUAE PASS (12/11/2026) — détails historiques de la préparation
 
 **Seule commande approuvée :** `_OK=Aga Plot(X,Y,Pen)` (45e commande AP20). Source 68000 `tools/m15_plot_r40_emit.py`, constructeur déterministe `tools/build_m15_plot_r40.py`, test natif `tools/test_m15_plot_r40.py`. **Gate A PASS : 221 scénarios 68000, export source natif strict et [CI globale](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43128576279) PASS.** Rendu par `graphics.library/WritePixel(-324)` sur le BitMap arrière AGA privé (RastPort sur pile), index de couleur borné, géométrie physique/logique et tous les bitplanes validés, refus avant tout dessin si `Safe` manque, `WritePixel=0` converti en retour AMOS **1**. Aucune modification des anciens segments R38, hormis le marqueur final `GetP`. 
 

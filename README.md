@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**R40 v0.11.1 — WinUAE test candidate:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **45 named AP20 commands**, 23,840 bytes, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`. New `_OK=Aga Plot(X,Y,Pen)` for the private AGA back buffer. **68000 CPU/CI Gate A PASS (221 cases), AMOS/WinUAE Gate B PENDING**; [R40 test](tests/current/M15_R40_PLOT_01.asc). [Last validated R38 (`LAST_GOOD`)](dist/AMOSPro_AGA_LAST_GOOD.Lib), 23,380 bytes, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`, unchanged. [R40 contract](docs/M15_PLOT_R40.md).
+**R40 v0.11.1 — latest WinUAE-validated release (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R40 versioned archive](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib) byte-for-byte (**23,840 bytes**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **45 named AP20 commands**; `Aga Plot(X,Y,Pen)` passed **221 native 68000 CPU test cases and CI**, with **interpreted AMOS/WinUAE Gate B confirmed by the user**: 192 pixels, zero errors, four corners, rejected invalid arguments, `Safe` after swap, `RESULT 1`, `CLOSE RETURNED`. [Exact archived test](tests/passed/M15_R40_PLOT_01.asc). Compiler Gate C and physical AGA Gate D untested. **R38 remains immutable in its versioned archive.**
 
 **R38 Chip RAM endurance passed in WinUAE (12 Nov 2026):** [500 font switches, zero errors and zero measured Chip RAM loss](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc). Total Chip free **1,582,088 bytes** and largest free block **1,320,664 bytes** remained constant at every 100-switch checkpoint. `RESULT 1`, normal AMOS return. R38 binary / `LAST_GOOD` unchanged.
 
 
-**Latest validated version: R38 v0.11.0 (12 November 2026)** — 44 AMOS AP20 commands covering indexed AGA screens, palettes, IFF/ILBM, Blitter, Copper, input and text.
+**Latest validated version: R40 v0.11.1 (12 November 2026)** — 45 named AP20 commands including `Aga Plot`; CPU/CI Gate A and interpreted AMOS/WinUAE Gate B **PASS**.
 
-- **Different artifacts:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) is the **R40 candidate**; [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains **WinUAE-validated R38**, identical to its [immutable archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).
-- **Validation:** R38 Gates A/B **PASS**; R40 Gate A **PASS**, Gate B **not yet tested**. Compiler Gate C and physical AGA Gate D remain untested.
+- **Libraries:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) and [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) are identical to the [R40 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib). The earlier [R38 archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib) is unchanged.
+- **Validation:** R40 CPU/CI Gate A **PASS**, interpreted AMOS/WinUAE Gate B **PASS**, Compiler Gate C and physical AGA Gate D **not tested**.
 - **Fonts:** `Aga Font Select` supports AmigaOS fonts; `Aga Font Bank Select` supports fixed and proportional monochrome AMCAF BankFont, using a private Chip RAM copy. The WinUAE 500-switch stress test showed no reduction in free Chip RAM or largest free block.
 - **Evidence and history:** [R38 technical report](docs/M14_FONT_BANK_R38.md) · [passed R38 test](tests/passed/M14_R38_FONT_BANK_01.asc) · [technical history](docs/NEXT_SESSION.md) · [passed tests](tests/passed/).
 
@@ -35,7 +35,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R40 0.11.1** — **45 named AP20 commands**. R40 Gate A CPU/CI **PASS**, WinUAE Gate B **pending**; R38 remains the last Gate A/B validated version in `LAST_GOOD`. Gates C/D untested.
+**Current library API R40 0.11.1** — **45 named AP20 commands**, CPU/CI Gate A and WinUAE Gate B **PASS**; Gates C/D untested.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
@@ -83,7 +83,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Text`** (M11 R26, extended R37) | `_OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)` | Four arguments: X pixels, baseline Y, indexed pen, AMOS string (1..128 characters). Draws one line into the AGA Intuition back buffer with temporary RastPort, default system font, R37 AmigaOS font or R38 AMCAF BankFont, with transparent `JAM1`. Return 1 if rendered, 0 on invalid state/geometry/string or not-`Safe` buffer. **R26 Gate A+B PASS for text and 40-swap archived scenarios.** R27 preserves the entire Text 68000 segment byte-for-byte; its new guards are implemented in Blit Copy/Fill/Clear only. [R26 contract](docs/M11_TEXT_R26.md) · [R27 contract](docs/M12_SAFE_BLITTER_R27.md). |
 | **`Aga Font Select`** (M14 R37, Gates A/B PASS) | `_OK=Aga Font Select(_FONT$,_YSIZE)` | Opens and selects an AmigaOS `.font` via `diskfont.library` (1..127-character name, requested height 1..255). Returns 1 on success, 0 on failure without changing the previous font. `_OK=Aga Font Select("",0)` restores the default font. Affects `Aga Text` on the private AGA screen, closes fonts on replacement/reset/Screen Close. **WinUAE Gate B PASS.** |
 | **`Aga Font Bank Select`** (M14 R38, Gates A/B PASS) | `_OK=Aga Font Bank Select(_START,_LENGTH)` | Selects a fixed-width or proportional monochrome `BankFont` created by AMCAF `Make Bank Font`. `_START=Start(n)`, `_LENGTH=Length(n)` refer to a live AMOS bank. Returns 1 on success, 0 on rejection without changing the selected font. Uses private Chip RAM copy (even if the source bank resides in Fast), safe after `Erase n`; frees the copy on replacement/reset/Screen Close. **WinUAE Gate B PASS.** |
-| **`Aga Plot`** (M15 R40, Gate A PASS) | `_OK=Aga Plot(X,Y,Pen)` | Draws **one pixel** at `(X,Y)` in the private AGA **back buffer**. X/Y from zero through width/height minus one, indexed `Pen` from 0 to 2^Depth−1 (1–8 bitplanes). Returns `1` on successful `WritePixel`, otherwise `0` (invalid arguments/state or back buffer not `Safe`). No out-of-bounds clipping or implicit swap/VBL. **CPU/CI Gate A PASS; WinUAE Gate B pending.** |
+| **`Aga Plot`** (M15 R40, Gates A/B PASS) | `_OK=Aga Plot(X,Y,Pen)` | Draws **one pixel** at `(X,Y)` in the private AGA **back buffer**. X/Y from zero through width/height minus one, indexed `Pen` from 0 to 2^Depth−1 (1–8 bitplanes). Returns `1` on successful `WritePixel`, otherwise `0` (invalid arguments/state or back buffer not `Safe`). No out-of-bounds clipping or implicit swap/VBL. **CPU/CI Gate A and WinUAE Gate B PASS.** |
 
 **Example: save the current AGA palette**, after opening the private AGA screen:
 
