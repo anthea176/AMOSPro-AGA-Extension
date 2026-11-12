@@ -1,6 +1,6 @@
 # AMOS Compiler Gate C — R46 C1 experimental single-segment bridge
 
-**12 novembre 2026 — EXPERIMENTAL ONLY. Gate C AMOS Compiler/WinUAE NOT PASSED.**
+**12 novembre 2026 — essai minimal Compiler/WinUAE C1 PASS (confirmation utilisateur). Gate C complète PAS ENCORE VALIDÉE.** La bibliothèque C1 reste expérimentale : aucune promotion ni remplacement des binaires canoniques.
 
 The user-supplied AMOSPro_AGA.Lib is exactly R46 v0.12.1 (29,288 bytes; SHA256 5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580). The GitHub main branch has since promoted the same R46 to LAST_GOOD after interpreted AMOS/WinUAE Gate B PASS. This experimental compiler bridge does not replace that validated R46, historical R44 or frozen R45.
 
@@ -24,7 +24,28 @@ The tradeoff is that AMOS Compiler will copy approximately 28 KiB even if only o
 - Trace: tests/diagnostics/R44_COMPILER_STAGE_TRACE.asc (historical file name; tests the INSTALLED library)
 - Baseline SHA is locked to the R46 0.12.1 archive. Original code block and the 50 public AMOS API definitions stay byte-for-byte identical.
 
-## One focused WinUAE Gate C test, NO repetition of the old failing baseline
+## Résultat du premier essai compilé C1
+
+**PASS déclaré par l'utilisateur le 12/11/2026.** La trace re-compilée sous WinUAE avec la candidate C1 affiche successivement :
+
+```text
+05 BEFORE AGA SCREEN CLOSE
+06 AFTER AGA SCREEN CLOSE
+COMPILER TRACE COMPLETED
+```
+
+Le Guru `80000004` n'a donc pas été reproduit sur ce chemin `Probe → Screen Open → Screen Close → retour AMOS`. C'est une **Gate C smoke PASS**, et **non** une Gate C complète PASS. Le binaire réellement chargé n'a pas été re-hashé depuis WinUAE ; le résultat est rattaché à la C1 fournie pour cet essai. **Ne pas clôturer le bug Compiler**, car les autres commandes n'ont pas encore été exercées dans un exécutable compilé.
+
+## Prochaine validation Compiler — réutiliser les sources déjà passées en interprété
+
+1. Compiler **sans modifier** [`tests/passed/M16_R46_IMAGE_DRAW_01.asc`](../tests/passed/M16_R46_IMAGE_DRAW_01.asc) avec la même candidate C1 installée. Placer [`M16_AGAPIC_SAMPLE_BANK10.abk`](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk) dans le répertoire courant AMOS. Attention : le test charge la banque 10 et l'écrase si déjà présente. Le nom affiché `R45` dans le dessin est un ancien libellé du test R46, pas une bibliothèque erronée.
+2. Exécuter **le nouvel exécutable compilé** sous WinUAE : vérifier que les trois images (opaque/masquées) et le clipping quatre côtés sont visibles, puis que `ERRORS 0 RESULT 1` et `CLOSE RETURNED` s'affichent sans Guru. Ce seul test couvre aussi `Aga Double Buffer`, `Aga Swap`, `Aga Text`, `Aga Box` et le retour à AMOS.
+3. Si PASS : compiler ensuite **sans modifier** [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) pour la restauration du curseur et les 500 bascules. Vérifier `RESULT 1`, `CLOSE RETURNED`, absence de perte Chip RAM significative.
+4. Si PASS : vérifier la sélection et la libération des fontes via [`tests/passed/M14_R38_FONT_BANK_01.asc`](../tests/passed/M14_R38_FONT_BANK_01.asc), avec son fichier `RAM:AMCAF_FONT9.abk`. Vérifier `RESULT 1` et `CLOSE RETURNED`. Les banques/test sources validés restent inchangés.
+
+Ne pas repasser le test minimal inchangé : il a déjà passé. En cas de Guru, relever le dernier repère et, si possible, le véritable PC de l'exception avant réinitialisation. Pour l'instant, **l'intégration Compiler et les tests de non-régression complets restent à valider**.
+
+## Historique du protocole du premier essai
 
 1. Backup the actually installed APSystem/AMOSPro_AGA.Lib and the interpreter configuration.
 2. Copy the experimental C1 library under the exact configured APSystem filename AMOSPro_AGA.Lib. Do NOT replace the canonical GitHub binaries or LAST_GOOD.
@@ -32,4 +53,4 @@ The tradeoff is that AMOS Compiler will copy approximately 28 KiB even if only o
 4. Execute under WinUAE. Pass criterion for this diagnostic is 06 AFTER AGA SCREEN CLOSE and clean program exit without Guru. If Guru returns, capture the true exception PC and preceding trace; a ROM STOP after reset is not the fault PC.
 5. If the minimal compiler trace passes, verify mouse cursor cleanup, fonts, double buffer and Aga Image Draw in BOTH interpreted and compiled contexts before a promotion or closure.
 
-**Static host tests PASS, CPU execution and WinUAE Gate C NOT TESTED.** Do not promote to LAST_GOOD based on static checks.
+**Bilan : tests statiques PASS ; trace minimale compilée sous WinUAE PASS sur retour utilisateur ; non-régression compilée des fonctionnalités non testée.** Ne pas promouvoir C1 en LAST_GOOD à ce stade.
