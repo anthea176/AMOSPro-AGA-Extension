@@ -220,9 +220,10 @@ M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B 
 | **M13 — R28 CANDIDATE / Gate A PASS, Gate B attendue** | **Palettes AGA 24 bits : import IFF/ILBM standard `CMAP` sans pixels, RGB Set/Get ; ensuite sauvegarde IFF, fades, color cycling** | [R28 0.10.0 candidate](../dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib) de 16 208 octets, [159 cas CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43004699618), **WinUAE non testé** ; binaire courant R27 inchangé | Test utilisateur [M13 R28](../tests/current/M13_R28_PALETTE_01.asc) avec palette IFF PPaint exportée ; garder R27 figée ; après PASS, définir sauvegarde IFF standard, fades puis cycling |
 | **M14 — PRIORITÉ 2 (après M13)** | **Fontes / texte AGA : compléter `Aga Text` R26 (choix/chargement de fontes, mesures, styles, alignement, lignes multiples)** | Le rendu R26 actuel est **une ligne, 1 à 128 caractères, police système**, pas un moteur complet de fontes | Étudier `SetFont`, `TextExtent`, les fontes AmigaOS/diskfont et les banques AMOS/AMCAF sans présumer leur compatibilité ; contrat séparé après les palettes |
 | **M15 — PRIORITÉ 3 (après M14)** | **Primitives de dessin AGA : Plot (pixel), Draw (ligne), Box (rectangle contour), Circle (cercle)** | **R40 `Aga Plot` candidate Gate A PASS, Gate B WinUAE en attente ; Draw/Box/Circle non implémentés** | Étudier les conventions des fonctions AMOS/Turbo/AMCAF, puis définir coordonnées, clipping, couleurs indexées, usage du back buffer Intuition AGA et protocole Safe avant toute nouvelle API |
-| M16+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et optimisations | En attente de décision après M13, M14 et M15 | Ne pas démarrer ces chantiers ni créer des commandes anticipées |
+| **M16 — IDÉE À ÉTUDIER (après M15)** | **Format dédié d'images compressées en banque DATA, de préférence en Fast RAM ; rendu CPU vers le back buffer AGA en Chip RAM** | Proposition non implémentée ; deux modes prévus : opaque et transparent à masque 1 bit | Étudier format/compression rapide, conversion, clipping/Safe, mémoire et performances 68000/68020+ |
+| M17+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et optimisations | Pistes distinctes, à réexaminer après M15/M16 | Aucun développement ni nouvelle API engagé |
 
-**Ordre décidé le 11/11/2026 : M13 palettes → M14 fontes → M15 dessin 2D (`Plot`, `Draw`, `Box`, `Circle`) → réexamen de M16+.** M8–M12 restent des jalons historiques validés sur leurs scénarios. **M13/M14/M15 sont des priorités de développement approuvées, pas des API ni des builds déjà disponibles** ; leurs signatures et sous-jalons restent à confirmer après audit.
+**Ordre défini le 11/11/2026 : M13 palettes → M14 fontes → M15 dessin 2D (`Plot`, `Draw`, `Box`, `Circle`).** **Idée ajoutée le 12/11/2026 : M16 images compressées en Fast RAM**, à étudier après M15 ; les autres pistes passent en M17+. M16 reste une proposition sans API, implémentation ni calendrier approuvés. Les statuts et validations réels des jalons précédents sont consignés dans les dossiers techniques.
 
 ## 2. M7 — Copper RGB4, bilan du scénario validé
 
@@ -292,7 +293,20 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **Contrats de recette :** points extrêmes, diagonales dans toutes les directions, lignes horizontales/verticales, rectangles partiellement hors champ, cercles tronqués, couleurs et profondeur 1–8 plans, double buffering, swaps répétés et fermeture/reprise AMOS. **Distinguer dessin de contour (`Box`) et remplissage (`Aga Blit Fill`)**.
 - **Extensions possibles, non engagées :** ellipse, rectangle plein de type `Bar`, polylignes, épaisseur/style et remplissage de cercle, uniquement après validation des quatre primitives de base.
 
-**M16+** : sprites matériels, scrolling, dual playfield, extensions Copper et optimisations seront réévalués **après** les palettes, les fontes et le dessin 2D. Aucun développement de ces fonctions n'est engagé par cette décision.
+### M16 — Images compressées en Fast RAM (idée à étudier après M15)
+
+**Objectif :** définir un format d'image alternatif aux IFF/ILBM pour les ressources de jeu (portraits, décors, interfaces, sprites logiciels), compressé dans une **banque DATA AMOS**, idéalement située en **Fast RAM**. Le **CPU** lirait et décompresserait les données puis dessinerait sur le **back buffer AGA en Chip RAM**. Il ne s'agit pas de reproduire les banques graphiques AMOS Bob/Icon. Le Blitter ne pouvant pas lire la Fast RAM, le rendu CPU constitue l'hypothèse de départ.
+
+- **Format à définir :** en-tête versionné avec largeur, hauteur, profondeur indexée (1 à 8 bitplanes), type de compression, tailles/offsets et **masque de transparence 1 bit optionnel**. Étudier un convertisseur de ressources hors Amiga. Vérifier la localisation effective de la banque en mémoire : une banque DATA n'est pas automatiquement garantie en Fast RAM.
+- **Deux modes d'affichage :** **opaque** (écrire chaque pixel, y compris l'index couleur 0) et **transparent** (masque 1 bit indépendant de la couleur : seuls les pixels visibles écrasent le décor). Alpha partiel hors premier périmètre.
+- **Compression/décompression :** comparer RLE et variantes simples à décodage rapide ; privilégier un accès par lignes/blocs pour éviter un tampon contenant toute l'image décompressée en Chip RAM. Mesurer le rapport de compression, le coût CPU et la mémoire temporaire.
+- **Rendu sécurisé :** positionnement X/Y, clipping sur les quatre bords, dessin non aligné sur les mots/bitplanes, validation des tailles, contrôle `Safe` avant écriture dans le back buffer AGA, respect du double buffering et absence de débordement mémoire.
+- **Évolutions possibles :** sous-images/atlas, plusieurs frames et cache de décodage ; éventuel rendu hybride CPU/Blitter uniquement si un benchmark en démontre l'intérêt.
+- **Recette avant validation :** images opaques et transparentes, pixels d'index 0 visibles avec masque, profondeurs 1/2/4/8, clipping sur chaque bord, swaps répétés, fermeture/reprise AMOS ; performances et consommation mémoire sur 68000 puis 68020/030, tests WinUAE et matériel distincts.
+
+**Statut :** idée enregistrée dans la roadmap uniquement. Format, compression exacte, API et jalons d'implémentation restent à discuter avant tout code ; aucune bibliothèque existante n'est modifiée.
+
+**M17+** : sprites matériels, scrolling, dual playfield, extensions Copper et optimisations à réexaminer séparément après M15/M16. Aucun développement engagé.
 
 ## 6. Règles de décision, livraison et suivi
 
