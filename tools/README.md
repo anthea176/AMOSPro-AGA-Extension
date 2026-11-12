@@ -1,15 +1,19 @@
 # Outils Python — R44 v0.11.5 `LAST_GOOD`, M15 et M15bis clôturés
 
-## M16/R45 — Aga Image Draw candidat Gate A 68000/CI PASS, WinUAE B FAIL (diagnostic bancaire en cours)
+## M16/R46 — `Aga Image Draw` : candidate CPU/CI Gate A PASS, WinUAE Gate B à tester
+
+**R46 v0.12.1 :** [émetteur 68000 R45/R46](m16_image_draw_r45_emit.py), [builder R46](build_m16_image_draw_r46.py), [tests CPU R46](test_m16_image_draw_r46.py) (**258 scénarios natifs PASS**), [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43221899949), [rapport](../docs/M16_R46_FLAGS0_FIX.md). Le correctif accepte les flags natifs **0/1/3** observés après `Load` d'une banque DATA ABK. [Binaire courant R46](../dist/AMOSPro_AGA.Lib), 29 288 octets, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. [Test courant R46](../tests/current/M16_R46_IMAGE_DRAW_01.asc), **Gate B NON TESTÉE**. R45 défaillante, 29 280 octets, reste [en archive](../dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib), [ASC R45 original en échec](../tests/failed/M16_R45_IMAGE_DRAW_01.asc) gelé. **R44 `LAST_GOOD` intacte.**
+
+### Historique M16/R45 — Gate B WinUAE FAIL, archive figée
 
 - Codec [m16_agapic.py](m16_agapic.py) : RLE planaire par ligne en groupes de 16 pixels ; DATA AmBk, profondeur 1..8, masquage 1 bit indépendant et modèle de dessin CPU word-wise.
 - Conversion hors Amiga [m16_agapic_convert.py](m16_agapic_convert.py) : PNG palette vers ABK ; masque PNG optionnel, import PNG via Pillow.
 - [m16_agapic_sample.py](m16_agapic_sample.py) : banque DATA ABK exemple 64×40×4, numéro 10, masque indépendant et index 0 visible.
 - [test_m16_agapic.py](test_m16_agapic.py) : roundtrips, clipping quatre bords, 1/2/4/8 plans, opaque et transparent, tests de données corrompues et garde mémoire.
-- **P0 PASS** : 432 roundtrips ABK, 1 344 rendus planaires, 31 rejets invalides, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). [Banque ABK témoin 1 856 octets](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), [notice](../tests/design/M16_AGAPIC_PREVIEW_README.md), SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf.
+- **P0 PASS** : 432 roundtrips ABK, 1 344 rendus planaires, 31 rejets invalides, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). [Banque ABK témoin 1 856 octets](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk), [notice](../tests/design/M16_AGAPIC_PREVIEW_README.md), SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf.
 - [Test d'aperçu ABK AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), **PASS confirmé par capture utilisateur** : banque DATA 10, 1 836 octets, 64×40×4, masque et codec RLE, `ABK FORMAT RESULT 1`. [Rapport détaillé](../docs/M16_AGAPIC_WINUAE_P0_PASS.md). `List Bank` affiche `S: $40413010`, sans marqueur F/C : Fast RAM à confirmer séparément. **P0 ABK WinUAE PASS ; le vrai code CPU R45 est maintenant implémenté, mais son premier rendu WinUAE a échoué (aucune image) et aucune performance 68000 n'est mesurée.** [Contrat proposé R45](../docs/M16_R45_IMAGE_DRAW_CONTRACT.md).
 
-**R45 v0.12.0 candidate :** [émetteur CPU](m16_image_draw_r45_emit.py), [builder](build_m16_image_draw_r45.py), [tests natifs](test_m16_image_draw_r45.py). **127 scénarios CPU 68000 Unicorn PASS** (dessin bitplanes, opaque/transparent, clipping non aligné, Safe, refus avant écriture), export assembleur strict et [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43218082112). [Binaire courant R45](../dist/AMOSPro_AGA.Lib) = archive versionnée (29 280 octets, SHA256 `0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7`). [Test WinUAE R45 courant](../tests/current/M16_R45_IMAGE_DRAW_01.asc), **Gate B FAIL (image absente)**. **R44 `LAST_GOOD` intacte**, aucune validation Compiler/Amiga physique.
+**R45 v0.12.0 archivée, Gate B FAIL :** [émetteur](m16_image_draw_r45_emit.py), [builder historique](build_m16_image_draw_r45.py), [tests natifs R45](test_m16_image_draw_r45.py) (127 scénarios CPU PASS). Sous WinUAE, flags natifs 0 de banque DATA chargée rejetés : tous les `Aga Image Draw` retournent 0. [Archive R45 figée](../dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib), SHA256 `0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7`. Ne pas assimiler Gate A à Gate B.
 
 ## M15bis/R44 — Aga Mouse Cursor, Gates A CPU/CI et B WinUAE PASS
 

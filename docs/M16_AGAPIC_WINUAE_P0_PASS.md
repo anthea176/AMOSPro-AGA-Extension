@@ -4,7 +4,7 @@
 
 ## Preuve utilisateur : M16
 
-Le programme [`M16_AGAPIC_ABK_PREVIEW_01.asc`](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), exécuté sous WinUAE/AMOS Professional avec le fichier [`M16_AGAPIC_SAMPLE_BANK10.abk`](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), affiche :
+Le programme [`M16_AGAPIC_ABK_PREVIEW_01.asc`](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), exécuté sous WinUAE/AMOS Professional avec le fichier [`M16_AGAPIC_SAMPLE_BANK10.abk`](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk), affiche :
 
 ```text
 M16-AGAPIC-ABK-PREVIEW-01

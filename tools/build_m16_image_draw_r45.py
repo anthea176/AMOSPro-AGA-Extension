@@ -19,6 +19,7 @@ from m16_image_draw_r45_emit import emit_image_draw, ENTRY_INDEX, GETP
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BASE_SHA256 = "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc"
+ARCHIVE_R45 = ROOT / "dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE_R44 = ROOT / "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"
 VERSION = "R45 0.12.0"
@@ -28,7 +29,7 @@ API = (("aga image draw", ENTRY_INDEX, "00,0,0,0,0"),)
 def build():
     original = BASE.read_bytes()
     assert digest(original) == BASE_SHA256, "R44 LAST_GOOD unexpectedly changed"
-    assert CURRENT.is_file(), "R45 current library missing"
+    assert ARCHIVE_R45.is_file(), "frozen R45 candidate archive missing"
     assert ARCHIVE_R44.read_bytes() == original, "R44 historical archive changed"
     tok, parts, _ = split(original)
     assert len(parts) == ENTRY_INDEX == 55, "R44 segment count changed"
@@ -54,7 +55,7 @@ def build():
     words = pack(">I", len(body)//4)
     candidate = original[:20] + words + original[24:28] + words + body + original[-4:]
     assert split(candidate)[:2] == (new_tokens, new_parts)
-    assert CURRENT.read_bytes() == candidate, "R45 current candidate changed"
+    assert ARCHIVE_R45.read_bytes() == candidate, "failed R45 archive changed"
     report = inspect(parse(candidate))
     assert not report["issues"], report["issues"]
     api = [x for x in report["tokens"] if x["name"].startswith("aga ")]

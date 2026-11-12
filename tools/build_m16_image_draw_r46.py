@@ -60,9 +60,11 @@ def build():
     assert (item[0]["instruction"], item[0]["function"], item[0]["signature"]) == (1,ENTRY_INDEX,API[0][2])
     assert any(x["index"] == ENTRY_INDEX and x["parameters"] == 5 and x["getp"]
                for x in report["parameter_checks"])
+    if ARCHIVE_R46.exists():
+        assert ARCHIVE_R46.read_bytes() == candidate, "R46 published archive mismatch"
     return candidate, dict(version=VERSION, size=len(candidate),sha256=digest(candidate),
         commands=50,segments=56,changed_segments=[ENTRY_INDEX],labels=labels,
-        Gate_A="PENDING_CPU_CI",Gate_B="NOT_TESTED")
+        Gate_A="CPU_CI_PASS",Gate_B="NOT_TESTED")
 
 
 if __name__ == "__main__":

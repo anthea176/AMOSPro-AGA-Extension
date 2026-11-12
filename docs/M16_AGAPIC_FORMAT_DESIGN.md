@@ -72,7 +72,7 @@ Après un Bank Swap ou Load, relire Start(bank) et Length(bank).
   Accepte un masque PNG monochrome indépendant (--mask), un index transparent
   (--transparent-index) ou le tRNS PNG (--png-alpha). Pas de quantification
   RGBA automatique, pas de palette incluse dans AGAPIC.
-- [Banque ABK témoin 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk) : 1 856 octets, SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf ; [notice de test WinUAE](../tests/design/M16_AGAPIC_PREVIEW_README.md). L'ABK est produit déterministiquement par les scripts PC et son chargement dans AMOS a été confirmé par l'utilisateur (`ABK FORMAT RESULT 1`).
+- [Banque ABK témoin 64×40×4](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk) : 1 856 octets, SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf ; [notice de test WinUAE](../tests/design/M16_AGAPIC_PREVIEW_README.md). L'ABK est produit déterministiquement par les scripts PC et son chargement dans AMOS a été confirmé par l'utilisateur (`ABK FORMAT RESULT 1`).
 - [Générateur de banque exemple](../tools/m16_agapic_sample.py) :
   64×40×4 couleurs indexées avec masque indépendant, banque DATA numéro 10.
 - [Tests de format et rendu de référence](../tools/test_m16_agapic.py) :

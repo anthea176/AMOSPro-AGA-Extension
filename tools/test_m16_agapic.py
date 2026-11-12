@@ -246,7 +246,7 @@ def test_compression():
 
 def test_committed_fixture():
     """The ABK Git artifact must equal the host builder byte-for-byte."""
-    fixture = Path(__file__).resolve().parents[1] / "tests/design/M16_AGAPIC_SAMPLE_BANK10.abk"
+    fixture = Path(__file__).resolve().parents[1] / "tests/current/M16_AGAPIC_SAMPLE_BANK10.abk"
     disk = fixture.read_bytes()
     expected = sample_binary()
     assert disk == expected, "sample ABK does not match exact generator bytes"

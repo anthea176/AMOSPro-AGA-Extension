@@ -14,7 +14,7 @@ from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
 
 from ap20_utils import split
 from audit_ap20 import parse, inspect
-from build_m16_image_draw_r46 import build, BASE, R45_FAILED, R45_SHA256, ARCHIVE_R44, ENTRY_INDEX
+from build_m16_image_draw_r46 import build, BASE, R45_FAILED, R45_SHA256, ARCHIVE_R44, ENTRY_INDEX, ARCHIVE_R46, CURRENT
 from m16_image_draw_r45_emit import emit_image_draw
 from m16_agapic import pack_image, parse_payload
 from m16_agapic_sample import sample
@@ -65,6 +65,10 @@ def main():
     data,_,_=sample()
     fixed,info=build()
     assert fixed == build()[0]
+    if ARCHIVE_R46.exists():
+        assert fixed == ARCHIVE_R46.read_bytes(), "R46 archived build mismatch"
+    if CURRENT.read_bytes()!=R45_FAILED.read_bytes():
+        assert fixed == CURRENT.read_bytes(), "R46 current candidate mismatch"
     old=R45_FAILED.read_bytes()
     assert hashlib.sha256(old).hexdigest()==R45_SHA256
     assert BASE.read_bytes()==ARCHIVE_R44.read_bytes()

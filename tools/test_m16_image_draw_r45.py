@@ -13,7 +13,7 @@ from unicorn.m68k_const import UC_M68K_REG_PC, UC_M68K_REG_SR
 from ap20_utils import split, digest
 from audit_ap20 import parse, inspect
 from build_m16_image_draw_r45 import (
-    build, BASE, BASE_SHA256, CURRENT, ARCHIVE_R44, ENTRY_INDEX, API, GETP)
+    build, BASE, BASE_SHA256, ARCHIVE_R45, ARCHIVE_R44, ENTRY_INDEX, API, GETP)
 from m16_image_draw_r45_emit import emit_image_draw
 from m16_agapic import pack_image, parse_payload, unpack_image
 from m16_agapic_sample import sample
@@ -197,7 +197,7 @@ def run():
     candidate,info=build()
     assert candidate==build()[0], "R45 non-deterministic"
     assert digest(BASE.read_bytes())==BASE_SHA256
-    assert BASE.read_bytes()==ARCHIVE_R44.read_bytes() and candidate==CURRENT.read_bytes(), "R44 frozen or R45 current mismatch"
+    assert BASE.read_bytes()==ARCHIVE_R44.read_bytes() and candidate==ARCHIVE_R45.read_bytes(), "R44 frozen or R45 archive mismatch"
     oldtok,old,_=split(BASE.read_bytes())
     newtok,new,_=split(candidate)
     assert len(old)==ENTRY_INDEX==55 and len(new)==56

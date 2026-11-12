@@ -6,7 +6,7 @@ la bibliothèque R44 LAST_GOOD.
 
 ## Fichiers à copier dans un même répertoire Amiga
 
-- [M16_AGAPIC_SAMPLE_BANK10.abk](M16_AGAPIC_SAMPLE_BANK10.abk) : banque AMOS
+- [M16_AGAPIC_SAMPLE_BANK10.abk](../current/M16_AGAPIC_SAMPLE_BANK10.abk) : banque AMOS
   DATA native, numéro 10, indicateur Fast préféré, masque indépendant.
   64×40×4, **1 856 octets** avec en-tête AmBk de 20 octets.
   SHA256 : **56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf**.
