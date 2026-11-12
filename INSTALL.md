@@ -1,5 +1,8 @@
 # Installing AMOSPro AGA Extension
 
+**R38 v0.11.0 — Gates A CPU/CI et B AMOS interprété/WinUAE PASS (12/11/2026).** Confirmation explicite utilisateur : « ca a marché ! » après essai de la candidate corrigée. Fonction `Aga Font Bank Select(Start(bank),Length(bank))` (44 commandes AP20), banques AMCAF `BankFont` monochromes fixes/proportionnelles, DATA/WORK, mémoire source CHIP/FAST ; copie privée en Chip RAM. **Gate B validée pour le scénario utilisateur, sans mesure de consommation mémoire ni stress multi-changements**. `StripFont` puis `FreeVec` libèrent les copies au remplacement, au reset et à la fermeture ; la fuite éventuelle liée à de nombreux changements WinUAE n'a pas encore été mesurée. Gate A 60 groupes CPU 68000 et régressions R37/R26/R36 PASS ; CI intégrité de la candidate PASS. `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib`, **23 380 octets**, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`. L'ancien `LAST_GOOD` R37 0.10.9 est préservé dans son archive immuable. Test exact archivé dans `tests/passed/M14_R38_FONT_BANK_01.asc` (blob `4d847f86bfffc9d0d062c75e6bdda97a13b623bf`) ; aucun `.asc` actif dans `tests/current/`. Gates C Compiler et D Amiga physique NON TESTÉES. Aucune nouvelle fonction R39 approuvée. Travail uniquement sur `main`.
+
+
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
 This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (A1200/A4000 or an appropriately configured WinUAE). You need AMOS Professional already installed.

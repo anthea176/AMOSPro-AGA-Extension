@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"
 BASE_SHA256="ca2a901c30ebd933e41fcaa66c6dc78b5561938caa86901eb09fcc3d81dca539"
 LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256="bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a"
+LAST_GOOD_SHA256="09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366"
 DEST=ROOT/"dist/AMOSPro_AGA.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"
 VERSION="R36 0.10.8"
@@ -27,7 +27,7 @@ API=(("aga palette cycle",ENTRY_CYCLE,"00,0,0"),)
 def build():
     frozen=BASE.read_bytes()
     assert digest(frozen)==BASE_SHA256,"R35 archive mutated"
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R37"
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,"LAST_GOOD must match WinUAE-PASS R38"
     tok,parts,_=split(frozen)
     assert len(parts)==BASE_ENTRIES and not parts[-1].endswith(GETP)
     base_audit=inspect(parse(frozen))

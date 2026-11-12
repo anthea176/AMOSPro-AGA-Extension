@@ -38,7 +38,7 @@ jobs:
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R38_GateA.Lib --out /tmp/amos-aga-r38-native --baseline none --strict
       - name: Export reproducible candidate only after all Gate A tests PASS
         run: python -B tools/build_m14_font_bank_r38.py --emit-base64
-      - name: Guard R37 LAST_GOOD and frozen archives
+      - name: Guard promoted R38 LAST_GOOD and frozen archives
         run: |
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import BASE,BASE_SHA256,LAST_GOOD,LAST_GOOD_SHA256; from ap20_utils import digest; assert digest(BASE.read_bytes())==BASE_SHA256; assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256; print('R37 LAST_GOOD unchanged')"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import BASE,BASE_SHA256,LAST_GOOD,LAST_GOOD_SHA256; from ap20_utils import digest; assert digest(BASE.read_bytes())==BASE_SHA256; assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256; print('R38 LAST_GOOD unchanged')"
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib

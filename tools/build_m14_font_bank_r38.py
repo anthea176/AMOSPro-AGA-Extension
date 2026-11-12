@@ -3,7 +3,7 @@
 
 Base is frozen WinUAE PASS R37. Only existing entry 48 receives three
 size-preserving calls to the R38 font release helper; entry 48 gets its
-GetP delimiter and entry 49 is appended. R37 and LAST_GOOD are not written.
+GetP delimiter and entry 49 is appended. R38 and LAST_GOOD are not written.
 """
 import argparse
 import base64
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib'
 BASE_SHA256 = 'bc6e7535ef300551298edae1a205ffdffa38db81e4126a5a42b36a0261b5e58a'
 LAST_GOOD = ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = '09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366'
 DEST = ROOT / 'dist/AMOSPro_AGA.Lib'
 ARCHIVE = ROOT / 'dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib'
 GETP = b'GetP'
@@ -44,7 +44,7 @@ def patch_pc16(segment, operand_at, caller, target, opcode):
 def build():
     frozen=BASE.read_bytes()
     assert digest(frozen)==BASE_SHA256,'frozen R37 archive changed'
-    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,'R37 LAST_GOOD changed'
+    assert digest(LAST_GOOD.read_bytes())==LAST_GOOD_SHA256,'R38 LAST_GOOD changed'
     tokens, old, _ = split(frozen)
     assert len(old)==ENTRY_INDEX==49
     assert not old[-1].endswith(GETP)

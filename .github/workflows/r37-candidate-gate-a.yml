@@ -36,5 +36,5 @@ jobs:
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R37_GateA.Lib --out /tmp/amos-aga-r37-native --baseline none --strict
       - name: R37 promoted archive and LAST_GOOD reproducibility (read-only)
         run: |
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,DEST,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes()==LAST_GOOD.read_bytes(); print('R37 LAST_GOOD verified:',meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,DEST,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes() and DEST.read_bytes()==LAST_GOOD.read_bytes(); print('R37 archive verified and R38 LAST_GOOD intact:',meta['sha256'],meta['size'])"
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
