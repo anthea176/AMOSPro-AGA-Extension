@@ -70,7 +70,7 @@ def build() -> tuple[bytes,dict]:
     return binary,dict(
         version="M16 R47 0.12.2 experimental",
         bytes=len(binary),sha256=sha256(binary).hexdigest(),
-        commands=51,segments=59,entry=ENTRY,
+        commands=51,segments=58,entry=ENTRY,
         native_capture_bytes=len(assembly),labels=labels,
         CPU_core="325 cases PASS on CI",
         bank_bridge="ABI NOT YET VALIDATED in WinUAE",

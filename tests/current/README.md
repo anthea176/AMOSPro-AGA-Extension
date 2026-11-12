@@ -10,3 +10,6 @@
 
 
 **Premier diagnostic après crash WinUAE :** [test court sans capture](../diagnostics/M16_R47_CRASH_ISOLATION_00.asc), exécuté avec R47 en interprété. Ne pas lancer le test complet à nouveau avant d'avoir identifié si `Detect` et `Open/Close` passent.
+
+
+**Deuxième étape seulement si le diagnostic 00 affiche `RESULT 1` :** [capture minimale 01](../diagnostics/M16_R47_CAPTURE_MINIMAL_01.asc) — une seule capture opaque 16x16, pas de `Draw`, pas de Save/Load, aucune compilation. La banque 11 doit être libre au départ ; WinUAE peut encore planter : configuration de test isolée obligatoire.
