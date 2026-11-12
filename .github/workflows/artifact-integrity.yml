@@ -112,5 +112,9 @@ jobs:
         run: |
           python -B tools/test_m16_r48_token_probe.py
           python -B tools/build_m16_r48_token_probe.py
+      - name: M16 R49 read-only Bnk.GetAdr ABI and CPU probe (Gate A only)
+        run: |
+          python -B tools/test_m16_r49_getadr_probe.py
+          python -B tools/build_m16_r49_getadr_probe.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
