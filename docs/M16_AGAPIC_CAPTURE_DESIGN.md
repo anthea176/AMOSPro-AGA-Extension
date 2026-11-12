@@ -41,6 +41,12 @@ La capture est maintenant représentée par [`tools/m16_agapic_capture_model.py`
 
 **Il ne crée pas encore de banque AMOS** : la future commande doit assembler l'en-tête et la table des lignes, puis appeler l'allocateur AMOS sans écraser un numéro existant, via une liaison relogeable compatible Compiler. Aucune bibliothèque `.Lib`, aucun token AP20 ni exemple validé n'est modifié ; R46 C1 `LAST_GOOD` reste immuable. La qualification sous WinUAE ne peut commencer qu'après raccordement de l'allocateur.
 
+### R47 — nouvelle candidate `Aga Image Capture` (non validée sous AMOS)
+
+Le wrapper 68000 expérimental se trouve dans [`tools/m16_capture_r47_emit.py`](../tools/m16_capture_r47_emit.py). Il comprend le contrôle strict du rectangle et de l'index, l'accès au back buffer + Safe non bloquant, la vérification d'un numéro de banque libre, le calcul exact du payload par passe de comptage, l'allocation DATA/Fast prioritaire via le gestionnaire AMOS, la génération de l'en-tête AGAPIC v1 et de la table des lignes, puis la seconde passe de compression directement dans la banque. Un échec après allocation appelle l'effacement de **la seule banque nouvellement créée** et libère le tampon temporaire. Les pseudo-appels `Rjsr` visent les routines AMOS `Bnk.GetAdr`, `Bnk.Reserve`, `Bnk.Eff` et `Bnk.Change` ; leurs indices numériques doivent être **validés sur la version réelle d'AMOS**.
+
+[`tools/build_m16_capture_r47.py`](../tools/build_m16_capture_r47.py) dérive obligatoirement la future version de la `LAST_GOOD` R46 C1 et applique `wrap_native_ap20()` en dernière étape. [`tools/test_m16_capture_r47_build.py`](../tools/test_m16_capture_r47_build.py) effectue l'audit statique du code, des 51 tokens et du pont Compiler ; **ces contrôles n'exécutent pas le wrapper complet dans AMOS**. **Pas de promotion, pas de WinUAE PASS ni de .Lib officielle avant les tests du gestionnaire de banques.**
+
 ## Obligation : mettre les exemples à jour avec les commandes livrées
 
 L'utilisateur a expressément demandé de **ne pas oublier les exemples** lors du changement de syntaxe. Inventaire initial des sources touchées :
