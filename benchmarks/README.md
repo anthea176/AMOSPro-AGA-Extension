@@ -1,5 +1,9 @@
 # Benchmark graphique 320×256×32 — AMOS / AMCAF / AGA
 
+## Diagnostic complémentaire : synchronisation Copy (AMOS interprété, R57)
+
+[**copy_wait_32c_r57.asc**](copy_wait_32c_r57.asc) — [protocole](README_COPY_WAIT_32C.md). Copie 64×48 : `Screen Copy` normal (**A**), `Screen Copy` + `Blitter Wait` **après chaque appel** (**W**), `Aga Blit Copy` R57 (**G**). Trois positions, trois passages, 1 200 appels ; **mesures en attente**. Bibliothèque et test courant inchangés.
+
 ## Benchmark cible : Copy (M17/R57)
 
 **[Screen Copy AMOS vs Aga Blit Copy](README_COPY_32C.md)** — [source ASCII `copy_32c_r57.asc`](copy_32c_r57.asc), quatre géométries (alignée, décalée, grande zone et recouvrement), trois passages, PAL 320×256×32, interprété et compilé. **Interprété et compilé PASS sur captures utilisateur.** [Mesures Copy R57 interprétées et compilées](RESULTATS_COPY_32C_R57_2026-11-12.md) : petite copie alignée **AMOS 35 ticks / AGA 69 ticks** dans les deux modes ; trois autres scénarios quasi à égalité en compilé. Aucun changement de la R57, de `LAST_GOOD` ou de `tests/current/`.
