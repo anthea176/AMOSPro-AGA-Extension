@@ -24,6 +24,7 @@ on:
       - "tools/compiler_relocation.py"
       - "tools/test_*.py"
       - "tools/m17_blit_group_r55_emit.py"
+      - "tools/m17_r56_rastport_emit.py"
       - "tools/agapal_r30_layout.py"
       - "tools/m16_agapic.py"
       - "tools/m16_agapic_capture_model.py"
@@ -148,6 +149,10 @@ jobs:
         run: |
           python -B tools/test_m17_blit_group_r55.py
           python -B tools/build_m17_blit_group_r55.py
+      - name: M17 R56 RastPort/SetRast native CPU Gate A
+        run: |
+          python -B tools/test_m17_r56_rastport.py
+          python -B tools/build_m17_r56_rastport.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 
