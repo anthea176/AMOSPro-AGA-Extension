@@ -506,7 +506,7 @@ def main():
         assert len(found)==1 and (found[0]["instruction"],found[0]["function"],found[0]["signature"])==(1,index,sig)
     assert any(x["index"]==ENTRY_BOX and x["parameters"]==5 and x["getp"] for x in audit42["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R42_BOX_01.asc").is_file(), "R42 WinUAE passed test must be archived"
-        assert not (ROOT/"tests/current/M15_R42_BOX_01.asc").exists(), "R42 test must be removed from current"
+    assert not (ROOT/"tests/current/M15_R42_BOX_01.asc").exists(), "R42 test must be removed from current"
     box_data=(ROOT/"tests/passed/M15_R42_BOX_01.asc").read_bytes()
     box_blob=b"blob "+str(len(box_data)).encode("ascii")+bytes([0])+box_data
     assert hashlib.sha1(box_blob).hexdigest()=="dbf5cefb215cc0ae1359d648ea34c855a92b2012", "R42 passed ASC modified"
