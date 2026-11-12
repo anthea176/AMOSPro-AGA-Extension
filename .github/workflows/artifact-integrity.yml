@@ -99,7 +99,7 @@ jobs:
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
       - name: M16 R45 image CPU draw experimental candidate — Unicorn Gate A (R44 LAST_GOOD frozen)
         run: |
-          python -B tools/build_m16_image_draw_r45.py
+          python -B tools/build_m16_image_draw_r45.py --emit-base64
           python -B tools/test_m16_image_draw_r45.py
           python -B -c "from pathlib import Path; import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build; Path('/tmp/AMOSPro_AGA_R45_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
