@@ -1,5 +1,9 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## M16/R54 v0.12.9 — Clôture A/B/C et LAST_GOOD (12/11/2026)
+
+**M16 AGAPIC capture et API des banques terminé sur WinUAE :** R53 `Aga Image Capture` à six paramètres a PASS interprété + compilé ; R54 ajoute `Aga Bank Image Draw(Bank,X,Y,Mode)` et `Aga Bank Font Select(Bank)` sans changer les anciennes signatures, avec Gate A CPU/CI PASS et Gate B interprétée/C compilée PASS utilisateur sur le même scénario R54. Rendu correct, `RESULT 1`, `CLOSE RETURNED`, aucun indice de perte nette Chip RAM sur le test. **Gate D Amiga AGA physique non testée.** [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [installable](../dist/AMOSPro_AGA.Lib) = [archive R54](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. R46 C1 et R53 restent archivées à l'octet près. [Rapport R54](M16_R54_BANK_NUMBER.md) et [test archivé](../tests/passed/M16_R54_BANK_NUMBER_01.asc). La suite du développement reste à décider ; aucune R55 engagée.
+
 ## M16/R46 v0.12.1 — Gates A/B PASS, LAST_GOOD (12/11/2026)
 
 **AMOS interprété / WinUAE : PASS sur captures utilisateur** du test `M16-R46-IMAGE-DRAW-01`. Images opaque, masquée et décalée visibles, quatre côtés clippés : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `CHIP BEFORE/END 1801928 1801928`, `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `HEAD AGAPIC V 1`, `STREAM 196 TOTAL 1836`, **`ERRORS 0 RESULT 1`**, **`CLOSE RETURNED`** (ligne 148). La chaîne graphique `R45 - CPU AGAPIC IMAGE` est un ancien libellé dans le test R46, conservé sans retouche.

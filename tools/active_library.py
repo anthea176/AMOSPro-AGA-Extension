@@ -9,7 +9,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA=C1_SHA
+LAST_GOOD_SHA="f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"  # Official R54 0.12.9, validated Gates A/B/C
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib": "4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26",
@@ -38,7 +38,9 @@ def verify_active(root: Path):
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
     if cur==good:
-        return cur,good,"promoted R46 C1"
+        r54=(root/"dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib").read_bytes()
+        assert r54==cur,"Promoted R54 differs from immutable 0.12.9 archive"
+        return cur,good,"promoted R54 v0.12.9"
     for path,digest in CANDIDATE_HASHES.items():
         p=root/path
         if p.is_file() and sha256(cur).hexdigest()==digest:

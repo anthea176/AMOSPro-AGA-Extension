@@ -1,14 +1,14 @@
 # AMOSPro AGA — 11 exemples simples
 
-## Candidate de capture courante
+## R54 v0.12.9 — exemple complémentaire validé
 
-R53 ajoute `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` sans changer les signatures Draw/Font existantes. Le [test fonctionnel actif unique](../tests/current/M16_R53_IMAGE_CAPTURE_01.asc) montre capture, dessin opaque/masqué et sauvegarde/rechargement ABK. [Procédure et limites](../docs/M16_MAIN_LINKAGE_FIX.md). WinUAE reste à valider ; exemples et ZIP R46 inchangés.
+[Exemple R54 des fonctions par numéro de banque](bank_number_r54/) : `Aga Bank Image Draw(Bank,X,Y,Mode)` et `Aga Bank Font Select(Bank)` sont comparées aux anciennes commandes. **Essai utilisateur PASS en interprété et en compilé sous WinUAE (`RESULT 1`, `CLOSE RETURNED`)**. Le programme ASCII validé et les deux ressources ABK sont fournis dans le nouveau dossier versionné ; [original archivé](../tests/passed/M16_R54_BANK_NUMBER_01.asc) inchangé. Les onze exemples simples ci-dessous restent intacts.
 
 [English](README.md) | **Français** · [Installation](../INSTALL.fr.md)
 
-**Version actuelle : R46 v0.12.1-C1**, `LAST_GOOD` officielle Gates A/B et test intégré compilé WinUAE Gate C PASS (`RESULT 1`, 500 bascules/0 erreur, Chip drop 0). La couverture des 50 commandes individuellement et Gate D physique restent ouvertes.
+**Version actuelle : R54 v0.12.9 `LAST_GOOD`**, 53 commandes, Gates A/B/C PASS sur le scénario testé sous WinUAE ; Gate D physique NON TESTÉE. L'[exemple compilé R46 C1](compiler_r46_all_in_one/) reste une démonstration historique figée, utile pour la compatibilité.
 
-Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. La plupart utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) en **AMOS Professional interprété** ; le nouvel exemple tout-en-un en compilé utilise la **R46 C1 officielle**.
+Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. La plupart utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) en **AMOS Professional interprété** ; l'exemple tout-en-un compilé archivé utilisait la **R46 C1 historique**.
 
 | Fichier | Démonstration | Utilisation |
 |---|---|---|
