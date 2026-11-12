@@ -1,0 +1,77 @@
+Short:        AGA graphics extension for AMOS Pro
+Author:       HWARF (Jerome)
+Uploader:     amethist rumor786 passinbox com (Jerome)
+Type:         dev/amos
+Version:      0.13.2 (R57, 12 Nov 2026)
+Requires:     AMOS Professional and an AGA Amiga (or AGA-enabled WinUAE)
+Architecture: m68k-amigaos
+Distribution: Aminet
+
+Description:
+  AMOSPro AGA Extension is an unofficial extension for AMOS
+  Professional on AGA-equipped Commodore Amiga computers, such
+  as the A1200 and A4000, and on suitably configured WinUAE.
+
+  It adds 53 native AMOS commands and functions for AGA graphics,
+  without requiring a replacement for the original AMOS editor.
+
+  Main features:
+    - AGA indexed screens with 2 to 256 colours
+    - IFF/ILBM picture loading and palette management
+    - Double buffering and back-buffer drawing
+    - Safe Blitter copy, fill and clear operations
+      (R57 revised graphics.library fill/clear implementation)
+    - Copper raster effects
+    - 2D drawing: Plot, Draw, Box and Circle
+    - Text rendering and AMOS font-bank selection
+    - Keyboard and mouse input, including cursor visibility
+      limited to the extension's own AGA window
+    - AGAPAL palette banks, fades and palette cycling
+    - AGAPIC compressed images in AMOS DATA banks, with CPU
+      decoding, opaque/masked drawing and image capture
+    - Bank-number convenience commands for images and fonts
+
+  The cursor visibility command does not disable the Workbench
+  pointer or mouse input in other windows.
+
+  The R57 / v0.13.2 library has passed automated CPU/CI tests
+  and WinUAE tests in both interpreted AMOS and newly compiled
+  programs for the documented R57 scenarios.
+
+  R57 improves back-buffer Fill and Clear performance. In one
+  compiled WinUAE benchmark, median Fill time decreased from
+  54 to 41 ticks and Clear from 115 to 58 ticks versus R55.
+  These are emulator benchmark results, not measurements on
+  physical Amiga hardware.
+
+  Tests on a physical AGA Amiga have NOT yet been performed,
+  and not every command combination has been exhaustively tested.
+
+  Installation:
+    1. Back up your existing AMOS configuration and libraries.
+    2. Copy AMOSPro_AGA.Lib into your AMOS APSystem directory.
+    3. In AMOS Professional, open Config / Set Interpreter /
+       Set Loaded Extensions and register the library in a free
+       extension slot (historically slot 14 in the project).
+    4. Save the interpreter configuration and restart AMOS.
+    5. Import .asc example files with Project / Merge ASCII.
+       These files are plain text, not native tokenized .AMOS files.
+
+  Some demos need the included IFF picture or font banks. See
+  INSTALL.md and the examples documentation for details.
+
+  Requirements:
+    - AMOS Professional already installed
+    - AGA chipset or AGA-enabled WinUAE configuration
+    - An unused AMOS extension slot
+
+  The code, native library, example source and technical
+  documentation are released under the MIT License. Graphics,
+  logos, IFF images and fonts have separate licensing terms;
+  consult ASSETS_LICENSE.md and the relevant attribution files.
+
+  Source, updates and documentation:
+    https://github.com/anthea176/AMOSPro-AGA-Extension
+
+  Developed by HWARF with assistance from ChatGPT (OpenAI) for
+  programming, testing and documentation.
