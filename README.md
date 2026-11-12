@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R54 v0.12.9** — validated reference [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32,364 bytes, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`; CPU/CI Gate A and WinUAE interpreted/compiled Gates B/C PASS on the R54 scenario, physical AGA Gate D NOT TESTED. **Current development binary: R57 v0.13.2**, [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), 32,980 bytes, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commands / 60 AP20 entries; in-place RastPort RectFill/SetRast, 30,780-byte monolith, Gates A CPU/CI, B AMOS interpreted/WinUAE and C AMOS Compiler/WinUAE **PASS** (user screenshots: `RESULT 1`, zero errors, `CLOSE RETURNED`, no Guru); **R57 D physical NOT TESTED**. Interpreted mode ended by manual interruption at line 169 inside the intentional `Do / Wait Vbl / Loop`, not a crash. R56 compiled Guru 8000000B. **R57 compiled V2 speedup:** median Fill **41 vs 54 ticks** in R55 (**−24.1% time**), Clear **58 vs 115 ticks** (**−49.6%**), `AGA ERR 0` and clean finish. [R57 benchmark](benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md). [One active AMOS test](tests/current/M17_R57_RAST_FILL_01.asc). All work on `main`; no duplicate R55 candidates.
+**Latest promoted `LAST_GOOD`: R57 v0.13.2** — validated 32,980-byte [reference](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`; R57 Gates A CPU/CI, B interpreted WinUAE and C compiled WinUAE PASS, D physical NOT TESTED. This promotion was made separately by the author. **Current working candidate: R58 v0.13.3**, [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **42,264 bytes**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`. **53 commands, 62 AP20 entries, 40,038-byte Compiler unit.** The V2 bridge uses unsigned offsets, with legacy `Aga Probe` redirected to offset **40,000**; all 59 native R57 entries are unchanged. **R58 Gate A CPU/CI PASS**, Gates B/C WinUAE and D physical **NOT TESTED**. [Active test](tests/current/M17_R58_COMPILER_BRIDGE_01.asc), [40K CPU proof](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43302242028). `main` only; one candidate library.
 
 
 **AGAPIC images in Fast RAM:** compressed images **can be stored in an AMOS DATA bank in Fast RAM**. `Aga Image Draw` reads and decompresses them with the **CPU** into the AGA back buffer in **Chip RAM**, without decompressing the full image into Chip RAM and without Blitter access to the source. AMOS controls the bank's actual placement; the test ABK's Fast/Chip location has not been measured. [AGAPIC format](docs/M16_AGAPIC_FORMAT_DESIGN.md).
@@ -30,7 +30,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R57 0.13.2** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
+**Current library API R58 0.13.3** — **53 named AP20 commands**. The previous 51 public signatures (including six-argument `Aga Image Capture`) are unchanged. R53 capture and R54 bank-number helpers passed WinUAE interpreted and compiled tests on their respective scenarios.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

@@ -23,7 +23,8 @@ from compiler_relocation import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-ACTIVE_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
+ACTIVE_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'  # Promoted reference R57
+R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
 LAST_GOOD_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
@@ -101,13 +102,19 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
     if active.is_file() or last_good.is_file():
         assert active.is_file() and last_good.is_file(), 'incomplete real R57 fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
-        assert sha256(current_bytes).hexdigest() == ACTIVE_SHA256
+        active_hash=sha256(current_bytes).hexdigest()
+        assert active_hash in (ACTIVE_SHA256, R58_SHA256)
+        if active_hash == R58_SHA256:
+            from build_m17_r58_compiler_bridge import build as build_r58
+            assert current_bytes==build_r58()[0]
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        tokens, original = unwrap_native_parts(current_bytes)
+        # The reference is the user-promoted R57 LAST_GOOD, never R58.
+        source_bytes=protected_bytes
+        tokens, original = unwrap_native_parts(source_bytes)
         assert len(original) == 59 and len(tokens) > 6
-        old_parts = unpack_ap20(current_bytes)[1]
-        original_title = unpack_ap20(current_bytes)[2]
-        native = repack_ap20(current_bytes, tokens, original, original_title)
+        old_parts = unpack_ap20(source_bytes)[1]
+        original_title = unpack_ap20(source_bytes)[2]
+        native = repack_ap20(source_bytes, tokens, original, original_title)
         v2 = wrap_native_ap20_v2(native, original_title)
         vt, entries, title = unpack_ap20(v2)
         assert vt == tokens and title == original_title
@@ -121,7 +128,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         pad = 40000 - size
         assert pad > 0 and not pad & 1
         extended = original + [bytes.fromhex('4e71') * (pad // 2), TARGET]
-        extended_native = repack_ap20(current_bytes, tokens, extended, original_title)
+        extended_native = repack_ap20(source_bytes, tokens, extended, original_title)
         extended_v2 = wrap_native_ap20_v2(extended_native, original_title)
         far_segments = unpack_ap20(extended_v2)[1]
         assert unpack_from('>H', far_segments[-2], 4)[0] == 40000
@@ -129,7 +136,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert unwrap_native_parts_v2(extended_v2) == (tokens, extended)
         realistic = far_segments[-1]
         # No generated AP20 is written to disk.
-        assert sha256(active.read_bytes()).hexdigest() == ACTIVE_SHA256
+        assert sha256(active.read_bytes()).hexdigest() in (ACTIVE_SHA256, R58_SHA256)
         assert sha256(last_good.read_bytes()).hexdigest() == LAST_GOOD_SHA256
     print('STATIC PASS: V2 AP20 offsets', offsets, 'MAX', MAX_UNIT_BYTES,
           'R57', 'REPACK PASS' if realistic is not None else 'not mounted', flush=True)

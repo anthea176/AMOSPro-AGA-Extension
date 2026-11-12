@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith(("R57 v0.13.2", "promoted R57 v0.13.2")):
+    if active.startswith("R58 0.13.3"):
+        from build_m17_r58_compiler_bridge import build as build_r58
+        candidate,meta=build_r58()
+        assert candidate==current, "R58 candidate not byte-exact to deterministic builder"
+        print("CURRENT M17 R58 V2 40K BUILDER PASS",meta)
+    elif active.startswith(("R57 v0.13.2", "promoted R57 v0.13.2")):
         from build_m17_r57_rastport import build as r57_build
         candidate,meta=r57_build()
         assert candidate==current,"Current R57 differs from deterministic builder"
