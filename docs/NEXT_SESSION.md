@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R51 — lecture du marqueur Rjsr chargé (Gate B en attente, 12/11/2026)
+
+**R50 Gate B FAIL :** capture utilisateur WinUAE, `BEFORE RJSR FNON` puis **Software Failure `80000004`** (instruction illégale), aucun retour. R48 Gate B PASS (sans `Rjsr`), R49 Gate B FAIL (avec `Rjsr Bnk.GetAdr`), R50 Gate B FAIL (avec `Rjsr FnOne`). Les indices et l'encodage `FE11 F700 index` concordent avec les sources AMOS Professional ; l'instruction fautive n'est pas identifiée faute de PC. Ne pas relancer R49/R50.
+
+**R51 est une sonde sans exécution de `Rjsr`** : code `BRA` au-dessus du marqueur `FE11 F700 0142`, puis lecture PC-relative des **octets après relocation**. [Lib candidate à la racine `dist/`](../dist/AMOSPro_AGA.Lib), [archive immuable](../dist/experimental/AMOSPro_AGA_M16_v0.12.6_R51_RJSR_RELOCATION_PROBE.Lib), **32 012 octets**, SHA256 `04808ea9c89afb171a2c82f1ab61efd8bc912a0449d13cb20e942ad655ba7aea`. [Test unique courant](../tests/current/M16_R51_RJSR_RELOCATION_PROBE_01.asc). **Résultats** : 1 = opcode `JSR abs.l` ($4EB9), cible non nulle et paire ; 2 = opcode `FE11` resté brut ; 3 = opcode/adresse invalide ; 0 = six paramètres inattendus. **Gate A 6 cas Unicorn + CI PASS** ([run 43258423093](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43258423093)); **Gate B en attente**, **Gate C non testée**. Ce test **n'appelle aucune fonction interne AMOS, ne manipule aucune banque, ne capture rien**. M16 ouvert ; **R46 C1 `LAST_GOOD` immuable**.
+
 ## M16/R50 — FAIL WinUAE et contrôle R51 préparé (12/11/2026)
 
 **Gate B R50 FAIL confirmé par capture utilisateur** : `BEFORE RJSR FNON`, puis Amiga **Software Failure 80000004** (instruction illégale). Le test R48 sans `Rjsr` avait Gate B PASS ; R49 avec `Rjsr Bnk.GetAdr` avait crash WinUAE ; R50 avec `Rjsr FnOne` échoue aussi. **La panne est liée au chemin `Rjsr` ou à la résolution de sa cible ; l'adresse fautive n'est pas connue.** Ne pas attribuer l'échec aux banques ou à la signature AMOS. R51 en cours de validation Gate A : lit sans l'exécuter le marqueur `FE11 F700 0142` ; `RESULT 1` si remplacé par `JSR` avec pointeur non nul et pair, `RESULT 2` s'il reste `FE11`, `RESULT 3` pour valeur anormale. **R46 C1 LAST_GOOD protégée ; R50 ne doit jamais être promue.**

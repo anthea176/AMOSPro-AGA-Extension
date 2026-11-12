@@ -1,11 +1,9 @@
-# Test AMOS actif — M16/R50 : `Rjsr` bibliothèque principale
+# Test AMOS actif — M16/R51 : vérifier la relocation Rjsr
 
-**Seul test actif :** [`M16_R50_FNONE_RJSR_PROBE_01.asc`](M16_R50_FNONE_RJSR_PROBE_01.asc), correspondant à [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) (**R50**, diagnostic uniquement).
+**Un seul test actif :** [`M16_R51_RJSR_RELOCATION_PROBE_01.asc`](M16_R51_RJSR_RELOCATION_PROBE_01.asc), aligné sur la bibliothèque **R51** dans [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib).
 
-Importer par **Project → Merge ASCII** dans un programme AMOS vide, puis exécuter **en interprété** dans la configuration WinUAE de test.
+Charger dans un programme AMOS vierge avec **Project → Merge ASCII**, lancer **en interprété**. La fonction R51 examine les octets du marqueur `Rjsr FnOne` sans l'exécuter. Pas de banque 11 nécessaire, ni d'écran AGA. **Aucune image n'est capturée.**
 
-**Résultat attendu :** `AFTER RJSR FNON 1`, puis `RESULT 1`. Une autre valeur ou un crash constitue un FAIL.
+**Interprétation du résultat** : `1` = opcode `JSR absolute long` installé avec adresse non nulle et paire ; `2` = `FE11` n'a pas été converti ; `3` = opcode ou adresse anormale ; `0` = paramètres de test incorrects. Une valeur `1` ne prouve pas que l'adresse pointe vers la bonne routine AMOS.
 
-La R50 garde les 6 paramètres de `Aga Image Capture` mais la fonction ne capture rien : elle appelle une seule fois `Rjsr FnOne` (index 322, routine interne AMOS retournant 1), **sans accès aux banques ni mémoire, et sans écran AGA**. Elle différencie un problème générique de liaison `Rjsr` du crash spécifique `Bnk.GetAdr` en R49. L'ancienne R49 a **Gate B FAIL (crash WinUAE)** et se trouve dans [`tests/diagnostics/`](../diagnostics/M16_R49_GETADR_PROBE_01.asc), non dans `current`. La R48 Gate B PASS reste archivée.
-
-**Ne pas compiler ni promouvoir R50.** La R46 C1 validée reste [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
+Le précédent test R50 a **Gate B FAIL (Software Failure 80000004)** et est archivé dans [`tests/diagnostics/`](../diagnostics/M16_R50_FNONE_RJSR_PROBE_01.asc). **R51 Gate A CPU/CI PASS, Gate B non testée, Gate C non testée.** Ne pas compiler ni promouvoir. R46 C1 reste `LAST_GOOD`.

@@ -1,0 +1,9 @@
+# M16/R51 — contrôle non exécutant des relocations Rjsr
+
+**État : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE.** R50 a échoué en interprété avec un **Software Failure 80000004**, malgré un appel `Rjsr FnOne` sans accès aux banques. Les sources AMOS identifient `Rjsr` comme un pseudo-opcode `FE11 F700 index` à transformer lors du chargement en `JSR absolute long` ($4EB9 + adresse cible). Il manque encore le PC Amiga réellement fautif ; l'explication « FE11 non relocalisé » est une **hypothèse à mesurer**, pas un fait acquis.
+
+R51 conserve les 51 commandes, la signature `Aga Image Capture(11,16,16,16,16,-1)`, 58 entrées AP20, le wrapper Compiler-safe et **32 012 octets**. Son code **saute** le marqueur `FE11 F700 0142` avec `BRA.w`, puis pointe vers cet emplacement par `LEA d16(PC),A0` et lit son contenu **sans appeler le `JSR`**. Registres AMOS préservés, aucune banque/écran/mémoire allouée. Le test CPU simule six conditions, y compris le marqueur brut et un `JSR` patché.
+
+[Lib courante](../dist/AMOSPro_AGA.Lib) · [Archive R51](../dist/experimental/AMOSPro_AGA_M16_v0.12.6_R51_RJSR_RELOCATION_PROBE.Lib) · [Seul test actif](../tests/current/M16_R51_RJSR_RELOCATION_PROBE_01.asc) · [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43258423093). SHA256 `04808ea9c89afb171a2c82f1ab61efd8bc912a0449d13cb20e942ad655ba7aea`.
+
+Sous WinUAE : importer uniquement le test de `tests/current/` en interprété. **`RESULT 1`** : opcode `JSR` présent avec pointeur non nul et pair (pas une preuve que la cible est correcte). **`RESULT 2`** : `FE11` non transformé, probable explication directe du Guru 80000004. **`RESULT 3`** : transformation anormale (ou cible nulle/impaire). **`RESULT 0`** : signature d'appel inattendue. En cas de crash, conserver le dernier repère et le PC si disponible. Pas de compilation avant validation. **R46 C1 `LAST_GOOD` intacte**.
