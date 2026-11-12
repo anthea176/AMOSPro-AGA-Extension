@@ -1,6 +1,6 @@
-# M15/R43 — Aga Circle : contrat proposé (validation utilisateur en attente)
+# M15/R43 — Aga Circle : contrat approuvé, implémentation Gate A en cours
 
-**Statut au 12/11/2026 : ÉTUDE UNIQUEMENT.** Aucune instruction R43 implémentée, aucun token/builder/test ASC candidat, aucune Gate A/B R43 effectuée. La dernière `LAST_GOOD` demeure **R42 v0.11.3**, Gates A et B PASS, 47 commandes AP20, 25 896 octets et SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. Gates C/D non testées. Le présent texte décrit le **contrat soumis à discussion** ; il n'autorise pas le code sans accord explicite sur ses choix.
+**Statut au 12/11/2026 : contrat explicitement approuvé par l'utilisateur (« oui c tous bon »).** Implémentation 68000, builder reproductible et tests Gate A déposés. Gate A/CI R43 non encore vérifiée ; aucun binaire candidat R43 publié ni test WinUAE actif. La dernière `LAST_GOOD` demeure **R42 v0.11.3**, Gates A et B PASS, 47 commandes AP20, 25 896 octets et SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. Gates C/D non testées. Le présent texte décrit le **contrat approuvé** ; la promotion d'un binaire reste soumise aux Gates réelles.
 
 ## Une seule commande proposée
 
@@ -28,7 +28,7 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 ## ABI et construction prévues
 
 - Entrée AP20 envisagée **53** (après l'entrée R42 52), **48 commandes / 54 segments** après ajout ; token fonction numérique à **quatre paramètres** de signature `00,0,0,0`.
-- Registres d'entrée attendus : `D3=Pen`, quatre arguments AMOS `(A3)+` consommés dans l'ordre **Radius, CY, CX** (trois LONG sur A3). Retour `D3` 0/1, `D2=0`, pile et autres registres préservés comme en R42.
+- Registres d'entrée attendus : `D3=Pen`, les trois arguments AMOS restants `(A3)+` consommés dans l'ordre **Radius, CY, CX** (trois LONG sur A3). Retour `D3` 0/1, `D2=0`, pile et autres registres préservés comme en R42.
 - Nouveau builder **déterministe depuis l'archive R42 figée** `dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib` ; vérifier le SHA256 avant build, la continuité du délimiteur `GetP` et l'identité de tous les segments historiques (sauf délimiteur requis). Ne pas reconstruire depuis un ancien binaire ni toucher au `LAST_GOOD` R42 avant Gate B utilisateur.
 - **Gate A** : CPU 68000 simulé / Capstone, pixel à pixel, zéro écriture hors plans, symétrie, rayons 0/1/2 et grands, quatre bords/quatre coins, centres externes, écran entièrement enveloppé mais aucun point visible, coordonnées AMOS LONG extrêmes, pen/depth, états BitMap invalides, Safe/Disp, ABI AP20 et non-régressions, export source strict et CI.
 - Après seulement une **Gate A complète PASS** : publier `dist/AMOSPro_AGA.Lib` et archive R43 dédiée, plus **un seul test WinUAE actif** sous `tests/current/` ; mettre à jour les deux README et la documentation dans le même commit. Ne pas modifier `LAST_GOOD`.
@@ -36,4 +36,4 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 
 ## Décision à obtenir
 
-**Confirmer explicitement ce contrat R43 avant toute modification** de source assembleur, builder, test `.asc`, API ou bibliothèque `.Lib`. R39 reste reportée ; les études M15bis souris et M16 Fast RAM restent séparées. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.
+**Contrat confirmé par l'utilisateur ; Gate A en cours.** Ne publier la bibliothèque R43 qu'après tests CPU et CI PASS. R39 reste reportée ; les études M15bis souris et M16 Fast RAM restent séparées. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.
