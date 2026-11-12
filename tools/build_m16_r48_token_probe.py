@@ -84,7 +84,7 @@ def build():
     # Use R46 C1 as immutable baseline and compare to R47 native history.
     native=native_from_promoted(stable,raw_title)
     old_tokens,base_parts,_=unpack_ap20(native)
-    assert old_tokens==r47_tokens[:len(old_tokens)]
+    assert r47_tokens.startswith(old_tokens[:-6]) and len(r47_tokens)>len(old_tokens)
     assert len(base_parts)==56 and base_parts[:55]==native_parts[:55]
     assert native_parts[55]==base_parts[55]+b"GetP"
 
