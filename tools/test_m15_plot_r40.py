@@ -34,6 +34,7 @@ class PlotMachine(CopyMachine):
         self.pixel_ok = pixel_ok
         self.calls = []
         self.draws = []
+        self.rp = None
         self.waits = 0
         for addr in LVOs:
             self.uc.mem_write(addr, bytes.fromhex("4e75"))
@@ -57,22 +58,23 @@ class PlotMachine(CopyMachine):
             assert self.get(DB+20) & 1
             self._ret(SAFE_MSG if self.safe_ready else 0)
         elif address == GFX-198:
-            assert self.a(1) == STACK-128
-            uc.mem_write(self.a(1), bytes(128))
+            assert STACK-512 <= self.a(1) < STACK-128
+            self.rp = self.a(1)
+            uc.mem_write(self.rp, bytes(128))
             self._ret()
         elif address == GFX-342:
-            assert self.a(1) == STACK-128
+            assert self.a(1) == self.rp
             assert self.get(self.a(1)+4) == self.expected_bitmap
             assert self.d(0) == self.pen
             self._ret()
         elif address == GFX-354:
-            assert self.a(1) == STACK-128
+            assert self.a(1) == self.rp
             assert self.d(0) == 0, "JAM1/copy expected"
             self._ret()
         elif address == GFX-324:
             assert self.calls[-4:] == [GFX-198, GFX-342, GFX-354, GFX-324] or (
                 self.calls[-5:] == [EXEC-372, GFX-198, GFX-342, GFX-354, GFX-324])
-            assert self.a(1) == STACK-128
+            assert self.a(1) == self.rp
             assert self.get(self.a(1)+4) == self.expected_bitmap
             assert (self.d(0), self.d(1)) == (self.x, self.y)
             assert 0 <= self.x < self.meta["width"]
