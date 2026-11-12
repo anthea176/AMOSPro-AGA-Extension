@@ -1,6 +1,12 @@
 # Benchmark graphique 320×256×32 — AMOS / AMCAF / AGA
 
-**Statut : contrôle statique local PASS ; essai sous AMOS interprété / WinUAE NON ENCORE EFFECTUÉ.** Les mesures ne sont pas inventées. Le benchmark ne modifie ni la bibliothèque AGA ni ses archives / tests `LAST_GOOD`.
+**V1 : exécution AMOS interprété / WinUAE confirmée par capture utilisateur (12/11/2026), `AGA ERR 0` et `BENCH FINISHED - CLOSE RETURNED`.** Les durées restent des observations, pas des preuves d'optimisation. Le benchmark ne modifie ni la bibliothèque AGA ni ses archives / tests `LAST_GOOD`.
+
+## Second run
+
+**[Nouveau benchmark V2 : graphique 320x256x32 avec trois temps séparés](README_V2.md)** — source [`graphics_32c_v2.asc`](graphics_32c_v2.asc), sans changer la bibliothèque AGA. La V1 est conservée telle quelle.
+
+**Mesures V1, ticks cumulés sur 3 passages :** PLOT (AMOS/AMCAF/AGA) 5/3/6 ; DRAW 105/105/107 ; BOX 160/159/159 ; CIRCLE 0/1/0 (mesure non exploitable) ; BAR 121/N/A/164 ; CLEAR 261/174/352. Une seule exécution, statistiques non établies.
 
 ## Fichier et installation
 
