@@ -1,9 +1,9 @@
-# Test AMOS actif — M16/R51 : vérifier la relocation Rjsr
+# Test AMOS actif — M16/R52 : cible effective de `Rjsr FnOne`
 
-**Un seul test actif :** [`M16_R51_RJSR_RELOCATION_PROBE_01.asc`](M16_R51_RJSR_RELOCATION_PROBE_01.asc), aligné sur la bibliothèque **R51** dans [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib).
+**Seul test actif :** [`M16_R52_FNONE_TARGET_PROBE_01.asc`](M16_R52_FNONE_TARGET_PROBE_01.asc), correspondant a [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R52 v0.12.7, diagnostic uniquement**.
 
-Charger dans un programme AMOS vierge avec **Project → Merge ASCII**, lancer **en interprété**. La fonction R51 examine les octets du marqueur `Rjsr FnOne` sans l'exécuter. Pas de banque 11 nécessaire, ni d'écran AGA. **Aucune image n'est capturée.**
+Charger avec **Project -> Merge ASCII** dans un programme vierge et lancer en **interprete** sous WinUAE. Aucun ecran ni banque 11 requis. La fonction R52 **saute le `Rjsr`** puis verifie que la cible du `JSR` est localisee dans une memoire reconnue par `exec.library/TypeOfMem` ; elle compare ensuite les six octets attendus de `FnOne` (`7601 7400 4E75`). Aucune banque/aucun ecran n'est modifie.
 
-**Interprétation du résultat** : `1` = opcode `JSR absolute long` installé avec adresse non nulle et paire ; `2` = `FE11` n'a pas été converti ; `3` = opcode ou adresse anormale ; `0` = paramètres de test incorrects. Une valeur `1` ne prouve pas que l'adresse pointe vers la bonne routine AMOS.
+Resultat attendu, selon le chargeur en place : **`RESULT 1`** si les trois instructions sont conformes ; **`RESULT 2`** si elles different ; **`RESULT 3`** si `TypeOfMem` ne reconnait pas la cible (ce qui ne prouve pas systematiquement qu'elle est inaccessible, par exemple zone ROM) ; **`RESULT 4`** si le `JSR` ou le pointeur sont invalides ; **`RESULT 0`** si les arguments ne correspondent pas.
 
-Le précédent test R50 a **Gate B FAIL (Software Failure 80000004)** et est archivé dans [`tests/diagnostics/`](../diagnostics/M16_R50_FNONE_RJSR_PROBE_01.asc). **R51 Gate A CPU/CI PASS, Gate B non testée, Gate C non testée.** Ne pas compiler ni promouvoir. R46 C1 reste `LAST_GOOD`.
+R51 a eu **Gate B PASS utilisateur** pour la seule relocation, sans capture reelle. Ancien test R51 archive [ici](../diagnostics/M16_R51_RJSR_RELOCATION_PROBE_01.asc). R52 : **Gate A CPU/CI PASS**, Gate B non testee, Gate C non testee. Ne pas compiler ni promouvoir R52 ; R46 C1 reste `LAST_GOOD`.

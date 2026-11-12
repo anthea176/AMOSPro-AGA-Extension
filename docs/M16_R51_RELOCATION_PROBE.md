@@ -7,3 +7,7 @@ R51 conserve les 51 commandes, la signature `Aga Image Capture(11,16,16,16,16,-1
 [Lib courante](../dist/AMOSPro_AGA.Lib) · [Archive R51](../dist/experimental/AMOSPro_AGA_M16_v0.12.6_R51_RJSR_RELOCATION_PROBE.Lib) · [Seul test actif](../tests/current/M16_R51_RJSR_RELOCATION_PROBE_01.asc) · [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43258423093). SHA256 `04808ea9c89afb171a2c82f1ab61efd8bc912a0449d13cb20e942ad655ba7aea`.
 
 Sous WinUAE : importer uniquement le test de `tests/current/` en interprété. **`RESULT 1`** : opcode `JSR` présent avec pointeur non nul et pair (pas une preuve que la cible est correcte). **`RESULT 2`** : `FE11` non transformé, probable explication directe du Guru 80000004. **`RESULT 3`** : transformation anormale (ou cible nulle/impaire). **`RESULT 0`** : signature d'appel inattendue. En cas de crash, conserver le dernier repère et le PC si disponible. Pas de compilation avant validation. **R46 C1 `LAST_GOOD` intacte**.
+
+## Gate B WinUAE (12/11/2026) : PASS sur la relocation uniquement
+
+Capture utilisateur : `R51 RJSR RELOC INSPECT`, `BEFORE CHECK`, `AFTER CHECK 1`, `RESULT 1`. Le marqueur a donc ete converti en instruction JSR avec adresse non nulle et paire. La **cible** n'est pas validee. Ne pas confondre ce diagnostic partiel avec une capture d'image utilisable ou un PASS Compiler. Suite : [R52](M16_R52_FNONE_TARGET_PROBE.md) inspecte les mots a l'adresse cible sans effectuer le JSR. `LAST_GOOD` R46 C1 protegee.

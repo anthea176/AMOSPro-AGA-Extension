@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R52 — controle de la cible FnOne (12/11/2026)
+
+**Gate B R51 PASS confirme par capture utilisateur** : `R51 RJSR RELOC INSPECT`, `AFTER CHECK 1`, `RESULT 1`. AMOS a remplace le pseudo-code `FE11 F700 0142` par `JSR abs.l` ($4EB9) avec une adresse non nulle et paire. **Cela ne prouve PAS que l'adresse correspond a FnOne**. R49/R50 restent Gate B FAIL (R50 Guru 80000004). R48 est Gate B PASS (ABI six arguments).
+
+**R52 diagnostic en attente de Gate B** : controle du code reel a la cible JSR sans executer ce dernier. Garde `TypeOfMem` sur l'adresse cible et dernier octet ; compare les trois mots de `FnOne` source officiel `7601 7400 4E75`. [Binaire actif](../dist/AMOSPro_AGA.Lib) et [archive](../dist/experimental/AMOSPro_AGA_M16_v0.12.7_R52_FNONE_TARGET_PROBE.Lib), **32 012 octets**, SHA256 `09ec9797fdea8f1b4694b2c8a9052776ff5cdcf7b959f2f1533c0b41151ea82e`. [Test unique actif](../tests/current/M16_R52_FNONE_TARGET_PROBE_01.asc). **Resultats : 1** = cible FnOne conforme ; **2** = mots differents ; **3** = zone non reconnue par TypeOfMem (peut aussi inclure ROM) ; **4** = marqueur/adresse JSR invalide ; **0** = parametres invalides. Gate A CPU/CI PASS [run 43259842568](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43259842568). Gates B/C R52 NON TESTEES. Aucun appel Rjsr n'est execute, aucune capture ou manipulation de banque. **R46 C1 LAST_GOOD intacte, M16 ouvert**.
+
 ## M16/R51 — lecture du marqueur Rjsr chargé (Gate B en attente, 12/11/2026)
 
 **R50 Gate B FAIL :** capture utilisateur WinUAE, `BEFORE RJSR FNON` puis **Software Failure `80000004`** (instruction illégale), aucun retour. R48 Gate B PASS (sans `Rjsr`), R49 Gate B FAIL (avec `Rjsr Bnk.GetAdr`), R50 Gate B FAIL (avec `Rjsr FnOne`). Les indices et l'encodage `FE11 F700 index` concordent avec les sources AMOS Professional ; l'instruction fautive n'est pas identifiée faute de PC. Ne pas relancer R49/R50.
