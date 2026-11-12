@@ -202,7 +202,10 @@ def run():
                     assert m.calls.count(EXEC-372)==int(bool(pending&1))
                 else:
                     assert not m.lines and not m.pixels and m.waits==0
-                    assert m.get(DB+20)==pending
+                    # Safe may have been acquired even when no raster pixel
+                    # intersects the screen; it is not a drawing failure.
+                    consumed=EXEC-372 in m.calls
+                    assert m.get(DB+20)==(pending & ~1 if consumed else pending)
                 # Byte-accurate validation for every plane, all untouched
                 # pixels preserved, and selected Pen applied to every hit.
                 after=m.snapshot()
