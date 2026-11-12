@@ -1,17 +1,9 @@
-# Test AMOS actif — M16/R47 capture AGAPIC (Gate B FAIL : crash WinUAE)
+# Test AMOS actif — M16/R48 token/ABI (diagnostic uniquement)
 
-**Un seul fichier `.asc` actif** : [M16_R47_IMAGE_CAPTURE_01.asc](M16_R47_IMAGE_CAPTURE_01.asc). Premier essai utilisateur en AMOS interprété le 12/11/2026 : **Gate B FAIL**, crash du processus WinUAE x64 avec génération de minidump Windows après affichage du seul titre `M16/R47 IMAGE CAPTURE TEST`. Aucun Guru Amiga, PC Amiga, résultat de capture ou repère intermédiaire n'est connu : **la commande fautive n'est pas isolée**. Ne pas relancer sans diagnostic ciblé. Gate C Compiler non testée. **R47 est expérimentale** : [bibliothèque R47 de test](../../dist/experimental/AMOSPro_AGA_M16_v0.12.2_IMAGE_CAPTURE_R47_CANDIDATE.Lib) (**32 012 octets**, SHA256 `a550e9662cda1890aa8331c6e849e702300e6070e8e2caaf2fab9918613944d5`), construite à partir de R46 C1 Compiler-safe ; **elle ne remplace pas `LAST_GOOD`**. Voir [procédure WinUAE](../../docs/M16_R47_GATE_B_PROCEDURE.md). Test dans une **configuration WinUAE isolée avec sauvegarde**.
+**Unique test actif :** [`M16_R48_TOKEN_ABI_PROBE_01.asc`](M16_R48_TOKEN_ABI_PROBE_01.asc). Il correspond à la bibliothèque **R48** actuellement dans [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib).
 
-**Avant de lancer :** les banques AMOS **11 et 12 doivent être libres** (`List Bank`). Le programme ne supprime jamais une banque préexistante. Il crée deux banques AGAPIC par capture depuis le back buffer, teste collision et cas invalides, redessine via l'ancienne syntaxe encore active `Aga Image Draw(Start(bank),Length(bank),X,Y,Mode)`, puis effectue `Save`/`Erase`/`Load` sur `RAM:M16_R47_CAPTURE11.abk`. Il supprime ensuite seulement les banques qu'il a créées.
+Importer avec **Project → Merge ASCII** dans un programme vide, puis lancer **en interprété**, dans la configuration WinUAE de test. Aucun écran ni banque n'est nécessaire. Résultat attendu : `AFTER R48 CALL 1` puis `RESULT 1`.
 
-**Sortie attendue si WinUAE valide réellement la candidate :** `CAP 11 12 1 1`, `COLL 0 PRES 1`, tous les refus à `0`, `DRAW O/M/RELOAD 1 1 1 RL 1`, **`RESULT 1` et `CLOSE RETURNED`**. La source du programme est une recette à exécuter, **pas un PASS déclaré**. Si crash, noter l'étape, le PC et la configuration.
+**R48 n'effectue aucune capture** : elle vérifie uniquement la reconnaissance de `Aga Image Capture(11,16,16,16,16,-1)` et l'ABI des arguments. Gate B sous WinUAE encore non validée ; ne pas compiler ni promouvoir. La R46 C1 reste [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-**Version officielle inchangée :** [R46 v0.12.1-C1](../../dist/AMOSPro_AGA.Lib) = [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib), 29 964 octets, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. Les [tests historiques validés](../passed/R46_C1_COMPILER_ALL_IN_ONE.asc) ne changent pas. [Contrat / tests M16](../../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
-
-
-**Premier diagnostic après crash WinUAE :** [test court sans capture](../diagnostics/M16_R47_CRASH_ISOLATION_00.asc), exécuté avec R47 en interprété. Ne pas lancer le test complet à nouveau avant d'avoir identifié si `Detect` et `Open/Close` passent.
-
-
-**Nouveaux retours WinUAE :** diagnostic 00 **PASS** (`Aga Detect=-1`, Open/Close=1, RESULT 1). Diagnostic 01 **non concluant**, erreur AMOS `Non dimensioned array at line 1` et non Guru. La [recette 02 sans commentaires](../diagnostics/M16_R47_CAPTURE_MINIMAL_02.asc) remplace le diagnostic 01 pour le prochain essai dans une configuration isolée, après vérification que R47 est chargée et banque 11 libre. Le test complet demeure Gate B FAIL et ne doit pas être relancé avant isolement.
-
-**Deuxième étape seulement si le diagnostic 00 affiche `RESULT 1` :** [capture minimale 01](../diagnostics/M16_R47_CAPTURE_MINIMAL_01.asc) — une seule capture opaque 16x16, pas de `Draw`, pas de Save/Load, aucune compilation. La banque 11 doit être libre au départ ; WinUAE peut encore planter : configuration de test isolée obligatoire.
+L'ancien test de capture R47 est conservé dans [`tests/diagnostics`](../diagnostics/M16_R47_IMAGE_CAPTURE_01.asc), **non actif et non compatible avec la sonde R48**.
