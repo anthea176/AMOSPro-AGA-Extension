@@ -372,6 +372,65 @@ def verified_r46_inherited_seeds(parsed):
     return verified_r45_inherited_seeds(old)
 
 
+def verified_current_compiler_seeds(parsed):
+    """Source-backed CFG entrypoints for the exact pinned R54/R57 native images.
+
+    The R46 native archive authenticates inherited routines; active_library
+    authenticates the current and LAST_GOOD Compiler wrappers. No altered,
+    independently rebuilt, or future unknown binary receives these seeds.
+    """
+    from active_library import verify_active
+    from compiler_relocation import native_from_promoted
+    current, last_good, _ = verify_active(ROOT)
+    frozen = NATIVE_R46_ARCHIVE.read_bytes()
+    need(sha(frozen) == NATIVE_R46_SHA,
+         'Strict source: inherited R46 native archive changed')
+    original = parse_lib(frozen)['section']
+    current_native = native_from_promoted(current, parse_lib(current)['title'])
+    good_native = native_from_promoted(last_good, parse_lib(last_good)['title'])
+    raw = parsed['raw']
+    if raw not in (current_native, good_native):
+        return {}
+    sections = parsed['section']
+    need(len(sections) == 59,
+         'Strict source: current R54/R57 AP20 native layout changed')
+    for i in (0, 17, 18):
+        need(sections[i]['core'] == original[i]['core'],
+             f'Strict source: inherited native entry {i} changed')
+    need(sections[0]['core'][56:60] == bytes.fromhex('48e7fffe'),
+         'Strict source: R46 embedded private helper moved')
+    for i, offset in ((17,500),(18,540)):
+        need(sections[i]['core'][offset:offset+8] ==
+             bytes.fromhex('fe11f700008c4e75'),
+             f'Strict source: AMOS keyboard marker changed at entry {i}')
+    seeds = {0: {56}, 17: {506}, 18: {546}, 56: {1192}}
+    need(sections[56]['core'][1192:1196] == bytes.fromhex('206a0020'),
+         'Strict source: R54 image helper moved')
+    link = bytes.fromhex('fe11f700031d')  # R53 Bnk.GetAdr AMOS Rjsr marker
+    for i, offsets in ((56,(586,818,848,1118,1138)),(57,(58,)),(58,(38,))):
+        for offset in offsets:
+            need(sections[i]['core'][offset:offset+6] == link,
+                 f'Strict source: AMOS Rjsr marker moved at entry {i}')
+            seeds.setdefault(i,set()).add(offset+6)
+    if raw == good_native:
+        need(sections[20]['core'] == original[20]['core'],
+             'Strict source: R54 inherited Back Fill changed')
+        need(len(sections[58]['core']) == 110,
+             'Strict source: R54 native final entry changed')
+    else:
+        good = parse_lib(good_native)['section']
+        need(sections[20]['core'][:4] == bytes.fromhex('600052fa') and
+             sections[20]['core'][4:] == good[20]['core'][4:],
+             'Strict source: R57 Back Fill forwarding patch changed')
+        need(sections[58]['core'][:len(good[58]['core'])] == good[58]['core'] and
+             len(sections[58]['core']) == len(good[58]['core'])+620 and
+             sections[58]['core'][110:114] == bytes.fromhex('48e7efee'),
+             'Strict source: R57 in-place RastPort helper changed')
+        seeds[20] = {4}
+        seeds[58].add(110)
+    return seeds
+
+
 def analyze_entries(parsed):
     sections=parsed['section']
     base=parsed['code_start']
@@ -380,6 +439,8 @@ def analyze_entries(parsed):
     # Discover cross-entry seeds exclusively from decoded CALL targets.
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
     inherited=verified_r44_inherited_seeds(parsed)
+    for index, extra in verified_current_compiler_seeds(parsed).items():
+        inherited.setdefault(index,set()).update(extra)
     for verifier in (verified_r45_inherited_seeds, verified_r46_inherited_seeds):
         for index,extra in verifier(parsed).items():
             inherited.setdefault(index,set()).update(extra)
@@ -612,6 +673,7 @@ def unclassified_gaps(parsed):
     This ensures future releases refuse silent code regressions.
     """
     block,_,_,_=analyze_entries(parsed)
+    trusted_r54_r57 = bool(verified_current_compiler_seeds(parsed))
     problems=[]
     for sec in parsed['section']:
         core=sec['core'];loc=sec['file_offset'];instructions=block[sec['id']]
@@ -627,6 +689,8 @@ def unclassified_gaps(parsed):
             # Remove exact AMOS Rjsr pseudo-ops; they are machine-level
             # AMOS link markers but not executable Motorola opcodes.
             b=b.replace(bytes.fromhex('FE11F700008C'),b'')
+            if trusted_r54_r57:
+                b=b.replace(bytes.fromhex('FE11F700031D'),b'')
             # Report a problematic region once, not once per zero-delimited
             # fragment (the old exporter repeated the R23 250-byte gap).
             fragments=[part for part in b.split(b'\0') if part]
