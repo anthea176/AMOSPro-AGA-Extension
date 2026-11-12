@@ -8,6 +8,10 @@ La seule sortie visible est le titre AMOS `M16/R47 IMAGE CAPTURE TEST`, puis Win
 
 La procédure ci-dessous est conservée comme recette expérimentale d'origine : **ne pas la répéter tant que la cause n'est pas cadrée**.
 
+## Analyse du minidump Windows fourni (12/11/2026)
+
+Fichier utilisateur : `winuae_x64_6.0.3_R_2026.11.12_16.12.24.dmp` (268 636 octets, minidump Windows, 16 streams, horodatage interne 15:12:25 UTC). Décodage direct des streams MINIDUMP (sans symboles WinUAE) : **exception Windows `0xC0000005` (access violation)**, paramètre 0 = `0` (**lecture**), adresse lue `0x622A709D`, adresse de l'instruction en faute `0x10559285`, dans `winuae64.exe` chargé à `0x10000000` (**offset `0x00559285`**). Contexte x64 : `RAX=0x622A709A`, `RIP=0x10559285`. Aucune preuve de fonction WinUAE symbolisée ni du PC Motorola 68000 : **ne pas interpréter le RIP Windows comme PC Amiga**. La proximité de RAX et de l'adresse de lecture est un indice, non une cause prouvée. Conserver la candidate R47 historique et effectuer un jalonnement AMOS ciblé, avec la bibliothèque R46 C1 de secours. **Gate B FAIL et Gate C non testée.**
+
 ## Fichiers
 
 - [Bibliothèque R47 candidate](../dist/experimental/AMOSPro_AGA_M16_v0.12.2_IMAGE_CAPTURE_R47_CANDIDATE.Lib), **pas** le binaire officiel `dist/AMOSPro_AGA.Lib`.
