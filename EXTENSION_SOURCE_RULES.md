@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE PERMANENTE — README publics : concision et historique (12/11/2026)
+
+**Les fichiers `README.md` (anglais) et `README.fr.md` (français) décrivent les fonctions disponibles et leur utilisation, et non un journal de développement.** Cette règle est indépendante du numéro de build.
+
+1. Sous `## Libraries and tests` et `## Bibliothèques et tests`, commencer **directement** par un unique résumé actuel débutant par **Latest promoted `LAST_GOOD`** / **Dernière version promue `LAST_GOOD`**. Il précise la bibliothèque installable, la version, les limites de validation et les liens utiles, sans historique détaillé en amont.
+2. **Interdiction d'empiler les anciennes versions avant ce résumé.** À chaque build ou promotion, **remplacer** le résumé en place (ne jamais préfixer un nouveau paragraphe `Rxx`). Transférer les anciens résultats, SHA, Gates, captures, échecs, tests et jalons dans [l'historique anglais](docs/LIBRARY_TEST_HISTORY.md), [l'historique français](docs/LIBRARY_TEST_HISTORY.fr.md) et/ou les rapports techniques de `docs/`. Ces historiques sont datés et clairement distingués de l'état courant.
+3. Dans le tableau public des commandes AMOS, **première colonne = nom de la commande seulement** : pas de suffixe `(M15 R43, Gates A/B PASS)`, de version Rxx, ni de statut CI/WinUAE. La troisième colonne explique **syntaxe, paramètres, retour, limites et comportement** ; déplacer les preuves de validation et la chronologie hors de ce tableau.
+4. Pour `Aga Image Draw`, indiquer **explicitement** que la **source AGAPIC en banque DATA peut résider en Fast RAM** : le **CPU lit/décompresse la source et dessine dans le back buffer AGA en Chip RAM**, sans imposer de copie Chip de l'image entière et sans lecture Fast par le Blitter. **Ne pas affirmer** que l'ABK témoin est physiquement en Fast RAM tant que sa localisation n'a pas été mesurée ; AMOS contrôle le placement réel.
+5. Garder README anglais et français synchronisés (mêmes commandes, signatures, état courant et liens valides). Vérifier notamment `python -B tools/test_readme_api_coverage.py` et les règles de validation applicables. Les archives binaires et les tests déjà validés restent immuables.
+
 ## M16/R46 v0.12.1 — Gates A/B PASS, LAST_GOOD (12/11/2026)
 
 **AMOS interprété / WinUAE : PASS sur captures utilisateur** du test `M16-R46-IMAGE-DRAW-01`. Images opaque, masquée et décalée visibles, quatre côtés clippés : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `CHIP BEFORE/END 1801928 1801928`, `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `HEAD AGAPIC V 1`, `STREAM 196 TOTAL 1836`, **`ERRORS 0 RESULT 1`**, **`CLOSE RETURNED`** (ligne 148). La chaîne graphique `R45 - CPU AGAPIC IMAGE` est un ancien libellé dans le test R46, conservé sans retouche.
