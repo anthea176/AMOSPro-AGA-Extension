@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **Feuille de route active, mise à jour le 12 novembre 2026.** Ce fichier suit les **décisions et travaux à venir**, pas les journaux de chaque révision. Les ~90 000 caractères de l'ancienne roadmap ont été conservés dans l'[archive historique intégrale](history/ROADMAP_ARCHIVE_2026-11-12.md), avec les liens relatifs ajustés. Les anciens états de cette archive ne sont pas les états courants.
+> **Feuille de route active, mise à jour le 13 novembre 2026.** Ce fichier suit les **décisions et travaux à venir**, pas les journaux de chaque révision. Les ~90 000 caractères de l'ancienne roadmap ont été conservés dans l'[archive historique intégrale](history/ROADMAP_ARCHIVE_2026-11-12.md), avec les liens relatifs ajustés. Les anciens états de cette archive ne sont pas les états courants.
 
 ## 1. Situation vérifiée
 
@@ -53,6 +53,17 @@
 ### C. Copie alignée sur 16 pixels — étude différée
 
 **Statut : BACKLOG LONG TERME, NON PRIORITAIRE.** Une commande optionnelle de type `Aga Blit16 Copy` a été évoquée, **sans nom ni signature validés**. Étudier uniquement si la comparaison d'API AmigaOS apporte un bénéfice reproductible pour les copies alignées ; pas d'accès direct aux registres Blitter ni de dégradation de `Aga Blit Copy`. [Résultats Copy/Wait R57](../benchmarks/RESULTATS_COPY_WAIT_R57_2026-11-12.md).
+
+### D. Cible native 68020+ — après le chantier C2P en cours
+
+**Décision de l'auteur (13/11/2026) : à traiter APRÈS le chantier d'intégration de `c2p.library`, sans interrompre ni modifier la candidate M18/R60 actuellement en attente des Gates B/C.** Aucun changement de binaire, de test actif ou d'ABI n'est autorisé par cette seule inscription.
+
+- **Processeur minimum visé pour le code natif de l'extension : Motorola 68020 / 68EC020**, puis 68030, 68040 et 68060 ; aucune exigence de compatibilité d'exécution avec un 68000 seul.
+- **Compilateur/assembleur et nouveaux générateurs natifs : cible `68020` minimale réelle**, et pas seulement un contrôle de présence du CPU au démarrage. Employer les instructions et modes d'adressage du 68020 lorsqu'ils sont utiles, sans réécrire artificiellement les routines 68000 existantes qui fonctionnent déjà sur 68020.
+- **Revoir les contrôles de prérequis CPU**, la documentation, l'installation et les tests Gate A pour inclure une exécution effective des instructions 68020 (68020/68EC020), puis vérifier AMOS interprété (B), **nouvel exécutable AMOS Compiler** (C) et Amiga AGA physique (D). Les tests M68000 historiques restent des preuves de leur code d'origine, pas la cible de qualification des futurs ajouts 020.
+- Conserver l'ABI AP20, les règles de relocation/compiler, la gestion du back buffer, `Safe`, les tests de non-régression et **`LAST_GOOD` protégée**. Ne proposer des optimisations spécifiques 030/040/060 qu'après mesures et en maintenant la compatibilité 020.
+
+**Ordre :** terminer le chantier C2P en cours et ses validations, puis ouvrir séparément cette migration de cible CPU. **Pas de modification du moteur existant dans ce lot de roadmap.**
 
 ## 4. Règles de validation et de livraison
 
