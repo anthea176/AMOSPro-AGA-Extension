@@ -34,9 +34,9 @@ R58_TITLE = (
 )
 R58_TITLE += bytes(len(R58_TITLE) & 1)
 # Diagnostic 'Aga Probe' remains an instruction, not a new public API.
-# The marker is checked by native CPU/ABI tests (AMOS ignores D3 here).
-FAR_PROBE = bytes.fromhex("766374004e75")  # D3=99, D2=0, RTS.
-assert FAR_ENTRY_INDEX == 60 and len(FAR_PROBE) == 6
+# The far PC is checked by CPU instruction tracing, without altering registers.
+FAR_PROBE = bytes.fromhex("4e714e75")  # NOP, RTS: preserves legacy Aga Probe registers.
+assert FAR_ENTRY_INDEX == 60 and len(FAR_PROBE) == 4
 
 
 def build() -> tuple[bytes, dict]:

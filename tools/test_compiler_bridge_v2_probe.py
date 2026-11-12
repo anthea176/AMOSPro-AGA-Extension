@@ -136,9 +136,9 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
     return tests, realistic
 
 
-def emulate(link: bytes, bridge: bytes, target_offset: int, *, absolute: bool) -> None:
+def emulate(link: bytes, bridge: bytes, target_offset: int, *, absolute: bool, expected_d3: int = 99) -> None:
     """Run original M68000 instructions, not a Python approximation."""
-    from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN
+    from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_CODE
     from unicorn.m68k_const import (
         UC_CPU_M68K_M68000, UC_M68K_REG_PC, UC_M68K_REG_SR,
         UC_M68K_REG_A7, UC_M68K_REG_A0, UC_M68K_REG_D0,
@@ -161,13 +161,20 @@ def emulate(link: bytes, bridge: bytes, target_offset: int, *, absolute: bool) -
     uc.reg_write(UC_M68K_REG_D0, 0xA5A51234)
     uc.reg_write(UC_M68K_REG_D2, 0x20313233)
     uc.reg_write(UC_M68K_REG_D3, 0)
+    visits = []
+    far_pc = BRIDGE + len(DISPATCH_V2) + target_offset
+    def trace(_uc, address, size, _user):
+        if address == far_pc:
+            visits.append(address)
+    uc.hook_add(UC_HOOK_CODE, trace)
     uc.emu_start(STUB, STOP, count=200)
+    assert visits == [far_pc], '68000 did not reach the requested far native entry'
     assert uc.reg_read(UC_M68K_REG_PC) == STOP, '68000 failed to return normally'
     assert uc.reg_read(UC_M68K_REG_A7) == STACK + 4, 'stack imbalance'
     assert uc.reg_read(UC_M68K_REG_A0) == 0x1F00C0, 'A0 destroyed'
     assert uc.reg_read(UC_M68K_REG_D0) == 0xA5A51234, 'D0 destroyed'
     assert uc.reg_read(UC_M68K_REG_D2) == 0x20313233, 'D2 destroyed'
-    assert uc.reg_read(UC_M68K_REG_D3) == 99, 'target at offset not executed'
+    assert uc.reg_read(UC_M68K_REG_D3) == expected_d3, 'target result/ABI mismatch'
 
 
 def cpu_checks(tests: list[tuple[int, bytes]], realistic: bytes | None) -> None:

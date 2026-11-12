@@ -42,10 +42,10 @@ def run() -> None:
     # Model AMOS Compiler's Rbsr as both possible far routine link types.
     # The 68000 executes the real 40000-byte output, including V2 dispatcher.
     close = bytes.fromhex("61000006") + pack(">H", FAR_NATIVE_OFFSET) + b"\x4e\x75\x4e\x71"
-    emulate(close, entries[-1], FAR_NATIVE_OFFSET, absolute=False)
+    emulate(close, entries[-1], FAR_NATIVE_OFFSET, absolute=False, expected_d3=0)
     far = b"\x4e\xb9" + pack(">I", 0x100000) + pack(">H", FAR_NATIVE_OFFSET) + b"\x4e\x75"
-    emulate(far, entries[-1], FAR_NATIVE_OFFSET, absolute=True)
-    print("R58 V2 ACTUAL M68000 40K PROBE PASS: BSR/JSR, D3=99, D2=0, ABI, stack", flush=True)
+    emulate(far, entries[-1], FAR_NATIVE_OFFSET, absolute=True, expected_d3=0)
+    print("R58 V2 ACTUAL M68000 40K PROBE PASS: BSR/JSR, FAR PC reached, all ABI registers, stack", flush=True)
     print("R57 ALL 59 NATIVE ENTRIES IDENTICAL; AP20 53 TOKENS; SHA", info["sha256"], flush=True)
     print("R58 GATE B/C WINUAE NOT YET TESTED", flush=True)
 
