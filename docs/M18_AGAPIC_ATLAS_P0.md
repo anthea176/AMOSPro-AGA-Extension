@@ -69,12 +69,50 @@ modification de palette ou de pixels ; pas de Swap implicite.
 Restauration : placement, clipping, Safe, double buffering et
 propriété du stockage à contractualiser.
 
-**Point historique avéré :** le manuel AMOS Pro documente Get Cblock /
-Put Cblock et un arrondi de X et de la largeur à des multiples de
-8 pixels. Un CBlock AGA moderne devra choisir explicitement
-**arrondi compatible ou coordonnées exactes**, sans annoncer une
-compatibilité binaire avec les blocs AMOS :
+### Décision de l'auteur — CBlock au pixel près (12/11/2026)
+
+**Contrat fonctionnel retenu pour M18 : capture et restauration aux
+coordonnées et dimensions exactes, à 1 pixel près.** Aucun arrondi
+silencieux de X, Y, largeur ou hauteur pour rendre l'opération plus
+rapide. Les pixels hors rectangle doivent rester inchangés, y compris
+les bits du même mot planaire en bordure. L'entrée de capture doit
+refuser entièrement un rectangle hors écran avant toute allocation ;
+les règles de clipping de la restauration seront explicitées avant
+l'API native. Ne pas modifier la palette, changer de back buffer,
+appeler Swap ou attendre un VBL implicitement.
+
+**Deux chemins internes à comparer à résultat graphique identique :**
+
+- **Chemin aligné 16 pixels** : lorsque source, destination et largeur
+  s'y prêtent, copies par mots planaires de 16 bits et/ou Blitter
+  Chip→Chip. Éviter les masques et décalages inutiles, sans supposer
+  que ce chemin sera toujours plus rapide.
+- **Chemin général au pixel près** : positions X non alignées, largeurs
+  quelconques et bords ; décalages, masques de premier/dernier mot et
+  préservation exacte des pixels voisins. Le résultat ne doit pas
+  dépendre de l'alignement ; mêmes conditions Safe et mémoire.
+
+Le chemin effectivement plus rapide sera sélectionné **après mesure**
+sur un corpus identique : capture + restauration, aligné/décalé,
+rectangles petits/grands, opaque et masqué si retenu, CPU Fast/Chip
+contre Blitter Chip→Chip en incluant les coûts de préparation, attente
+et allocation. Mesurer séparément les sous-étapes et le total.
+Comparer aussi, à périmètre identique, AMOS `Screen Copy` et notre
+`Aga Blit Copy`. Le benchmark R57 préexistant donnait 35 contre
+69 ticks sur un petit rectangle aligné 64×48 : cela interdit de
+déclarer le Blitter plus rapide sans preuve.
+
+**Point historique distinct :** le manuel AMOS Pro documente
+`Get Cblock`/`Put Cblock` et un arrondi horizontal à des multiples
+de **8 pixels**. Cela correspond à un octet par bitplane, tandis que
+16 pixels correspondent à un mot de 16 bits, mais **la cause précise
+de l'arrondi AMOS n'est pas démontrée**. Notre CBlock AGA n'imposera
+pas cette convention et ne prétendra pas être compatible au niveau
+binaire avec les blocs AMOS :
 https://amospromanual.dev/07-07-icons-and-blocks.html
+
+**Statut : contrat fonctionnel approuvé, pas d'implémentation,
+pas de nouvelle commande AP20 ni de benchmark CBlock exécuté.**
 
 ## 3. Équivalent fonctionnel F 16 Icon
 

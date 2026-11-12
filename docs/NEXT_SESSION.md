@@ -2,7 +2,7 @@
 
 ## M18 / P0 — atlas AGAPIC v1, prototype hôte seulement (12/11/2026)
 
-**Chantier M18 autorisé après clôture de M17.** Première tranche : [contrat M18](M18_AGAPIC_ATLAS_P0.md), [modèle de rendu AGAPIC sous-rectangle / frames de grille](../tools/m18_agapic_atlas_model.py) et [tests hôte](../tools/test_m18_agapic_atlas_model.py). Le modèle utilise le format v1 inchangé, sans nouveau token AP20, nouvelle Lib R60 ni test ASC actif. Aucun résultat CPU M68000 Gate A ou WinUAE B/C revendiqué. **CBlock et F 16 Icon restent à auditer** avant de fixer une API. R59 v0.13.4 reste `LAST_GOOD`, les deux fichiers `dist/` sont inchangés ; `main` exclusivement.
+**Chantier M18 autorisé après clôture de M17.** Première tranche : [contrat M18](M18_AGAPIC_ATLAS_P0.md), [modèle de rendu AGAPIC sous-rectangle / frames de grille](../tools/m18_agapic_atlas_model.py) et [tests hôte](../tools/test_m18_agapic_atlas_model.py). Le modèle utilise le format v1 inchangé, sans nouveau token AP20, nouvelle Lib R60 ni test ASC actif. Aucun résultat CPU M68000 Gate A ou WinUAE B/C revendiqué. **CBlock : décision de l'auteur prise le 12/11/2026** — capture/restauration au pixel près sans arrondi ; voie optimisée pour alignement 16 pixels et voie générale avec décalages/masques, à comparer sur les mêmes rectangles (CPU/Blitter, coût total compris). L'arrondi 8 pixels des CBlock AMOS est historique, sa justification exacte n'est pas prouvée. [Contrat détaillé](M18_AGAPIC_ATLAS_P0.md). **La signature CBlock et le comportement d'échec restent à finaliser ; `F 16 Icon` reste à auditer.** R59 v0.13.4 reste `LAST_GOOD`, les deux fichiers `dist/` sont inchangés ; `main` exclusivement.
 
 ## M17/R59 v0.13.4 — `LAST_GOOD` PROMUE (12/11/2026)
 
