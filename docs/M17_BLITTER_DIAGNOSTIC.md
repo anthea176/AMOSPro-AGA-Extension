@@ -1,5 +1,17 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
+## R57 0.13.2 — correctif ciblé après Guru compilé R56
+
+**Faits utilisateur :** benchmark V2 R56 sous AMOS interprété **PASS** (`AGA ERR 0`, clôture sans erreur, Bar G 40/41/41, Clear G 59/58/58). En compilé, `Software Failure 8000000B` (Line-F), **Gate C R56 FAIL**. Le programme compilé de l'auteur utilise `Do / Wait Vbl / Loop` et non le `Wait Key` du test historique. Le PC de faute n'est pas disponible.
+
+**Relecture des octets :** R56 conservait 620 octets du helper Fill R55, inutilisés, et ajoutait 580 octets du nouveau code : monolithe **31 360 octets**, sans dépasser la limite **32 768**. Les 59 stubs publics restaient identiques ; seuls deux octets de déplacement du `BRA.W` Fill changeaient dans le code existant. Le test CPU ne reproduit pas entièrement la transformation d'AMOS Compiler. **Ne pas conclure à un défaut de taille sans preuve.**
+
+**R57 :** nouvelle implémentation `RectFill`/`SetRast` de 580 octets **à l'emplacement 30128**, ancien helper R55 de 620 octets remplacé (40 NOP de remplissage). **Saut Fill, BSR de Clear, stubs, dispatcher, offsets et taille du monolithe 30 780 octets = R55**. Aucun nouveau token, 53 commandes / 60 entrées AP20. [Binaire actif](../dist/AMOSPro_AGA.Lib) **32 980 octets**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0` ; [ASC actif unique](../tests/current/M17_R57_RAST_FILL_01.asc) avec boucle VBL. Pas de deuxième bibliothèque ni de branche. `LAST_GOOD` R54 inchangée.
+
+**Validation :** [CI R57 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339) : 111 scénarios CPU, pixels, double buffering, Safe, ABI, branchement de Clear et égalité des stubs Compiler R55. **Gates B/C/D R57 non testées**. La R57 vérifie l'hypothèse de placement, **n'est pas encore une preuve de correction du Guru**. Recompiler le même ASC R57 sous AMOS Compiler/WinUAE, sans refaire R54/R55.
+
+---
+
 ## R56 0.13.1 — remplacement Fill/Clear par graphics.library RastPort
 
 **Version de travail :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commandes / 60 entrées AP20, monolithe 31 360 octets. **Un seul test AMOS :** [`tests/current/M17_R56_RAST_FILL_01.asc`](../tests/current/M17_R56_RAST_FILL_01.asc). `main` uniquement ; aucune autre copie R56. `LAST_GOOD` figé R54 inchangé.

@@ -1,10 +1,12 @@
-# Outils Python — R56 active, R54 `LAST_GOOD` Compiler-safe
+# Outils Python — R57 active, R54 `LAST_GOOD` Compiler-safe
 
-## R56 — un binaire `dist/AMOSPro_AGA.Lib`, un test `tests/current/`
+## R57 — code rastport dans dist, test unique dans tests/current
 
-**Actuel : R56 0.13.1**, [bibliothèque unique](../dist/AMOSPro_AGA.Lib) **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`; [test AMOS unique](../tests/current/M17_R56_RAST_FILL_01.asc) avec `Wait Key`. **Gate A CPU/CI PASS** [run 43282947214](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214). **Gates B/C WinUAE et D physique R56 NON TESTÉES**. Pas de version R56 ailleurs, pas de branche autre que `main`.
+**R57 en cours :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc) est l'unique test actif, fin `Do / Wait Vbl / Loop`. **Gate A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B/C/D R57 non testées**.
 
-**`LAST_GOOD` : R54 0.12.9** inchangée, 32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS sur les scénarios validés. `tools/build_m17_r56_rastport.py` reproduit le binaire Compiler-safe depuis R55 construit en mémoire et R54 protégé ; `python -B tools/test_m17_r56_rastport.py` simule les octets CPU 68000 avec RastPort, Safe et contrôle des pixels. `python -B tools/build_aga_current.py --verify` compare les octets produits au fichier actif et conserve les vérifications historiques R46 C1.
+Générateur `tools/build_m17_r57_rastport.py` : remplacera en mémoire le helper R55 de 620 octets par RastPort R56 de 580 octets + 40 NOP ; aucun autre binaire écrit. Test natif `tools/test_m17_r57_rastport.py` ; binaire courant vérifié par `python -B tools/build_aga_current.py --verify`. Le binaire R56 a subi le Guru compilé `8000000B` ; cette architecture de placement n'est pas encore validée sous AMOS Compiler.
+
+**R54 `LAST_GOOD` préservée**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. Seule branche `main`, aucun autre livrable actif.
 
 ## Historique — R53 capture et sondes R47–R52
 

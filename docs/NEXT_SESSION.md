@@ -1,14 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M17/R56 0.13.1 — Fill/Clear par RastPort, Gate A PASS (12/11/2026)
+## M17/R57 0.13.2 — correctif de placement du helper, Gate A PASS (12/11/2026)
 
-**Règle de l'auteur : uniquement `main` ; 1 binaire actif [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) et 1 ASC [`tests/current/M17_R56_RAST_FILL_01.asc`](../tests/current/M17_R56_RAST_FILL_01.asc)**. Aucune copie R56 dans `dist/experimental/`, `archive/` ou Actions. [Règles permanentes](../EXTENSION_SOURCE_RULES.md).
+**Règle utilisateur :** branche `main` uniquement, **un seul binaire actif [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)**, **un seul programme actif [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc)**. Aucune autre copie R57 dans `dist/experimental/`. `LAST_GOOD` R54 intacte.
 
-**R56 active :** **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, **53 commandes AMOS / 60 entrées AP20**, monolithe Compiler-safe **31 360 octets**. Évolution R55 → R56 : `RectFill` pour les rectangles, `SetRast` seulement quand la surface couvre exactement la bitmap physique ; `WaitBlit` conservé, même contrôle d'arguments, des bitplanes, `Safe`, de l'ABI et du double buffering. Ancien helper R55 conservé en mémoire native mais non activé. [CI R56 : 171 scénarios CPU Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214). **Gate B interprétée/WinUAE, C nouvel exécutable compilé/WinUAE et D Amiga physique : NON TESTÉES pour R56**.
+**R57 :** 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, **monolithe 30 780 octets**, identique en taille et offsets à la R55 dont l'exécution compilée fonctionnait. Les 620 octets de l'ancien helper R55 ont été remplacés directement par **580 octets de RastPort R56 + 40 NOP**, sans changer stubs, dispatcher, saut Fill ni branchement Clear. **Gate A CPU/CI PASS** ([run 43286230339](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B/C/D R57 non testées**. L'hypothèse du placement reste à confirmer dans AMOS Compiler.
 
-**R55 historique :** Gates A/B/C PASS sur le test fonctionnel de l'auteur (B capture, C confirmation sans capture), benchmark compilé V2 `BAR 100 G = 54/54/54`, `CLEAR 80 G = 115/116/115` : gain Fill 0 et Clear ≈ 1,7 % vs R46 C1, non significatif. [Bilan R55](../benchmarks/RESULTATS_32C_R55_COMPILER_2026-11-12.md). **R54 `LAST_GOOD` reste intacte**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C historiques PASS ; pas de promotion R56.
+**Incident R56 :** le benchmark V2 a fonctionné sous **AMOS interprété** (`AGA ERR 0`, `V2 FINISHED - CLOSE RETURNED`, Bar G 40/41/41, Clear G 59/58/58). Le programme **compilé** plante avec Guru `8000000B` (Line-F). L'utilisateur a une boucle finale `Do / Wait Vbl / Loop`, pas de `Wait Key`. Ne pas attribuer l'incident à un dépassement de limite : R56 utilisait 31 360 octets, inférieur à 32 768 ; pas de PC de faute connu.
 
-**Étape utilisateur :** récupérer `dist/AMOSPro_AGA.Lib`, installer sous AMOS et redémarrer complètement ; lancer l'ASC R56 unique (avec `examples/demo.iff`), contrôler `RESULT 1` et `CLOSE RETURNED`, tester le nouvel exécutable AMOS Compiler distinctement. Ensuite recompiler le [benchmark V2 inchangé](../benchmarks/graphics_32c_v2.asc) pour comparer les temps Fill/Clear à R55 et à la baseline. Ne refaire aucun test R55 déjà acquis.
+**R55 :** Gates A/B/C PASS sur son scénario, benchmark compilé sans gain Fill/Clear robuste. **R54 `LAST_GOOD`** : SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, inchangée. Tests historiques et archives figés.
+
+**Suite unique :** télécharger R57 du chemin `dist/`, redémarrer AMOS et exécuter l'ASC R57 avec `examples/demo.iff`. Il faut ensuite compiler **ce même ASC avec R57** pour tester la Gate C ; l'ancien exécutable R56 n'est pas représentatif. Les tests R54/R55 déjà acquis ne sont pas à refaire.
 
 ## M16/R54 v0.12.9 — PROMUE LAST_GOOD, Gates A/B/C PASS (12/11/2026)
 

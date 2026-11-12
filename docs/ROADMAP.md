@@ -1,10 +1,10 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
-## M17/R56 0.13.1 — RectFill/SetRast, Gate A CPU/CI PASS (12/11/2026)
+## M17/R57 0.13.2 — code RastPort en place, Gate A CPU PASS (12/11/2026)
 
-**`main` uniquement ; une seule bibliothèque active : `dist/AMOSPro_AGA.Lib` ; un seul ASC actif : `tests/current/M17_R56_RAST_FILL_01.asc`.** R56 **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 31 360 octets. Remplacement interne du Fill groupé R55 par un RastPort de pile utilisant `RectFill` et `SetRast` exclusivement si largeur/hauteur physiques intégralement couvertes. **Gate A CPU/CI PASS (171 scénarios)** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214)), **B/C WinUAE et D Amiga physique R56 NON TESTÉES**. R54 reste `LAST_GOOD` sans changement et aucune R56 n'est promue.
+**`main` uniquement. Bibliothèque courante unique : `dist/AMOSPro_AGA.Lib` R57 (32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`) ; programme courant unique : `tests/current/M17_R57_RAST_FILL_01.asc`.** 53 commandes, 60 entrées AP20, monolithe 30 780 octets. R57 retire le helper mort R55 et substitue le code RectFill/SetRast **à l'offset natif 30128**, sans déplacer les stubs Compiler. Gate A CPU/CI **PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **Gates B/C/D R57 en attente** ; R54 `LAST_GOOD` non modifiée.
 
-**Cause du changement :** la R55 avait les Gates A/B/C PASS mais sans gain significatif sur V2 compilé (Fill médiane 54 ticks, Clear 115 contre 117 avant M17). [Bilan R55](../benchmarks/RESULTATS_32C_R55_COMPILER_2026-11-12.md). Suite : tester le seul ASC R56 puis compiler le [benchmark V2 inchangé](../benchmarks/graphics_32c_v2.asc) pour comparer les trois mesures. [Diagnostic technique](M17_BLITTER_DIAGNOSTIC.md).
+**Cause de R57 :** R56 a passé le benchmark interprété mais **échoué en compilé (Guru `8000000B`)**. La taille 31 360 octets restait sous la limite ; l'hypothèse de placement n'est pas confirmée. R57 doit être vérifiée sur **un exécutable nouvellement compilé** avant toute conclusion et avant de poursuivre le benchmark. [Rapport](M17_BLITTER_DIAGNOSTIC.md).
 
 ## M16/R54 v0.12.9 — Clôture A/B/C et LAST_GOOD (12/11/2026)
 

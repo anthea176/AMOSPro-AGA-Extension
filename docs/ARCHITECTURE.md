@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État actuel — R56 CPU/CI PASS, `LAST_GOOD` R54 (12/11/2026)
+## État actuel — M17/R57 Gate A PASS ; R54 LAST_GOOD (12/11/2026)
 
-**Bibliothèque active unique :** `dist/AMOSPro_AGA.Lib` R56 0.13.1, **33 560 octets**, SHA256 `df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef`, **53 commandes / 60 entrées AP20**, monolithe Compiler-safe 31 360 octets. Utilise un RastPort temporaire sur le back BitMap : `SetRast` pour totalité de la bitmap physique et `RectFill` pour toute autre région, avec `WaitBlit` ; conventions AMOS/Safe inchangées. [ASC unique en cours](../tests/current/M17_R56_RAST_FILL_01.asc), 40 swaps et opérations Fill/Clear/Copy.
+**Binaire actif unique `dist/AMOSPro_AGA.Lib` : R57 0.13.2**, 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 30 780 octets (taille R55). La nouvelle routine RastPort Fill/Clear de 580 octets occupe l'ancien créneau de 620 octets R55, complété de 40 NOP ; stubs AP20, dispatcher, branchements externes et offsets inchangés. **[Test ASC unique](../tests/current/M17_R57_RAST_FILL_01.asc)** : Safe, Fill/Clear/Copy, 40 swaps, boucle VBL.
 
-**Gates R56 : A CPU/CI PASS (171 scénarios), B/C/D NON TESTÉES.** [Preuve Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43282947214). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R54 0.12.9** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS scénarios R54). R55 a obtenu A/B/C sur son scénario, mais aucun gain robuste dans le benchmark compilé V2. Un seul binaire actif et un seul ASC dans le dépôt, `main` uniquement. [Diagnostic M17](M17_BLITTER_DIAGNOSTIC.md).
+**R57 Gate A CPU/CI PASS, B/C/D non testées.** R56 avait un benchmark interprété PASS mais plantait en compilé avec `8000000B`. Le placement est une hypothèse à confirmer. **`LAST_GOOD` R54 0.12.9 reste intacte** (32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C historiques PASS). [Rapport](M17_BLITTER_DIAGNOSTIC.md).
 
 ## Historique — M16/R46 v0.12.1, ancien checkpoint Gates A/B (12/11/2026)
 
