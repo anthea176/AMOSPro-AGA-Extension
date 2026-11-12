@@ -1,5 +1,27 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
+## R55 — Première optimisation CPU/CI PASS, candidate non publiée (12/11/2026)
+
+**Statut post-diagnostic : implémentation ciblée effectuée sur `main`, Gate A CPU/CI PASS ; Gates B (AMOS interprété/WinUAE), C (nouvel exécutable Compiler/WinUAE) et D (Amiga physique) NON TESTÉES.** [GitHub Actions Gate A R55 — PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276651112) sur le commit `f27a776934cd5e92762fee892cc02504b45d5a89`. Le builder reste **strictement en mémoire**, sans `.Lib` R55 officielle ni archive candidate publiée. **R54 reste `LAST_GOOD`**, empreinte et archives inchangées. Cette section complète le diagnostic historique conservé plus bas.
+
+**Fichiers ajoutés :** [émetteur 68000 groupé](../tools/m17_blit_group_r55_emit.py), [builder Compiler-safe en mémoire](../tools/build_m17_blit_group_r55.py), [suite de tests CPU](../tools/test_m17_blit_group_r55.py). La CI quotidienne [Artifact integrity](../.github/workflows/artifact-integrity.yml) intègre `python -B tools/test_m17_blit_group_r55.py` puis `python -B tools/build_m17_blit_group_r55.py`.
+
+### Contrat de l'optimisation
+
+- **Aucune nouvelle commande/token AMOS, aucune signature modifiée.** La R55 conserve les 53 commandes et 60 entrées AP20 de R54. `Aga Blit Copy` est conservée octet pour octet ; `Aga Blit Clear` reste le wrapper historique de 38 octets, y compris son `BSR.W` de déplacement **−572** vers l'ancien point d'entrée Fill.
+- **Relocation sans décaler le code existant :** les 4 premiers octets de l'ancienne entrée native Fill sont remplacés par un `BRA.W` vers la nouvelle routine, **ajoutée à la fin de la dernière entrée native**. Les anciennes positions natives et les 59 stubs `Rbsr` restent identiques ; l'enveloppe finale est reconstruite en mémoire avec `wrap_native_ap20()`. La limite du monolithe inférieur à 32 Kio est contrôlée.
+- **Validation et sécurité identiques :** géométrie, profondeur 1–8, pointeurs de **tous** les bitplanes, indice couleur, contrôle `Safe` sans attente bloquante ni écriture si refus. Le helper 68000 conserve les conventions AMOS `A3`/`D2`/`D3`, l'équilibre de pile et les registres non volatils, contrôlés par Unicorn.
+- **Blits groupés :** `FullMask=(1<<Depth)-1`, `SetMask=Pen&FullMask`, `ClearMask=FullMask^SetMask`. Appeler `BltBitMap` avec minterm `$00` pour `ClearMask` non nul, puis minterm `$F0` pour `SetMask` non nul. Résultat **un ou deux appels** et autant de `WaitBlit` ; précédemment un appel/attente **par bitplane**. Source et destination restent le même back `BitMap` validé.
+- **Retour strict :** le helper calcule le nombre de bits à 1 du masque et exige que le compte de plans renvoyé par `BltBitMap` soit **exactement égal** ; une opération partielle ou nulle retourne 0 après `WaitBlit`. Le code ne déclare pas une atomicité du dessin après un échec partiel.
+
+### Preuves et limites des tests
+
+La nouvelle suite Gate A inspecte l'identité R54, la reproductibilité du builder, les tokens, stubs et offsets, le branchement de Fill, le `BSR.W` de Clear, la taille et les instructions 68000, puis exécute les **octets natifs produits** sous Unicorn avec simulations strictes de `BltBitMap`, `WaitBlit` et `GetMsg(SafePort)`. Les 510 combinaisons (1–8 plans, toutes les couleurs) sont vérifiées par modèle de masques ; des cas échantillonnés contrôlent les pixels et la mémoire après émission CPU, les deux buffers, les erreurs, les retours partiels et la préservation de l'ABI. `Aga Blit Copy` est rejouée comme non-régression.
+
+**Ne pas confondre :** la CI ne mesure ni l'accélération, ni la compatibilité visuelle WinUAE, ni un exécutable AMOS Compiler R55. La **Gate B/C nécessitera une candidate installable versionnée et un programme nouvellement compilé**, tous deux identifiés par leur SHA256. Rejouer sans modification le benchmark [`graphics_32c_v2.asc`](../benchmarks/graphics_32c_v2.asc) en interprété et compilé, trois passages, mêmes paramètres WinUAE et contrôle visuel. **Aucune promotion de R55 avant résultat et accord utilisateur.**
+
+---
+
 ## Statut et limites
 
 **M17 est ouvert en phase d'étude/diagnostic uniquement. Aucun patch 68000, aucune candidate, aucun test runtime M17, aucune promotion.** La base sûre est [R54 v0.12.9 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) (**32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, 53 commandes / 60 entrées AP20, Gates A/B/C PASS sur le scénario R54 ; Gate D matérielle NON TESTÉE). L'[archive R46 C1](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) et les versions antérieures restent figées. Travail exclusivement sur `main`.
