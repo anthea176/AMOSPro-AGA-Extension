@@ -1,6 +1,6 @@
 # Test AMOS actif — M16/R47 capture AGAPIC (NON VALIDÉ sous WinUAE)
 
-**Un seul fichier `.asc` actif** : [M16_R47_IMAGE_CAPTURE_01.asc](M16_R47_IMAGE_CAPTURE_01.asc). Le programme n'a pas encore été testé sous AMOS interprété (Gate B) ni Compiler (Gate C). **R47 est expérimentale**, construite à partir de la bibliothèque R46 C1 Compiler-safe, et ne doit pas remplacer `LAST_GOOD` sans nouvelle validation. Test dans une **configuration WinUAE isolée avec sauvegarde**.
+**Un seul fichier `.asc` actif** : [M16_R47_IMAGE_CAPTURE_01.asc](M16_R47_IMAGE_CAPTURE_01.asc). Le programme n'a pas encore été testé sous AMOS interprété (Gate B) ni Compiler (Gate C). **R47 est expérimentale** : [bibliothèque R47 de test](../../dist/experimental/AMOSPro_AGA_M16_v0.12.2_IMAGE_CAPTURE_R47_CANDIDATE.Lib) (**32 012 octets**, SHA256 `a550e9662cda1890aa8331c6e849e702300e6070e8e2caaf2fab9918613944d5`), construite à partir de R46 C1 Compiler-safe ; **elle ne remplace pas `LAST_GOOD`**. Voir [procédure WinUAE](../../docs/M16_R47_GATE_B_PROCEDURE.md). Test dans une **configuration WinUAE isolée avec sauvegarde**.
 
 **Avant de lancer :** les banques AMOS **11 et 12 doivent être libres** (`List Bank`). Le programme ne supprime jamais une banque préexistante. Il crée deux banques AGAPIC par capture depuis le back buffer, teste collision et cas invalides, redessine via l'ancienne syntaxe encore active `Aga Image Draw(Start(bank),Length(bank),X,Y,Mode)`, puis effectue `Save`/`Erase`/`Load` sur `RAM:M16_R47_CAPTURE11.abk`. Il supprime ensuite seulement les banques qu'il a créées.
 
