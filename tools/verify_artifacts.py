@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R42 Gate A CPU/CI PASS candidate; R41 LAST_GOOD WinUAE PASS; archives frozen."""
+"""Integrity: R42 Gate A CPU/CI and user-confirmed WinUAE Gate B PASS, R42 LAST_GOOD; archives frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -38,7 +38,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -108,7 +108,7 @@ def main():
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -398,7 +398,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"]
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
@@ -458,11 +458,11 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc"))==["M15_R42_BOX_01.asc"], "Only R42 WinUAE Gate B test may be active"
+    assert not list((ROOT/"tests/current").glob("*.asc")), "R42 passed: tests/current must have no ASC"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"], "R41 LAST_GOOD must remain byte-identical"
+    assert hashlib.sha256(binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"]).hexdigest()=="0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc", "R41 archive changed"
 
     built41,meta41=build_r41()
     assert built41==build_r41()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"], "R41 frozen archive not reproducible"
@@ -486,7 +486,7 @@ def main():
     draw_data=(ROOT/"tests/passed/M15_R41_DRAW_01.asc").read_bytes()
     draw_blob=b"blob "+str(len(draw_data)).encode("ascii")+bytes([0])+draw_data
     assert hashlib.sha1(draw_blob).hexdigest()=="aa7de64b37a2842db21bc7452c2fab4570413e9f", "R41 passed ASC bytes modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==built41, "R41 LAST_GOOD not preserved"
+    assert binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"]==built41, "R41 historical archive changed"
 
     built42,meta42=build_r42()
     assert candidate==built42==build_r42()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"], "R42 candidate not reproducible"
@@ -505,10 +505,14 @@ def main():
         found=[x for x in named42 if x["name"]==name]
         assert len(found)==1 and (found[0]["instruction"],found[0]["function"],found[0]["signature"])==(1,index,sig)
     assert any(x["index"]==ENTRY_BOX and x["parameters"]==5 and x["getp"] for x in audit42["parameter_checks"])
-    assert (ROOT/"tests/current/M15_R42_BOX_01.asc").is_file(), "R42 active WinUAE test missing"
-    assert not (ROOT/"tests/passed/M15_R42_BOX_01.asc").exists(), "R42 WinUAE Gate B not confirmed"
-    print("PASS: R42 candidate 47 AP20 tokens native CPU 68000 Gate A PASS; Gate B WinUAE pending;"
-          " R41 LAST_GOOD and all historical archives frozen")
+    assert (ROOT/"tests/passed/M15_R42_BOX_01.asc").is_file(), "R42 WinUAE passed test must be archived"
+        assert not (ROOT/"tests/current/M15_R42_BOX_01.asc").exists(), "R42 test must be removed from current"
+    box_data=(ROOT/"tests/passed/M15_R42_BOX_01.asc").read_bytes()
+    box_blob=b"blob "+str(len(box_data)).encode("ascii")+bytes([0])+box_data
+    assert hashlib.sha1(box_blob).hexdigest()=="dbf5cefb215cc0ae1359d648ea34c855a92b2012", "R42 passed ASC modified"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built42, "R42 promotion byte mismatch"
+    print("PASS: R42 47 AP20 tokens native CPU 68000 Gate A and user WinUAE Gate B PASS;"
+          " R42 LAST_GOOD promoted and all historical archives frozen")
 
 
 if __name__ == "__main__":

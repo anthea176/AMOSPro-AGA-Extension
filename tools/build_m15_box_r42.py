@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """M15/R42 v0.11.3: deterministic Aga Box candidate from frozen WinUAE-PASS R41.
 
-This builder does not modify the candidate or LAST_GOOD on disk. Gate B must
-be independently validated by the user before R42 may replace LAST_GOOD.
+This builder does not modify the candidate or LAST_GOOD on disk. R42 was
+promoted after explicit user-confirmed WinUAE Gate B.
 """
 import argparse
 import base64
@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"
 BASE_SHA256 = "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"
 GETP = b"GetP"
@@ -72,7 +72,7 @@ def build():
     return candidate, dict(version=VERSION, sha256=digest(candidate),
         size=len(candidate), named_commands=47, segments=53,
         new_command=API[0], changed_segments=[51, 52],
-        labels=labels, Gate_A="CPU_CI_PENDING", Gate_B="NOT_TESTED")
+        labels=labels, Gate_A="CPU_CI_PASS", Gate_B="USER_WINUAE_PASS")
 
 
 if __name__ == "__main__":

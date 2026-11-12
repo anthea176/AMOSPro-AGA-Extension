@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R42 v0.11.3 — AMOS/WinUAE test candidate, native CPU/CI Gate A PASS (360 cases), Gate B not tested:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 named AP20 commands**. New `Aga Box(X1,Y1,X2,Y2,Pen)` draws safely clipped 1-pixel rectangle outlines with unordered corners. [Active R42 test](tests/current/M15_R42_BOX_01.asc) requires no extra IFF/ABK. **Last `LAST_GOOD`: R41 v0.11.2**, 24,816 bytes; [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib) remains unchanged. Compiler Gate C and physical AGA Gate D untested.
+**R42 v0.11.3 — native CPU/CI Gate A and WinUAE Gate B PASS (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 named AP20 commands**. `Aga Box(X1,Y1,X2,Y2,Pen)`: 360 native 68000 CPU/CI cases PASS and user-confirmed interpreted AMOS/WinUAE rendering (`RESULT 1`, `CLOSE RETURNED`). [Exact test archived](tests/passed/M15_R42_BOX_01.asc). R41 remains archived. Gates C/D untested.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R42 v0.11.3 candidate](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib`, **keeping the same extension slot**, then **restart AMOS**. Back up the installed library; [R41 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains available for rollback. From an empty program import the [R42 test](tests/current/M15_R42_BOX_01.asc) using **Project → Merge ASCII**.
+2. Copy the [WinUAE-validated R42 v0.11.3](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib`, keeping the same slot, then **restart AMOS**. Back up the previous library; [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) now contains R42. The [passed R42 test](tests/passed/M15_R42_BOX_01.asc) is archived.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R42 v0.11.3 — AMOS/WinUAE test candidate, native CPU/CI Gate A PASS (360 cases), Gate B not tested:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 named AP20 commands**. New `Aga Box(X1,Y1,X2,Y2,Pen)` draws safely clipped 1-pixel rectangle outlines with unordered corners. [Active R42 test](tests/current/M15_R42_BOX_01.asc) requires no extra IFF/ABK. **Last `LAST_GOOD`: R41 v0.11.2**, 24,816 bytes; [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib) remains unchanged. Compiler Gate C and physical AGA Gate D untested.
+**R42 v0.11.3 — native CPU/CI Gate A and WinUAE Gate B PASS (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 named AP20 commands**. `Aga Box(X1,Y1,X2,Y2,Pen)`: 360 native 68000 CPU/CI cases PASS and user-confirmed interpreted AMOS/WinUAE rendering (`RESULT 1`, `CLOSE RETURNED`). [Exact test archived](tests/passed/M15_R42_BOX_01.asc). R41 remains archived. Gates C/D untested.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 
