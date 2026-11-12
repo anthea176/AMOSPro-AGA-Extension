@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Reusable, non-promoting AP20 compiler CloseWindow bridge for R44 and R45.
+"""HISTORICAL INCOMPLETE R44/R45 AP20 CloseWindow experiment (NOT FOR PRODUCTION).
+
+Only four legacy CloseWindow branches are repaired; remaining cross-segment
+calls make this unsuitable for future versions. Use compiler_relocation.py and
+build_aga_current.py for the official user-validated R46 C1 bridge.
 
 Only emits in memory by default. R44 / R45 baselines are SHA256 pinned.
 No canonical library, archive or LAST_GOOD is rewritten.

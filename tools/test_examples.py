@@ -161,6 +161,32 @@ def main() -> None:
     require(all(x in combined for x in ("_ERR=1","_ERR=2","_ERR=3","_ERR=4")),
             "M15/M15bis example must have bounded failure outcomes")
 
+    # Archived exact R46 C1 integrated Compiler PASS example.
+    kit = EXAMPLE_DIR / "compiler_r46_all_in_one"
+    all_in_one = (kit/"COMPILER_R46_ALL_IN_ONE.asc").read_bytes()
+    assert all_in_one == (ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
+    assert len(all_in_one)==5404 and all_in_one.endswith(b"End\n")
+    lines = all_in_one.decode("ascii").splitlines()
+    assert sum(x.strip().startswith("If ") for x in lines) == sum(x.strip()=="End If" for x in lines)
+    assert sum(x.strip().startswith("For ") for x in lines) == sum(x.strip().startswith("Next ") for x in lines)
+    for command in ("Aga Image Draw(", "Aga Mouse Cursor(", "Aga Font Bank Select(",
+                    "Aga Font Select(", "Aga Swap", "Aga Screen Close",
+                    "Aga Plot(", "Aga Draw(", "Aga Box(", "Aga Circle("):
+        assert command in all_in_one.decode("ascii"), "C1 example missing "+command
+    assert (kit/"M16_AGAPIC_SAMPLE_BANK10.abk").read_bytes() == (
+        ROOT/"tests/current/M16_AGAPIC_SAMPLE_BANK10.abk").read_bytes()
+    assert (kit/"Hwarf1252S.abk").read_bytes() == (
+        EXAMPLE_DIR/"Amcaf Fonts/Hwarf1252S.abk").read_bytes()
+    assert (kit/"README.md").is_file() and (kit/"Hwarf-12xxS.licence").is_file()
+    import zipfile
+    with zipfile.ZipFile(EXAMPLE_DIR/"COMPILER_R46_ALL_IN_ONE.zip") as archive:
+        names=archive.namelist()
+        root="R46_C1_COMPILER_ALL_IN_ONE/"
+        assert set(names)=={root+n for n in (
+            "COMPILER_R46_ALL_IN_ONE.asc","M16_AGAPIC_SAMPLE_BANK10.abk",
+            "Hwarf1252S.abk","Hwarf-12xxS.licence","README.md")}
+        for name in names:
+            assert archive.read(name)==(kit/name.removeprefix(root)).read_bytes()
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
     require(hashlib.sha256(original).digest() == hashlib.sha256(demo).digest()
@@ -179,7 +205,7 @@ def main() -> None:
         text = (ROOT / p).read_text("utf-8")
         require("examples/README" in text and "INSTALL" in text,
                 f"Missing distribution links in root {p}")
-    print(f"Distribution examples PASS: {len(EXAMPLES)} distinct ASCII demos, "
+    print(f"Distribution examples PASS: {len(EXAMPLES)+1} distinct ASCII demos, "
           "all AP20 calls recognized, cleanup checks and matching 320x256x256 ILBM. "
           "AMOS/WinUAE execution still required.")
 

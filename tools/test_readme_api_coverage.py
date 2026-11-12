@@ -133,12 +133,13 @@ def main() -> None:
         if token["name"].lower().startswith("aga ")
     }
     assert exported, "No named AP20 commands found in current library"
-    version = re.search(
-        r"R(\d+)\s+(\d+\.\d+\.\d+)",
-        library.title.decode("latin-1"),
-    )
-    assert version, "Cannot read current version from AP20 binary title"
-    release = f"R{version.group(1)} {version.group(2)}"
+    title = library.title.decode("latin-1")
+    # Compiler-safe R46 C1 retains the exact user-tested title
+    # "R46 Compiler Gate C candidate 0.12.1-C1".
+    revision = re.search(r"\bR(\d+)\b", title)
+    version = re.search(r"\$VER:\s*AMOSPro_AGA\s+(\d+\.\d+\.\d+)", title)
+    assert revision and version, "Cannot read Rxx and $VER from current AP20 title"
+    release = f"R{revision.group(1)} {version.group(1)}"
 
     english = check_readme(*READMES[0], exported, release)
     french = check_readme(*READMES[1], exported, release)

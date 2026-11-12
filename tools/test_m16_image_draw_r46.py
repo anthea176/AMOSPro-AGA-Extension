@@ -15,6 +15,7 @@ from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
 from ap20_utils import split
 from audit_ap20 import parse, inspect
 from build_m16_image_draw_r46 import build, BASE, R45_FAILED, R45_SHA256, ARCHIVE_R44, ENTRY_INDEX, ARCHIVE_R46, CURRENT
+from build_aga_compiler_bridge_r46 import build as wrap_r46_c1
 from m16_image_draw_r45_emit import emit_image_draw
 from m16_agapic import pack_image, parse_payload
 from m16_agapic_sample import sample
@@ -67,8 +68,7 @@ def main():
     assert fixed == build()[0]
     if ARCHIVE_R46.exists():
         assert fixed == ARCHIVE_R46.read_bytes(), "R46 archived build mismatch"
-    if CURRENT.read_bytes()!=R45_FAILED.read_bytes():
-        assert fixed == CURRENT.read_bytes(), "R46 current candidate mismatch"
+    assert wrap_r46_c1(fixed) == CURRENT.read_bytes(), "official R46 must be compiler-safe C1"
     old=R45_FAILED.read_bytes()
     assert hashlib.sha256(old).hexdigest()==R45_SHA256
     assert BASE.read_bytes()==ARCHIVE_R44.read_bytes()
@@ -133,7 +133,7 @@ def main():
     print("M16/R46 native CPU Gate A PASS:",count,"real 68000 scenarios")
     print("WinUAE real bank native FLAGS=0 reproduced: R45 rejects, R46 accepts")
     print("0/1/3 accepted; 2/4/5/6/7/256/65535 rejected before any paint")
-    print("50 AP20 commands, 56 segments. R44 LAST_GOOD and failed R45 frozen.")
+    print("Native R46: 50 commands / 56 segments frozen; official C1: 57 entries")
     print("R46 candidate SHA256",info["sha256"],"size",info["size"])
     print("R46 Gate B PASS from user WinUAE captures (not executed by CPU harness)")
 

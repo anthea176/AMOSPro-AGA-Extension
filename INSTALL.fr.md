@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**R42 v0.11.3 — Gates A CPU/CI et B WinUAE PASS (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R42](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25 896 octets**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 commandes AP20**. `Aga Box(X1,Y1,X2,Y2,Pen)` : 360 tests CPU/CI PASS, puis validation AMOS interprété/WinUAE et rendu confirmé par l'utilisateur (`RESULT 1`, `CLOSE RETURNED`). [Test original archivé](tests/passed/M15_R42_BOX_01.asc). R41 reste dans son archive. Gates C/D non testées.
+**R46 v0.12.1-C1 — version officielle promue (12/11/2026) :** [bibliothèque `AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive C1 validée](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrées AP20**. Gates A CPU, B interprété WinUAE et C test intégré compilé WinUAE PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physique non testée. Ne plus installer l'ancienne archive R46 native pour un programme compilé.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -10,7 +10,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier la [R42 v0.11.3 validée](dist/AMOSPro_AGA.Lib) dans **`APSystem`** sous le nom exact `AMOSPro_AGA.Lib`, **sans changer de slot**, puis **redémarrer AMOS**. Conserver une copie de la bibliothèque précédente ; [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) contient désormais R42. Le [test R42 validé](tests/passed/M15_R42_BOX_01.asc) est archivé.
+2. Copier la [R46 C1 validée sous WinUAE et Compiler](dist/AMOSPro_AGA.Lib) dans **`APSystem`** sous le nom `AMOSPro_AGA.Lib` et avec le même slot, puis **redémarrer AMOS et Compiler**. Conserver l'ancienne bibliothèque/configuration ; [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) contient maintenant la C1. **Recompiler les anciens exécutables**, qui embarquent l'ancien code.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.
@@ -19,7 +19,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## 2. Lancer les exemples
 
-1. Copier les sept fichiers `.asc` ainsi que `demo.iff` depuis [`examples/`](examples/) dans un répertoire accessible depuis l'Amiga ou WinUAE (disque dur Amiga, dossier Windows monté, image disque).
+1. Copier les exemples `.asc` choisis ainsi que `demo.iff` depuis [`examples/`](examples/) dans un répertoire accessible depuis l'Amiga ou WinUAE (disque dur Amiga, dossier Windows monté, image disque).
 2. Dans l'éditeur AMOS, créer un **programme vide** (**New**), puis **Project → Merge ASCII** (raccourci **Amiga + Maj + M**). Importer `examples/screen.asc`.
 3. Exécuter en **mode interprété** : un motif AGA apparaît quelques secondes puis l'écran se referme et AMOS revient.
 4. Pour `picture.asc`, repartir d'un programme vide puis faire **Merge ASCII**. Au sélecteur de fichiers (`Fsel$("**")`), choisir `examples/demo.iff` ; appuyer sur une touche pour fermer l'affichage.
@@ -35,11 +35,11 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 | `demo.iff` introuvable | Le chemin doit être visible **depuis AmigaOS**. Parcourir les volumes accessibles au sélecteur, pas le chemin Windows directement. |
 | Ouverture de l'écran impossible | Vérifier le chipset **AGA** et la disponibilité du mode PAL 320×256 en 256 couleurs. |
 | Un `.asc` ne se charge pas | Utiliser **Project → Merge ASCII**, pas `Load` qui attend un programme AMOS tokenisé. |
-| Erreur dans un exemple | Revenir à AMOS et consulter le message. **Ces nouveaux exemples sont contrôlés statiquement, mais n'ont pas encore été essayés sous WinUAE.** |
+| Erreur dans un exemple | Consulter le résultat. Le [tout-en-un compilé R46 C1](examples/compiler_r46_all_in_one/) est validé sous WinUAE ; les autres exemples disposent de tests distincts. |
 
 ## Statut et droits
 
-**R42 v0.11.3 — Gates A CPU/CI et B WinUAE PASS (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R42](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25 896 octets**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, **47 commandes AP20**. `Aga Box(X1,Y1,X2,Y2,Pen)` : 360 tests CPU/CI PASS, puis validation AMOS interprété/WinUAE et rendu confirmé par l'utilisateur (`RESULT 1`, `CLOSE RETURNED`). [Test original archivé](tests/passed/M15_R42_BOX_01.asc). R41 reste dans son archive. Gates C/D non testées.
+**R46 v0.12.1-C1 — version officielle promue (12/11/2026) :** [bibliothèque `AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive C1 validée](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrées AP20**. Gates A CPU, B interprété WinUAE et C test intégré compilé WinUAE PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physique non testée. Ne plus installer l'ancienne archive R46 native pour un programme compilé.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

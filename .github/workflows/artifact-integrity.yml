@@ -20,6 +20,7 @@ on:
       - "archive/**/*.Lib"
       - "dist/**/*.Lib"
       - "tools/build_*.py"
+      - "tools/compiler_relocation.py"
       - "tools/test_*.py"
       - "tools/agapal_r30_layout.py"
       - "tools/m16_agapic.py"
@@ -76,7 +77,13 @@ jobs:
           python-version: "3.12"
       - name: Verify current HUNK files and exact committed artifacts
         run: python -B tools/verify_artifacts.py
-      - name: "Gate C candidate: portable R44 rebuild + R45 in-memory transposition (STATIC ONLY)"
+      - name: "Promoted R46 C1: deterministic compiler-safe LAST_GOOD + future-build regression"
+        run: |
+          python -B tools/build_aga_current.py --verify
+          python -B tools/test_aga_compiler_bridge_r46.py
+          python -B tools/test_compiler_relocation.py
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib
+      - name: "Historical R44/R45 relocation experiment (STATIC ONLY, not promoted)"
         run: |
           python -B tools/test_aga_compiler_compat.py
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib
@@ -88,7 +95,7 @@ jobs:
           python -B tools/m16_agapic_sample.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
-      - name: Verify eight distribution examples (static syntax, ILBM and packaging)
+      - name: Verify all eleven distribution examples (including C1 compiled ZIP)
         run: python -B tools/test_examples.py
       - name: Validate M7 Copper API staging contract (static only)
         run: python -B tools/test_m7_copper_contract.py
@@ -96,10 +103,11 @@ jobs:
         run: python -B tools/test_amos_copper_syntax.py
       - name: Check AMOS block syntax in the unique active test
         run: python -B tools/test_current_amos_blocks.py
-      - name: Verify safe native 68000 source export (R23 strict)
+      - name: Verify native R46 68000 source (strict), and C1 compiler bridge separately
         run: |
           python -B -m unittest discover -s tests -p 'test_native_source.py' -v
-          python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-native --baseline none --strict
+          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib --out /tmp/amos-aga-native --baseline none --strict
+          python -B tools/build_aga_current.py --verify
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
@@ -112,7 +120,7 @@ jobs:
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
 
-      - name: M16 R46 LAST_GOOD image draw — native CPU Gate A (Gate B user-confirmed)
+      - name: M16 raw R46 frozen source — native CPU Gate A (Gate B user-confirmed, C1 promoted)
         run: |
           python -B tools/build_m16_image_draw_r46.py --emit-base64
           python -B tools/test_m16_image_draw_r46.py

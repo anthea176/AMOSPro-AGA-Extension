@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R46 Gate A/B LAST_GOOD; historical R44 and failed R45 archives pinned."""
+"""Integrity: R46 C1 official Gate A/B/C integrated PASS; all earlier archives frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,8 +7,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580",
+    "dist/AMOSPro_AGA.Lib": "d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib": "5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580",
+    "dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib": "d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib": "0d780b4648214c36e8f291d9575390462d174cd8ba22cac2188324b75bd220d7",
     "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib": "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib": "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf",
@@ -42,7 +43,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -106,6 +107,8 @@ def main():
     from build_m15bis_cursor_r44 import build as build_r44, ENTRY_INDEX as ENTRY_CURSOR, API as API_R44, OWNED_CLOSES
     from build_m16_image_draw_r45 import build as build_r45, ENTRY_INDEX as ENTRY_IMAGE, API as API_R45
     from build_m16_image_draw_r46 import build as build_r46
+    from build_aga_current import build as build_current
+    from compiler_relocation import unwrap_native_parts, native_from_promoted, wrap_native_ap20, unpack_ap20, is_compiler_wrapped
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -115,10 +118,12 @@ def main():
 
     candidate = binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]  # frozen R44 for inherited historical assertions
     candidate_r45 = binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"]
-    candidate_r46 = binaries["dist/AMOSPro_AGA.Lib"]
+    candidate_r46 = binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib"]  # frozen native raw R46
+    promoted = binaries["dist/AMOSPro_AGA.Lib"]  # 57-entry compiler-safe C1
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == candidate_r46
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == promoted
+    assert promoted == binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -408,7 +413,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate_r46
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==promoted
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
@@ -630,9 +635,27 @@ def main():
     new_data=test_r46.read_bytes()
     new_blob=b"blob "+str(len(new_data)).encode("ascii")+bytes([0])+new_data
     assert len(new_data)==4240 and hashlib.sha1(new_blob).hexdigest()=="83eff57323b1cacd0ea58a131ef1ebcec079eceb", "R46 Gate B PASS ASC original mutated"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate_r46==binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib"] and candidate_r46 not in (candidate_r45,candidate), "R46 LAST_GOOD promotion mismatch"
-    print("PASS: R46 candidate 50 AP20 commands / 56 segments, 29288 B exact;")
-    print("      258 CPU native Gate A cases; user WinUAE Gate B PASS; R45 failed and R44 PASS archives frozen; LAST_GOOD R46")
+    # Original R46 is frozen: raw code is source input only, NOT installable.
+    # The reproducible C1 bridge is now the official R46 0.12.1-C1.
+    built_current, meta_current = build_current()
+    assert promoted == built_current == binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"], "C1 is not official LAST_GOOD"
+    assert promoted != candidate_r46 and promoted not in (candidate_r45,candidate)
+    assert len(promoted)==29964 and meta_current["sha256"]=="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
+    assert is_compiler_wrapped(promoted) and not is_compiler_wrapped(candidate_r46)
+    tok_c1, seg_c1, _ = unpack_ap20(promoted)
+    assert tok_c1==tok46 and len(seg_c1)==57 and len(seg_c1[-1])==27888
+    assert unwrap_native_parts(promoted)==(tok46,seg46)
+    assert native_from_promoted(promoted,split(candidate_r46)[2])==candidate_r46
+    assert wrap_native_ap20(candidate_r46,split(promoted)[2])==promoted
+    audit_c1=inspect(parse(promoted))
+    assert not audit_c1["issues"] and audit_c1["tokens"]==aud46["tokens"]
+    verified_asc=(ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
+    assert verified_asc==(ROOT/"examples/compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc").read_bytes()
+    git_blob=b"blob "+str(len(verified_asc)).encode("ascii")+bytes([0])+verified_asc
+    assert len(verified_asc)==5404 and hashlib.sha1(git_blob).hexdigest()=="eded9040e382e9177b3c929bfa19e3c61ee9dd69"
+    print("PASS: official Compiler-safe R46 C1, 57 entries, 29964 bytes, 50 tokens, WinUAE integrated Gate C PASS;")
+    print("      native R46/R44/R45 archives frozen, C1 bridge deterministic and future source reversible.")
+    print("      R46 raw source: 56 segments / 29288 B, 258 native CPU Gate A scenarios and interpreted Gate B PASS.")
 
 
 if __name__ == "__main__":

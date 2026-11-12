@@ -1,6 +1,6 @@
 # R46 C1 — AMOS Compiler / AGA all-in-one test
 
-**Statut : PASS confirmé sous AMOS Compiler/WinUAE sur R46 C1 le 12/11/2026** (capture : `RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur, Chip drop 0). This is one AMOS ASCII source file plus the two data banks it needs. No extra AMCAF extension is required to use the embedded AMCAF BankFont.
+**Statut : PASS confirmé sous AMOS Compiler/WinUAE (R46 C1) le 12/11/2026**, puis promotion de cette bibliothèque comme officielle `LAST_GOOD`. Capture : `RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur et `CHIP DROP 0`. Un seul source ASC avec deux banques DATA.
 
 ## Contenu / Contents
 
@@ -11,7 +11,7 @@
 
 ## FR — mode d'emploi
 
-1. Installer **la candidate expérimentale R46 C1** dans le bon `APSystem/AMOSPro_AGA.Lib`, puis relancer complètement AMOS et le Compiler : [candidate C1](../../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). Ne pas remplacer les fichiers officiels du dépôt.
+1. Installer **la version officielle R46 C1** dans le bon `APSystem/AMOSPro_AGA.Lib`, puis relancer complètement AMOS et le Compiler : [candidate C1](../../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). Ne pas remplacer les fichiers officiels du dépôt.
 2. Copier **tout ce dossier** sur un volume accessible à AmigaOS/WinUAE. Le programme compilé doit s'exécuter avec ce dossier comme **répertoire courant AmigaDOS** (les fichiers `.abk` sont chargés par nom relatif). L'exécutable ne change pas automatiquement le répertoire courant.
 3. Dans AMOS : nouveau programme vide, puis **Project → Merge ASCII** du fichier `COMPILER_R46_ALL_IN_ONE.asc`. Compiler ensuite le programme pour créer un **nouvel exécutable**. Ne pas utiliser l'ancien exécutable, qui contient l'ancienne bibliothèque.
 4. Lancer l'exécutable depuis le répertoire contenant les deux fichiers ABK. Observer les trois images (opaque, masquée, décalée), les effets de clipping, les textes en police AMCAF et Topaz, puis les phases du curseur (visible → masqué → visible → masqué). Le test effectue **500 bascules** rapides du curseur, puis ferme l'écran tout en le laissant masqué.
@@ -21,8 +21,8 @@ Le programme remplace temporairement **les banques AMOS 10 et 25**. Aucune modif
 
 ## EN — quick start
 
-With the experimental R46 C1 library installed, compile the ASCII source in AMOS Professional. Place the compiled executable and both `.abk` files in the same folder, **run it with that folder as the AmigaDOS current directory**, and look for `RESULT 1`, `CLOSE RETURNED`, and the three correctly rendered images. The program also exercises AMCAF and disk fonts, screen cleanup, 500 cursor toggles, and safe double-buffer drawing. Existing release libraries are unchanged.
+With the official R46 C1 library installed, compile the ASCII source in AMOS Professional. Place the compiled executable and both `.abk` files in the same folder, **run it with that folder as the AmigaDOS current directory**, and look for `RESULT 1`, `CLOSE RETURNED`, and the three correctly rendered images. The program also exercises AMCAF and disk fonts, screen cleanup, 500 cursor toggles, and safe double-buffer drawing. Existing release libraries are unchanged.
 
-**Gate C de cette recette intégrée : PASS confirmé par l'utilisateur.** Cela ne certifie pas les 50 commandes ni le matériel. [Source exacte archivée](../../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc) · [Rapport détaillé](../../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). `LAST_GOOD` inchangée.
+**Gate C de cette recette intégrée : PASS confirmé par l'utilisateur ; bibliothèque R46 C1 désormais officielle `LAST_GOOD`.** Cela ne certifie pas les 50 commandes ni le matériel. [Source exacte archivée](../../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc) · [Rapport détaillé](../../docs/GATE_C_R46_MONOLITH_CANDIDATE.md).
 
 Font image rights are governed by [Hwarf's license](Hwarf-12xxS.licence), not the source MIT license. The AGAPIC sample is supplied for the existing test purposes; see [asset terms](../../ASSETS_LICENSE.md).

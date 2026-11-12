@@ -1,8 +1,8 @@
-# AMOS Compiler Gate C — R46 C1 experimental single-segment bridge
+# AMOS Compiler Gate C — R46 C1 PROMOTED, verified single-segment bridge
 
-**12 novembre 2026 — Gate C du test intégré R46 C1 sous AMOS Compiler/WinUAE : PASS sur capture utilisateur (`RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur, Chip drop 0).** C1 reste expérimentale, la couverture totale des 50 commandes n'est pas revendiquée, et aucune bibliothèque officielle n'est promue.
+**12 novembre 2026 — Gate C du test intégré R46 C1 sous AMOS Compiler/WinUAE : PASS sur capture utilisateur (`RESULT 1`, `CLOSE RETURNED`, 500 bascules/0 erreur, Chip drop 0). PROMOTION OFFICIELLE AUTORISÉE PAR L'UTILISATEUR.** `dist/AMOSPro_AGA.Lib` et `LAST_GOOD` remplacés octet pour octet par **la C1 testée** (29 964 octets, 57 entrées AP20, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`). Aucune réécriture du code 68000 ; la couverture des 50 commandes n'est pas exhaustive, et Gate D n'est pas testée.
 
-The user-supplied AMOSPro_AGA.Lib is exactly R46 v0.12.1 (29,288 bytes; SHA256 5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580). The GitHub main branch has since promoted the same R46 to LAST_GOOD after interpreted AMOS/WinUAE Gate B PASS. This experimental compiler bridge does not replace that validated R46, historical R44 or frozen R45.
+The historical raw R46 v0.12.1 (29,288 bytes; SHA256 5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580) is preserved in its immutable archive for CPU tests and native-source export. The previously experimental C1 Compiler bridge is now the official R46 v0.12.1-C1 binary. R44, failed R45 and original R46 archives remain untouched.
 
 ## Why
 
@@ -79,7 +79,7 @@ CLOSE RETURNED
 
 **Portée :** ouverture/fermeture, images AGAPIC opaques/masquées/décalées et clipping, rejets invalides, dessin 2D, double buffering/Swap/Safe, fontes AMCAF/Topaz, 500 bascules du curseur, état après fermeture. La mémoire libre Chip est identique **sur cet essai** ; cela ne prouve pas l'absence de toute fuite dans l'ensemble de l'API. **Gate C de la recette intégrée C1 : PASS.**
 
-**Limites :** cette preuve concerne **R46 C1 expérimentale**, pas la bibliothèque canonique à 56 segments. Elle ne valide pas une à une les 50 commandes, ni l'Amiga physique (Gate D). **Ne pas promouvoir automatiquement** C1 en LAST_GOOD. Vérifier le coût d'incorporation d'environ 28 Kio et l'ABI du trampoline avant une décision de production. Ne pas refaire les tests déjà passés sans modification pertinente.
+**Limites :** cette preuve concerne **R46 C1 expérimentale**, pas la bibliothèque canonique à 56 segments. Elle ne valide pas une à une les 50 commandes, ni l'Amiga physique (Gate D). **Promotion autorisée explicitement** par l'utilisateur et effectuée à l'identique. Le coût d'incorporation d'environ 28 Kio est une limite connue acceptée pour C1 ; garder les tests ABI structurels et les régressions des futures versions obligatoires. Ne pas refaire les tests déjà passés sans modification pertinente.
 
 ## Suite technique après validation fonctionnelle
 
@@ -94,3 +94,7 @@ La recette Gate C intégrée R46 C1 est PASS. **Ne pas redemander les essais Ope
 5. If the minimal compiler trace passes, verify mouse cursor cleanup, fonts, double buffer and Aga Image Draw in BOTH interpreted and compiled contexts before a promotion or closure.
 
 **Bilan actualisé au 12/11/2026 : Gate C du scénario intégré R46 C1 PASS sous WinUAE, capture utilisateur : `RESULT 1`, `CLOSE RETURNED`, 500 curseur/0 erreur, fontes/image PASS, Chip drop 0.** Audit ABI/coût et couverture API exhaustive restent ouverts. **Ne pas promouvoir C1 en `LAST_GOOD` à ce stade.**
+
+## Build de référence après promotion
+
+`python -B tools/build_aga_current.py --verify` contrôle la nouvelle bibliothèque officielle et `python -B tools/test_compiler_relocation.py` teste le chemin de génération R47+ avec enveloppe AP20 obligatoire. [Procédure détaillée](../tools/README.md). Ancien builder natif R46 conservé pour la reproductibilité historique seulement. **Ne pas modifier les archives de tests C1 ni retester inutilement le binaire inchangé.**

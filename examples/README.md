@@ -2,11 +2,11 @@
 
 **English** | [Français](README.fr.md) · [Installation](../INSTALL.md)
 
-**Current release: R46 v0.12.1** is `LAST_GOOD` for interpreted AMOS/WinUAE (Gates A/B). The experimental **R46 C1** passed its **compiled WinUAE all-in-one Gate C regression** (image, 2D, fonts, 500 cursor toggles, cleanup: `RESULT 1`, Chip drop 0); full 50-command coverage and hardware remain open. [Gate C progress](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md).
+**Current release: R46 v0.12.1-C1** is now the official `LAST_GOOD` (Gates A/B + compiled WinUAE integrated Gate C PASS, `RESULT 1`, cursor 500/0, Chip drop 0). Exhaustive Compiler coverage of all 50 commands and physical Gate D remain open.
 
 **Chip RAM endurance:** a separate [500-switch WinUAE stress test](../tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) passed on 12 November 2026 with no measured loss of total or largest free Chip RAM.
 
-These are **user-facing examples**, not historical regression tests. Most run in interpreted AMOS with the [current release](../dist/AMOSPro_AGA.Lib); the new all-in-one compiled test explicitly requires experimental **R46 C1**.
+These are **user-facing examples**, not historical regression tests. Most run in interpreted AMOS with the [current release](../dist/AMOSPro_AGA.Lib); the new all-in-one compiled test uses official **R46 C1**.
 
 | File | Demonstrates | What to do |
 |---|---|---|
@@ -20,7 +20,7 @@ These are **user-facing examples**, not historical regression tests. Most run in
 | [`fade_to_bank_r33.asc`](fade_to_bank_r33.asc) | **R33 visible RGB24 fade demo:** three large coloured strips, RED → GREEN → BLUE → RED, each transition 150 VBL | No IFF needed. **Overwrites bank 12**; `Aga Swap` and `Amos To Back` run **before** the fades. Pauses between transitions; results appear after the screen closes. **User-confirmed visible, working fade in WinUAE (11 Nov 2026); no FPS/timing measurement.** |
 | [`font_bank_r38.asc`](font_bank_r38.asc) | **R38 AMCAF BankFont showcase:** draw text with `Hwarf1252S.abk` and `Pix3M-1252L.abk` on the same 320×256 AGA screen | Requires R38 v0.11.0; run from the `examples/` directory with `Amcaf Fonts/` present; **replaces AMOS bank 25**; press a key to exit. |
 | [`m15_2d_cursor.asc`](m15_2d_cursor.asc) | **M15 + M15bis combined showcase (R44):** Plot stars, Draw axes and a moving crosshair, Box frames, Circle radar rings and custom reticle, plus window-local `Aga Mouse Cursor` visibility | **No IFF or font bank needed.** Move the mouse, **right-click** to show/hide the system cursor, **left-click or press a key** to exit (automatic stop at 600 frames). R44 v0.11.5 or later required; **user-confirmed WinUAE working (12 Nov 2026).** |
-| [`compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc`](compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc) | **R46 C1 all-in-one Compiler test:** AGAPIC opaque/masked images, clipping, Plot/Draw/Box/Circle, double buffer, two fonts, 500 cursor toggles and full screen cleanup | **One ASC plus two included ABKs.** Keep the bundled directory together; compile with experimental R46 C1. Report `RESULT 1` and `CLOSE RETURNED`. **Compiled WinUAE PASS (12 Nov 2026): `RESULT 1`, cursor errors 0, Chip drop 0.** |
+| [`compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc`](compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc) | **R46 C1 all-in-one Compiler test:** AGAPIC opaque/masked images, clipping, Plot/Draw/Box/Circle, double buffer, two fonts, 500 cursor toggles and full screen cleanup | **One ASC plus two included ABKs.** Keep the bundled directory together; compile with official R46 C1. Report `RESULT 1` and `CLOSE RETURNED`. **Compiled WinUAE PASS (12 Nov 2026): `RESULT 1`, cursor errors 0, Chip drop 0.** |
 
 **R46 Compiler all-in-one test:** [download the single ZIP package](COMPILER_R46_ALL_IN_ONE.zip), or [open the self-contained folder](compiler_r46_all_in_one/) and follow its [setup instructions](compiler_r46_all_in_one/README.md). The single ASC uses two bundled ABKs; **run the compiled executable with that folder as the AmigaDOS current directory**. The test does not modify any official `LAST_GOOD` library.
 

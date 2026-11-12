@@ -1,10 +1,19 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Promotion officielle R46 v0.12.1-C1 — 12/11/2026
+
+**R46 C1 est la nouvelle LAST_GOOD installable** apres l'accord explicite de l'utilisateur et la validation du test tout-en-un sous AMOS Compiler / WinUAE : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = [archive C1 validee](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrees AP20**. Gates A natif, B interprete et **Gate C compilee (recette integree) PASS** : `RESULT 1`, `CLOSE RETURNED`, curseur 500/0, `CHIP DROP 0`. **Gate D physique non testee ; couverture des 50 commandes individuellement non revendiquee.**
+
+**Build obligatoire des prochaines revisions :** [`tools/build_aga_current.py`](../tools/build_aga_current.py), [`tools/compiler_relocation.py`](../tools/compiler_relocation.py) (`native_from_promoted` pour recuperer les segments natifs, puis `wrap_native_ap20` pour toute sortie publiable) et [`tools/test_compiler_relocation.py`](../tools/test_compiler_relocation.py). Si la limite de 32 Kio du pont est atteinte : echec ferme, aucun retour silencieux au code natif defaillant. R46 native originale (29 288 octets / 56 segments), R44 et R45 **archivees sans modification**. Travail exclusivement sur `main`.
+
+**Ne pas repeter les tests WinUAE deja valides sans changement.** Le pont monolithique d'environ 28 Kio a un cout d'incorporation accepte pour C1. Voir [rapport Gate C](GATE_C_R46_MONOLITH_CANDIDATE.md) et [regles de programmation](../EXTENSION_SOURCE_RULES.md).
+
+
 ## Nouveau statut : Gate C R46 C1 test intégré PASS — 12/11/2026
 
 **AMOS Compiler/WinUAE : PASS sur capture utilisateur** de [`COMPILER_R46_ALL_IN_ONE.asc`](../tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc), source archivée sans modification. Affichage : `OPEN 1 DB 1 SWAP 1 BACKSAFE 1`, `IMAGE O/M/S 1 1 1`, `CLIP 1 1 1 1`, `2D 1 1 1 1`, `FONT BANK 1 BAD 0`, `FONT OS 1 RESET 1 TEXT 1 1 1`, `CUR 500 ERR 0`, `CHIP BEFORE/END 1847416 1847416 DROP 0`, `CLOSED -1`, `PALETTE ERR 0 RESULT 1`, **`CLOSE RETURNED`**. [Rapport complet](GATE_C_R46_MONOLITH_CANDIDATE.md).
 
-**Suite : ne pas refaire les tests déjà passés.** La Gate C du scénario intégré **R46 C1** est confirmée ; le contrôle ABI/relocation et le coût monolithique ~28 Kio, la couverture API exhaustive et Gate D matérielle restent ouverts. **R46 officielle demeure LAST_GOOD Gates A/B**, C1 expérimentale distincte ; aucune bibliothèque ni archive modifiée. **Branche `main` uniquement**. Les sections datées ci-dessous sont historiques.
+**Archive du diagnostic avant promotion :** le test tout-en-un est PASS. La promotion officielle C1 et la chaine de build compatible Compiler sont decrites dans la section actuelle ci-dessus ; la version R46 native a 56 segments reste une archive historique. Les prochains changements doivent conserver la relocation via le pont et les Gates distinctes.
 
 
 ## M16/R46 v0.12.1 — Gates A/B PASS, LAST_GOOD (12/11/2026)

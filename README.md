@@ -19,11 +19,11 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R46 v0.12.1** — **50 AMOS commands**, **29,288 bytes**, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. [Library to install](dist/AMOSPro_AGA.Lib) · [identical `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [versioned R46 archive](dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib). **CPU/CI Gate A and interpreted AMOS/WinUAE Gate B passed**; Compiler Gate C and physical AGA Gate D remain unvalidated.
+**Latest promoted `LAST_GOOD`: R46 v0.12.1-C1** — **50 AMOS commands**, **57 AP20 entries**, **29,964 bytes**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. [Library to install](dist/AMOSPro_AGA.Lib) · [identical `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [exact C1 validated archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). **CPU Gate A, interpreted WinUAE Gate B and integrated AMOS Compiler/WinUAE Gate C PASS** (`RESULT 1`, cursor 500/0, Chip drop 0). Gate C covers the integrated scenario, not all 50 commands individually; physical AGA Gate D untested.
 
 **AGAPIC images in Fast RAM:** compressed images **can be stored in an AMOS DATA bank in Fast RAM**. `Aga Image Draw` reads and decompresses them with the **CPU** into the AGA back buffer in **Chip RAM**, without decompressing the full image into Chip RAM and without Blitter access to the source. AMOS controls the bank's actual placement; the test ABK's Fast/Chip location has not been measured. [AGAPIC format](docs/M16_AGAPIC_FORMAT_DESIGN.md).
 
-**Past releases and test evidence:** [detailed release history](docs/LIBRARY_TEST_HISTORY.md) · [R46 report](docs/M16_R46_FLAGS0_FIX.md) · [archived tests](tests/passed/).
+**Past releases and test evidence:** [release history](docs/LIBRARY_TEST_HISTORY.md) · [Compiler Gate C PASS report](docs/GATE_C_R46_MONOLITH_CANDIDATE.md) · [exact compiled test source](tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc) · [historical native R46 archive](dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib).
 
 **Installation:** [INSTALL.md](INSTALL.md). A GitHub update does not automatically replace the library installed in AMOS/WinUAE.
 

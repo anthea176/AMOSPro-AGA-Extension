@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""M16/R46 v0.12.1: repair loaded AMOS DATA bank native flags=0.
+"""HISTORICAL NATIVE R46 v0.12.1 (56 segments), NOT THE OFFICIAL COMPILER BUILD.
+
+Reproduce the original AMOS DATA flags=0 repair for CPU/strict-source tests.
+Use tools/build_aga_current.py to generate/verify the installable C1 binary.
 
 The R45 v0.12.0 candidate failed WinUAE Gate B because it rejected the
 observed valid AMOS bank native metadata FLAGS=0. R46 allows only 0,1,3
@@ -73,7 +76,7 @@ if __name__ == "__main__":
     args=parser.parse_args()
     candidate,info=build()
     assert candidate == build()[0], "R46 non-deterministic build"
-    print("M16/R46 native AMOS bank flags repair candidate",
+    print("M16/R46 HISTORICAL RAW 56-SEGMENT SOURCE (NOT INSTALLABLE IN COMPILER)",
           {key:value for key,value in info.items() if key!="labels"},flush=True)
     if args.emit_base64:
         print("R46_BASE64_BEGIN",flush=True)

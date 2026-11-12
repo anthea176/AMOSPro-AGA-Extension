@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static-only R46 Compiler candidate regression; no simulated Gate C PASS."""
+"""Static bridge regression; WinUAE Gate C PASS confirmed separately by user."""
 import os
 import struct
 from pathlib import Path
@@ -68,10 +68,14 @@ def run():
     assert offset==27856
     assert mod.digest(data)==mod.CANDIDATE_SHA
     assert len(data)==29964
+    root=Path(__file__).resolve().parents[1]
+    assert data==(root/"dist/AMOSPro_AGA.Lib").read_bytes()
+    assert data==(root/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    assert data==mod.CANDIDATE.read_bytes()
     print('PASS: R46 source SHA, deterministic AP20, 50-command token table, GetP boundaries')
     print('PASS: 56 original code fragments unchanged inside single 27,888-byte AP20 unit')
     print('PASS: 56 public index boundaries preserved; Rbsr entries point to central index 56')
-    print('LIMITATION: static only; no runtime 68000, AMOS Interpreter or Compiler PASS')
+    print('STATIC REPRODUCIBILITY PASS; real Compiler/WinUAE Gate C was user-confirmed independently')
 
 
 if __name__=='__main__': run()
