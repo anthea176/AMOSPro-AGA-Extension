@@ -30,7 +30,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R58 0.13.3** — **53 commandes AP20**. Les 51 signatures antérieures (dont `Aga Image Capture` à six arguments) sont inchangées. R53 capture et R54 fonctions par banque ont passé les essais WinUAE interprété et compilé sur leurs scénarios respectifs.
+**API de la bibliothèque courante R59 0.13.4** — **53 commandes AP20**. Les 51 signatures antérieures (dont `Aga Image Capture` à six arguments) sont inchangées. R53 capture et R54 fonctions par banque ont passé les essais WinUAE interprété et compilé sur leurs scénarios respectifs.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
