@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M15/R40 v0.11.1 — Aga Plot : Gate A CPU/CI PASS, Gate B WinUAE à tester (12/11/2026)
+
+**Seule commande approuvée :** `_OK=Aga Plot(X,Y,Pen)` (45e commande AP20). Source 68000 `tools/m15_plot_r40_emit.py`, constructeur déterministe `tools/build_m15_plot_r40.py`, test natif `tools/test_m15_plot_r40.py`. **Gate A PASS : 221 scénarios 68000, export source natif strict et [CI globale](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43128576279) PASS.** Rendu par `graphics.library/WritePixel(-324)` sur le BitMap arrière AGA privé (RastPort sur pile), index de couleur borné, géométrie physique/logique et tous les bitplanes validés, refus avant tout dessin si `Safe` manque, `WritePixel=0` converti en retour AMOS **1**. Aucune modification des anciens segments R38, hormis le marqueur final `GetP`. 
+
+**Candidate R40 :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib` (**23 840 octets**, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`). **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R38 v0.11.0**, 23 380 octets, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`. [Test AMOS/WinUAE actif](../tests/current/M15_R40_PLOT_01.asc) (depuis ce document racine) ; **Gate B NON TESTÉE**, idem Gates C Compiler/D Amiga physique. Après confirmation de Gate B seulement : archiver le `.asc` exact et promouvoir l'identique candidate en `LAST_GOOD`. **R39 ignorée/reportée, aucune autre fonction M15 engagée.** Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche `main` exclusivement.
+
 **État actuel au 12/11/2026 :** R38 0.11.0 Gates A/B PASS, `LAST_GOOD` = R38, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`. Gates C/D non testées. Voir [contrat R38](M14_FONT_BANK_R38.md).
 
 **Ce document décrit l'architecture actuelle et ses limites, pas la chronologie des prototypes.** La précédente compilation historique de notes R10/R12 reste intacte dans [`history/ARCHITECTURE_LEGACY_20261110.md`](history/ARCHITECTURE_LEGACY_20261110.md). Vérifier le code, les builders et le binaire avant tout changement.

@@ -91,7 +91,7 @@ jobs:
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_plot_r40 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R40_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R40_GateA.Lib --out /tmp/amos-aga-r40-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
-          python -B tools/build_m15_plot_r40.py --emit-base64
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_plot_r40 import build,DEST,ARCHIVE,LAST_GOOD,BASE; b,meta=build(); assert b==DEST.read_bytes()==ARCHIVE.read_bytes() and LAST_GOOD.read_bytes()==BASE.read_bytes(); print('R40 Gate A candidate exact:',meta['sha256'],meta['size'])"
 
       - name: M13 R29 frozen IFF palette save — native 68000 regression
         run: |
@@ -163,15 +163,15 @@ jobs:
         run: |
           python -B tools/test_m14_font_select_r37.py
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes(); print('R37 archive validated:',meta['sha256'],meta['size'])"
-          python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-r37-integrity --baseline none --strict
+          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib --out /tmp/amos-aga-r37-integrity --baseline none --strict
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
 
       - name: M14 R38 Gate A BankFont — CPU 68000, R38 LAST_GOOD and promoted artifact integrity
         run: |
           python -B tools/test_m14_font_bank_r38.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import build,ARCHIVE,DEST,LAST_GOOD,BASE_SHA256; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes() and digest(LAST_GOOD.read_bytes())==meta['sha256']; print('R38 promoted:',meta['sha256'],meta['size'])"
-          python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-r38-integrity --baseline none --strict
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import build,ARCHIVE,LAST_GOOD; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes() and digest(LAST_GOOD.read_bytes())==meta['sha256']; print('R38 frozen LAST_GOOD:',meta['sha256'],meta['size'])"
+          python -B tools/generate_aga_native_source.py --lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib --out /tmp/amos-aga-r38-integrity --baseline none --strict
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
 

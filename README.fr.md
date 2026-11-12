@@ -19,13 +19,15 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
+**R40 v0.11.1 — candidate à tester sous WinUAE :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **45 commandes AP20**, 23 840 octets, SHA256 `0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231`. Nouvelle fonction `_OK=Aga Plot(X,Y,Pen)` sur le back buffer AGA. **Gate A CPU 68000/CI PASS (221 scénarios), Gate B AMOS/WinUAE EN ATTENTE** ; [test R40](tests/current/M15_R40_PLOT_01.asc). [Dernière version validée R38 (`LAST_GOOD`)](dist/AMOSPro_AGA_LAST_GOOD.Lib), 23 380 octets, SHA256 `09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366`, inchangée. [Contrat R40](docs/M15_PLOT_R40.md).
+
 **Stress Chip RAM R38 validé sous WinUAE (12/11/2026) :** [500 changements de fontes, 0 erreur et 0 octet perdu](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) ; relevés Chip libre **1 582 088 octets** et plus grand bloc **1 320 664 octets** constants à 0/100/200/300/400/500. `RESULT 1`, retour AMOS normal. Binaire R38 / `LAST_GOOD` inchangé.
 
 
 **Dernière version validée : R38 v0.11.0 (12 novembre 2026)** — 44 commandes AMOS AP20 pour les écrans AGA indexés, palettes, IFF/ILBM, Blitter, Copper, entrées et texte.
 
-- **Bibliothèque :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).
-- **Validation :** Gate A (CPU 68000 / CI) et Gate B (AMOS interprété / WinUAE) **PASS**. Gates C (Compiler) et D (Amiga AGA réel) non testées.
+- **Bibliothèques distinctes :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) est la **candidate R40** ; [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste la **R38 validée**, identique à son [archive immuable](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).
+- **Validation :** R38 Gates A/B **PASS** ; R40 Gate A **PASS**, Gate B **non testée**. Gates C Compiler et D Amiga AGA réel non testées.
 - **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. Le test d'endurance WinUAE (500 changements) n'a mesuré aucune baisse de Chip RAM libre ni du plus grand bloc disponible.
 - **Preuves et historique :** [rapport technique R38](docs/M14_FONT_BANK_R38.md) · [test R38 validé](tests/passed/M14_R38_FONT_BANK_01.asc) · [historique technique](docs/NEXT_SESSION.md) · [tests validés](tests/passed/).
 
@@ -33,7 +35,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R38 0.11.0** — **44 commandes AP20**. Gates A (CPU 68000 / CI) et B (AMOS interprété / WinUAE) **PASS** ; Gates C (Compiler) et D (Amiga AGA réel) non testées.
+**API de la bibliothèque courante R40 0.11.1** — **45 commandes AP20**. R40 Gate A CPU/CI **PASS**, Gate B WinUAE **à tester** ; R38 reste la dernière version validée Gate A/B dans `LAST_GOOD`. Gates C/D non testées.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -81,6 +83,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Text`** (M11 R26, étendue R37) | `_OK=Aga Text(_X,_BASELINE_Y,_PEN,_TEXT$)` | Quatre paramètres : X en pixels, Y de la ligne de base, index couleur, chaîne AMOS (1 à 128 caractères). Rend une ligne sur le back buffer AGA Intuition avec RastPort temporaire, fonte système, fonte AmigaOS (R37) ou BankFont AMCAF (R38), et fond `JAM1` transparent. Retour 1 si dessin, 0 si état/géométrie/chaîne invalides ou buffer non-`Safe`. **R26 Gates A+B PASS pour les scénarios archivés texte et 40 swaps.** R27 conserve tout le segment 68000 de `Aga Text` à l'octet près ; les nouveaux gardes concernent seulement Blit Copy/Fill/Clear. [Contrat R26](docs/M11_TEXT_R26.md) · [contrat R27](docs/M12_SAFE_BLITTER_R27.md). |
 | **`Aga Font Select`** (M14 R37, Gates A/B PASS) | `_OK=Aga Font Select(_FONT$,_YSIZE)` | Charge et sélectionne une fonte AmigaOS `.font` via `diskfont.library` (nom 1..127 caractères, hauteur demandée 1..255). Retour 1 si succès, 0 si refus sans effet. `_OK=Aga Font Select("",0)` restaure la fonte par défaut. Influence `Aga Text` sur l'écran AGA privé ; libération au remplacement/reset/Screen Close. **Gate B WinUAE PASS.** |
 | **`Aga Font Bank Select`** (M14 R38, Gates A/B PASS) | `_OK=Aga Font Bank Select(_START,_LENGTH)` | Sélectionne une fonte monochrome fixe ou proportionnelle provenant d'une banque `BankFont` créée par AMCAF `Make Bank Font`. `_START=Start(n)` et `_LENGTH=Length(n)` désignent la banque AMOS vivante. Retourne 1 en cas de succès, 0 en cas d'échec sans changer la fonte. Copie privée en mémoire Chip (même si la banque source est en Fast) ; fonctionne après `Erase n`, libération au changement/reset/fermeture. **Gate B WinUAE PASS.** |
+| **`Aga Plot`** (M15 R40, Gate A PASS) | `_OK=Aga Plot(X,Y,Pen)` | Écrit **un pixel** à `(X,Y)` dans le **back buffer AGA**. X/Y entre zéro et largeur/hauteur moins un, `Pen` indexé 0..2^Depth−1 (1 à 8 plans). `1` si `WritePixel` réussit, `0` sinon (paramètre invalide, écran absent ou buffer non-`Safe`). Pas de clipping hors écran, aucun swap/VBL implicite. **Gate A CPU/CI PASS ; Gate B WinUAE à tester.** |
 
 **Exemple AMOS : sauvegarder la palette active** une fois l'écran AGA Intuition ouvert :
 
