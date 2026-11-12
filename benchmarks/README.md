@@ -1,5 +1,9 @@
 # Benchmark graphique 320×256×32 — AMOS / AMCAF / AGA
 
+## Benchmark cible : Copy (M17/R57)
+
+**[Screen Copy AMOS vs Aga Blit Copy](README_COPY_32C.md)** — [source ASCII `copy_32c_r57.asc`](copy_32c_r57.asc), quatre géométries (alignée, décalée, grande zone et recouvrement), trois passages, PAL 320×256×32, interprété et compilé. **En attente des mesures utilisateur.** Aucun changement de la R57, de `LAST_GOOD` ou de `tests/current/`.
+
 **V1 : exécution AMOS interprété / WinUAE confirmée par capture utilisateur (12/11/2026), `AGA ERR 0` et `BENCH FINISHED - CLOSE RETURNED`.** Les durées restent des observations, pas des preuves d'optimisation. Le benchmark ne modifie ni la bibliothèque AGA ni ses archives / tests `LAST_GOOD`.
 
 ## Second run
