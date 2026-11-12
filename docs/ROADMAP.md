@@ -324,7 +324,7 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **API à contractualiser :** une seule commande de visibilité (par exemple `Aga Mouse Cursor(Visible)`, **nom et retour non arrêtés**) avec valeurs explicites visible/masqué, refus sans effet lorsqu'aucun écran AGA valide n'est ouvert. Aucune influence sur les écrans AMOS natifs.
 - **Tests avant validation :** curseur visible par défaut ; bascule visible → masqué → visible ; `Aga Mouse X/Y`, clics et clavier inchangés ; passage vers Workbench puis retour AGA avec option masquée ; fermeture et réouverture ; Ctrl+C, échecs et alternances répétées sans fuite Chip RAM.
 
-**Statut :** demande fonctionnelle enregistrée dans la roadmap. Le contrat d'API et le détail du sprite transparent sont à valider avant codage ; aucun changement de bibliothèque engagé.
+**Statut :** [proposition de contrat M15bis/R44](M15BIS_MOUSE_CURSOR_R44_DESIGN.md) rédigée le 12/11/2026, **validation explicite utilisateur en attente**. Aucun nouveau token/source/test/binaire ; R43 demeure `LAST_GOOD`.
 
 ### M16 — Images compressées en Fast RAM (idée à étudier après M15)
 

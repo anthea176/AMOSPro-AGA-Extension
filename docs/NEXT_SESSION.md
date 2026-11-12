@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M15bis/R44 — visibilité locale du pointeur : contrat proposé, PAS APPROUVÉ (12/11/2026)
+
+[Proposition technique](M15BIS_MOUSE_CURSOR_R44_DESIGN.md) : une fonction `_OK=Aga Mouse Cursor(Visible)` envisagée, `0` masque le pointeur dans **la seule fenêtre AGA privée**, `1` restaure le pointeur Intuition ; buffer transparent 16×16, 72 octets Chip alloué au premier masque et libéré à la fermeture après `ClearPointer/CloseWindow`. **Aucune implémentation, API ni nouveau candidat R44**, contrat à valider avec l'utilisateur avant code. R43 `Aga Circle` demeure `LAST_GOOD`, Gates A/B PASS (voir ci-dessous). **`main` uniquement.**
+
 ## M15/R43 v0.11.4 — Aga Circle : Gates A CPU/CI et B AMOS/WinUAE PASS, LAST_GOOD (12/11/2026)
 
 **R43 VALIDÉE par l'utilisateur (capture « parfait !!! ») :** `_OK=Aga Circle(CX,CY,Radius,Pen)` — cercle de contour d'un pixel par Bresenham midpoint 68000 en arithmétique 32 bits avec clipping sécurisé des huit octants, sans dessin hors écran ni bord inventé. Écran AGA privé, uniquement sur le back buffer après `Safe` non bloquant ; aucune allocation persistante, aucun swap/VBL implicite. **48 commandes AP20, 54 segments ; 436 scénarios CPU 68000 Gate A PASS et CI complète PASS** ([CI candidate](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950)).
