@@ -34,7 +34,17 @@ The tradeoff is that AMOS Compiler will copy approximately 28 KiB even if only o
 COMPILER TRACE COMPLETED
 ```
 
-Le Guru `80000004` n'a donc pas été reproduit sur ce chemin `Probe → Screen Open → Screen Close → retour AMOS`. C'est une **Gate C smoke PASS**, et **non** une Gate C complète PASS. Le binaire réellement chargé n'a pas été re-hashé depuis WinUAE ; le résultat est rattaché à la C1 fournie pour cet essai. **Ne pas clôturer le bug Compiler**, car les autres commandes n'ont pas encore été exercées dans un exécutable compilé.
+Le Guru `80000004` n'a donc pas été reproduit sur ce chemin `Probe → Screen Open → Screen Close → retour AMOS`. C'est une **Gate C smoke PASS**, et **non** une Gate C complète PASS. Le binaire réellement chargé n'a pas été re-hashé depuis WinUAE ; le résultat est rattaché à la C1 fournie pour cet essai. Le benchmark compilé supplémentaire (détaillé ci-dessous) a également fonctionné sans plantage, mais certaines commandes demeurent non testées.
+
+## Deuxième résultat utilisateur : benchmark `graphics_32c_v2.asc` en compilé
+
+**PASS d'exécution / absence de Guru déclaré par l'utilisateur le 12/11/2026**, avec la candidate expérimentale C1 utilisée dans ce diagnostic. La source jointe par l'utilisateur a été lue telle quelle : **369 lignes, 9 495 octets CRLF**, SHA256 `0fcb08cdab1c983b8afdd8eae9e9118341e74143b668e7689ebd59419deb8276`. Aucun chiffre de timings ni capture du résultat final n'a été fourni. Le commentaire initial du source mentionne R44 et une validation interprétée en attente : il est historique et **n'identifie pas** la bibliothèque réellement installée lors du test.
+
+La partie AGA du benchmark utilise trois séries chronométrées, en 320×256×32, de **120 000 `Aga Plot`, 400 `Aga Draw`, 225 `Aga Box`, 8 000 `Aga Circle`, 100 `Aga Blit Fill` et 80 `Aga Blit Clear` par série**. Le code sollicite aussi `Aga Screen Open`, `Aga Double Buffer`, `Aga Palette Set`, `Aga Text`, `Aga Swap`, `Aga Wait Vbl`, `Aga Screen Close` et le retour à l'écran AMOS. Des opérations AMOS natives et AMCAF sont également exécutées dans le même programme.
+
+**Portée du résultat :** stabilité compilée et chemin de fermeture dans un scénario graphique intensif, plus fort que le smoke test précédent ; **pas de mesure numérique validée**, ni preuve que le compteur final `AGA ERR` est nul. Le code incrémente ce compteur uniquement selon les retours de la *dernière* opération de chaque série et certains swaps. Ce test **n'utilise pas `Aga Image Draw`, `Aga Mouse Cursor`, `Aga Font Select` ni `Aga Font Bank Select`**. Conserver la Gate C complète ouverte pour ces régressions ciblées. Éviter tout nouvel essai redondant de la trace minimale ou du benchmark compilé qui viennent de passer.
+
+**Décision :** R46 C1 reste une candidate Gate C expérimentale distincte ; aucune promotion. Les binaires canoniques R46 LAST_GOOD, les archives R44/R45 et la branche `main` restent préservés.
 
 ## Prochaine validation Compiler — réutiliser les sources déjà passées en interprété
 
