@@ -1,0 +1,54 @@
+name: Archive M17 R55 experimental candidate on main
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m17-r55-archive-candidate.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  archive_r55:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify pinned official R54 and R55 68000 CPU Gate A
+        run: |
+          python -B tools/verify_fast.py
+          python -B tools/build_aga_current.py --verify
+          python -m pip install capstone==5.0.9 unicorn==2.1.4
+          python -B tools/test_m17_blit_group_r55.py
+      - name: Commit versioned R55 candidate only to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "main"
+          candidate="$RUNNER_TEMP/AMOSPro_AGA_M17_R55_CANDIDATE.Lib"
+          target="dist/experimental/AMOSPro_AGA_M17_v0.13.0_BLIT_GROUP_R55_CANDIDATE.Lib"
+          expected="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"
+          python -B tools/build_m17_blit_group_r55.py --ci-output "$candidate"
+          printf '%s  %s\n' "$expected" "$candidate" | sha256sum -c -
+          if test -e "$target"; then
+            printf '%s  %s\n' "$expected" "$target" | sha256sum -c -
+            echo "Candidate already present and byte-identical."
+            exit 0
+          fi
+          mkdir -p dist/experimental
+          cp "$candidate" "$target"
+          printf '%s  %s\n' "$expected" "$target" | sha256sum -c -
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
+          git add -- "$target"
+          test "$(git diff --cached --name-only)" = "$target"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build(m17): archive R55 grouped Blitter Gate A candidate"
+          git push origin HEAD:main
