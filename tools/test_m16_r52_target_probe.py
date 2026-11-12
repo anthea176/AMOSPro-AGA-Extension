@@ -41,7 +41,7 @@ def run_case(target,code_at_target=None,expected=1,valid=True,allowed=True):
         if expected in (0,1):
             raise
         assert m.d(3)==expected,(expected,m.d(3),exc)
-        assert not isinstance(exc.args[0],tuple),exc
+        assert not (exc.args and isinstance(exc.args[0],tuple)),exc
     assert m.main_calls==[]
     assert m.banks==original
     assert not m.reserve_count and not m.erase_count and not m.change_count
