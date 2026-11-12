@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Authoritative current builder: R46 v0.12.1-C1 (AMOS Compiler Gate C PASS).
+"""Reproducible frozen R46 C1 bridge plus verification of active R54 LAST_GOOD.
 
-Future versions MUST derive native parts from the compiler-safe LAST_GOOD
+New versions MUST derive native parts from the compiler-safe LAST_GOOD
 with compiler_relocation.native_from_promoted(), modify the native parts,
 and call compiler_relocation.wrap_native_ap20() as the FINAL production step.
 Never publish the raw output of historical build_m16_image_draw_r46.py.
@@ -19,6 +19,7 @@ from active_library import verify_active
 ROOT = Path(__file__).resolve().parents[1]
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+C1_ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 HISTORICAL_RAW = SOURCE
 
 
@@ -44,7 +45,7 @@ def build() -> tuple[bytes, dict]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--verify", action="store_true",
-                    help="verify exact current/LAST_GOOD bytes against the reproducible C1 (default)")
+                    help="verify reproducible historical C1 and current pinned Compiler-safe release")
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
@@ -59,8 +60,10 @@ def main() -> None:
         candidate,details_candidate=capture_build()
         assert candidate==current, "Active capture is not reproducible"
         print("ACTIVE CAPTURE BUILDER PASS",{k:v for k,v in details_candidate.items() if k!="labels"})
-    assert LAST_GOOD.read_bytes() == data, "LAST_GOOD not identical to promoted compiler-safe R46"
-    print("CURRENT BUILDER PASS", details)
+    assert C1_ARCHIVE.read_bytes() == data, "Archived compiler-safe R46 C1 diverged"
+    # verify_active() separately checks the pinned LAST_GOOD release.
+    print("HISTORICAL R46 C1 BRIDGE PASS", details)
+    print("CURRENT INSTALLABLE LIBRARY PASS:", active)
     print("Next revision source: native_from_promoted(LAST_GOOD.read_bytes(), native_title)")
     print("Next revision final: wrap_native_ap20(native_candidate, release_title)")
 

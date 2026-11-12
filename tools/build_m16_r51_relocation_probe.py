@@ -14,12 +14,12 @@ from pathlib import Path
 from hashlib import sha256
 from struct import pack
 from audit_ap20 import inspect,parse
-from active_library import verify_active,LAST_GOOD_SHA
+from active_library import verify_active,C1_SHA
 from compiler_relocation import (unpack_ap20,unwrap_native_parts,
     native_from_promoted,repack_ap20,wrap_native_ap20)
 from m68k_emit import Code,D,A,M,POST,I
 ROOT=Path(__file__).resolve().parents[1]
-GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 R50=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.5_R50_RJSR_FNONE_PROBE.Lib"
 R50_SHA="984cbd5f6485c9f1133eafe356d23c290b2e457902d4f518df3776ffbb5f5eef"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.6_R51_RJSR_RELOCATION_PROBE.Lib"
@@ -69,7 +69,7 @@ def emit_probe():
     return out,c.labels
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)
     r50=R50.read_bytes()
     assert sha256(r50).hexdigest()==R50_SHA and len(r50)==32012

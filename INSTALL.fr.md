@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate active R54 0.12.9 :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **32 364 octets**, Gate A CPU/CI PASS ; **Gates B/C R54 sous WinUAE en attente**. Ajoute les commandes dessin/fonte par numéro de banque sans modifier les anciennes. **R53 Image Capture a déjà réussi en interprété et en compilé sous WinUAE**. **R46 C1 reste [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib)**. [Test et procédure R54](docs/M16_R54_BANK_NUMBER.md).
+**R54 v0.12.9 `LAST_GOOD` promue :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32 364 octets, 53 commandes. **Gate A CPU/CI PASS ; Gates B/C WinUAE interprété/nouvel exécutable compilé PASS sur le scénario testé ; Gate D physique non testée.** Les raccourcis image/fonte par numéro de banque préservent les anciennes signatures. [Rapport R54](docs/M16_R54_BANK_NUMBER.md) · [test original archivé](tests/passed/M16_R54_BANK_NUMBER_01.asc).
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -10,7 +10,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier la [candidate R54](dist/AMOSPro_AGA.Lib) dans **APSystem** sous le nom `AMOSPro_AGA.Lib`, dans le même slot, puis **redémarrer AMOS et Compiler**. Conserver l'ancienne bibliothèque/configuration. Exécuter le [test courant](tests/current/M16_R54_BANK_NUMBER_01.asc) en interprété ; après succès, compiler un **nouvel exécutable** et le tester séparément.
+2. Copier la [bibliothèque R54 validée](dist/AMOSPro_AGA.Lib) dans **APSystem** sous le nom `AMOSPro_AGA.Lib`, dans le même slot, puis **redémarrer AMOS et Compiler**. Conserver l'ancienne bibliothèque/configuration. Pour reproduire la validation, exécuter le [test archivé](tests/passed/M16_R54_BANK_NUMBER_01.asc) en interprété ; après succès, compiler un **nouvel exécutable** et le tester séparément.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.
@@ -39,7 +39,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**R46 v0.12.1-C1 — version officielle promue (12/11/2026) :** [`LAST_GOOD` R46 C1](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive C1 validée](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commandes / 57 entrées AP20**. Gates A CPU, B interprété WinUAE et C test intégré compilé WinUAE PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physique non testée. Ne plus installer l'ancienne archive R46 native pour un programme compilé.
+**R54 v0.12.9 — bibliothèque officielle promue, Compiler-safe (12/11/2026) :** [installable](dist/AMOSPro_AGA.Lib) = [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 figée](dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **32 364 octets / 53 commandes / 60 entrées AP20**. Gates A/B/C PASS sur le scénario utilisateur ; Gate D Amiga physique non testée. L'ancienne [archive Compiler-safe R46 C1](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) reste figée pour la traçabilité et les régressions.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

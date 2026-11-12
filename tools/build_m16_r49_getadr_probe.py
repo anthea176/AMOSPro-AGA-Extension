@@ -14,7 +14,7 @@ import base64
 from hashlib import sha256
 from pathlib import Path
 from struct import pack
-from active_library import verify_active, LAST_GOOD_SHA
+from active_library import verify_active, C1_SHA
 from audit_ap20 import parse,inspect
 from compiler_relocation import (unpack_ap20,repack_ap20,wrap_native_ap20,
                                  unwrap_native_parts,native_from_promoted,
@@ -22,7 +22,7 @@ from compiler_relocation import (unpack_ap20,repack_ap20,wrap_native_ap20,
 from m68k_emit import Code,D,A,POST,I
 from m16_capture_r47_emit import IDX_GETADR
 ROOT=Path(__file__).resolve().parents[1]
-GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 R48=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib"
 R48_SHA="c30cfcc33ee50bb1f18c36225ccd7a5a6df7860e11201608d1801a0095687028"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.4_R49_GETADR_PROBE.Lib"
@@ -56,7 +56,7 @@ def native_probe():
     return raw
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)       # active may be R48 now or R49 after publication
     r48=R48.read_bytes()
     assert sha256(r48).hexdigest()==R48_SHA

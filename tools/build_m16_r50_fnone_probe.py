@@ -10,13 +10,13 @@ import argparse,base64
 from hashlib import sha256
 from pathlib import Path
 from struct import pack
-from active_library import verify_active,LAST_GOOD_SHA
+from active_library import verify_active,C1_SHA
 from compiler_relocation import (native_from_promoted,unpack_ap20,
             unwrap_native_parts,repack_ap20,wrap_native_ap20)
 from audit_ap20 import inspect,parse
 from build_m16_r49_getadr_probe import native_probe as probe49
 ROOT=Path(__file__).resolve().parents[1]
-GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 R49=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.4_R49_GETADR_PROBE.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.5_R50_RJSR_FNONE_PROBE.Lib"
 R49_HASH="c18a0992ee148beb437aecc2c1c865338630b40e34bc989c72dfb26313d5657e"
@@ -31,7 +31,7 @@ def native_probe():
     return out
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)
     prev=R49.read_bytes()
     assert sha256(prev).hexdigest()==R49_HASH and len(prev)==32012

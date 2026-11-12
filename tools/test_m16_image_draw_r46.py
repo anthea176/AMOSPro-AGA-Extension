@@ -69,7 +69,7 @@ def main():
     assert fixed == build()[0]
     if ARCHIVE_R46.exists():
         assert fixed == ARCHIVE_R46.read_bytes(), "R46 archived build mismatch"
-    assert wrap_r46_c1(fixed) == (Path(__file__).resolve().parents[1]/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes(), "official R46 must be compiler-safe C1"
+    assert wrap_r46_c1(fixed) == (Path(__file__).resolve().parents[1]/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib").read_bytes(), "frozen R46 C1 must remain compiler-safe"
     old=R45_FAILED.read_bytes()
     assert hashlib.sha256(old).hexdigest()==R45_SHA256
     assert BASE.read_bytes()==ARCHIVE_R44.read_bytes()

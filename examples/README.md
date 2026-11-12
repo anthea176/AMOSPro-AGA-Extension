@@ -1,16 +1,16 @@
 # AMOSPro AGA — 11 simple examples
 
-## Current capture candidate
+## R54 v0.12.9 — additional validated example
 
-R53 adds `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` without changing the existing Draw/Font signatures. The [single active functional test](../tests/current/M16_R53_IMAGE_CAPTURE_01.asc) demonstrates capture, opaque/masked drawing and ABK Save/Load. [Procedure and validation limits](../docs/M16_MAIN_LINKAGE_FIX.md). WinUAE validation pending; versioned R46 examples and ZIP remain unchanged.
+[R54 Bank Number Helpers](bank_number_r54/) demonstrates the new `Aga Bank Image Draw(Bank,X,Y,Mode)` and `Aga Bank Font Select(Bank)` alongside the legacy image/font calls. **Interpreted and freshly compiled WinUAE user test PASS (`RESULT 1`, `CLOSE RETURNED`)**. The validated ASCII source and both ABK resources are packaged in the versioned folder; [original passed test](../tests/passed/M16_R54_BANK_NUMBER_01.asc) is preserved unchanged. The eleven simple examples below are not rewritten.
 
 **English** | [Français](README.fr.md) · [Installation](../INSTALL.md)
 
-**Current release: R46 v0.12.1-C1** is now the official `LAST_GOOD` (Gates A/B + compiled WinUAE integrated Gate C PASS, `RESULT 1`, cursor 500/0, Chip drop 0). Exhaustive Compiler coverage of all 50 commands and physical Gate D remain open.
+**Current release: R54 v0.12.9 `LAST_GOOD`**, 53 commands, Gates A/B/C PASS on tested WinUAE scenario; Gate D real Amiga NOT TESTED. The [former R46 C1 compiled example](compiler_r46_all_in_one/) remains a frozen historical demonstration, still useful for compatibility checks.
 
 **Chip RAM endurance:** a separate [500-switch WinUAE stress test](../tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) passed on 12 November 2026 with no measured loss of total or largest free Chip RAM.
 
-These are **user-facing examples**, not historical regression tests. Most run in interpreted AMOS with the [current release](../dist/AMOSPro_AGA.Lib); the new all-in-one compiled test uses official **R46 C1**.
+These are **user-facing examples**, not historical regression tests. Most run in interpreted AMOS with the [current release](../dist/AMOSPro_AGA.Lib); the archived all-in-one compiled example was validated using historical **R46 C1**.
 
 | File | Demonstrates | What to do |
 |---|---|---|

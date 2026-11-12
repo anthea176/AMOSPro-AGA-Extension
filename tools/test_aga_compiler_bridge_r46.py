@@ -71,7 +71,7 @@ def run():
     root=Path(__file__).resolve().parents[1]
     from active_library import verify_active
     verify_active(root)  # current candidate is distinct from LAST_GOOD
-    assert data==(root/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    assert data==(root/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib").read_bytes()
     assert data==mod.CANDIDATE.read_bytes()
     print('PASS: R46 source SHA, deterministic AP20, 50-command token table, GetP boundaries')
     print('PASS: 56 original code fragments unchanged inside single 27,888-byte AP20 unit')

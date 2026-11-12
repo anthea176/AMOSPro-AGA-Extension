@@ -9,7 +9,7 @@ from pathlib import Path
 from struct import pack
 
 from audit_ap20 import parse, inspect
-from build_aga_current import build, LAST_GOOD, CURRENT, HISTORICAL_RAW
+from build_aga_current import build, C1_ARCHIVE, LAST_GOOD, CURRENT, HISTORICAL_RAW
 from active_library import verify_active
 from compiler_relocation import (
     unpack_ap20, repack_ap20, is_compiler_wrapped,
@@ -30,7 +30,7 @@ def rejects(call):
 def main():
     raw = HISTORICAL_RAW.read_bytes()
     official, meta = build()
-    assert official == LAST_GOOD.read_bytes()
+    assert official == C1_ARCHIVE.read_bytes()  # frozen C1, not moving LAST_GOOD
     verify_active(ROOT)
     assert hashlib.sha256(official).hexdigest() == "d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
     assert is_compiler_wrapped(official) and not is_compiler_wrapped(raw)
