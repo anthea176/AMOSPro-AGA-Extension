@@ -24,6 +24,7 @@ on:
       - "tools/test_*.py"
       - "tools/agapal_r30_layout.py"
       - "tools/m16_agapic.py"
+      - "tools/m16_agapic_capture_model.py"
       - "tools/m16_agapic_convert.py"
       - "tools/m16_agapic_sample.py"
       - "tests/design/*.asc"
@@ -92,6 +93,7 @@ jobs:
       - name: M16 AGAPIC P0 host-only planar RLE and reference bank model (NOT AP20 Gate A)
         run: |
           python -B tools/test_m16_agapic.py
+          python -B tools/test_m16_agapic_capture_model.py
           python -B tools/m16_agapic_sample.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py

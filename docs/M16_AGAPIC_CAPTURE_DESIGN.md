@@ -1,6 +1,6 @@
 # M16 — Capture AGAPIC et ergonomie des banques (contrat en discussion)
 
-**12/11/2026. Statut : conception uniquement, aucun nouveau token implémenté.** M16 reste en développement. Référence figée : R46 v0.12.1-C1 `LAST_GOOD` Compiler-safe, sans changement de binaire tant que les contrats ne sont pas approuvés. Branche `main` uniquement.
+**12/11/2026. Statut : conception validée et développement commencé par le modèle hôte ; aucun nouveau token AP20 ni commande 68000 livrés.** M16 reste en développement. Référence figée : R46 v0.12.1-C1 `LAST_GOOD` Compiler-safe, sans changement de binaire tant que les contrats ne sont pas approuvés. Branche `main` uniquement.
 
 ## Décisions déjà validées
 
@@ -21,6 +21,17 @@ _OK=Aga Font Bank Select(Bank)
 - **Capture :** créer une banque DATA AMOS au format AGAPIC v1, normalement allocable en Fast RAM, depuis un rectangle du back buffer. Compression RLE et masque 1 bit indépendant. Dernier paramètre **validé** : `-1` pour opaque (sans masque), sinon index de couleur à traiter comme transparent, borné par la profondeur AGA ; le masque 1 bit séparé préserve les couleurs d'origine. **Bords validés : rectangle strictement contenu dans l'écran, aucun clipping, échec `0` sans banque créée.** Les limites mémoire restent à valider. L'emplacement effectif en Fast RAM n'est pas prouvé par les flags seuls.
 - **Draw :** consulter la banque vivante par **numéro**, puis vérifier son type, son nom, son adresse, sa longueur et son en-tête AGAPIC avant décodage. Actuellement la commande exige `Start(Bank),Length(Bank)` ; la nouvelle signature est une **proposition** et la compatibilité avec le token existant devra être explicitement décidée.
 - **Font Select :** même simplification proposée pour la sélection d'une banque AMCAF `BankFont` déjà existante : le nouvel argument serait `Bank` au lieu de `Start(Bank),Length(Bank)`. **Sélection ≠ création**. Ne pas modifier l'extension AMCAF.
+
+## Étape de développement engagée — modèle de capture (HOST ONLY)
+
+La capture est maintenant représentée par [`tools/m16_agapic_capture_model.py`](../tools/m16_agapic_capture_model.py) et contrôlée par [`tools/test_m16_agapic_capture_model.py`](../tools/test_m16_agapic_capture_model.py), exécuté dans la CI M16. Le modèle :
+
+- extrait des pixels indexés des **1 à 8 bitplanes planaires** avec `BytesPerRow` aligné sur les WORDs, y compris X non aligné ; réutilise **le vrai codec AGAPIC v1** `pack_image` plutôt qu'un autre format ;
+- encode `TransparentIndex=-1` sans masque, ou produit un masque 1 bit indépendant avec bit 0 pour l'index transparent ;
+- refuse dimensions invalides, rectangle hors écran, index impossible, mémoire bitmap incohérente et collision avec **toute banque** avant insertion de la moindre nouvelle banque ;
+- simule une **préférence Fast RAM et un repli Chip RAM** avec capacités factices, sans conclure sur le placement Amiga ni sur les frais réels de l'allocateur AMOS ; produit une enveloppe ABK conforme pour contrôler le round-trip.
+
+**Périmètre strict :** ces tests ne font exécuter **aucune instruction 68000**, n'appellent **pas** `Bnk.Reserve`, ne mesurent aucune vitesse sur Amiga, et ne prouvent ni l'emplacement physique de l'allocation ni le fonctionnement du Compiler. **La R46 C1 officielle n'est pas modifiée ; M16 non clôturé.** Prochaine étape : inspecter et valider l'ABI banque/AMOS Compiler, développer la routine native et ses tests Gate A CPU avant tout essai WinUAE.
 
 ## Obligation : mettre les exemples à jour avec les commandes livrées
 
