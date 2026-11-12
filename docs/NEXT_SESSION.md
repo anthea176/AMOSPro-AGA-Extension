@@ -2,7 +2,7 @@
 
 ## M16 — AGAPIC v1 / P0 : étude et prototype hôte, pas encore de R45 (12/11/2026)
 
-Le chantier [M16 AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md) est lancé : format planaire 16 pixels/paquet, compression RLE indépendante par scanline, masque 1 bit indépendant de l'index couleur, enveloppe AmBk DATA native préférant Fast RAM (sans la garantir), conversion PNG indexé hors Amiga, tests hôte de clipping et rendu planaire CPU. **Le test de la banque ABK réelle sous WinUAE est encore à réaliser.** Aucun nouveau token AP20, aucun dessin natif 68000, aucune Gate A/B R45. **R44 v0.11.5 reste LAST_GOOD, 49 commandes, binaires intacts ; main uniquement.**
+Le chantier [M16 AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md) est lancé : format planaire 16 pixels/paquet, compression RLE indépendante par scanline, masque 1 bit indépendant de l'index couleur, enveloppe AmBk DATA native préférant Fast RAM (sans la garantir), conversion PNG indexé hors Amiga, tests hôte de clipping et rendu planaire CPU. **P0 CI hôte PASS** : 432 tests ABK/roundtrip, 1 344 rendus planaires, 31 rejets d'entrées invalides, [run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). [Banque ABK générée 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf, 1 856 octets. [Test de chargement AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc) et [notice](../tests/design/M16_AGAPIC_PREVIEW_README.md). **Le chargement ABK réel sous WinUAE reste NON TESTÉ.** Aucun nouveau token AP20, aucun dessin natif 68000, aucune Gate A/B R45. **R44 v0.11.5 reste LAST_GOOD, 49 commandes, binaires intacts ; main uniquement.**
 
 ## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
 

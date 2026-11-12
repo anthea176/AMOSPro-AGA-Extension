@@ -1,6 +1,6 @@
 # M16 — AGAPIC v1 : images compressées en banque DATA / rendu CPU AGA
 
-**État : prototype P0 (format + outillage PC + tests de rendu de référence).**
+**État : P0 FORMAT/OUTILLAGE HÔTE PASS sous CI (12/11/2026).** 432 cas ABK/roundtrips, 1 344 rendus planaires comparés pixel par pixel et 31 cas invalides ; [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). Ceci reste un modèle Python, PAS une Gate A native de l'extension. La banque ABK témoin est maintenant versionnée ; son chargement AMOS/WinUAE reste non testé.
 Aucun token AP20 R45, aucun dessin natif 68000 ni test WinUAE réussi à ce stade.
 **R44 v0.11.5 reste LAST_GOOD** : 49 commandes AP20, 27 460 octets.
 Travail exclusivement sur la branche **main**.
@@ -72,6 +72,7 @@ Après un Bank Swap ou Load, relire Start(bank) et Length(bank).
   Accepte un masque PNG monochrome indépendant (--mask), un index transparent
   (--transparent-index) ou le tRNS PNG (--png-alpha). Pas de quantification
   RGBA automatique, pas de palette incluse dans AGAPIC.
+- [Banque ABK témoin 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk) : 1 856 octets, SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf ; [notice de test WinUAE](../tests/design/M16_AGAPIC_PREVIEW_README.md). L'ABK est produit déterministiquement par les scripts PC, mais Load sous AMOS attend encore un essai réel.
 - [Générateur de banque exemple](../tools/m16_agapic_sample.py) :
   64×40×4 couleurs indexées avec masque indépendant, banque DATA numéro 10.
 - [Tests de format et rendu de référence](../tools/test_m16_agapic.py) :
@@ -84,7 +85,7 @@ Commande de conversion hors Amiga :
 
     python tools/m16_agapic_convert.py image_indexee.png image.abk --bank 10 --depth 4 --mask masque_gris.png
 
-La compression RLE simplifie le décodage 68000 et compresse les grands aplats.
+La compression RLE simplifie le décodage 68000 et compresse les grands aplats. **Mesure de taille hôte (non temporelle) :** 320×256×8 opaque : 81 920 octets planaires, 5 412 octets AGAPIC sur une image uniforme ; échantillon complexe : 83 236 octets AGAPIC, donc légère expansion. Aucun FPS Amiga ne peut en être déduit.
 Une image très détaillée/bruitée peut au contraire croître légèrement.
 **Aucune vitesse ni cadence 50 FPS n'est revendiquée** à partir de tests PC.
 

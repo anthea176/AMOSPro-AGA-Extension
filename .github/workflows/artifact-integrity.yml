@@ -26,6 +26,7 @@ on:
       - "tools/m16_agapic_convert.py"
       - "tools/m16_agapic_sample.py"
       - "tests/design/*.asc"
+      - "tests/design/*.abk"
       - "tests/current/*.asc"
       - "tests/passed/*.asc"
       - "tools/audit_ap20.py"
@@ -77,7 +78,7 @@ jobs:
       - name: M16 AGAPIC P0 host-only planar RLE and reference bank model (NOT AP20 Gate A)
         run: |
           python -B tools/test_m16_agapic.py
-          python -B tools/m16_agapic_sample.py --emit-base64
+          python -B tools/m16_agapic_sample.py
       - name: Verify every AP20 instruction/function is documented in README
         run: python -B tools/test_readme_api_coverage.py
       - name: Verify eight distribution examples (static syntax, ILBM and packaging)

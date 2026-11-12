@@ -4,7 +4,7 @@
 
 ## Où commencer ?
 
-**M16 démarré en prototype P0 (aucune nouvelle commande AP20)** : [format AGAPIC et modèle planaire RLE](M16_AGAPIC_FORMAT_DESIGN.md), [codec et conversion](../tools/m16_agapic.py), [aperçu ABK pour AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc). **R44 demeure LAST_GOOD**, aucune validation native R45 ni WinUAE M16 à ce stade.
+**M16/P0 format AGAPIC validé sur modèle hôte/CI (aucune nouvelle commande AP20)** : [format AGAPIC et modèle planaire RLE](M16_AGAPIC_FORMAT_DESIGN.md), [codec et conversion](../tools/m16_agapic.py), [banque ABK témoin](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), [programme d'aperçu AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc) et [CI hôte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). Le Load ABK réel reste à tester dans WinUAE. **R44 demeure LAST_GOOD**, aucune validation native R45 ni WinUAE M16 à ce stade.
 
 | Besoin | Document |
 |---|---|

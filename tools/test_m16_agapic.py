@@ -2,7 +2,10 @@
 """M16 P0 host-only AGAPIC v1 format / planar CPU-model tests (no AP20)."""
 import random
 import struct
+import hashlib
+from pathlib import Path
 
+from m16_agapic_sample import binary as sample_binary
 from m16_agapic import (ABK_HEADER, BANK_NAME, CODEC_ROW_RLE, FLAG_MASK,
                        HEADER, AGAPIC, make_abk, pack_image, parse_abk,
                        parse_payload, render_cpu_model, stats, unpack_image)
@@ -241,6 +244,23 @@ def test_compression():
     return len(flat), len(busy)
 
 
+def test_committed_fixture():
+    """The ABK Git artifact must equal the host builder byte-for-byte."""
+    fixture = Path(__file__).resolve().parents[1] / "tests/design/M16_AGAPIC_SAMPLE_BANK10.abk"
+    disk = fixture.read_bytes()
+    expected = sample_binary()
+    assert disk == expected, "sample ABK does not match exact generator bytes"
+    assert len(disk) == 1856, "AGAPIC sample ABK length changed"
+    assert hashlib.sha256(disk).hexdigest() == (
+        "56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf"
+    ), "AGAPIC sample SHA changed"
+    bank, flags, image = parse_abk(disk)
+    assert (bank, flags, image.width, image.height, image.depth, image.masked) == (
+        10, 1, 64, 40, 4, True)
+    assert image.offsets[0] == 196 and image.offsets[-1] == len(image.raw)
+    return "12f19cb352252d771b058395f8b6f654aed45764"
+
+
 def main():
     rng = random.Random(0xA6A160)
     a = test_roundtrip(rng)
@@ -248,11 +268,13 @@ def main():
     c = test_opaque_zero_and_mask()
     d = test_invalid()
     flat, busy = test_compression()
+    fixture_blob = test_committed_fixture()
     print(f"M16 P0 host format/model PASS: {a} ABK/roundtrips, "
           f"{b} clipped planar renders, {c} index-0/mask cases, "
           f"{d} malformed/invalid cases")
     print(f"AGAPIC RLE example 320x256x8: flat {flat} B vs "
           f"raw planar 81920 B; complex sample {busy} B")
+    print("Pinned ABK fixture 1856 B, Git blob", fixture_blob)
     print("No new AP20 command, no WinUAE render or measured 68000 speed.")
     print("R44 LAST_GOOD remains untouched; CPU model is not a Gate A.")
 
