@@ -1,5 +1,9 @@
 # M16/R52 — diagnostic sur les instructions a la cible de Rjsr
 
+## Résultat reçu et conclusion ultérieure — 12/11/2026
+
+**R52 : RESULT 2**, communiqué par l'utilisateur. Cela ne prouve pas seul une mauvaise adresse. L'[audit source ultérieur](M16_MAIN_LINKAGE_FIX.md) établit que 322 désigne LPrintX, tandis que FnOne est 822 : le comptage avait oublié +ILib.s et Lib_Pos 500. R53 corrige la capture réelle ; R52 et son [test archivé](../tests/diagnostics/M16_R52_FNONE_TARGET_PROBE_01.asc) restent inchangés. Le texte ci-dessous décrit le diagnostic à sa création.
+
 R51 Gate B WinUAE a affiche `RESULT 1` : le marqueur `Rjsr` index 322 est relocalise en `JSR absolute long`, mais l'adresse n'a pas ete comparee a la vraie routine. R49 plante dans WinUAE ; R50 a provoque un Guru `80000004` avec `FnOne`.
 
 **R52 ne execute PAS `Rjsr`.** Elle verifie les parametres precedemment valides (six entiers), saute le marqueur, lit le pointeur de `JSR` et le controle par **`exec.library/TypeOfMem` LVO -534** a ses deux bornes avant de lire les trois mots machines. Source AMOS Professional officielle `+Lib.s`, `Lib_Par FnOne` : `MOVEQ #1,D3`, `MOVEQ #0,D2`, `RTS` = **`7601 7400 4E75`**.

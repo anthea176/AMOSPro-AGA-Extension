@@ -1,5 +1,9 @@
 # AMOSPro AGA — 11 simple examples
 
+## Current capture candidate
+
+R53 adds `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` without changing the existing Draw/Font signatures. The [single active functional test](../tests/current/M16_R53_IMAGE_CAPTURE_01.asc) demonstrates capture, opaque/masked drawing and ABK Save/Load. [Procedure and validation limits](../docs/M16_MAIN_LINKAGE_FIX.md). WinUAE validation pending; versioned R46 examples and ZIP remain unchanged.
+
 **English** | [Français](README.fr.md) · [Installation](../INSTALL.md)
 
 **Current release: R46 v0.12.1-C1** is now the official `LAST_GOOD` (Gates A/B + compiled WinUAE integrated Gate C PASS, `RESULT 1`, cursor 500/0, Chip drop 0). Exhaustive Compiler coverage of all 50 commands and physical Gate D remain open.

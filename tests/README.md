@@ -1,5 +1,9 @@
 # Tests AMOS — R46 v0.12.1-C1 LAST_GOOD, Gates A/B + C intégrée WinUAE PASS
 
+## Test actif — capture fonctionnelle R53 0.12.8
+
+Seul programme à exécuter : [M16_R53_IMAGE_CAPTURE_01.asc](current/M16_R53_IMAGE_CAPTURE_01.asc). [Procédure, empreinte et résultats attendus](../docs/M16_MAIN_LINKAGE_FIX.md). Gate A locale PASS ; AMOS interprété puis **nouvel exécutable Compiler** à valider séparément. R46 C1 LAST_GOOD intacte. La sonde R52 est archivée à l'identique en `diagnostics/`. Les états ci-dessous sont historiques.
+
 **Statut courant 12/11/2026 : test intégré R46 C1 Compiler/WinUAE PASS puis PROMOTION officielle**, capture utilisateur : `RESULT 1`, `CLOSE RETURNED`, `CUR 500 ERR 0`, image, clipping, fontes PASS, `CHIP DROP 0`. [ASC identique archivé](passed/R46_C1_COMPILER_ALL_IN_ONE.asc) · [rapport](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). Bibliothèque officielle [R46 v0.12.1-C1](../dist/AMOSPro_AGA.Lib), SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b` ; R46 native d'avant C1 et R44/R45 archivées. Gate D physique et couverture exhaustive non testées. Les anciennes sections sont historiques.
 
 

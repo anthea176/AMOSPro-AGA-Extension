@@ -1,0 +1,3132 @@
+{
+  "units": [
+    {
+      "file": "+ILib.s",
+      "directives": [
+        [
+          4,
+          "Lib_Ini 0"
+        ],
+        [
+          10,
+          "Lib_Def Init"
+        ],
+        [
+          23,
+          "Lib_Int Edit_Load"
+        ],
+        [
+          24,
+          "Lib_Int Edit_Free"
+        ],
+        [
+          25,
+          "Lib_Int Mon_Load"
+        ],
+        [
+          26,
+          "Lib_Int Mon_Free"
+        ],
+        [
+          30,
+          "Lib_Def Mon_Start"
+        ],
+        [
+          31,
+          "Lib_Def Mon_In_Editor"
+        ],
+        [
+          32,
+          "Lib_Def Mon_In_Program"
+        ],
+        [
+          33,
+          "Lib_Def Mon_MonitorChr"
+        ],
+        [
+          34,
+          "Lib_Def Mon_Free2"
+        ],
+        [
+          35,
+          "Lib_Def Mon_Free3"
+        ],
+        [
+          39,
+          "Lib_Def Ed_Start"
+        ],
+        [
+          40,
+          "Lib_Def Ed_Cold"
+        ],
+        [
+          41,
+          "Lib_Def Ed_Title"
+        ],
+        [
+          42,
+          "Lib_Def Ed_End"
+        ],
+        [
+          43,
+          "Lib_Def Ed_Loop"
+        ],
+        [
+          44,
+          "Lib_Def Ed_ErrRun"
+        ],
+        [
+          45,
+          "Lib_Def Ed_CloseEditor"
+        ],
+        [
+          46,
+          "Lib_Def Ed_KillEditor"
+        ],
+        [
+          47,
+          "Lib_Def Ed_ZapFonction"
+        ],
+        [
+          48,
+          "Lib_Def Ed_ZapIn"
+        ],
+        [
+          49,
+          "Lib_Def Ed_RunDirect"
+        ],
+        [
+          50,
+          "Lib_Def Tokenise"
+        ],
+        [
+          51,
+          "Lib_Def Detok"
+        ],
+        [
+          52,
+          "Lib_Def Mon_Detok"
+        ],
+        [
+          53,
+          "Lib_Def TInst"
+        ],
+        [
+          54,
+          "Lib_Def Ed_Free1"
+        ],
+        [
+          55,
+          "Lib_Def Ed_Free2"
+        ],
+        [
+          56,
+          "Lib_Def Ed_Free3"
+        ],
+        [
+          57,
+          "Lib_Def Ed_Free1"
+        ],
+        [
+          58,
+          "Lib_Def Ed_Free2"
+        ],
+        [
+          62,
+          "Lib_Int Tk_FindA"
+        ],
+        [
+          63,
+          "Lib_Int Tk_EditL"
+        ],
+        [
+          64,
+          "Lib_Int Tk_FindL"
+        ],
+        [
+          65,
+          "Lib_Int Tk_FindN"
+        ],
+        [
+          66,
+          "Lib_Int Tk_SizeL"
+        ],
+        [
+          67,
+          "Lib_Int Prg_RunIt"
+        ],
+        [
+          68,
+          "Lib_Int Prg_TestIt"
+        ],
+        [
+          69,
+          "Lib_Int Prg_Save"
+        ],
+        [
+          70,
+          "Lib_Int Prg_Load"
+        ],
+        [
+          71,
+          "Lib_Int Prg_New"
+        ],
+        [
+          72,
+          "Lib_Int Prg_NewStructure"
+        ],
+        [
+          73,
+          "Lib_Int Prg_DelStructure"
+        ],
+        [
+          74,
+          "Lib_Int Prg_AccAdr"
+        ],
+        [
+          75,
+          "Lib_Int Prg_DejaRunned"
+        ],
+        [
+          76,
+          "Lib_Int Prg_DataLoad"
+        ],
+        [
+          77,
+          "Lib_Int Prg_DataSave"
+        ],
+        [
+          78,
+          "Lib_Int Prg_DataNew"
+        ],
+        [
+          79,
+          "Lib_Int Prg_CptLines"
+        ],
+        [
+          80,
+          "Lib_Int Prg_ChgTTexte"
+        ],
+        [
+          81,
+          "Lib_Int Prg_SetBanks"
+        ],
+        [
+          82,
+          "Lib_Int Prg_ReSetBanks"
+        ],
+        [
+          83,
+          "Lib_Int Prg_SetBanks"
+        ],
+        [
+          84,
+          "Lib_Int Prg_Pull"
+        ],
+        [
+          85,
+          "Lib_Int ClearVar"
+        ],
+        [
+          86,
+          "Lib_Int PTest"
+        ],
+        [
+          87,
+          "Lib_Int SsTest"
+        ],
+        [
+          88,
+          "Lib_Int ResVNom"
+        ],
+        [
+          89,
+          "Lib_Int ResDir"
+        ],
+        [
+          90,
+          "Lib_Int ResVarBuf"
+        ],
+        [
+          91,
+          "Lib_Int VerDirect"
+        ],
+        [
+          92,
+          "Lib_Int Stack_Reserve"
+        ],
+        [
+          93,
+          "Lib_Int Includes_Clear"
+        ],
+        [
+          94,
+          "Lib_Int Includes_Adr"
+        ],
+        [
+          95,
+          "Lib_Int Equ_Free"
+        ],
+        [
+          99,
+          "Lib_Int RamFast"
+        ],
+        [
+          100,
+          "Lib_Int RamFast2"
+        ],
+        [
+          101,
+          "Lib_Int RamChip"
+        ],
+        [
+          102,
+          "Lib_Int RamChip2"
+        ],
+        [
+          103,
+          "Lib_Int RamFree"
+        ],
+        [
+          104,
+          "Lib_Int ResTempBuffer"
+        ],
+        [
+          106,
+          "Lib_Int Math_Close"
+        ],
+        [
+          107,
+          "Lib_Int Sys_WaitMul"
+        ],
+        [
+          108,
+          "Lib_Int Def_GetMessage"
+        ],
+        [
+          109,
+          "Lib_Int Sys_GetMessage"
+        ],
+        [
+          110,
+          "Lib_Int GetMessage"
+        ],
+        [
+          111,
+          "Lib_Int Sys_AddPath"
+        ],
+        [
+          112,
+          "Lib_Def Sys_GetPath"
+        ],
+        [
+          113,
+          "Lib_Int Sys_UnCode"
+        ],
+        [
+          114,
+          "Lib_Int MemMaximum"
+        ],
+        [
+          115,
+          "Lib_Int MemDelBanks"
+        ],
+        [
+          116,
+          "Lib_Int TheEnd"
+        ],
+        [
+          117,
+          "Lib_Int UserReg"
+        ],
+        [
+          118,
+          "Lib_Int VersionN"
+        ],
+        [
+          119,
+          "Lib_Int BugBug"
+        ],
+        [
+          120,
+          "Lib_Int PreBug"
+        ],
+        [
+          121,
+          "Lib_Int Sys_ClearCache"
+        ],
+        [
+          122,
+          "Lib_Int WOption"
+        ],
+        [
+          123,
+          "Lib_Int ReCop"
+        ],
+        [
+          125,
+          "Lib_Int Lst.ChipNew"
+        ],
+        [
+          126,
+          "Lib_Int Lst.New"
+        ],
+        [
+          127,
+          "Lib_Int Lst.Cree"
+        ],
+        [
+          128,
+          "Lib_Int Lst.DelAll"
+        ],
+        [
+          129,
+          "Lib_Int Lst.Del"
+        ],
+        [
+          130,
+          "Lib_Int Lst.Insert"
+        ],
+        [
+          131,
+          "Lib_Int Lst.Remove"
+        ],
+        [
+          132,
+          "Lib_Int Bnk.PrevProgram"
+        ],
+        [
+          133,
+          "Lib_Int Bnk.CurProgram"
+        ],
+        [
+          134,
+          "Lib_Int AskDir"
+        ],
+        [
+          135,
+          "Lib_Int AskDir2"
+        ],
+        [
+          139,
+          "Lib_Def Tokenisation"
+        ],
+        [
+          140,
+          "Lib_Def Testing"
+        ],
+        [
+          141,
+          "Lib_Def CValRout"
+        ],
+        [
+          143,
+          "Lib_Def CmpInit1"
+        ],
+        [
+          144,
+          "Lib_Def CmpInit2"
+        ],
+        [
+          145,
+          "Lib_Def AMOSInit"
+        ],
+        [
+          146,
+          "Lib_Def CmpDbMode"
+        ],
+        [
+          147,
+          "Lib_Def CmpLineCLI"
+        ],
+        [
+          148,
+          "Lib_Def CmpLineSER"
+        ],
+        [
+          149,
+          "Lib_Def CmpPrintCLI"
+        ],
+        [
+          150,
+          "Lib_Def CmpPrintSER"
+        ],
+        [
+          151,
+          "Lib_Def CmpEffVarBuf"
+        ],
+        [
+          152,
+          "Lib_Def CmpLibrariesInit"
+        ],
+        [
+          153,
+          "Lib_Def CmpLibrariesStop"
+        ],
+        [
+          154,
+          "Lib_Def CmpEndRoutines"
+        ],
+        [
+          155,
+          "Lib_Def CmpLibClose"
+        ],
+        [
+          156,
+          "Lib_Def CmpClearVar"
+        ],
+        [
+          158,
+          "Lib_Def PlusF"
+        ],
+        [
+          159,
+          "Lib_Def PlusC"
+        ],
+        [
+          160,
+          "Lib_Def MoinsF"
+        ],
+        [
+          161,
+          "Lib_Def MoinsC"
+        ],
+        [
+          162,
+          "Lib_Def MultE"
+        ],
+        [
+          163,
+          "Lib_Def MultF"
+        ],
+        [
+          164,
+          "Lib_Def DiviseE"
+        ],
+        [
+          165,
+          "Lib_Def DiviseF"
+        ],
+        [
+          166,
+          "Lib_Def Puissance"
+        ],
+        [
+          167,
+          "Lib_Def Modulo"
+        ],
+        [
+          168,
+          "Lib_Def Chaine_Compare"
+        ],
+        [
+          173,
+          "Lib_Def DefRun1"
+        ],
+        [
+          290,
+          "Lib_Def DefRun2"
+        ],
+        [
+          332,
+          "Lib_Def DefRunAcc"
+        ],
+        [
+          386,
+          "Lib_Def DefRunExtensions"
+        ],
+        [
+          405,
+          "Lib_Def SetChrPatch"
+        ],
+        [
+          426,
+          "Lib_Def Pos_IRet"
+        ],
+        [
+          430,
+          "Lib_Def New_ChrGet"
+        ],
+        [
+          518,
+          "Lib_Par InEnd"
+        ],
+        [
+          533,
+          "Lib_Par InExtCall"
+        ],
+        [
+          580,
+          "Lib_Def FnExtCall"
+        ],
+        [
+          625,
+          "Lib_Def Open_MathLibraries"
+        ],
+        [
+          715,
+          "Lib_Def Parameters"
+        ],
+        [
+          891,
+          "Lib_Def Test_PaSaut"
+        ],
+        [
+          904,
+          "Lib_Def Test_Normal"
+        ],
+        [
+          914,
+          "Lib_Def Test_Force"
+        ],
+        [
+          1038,
+          "Lib_Def GoMenu"
+        ],
+        [
+          1087,
+          "Lib_Def OnBreakGo"
+        ],
+        [
+          1105,
+          "Lib_Def EveJump"
+        ],
+        [
+          1155,
+          "Lib_Def RIllDir"
+        ],
+        [
+          1161,
+          "Lib_Def OOfData"
+        ],
+        [
+          1166,
+          "Lib_Def OOfBuf"
+        ],
+        [
+          1171,
+          "Lib_Def InpTL"
+        ],
+        [
+          1177,
+          "Lib_Def EProErr"
+        ],
+        [
+          1183,
+          "Lib_Def ResLNo"
+        ],
+        [
+          1189,
+          "Lib_Def NoOnErr"
+        ],
+        [
+          1195,
+          "Lib_Def ResPLab"
+        ],
+        [
+          1201,
+          "Lib_Def NoResume"
+        ],
+        [
+          1207,
+          "Lib_Def NoErr"
+        ],
+        [
+          1213,
+          "Lib_Def OofStack"
+        ],
+        [
+          1219,
+          "Lib_Def NonDim"
+        ],
+        [
+          1225,
+          "Lib_Def AlrDim"
+        ],
+        [
+          1231,
+          "Lib_Def DByZero"
+        ],
+        [
+          1237,
+          "Lib_Def OverFlow"
+        ],
+        [
+          1243,
+          "Lib_Def RetGsb"
+        ],
+        [
+          1249,
+          "Lib_Def PopGsb"
+        ],
+        [
+          1265,
+          "Lib_Def Error"
+        ],
+        [
+          1270,
+          "Lib_Def ErrorExt"
+        ],
+        [
+          1405,
+          "Lib_Def Start_Type"
+        ],
+        [
+          1411,
+          "Lib_Def InAPCmp"
+        ],
+        [
+          1430,
+          "Lib_Def InAPCmpCLI"
+        ],
+        [
+          1436,
+          "Lib_Par InRun0"
+        ],
+        [
+          1442,
+          "Lib_Def InRun0CLI"
+        ],
+        [
+          1446,
+          "Lib_Par InRun1"
+        ],
+        [
+          1502,
+          "Lib_Def InRun1CLI"
+        ],
+        [
+          1508,
+          "Lib_Par InPRun"
+        ],
+        [
+          1601,
+          "Lib_Def InPRunCLI"
+        ],
+        [
+          1608,
+          "Lib_Par InAskEditor1"
+        ],
+        [
+          1615,
+          "Lib_Def InAskEditor1CLI"
+        ],
+        [
+          1619,
+          "Lib_Par InAskEditor2"
+        ],
+        [
+          1625,
+          "Lib_Def InAskEditor2CLI"
+        ],
+        [
+          1629,
+          "Lib_Par InAskEditor3"
+        ],
+        [
+          1643,
+          "Lib_Def InAskEditor3CLI"
+        ],
+        [
+          1649,
+          "Lib_Par InCallEditor1"
+        ],
+        [
+          1656,
+          "Lib_Def InCallEditor1CLI"
+        ],
+        [
+          1660,
+          "Lib_Par InCallEditor2"
+        ],
+        [
+          1666,
+          "Lib_Def InCallEditor2CLI"
+        ],
+        [
+          1670,
+          "Lib_Par InCallEditor3"
+        ],
+        [
+          1684,
+          "Lib_Def InCallEditor3CLI"
+        ],
+        [
+          1688,
+          "Lib_Int Bnk.PrevProgram"
+        ],
+        [
+          1689,
+          "Lib_Def Bnk.PrevProgramCLI"
+        ],
+        [
+          1692,
+          "Lib_Int Bnk.CurProgram"
+        ],
+        [
+          1693,
+          "Lib_Def Bnk.CurProgramCLI"
+        ],
+        [
+          1699,
+          "Lib_Par FnPrgUnder"
+        ],
+        [
+          1720,
+          "Lib_Def FnPrgUnderCLI"
+        ],
+        [
+          1724,
+          "Lib_Int InCloseEditor"
+        ],
+        [
+          1725,
+          "Lib_Def InCloseEditorCLI"
+        ],
+        [
+          1726,
+          "Lib_Int InKillEditor"
+        ],
+        [
+          1727,
+          "Lib_Def InKillEditorCLI"
+        ],
+        [
+          1728,
+          "Lib_Int InMonitor"
+        ],
+        [
+          1729,
+          "Lib_Def InMonitorCLI"
+        ],
+        [
+          1735,
+          "Lib_Def End_Type"
+        ],
+        [
+          1739,
+          "Lib_Def RunName"
+        ],
+        [
+          1745,
+          "Lib_Def Ed_Par"
+        ],
+        [
+          1763,
+          "Lib_Def ZapReturn"
+        ],
+        [
+          1776,
+          "Lib_Par FnPrgState"
+        ],
+        [
+          1783,
+          "Lib_Def GetInstruction"
+        ],
+        [
+          1784,
+          "Lib_Def GetInstruction2"
+        ],
+        [
+          1791,
+          "Lib_Par InRem"
+        ],
+        [
+          1799,
+          "Lib_Par InSetBuffer"
+        ],
+        [
+          1810,
+          "Lib_Par InLab"
+        ],
+        [
+          1820,
+          "Lib_Par InSystem"
+        ],
+        [
+          1828,
+          "Lib_Par InEdit"
+        ],
+        [
+          1836,
+          "Lib_Par InDirect"
+        ],
+        [
+          1845,
+          "Lib_Par InBreakOn"
+        ],
+        [
+          1852,
+          "Lib_Par InBreakOff"
+        ],
+        [
+          1861,
+          "Lib_Par InOnBreak"
+        ],
+        [
+          1875,
+          "Lib_Par InOnError"
+        ],
+        [
+          1910,
+          "Lib_Def InOnErrorGoto"
+        ],
+        [
+          1911,
+          "Lib_Def InOnErrorProc"
+        ],
+        [
+          1916,
+          "Lib_Par InResumeLabel"
+        ],
+        [
+          1931,
+          "Lib_Def InResumeLabel1"
+        ],
+        [
+          1950,
+          "Lib_Par InResume"
+        ],
+        [
+          1975,
+          "Lib_Def InResume1"
+        ],
+        [
+          1980,
+          "Lib_Par InResumeNext"
+        ],
+        [
+          2010,
+          "Lib_Par InTrap"
+        ],
+        [
+          2021,
+          "Lib_Par FnErrTrap"
+        ],
+        [
+          2031,
+          "Lib_Def InEveryGosub"
+        ],
+        [
+          2032,
+          "Lib_Def InEveryProc"
+        ],
+        [
+          2033,
+          "Lib_Par InEvery"
+        ],
+        [
+          2056,
+          "Lib_Par InEveryOff"
+        ],
+        [
+          2064,
+          "Lib_Par InEveryOn"
+        ],
+        [
+          2073,
+          "Lib_Par InFor"
+        ],
+        [
+          2115,
+          "Lib_Par InNext"
+        ],
+        [
+          2175,
+          "Lib_Def InNextF"
+        ],
+        [
+          2176,
+          "Lib_Def InNextD"
+        ],
+        [
+          2183,
+          "Lib_Par InRepeat"
+        ],
+        [
+          2206,
+          "Lib_Par InUntil"
+        ],
+        [
+          2230,
+          "Lib_Par InWhile"
+        ],
+        [
+          2249,
+          "Lib_Par InWend"
+        ],
+        [
+          2276,
+          "Lib_Par InDo"
+        ],
+        [
+          2284,
+          "Lib_Par InLoop"
+        ],
+        [
+          2297,
+          "Lib_Par InExit"
+        ],
+        [
+          2316,
+          "Lib_Par InExitIf"
+        ],
+        [
+          2335,
+          "Lib_Par InIf"
+        ],
+        [
+          2361,
+          "Lib_Par InElseIf"
+        ],
+        [
+          2369,
+          "Lib_Par InElse"
+        ],
+        [
+          2380,
+          "Lib_Def FnElse"
+        ],
+        [
+          2388,
+          "Lib_Par InGosub"
+        ],
+        [
+          2413,
+          "Lib_Par InReturn"
+        ],
+        [
+          2435,
+          "Lib_Par InPop"
+        ],
+        [
+          2457,
+          "Lib_Def DProc1"
+        ],
+        [
+          2458,
+          "Lib_Def DProc2F"
+        ],
+        [
+          2459,
+          "Lib_Def DProc2D"
+        ],
+        [
+          2460,
+          "Lib_Def FProc"
+        ],
+        [
+          2461,
+          "Lib_Def PrgInF"
+        ],
+        [
+          2462,
+          "Lib_Def PrgInD"
+        ],
+        [
+          2464,
+          "Lib_Par InProcedure"
+        ],
+        [
+          2474,
+          "Lib_Par InProc"
+        ],
+        [
+          2482,
+          "Lib_Def CallProc"
+        ],
+        [
+          2630,
+          "Lib_Par InEndProc"
+        ],
+        [
+          2695,
+          "Lib_Par InPopProc"
+        ],
+        [
+          2713,
+          "Lib_Def PopP"
+        ],
+        [
+          2746,
+          "Lib_Def Goto2"
+        ],
+        [
+          2756,
+          "Lib_Par InGoto"
+        ],
+        [
+          2788,
+          "Lib_Par InOn"
+        ],
+        [
+          2857,
+          "Lib_Def GetLabelE"
+        ],
+        [
+          2858,
+          "Lib_Def GetLabelA"
+        ],
+        [
+          2859,
+          "Lib_Def GetLabel"
+        ],
+        [
+          2946,
+          "Lib_Def Finie"
+        ],
+        [
+          2961,
+          "Lib_Def TInst"
+        ],
+        [
+          3042,
+          "Lib_Def L_OpeNul"
+        ],
+        [
+          3091,
+          "Lib_Par Fn_New_Evalue"
+        ],
+        [
+          3101,
+          "Lib_Def New_Evalue"
+        ],
+        [
+          3719,
+          "Lib_Def InNull"
+        ],
+        [
+          3725,
+          "Lib_Par FnNull"
+        ],
+        [
+          3734,
+          "Lib_Par InVar"
+        ],
+        [
+          3807,
+          "Lib_Par FnVar"
+        ],
+        [
+          3896,
+          "Lib_Par InDim"
+        ],
+        [
+          4009,
+          "Lib_Def GetTablo"
+        ],
+        [
+          4058,
+          "Lib_Par FnVarPtr"
+        ],
+        [
+          4074,
+          "Lib_Par FnArray"
+        ],
+        [
+          4105,
+          "Lib_Par FnCEntier"
+        ],
+        [
+          4113,
+          "Lib_Par FnCstFl"
+        ],
+        [
+          4129,
+          "Lib_Par FnCstDFl"
+        ],
+        [
+          4146,
+          "Lib_Par FnCstCh"
+        ],
+        [
+          4177,
+          "Lib_Par InShared"
+        ],
+        [
+          4194,
+          "Lib_Par InDFn"
+        ],
+        [
+          4206,
+          "Lib_Par FnFn"
+        ],
+        [
+          4271,
+          "Lib_Par InSwap"
+        ],
+        [
+          4290,
+          "Lib_Def InSwapD"
+        ],
+        [
+          4296,
+          "Lib_Par FnNot"
+        ],
+        [
+          4308,
+          "Lib_Par FnMax"
+        ],
+        [
+          4316,
+          "Lib_Def FnMaxS"
+        ],
+        [
+          4319,
+          "Lib_Par FnMin"
+        ],
+        [
+          4347,
+          "Lib_Def FnMinS"
+        ],
+        [
+          4353,
+          "Lib_Par InInc"
+        ],
+        [
+          4359,
+          "Lib_Par InDec"
+        ],
+        [
+          4365,
+          "Lib_Par InAdd2"
+        ],
+        [
+          4374,
+          "Lib_Par InAdd4"
+        ],
+        [
+          4399,
+          "Lib_Par InSort"
+        ],
+        [
+          4449,
+          "Lib_Par FnMatch"
+        ],
+        [
+          4520,
+          "Lib_Def GTablo"
+        ],
+        [
+          4560,
+          "Lib_Def AdSort"
+        ],
+        [
+          4571,
+          "Lib_Def CpBis"
+        ],
+        [
+          4589,
+          "Lib_Par InData"
+        ],
+        [
+          4602,
+          "Lib_Par InRead"
+        ],
+        [
+          4700,
+          "Lib_Def InReadF"
+        ],
+        [
+          4701,
+          "Lib_Def InReadS"
+        ],
+        [
+          4707,
+          "Lib_Par InRestore"
+        ],
+        [
+          4729,
+          "Lib_Def InRestore1"
+        ],
+        [
+          4740,
+          "Lib_Par InField"
+        ],
+        [
+          4807,
+          "Lib_Par InLineInputH"
+        ],
+        [
+          4812,
+          "Lib_Par InInputH"
+        ],
+        [
+          4827,
+          "Lib_Par InInput"
+        ],
+        [
+          4832,
+          "Lib_Par InLineInput"
+        ],
+        [
+          5013,
+          "Lib_Def Input"
+        ],
+        [
+          5014,
+          "Lib_Def CRet"
+        ],
+        [
+          5020,
+          "Lib_Par InPrintH"
+        ],
+        [
+          5038,
+          "Lib_Par InLPrint"
+        ],
+        [
+          5046,
+          "Lib_Par InPrint"
+        ],
+        [
+          5339,
+          "Lib_Def PrintE"
+        ],
+        [
+          5340,
+          "Lib_Def PrintF"
+        ],
+        [
+          5341,
+          "Lib_Def PrintS"
+        ],
+        [
+          5342,
+          "Lib_Def PrintX"
+        ],
+        [
+          5343,
+          "Lib_Def LPrintX"
+        ],
+        [
+          5344,
+          "Lib_Def CRPrint"
+        ],
+        [
+          5345,
+          "Lib_Def HPrintS"
+        ],
+        [
+          5346,
+          "Lib_Def PrtRet"
+        ],
+        [
+          5347,
+          "Lib_Def PrtVir"
+        ],
+        [
+          5348,
+          "Lib_Def HPrintX"
+        ],
+        [
+          5349,
+          "Lib_Def UsingC"
+        ],
+        [
+          5350,
+          "Lib_Def UsingS"
+        ],
+        [
+          5360,
+          "Lib_Par InDefaultPalette"
+        ],
+        [
+          5368,
+          "Lib_Par InPalette"
+        ],
+        [
+          5384,
+          "Lib_Def Plt"
+        ],
+        [
+          5407,
+          "Lib_Def InFade1"
+        ],
+        [
+          5408,
+          "Lib_Def InFade2"
+        ],
+        [
+          5409,
+          "Lib_Def InFade3"
+        ],
+        [
+          5410,
+          "Lib_Def InFadePal"
+        ],
+        [
+          5411,
+          "Lib_Par InFade"
+        ],
+        [
+          5468,
+          "Lib_Par InPolyline"
+        ],
+        [
+          5506,
+          "Lib_Par InPolygon"
+        ],
+        [
+          5560,
+          "Lib_Def ChannelToSprite"
+        ],
+        [
+          5561,
+          "Lib_Def ChannelToBob"
+        ],
+        [
+          5562,
+          "Lib_Def ChannelToSDisplay"
+        ],
+        [
+          5563,
+          "Lib_Def ChannelToSSize"
+        ],
+        [
+          5564,
+          "Lib_Def ChannelToSOffset"
+        ],
+        [
+          5565,
+          "Lib_Def ChannelToRainbow"
+        ],
+        [
+          5567,
+          "Lib_Par InChannel"
+        ],
+        [
+          5613,
+          "Lib_Par InBset"
+        ],
+        [
+          5624,
+          "Lib_Def InBset1"
+        ],
+        [
+          5627,
+          "Lib_Par InBclr"
+        ],
+        [
+          5638,
+          "Lib_Def InBclr1"
+        ],
+        [
+          5641,
+          "Lib_Par InBchg"
+        ],
+        [
+          5652,
+          "Lib_Def InBchg1"
+        ],
+        [
+          5655,
+          "Lib_Par FnBtst"
+        ],
+        [
+          5671,
+          "Lib_Def FnBtst1"
+        ],
+        [
+          5677,
+          "Lib_Par InRorB"
+        ],
+        [
+          5690,
+          "Lib_Def InRorB1"
+        ],
+        [
+          5693,
+          "Lib_Par InRorW"
+        ],
+        [
+          5706,
+          "Lib_Def InRorW1"
+        ],
+        [
+          5709,
+          "Lib_Par InRorL"
+        ],
+        [
+          5722,
+          "Lib_Def InRorL1"
+        ],
+        [
+          5726,
+          "Lib_Par InRolB"
+        ],
+        [
+          5739,
+          "Lib_Def InRolB1"
+        ],
+        [
+          5743,
+          "Lib_Par InRolW"
+        ],
+        [
+          5756,
+          "Lib_Def InRolW1"
+        ],
+        [
+          5760,
+          "Lib_Par InRolL"
+        ],
+        [
+          5773,
+          "Lib_Def InRolL1"
+        ],
+        [
+          5813,
+          "Lib_Par In_apml_"
+        ],
+        [
+          5852,
+          "Lib_Par InCall"
+        ],
+        [
+          5881,
+          "Lib_Par FnEqu"
+        ],
+        [
+          5896,
+          "Lib_Par InStruc"
+        ],
+        [
+          5923,
+          "Lib_Par FnStruc"
+        ],
+        [
+          5962,
+          "Lib_Par InStrucD"
+        ],
+        [
+          5993,
+          "Lib_Par FnStrucD"
+        ],
+        [
+          6031,
+          "Lib_Def Demande"
+        ],
+        [
+          6086,
+          "Lib_Def DDemande"
+        ],
+        [
+          6110,
+          "Lib_Def Menage"
+        ],
+        [
+          6442,
+          "Lib_Par InLeft"
+        ],
+        [
+          6453,
+          "Lib_Par FnLeft"
+        ],
+        [
+          6466,
+          "Lib_Par InRight"
+        ],
+        [
+          6482,
+          "Lib_Par FnRight"
+        ],
+        [
+          6502,
+          "Lib_Par InMid2"
+        ],
+        [
+          6512,
+          "Lib_Par FnMid2"
+        ],
+        [
+          6525,
+          "Lib_Par InMid3"
+        ],
+        [
+          6537,
+          "Lib_Par FnMid3"
+        ],
+        [
+          6550,
+          "Lib_Def RFnMid"
+        ],
+        [
+          6588,
+          "Lib_Def RInMid"
+        ],
+        [
+          6616,
+          "Lib_Def RInMid2"
+        ],
+        [
+          6653,
+          "Lib_Par FnVal"
+        ],
+        [
+          6670,
+          "Lib_Par FnResource"
+        ],
+        [
+          6731,
+          "Lib_Par InMenuKey"
+        ],
+        [
+          6771,
+          "Lib_Def InMenuKey1"
+        ],
+        [
+          6772,
+          "Lib_Def InMenuKey2"
+        ],
+        [
+          6773,
+          "Lib_Def InMenuKey3"
+        ],
+        [
+          6774,
+          "Lib_Def MnKy"
+        ],
+        [
+          6780,
+          "Lib_Par InOnMenu"
+        ],
+        [
+          6827,
+          "Lib_Par InMenu"
+        ],
+        [
+          6917,
+          "Lib_Def InMenu2"
+        ],
+        [
+          6918,
+          "Lib_Def InMenu3"
+        ],
+        [
+          6919,
+          "Lib_Def InMenu4"
+        ],
+        [
+          6925,
+          "Lib_Par InMenuDel"
+        ],
+        [
+          6938,
+          "Lib_Def InMenuDel1"
+        ],
+        [
+          6944,
+          "Lib_Par InSetMenu"
+        ],
+        [
+          6967,
+          "Lib_Def MnDim"
+        ],
+        [
+          7001,
+          "Lib_Def MenuProcedure"
+        ],
+        [
+          7018,
+          "Lib_Def ValRout"
+        ],
+        [
+          7266,
+          "Lib_Def Start_FloatSwap"
+        ],
+        [
+          7268,
+          "Lib_Def CmpInitFloat"
+        ],
+        [
+          7269,
+          "Lib_Def CmpInitDouble"
+        ],
+        [
+          7277,
+          "Lib_Def IntToFl1"
+        ],
+        [
+          7287,
+          "Lib_Def DIntToFl1"
+        ],
+        [
+          7303,
+          "Lib_Def IntToFl2"
+        ],
+        [
+          7314,
+          "Lib_Def DIntToFl2"
+        ],
+        [
+          7330,
+          "Lib_Def FlToInt1"
+        ],
+        [
+          7340,
+          "Lib_Def DFlToInt1"
+        ],
+        [
+          7356,
+          "Lib_Def FlToInt2"
+        ],
+        [
+          7367,
+          "Lib_Def DFlToInt2"
+        ],
+        [
+          7383,
+          "Lib_Def Math_Fonction"
+        ],
+        [
+          7393,
+          "Lib_Def DMath_Fonction"
+        ],
+        [
+          7410,
+          "Lib_Def Float_Compare"
+        ],
+        [
+          7420,
+          "Lib_Def DFloat_Compare"
+        ],
+        [
+          7436,
+          "Lib_Def Float_Operation"
+        ],
+        [
+          7447,
+          "Lib_Def DFloat_Operation"
+        ],
+        [
+          7466,
+          "Lib_Def Float_Test"
+        ],
+        [
+          7475,
+          "Lib_Def Float_TestF"
+        ],
+        [
+          7490,
+          "Lib_Def Math_Operation"
+        ],
+        [
+          7501,
+          "Lib_Def DMath_Operation"
+        ],
+        [
+          7519,
+          "Lib_Def Float_Fonction"
+        ],
+        [
+          7529,
+          "Lib_Def DFloat_Fonction"
+        ],
+        [
+          7544,
+          "Lib_Def FlPos"
+        ],
+        [
+          7550,
+          "Lib_Def FlPosD"
+        ],
+        [
+          7560,
+          "Lib_Def AAngle"
+        ],
+        [
+          7577,
+          "Lib_Def AAngleD"
+        ],
+        [
+          7601,
+          "Lib_Def FFAngle"
+        ],
+        [
+          7618,
+          "Lib_Def FAngleD"
+        ],
+        [
+          7642,
+          "Lib_Def FnParamF"
+        ],
+        [
+          7647,
+          "Lib_Def FnParamD"
+        ],
+        [
+          7657,
+          "Lib_Def Ascii2Float"
+        ],
+        [
+          7664,
+          "Lib_Def Ascii2FloatD"
+        ],
+        [
+          7676,
+          "Lib_Def Float2Ascii"
+        ],
+        [
+          7684,
+          "Lib_Def Float2AsciiD"
+        ],
+        [
+          7714,
+          "Lib_Def FnMaxF"
+        ],
+        [
+          7715,
+          "Lib_Def FnMaxD"
+        ],
+        [
+          7716,
+          "Lib_Def FnMinF"
+        ],
+        [
+          7717,
+          "Lib_Def FnMinD"
+        ],
+        [
+          7722,
+          "Lib_Def End_FloatSwap"
+        ],
+        [
+          7743,
+          "Lib_Pos 500"
+        ]
+      ]
+    },
+    {
+      "file": "+Lib.s",
+      "directives": [
+        [
+          1712,
+          "Lib_Def MainLibrary"
+        ],
+        [
+          1716,
+          "Lib_Par FnErrn"
+        ],
+        [
+          1726,
+          "Lib_Par FnErrD"
+        ],
+        [
+          1738,
+          "Lib_Par FnSgn"
+        ],
+        [
+          1745,
+          "Lib_Def FnSgnF"
+        ],
+        [
+          1754,
+          "Lib_Par FnStrE"
+        ],
+        [
+          1766,
+          "Lib_Def FnStrF"
+        ],
+        [
+          1779,
+          "Lib_Par FnAbs"
+        ],
+        [
+          1786,
+          "Lib_Def FnAbsF"
+        ],
+        [
+          1794,
+          "Lib_Par FnInt"
+        ],
+        [
+          1798,
+          "Lib_Def FnIntF"
+        ],
+        [
+          1806,
+          "Lib_Par FnTan"
+        ],
+        [
+          1814,
+          "Lib_Par FnSqr"
+        ],
+        [
+          1823,
+          "Lib_Par FnLog"
+        ],
+        [
+          1832,
+          "Lib_Par FnLn"
+        ],
+        [
+          1841,
+          "Lib_Par FnExp"
+        ],
+        [
+          1849,
+          "Lib_Par FnSin"
+        ],
+        [
+          1857,
+          "Lib_Par FnCos"
+        ],
+        [
+          1865,
+          "Lib_Par FnASin"
+        ],
+        [
+          1873,
+          "Lib_Par FnACos"
+        ],
+        [
+          1881,
+          "Lib_Par FnATan"
+        ],
+        [
+          1889,
+          "Lib_Par FnHSin"
+        ],
+        [
+          1897,
+          "Lib_Par FnHCos"
+        ],
+        [
+          1905,
+          "Lib_Par FnHTan"
+        ],
+        [
+          1913,
+          "Lib_Par InRadian"
+        ],
+        [
+          1921,
+          "Lib_Par InDegree"
+        ],
+        [
+          1929,
+          "Lib_Par InFix"
+        ],
+        [
+          1947,
+          "Lib_Par FnRnd"
+        ],
+        [
+          1990,
+          "Lib_Def Mulu32"
+        ],
+        [
+          2012,
+          "Lib_Par InRandom"
+        ],
+        [
+          2020,
+          "Lib_Par InTimer"
+        ],
+        [
+          2027,
+          "Lib_Par FnTimer"
+        ],
+        [
+          2035,
+          "Lib_Par FnPi"
+        ],
+        [
+          2044,
+          "Lib_Par InWait"
+        ],
+        [
+          2057,
+          "Lib_Def Wait_Normal"
+        ],
+        [
+          2072,
+          "Lib_Def WaitRout"
+        ],
+        [
+          2086,
+          "Lib_Def Wait_Event"
+        ],
+        [
+          2095,
+          "Lib_Par InMWait"
+        ],
+        [
+          2104,
+          "Lib_Par InWtVbl"
+        ],
+        [
+          2113,
+          "Lib_Par InWtKy"
+        ],
+        [
+          2136,
+          "Lib_Par InKeySpeed"
+        ],
+        [
+          2149,
+          "Lib_Par FnParamS"
+        ],
+        [
+          2156,
+          "Lib_Par FnParamE"
+        ],
+        [
+          2165,
+          "Lib_Par InListBank"
+        ],
+        [
+          2181,
+          "Lib_Par InErase"
+        ],
+        [
+          2190,
+          "Lib_Par InEraseTemp"
+        ],
+        [
+          2198,
+          "Lib_Par InEraseAll"
+        ],
+        [
+          2206,
+          "Lib_Par InBankSwap"
+        ],
+        [
+          2242,
+          "Lib_Par FnBStart"
+        ],
+        [
+          2255,
+          "Lib_Par FnBLength"
+        ],
+        [
+          2276,
+          "Lib_Par InBGrab"
+        ],
+        [
+          2304,
+          "Lib_Par InBSend"
+        ],
+        [
+          2332,
+          "Lib_Par InInsSprite"
+        ],
+        [
+          2345,
+          "Lib_Par InInsIcon"
+        ],
+        [
+          2358,
+          "Lib_Par InDelIcon1"
+        ],
+        [
+          2363,
+          "Lib_Par InDelIcon2"
+        ],
+        [
+          2371,
+          "Lib_Par InDelSprite1"
+        ],
+        [
+          2376,
+          "Lib_Par InDelSprite2"
+        ],
+        [
+          2382,
+          "Lib_Def IDIc3"
+        ],
+        [
+          2396,
+          "Lib_Par InResWork"
+        ],
+        [
+          2404,
+          "Lib_Par InResChipWork"
+        ],
+        [
+          2412,
+          "Lib_Par InResData"
+        ],
+        [
+          2420,
+          "Lib_Par InResChipData"
+        ],
+        [
+          2426,
+          "Lib_Def RsBqX"
+        ],
+        [
+          2441,
+          "Lib_Par InBankSchrink"
+        ],
+        [
+          2452,
+          "Lib_Par FnStart"
+        ],
+        [
+          2462,
+          "Lib_Par FnLength"
+        ],
+        [
+          2481,
+          "Lib_Par FnChipFree"
+        ],
+        [
+          2488,
+          "Lib_Par FnFastFree"
+        ],
+        [
+          2493,
+          "Lib_Def FFree"
+        ],
+        [
+          2506,
+          "Lib_Def TransMem"
+        ],
+        [
+          2597,
+          "Lib_Par InCopy"
+        ],
+        [
+          2610,
+          "Lib_Par InFill"
+        ],
+        [
+          2619,
+          "Lib_Def FillBis"
+        ],
+        [
+          2643,
+          "Lib_Par FnHunt"
+        ],
+        [
+          2672,
+          "Lib_Par InAReg"
+        ],
+        [
+          2679,
+          "Lib_Par FnAReg"
+        ],
+        [
+          2688,
+          "Lib_Par InDReg"
+        ],
+        [
+          2695,
+          "Lib_Par FnDReg"
+        ],
+        [
+          2704,
+          "Lib_Def IReg"
+        ],
+        [
+          2710,
+          "Lib_Def FReg"
+        ],
+        [
+          2716,
+          "Lib_Def RReg"
+        ],
+        [
+          2729,
+          "Lib_Par InPoke"
+        ],
+        [
+          2735,
+          "Lib_Par InDoke"
+        ],
+        [
+          2748,
+          "Lib_Par InLoke"
+        ],
+        [
+          2769,
+          "Lib_Par FnPeek"
+        ],
+        [
+          2776,
+          "Lib_Par FnDeek"
+        ],
+        [
+          2790,
+          "Lib_Par FnLeek"
+        ],
+        [
+          2809,
+          "Lib_Par InPokeD"
+        ],
+        [
+          2823,
+          "Lib_Par FnPeekD2"
+        ],
+        [
+          2828,
+          "Lib_Par FnPeekD3"
+        ],
+        [
+          2839,
+          "Lib_Par FPeekD"
+        ],
+        [
+          2871,
+          "Lib_Def Lib.Close"
+        ],
+        [
+          2881,
+          "Lib_Def Lib.CloseD0"
+        ],
+        [
+          2897,
+          "Lib_Def Lib.GetA2"
+        ],
+        [
+          2909,
+          "Lib_Def Lib.Call"
+        ],
+        [
+          2926,
+          "Lib_Par FnExeCall"
+        ],
+        [
+          2931,
+          "Lib_Par FnGfxCall"
+        ],
+        [
+          2936,
+          "Lib_Par FnDosCall"
+        ],
+        [
+          2941,
+          "Lib_Par FnIntCall"
+        ],
+        [
+          2949,
+          "Lib_Par InLibOpen"
+        ],
+        [
+          2983,
+          "Lib_Par InLibClose0"
+        ],
+        [
+          2987,
+          "Lib_Par InLibClose1"
+        ],
+        [
+          2995,
+          "Lib_Par FnLibCall"
+        ],
+        [
+          3008,
+          "Lib_Par FnLibBase"
+        ],
+        [
+          3020,
+          "Lib_Def Dev.GetA2"
+        ],
+        [
+          3039,
+          "Lib_Def Dev.Open"
+        ],
+        [
+          3101,
+          "Lib_Def Dev.Close"
+        ],
+        [
+          3116,
+          "Lib_Def Dev.CloseA2"
+        ],
+        [
+          3149,
+          "Lib_Def Dev.GetIO"
+        ],
+        [
+          3163,
+          "Lib_Def Dev.SendIO"
+        ],
+        [
+          3184,
+          "Lib_Def Dev.DoIO"
+        ],
+        [
+          3206,
+          "Lib_Def Dev.CheckIO"
+        ],
+        [
+          3223,
+          "Lib_Def Dev.AbortIO"
+        ],
+        [
+          3246,
+          "Lib_Def Dev.Error"
+        ],
+        [
+          3274,
+          "Lib_Par InDevOpen"
+        ],
+        [
+          3296,
+          "Lib_Par InDevClose0"
+        ],
+        [
+          3303,
+          "Lib_Par InDevClose1"
+        ],
+        [
+          3312,
+          "Lib_Par FnDevBase"
+        ],
+        [
+          3322,
+          "Lib_Par InDevDo"
+        ],
+        [
+          3332,
+          "Lib_Par InDevSend"
+        ],
+        [
+          3342,
+          "Lib_Par InDevAbort"
+        ],
+        [
+          3351,
+          "Lib_Par FnDevCheck"
+        ],
+        [
+          3363,
+          "Lib_Par InExec"
+        ],
+        [
+          3398,
+          "Lib_Def CreatePort"
+        ],
+        [
+          3403,
+          "Lib_Def DeletePort"
+        ],
+        [
+          3408,
+          "Lib_Def CreateExtIO"
+        ],
+        [
+          3413,
+          "Lib_Def DeleteExtIO"
+        ],
+        [
+          3418,
+          "Lib_Def AmigaLib"
+        ],
+        [
+          3600,
+          "Lib_Def BkSpr"
+        ],
+        [
+          3604,
+          "Lib_Def BkIco"
+        ],
+        [
+          3608,
+          "Lib_Def BkMus"
+        ],
+        [
+          3612,
+          "Lib_Def BkAmal"
+        ],
+        [
+          3616,
+          "Lib_Def BkMenu"
+        ],
+        [
+          3620,
+          "Lib_Def BkDat"
+        ],
+        [
+          3624,
+          "Lib_Def BkWrk"
+        ],
+        [
+          3628,
+          "Lib_Def BkAsm"
+        ],
+        [
+          3632,
+          "Lib_Def BkIff"
+        ],
+        [
+          3636,
+          "Lib_Def Bnk_NoLoad"
+        ],
+        [
+          3643,
+          "Lib_Def ChVerBuf"
+        ],
+        [
+          3648,
+          "Lib_Def ChVerBuf2"
+        ],
+        [
+          3665,
+          "Lib_Def Str2Chaine"
+        ],
+        [
+          3678,
+          "Lib_Def Mes2Chaine"
+        ],
+        [
+          3687,
+          "Lib_Def MCSuit"
+        ],
+        [
+          3700,
+          "Lib_Def Set_HiChaine"
+        ],
+        [
+          3713,
+          "Lib_Def Ret_ChVide"
+        ],
+        [
+          3720,
+          "Lib_Def A0ToChaine"
+        ],
+        [
+          3740,
+          "Lib_Def FinBin"
+        ],
+        [
+          3756,
+          "Lib_Def AskD3"
+        ],
+        [
+          3777,
+          "Lib_Def SHunk"
+        ],
+        [
+          3789,
+          "Lib_Def NHunk"
+        ],
+        [
+          3800,
+          "Lib_Par InSave2"
+        ],
+        [
+          3819,
+          "Lib_Par InSave1"
+        ],
+        [
+          3833,
+          "Lib_Def Bnk.SaveAll"
+        ],
+        [
+          3873,
+          "Lib_Def Bnk.SaveVide"
+        ],
+        [
+          3894,
+          "Lib_Def Bnk.SaveA0"
+        ],
+        [
+          3988,
+          "Lib_Par InLoad1"
+        ],
+        [
+          3996,
+          "Lib_Par InLoad2"
+        ],
+        [
+          4002,
+          "Lib_Def Load0"
+        ],
+        [
+          4025,
+          "Lib_Def Bnk.Load"
+        ],
+        [
+          4225,
+          "Lib_Par InPLoad"
+        ],
+        [
+          4278,
+          "Lib_Par InBload"
+        ],
+        [
+          4310,
+          "Lib_Par InBSave"
+        ],
+        [
+          4336,
+          "Lib_Par InMaskIff"
+        ],
+        [
+          4343,
+          "Lib_Par FnPicture"
+        ],
+        [
+          4351,
+          "Lib_Par InLoadIff1"
+        ],
+        [
+          4359,
+          "Lib_Par InLoadIff2"
+        ],
+        [
+          4383,
+          "Lib_Par FnFormLoad2"
+        ],
+        [
+          4389,
+          "Lib_Par FnFormLoad3"
+        ],
+        [
+          4429,
+          "Lib_Par FnFormLength1"
+        ],
+        [
+          4435,
+          "Lib_Par FnFormLength2"
+        ],
+        [
+          4457,
+          "Lib_Par FnFormPlay2"
+        ],
+        [
+          4463,
+          "Lib_Par FnFormPlay3"
+        ],
+        [
+          4483,
+          "Lib_Par FnFormSkip1"
+        ],
+        [
+          4489,
+          "Lib_Par FnFormSkip2"
+        ],
+        [
+          4509,
+          "Lib_Par InIffAnim2"
+        ],
+        [
+          4515,
+          "Lib_Par InIffAnim3"
+        ],
+        [
+          4587,
+          "Lib_Par FnFormParam"
+        ],
+        [
+          4595,
+          "Lib_Par InSaveIff1"
+        ],
+        [
+          4601,
+          "Lib_Par InSaveIff2"
+        ],
+        [
+          4625,
+          "Lib_Def GetFile"
+        ],
+        [
+          4640,
+          "Lib_Def FiClean"
+        ],
+        [
+          4653,
+          "Lib_Par InSetInput"
+        ],
+        [
+          4666,
+          "Lib_Par FnInputD1"
+        ],
+        [
+          4686,
+          "Lib_Par FnInputD2"
+        ],
+        [
+          4720,
+          "Lib_Def GetByte"
+        ],
+        [
+          4779,
+          "Lib_Def EndByte"
+        ],
+        [
+          4799,
+          "Lib_Par InDirD"
+        ],
+        [
+          4817,
+          "Lib_Par FnDirD"
+        ],
+        [
+          4849,
+          "Lib_Par InParent"
+        ],
+        [
+          4873,
+          "Lib_Par InKill"
+        ],
+        [
+          4886,
+          "Lib_Par InRename"
+        ],
+        [
+          4906,
+          "Lib_Par InMkDir"
+        ],
+        [
+          4922,
+          "Lib_Par FnDrive"
+        ],
+        [
+          4940,
+          "Lib_Par FnDFree"
+        ],
+        [
+          4966,
+          "Lib_Par FnDiscInfo"
+        ],
+        [
+          5021,
+          "Lib_Par FnPort"
+        ],
+        [
+          5049,
+          "Lib_Par InOpenPort"
+        ],
+        [
+          5057,
+          "Lib_Par InOpenOut"
+        ],
+        [
+          5065,
+          "Lib_Par InOpenIn"
+        ],
+        [
+          5071,
+          "Lib_Def OpIn"
+        ],
+        [
+          5093,
+          "Lib_Def DiskClear"
+        ],
+        [
+          5107,
+          "Lib_Par FnLof"
+        ],
+        [
+          5123,
+          "Lib_Par InPof"
+        ],
+        [
+          5135,
+          "Lib_Par FnPof"
+        ],
+        [
+          5148,
+          "Lib_Par FnEof"
+        ],
+        [
+          5166,
+          "Lib_Def RLof"
+        ],
+        [
+          5177,
+          "Lib_Par InClose1"
+        ],
+        [
+          5185,
+          "Lib_Par InClose0"
+        ],
+        [
+          5192,
+          "Lib_Def CloAll"
+        ],
+        [
+          5201,
+          "Lib_Def Cloa1"
+        ],
+        [
+          5220,
+          "Lib_Par InOpenRandom"
+        ],
+        [
+          5228,
+          "Lib_Par InAppend"
+        ],
+        [
+          5237,
+          "Lib_Def RanApp"
+        ],
+        [
+          5265,
+          "Lib_Par InGet"
+        ],
+        [
+          5297,
+          "Lib_Par InPut"
+        ],
+        [
+          5353,
+          "Lib_Def GetPut"
+        ],
+        [
+          5384,
+          "Lib_Def ImpChaine"
+        ],
+        [
+          5410,
+          "Lib_Def PRT_Open"
+        ],
+        [
+          5437,
+          "Lib_Def PRT_Close"
+        ],
+        [
+          5451,
+          "Lib_Def PRT_Print"
+        ],
+        [
+          5483,
+          "Lib_Par InSetDir2"
+        ],
+        [
+          5496,
+          "Lib_Par InSetDir1"
+        ],
+        [
+          5510,
+          "Lib_Par FnPrgFirst"
+        ],
+        [
+          5516,
+          "Lib_Par FnDevFirst"
+        ],
+        [
+          5522,
+          "Lib_Def DevAcc"
+        ],
+        [
+          5537,
+          "Lib_Par FnDirFirst"
+        ],
+        [
+          5555,
+          "Lib_Par FnFillNext"
+        ],
+        [
+          5596,
+          "Lib_Par InAssign"
+        ],
+        [
+          5704,
+          "Lib_Par FnExist"
+        ],
+        [
+          5715,
+          "Lib_Def RExist"
+        ],
+        [
+          5732,
+          "Lib_Def NoReq"
+        ],
+        [
+          5748,
+          "Lib_Def YesReq"
+        ],
+        [
+          5764,
+          "Lib_Par InLDirW0"
+        ],
+        [
+          5769,
+          "Lib_Par InDirW0"
+        ],
+        [
+          5774,
+          "Lib_Def DirW0a"
+        ],
+        [
+          5785,
+          "Lib_Par InLDirW1"
+        ],
+        [
+          5790,
+          "Lib_Par InDirW1"
+        ],
+        [
+          5795,
+          "Lib_Def DirW1a"
+        ],
+        [
+          5801,
+          "Lib_Def DirW2"
+        ],
+        [
+          5813,
+          "Lib_Par InLDir0"
+        ],
+        [
+          5818,
+          "Lib_Par InDir0"
+        ],
+        [
+          5823,
+          "Lib_Def Dir0a"
+        ],
+        [
+          5834,
+          "Lib_Par InLDir1"
+        ],
+        [
+          5839,
+          "Lib_Par InDir1"
+        ],
+        [
+          5844,
+          "Lib_Def Dir1a"
+        ],
+        [
+          5850,
+          "Lib_Def Dir2"
+        ],
+        [
+          5856,
+          "Lib_Def Dir3"
+        ],
+        [
+          5942,
+          "Lib_Def TTDir"
+        ],
+        [
+          5980,
+          "Lib_Def LockGet"
+        ],
+        [
+          5993,
+          "Lib_Def LockFree"
+        ],
+        [
+          6006,
+          "Lib_Def FillAll"
+        ],
+        [
+          6016,
+          "Lib_Def FillGet"
+        ],
+        [
+          6038,
+          "Lib_Def FillDev"
+        ],
+        [
+          6124,
+          "Lib_Def FillFirst"
+        ],
+        [
+          6175,
+          "Lib_Def FillNxt"
+        ],
+        [
+          6224,
+          "Lib_Def FillFFree"
+        ],
+        [
+          6245,
+          "Lib_Def FillSort"
+        ],
+        [
+          6299,
+          "Lib_Def FillFPoke"
+        ],
+        [
+          6372,
+          "Lib_Def FfComp"
+        ],
+        [
+          6378,
+          "Lib_Def FfComp2"
+        ],
+        [
+          6404,
+          "Lib_Def FillFFind"
+        ],
+        [
+          6473,
+          "Lib_Def Dsk.DNom"
+        ],
+        [
+          6492,
+          "Lib_Def Dsk.PathIt"
+        ],
+        [
+          6545,
+          "Lib_Def NomDisc"
+        ],
+        [
+          6559,
+          "Lib_Def NomDir"
+        ],
+        [
+          6602,
+          "Lib_Def Joker"
+        ],
+        [
+          6670,
+          "Lib_Def D_Open"
+        ],
+        [
+          6675,
+          "Lib_Def D_OpenD1"
+        ],
+        [
+          6698,
+          "Lib_Def D_Close"
+        ],
+        [
+          6709,
+          "Lib_Def D_Read"
+        ],
+        [
+          6719,
+          "Lib_Def D_Write"
+        ],
+        [
+          6729,
+          "Lib_Def D_Seek"
+        ],
+        [
+          6742,
+          "Lib_Par FnPSel"
+        ],
+        [
+          6749,
+          "Lib_Par FnFileSelector1"
+        ],
+        [
+          6757,
+          "Lib_Par FnFileSelector2"
+        ],
+        [
+          6764,
+          "Lib_Par FnFileSelector3"
+        ],
+        [
+          6770,
+          "Lib_Par FnFileSelector4"
+        ],
+        [
+          6794,
+          "Lib_Def AppCentre"
+        ],
+        [
+          6832,
+          "Lib_Def IffFormLoad"
+        ],
+        [
+          6887,
+          "Lib_Def IffFormSize"
+        ],
+        [
+          6931,
+          "Lib_Def IffRead"
+        ],
+        [
+          6944,
+          "Lib_Def IffSeek"
+        ],
+        [
+          6956,
+          "Lib_Def IffInit"
+        ],
+        [
+          6967,
+          "Lib_Def IffForm"
+        ],
+        [
+          6991,
+          "Lib_Def IffFormPlay"
+        ],
+        [
+          7552,
+          "Lib_Def IffSaveScreen"
+        ],
+        [
+          7577,
+          "Lib_Def SaveBMHD"
+        ],
+        [
+          7612,
+          "Lib_Def SaveCMAP"
+        ],
+        [
+          7634,
+          "Lib_Def SaveCAMG"
+        ],
+        [
+          7653,
+          "Lib_Def SaveAMSC"
+        ],
+        [
+          7672,
+          "Lib_Def SaveBODY"
+        ],
+        [
+          7808,
+          "Lib_Def SaveA1"
+        ],
+        [
+          7821,
+          "Lib_Def SaveRegs"
+        ],
+        [
+          7829,
+          "Lib_Def LoadRegs"
+        ],
+        [
+          7838,
+          "Lib_Par InCommandLine"
+        ],
+        [
+          7858,
+          "Lib_Par FnCommandLine"
+        ],
+        [
+          7888,
+          "Lib_Def Bnk.GetAdr"
+        ],
+        [
+          7911,
+          "Lib_Def Bnk.GetBobs"
+        ],
+        [
+          7924,
+          "Lib_Def Bnk.GetIcons"
+        ],
+        [
+          7938,
+          "Lib_Def Bnk.Eff"
+        ],
+        [
+          7953,
+          "Lib_Def Bnk.EffA0"
+        ],
+        [
+          7984,
+          "Lib_Def Bnk.EffBobA0"
+        ],
+        [
+          8012,
+          "Lib_Def Bnk.EffAll"
+        ],
+        [
+          8030,
+          "Lib_Def Bnk.EffTemp"
+        ],
+        [
+          8053,
+          "Lib_Def Bnk.OrAdr"
+        ],
+        [
+          8069,
+          "Lib_Def Bnk.AdBob"
+        ],
+        [
+          8090,
+          "Lib_Def Bnk.AdIcon"
+        ],
+        [
+          8112,
+          "Lib_Def Bnk.ResIco"
+        ],
+        [
+          8121,
+          "Lib_Def Bnk.ResBob"
+        ],
+        [
+          8134,
+          "Lib_Def Bnk.Ric"
+        ],
+        [
+          8139,
+          "Lib_Def Bnk.Ric2"
+        ],
+        [
+          8236,
+          "Lib_Def Bnk.Schrink"
+        ],
+        [
+          8287,
+          "Lib_Def Bnk.InsBob"
+        ],
+        [
+          8343,
+          "Lib_Def Bnk.DelBob"
+        ],
+        [
+          8408,
+          "Lib_Def Bnk.UnRev"
+        ],
+        [
+          8441,
+          "Lib_Def Bnk.Reserve"
+        ],
+        [
+          8484,
+          "Lib_Def Bnk.GetLength"
+        ],
+        [
+          8520,
+          "Lib_Def Bnk.Length"
+        ],
+        [
+          8553,
+          "Lib_Def Bnk.Change"
+        ],
+        [
+          8587,
+          "Lib_Def Bnk.List"
+        ],
+        [
+          8658,
+          "Lib_Par FnTrue"
+        ],
+        [
+          8663,
+          "Lib_Par FnOne"
+        ],
+        [
+          8668,
+          "Lib_Par FnFalse"
+        ]
+      ]
+    }
+  ],
+  "source": "https://github.com/marc365/AMOS-Professional-365",
+  "retrieved": "2026-11-12",
+  "scope": "+ILib.s declarations in order, then +Lib.s through FnFalse; include at +Lib.s:1710",
+  "commit": "3e8f53196b80cbb2e01342a89a3545d080bf0de4",
+  "blobs": {
+    "+ILib.s": {
+      "git_blob": "c3cdcc80d1d5106432e62d0ad9d6da0178363791",
+      "sha256": "1c0936ea70524ac3f0226c573282c5afc818d9b709468d65f3b5e9a01e4071bc"
+    },
+    "+Lib.s": {
+      "git_blob": "c37fde6517ce00701779e044308d7ae803015412",
+      "sha256": "a4191dfddb00faa9b875c2ef7170c0cfcd15dc14dbf15cbc0114e651319f4970"
+    },
+    "+Equ.s": {
+      "git_blob": "c5ac16e3c9cc68d7c6e84c98afb187130fc8242e",
+      "sha256": "e69bd959953a2a4a09e19409a9fd46f1fabb372d747e8814f3ff271efd99796e"
+    },
+    "+CEqu.s": {
+      "git_blob": "e2b4ff27a0238e58624e3aa2a6e4ed28991abc05",
+      "sha256": "18bef24860cf7520b4f555e8e44ea8efbd2f83ae671b2a1fae16ea73dde63962"
+    },
+    "+B.s": {
+      "git_blob": "ab9a438c0a88ea485cfbfe51f2ecea1098f902ad",
+      "sha256": "e5ed4010ac3dab97a1a3ef3244c2904ac43db128ddc53436016c78113c4d0225"
+    },
+    "+APComp.s": {
+      "git_blob": "6a552a8acc0455ad833c5cf40bcae3e26ce488bb",
+      "sha256": "e164c01a798a4e8fd8024bdb2f09c3a180e9d9adf226431ee93724f1093feab6"
+    }
+  }
+}

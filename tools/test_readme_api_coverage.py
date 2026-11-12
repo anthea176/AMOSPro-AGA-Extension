@@ -14,7 +14,7 @@ import re
 from audit_ap20 import inspect, parse
 
 ROOT = Path(__file__).resolve().parents[1]
-LIB = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"  # README describes promoted public API, not Gate-A probe
+LIB = ROOT / "dist/AMOSPro_AGA.Lib"  # Active candidate, with explicit Gate limits.
 READMES = (
     (
         "English",
@@ -26,13 +26,13 @@ READMES = (
         "Current library API",
     ),
     (
-        "Français",
+        "FranÃ§ais",
         ROOT / "README.fr.md",
-        "## Bibliothèques et tests",
+        "## BibliothÃ¨ques et tests",
         "## Commandes AMOS principales",
-        "### Détail : Souris AGA",
-        "| Commande | Syntaxe exacte | Paramètres et comportement |",
-        "API de la bibliothèque courante",
+        "### DÃ©tail : Souris AGA",
+        "| Commande | Syntaxe exacte | ParamÃ¨tres et comportement |",
+        "API de la bibliothÃ¨que courante",
     ),
 )
 

@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R46 v0.12.1-C1 — official promoted library (12 Nov 2026):** [installable `AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [validated C1 archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib), **29,964 bytes**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, **50 commands / 57 entries AP20**. CPU Gate A, interpreted WinUAE Gate B and compiled WinUAE integrated Gate C PASS (`RESULT 1`, `CLOSE RETURNED`). Gate D physical Amiga not tested. Never install the older raw R46 archive for compiled programs.
+**Active candidate R53 0.12.8:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 32,008 bytes. Local Gate A PASS; real interpreted/compiled WinUAE tests pending. **R46 C1 remains [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib)**. [SHA256, unique capture test and protocol](docs/M16_MAIN_LINKAGE_FIX.md).
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [WinUAE/Compiler-validated R46 C1](dist/AMOSPro_AGA.Lib) into **`APSystem`** as `AMOSPro_AGA.Lib` in the same extension slot, then **restart AMOS and Compiler**. Back up the previous library and configuration; [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) is now C1. **Recompile old executables**: the compiler embeds the extension routines.
+2. Copy the [R53 candidate](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib` in the same slot, then **restart AMOS and Compiler**. Keep the previous library/configuration. Run the [active test](tests/current/M16_R53_IMAGE_CAPTURE_01.asc) interpreted first; after success, compile a **new executable** and test it separately.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.

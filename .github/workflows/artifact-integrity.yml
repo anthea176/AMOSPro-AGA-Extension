@@ -54,6 +54,10 @@ on:
       - "tools/m16_image_draw_r45_emit.py"
       - "tools/m16_capture_r47_core_emit.py"
       - "tools/m16_capture_r47_emit.py"
+      - "tools/m16_capture_emit.py"
+      - "tools/amos_main_abi.py"
+      - "tools/amos_link_test_support.py"
+      - "tests/fixtures/amos_main_declarations.json"
       - "tools/build_m16_image_draw_r46.py"
       - "tools/test_m16_image_draw_r46.py"
       - "tools/m15_box_r42_emit.py"
@@ -101,6 +105,13 @@ jobs:
           python -B tools/test_m16_agapic_capture_model.py
       - name: Install current native Gate A dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: Corrected capture linkage and public AP20 CPU regression
+        run: |
+          python -B tools/test_amos_main_linkage.py
+          python -B tools/test_m16_capture_build.py
+          python -B tools/test_m16_capture.py
+          python -B tools/test_m16_image_draw_r46.py
+          python -B tools/build_m16_capture.py
       - name: M16 R47 current native CPU and compiler-safe wrapper tests
         run: |
           python -B tools/test_m16_capture_r47_core.py

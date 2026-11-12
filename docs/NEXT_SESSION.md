@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R53 — correction fonctionnelle de liaison (12/11/2026)
+
+**Cause prouvée :** le comptage R47 oubliait l'inclusion de +ILib.s et son `Lib_Pos 500`. Les indices de banques deviennent 797/800/816/819 ; FnOne est 822, pas 322. R52 a donné **RESULT 2** selon le retour utilisateur : constat compatible, mais insuffisant seul pour identifier la cible. [Audit complet et protocole](M16_MAIN_LINKAGE_FIX.md).
+
+**Candidate active R53 0.12.8**, 32 008 octets, SHA256 `4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26`, dans `dist/AMOSPro_AGA.Lib` et son archive versionnée. Gate A locale PASS : 62 scénarios de capture, 325 cas RLE, 258 régressions Draw, liaison indépendante et pont AP20. **B/C/D non testées ; aucune CI distante lancée.** Test unique : `tests/current/M16_R53_IMAGE_CAPTURE_01.asc`. R46 C1 LAST_GOOD inchangée. Aucun commit/push. Les sections suivantes sont historiques.
+
 ## M16/R52 — controle de la cible FnOne (12/11/2026)
 
 **Gate B R51 PASS confirme par capture utilisateur** : `R51 RJSR RELOC INSPECT`, `AFTER CHECK 1`, `RESULT 1`. AMOS a remplace le pseudo-code `FE11 F700 0142` par `JSR abs.l` ($4EB9) avec une adresse non nulle et paire. **Cela ne prouve PAS que l'adresse correspond a FnOne**. R49/R50 restent Gate B FAIL (R50 Guru 80000004). R48 est Gate B PASS (ABI six arguments).

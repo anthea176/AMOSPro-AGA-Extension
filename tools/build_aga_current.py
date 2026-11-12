@@ -47,7 +47,12 @@ def main() -> None:
                     help="verify exact current/LAST_GOOD bytes against the reproducible C1 (default)")
     args = ap.parse_args()
     data, details = build()
-    verify_active(ROOT)  # Current candidate may differ from independently frozen C1
+    current,_,active=verify_active(ROOT)
+    if "IMAGE_CAPTURE_LINK_FIX_R53" in active:
+        from build_m16_capture import build as capture_build
+        candidate,details_candidate=capture_build()
+        assert candidate==current, "Active capture is not reproducible"
+        print("ACTIVE CAPTURE BUILDER PASS",{k:v for k,v in details_candidate.items() if k!="labels"})
     assert LAST_GOOD.read_bytes() == data, "LAST_GOOD not identical to promoted compiler-safe R46"
     print("CURRENT BUILDER PASS", details)
     print("Next revision source: native_from_promoted(LAST_GOOD.read_bytes(), native_title)")

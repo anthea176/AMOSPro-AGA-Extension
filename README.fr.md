@@ -19,7 +19,9 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Dernière version promue `LAST_GOOD` : R46 v0.12.1-C1** — **50 commandes AMOS**, **57 entrées AP20**, **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. [Bibliothèque à installer](dist/AMOSPro_AGA.Lib) · [Copie `LAST_GOOD` identique](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Archive C1 exacte](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). **Gates A CPU, B WinUAE interprété et C WinUAE compilé (test intégré) PASS** : `RESULT 1`, curseur 500/0, Chip drop 0. Gate C ne couvre pas les 50 commandes individuellement ; Gate D Amiga physique non testée.
+**Dernière version promue `LAST_GOOD` : R46 v0.12.1-C1** — **50 commandes AMOS**, **57 entrées AP20**, **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. [Bibliothèque validée](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Copie `LAST_GOOD` identique](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Archive C1 exacte](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). **Gates A CPU, B WinUAE interprété et C WinUAE compilé (test intégré) PASS** : `RESULT 1`, curseur 500/0, Chip drop 0. Gate C ne couvre pas les 50 commandes individuellement ; Gate D Amiga physique non testée.
+
+**Candidate active R53 0.12.8 :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 32 008 octets. Les indices AMOS issus des sources rétablissent la capture fonctionnelle `Aga Image Capture`. **Gate A locale PASS ; WinUAE B/C/D non testées.** [Preuves, SHA256 et procédure](docs/M16_MAIN_LINKAGE_FIX.md) · [test actif unique](tests/current/M16_R53_IMAGE_CAPTURE_01.asc). R46 C1 reste LAST_GOOD.
 
 **Images AGAPIC en Fast RAM :** les images compressées peuvent être conservées dans une banque DATA AMOS en **Fast RAM**. `Aga Image Draw` les lit et les décompresse au **CPU** directement vers le back buffer AGA en **Chip RAM**, sans décompression intégrale en Chip et sans Blitter pour lire la source. L'emplacement réel de la banque est choisi par AMOS ; celui de l'ABK de test n'a pas été mesuré. [Format AGAPIC](docs/M16_AGAPIC_FORMAT_DESIGN.md).
 
@@ -29,7 +31,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R46 0.12.1** — **50 commandes AP20**. Les paramètres et comportements ci-dessous correspondent à la bibliothèque R46 validée sous AMOS interprété/WinUAE.
+**API de la bibliothèque courante R53 0.12.8** — **51 commandes AP20**. Les 50 signatures existantes restent celles de R46 C1 ; Image Capture attend la validation réelle AMOS/WinUAE.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -83,6 +85,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Circle`** | `_OK=Aga Circle(CX,CY,Radius,Pen)` | Trace **un cercle de contour d'un pixel** centré sur `CX,CY` signés 16 bits, avec `Radius` entier 0..32767 et `Pen` indexé (0..2^Depth-1). Un rayon 0 trace un seul pixel ; rayon négatif/hors plage ou paramètres invalides retournent `0`. Symétrie entière à huit octants et `WritePixel` borné, sans bordure artificielle. Seulement sur le back buffer privé `Safe` ; pas de remplissage ni swap/VBL implicite. Retour `1` si au moins un pixel écrit, sinon `0`. |
 | **`Aga Mouse Cursor`** | `_OK=Aga Mouse Cursor(Visible)` | Fonction entière : **`Visible=0` masque** le curseur uniquement dans la fenêtre Intuition de l'écran AGA privé ; **`Visible=1` restaure** le curseur normal. `1` si l'action est acceptée, même répétée, `0` si paramètre différent de 0/1, écran absent ou allocation impossible. La souris, les clics et le clavier restent actifs ; Workbench et autres fenêtres ne sont pas modifiés. 72 octets Chip alloués une seule fois au premier masquage ; `ClearPointer` avant `CloseWindow`, puis `FreeMem` et remise à zéro, y compris Ctrl+C. Aucun Swap/VBL implicite. |
 | **`Aga Image Draw`** | `_OK=Aga Image Draw(Start(_B),Length(_B),_X,_Y,_MODE)` | Affiche une image compressée **AGAPIC v1 stockée en banque DATA AMOS, y compris en Fast RAM**. Le **CPU** lit et décompresse la banque source directement dans le **back buffer AGA en Chip RAM** : pas de décompression intégrale en Chip et pas de lecture Fast par le Blitter. Profondeur **1 à 8 plans**, `_MODE=0` opaque (index couleur 0 visible), `_MODE=1` avec masque de transparence indépendant ; X non aligné, clipping des quatre côtés, contrôle `Safe` non bloquant et validation RLE avant écriture. Retour **1** pour un appel valide (même si l'image est totalement hors écran), **0** pour paramètre, banque ou données invalides sans modifier le bitmap. Utiliser les valeurs actuelles `Start(_B)` et `Length(_B)` d'une banque vivante ; AMOS décide si elle réside effectivement en Fast ou Chip RAM. |
+| `Aga Image Capture` | `_OK=Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` | Candidate : banque entière 5..65535 obligatoirement libre ; rectangle entier strictement contenu dans le back buffer AGA, sans clipping. Retourne 1 si création d'une banque DATA AGAPIC, 0 si échec. Index -1 opaque ; 0..2^Depth-1 crée un masque séparé. Pixels/palette préservés, aucun swap implicite. Validation WinUAE en attente. |
 
 **Exemple : masquer puis réafficher le curseur sur notre écran AGA** (après ouverture de l'écran privé) :
 

@@ -9,6 +9,7 @@ All pixel comparisons execute the real R46 68000 machine code.
 from __future__ import annotations
 
 import hashlib
+from pathlib import Path
 import struct
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
 
