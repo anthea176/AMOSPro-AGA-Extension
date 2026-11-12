@@ -1,5 +1,9 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE ABSOLUE — maximum CINQ paramètres par commande ou fonction d'extension AMOS
+
+Incident M16/R47 du 12/11/2026 : le token `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` comporte **6 paramètres**. Malgré la structure AP20/CPU Gate A PASS, il provoque en interprété `Non dimensioned array`, tandis que le programme sans cette ligne fonctionne. Le source AMOS Professional `+B.s` (`Library_GetParams`, label `.Entier`) contient `cmp.w #6,d1` puis `moveq #5,d1` : **tout nombre >=6 est ramené à 5** dans le branchement normal de traitement des paramètres entiers. Pour toute nouvelle API : **au plus cinq paramètres**, vérifier le vrai parseur AMOS ainsi que GetP, les tokens, les arguments D3/A3, les tests CPU et le Compiler. Contrôle statique : `audit_ap20.amos20_parameter_limit_errors`. Ne jamais déclarer un test Gate A suffisant si le contrat de paramètres est incompatible. R47 est conservée comme archive invalide, R46 C1 `LAST_GOOD` inchangée.
+
 ## RÈGLE PERMANENTE — suivi des exemples lors des changements d'API (M16)
 
 **Aucune nouvelle signature publique ne peut être déclarée livrée tant que les exemples et les notices ne correspondent pas réellement au binaire installé.** Pour chaque ajout/changement de commande (ex. `Aga Image Draw`, `Aga Image Capture`, `Aga Font Bank Select`) :

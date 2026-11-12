@@ -106,7 +106,7 @@ jobs:
           python -B tools/test_m16_capture_r47_core.py
           python -B tools/test_m16_capture_r47_build.py
           python -B tools/test_m16_capture_r47_unicorn.py
-      - name: Export candidate M16 R47 binary in CI logs for exact archival (NOT LAST_GOOD)
-        run: python -B tools/build_m16_capture_r47.py --emit-base64
+      # The frozen R47 six-argument API is incompatible with AMOS Library_GetParams.
+      # Do NOT export an unusable binary as an installable candidate.
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/

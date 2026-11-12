@@ -3,7 +3,7 @@
 
 Derive native parts from the official promoted R46 C1, append the new
 capture entry and AP20 token, and FINALLY wrap via compiler_relocation.
-Do not install or promote candidate here. WinUAE/Compiler runtime Gates
+HISTORICAL INVALID CANDIDATE (AMOS parser accepts at most FIVE numeric parameters).\nDo not install or promote candidate here. WinUAE/Compiler runtime Gates
 are NOT verified, particularly AMOS main bank Rjsr ABI 297/300/316/319.
 """
 from __future__ import annotations
@@ -87,7 +87,7 @@ def main():
     assert binary==other and meta==meta2, "non-deterministic candidate"
     print("M16/R47 CAPTURE COMPILER-WRAPPED CANDIDATE STATIC PASS:",
           {k:v for k,v in meta.items() if k!="labels"})
-    print("Candidate IS NOT LAST_GOOD and must NOT be installed without WinUAE")
+    print("FROZEN R47 IS UNUSABLE: AMOS parser supports at most five parameters; DO NOT INSTALL")
     if args.emit_base64:
         print("M16_R47_CAPTURE_LIB_BASE64_BEGIN")
         print(base64.b64encode(binary).decode("ascii"))
