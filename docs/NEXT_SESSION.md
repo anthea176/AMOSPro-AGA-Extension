@@ -1,6 +1,6 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M15bis/R44 v0.11.5 — Aga Mouse Cursor : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE (12/11/2026)
+## M15bis/R44 v0.11.5 — Aga Mouse Cursor : Gates A et B PASS, démo combinée en attente (12/11/2026)
 
 **API approuvée et développée :** `_OK=Aga Mouse Cursor(Visible)` ; `0` masque le pointeur **uniquement dans la fenêtre Intuition de l'écran AGA privé**, `1` rétablit le curseur système pour cette fenêtre. Valeurs autres que 0/1, écran/fenêtre invalide ou allocation refusée retournent `0` sans effet. `1` signifie état de pointeur appliqué (idempotence). Mouse X/Y, boutons et clavier restent actifs.
 
@@ -10,7 +10,9 @@
 
 **Candidate publiée :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib` à l'octet près. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure R43 v0.11.4**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS ; archives antérieures intactes.
 
-**Gate B R44 NON TESTÉE :** unique test actif `tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc` à importer via **Project → Merge ASCII** dans AMOS interprété/WinUAE. Observer visible→masqué→visible→masqué→fermeture, tester le retour Workbench, lire `SWITCHES 500 ERR 0`, `RESULT 1` et `CLOSE RETURNED` ; examiner `CHIP DROP` et `CHIP WARN` sans les présenter comme preuve complète d'absence de fuite. **Ne pas promouvoir `LAST_GOOD` avant confirmation utilisateur explicite.** Gates C Compiler / D Amiga AGA physique NON TESTÉES. [Contrat M15bis](M15BIS_MOUSE_CURSOR_R44_DESIGN.md), branche **`main` uniquement**.
+**Gate B R44 PASS utilisateur (capture et rendu confirmés) ; test courant conservé jusqu'à la clôture :** unique test actif `tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc` à importer via **Project → Merge ASCII** dans AMOS interprété/WinUAE. Observer visible→masqué→visible→masqué→fermeture, tester le retour Workbench, lire `SWITCHES 500 ERR 0`, `RESULT 1` et `CLOSE RETURNED` ; examiner `CHIP DROP` et `CHIP WARN` sans les présenter comme preuve complète d'absence de fuite. **Ne pas promouvoir `LAST_GOOD` avant confirmation utilisateur explicite.** Gates C Compiler / D Amiga AGA physique NON TESTÉES. [Contrat M15bis](M15BIS_MOUSE_CURSOR_R44_DESIGN.md), branche **`main` uniquement**.
+
+**Retour WinUAE R44 du 12/11/2026 : Gate B PASS confirmée par l'utilisateur (« ça marche super »).** Capture : `SHOW 1 1 1 ; HIDE 1 1 ; BAD 0 0 ; NOSCREEN 0 ; SWITCHES 500 ERR 0 ; CHIP FREE 1631384 / 1631384 DROP 0 ; BIG FREE 1630656 / 1630656 DROP 0 ; CHIP BEFORE/END 1801928 / 1801928 ; CHIP WARN 0 ; CLOSED -1 ; RESULT 1 ; CLOSE RETURNED`. Le rendu du curseur visible/masqué et le retour AMOS sont confirmés ; aucune fuite Chip mesurée pendant ce test (ne prouve pas tous les chemins Ctrl+C). **R44 reste candidate ; ne pas promouvoir `LAST_GOOD` ni clôturer M15/M15bis avant l'essai de la [démo combinée](../examples/m15_2d_cursor.asc).** Gates C/D non testées.
 
 ## M15/R43 v0.11.4 — Aga Circle : Gates A CPU/CI et B AMOS/WinUAE PASS, LAST_GOOD (12/11/2026)
 

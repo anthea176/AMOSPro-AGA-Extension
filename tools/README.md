@@ -1,8 +1,10 @@
-# Outils Python actifs — R44 v0.11.5 candidate Gate A PASS, R43 LAST_GOOD
+# Outils Python actifs — R44 v0.11.5 candidate Gates A/B PASS, R43 LAST_GOOD
 
-## M15bis/R44 — Aga Mouse Cursor (CPU/CI Gate A PASS, WinUAE Gate B en attente)
+## M15bis/R44 — Aga Mouse Cursor (Gates A CPU/CI et B WinUAE PASS, démo globale en attente)
 
-**Outils actifs :** `m15bis_cursor_r44_emit.py`, `build_m15bis_cursor_r44.py`, `test_m15bis_cursor_r44.py`. **516 scénarios CPU 68000 PASS**, test de 500 alternances avec une allocation Chip unique, quatre fermetures de fenêtre et séquence `ClearPointer` → `CloseWindow` → `FreeMem`, export strict validé et [CI CPU complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398). **Binaire R44 candidat :** `dist/AMOSPro_AGA.Lib` = archive R44, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, 49 commandes AP20/55 segments. **Gate B WinUAE NON TESTÉE** ; [test courant](../tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc). **R43 `LAST_GOOD` intacte**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS. Gates C/D non testées.
+**Outils actifs :** `m15bis_cursor_r44_emit.py`, `build_m15bis_cursor_r44.py`, `test_m15bis_cursor_r44.py`. **516 scénarios CPU 68000 PASS**, test de 500 alternances avec une allocation Chip unique, quatre fermetures de fenêtre et séquence `ClearPointer` → `CloseWindow` → `FreeMem`, export strict validé et [CI CPU complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398). **Binaire R44 candidat :** `dist/AMOSPro_AGA.Lib` = archive R44, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, 49 commandes AP20/55 segments. **Gate B WinUAE PASS confirmée par utilisateur** ; [test courant conservé jusqu'à la clôture](../tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc). **R43 `LAST_GOOD` intacte**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS. Gates C/D non testées.
+
+**Démo M15/M15bis :** [exemple utilisateur combiné](../examples/m15_2d_cursor.asc) non encore exécuté sous WinUAE ; aucun changement de binaire, R43 `LAST_GOOD` intacte.
 
 ## M15/R43 — Aga Circle, Gates A CPU/CI et B WinUAE PASS
 

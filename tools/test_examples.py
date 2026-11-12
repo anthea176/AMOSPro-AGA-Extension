@@ -16,16 +16,16 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33", "font_bank_r38")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33", "font_bank_r38", "m15_2d_cursor")
 EXAMPLE_DIR = ROOT / "examples"
 AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+){0,3}")
 FUNCTION_BARE = re.compile(
     r"^\s*Aga\s+(?:"
     r"Copper\s+(?:Clear|Wait|Move|End|On|Off)"
-    r"|Mouse\s+(?:X|Y|Buttons|Pressed|Released)"
+    r"|Mouse\s+(?:X|Y|Buttons|Pressed|Released|Cursor)"
     r"|Rect\s+Overlap|Text|Blit\s+(?:Copy|Fill|Clear)"
     r"|Double\s+Buffer|Swap|Pic\s+Info|Iff\s+Load"
-    r"|Wait\s+Key|Key|Detect|Demo"
+    r"|Wait\s+Key|Key|Detect|Demo|Plot|Draw|Box|Circle"
     r")\b", re.IGNORECASE,
 )
 
@@ -134,6 +134,32 @@ def main() -> None:
     for name in ("Hwarf1252S.abk", "Pix3M-1252L.abk"):
         require((EXAMPLE_DIR / "Amcaf Fonts" / name).is_file(),
                 f"Missing bundled R38 font bank {name}")
+
+    combined = (EXAMPLE_DIR / "m15_2d_cursor.asc").read_text("ascii")
+    require(all(fragment in combined for fragment in (
+        "_OPEN=Aga Screen Open(320,256,256,$00021000)",
+        "_DB=Aga Double Buffer",
+        "Aga Palette Set(", "Aga Blit Clear(0,0,320,256)",
+        "Aga Plot(", "Aga Draw(", "Aga Box(", "Aga Circle(",
+        "_CUR=Aga Mouse Cursor(0)",
+        "_CUR=Aga Mouse Cursor(_VISIBLE)",
+        "Aga Mouse X", "Aga Mouse Y", "Aga Mouse Pressed",
+        "Aga Key", "Aga Swap", "Aga Wait Vbl",
+        "For _TRY=1 To 12", "For _ST=1 To 12",
+        "_READY=0", "_SWREADY=0",
+        "If _READY=0", "If _SWREADY=0",
+        "Aga Screen Close", "Amos To Front",
+        'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"',
+    )), "M15/M15bis combined example must exercise all five APIs and safe cleanup")
+    require(combined.index("_CLEAR=Aga Blit Clear(0,0,320,256)") <
+            combined.index("_TOP=Aga Blit Fill(") <
+            combined.index("_B0=Aga Box("),
+            "M15/M15bis must clear a Safe buffer before drawing primitives")
+    require('Fsel$(' not in combined and "Aga Iff Load" not in combined and
+            'Load "' not in combined,
+            "M15/M15bis combined example must not require any external asset")
+    require(all(x in combined for x in ("_ERR=1","_ERR=2","_ERR=3","_ERR=4")),
+            "M15/M15bis example must have bounded failure outcomes")
 
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
