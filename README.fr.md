@@ -19,6 +19,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
+**R44 v0.11.5 — CANDIDATE COURANTE, GATE A CPU/CI PASS (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [archive dédiée R44](dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib), **27 460 octets**, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, **49 commandes AP20 / 55 segments**. Nouvelle fonction `_OK=Aga Mouse Cursor(Visible)` : `0` masque le pointeur uniquement dans notre fenêtre Intuition AGA ; `1` le réaffiche. Sprite transparent Chip RAM, 72 octets maximum alloués une fois par fenêtre, libérés sur fermeture/Ctrl+C ; clavier et boutons souris inchangés. **516 tests CPU 68000 et [CI Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208444956)**. **Gate B WinUAE NON TESTÉE**, [test unique actif](tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc). Gates C/D non testées. **`LAST_GOOD` R43 préservée.**
+
 **R43 v0.11.4 — DERNIÈRE VERSION VALIDÉE SOUS WINUAE, `LAST_GOOD` (12/11/2026) :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R43](dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib) à l'octet près, **27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, **48 commandes AP20 / 54 segments**. `Aga Circle(CX,CY,Radius,Pen)` : **436 tests CPU 68000 Gate A et [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950)**, puis **Gate B AMOS interprété/WinUAE PASS confirmée par l'utilisateur** (« parfait !!! »), rendu visuel conforme, `RESULT 1` et `CLOSE RETURNED`. [Test exact archivé](tests/passed/M15_R43_CIRCLE_01.asc) sans retouche, blob `088158365a64accf0417fdda3fbba74e2e58ebf7` (**3 466 octets**). Gates C Compiler/D AGA réel non testées.
 
 **R42 v0.11.3 — VERSION PRÉCÉDENTE WINUAE-PASS, ARCHIVE FIGÉE :** [archive R42](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), 25 896 octets, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, 47 commandes AP20, [test WinUAE d'origine](tests/passed/M15_R42_BOX_01.asc). Archive préservée et distincte de `LAST_GOOD` R43.
@@ -30,10 +32,10 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 **Stress Chip RAM R38 validé sous WinUAE (12/11/2026) :** [500 changements de fontes, 0 erreur et 0 octet perdu](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) ; relevés Chip libre **1 582 088 octets** et plus grand bloc **1 320 664 octets** constants à 0/100/200/300/400/500. `RESULT 1`, retour AMOS normal. Archive R38 inchangée.
 
 
-**Dernière version validée sous WinUAE : R43 v0.11.4** — 48 commandes AP20, Gates A/B PASS, `LAST_GOOD` promue ; Gates C/D non testées. R42 reste archivée.
+**Dernière version validée sous WinUAE : R43 v0.11.4** — 48 commandes AP20, Gates A/B PASS, `LAST_GOOD` inchangée. **Candidate R44 v0.11.5** : 49 commandes, Gate A PASS et Gate B WinUAE en attente. Gates C/D non testées.
 
-- **Bibliothèques :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R43](dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib). Archives R42/R41 et antérieures figées.
-- **Validation :** R43 Gate A CPU 68000/CI PASS (436 cas) et Gate B AMOS/WinUAE PASS confirmée. Gates C Compiler et D AGA physique non testées.
+- **Bibliothèques :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) est la candidate R44 et égale son [archive R44](dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib). [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste octet pour octet identique à l'archive R43. Archives précédentes préservées.
+- **Validation :** R44 Gate A CPU/CI PASS (516 cas), Gate B WinUAE non testée. R43 `LAST_GOOD` Gates A/B PASS. Gates C Compiler et D AGA physique non testées.
 - **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. Le test d'endurance WinUAE (500 changements) n'a mesuré aucune baisse de Chip RAM libre ni du plus grand bloc disponible.
 - **Preuves et historique :** [rapport technique R38](docs/M14_FONT_BANK_R38.md) · [test R38 validé](tests/passed/M14_R38_FONT_BANK_01.asc) · [historique technique](docs/NEXT_SESSION.md) · [tests validés](tests/passed/).
 
@@ -41,7 +43,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R43 0.11.4** — **48 commandes AP20**, Gates A CPU/CI et B AMOS/WinUAE PASS ; Gates C/D non testées.
+**API de la bibliothèque courante R44 0.11.5** — **49 commandes AP20**, Gate A CPU/CI PASS et Gate B WinUAE NON TESTÉE ; `LAST_GOOD` R43 Gates A/B PASS ; C/D non testées.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
@@ -93,6 +95,17 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Draw`** (M15 R41, Gates A/B PASS) | `_OK=Aga Draw(X1,Y1,X2,Y2,Pen)` | Trace une **ligne d'un pixel** sur le **back buffer AGA**, extrémités incluses. Tracé rapide pour les coordonnées entièrement dans l'écran ; **clipping logiciel sécurisé** par Bresenham en dehors. Coordonnées signées 16 bits, `Pen` indexé selon la profondeur. `1` si au moins un pixel dessiné, `0` sinon. Pas de swap/VBL implicite. **Gates A et B PASS.** |
 | **`Aga Box`** (M15 R42, Gates A/B PASS) | `_OK=Aga Box(X1,Y1,X2,Y2,Pen)` | Dessine **le contour d'un rectangle** de 1 pixel d'épaisseur sur le **back buffer AGA**. Coordonnées des **deux coins inclusives**, dans n'importe quel ordre (pas largeur/hauteur). **Clipping sûr des quatre côtés originaux** sans ajouter de fausse bordure. Coordonnées signées 16 bits, `Pen` couleur indexée ; `1` si au moins un pixel dessiné, sinon `0`. Pas de swap/VBL implicite, pas de remplissage. **Gates A CPU/CI et B WinUAE PASS.** |
 | **`Aga Circle`** (M15 R43, Gates A/B PASS) | `_OK=Aga Circle(CX,CY,Radius,Pen)` | Trace **un cercle de contour d'un pixel** centré sur `CX,CY` signés 16 bits, avec `Radius` entier 0..32767 et `Pen` indexé (0..2^Depth-1). Un rayon 0 trace un seul pixel ; rayon négatif/hors plage ou paramètres invalides retournent `0`. Symétrie entière à huit octants et `WritePixel` borné, sans bordure artificielle. Seulement sur le back buffer privé `Safe` ; pas de remplissage ni swap/VBL implicite. Retour `1` si au moins un pixel écrit, sinon `0`. **436 tests CPU 68000 Gate A et Gate B WinUAE PASS.** |
+| **`Aga Mouse Cursor`** (M15bis R44, Gate A PASS, Gate B en attente) | `_OK=Aga Mouse Cursor(Visible)` | Fonction entière : **`Visible=0` masque** le curseur uniquement dans la fenêtre Intuition de l'écran AGA privé ; **`Visible=1` restaure** le curseur normal. `1` si l'action est acceptée, même répétée, `0` si paramètre différent de 0/1, écran absent ou allocation impossible. La souris, les clics et le clavier restent actifs ; Workbench et autres fenêtres ne sont pas modifiés. 72 octets Chip alloués une seule fois au premier masquage ; `ClearPointer` avant `CloseWindow`, puis `FreeMem` et remise à zéro, y compris Ctrl+C. Aucun Swap/VBL implicite. **516 tests CPU/CI Gate A PASS ; Gate B WinUAE non testée.** |
+
+**Exemple : masquer puis réafficher le curseur sur notre écran AGA** (après ouverture de l'écran privé) :
+
+```amos
+_HIDE=Aga Mouse Cursor(0)
+If _HIDE=1
+   _MX=Aga Mouse X
+   _SHOW=Aga Mouse Cursor(1)
+End If
+```
 
 **Exemple de cercle AGA** (après ouverture de l'écran et activation du double buffering) :
 

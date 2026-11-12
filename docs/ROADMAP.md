@@ -1,5 +1,17 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
+## M15bis/R44 v0.11.5 — Aga Mouse Cursor : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE (12/11/2026)
+
+**API approuvée et développée :** `_OK=Aga Mouse Cursor(Visible)` ; `0` masque le pointeur **uniquement dans la fenêtre Intuition de l'écran AGA privé**, `1` rétablit le curseur système pour cette fenêtre. Valeurs autres que 0/1, écran/fenêtre invalide ou allocation refusée retournent `0` sans effet. `1` signifie état de pointeur appliqué (idempotence). Mouse X/Y, boutons et clavier restent actifs.
+
+**Gestion locale et mémoire :** sprite transparent 16×16 à deux plans, **72 octets Chip RAM `MEMF_CHIP|MEMF_CLEAR`**, une seule allocation paresseuse par fenêtre au premier masquage. `ClearPointer` avant `CloseWindow`, puis `FreeMem` 72 octets après fermeture ; état privé réinitialisé. Quatre sites de fermeture **0/8/17/18** interceptés par BSR.w vers le cleanup R44 ; la fermeture de la fenêtre auxiliaire de `Aga Palette Save` (segment 40) est strictement conservée. Les offsets de l'état partagé 40 octets ne changent pas.
+
+**Gate A CPU 68000 et CI complète PASS :** **516 scénarios CPU** dont 500 cycles masqué/visible avec une allocation unique, mémoire, OOM, ABI A3, Win/Screen, quatre hooks de fermeture, ordre `ClearPointer→CloseWindow→FreeMem`, HUNK/AP20, export source natif strict. [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43208679398). **49 commandes AP20 / 55 segments.** Candidat binaire R44 déterministe SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, **27 460 octets**.
+
+**Candidate publiée :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib` à l'octet près. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure R43 v0.11.4**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, Gates A/B PASS ; archives antérieures intactes.
+
+**Gate B R44 NON TESTÉE :** unique test actif `tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc` à importer via **Project → Merge ASCII** dans AMOS interprété/WinUAE. Observer visible→masqué→visible→masqué→fermeture, tester le retour Workbench, lire `SWITCHES 500 ERR 0`, `RESULT 1` et `CLOSE RETURNED` ; examiner `CHIP DROP` et `CHIP WARN` sans les présenter comme preuve complète d'absence de fuite. **Ne pas promouvoir `LAST_GOOD` avant confirmation utilisateur explicite.** Gates C Compiler / D Amiga AGA physique NON TESTÉES. [Contrat M15bis](M15BIS_MOUSE_CURSOR_R44_DESIGN.md), branche **`main` uniquement**.
+
 ## M15/R43 v0.11.4 — Aga Circle : Gates A CPU/CI et B AMOS/WinUAE PASS, LAST_GOOD (12/11/2026)
 
 **R43 VALIDÉE par l'utilisateur (capture « parfait !!! ») :** `_OK=Aga Circle(CX,CY,Radius,Pen)` — cercle de contour d'un pixel par Bresenham midpoint 68000 en arithmétique 32 bits avec clipping sécurisé des huit octants, sans dessin hors écran ni bord inventé. Écran AGA privé, uniquement sur le back buffer après `Safe` non bloquant ; aucune allocation persistante, aucun swap/VBL implicite. **48 commandes AP20, 54 segments ; 436 scénarios CPU 68000 Gate A PASS et CI complète PASS** ([CI candidate](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950)).
@@ -314,7 +326,7 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **Contrats de recette :** points extrêmes, diagonales dans toutes les directions, lignes horizontales/verticales, rectangles partiellement hors champ, cercles tronqués, couleurs et profondeur 1–8 plans, double buffering, swaps répétés et fermeture/reprise AMOS. **Distinguer dessin de contour (`Box`) et remplissage (`Aga Blit Fill`)**.
 - **Extensions possibles, non engagées :** ellipse, rectangle plein de type `Bar`, polylignes, épaisseur/style et remplissage de cercle, uniquement après validation des quatre primitives de base.
 
-### M15bis — Visibilité du pointeur souris sur l'écran AGA (à définir avant M16)
+### M15bis — Visibilité du pointeur souris AGA (R44 v0.11.5 candidate Gate A PASS)
 
 **Objectif :** permettre à un programme AMOS de **masquer ou réafficher à la demande le pointeur matériel Intuition** sur la **seule fenêtre de l'écran AGA privé** de l'extension. Par défaut, le pointeur reste visible. Le clavier, les coordonnées `Aga Mouse X/Y` et les boutons `Aga Mouse Buttons/Pressed/Released` continuent de fonctionner lorsque le pointeur est masqué.
 
@@ -324,7 +336,7 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **API à contractualiser :** une seule commande de visibilité (par exemple `Aga Mouse Cursor(Visible)`, **nom et retour non arrêtés**) avec valeurs explicites visible/masqué, refus sans effet lorsqu'aucun écran AGA valide n'est ouvert. Aucune influence sur les écrans AMOS natifs.
 - **Tests avant validation :** curseur visible par défaut ; bascule visible → masqué → visible ; `Aga Mouse X/Y`, clics et clavier inchangés ; passage vers Workbench puis retour AGA avec option masquée ; fermeture et réouverture ; Ctrl+C, échecs et alternances répétées sans fuite Chip RAM.
 
-**Statut :** [proposition de contrat M15bis/R44](M15BIS_MOUSE_CURSOR_R44_DESIGN.md) rédigée le 12/11/2026, **validation explicite utilisateur en attente**. Aucun nouveau token/source/test/binaire ; R43 demeure `LAST_GOOD`.
+**Statut :** [contrat M15bis/R44 accepté](M15BIS_MOUSE_CURSOR_R44_DESIGN.md) et implémentation v0.11.5 : **Gate A CPU/CI PASS (516 cas)**, [candidate R44](../dist/AMOSPro_AGA.Lib) et [test WinUAE courant](../tests/current/M15BIS_R44_MOUSE_CURSOR_01.asc). **Gate B R44 NON TESTÉE ; R43 demeure `LAST_GOOD`**. Ne pas commencer M16 avant clôture R44 ou nouvel accord.
 
 ### M16 — Images compressées en Fast RAM (idée à étudier après M15)
 

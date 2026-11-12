@@ -97,7 +97,7 @@ def build():
                for t in audit44["parameter_checks"])
     return candidate, dict(version=VERSION,size=len(candidate),sha256=digest(candidate),
         named_commands=49,segments=55,changed_segments=sorted(set(OWNED_CLOSES)|{53,54}),
-        window_cleanup_sites=changes, labels=labels, Gate_A="PENDING",
+        window_cleanup_sites=changes, labels=labels, Gate_A="CPU_CI_PASS",
         Gate_B="NOT_TESTED")
 
 

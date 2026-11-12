@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M15bis/R44 provisional native 68000 CPU Gate A.
+"""M15bis/R44 native 68000 CPU Gate A.
 
 Executes true machine-code AP20 entry and shared window-close helper in
 Unicorn, with strict ABI checking and OS-call mocks. This does NOT establish
@@ -262,7 +262,7 @@ def run():
     assert m.alloc_count==2 and m.free_count==2 and not m.allocations
     cases+=1
 
-    print("M15bis/R44 68000 native CPU preliminary Gate A PASS:",cases,"cases")
+    print("M15bis/R44 68000 native CPU Gate A PASS:",cases,"cases")
     print("49 AP20 commands / 55 segments, four window-close hooks and")
     print("single Chip allocation, SetPointer/ClearPointer, OOM, 500 toggles,")
     print("close-order, state/ABI, unchanged unrelated Palette Save and R43")
