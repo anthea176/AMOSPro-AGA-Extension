@@ -1,5 +1,7 @@
 # M15/R42 — Aga Box : contrat de contour 2D AGA
 
+**M15/R42 Gate A CPU/CI PASS (12/11/2026) :** **360 tests 68000** avec contrôle pixel à pixel du contour, sécurité des bitplanes, huit orientations de coins, rectangles clippés et hors écran, signal `Safe`, ABI, AP20 **47 commandes / 53 segments**, export assembleur strict et [CI globale PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43198823212). Binaire reproductible R42 v0.11.3 généré **en mémoire uniquement** : **25 896 octets**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. **Gate B AMOS interprété/WinUAE non testée** ; la R41 v0.11.2 demeure `LAST_GOOD` (24 816 octets), intacte. Le programme de recette R42 est préparé mais non encore publié.
+
 **Décision du 12 novembre 2026 :** après la validation sous WinUAE de R41, l'utilisateur a autorisé le chantier M15/R42, **une seule nouvelle fonction `Aga Box`**. Ce texte est le contrat proposé pour le développement en cours. **Gate A CPU/CI et Gate B WinUAE non exécutées à l'ouverture du chantier.** R41 v0.11.2 est **`LAST_GOOD`**, 46 commandes AP20, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`.
 
 ## API prévue
