@@ -120,5 +120,9 @@ jobs:
         run: |
           python -B tools/test_m16_r50_fnone_probe.py
           python -B tools/build_m16_r50_fnone_probe.py --emit-base64
+      - name: M16 R51 inspect skipped Rjsr marker without executing (Gate A only)
+        run: |
+          python -B tools/test_m16_r51_relocation_probe.py
+          python -B tools/build_m16_r51_relocation_probe.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/

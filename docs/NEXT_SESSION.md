@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16/R50 — FAIL WinUAE et contrôle R51 préparé (12/11/2026)
+
+**Gate B R50 FAIL confirmé par capture utilisateur** : `BEFORE RJSR FNON`, puis Amiga **Software Failure 80000004** (instruction illégale). Le test R48 sans `Rjsr` avait Gate B PASS ; R49 avec `Rjsr Bnk.GetAdr` avait crash WinUAE ; R50 avec `Rjsr FnOne` échoue aussi. **La panne est liée au chemin `Rjsr` ou à la résolution de sa cible ; l'adresse fautive n'est pas connue.** Ne pas attribuer l'échec aux banques ou à la signature AMOS. R51 en cours de validation Gate A : lit sans l'exécuter le marqueur `FE11 F700 0142` ; `RESULT 1` si remplacé par `JSR` avec pointeur non nul et pair, `RESULT 2` s'il reste `FE11`, `RESULT 3` pour valeur anormale. **R46 C1 LAST_GOOD protégée ; R50 ne doit jamais être promue.**
+
 ## M16/R50 — contrôle `Rjsr FnOne` prêt sous WinUAE (12/11/2026)
 
 **Résultat R49 utilisateur : Gate B FAIL (nouveau crash natif WinUAE x64)** après `R49 BANK GETADR PROBE` et `BEFORE GETADR`, avant tout retour. L'unique changement par rapport à la R48 Gate B PASS est `Rjsr Bnk.GetAdr` index 297, donc **le pont ou l'exécution réelle de cette routine est fautif ; l'origine exacte n'est pas prouvée**. Les indices 297/300/316/319 concordent avec `+Lib.s` source officiel, mais cela ne démontre pas le comportement du runtime installé.
