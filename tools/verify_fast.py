@@ -30,11 +30,12 @@ def main() -> None:
     # frozen native source. Version-specific extension checks stay in build_aga_current.
     raw = (ROOT / "dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib").read_bytes()
     raw_tokens, raw_parts, _ = unpack_ap20(raw)
-    active_tokens, active_parts, _ = unpack_ap20(last_good)
+    c1=(ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib").read_bytes()
+    active_tokens, active_parts, _ = unpack_ap20(c1)
     assert active_tokens == raw_tokens, "Promoted tokens diverge from C1 source"
     assert len(active_parts) == len(raw_parts) + 1, "Compiler bridge entry lost"
-    assert unwrap_native_parts(last_good) == (raw_tokens, raw_parts), "LAST_GOOD Compiler bridge corrupt"
-    print("ACTIVE AP20 PASS:", active_label, "; R46 LAST_GOOD compiler bridge immutable, reversible")
+    assert unwrap_native_parts(c1) == (raw_tokens, raw_parts), "Archived R46 C1 Compiler bridge corrupt"
+    print("ACTIVE AP20 PASS:", active_label, "; R46 C1 archive compiler bridge immutable, reversible")
 
 
 if __name__ == "__main__":

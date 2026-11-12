@@ -7,7 +7,9 @@ good is never overwritten by Gate A / CPU diagnostics.
 from hashlib import sha256
 from pathlib import Path
 
-LAST_GOOD_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
+C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
+C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
+LAST_GOOD_SHA=C1_SHA
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib": "4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26",
@@ -27,8 +29,10 @@ def verify_active(root: Path):
     from audit_ap20 import parse,inspect
     from compiler_relocation import is_compiler_wrapped
     root=Path(root)
+    c1=(root/C1_ARCHIVE).read_bytes()
+    assert sha256(c1).hexdigest()==C1_SHA,"Archived R46 C1 changed"
     good=(root/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD R46 C1 changed"
+    assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     assert is_compiler_wrapped(cur),"Active library must be Compiler-safe"
     report=inspect(parse(cur))

@@ -126,10 +126,10 @@ def main():
     candidate = binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]  # frozen R44 for inherited historical assertions
     candidate_r45 = binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"]
     candidate_r46 = binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib"]  # frozen native raw R46
-    promoted = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]  # frozen promoted C1, not the new active candidate
+    promoted = binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"]  # immutable historical R46 C1 baseline
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == promoted
+    assert binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"] == promoted
     assert promoted == binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
@@ -420,7 +420,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==promoted
+    assert binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"]==promoted
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
@@ -645,7 +645,7 @@ def main():
     # Original R46 is frozen: raw code is source input only, NOT installable.
     # The reproducible C1 bridge is now the official R46 0.12.1-C1.
     built_current, meta_current = build_current()
-    assert promoted == built_current == binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"], "C1 is not official LAST_GOOD"
+    assert promoted == built_current == binaries["dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"], "R46 C1 historical archive changed"
     assert promoted != candidate_r46 and promoted not in (candidate_r45,candidate)
     assert len(promoted)==29964 and meta_current["sha256"]=="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
     assert is_compiler_wrapped(promoted) and not is_compiler_wrapped(candidate_r46)

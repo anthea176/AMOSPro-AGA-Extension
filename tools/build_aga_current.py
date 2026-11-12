@@ -19,6 +19,7 @@ from active_library import verify_active
 ROOT = Path(__file__).resolve().parents[1]
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+C1_ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 HISTORICAL_RAW = SOURCE
 
 
@@ -59,7 +60,8 @@ def main() -> None:
         candidate,details_candidate=capture_build()
         assert candidate==current, "Active capture is not reproducible"
         print("ACTIVE CAPTURE BUILDER PASS",{k:v for k,v in details_candidate.items() if k!="labels"})
-    assert LAST_GOOD.read_bytes() == data, "LAST_GOOD not identical to promoted compiler-safe R46"
+    assert C1_ARCHIVE.read_bytes() == data, "Archived compiler-safe R46 C1 diverged"
+    # verify_active() separately checks the pinned LAST_GOOD release.
     print("CURRENT BUILDER PASS", details)
     print("Next revision source: native_from_promoted(LAST_GOOD.read_bytes(), native_title)")
     print("Next revision final: wrap_native_ap20(native_candidate, release_title)")
