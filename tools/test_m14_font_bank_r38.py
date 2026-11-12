@@ -206,7 +206,7 @@ def run():
     # AMOS LOAD creates DATA banks (flags 1/3); previous code accepted only
     # WORK banks (flags 0/2). Test real 1-bit fixed and proportional banks.
     real_banks=(
-        'AMCAF_FONT9.abk',
+        'examples/AMCAF_FONT9.abk',
         'examples/Amcaf Fonts/Hwarf1250S.abk',
         'examples/Amcaf Fonts/Hwarf1252S.abk',
         'examples/Amcaf Fonts/Pix3M-1250L.abk',
