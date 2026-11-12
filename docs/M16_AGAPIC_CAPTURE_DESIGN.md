@@ -39,7 +39,7 @@ La capture est maintenant représentée par [`tools/m16_agapic_capture_model.py`
 
 [`tools/test_m16_capture_r47_core.py`](../tools/test_m16_capture_r47_core.py) utilise Capstone et **Unicorn M68K** pour vérifier le code machine réel, les sorties RLE via le décodeur AGAPIC existant, la transparence, les bords, la sauvegarde des registres, l'absence d'écriture dans les bitplanes et le refus d'un tampon insuffisant. **Gate A du cœur CPU : PASS — 325 cas déterministes exécutés sur Unicorn Motorola 68000, code machine 758 octets, CI complète PASS** ([run 43240616700](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43240616700)). **Ceci ne valide pas la commande de capture de banque**, qui n'existe pas encore.
 
-**Il ne crée pas encore de banque AMOS** : la future commande doit assembler l'en-tête et la table des lignes, puis appeler l'allocateur AMOS sans écraser un numéro existant, via une liaison relogeable compatible Compiler. Aucune bibliothèque `.Lib`, aucun token AP20 ni exemple validé n'est modifié ; R46 C1 `LAST_GOOD` reste immuable. La qualification sous WinUAE ne peut commencer qu'après raccordement de l'allocateur.
+**Ce cœur seul ne crée pas de banque AMOS** : c'est le wrapper expérimental R47 ci-dessous qui assemble en-tête/table et appelle l'allocateur AMOS avec contrôles d'occupation et relocalisation Compiler (non validée sur WinUAE). Aucune bibliothèque `.Lib`, aucun token AP20 ni exemple validé n'est modifié ; R46 C1 `LAST_GOOD` reste immuable. La qualification sous WinUAE ne peut commencer qu'après raccordement de l'allocateur.
 
 ### R47 — nouvelle candidate `Aga Image Capture` (non validée sous AMOS)
 
@@ -68,3 +68,9 @@ L'utilisateur a expressément demandé de **ne pas oublier les exemples** lors d
 2. Capture : **refus des rectangles partiellement ou totalement hors écran déjà décidé**, à tester y compris X/Y négatifs, dimensions nulles et overflow ; transparence par index et masque indépendant validés ; restent à définir les limites de dimensions et taille compressée maximale, ainsi que le repli mémoire.
 3. Garantir une allocation de taille correcte, nettoyer les échecs, rejeter les banques occupées **avant** toute action destructive ; vérifier l'accès aux banques en interprété **et Compiler**.
 4. Préparer tests CPU / WinUAE interprété / exécutable compilé, exemple de capture→dessin→`Save`→`Load`→dessin, et nouveau bundle cohérent. Aucun code de l'extension ni fichier `.asc` exécutable modifié avant accord explicite sur la fonction en cours.
+
+## Tests M16/R47 complets — état effectif
+
+**Gate A de la capture avec services AMOS simulés : PASS** sur [23 scénarios natifs supplémentaires](../tools/test_m16_capture_r47_unicorn.py), en plus des 325 scénarios du compresseur RLE et des 130 scénarios de référence hôte ([CI PASS 43242855309](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43242855309)). Teste la lecture du back buffer, les masques transparents, la création/refus de banque, la conservation du contenu d'une banque déjà occupée, le nettoyage d'allocation, la sauvegarde des registres et du stack AMOS. Les services AMOS étaient **simulés** ; leurs identifiants Rjsr réels restent à qualifier sur WinUAE.
+
+**Candidate compiler-safe générée en mémoire :** 51 commandes, 58 entrées AP20, 32 012 octets. À archiver séparément après contrôle binaire, jamais dans `dist/AMOSPro_AGA.Lib` avant une promotion explicite. [Test AMOS R47 actif](../tests/current/M16_R47_IMAGE_CAPTURE_01.asc) : **Gate B sous WinUAE non testée**, et Gate C Compiler non testée. La R46 C1 officielle reste identique aux archives validées.
