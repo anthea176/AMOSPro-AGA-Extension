@@ -1,6 +1,6 @@
 # M16 P0 — prévisualisation de la banque AGAPIC DATA sous AMOS/WinUAE
 
-**À tester : le conteneur ABK, PAS le rendu d'image.** Aucune commande
+**PASS utilisateur (12/11/2026) : conteneur ABK chargé sous AMOS/WinUAE. Aucun rendu d'image natif.** Aucune commande
 AGAPIC 68000 n'existe dans la bibliothèque R44 actuelle. Ne pas remplacer
 la bibliothèque R44 LAST_GOOD.
 
@@ -27,15 +27,9 @@ Le programme lit les 32 octets d'en-tête AGAPIC après le Load :
   dernier offset : Length(10).
 - Résultat attendu : **ABK FORMAT RESULT 1**.
 
-**List Bank :** observer le marqueur F (Fast) ou C (Chip). Les flags
-externes de l'ABK demandent DATA/Fast, mais la RAM réellement utilisée
-dépend de la disponibilité du système. Un affichage C est un résultat
-important à noter, pas une preuve de corruption de la banque.
+**List Bank :** la capture WinUAE affiche `10 - AGAPIC S: $40413010 L: 1836` ; **S correspond à l'adresse Start, pas à un indicateur Fast/Chip**. Cette sortie ne comporte pas de F/C explicite : le placement RAM reste à confirmer via la configuration WinUAE ou `exec.library/TypeOfMem`. Le flag externe demande DATA/Fast, sans garantir la mémoire réelle.
 
-Le test ne sait pas si l'archive ABK générée sur PC sera acceptée
-par AMOS avant l'essai WinUAE : le modèle de format Python PASS ne suffit
-pas pour déclarer une Gate B. Une fois ce chargement confirmé, le prochain
-sous-jalon R45 pourra implémenter le dessin CPU depuis Start(10)/Length(10).
+Le chargement du fichier généré sur PC est confirmé par la capture utilisateur : `ABK FORMAT RESULT 1`, Magic `AGAPIC`, Version 1, profondeur 4, offsets exacts, banque DATA 10. [Rapport de validation](../../docs/M16_AGAPIC_WINUAE_P0_PASS.md). Le programme ASC original reste inchangé ; ce PASS est celui **du format P0 uniquement**, pas la Gate B d'une commande R45. [Contrat proposé pour le futur rendu CPU R45](../../docs/M16_R45_IMAGE_DRAW_CONTRACT.md).
 
 [Format complet AGAPIC v1](../../docs/M16_AGAPIC_FORMAT_DESIGN.md) ·
 [Generator déterministe](../../tools/m16_agapic_sample.py) ·

@@ -4,11 +4,11 @@
 
 ## Où commencer ?
 
-**M16/P0 format AGAPIC validé sur modèle hôte/CI (aucune nouvelle commande AP20)** : [format AGAPIC et modèle planaire RLE](M16_AGAPIC_FORMAT_DESIGN.md), [codec et conversion](../tools/m16_agapic.py), [banque ABK témoin](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), [programme d'aperçu AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc) et [CI hôte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). Le Load ABK réel reste à tester dans WinUAE. **R44 demeure LAST_GOOD**, aucune validation native R45 ni WinUAE M16 à ce stade.
+**M16/P0 — banque DATA AGAPIC validée sous WinUAE** : [format et modèle hôte](M16_AGAPIC_FORMAT_DESIGN.md), [ABK 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), [test AMOS original](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), **`ABK FORMAT RESULT 1`** sur la capture utilisateur ; [rapport](M16_AGAPIC_WINUAE_P0_PASS.md) et [contrat R45 proposé](M16_R45_IMAGE_DRAW_CONTRACT.md). Les 1 344 rendus du modèle Python ne démontrent pas le dessin natif 68000. **R44 reste LAST_GOOD ; R45 non codée**, Gates C/D non testées.
 
 | Besoin | Document |
 |---|---|
-| **Que développons-nous ensuite ?** | **M15 et M15bis clôturés :** [rapport de clôture R44](M15_M15BIS_R44_CLOSURE.md), [R44 LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib), [test WinUAE archivé](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) et [exemple 2D + souris validé](../examples/m15_2d_cursor.asc). **Prochaine étude éventuelle : M16**, images compressées en Fast RAM, sans code engagé · [roadmap](ROADMAP.md). |
+| **Que développons-nous ensuite ?** | **M16 P0 AGAPIC validé (format ABK sous WinUAE)** : [rapport](M16_AGAPIC_WINUAE_P0_PASS.md) · [contrat de dessin CPU R45 proposé](M16_R45_IMAGE_DRAW_CONTRACT.md). R45 et le rendu native 68000 restent à développer/tester. **R44 LAST_GOOD reste intacte** ; M15/M15bis clôturés · [roadmap](ROADMAP.md). |
 | **État exact, binaire et tests actuels** | [Reprise / état courant](NEXT_SESSION.md) · [Rapport M10 R25](M10_RECT_OVERLAP_R25.md) · [Historique M8](M8_STATUS.md) |
 | **Copper — architecture et sécurité** | [M7 Copper](M7_COPPER_DESIGN.md) · [R18 raster RGB4, PASS WinUAE](M7_COPPER_R18.md) · [R17 On/Off, PASS WinUAE 3/3](M7_COPPER_R17.md) · [R16 Clear validée](M7_COPPER_R16.md) · [préflight Python](../tools/m7_copper_contract.py) |
 | **M9 zones cliquables — R24 PASS WinUAE** | [R24 Hotspot Hit, Gate A+B PASS](M9_HOTSPOT_R24.md) · [Test exact R24 archivé](../tests/passed/M9_R24_HOTSPOT_HIT_01.asc) · [Contrat M8–M10](INTERACTIONS_COLLISIONS.md) |

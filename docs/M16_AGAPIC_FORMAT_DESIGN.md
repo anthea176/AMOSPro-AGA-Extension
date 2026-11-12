@@ -1,7 +1,7 @@
 # M16 — AGAPIC v1 : images compressées en banque DATA / rendu CPU AGA
 
-**État : P0 FORMAT/OUTILLAGE HÔTE PASS sous CI (12/11/2026).** 432 cas ABK/roundtrips, 1 344 rendus planaires comparés pixel par pixel et 31 cas invalides ; [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). Ceci reste un modèle Python, PAS une Gate A native de l'extension. La banque ABK témoin est maintenant versionnée ; son chargement AMOS/WinUAE reste non testé.
-Aucun token AP20 R45, aucun dessin natif 68000 ni test WinUAE réussi à ce stade.
+**État : P0 VALIDÉ sur modèle hôte/CI et chargement ABK sous AMOS/WinUAE (12/11/2026).** 432 contrôles ABK/roundtrips, 1 344 rendus planaires et 31 cas invalides ; [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43214342325). La capture utilisateur du chargement AGAPIC confirme `ABK FORMAT RESULT 1`, banque 10, 1 836 octets DATA, version 1, 64×40×4, masque/codec 1 et offsets 32/196/1 836. [Rapport de validation WinUAE](M16_AGAPIC_WINUAE_P0_PASS.md). Le rendu CPU n'a été testé que dans le modèle Python, **pas encore dans l'extension**.
+Aucun token AP20 R45 ni dessin natif 68000 : la validation WinUAE concerne uniquement l'enveloppe ABK et la lecture de son en-tête.
 **R44 v0.11.5 reste LAST_GOOD** : 49 commandes AP20, 27 460 octets.
 Travail exclusivement sur la branche **main**.
 
@@ -60,7 +60,7 @@ LONG = longueur payload+8 (4), nom ASCII AGAPIC suivi de deux espaces
 
 Modèle fondé sur [AGAPAL R30](M13_AGAPAL_R30_PREVIEW.md), dont le
 Save/Load a déjà été validé. Un flag DATA/Fast **ne prouve pas que la
-banque chargée réside en Fast RAM** : vérifier F/C avec List Bank sous AMOS.
+banque chargée réside en Fast RAM**. Sur la capture actuelle, `List Bank` affiche `S: $40413010` (adresse de début) **sans indication F/C explicite** ; confirmer la nature mémoire via la configuration WinUAE ou Exec `TypeOfMem`. Ne pas identifier Fast seulement d'après `S`.
 Après un Bank Swap ou Load, relire Start(bank) et Length(bank).
 
 ## Outils du prototype
@@ -72,7 +72,7 @@ Après un Bank Swap ou Load, relire Start(bank) et Length(bank).
   Accepte un masque PNG monochrome indépendant (--mask), un index transparent
   (--transparent-index) ou le tRNS PNG (--png-alpha). Pas de quantification
   RGBA automatique, pas de palette incluse dans AGAPIC.
-- [Banque ABK témoin 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk) : 1 856 octets, SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf ; [notice de test WinUAE](../tests/design/M16_AGAPIC_PREVIEW_README.md). L'ABK est produit déterministiquement par les scripts PC, mais Load sous AMOS attend encore un essai réel.
+- [Banque ABK témoin 64×40×4](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk) : 1 856 octets, SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf ; [notice de test WinUAE](../tests/design/M16_AGAPIC_PREVIEW_README.md). L'ABK est produit déterministiquement par les scripts PC et son chargement dans AMOS a été confirmé par l'utilisateur (`ABK FORMAT RESULT 1`).
 - [Générateur de banque exemple](../tools/m16_agapic_sample.py) :
   64×40×4 couleurs indexées avec masque indépendant, banque DATA numéro 10.
 - [Tests de format et rendu de référence](../tools/test_m16_agapic.py) :
@@ -132,5 +132,4 @@ atlas et images multiples. Un seul nouveau jeton AP20 par sous-version.
 - **R44 LAST_GOOD inchangée** ainsi que sa bibliothèque courante, son archive
   versionnée et tous les tests déjà validés.
 
-Le chargement réel de l'ABK hôte via AMOS reste à confirmer indépendamment
-de la validité du modèle Python ; le Blitter ne lit pas directement Fast RAM.
+Le chargement réel de l'ABK hôte via AMOS est **confirmé** ; la mise en image depuis les données compressées demeure **NON TESTÉE** côté Amiga. Le Blitter ne lit pas directement Fast RAM. [Contrat R45 proposé](M16_R45_IMAGE_DRAW_CONTRACT.md) ; ne pas confondre essai de chargement et Gate B du dessin.

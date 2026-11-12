@@ -1,13 +1,13 @@
 # Outils Python — R44 v0.11.5 `LAST_GOOD`, M15 et M15bis clôturés
 
-## M16 — AGAPIC P0 tests hôte/CI PASS, aucune nouvelle extension R45
+## M16 — AGAPIC P0 : codec hôte/CI + chargement ABK WinUAE PASS, R45 non codée
 
 - Codec [m16_agapic.py](m16_agapic.py) : RLE planaire par ligne en groupes de 16 pixels ; DATA AmBk, profondeur 1..8, masquage 1 bit indépendant et modèle de dessin CPU word-wise.
 - Conversion hors Amiga [m16_agapic_convert.py](m16_agapic_convert.py) : PNG palette vers ABK ; masque PNG optionnel, import PNG via Pillow.
 - [m16_agapic_sample.py](m16_agapic_sample.py) : banque DATA ABK exemple 64×40×4, numéro 10, masque indépendant et index 0 visible.
 - [test_m16_agapic.py](test_m16_agapic.py) : roundtrips, clipping quatre bords, 1/2/4/8 plans, opaque et transparent, tests de données corrompues et garde mémoire.
 - **P0 PASS** : 432 roundtrips ABK, 1 344 rendus planaires, 31 rejets invalides, [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43213818778). [Banque ABK témoin 1 856 octets](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk), [notice](../tests/design/M16_AGAPIC_PREVIEW_README.md), SHA256 56443d5ed29527a21d043b845e70c545402648ef35fa590943cd62818499edaf.
-- [Test d'aperçu ABK AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), à exécuter seulement après préparation du fichier .abk. **P0 n'est pas une Gate A native : aucun R45 n'est disponible, aucune vitesse 68000/WinUAE établie.** [Contrat M16](../docs/M16_AGAPIC_FORMAT_DESIGN.md).
+- [Test d'aperçu ABK AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), **PASS confirmé par capture utilisateur** : banque DATA 10, 1 836 octets, 64×40×4, masque et codec RLE, `ABK FORMAT RESULT 1`. [Rapport détaillé](../docs/M16_AGAPIC_WINUAE_P0_PASS.md). `List Bank` affiche `S: $40413010`, sans marqueur F/C : Fast RAM à confirmer séparément. **Pas de rendu CPU natif, ni Gate A/B R45, ni performance 68000 validée.** [Contrat proposé R45](../docs/M16_R45_IMAGE_DRAW_CONTRACT.md).
 
 ## M15bis/R44 — Aga Mouse Cursor, Gates A CPU/CI et B WinUAE PASS
 
