@@ -4,6 +4,8 @@
 
 ## Où commencer ?
 
+**M16 démarré en prototype P0 (aucune nouvelle commande AP20)** : [format AGAPIC et modèle planaire RLE](M16_AGAPIC_FORMAT_DESIGN.md), [codec et conversion](../tools/m16_agapic.py), [aperçu ABK pour AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc). **R44 demeure LAST_GOOD**, aucune validation native R45 ni WinUAE M16 à ce stade.
+
 | Besoin | Document |
 |---|---|
 | **Que développons-nous ensuite ?** | **M15 et M15bis clôturés :** [rapport de clôture R44](M15_M15BIS_R44_CLOSURE.md), [R44 LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib), [test WinUAE archivé](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) et [exemple 2D + souris validé](../examples/m15_2d_cursor.asc). **Prochaine étude éventuelle : M16**, images compressées en Fast RAM, sans code engagé · [roadmap](ROADMAP.md). |

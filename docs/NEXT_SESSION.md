@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M16 — AGAPIC v1 / P0 : étude et prototype hôte, pas encore de R45 (12/11/2026)
+
+Le chantier [M16 AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md) est lancé : format planaire 16 pixels/paquet, compression RLE indépendante par scanline, masque 1 bit indépendant de l'index couleur, enveloppe AmBk DATA native préférant Fast RAM (sans la garantir), conversion PNG indexé hors Amiga, tests hôte de clipping et rendu planaire CPU. **Le test de la banque ABK réelle sous WinUAE est encore à réaliser.** Aucun nouveau token AP20, aucun dessin natif 68000, aucune Gate A/B R45. **R44 v0.11.5 reste LAST_GOOD, 49 commandes, binaires intacts ; main uniquement.**
+
 ## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
 
 **M15 Plot/Draw/Box/Circle et M15bis Aga Mouse Cursor sont clôturés** après la CI Gate A (516 scénarios CPU 68000 R44) et les validations WinUAE utilisateur : test R44 (500 bascules, 0 erreur, CHIP DROP 0, RESULT 1, CLOSE RETURNED) puis démonstration globale `examples/m15_2d_cursor.asc` (« ça marche super »). Le retour global confirme le fonctionnement visuel, sans capture chiffrée fournie pour cette démo. **49 commandes AP20, 55 segments.**

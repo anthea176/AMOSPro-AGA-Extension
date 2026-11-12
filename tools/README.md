@@ -1,5 +1,13 @@
 # Outils Python — R44 v0.11.5 `LAST_GOOD`, M15 et M15bis clôturés
 
+## M16 — Prototype hôte AGAPIC v1 (aucune nouvelle extension R45)
+
+- Codec [m16_agapic.py](m16_agapic.py) : RLE planaire par ligne en groupes de 16 pixels ; DATA AmBk, profondeur 1..8, masquage 1 bit indépendant et modèle de dessin CPU word-wise.
+- Conversion hors Amiga [m16_agapic_convert.py](m16_agapic_convert.py) : PNG palette vers ABK ; masque PNG optionnel, import PNG via Pillow.
+- [m16_agapic_sample.py](m16_agapic_sample.py) : banque DATA ABK exemple 64×40×4, numéro 10, masque indépendant et index 0 visible.
+- [test_m16_agapic.py](test_m16_agapic.py) : roundtrips, clipping quatre bords, 1/2/4/8 plans, opaque et transparent, tests de données corrompues et garde mémoire.
+- [Test d'aperçu ABK AMOS](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc), à exécuter seulement après préparation du fichier .abk. **P0 n'est pas une Gate A native : aucun R45 n'est disponible, aucune vitesse 68000/WinUAE établie.** [Contrat M16](../docs/M16_AGAPIC_FORMAT_DESIGN.md).
+
 ## M15bis/R44 — Aga Mouse Cursor, Gates A CPU/CI et B WinUAE PASS
 
 **Outils :** `m15bis_cursor_r44_emit.py`, `build_m15bis_cursor_r44.py`, `test_m15bis_cursor_r44.py`. **516 cas CPU 68000 PASS**, dont 500 bascules de curseur, allocation unique 72 octets Chip, ABI, protections des quatre fermetures et nettoyage ordonné `ClearPointer` → `CloseWindow` → `FreeMem`, export 68000 strict et [CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43209272738). Test curseur WinUAE `RESULT 1`, `CLOSE RETURNED`, Chip DROP 0, et [exemple interactif M15/M15bis](../examples/m15_2d_cursor.asc) confirmés par utilisateur. **R44 `AMOSPro_AGA.Lib` = `LAST_GOOD` = archive versionnée**, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`, **49 commandes AP20 / 55 segments**. [Test d'origine archivé](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) sans retouche, `tests/current/` sans ASC actif. **R43 est figée dans son archive**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`. Gates C/D non testées. [Clôture](../docs/M15_M15BIS_R44_CLOSURE.md).
