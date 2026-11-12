@@ -2,6 +2,8 @@
 
 **English** | [Français](README.fr.md) · [Installation](../INSTALL.md)
 
+**Chip RAM endurance:** a separate [500-switch WinUAE stress test](../tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) passed on 12 November 2026 with no measured loss of total or largest free Chip RAM.
+
 These are **user-facing examples**, not historical regression tests. Use the current [`AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) and run them as **interpreted AMOS Professional** programs.
 
 | File | Demonstrates | What to do |

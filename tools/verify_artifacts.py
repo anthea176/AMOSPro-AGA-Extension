@@ -426,6 +426,12 @@ def main():
     assert meta38["sha256"]=="09b23a6cd1b8f8eb91b836b43a98ede4da2b16e0b6fb2173ac43ab54d684f366" and meta38["size"]==23380
     assert (ROOT/"tests/passed/M14_R38_FONT_BANK_01.asc").is_file(), "R38 WinUAE PASS test must be archived"
     assert not (ROOT/"tests/current/M14_R38_FONT_BANK_01.asc").exists(), "R38 current test must be cleared"
+    stress = ROOT/"tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc"
+    assert stress.is_file(), "R38 WinUAE memory stress test must be archived"
+    stress_bytes = stress.read_bytes()
+    git_blob = b"blob " + str(len(stress_bytes)).encode("ascii") + bytes([0]) + stress_bytes
+    assert hashlib.sha1(git_blob).hexdigest()=="976635ad8562c88ed07753c71a4dc2a6d18c2e29", "R38 memory stress test bytes changed"
+    assert not (ROOT/"tests/current/M14_R38_CHIP_RAM_STRESS_01.asc").exists(), "R38 WinUAE PASS memory stress test must be removed from current"
     print("PASS: R38 current/archive/LAST_GOOD Gate A/B WinUAE-PASS 44 AP20 tokens;"
           " R36 and all historical archives frozen")
 

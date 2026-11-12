@@ -19,14 +19,14 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Test d'endurance R38 en attente WinUAE :** [500 changements de fontes et mesures Chip RAM](tests/current/M14_R38_CHIP_RAM_STRESS_01.asc) ; Topaz AMCAF / Hwarf / Pix3M / Topaz AmigaOS. Aucun changement du binaire R38 ni de `LAST_GOOD`. [Mode d'emploi](tests/current/README.md).
+**Stress Chip RAM R38 validé sous WinUAE (12/11/2026) :** [500 changements de fontes, 0 erreur et 0 octet perdu](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) ; relevés Chip libre **1 582 088 octets** et plus grand bloc **1 320 664 octets** constants à 0/100/200/300/400/500. `RESULT 1`, retour AMOS normal. Binaire R38 / `LAST_GOOD` inchangé.
 
 
 **Dernière version validée : R38 v0.11.0 (12 novembre 2026)** — 44 commandes AMOS AP20 pour les écrans AGA indexés, palettes, IFF/ILBM, Blitter, Copper, entrées et texte.
 
 - **Bibliothèque :** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R38](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).
 - **Validation :** Gate A (CPU 68000 / CI) et Gate B (AMOS interprété / WinUAE) **PASS**. Gates C (Compiler) et D (Amiga AGA réel) non testées.
-- **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. La consommation de Chip RAM après de nombreux changements de fonte reste à mesurer.
+- **Fontes :** `Aga Font Select` accepte les fontes AmigaOS ; `Aga Font Bank Select` accepte les BankFont AMCAF monochromes fixes ou proportionnelles, avec copie privée en Chip RAM. Le test d'endurance WinUAE (500 changements) n'a mesuré aucune baisse de Chip RAM libre ni du plus grand bloc disponible.
 - **Preuves et historique :** [rapport technique R38](docs/M14_FONT_BANK_R38.md) · [test R38 validé](tests/passed/M14_R38_FONT_BANK_01.asc) · [historique technique](docs/NEXT_SESSION.md) · [tests validés](tests/passed/).
 
 **Installation :** consulter [INSTALL.fr.md](INSTALL.fr.md). Une mise à jour du dépôt GitHub ne remplace pas automatiquement les bibliothèques déjà installées dans AMOS/WinUAE.

@@ -19,14 +19,14 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**R38 Chip RAM stress test pending WinUAE:** [500 font switches with memory samples](tests/current/M14_R38_CHIP_RAM_STRESS_01.asc), cycling AMCAF Topaz/Hwarf/Pix3M and AmigaOS Topaz. The R38 binary and `LAST_GOOD` remain unchanged. [Instructions](tests/current/README.md).
+**R38 Chip RAM endurance passed in WinUAE (12 Nov 2026):** [500 font switches, zero errors and zero measured Chip RAM loss](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc). Total Chip free **1,582,088 bytes** and largest free block **1,320,664 bytes** remained constant at every 100-switch checkpoint. `RESULT 1`, normal AMOS return. R38 binary / `LAST_GOOD` unchanged.
 
 
 **Latest validated version: R38 v0.11.0 (12 November 2026)** — 44 AMOS AP20 commands covering indexed AGA screens, palettes, IFF/ILBM, Blitter, Copper, input and text.
 
 - **Library:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) and [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) are identical to the [R38 archive](dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib).
 - **Validation:** Gate A (68000 CPU / CI) and Gate B (interpreted AMOS / WinUAE) **PASS**. Gate C (Compiler) and Gate D (physical AGA) have not been tested.
-- **Fonts:** `Aga Font Select` supports AmigaOS fonts; `Aga Font Bank Select` supports fixed and proportional monochrome AMCAF BankFont, using a private Chip RAM copy. Repeated-switch Chip RAM stress has not been measured yet.
+- **Fonts:** `Aga Font Select` supports AmigaOS fonts; `Aga Font Bank Select` supports fixed and proportional monochrome AMCAF BankFont, using a private Chip RAM copy. The WinUAE 500-switch stress test showed no reduction in free Chip RAM or largest free block.
 - **Evidence and history:** [R38 technical report](docs/M14_FONT_BANK_R38.md) · [passed R38 test](tests/passed/M14_R38_FONT_BANK_01.asc) · [technical history](docs/NEXT_SESSION.md) · [passed tests](tests/passed/).
 
 **Installation:** use [INSTALL.md](INSTALL.md). GitHub updates do not automatically replace libraries already installed in AMOS/WinUAE.
