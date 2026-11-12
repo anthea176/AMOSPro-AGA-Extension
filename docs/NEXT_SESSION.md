@@ -1,14 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M17/R55 v0.13.0 — bibliothèque de travail sur main, Gate A PASS (12/11/2026)
+## M17/R55 v0.13.0 — Gates A/B/C PASS sur le scénario Blitter (12/11/2026)
 
 **Règle de l'auteur :** uniquement `main` ; **un seul binaire actif : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)** ; **un seul ASC actif : [`tests/current/M17_R55_BLIT_GROUP_01.asc`](../tests/current/M17_R55_BLIT_GROUP_01.asc)**. Aucun binaire R55 dans `dist/experimental/`, aucun workflow d'archivage R55. [Règle permanente](../EXTENSION_SOURCE_RULES.md).
 
-**État exact : R55 v0.13.0**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, **53 commandes / 60 entrées AP20**. Fill/Clear groupés, Copy inchangée ; **Gate A CPU/CI PASS** sur [run R55](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835). **Gates B interprété/WinUAE, C nouvel exécutable AMOS Compiler/WinUAE, D Amiga physique NON TESTÉES.** [Rapport technique](M17_BLITTER_DIAGNOSTIC.md).
+**État exact : R55 v0.13.0**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, **53 commandes / 60 entrées AP20**. Fill/Clear groupés, Copy inchangée ; **Gate A CPU/CI PASS** sur [run R55](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835). **Gate B interprété/WinUAE PASS : capture de l'auteur `DONE 40`, `C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1`, `RESULT 1`, `CLOSE RETURNED`. Gate C nouvel exécutable AMOS Compiler/WinUAE PASS : confirmation explicite de l'auteur sans capture (le test se terminait immédiatement). Gate D Amiga physique NON TESTÉE.** [Rapport technique](M17_BLITTER_DIAGNOSTIC.md).
 
 **R54 reste `LAST_GOOD` dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`**, inchangée, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, ses Gates A/B/C historiques PASS. **R55 n'est pas promue**.
 
-**Essai suivant :** installer `dist/AMOSPro_AGA.Lib` R55 dans APSystem, redémarrer AMOS, lancer le seul ASC courant avec `examples/demo.iff` et vérifier `RESULT 1`, `CLOSE RETURNED`, rendu et swaps ; ensuite [benchmark V2 historique inchangé](../benchmarks/graphics_32c_v2.asc) pour mesurer le gain, puis compiler à nouveau les programmes pour Gate C.
+**Test actif corrigé :** ajout de `Wait Key` **après les résultats** dans `tests/current/M17_R55_BLIT_GROUP_01.asc` afin de permettre une capture interprétée/compilée. Il s'agit uniquement de l'attente finale, **pas d'un changement du binaire R55** ; les Gates B/C validées concernent l'exécution précédente sans cette attente. **Étape suivante :** [benchmark V2 historique inchangé](../benchmarks/graphics_32c_v2.asc) pour mesurer le gain en interprété et compilé, 3 essais avec conditions WinUAE comparables. R55 reste la candidate de travail, aucune promotion automatique.
 
 ## M16/R54 v0.12.9 — PROMUE LAST_GOOD, Gates A/B/C PASS (12/11/2026)
 
