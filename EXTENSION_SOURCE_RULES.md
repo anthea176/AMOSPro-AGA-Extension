@@ -1,5 +1,7 @@
 # EXTENSION_SOURCE_RULES.md
 
+**Décision M15 (12/11/2026) :** l'utilisateur demande de **sauter R39** (fontes `Change Print Font` 8×8) et de passer directement au **dessin 2D AGA M15**. Ordre de travail proposé : **R40 `Aga Plot`**, puis `Aga Draw`, `Aga Box`, `Aga Circle`, un seul appel public par sous-jalon. Le contrat et l'audit sont dans [`docs/M15_DRAWING_2D_DESIGN.md`](docs/M15_DRAWING_2D_DESIGN.md). **Étude uniquement à ce stade : aucune nouvelle commande approuvée, aucune candidate créée.** R38 v0.11.0 WinUAE-PASS et ses bibliothèques `LAST_GOOD` restent inchangées ; tests M15 Gates A/B/C/D non exécutés. Travail exclusivement sur `main` du dépôt courant.
+
 **Suivi de fuite Chip RAM R38 — VALIDÉ WinUAE (12/11/2026) :** 500 sélections de fontes AMCAF Topaz/Hwarf/Pix3M + Topaz AmigaOS, chacune suivie de `Aga Text` sur un écran AGA privé. `Chip Free = 1 582 088` et plus grand bloc Chip libre `1 320 664` identiques aux six relevés 0..500 ; `CHIP DROP 0`, `BIG DROP 0`, `ERR 0`, `RESULT 1`, `CLOSE RETURNED` (ligne 167). Reset +12 712 octets libres, fermeture +170 472 octets supplémentaires. Aucune fuite mesurée sur ce scénario. `tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc`, Git blob original `976635ad8562c88ed07753c71a4dc2a6d18c2e29` intact ; `tests/current/` sans ASC actif. Binaires R38 et `LAST_GOOD` inchangés. Gates C Compiler/D matériel AGA réel non testées.
 
 ## R38 0.11.0 — Aga Font Bank Select : Gates A/B PASS, LAST_GOOD (12/11/2026)

@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**Décision M15 (12/11/2026) :** l'utilisateur demande de **sauter R39** (fontes `Change Print Font` 8×8) et de passer directement au **dessin 2D AGA M15**. Ordre de travail proposé : **R40 `Aga Plot`**, puis `Aga Draw`, `Aga Box`, `Aga Circle`, un seul appel public par sous-jalon. Le contrat et l'audit sont dans [`docs/M15_DRAWING_2D_DESIGN.md`](M15_DRAWING_2D_DESIGN.md). **Étude uniquement à ce stade : aucune nouvelle commande approuvée, aucune candidate créée.** R38 v0.11.0 WinUAE-PASS et ses bibliothèques `LAST_GOOD` restent inchangées ; tests M15 Gates A/B/C/D non exécutés. Travail exclusivement sur `main` du dépôt courant.
+
 **Suite R38 (12/11/2026) — TEST CHIP RAM WinUAE PASS :** 500 sélections + 500 `Aga Text`, 0 erreur, `Chip Free = 1 582 088` et plus grand bloc libre `1 320 664` aux six relevés ; `CHIP DROP 0`, `BIG DROP 0`, `RESULT 1`, `CLOSE RETURNED` (ligne 167). Après reset 1 594 800 octets libres, après fermeture 1 765 272. [ASC original archivé](../tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) sans changement (`976635ad8562c88ed07753c71a4dc2a6d18c2e29`) ; `tests/current/` sans ASC actif. Aucune fuite constatée sur ce protocole, pas de garantie pour d'autres scénarios. Binaire R38 `LAST_GOOD` inchangé ; Gates C/D non testées.
 
 ## R38 0.11.0 — Aga Font Bank Select : Gates A/B PASS, LAST_GOOD (12/11/2026)
