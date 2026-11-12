@@ -8,6 +8,8 @@ import tempfile
 
 from active_library import C1_ARCHIVE, verify_active
 from compiler_relocation import wrap_native_ap20
+from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
+from build_m17_r58_compiler_bridge import build as build_r58
 import generate_aga_native_source as exp
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +26,8 @@ def main() -> None:
         native, ctx = exp.source_binary_from_input(wrapped)
         assert ctx and ctx["verified_extract_and_rewrap"]
         assert ctx["official_entries"] == ctx["native_entries"] + 1
-        assert wrap_native_ap20(native, exp.parse_lib(wrapped)["title"]) == wrapped
+        rewrap = wrap_native_ap20_v2 if is_v2_wrapped(wrapped) else wrap_native_ap20
+        assert rewrap(native, exp.parse_lib(wrapped)["title"]) == wrapped
         with tempfile.TemporaryDirectory(prefix="aga-native-source-") as tmp:
             assert exp.main(["--lib", str(path), "--out", tmp,
                              "--baseline", "auto", "--strict"]) == 0
@@ -40,6 +43,17 @@ def main() -> None:
         print("STRICT SOURCE EXPORT PASS:", path.relative_to(ROOT),
               ctx["official_entries"], "->", ctx["native_entries"],
               "entries;", ctx["provenance"])
+
+    # Check future R58's strict source extraction directly in memory while
+    # keeping only one installable .Lib and one active AMOS test in the repo.
+    candidate, meta = build_r58()
+    native58, ctx58 = exp.source_binary_from_input(candidate)
+    assert ctx58 and ctx58["verified_extract_and_rewrap"]
+    assert ctx58["official_entries"] == 62 and ctx58["native_entries"] == 61
+    assert wrap_native_ap20_v2(native58, exp.parse_lib(candidate)["title"]) == candidate
+    parsed58 = exp.parse_lib(native58)
+    assert not exp.unclassified_gaps(parsed58), "R58 strict native source has untrusted gaps"
+    print("R58 V2 STRICT NATIVE EXPORT PASS (in memory): 62 -> 61 AP20 entries")
 
     # A valid AP20 title mutation must never pass the provenance check.
     tampered = bytearray(current)

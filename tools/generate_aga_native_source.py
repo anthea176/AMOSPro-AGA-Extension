@@ -129,6 +129,35 @@ def source_binary_from_input(raw):
     """
     parsed = parse_lib(raw)
     from compiler_relocation import is_compiler_wrapped, native_from_promoted, wrap_native_ap20
+    from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2, wrap_native_ap20_v2
+    if is_v2_wrapped(raw):
+        # Only accept the exact deterministic R58 output of the SHA-pinned R57
+        # builder. Never decode an arbitrary FE31 entry as native Motorola code.
+        from build_m17_r58_compiler_bridge import build as r58_build
+        from compiler_relocation import repack_ap20
+        expected, meta = r58_build()
+        need(raw == expected, 'Unsupported V2 compiler wrapper; source audit required')
+        try:
+            tokens, parts = unwrap_native_parts_v2(raw)
+            native = repack_ap20(raw, tokens, parts, parsed['title'])
+        except (AssertionError, ValueError) as exc:
+            raise ExportError('Malformed deterministic R58 V2 source') from exc
+        need(wrap_native_ap20_v2(native, parsed['title']) == raw,
+             'R58 V2 source rewrap not byte-exact')
+        return native, {
+            'format': 'Compiler-safe AP20 V2 unsigned-offset monolith',
+            'provenance': 'verified deterministic R58 builder from SHA-pinned R57',
+            'official_sha256': sha(raw),
+            'official_bytes': len(raw),
+            'official_entries': len(parsed['section']),
+            'native_sha256': sha(native),
+            'native_bytes': len(native),
+            'native_entries': len(parse_lib(native)['section']),
+            'native_archive': None,
+            'verified_extract_and_rewrap': True,
+            'warning': 'Native ASM output is NOT an installable .Lib; R58 requires '
+                       'the V2 AP20 bridge (never the historical C1 wrapper).',
+        }
     if not is_compiler_wrapped(raw):
         need(not any(sec['core'].startswith(b'\xfe\x31') for sec in parsed['section']),
              'Rbsr entry without audited compiler dispatcher: '
@@ -380,13 +409,20 @@ def verified_current_compiler_seeds(parsed):
     independently rebuilt, or future unknown binary receives these seeds.
     """
     from active_library import verify_active
-    from compiler_relocation import native_from_promoted
+    from compiler_relocation import native_from_promoted, repack_ap20
+    from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
+    def reconstruct(blob):
+        if is_v2_wrapped(blob):
+            tok, parts = unwrap_native_parts_v2(blob)
+            return repack_ap20(blob, tok, parts, parse_lib(blob)['title'])
+        return native_from_promoted(blob, parse_lib(blob)['title'])
     frozen = NATIVE_R46_ARCHIVE.read_bytes()
     need(sha(frozen) == NATIVE_R46_SHA,
          'Strict source: inherited R46 native archive changed')
     original = parse_lib(frozen)['section']
-    current_native = native_from_promoted(current, parse_lib(current)['title'])
+    current_native = reconstruct(current)
+    protected_native = reconstruct(last_good)
     # Reproduce historical R54 from its immutable archive, not the mutable
     # "LAST_GOOD" pointer: the author promoted R57 after its WinUAE Gates.
     r54_archive = ROOT/'dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib'
@@ -394,11 +430,22 @@ def verified_current_compiler_seeds(parsed):
     need(sha(r54_blob) == 'f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0', 'R54 provenance archive changed')
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
-    if raw not in (current_native, good_native):
-        return {}
     sections = parsed['section']
-    need(len(sections) == 59,
-         'Strict source: current R54/R57 AP20 native layout changed')
+    r58_case = (len(sections) == 61)
+    if r58_case:
+        # Treat the new padding as DATA, never a speculative 68000 routine.
+        from build_m17_r58_compiler_bridge import build as build_r58, FAR_PROBE
+        v2_blob, info = build_r58()
+        need(raw == reconstruct(v2_blob),
+             'Strict source: R58 native code differs from exact in-memory builder')
+        need(len(sections[59]['core']) == 9252 and not any(sections[59]['core']),
+             'Strict source: R58 data padding changed')
+        need(sections[60]['core'] == FAR_PROBE,
+             'Strict source: R58 far diagnostic marker changed')
+    elif len(sections) != 59:
+        return {}
+    if raw not in (current_native, good_native, protected_native) and not r58_case:
+        return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
              f'Strict source: inherited native entry {i} changed')
@@ -438,6 +485,8 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R57 in-place RastPort helper changed')
         seeds[20] = {4}
         seeds[58].add(110)
+    if r58_case:
+        seeds[60] = {0}  # only the two source-proven NOP/RTS instructions
     return seeds
 
 
