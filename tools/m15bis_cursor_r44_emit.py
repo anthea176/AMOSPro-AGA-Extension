@@ -32,7 +32,7 @@ def emit_cursor():
     # ABI: AMOS D3=Visible, numeric function returns D3=0/1, D2=0.
     # A3 (AMOS parameter stack) stays unchanged; all other ordinary
     # callee-preserved registers as in R43. The wrapper saves ALL D/A0-A6.
-    c.raw("48e7efee")
+    c.raw("48e7effe")
     c.move(D(3), D(7))
     c.move(I(0), D(3))
     c.tst(D(7))
@@ -106,7 +106,7 @@ def emit_cursor():
     c.move(I(1), D(3))
 
     c.label("done")
-    c.raw("4cdf77f7")                # R43 normal ABI restore (except D3/A3)
+    c.raw("4cdf7ff7")                # R43 normal ABI restore (except D3/A3)
     c.raw("74004e75")                # D2=integer result, RTS
 
     # Shared CloseWindow hook for segment 0,8,17,18:
