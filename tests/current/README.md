@@ -1,9 +1,7 @@
-# Test AMOS courant — M16/R46 `Aga Image Draw`
+# Tests AMOS courants — aucun ASC actif
 
-**Unique ASC actif :** [`M16_R46_IMAGE_DRAW_01.asc`](M16_R46_IMAGE_DRAW_01.asc). Installer [R46 v0.12.1 candidate](../../dist/AMOSPro_AGA.Lib) sous WinUAE, **relancer AMOS après remplacement de la bibliothèque**, placer la banque [`M16_AGAPIC_SAMPLE_BANK10.abk`](M16_AGAPIC_SAMPLE_BANK10.abk) dans le répertoire courant, puis importer le test par **Project → Merge ASCII**. Le test écrase la banque AMOS 10.
+**M16/R46 v0.12.1 a passé la Gate B WinUAE (12/11/2026)** : [programme exact archivé](../passed/M16_R46_IMAGE_DRAW_01.asc) (4 240 octets, Git blob `83eff57323b1cacd0ea58a131ef1ebcec079eceb`), sans modification après essai ; [rapport](../../docs/M16_R46_FLAGS0_FIX.md). `ERRORS 0 RESULT 1`, `CLOSE RETURNED` et rendu opaque, masque, décalé, quatre bords correct.
 
-**Gate A R46 PASS** : 258 scénarios CPU 68000 et export assembleur strict validés ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43221899949)). **Gate B WinUAE R46 NON TESTÉE.** R45 a échoué (flags natifs 0 non acceptés), [ASC R45 archivé sans retouche](../failed/M16_R45_IMAGE_DRAW_01.asc). [Diagnostic du bug et correctif](../../docs/M16_R46_FLAGS0_FIX.md).
+**Aucun `.asc` actif** dans ce répertoire. [Banque AGAPIC numéro 10](M16_AGAPIC_SAMPLE_BANK10.abk) (1 856 octets) conservée. [Bibliothèque R46](../../dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R46](../../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib), SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`.
 
-**Visuel attendu :** trois cadres contenant une mosaïque 64×40, une image opaque et deux images masquées circulaires ; portions visibles sur les quatre bords. Vérifier couleur 0 opaque (rose), trous transparents laissant le décor, décalage X, Safe et fermeture. Sortie attendue : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, `ERRORS 0 RESULT 1`, `CLOSE RETURNED`. Diagnostic banque : `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `STREAM 196 TOTAL 1836`.
-
-**R44 v0.11.5 demeure `LAST_GOOD`** ([binaire gelé](../../dist/AMOSPro_AGA_LAST_GOOD.Lib)). Ne pas promouvoir R46 avant confirmation utilisateur. Gates C Compiler et D Amiga AGA réel non testées.
+R44 reste archivée avec Gate A/B PASS, R45 en échec Gate B reste archivée. Gates C Compiler / D matériel non validées.

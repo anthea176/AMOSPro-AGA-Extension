@@ -1,6 +1,6 @@
 # M16/R46 — Correction des flags de banque DATA AMOS chargée (12/11/2026)
 
-**Statut : R46 v0.12.1 candidate, Gate A CPU 68000/CI PASS ; Gate B AMOS/WinUAE NON TESTÉE.** La version précédente **R45 v0.12.0 a échoué Gate B** lors des captures utilisateur : aucune image AGAPIC affichée, mais les rectangles tracés par `Aga Box` fonctionnent.
+**Statut actuel : R46 v0.12.1 Gates A CPU/CI et B AMOS interprété/WinUAE PASS (captures utilisateur du 12/11/2026), promue `LAST_GOOD`.** La version précédente **R45 v0.12.0 a échoué Gate B** lors des captures utilisateur : aucune image AGAPIC affichée, mais les rectangles tracés par `Aga Box` fonctionnent.
 
 ## Diagnostic établi par les deux captures WinUAE R45
 
@@ -32,12 +32,20 @@ CLOSE RETURNED
 - Binaire de référence R46 : **29 288 octets**, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. L'[archive candidate](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib) et `dist/AMOSPro_AGA.Lib` doivent être rigoureusement identiques.
 - **R44 v0.11.5 reste `LAST_GOOD`** : SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`. La [R45 défaillante](../dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib) reste archivée à l'octet près avec son [ASC original en échec](../tests/failed/M16_R45_IMAGE_DRAW_01.asc). Aucune autre commande AGA ni aucun ancien test validé n'est modifié.
 
-## Essai Gate B R46 attendu sous AMOS interprété / WinUAE
+## Résultat Gate B R46 — PASS (12/11/2026)
 
-Installer [R46 actuelle](../dist/AMOSPro_AGA.Lib), avec la même [banque ABK](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk), puis importer [l'unique test courant R46](../tests/current/M16_R46_IMAGE_DRAW_01.asc) par **Project → Merge ASCII**. Ne pas oublier de **redémarrer AMOS après remplacement de la bibliothèque** et de vérifier que ce n'est pas encore R45 qui est chargée.
+Les captures utilisateur confirment une mosaïque opaque, deux mosaïques masquées et des portions clippées aux quatre bords, index couleur 0 visible. Résultat : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `CHIP BEFORE/END 1801928 1801928`, `NOSCREEN 0 CLOSED -1`, `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `HEAD AGAPIC V 1`, `STREAM 196 TOTAL 1836`, **`ERRORS 0 RESULT 1`**, **`CLOSE RETURNED`**, fin ligne 148.
+
+L'ASC R46 affiche encore `R45 - CPU AGAPIC IMAGE` comme titre de l'écran ; ce libellé hérité n'affecte pas le code exécuté. L'ASC est archivé à l'octet près, sans retouche.
+
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R46, **29 288 octets**, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. [Test WinUAE exact archivé](../tests/passed/M16_R46_IMAGE_DRAW_01.asc) (4 240 octets, Git blob `83eff57323b1cacd0ea58a131ef1ebcec079eceb`). Archives R44/R45 inchangées ; **Gate C Compiler non validée** (CI expérimentale indépendante en échec), **Gate D matériel non testée**. Localisation Fast RAM et performances CPU réel non mesurées.
+
+## Procédure Gate B historique (avant le PASS)
+
+Installer [R46 actuelle](../dist/AMOSPro_AGA.Lib), avec la même [banque ABK](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk), puis importer [l'unique test courant R46](../tests/passed/M16_R46_IMAGE_DRAW_01.asc) par **Project → Merge ASCII**. Ne pas oublier de **redémarrer AMOS après remplacement de la bibliothèque** et de vérifier que ce n'est pas encore R45 qui est chargée.
 
 Visuel attendu : trois cadres en haut, mais **à l'intérieur une mosaïque de couleurs de 64×40 pixels** ; celle de gauche est opaque (avec index 0 rose visible), celles du centre et de droite montrent la mosaïque dans un disque masqué (avec quelques trous transparents). D'autres portions de l'image doivent être dessinées sur les bords gauche, droit, haut et bas.
 
 Valeurs attendues : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, `ERRORS 0 RESULT 1` et `CLOSE RETURNED`. Les métadonnées de la banque doivent encore afficher `NATIVE FLAGS 0`, `LEN 1852`, `NO 10`, `STREAM 196 TOTAL 1836`.
 
-**Ne pas promouvoir R46 en `LAST_GOOD` avant confirmation visuelle et fonctionnelle sous WinUAE.** Le fait de passer la Gate A ne prouve ni les performances 68000 réelles, ni la Gate C (AMOS Compiler), ni la Gate D (Amiga AGA physique).
+**La Gate B WinUAE a été confirmée : R46 est promue `LAST_GOOD`.** Le fait de passer la Gate A ne prouve ni les performances 68000 réelles, ni la Gate C (AMOS Compiler), ni la Gate D (Amiga AGA physique).

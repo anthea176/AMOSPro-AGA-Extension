@@ -1,5 +1,12 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M16/R46 v0.12.1 — Gates A/B PASS, LAST_GOOD (12/11/2026)
+
+**AMOS interprété / WinUAE : PASS sur captures utilisateur** du test `M16-R46-IMAGE-DRAW-01`. Images opaque, masquée et décalée visibles, quatre côtés clippés : `OPAQUE 1 MASK 1 SHIFT 1`, `CLIP 1 1 1 1`, `BAD 0 0 0 OUT 1`, `SWAP 1 BACKSAFE 1`, `CHIP BEFORE/END 1801928 1801928`, `NATIVE LEN 1852 WANT 1852`, `NATIVE NO 10 FLAGS 0`, `NATIVE NAME AGAPIC`, `HEAD AGAPIC V 1`, `STREAM 196 TOTAL 1836`, **`ERRORS 0 RESULT 1`**, **`CLOSE RETURNED`** (ligne 148). La chaîne graphique `R45 - CPU AGAPIC IMAGE` est un ancien libellé dans le test R46, conservé sans retouche.
+
+**Promotion :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib`, **29 288 octets**, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`, même blob Git ; **50 commandes AP20 / 56 segments** ; 258 scénarios natifs CPU 68000 et source strict Gate A PASS ([CI R46](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43221899949)). Test WinUAE exact archivé en `tests/passed/M16_R46_IMAGE_DRAW_01.asc` (**4 240 octets**, Git blob `83eff57323b1cacd0ea58a131ef1ebcec079eceb`) ; aucun ASC actif dans `tests/current/`. Archive R44 validée et archive R45 échouée immuables. **Gate C Compiler non validée** (CI expérimentale distincte en échec), **Gate D Amiga AGA physique non testée**. Emplacement Fast RAM réel et performances 68000 matériel non mesurés. **Branche `main` uniquement.**
+
+
 ## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
 
 **M15 Plot/Draw/Box/Circle et M15bis Aga Mouse Cursor sont clôturés** après la CI Gate A (516 scénarios CPU 68000 R44) et les validations WinUAE utilisateur : test R44 (500 bascules, 0 erreur, CHIP DROP 0, RESULT 1, CLOSE RETURNED) puis démonstration globale `examples/m15_2d_cursor.asc` (« ça marche super »). Le retour global confirme le fonctionnement visuel, sans capture chiffrée fournie pour cette démo. **49 commandes AP20, 55 segments.**

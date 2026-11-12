@@ -64,7 +64,7 @@ def build():
         assert ARCHIVE_R46.read_bytes() == candidate, "R46 published archive mismatch"
     return candidate, dict(version=VERSION, size=len(candidate),sha256=digest(candidate),
         commands=50,segments=56,changed_segments=[ENTRY_INDEX],labels=labels,
-        Gate_A="CPU_CI_PASS",Gate_B="NOT_TESTED")
+        Gate_A="CPU_CI_PASS",Gate_B="USER_WINUAE_PASS")
 
 
 if __name__ == "__main__":

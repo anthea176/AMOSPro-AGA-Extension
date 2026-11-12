@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R46 Gate A repair, failed R45 archive, R44 LAST_GOOD and all history pinned."""
+"""Integrity: R46 Gate A/B LAST_GOOD; historical R44 and failed R45 archives pinned."""
 from pathlib import Path
 import hashlib
 import struct
@@ -42,7 +42,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -113,12 +113,12 @@ def main():
         assert hashlib.sha256(raw).hexdigest() == expected, relative
         binaries[relative] = raw
 
-    candidate = binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]  # frozen R44 for inherited historical assertions
+    candidate = binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]  # frozen R44 for inherited historical assertions
     candidate_r45 = binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"]
     candidate_r46 = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == candidate_r46
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -408,7 +408,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate_r46
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
@@ -468,7 +468,7 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc")) == ["M16_R46_IMAGE_DRAW_01.asc"], "R46 Gate B must have exactly one current ASC"
+    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc")) == [], "No active ASC must remain after R46 Gate B PASS"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
@@ -546,7 +546,7 @@ def main():
     assert len(test_data)==3466 and hashlib.sha1(test_blob).hexdigest()=="088158365a64accf0417fdda3fbba74e2e58ebf7", "R43 passed ASC bytes changed"
     assert binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"]==built43, "R43 frozen archive changed"
     built44,meta44=build_r44()
-    assert candidate==built44==build_r44()[0]==binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]==binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"], "R44 promoted reproducibility mismatch"
+    assert candidate==built44==build_r44()[0]==binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"], "R44 historical reproducibility mismatch"
     assert meta44["sha256"]=="0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc" and meta44["size"]==27460, "R44 candidate SHA/size mismatch"
     tok44,seg44,_=split(candidate)
     assert len(seg44)==55 and len(seg43)==54, "R44 segment count"
@@ -580,8 +580,8 @@ def main():
     demo_bytes=demo.read_bytes()
     demo_blob=b"blob "+str(len(demo_bytes)).encode("ascii")+bytes([0])+demo_bytes
     assert len(demo_bytes)==6495 and hashlib.sha1(demo_blob).hexdigest()=="b9db059c7c3554d8f3bb59fca61ff2d54270a23b", "User-tested combined example modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built44, "R44 LAST_GOOD promotion mismatch"
-    print("PASS: R44 49 AP20 commands / 55 segments, exact R44 LAST_GOOD and original ASC;")
+    assert binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]==candidate==built44, "R44 historical archive mismatch"
+    print("PASS: R44 historical 49 AP20 commands / 55 segments, archived R44 and original ASC;")
     print("      R43 frozen, R44 native Gate A and user WinUAE Gate B PASS; combined demo user-confirmed")
     # R45 is a Gate-A-only candidate, NEVER the promoted LAST_GOOD before
     # explicit WinUAE confirmation; its new segment may not mutate R44.
@@ -609,7 +609,7 @@ def main():
     test_data=test_r45.read_bytes()
     test_blob=b"blob "+str(len(test_data)).encode("ascii")+bytes([0])+test_data
     assert len(test_data)==4241 and hashlib.sha1(test_blob).hexdigest()=="993b9b6b4eff2eaa3183437602868bbe2946d26a", "R45 failed ASC mutated"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built44 and candidate_r45!=candidate, "R44 LAST_GOOD must remain untouched"
+    assert binaries["dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"]==candidate==built44 and candidate_r45!=candidate, "R44 historical archive must remain untouched"
     print("PASS: failed R45 50 AP20 commands / 56 segments, 29280 B frozen, WinUAE Gate B FAIL (flags=0);")
 
     # R46 repairs ONLY entry 55 in the failed R45 baseline; all AP20
@@ -625,14 +625,14 @@ def main():
     named46=[v for v in aud46["tokens"] if v["name"].startswith("aga ")]
     assert len(named46)==50 and sum(v["name"]=="aga image draw" for v in named46)==1, "R46 named commands changed"
     assert any(v["index"]==ENTRY_IMAGE and v["parameters"]==5 and v["getp"] for v in aud46["parameter_checks"])
-    test_r46=ROOT/"tests/current/M16_R46_IMAGE_DRAW_01.asc"
-    assert test_r46.is_file() and not (ROOT/"tests/passed/M16_R46_IMAGE_DRAW_01.asc").exists()
+    test_r46=ROOT/"tests/passed/M16_R46_IMAGE_DRAW_01.asc"
+    assert test_r46.is_file() and not (ROOT/"tests/current/M16_R46_IMAGE_DRAW_01.asc").exists()
     new_data=test_r46.read_bytes()
     new_blob=b"blob "+str(len(new_data)).encode("ascii")+bytes([0])+new_data
-    assert len(new_data)==4240 and hashlib.sha1(new_blob).hexdigest()=="83eff57323b1cacd0ea58a131ef1ebcec079eceb", "R46 current ASC mutated"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==built44 and candidate_r46 not in (candidate_r45,candidate), "R46 must not be LAST_GOOD"
+    assert len(new_data)==4240 and hashlib.sha1(new_blob).hexdigest()=="83eff57323b1cacd0ea58a131ef1ebcec079eceb", "R46 Gate B PASS ASC original mutated"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate_r46==binaries["dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib"] and candidate_r46 not in (candidate_r45,candidate), "R46 LAST_GOOD promotion mismatch"
     print("PASS: R46 candidate 50 AP20 commands / 56 segments, 29288 B exact;")
-    print("      258 CPU native Gate A cases, R45 failed archive frozen, R44 LAST_GOOD frozen, R46 Gate B WinUAE NOT TESTED")
+    print("      258 CPU native Gate A cases; user WinUAE Gate B PASS; R45 failed and R44 PASS archives frozen; LAST_GOOD R46")
 
 
 if __name__ == "__main__":

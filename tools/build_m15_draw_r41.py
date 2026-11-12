@@ -15,7 +15,7 @@ from m15_draw_r41_emit import emit_draw, ENTRY_INDEX
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib"
 BASE_SHA256 = "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231"
-LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+LAST_GOOD = ROOT / "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"  # historical R44 anchor, not moving LAST_GOOD
 LAST_GOOD_SHA256 = "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"

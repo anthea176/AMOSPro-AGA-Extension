@@ -135,7 +135,7 @@ def main():
     print("0/1/3 accepted; 2/4/5/6/7/256/65535 rejected before any paint")
     print("50 AP20 commands, 56 segments. R44 LAST_GOOD and failed R45 frozen.")
     print("R46 candidate SHA256",info["sha256"],"size",info["size"])
-    print("R46 AMOS/WinUAE Gate B NOT TESTED")
+    print("R46 Gate B PASS from user WinUAE captures (not executed by CPU harness)")
 
 
 if __name__=="__main__":

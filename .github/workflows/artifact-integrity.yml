@@ -103,7 +103,7 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
-      - name: M16 R45 image CPU draw experimental candidate — Unicorn Gate A (R44 LAST_GOOD frozen)
+      - name: M16 R45 failed-image archive — frozen Unicorn Gate A (R44 historical archive)
         run: |
           python -B tools/build_m16_image_draw_r45.py
           python -B tools/test_m16_image_draw_r45.py
@@ -112,7 +112,7 @@ jobs:
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
 
-      - name: M16 R46 image draw loaded-bank FLAGS=0 repair — native CPU Gate A only
+      - name: M16 R46 LAST_GOOD image draw — native CPU Gate A (Gate B user-confirmed)
         run: |
           python -B tools/build_m16_image_draw_r46.py --emit-base64
           python -B tools/test_m16_image_draw_r46.py
@@ -138,7 +138,7 @@ jobs:
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R43_GateA.Lib --out /tmp/amos-aga-r43-native --baseline none --strict
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib
 
-      - name: M15bis R44 Aga Mouse Cursor promoted — 516 CPU cases, strict native source, R43 archive frozen
+      - name: M15bis R44 Aga Mouse Cursor historical archive — 516 CPU cases, strict native source
         run: |
           python -B tools/test_m15bis_cursor_r44.py
           python -B tools/build_m15bis_cursor_r44.py

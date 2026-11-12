@@ -1,5 +1,7 @@
 # M16 — AGAPIC v1 : images compressées en banque DATA / rendu CPU AGA
 
+**Mise à jour 12/11/2026 : R46 `Aga Image Draw` validée Gates A/B AMOS/WinUAE et promue `LAST_GOOD`.** [Rapport](M16_R46_FLAGS0_FIX.md), [ASC original archivé](../tests/passed/M16_R46_IMAGE_DRAW_01.asc). Emplacement Fast RAM effectif, Gate C Compiler et Gate D matériel encore non validés. Les sections R44/R45 ci-dessous décrivent des étapes historiques.
+
 **État : P0 VALIDÉ sur modèle hôte/CI et chargement ABK sous AMOS/WinUAE (12/11/2026).** 432 contrôles ABK/roundtrips, 1 344 rendus planaires et 31 cas invalides ; [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43214342325). La capture utilisateur du chargement AGAPIC confirme `ABK FORMAT RESULT 1`, banque 10, 1 836 octets DATA, version 1, 64×40×4, masque/codec 1 et offsets 32/196/1 836. [Rapport de validation WinUAE](M16_AGAPIC_WINUAE_P0_PASS.md). Le rendu CPU n'a été testé que dans le modèle Python, **pas encore dans l'extension**.
 Aucun token AP20 R45 ni dessin natif 68000 : la validation WinUAE concerne uniquement l'enveloppe ABK et la lecture de son en-tête.
 **R44 v0.11.5 reste LAST_GOOD** : 49 commandes AP20, 27 460 octets.

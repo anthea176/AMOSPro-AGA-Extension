@@ -17,7 +17,7 @@ from audit_ap20 import parse, inspect, token
 from m16_image_draw_r45_emit import emit_image_draw, ENTRY_INDEX, GETP
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib"  # frozen R44 historical base
 BASE_SHA256 = "0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc"
 ARCHIVE_R45 = ROOT / "dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib"
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"

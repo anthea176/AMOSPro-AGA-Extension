@@ -1,6 +1,10 @@
-# Outils Python — R44 v0.11.5 `LAST_GOOD`, M15 et M15bis clôturés
+# Outils Python — R46 v0.12.1 `LAST_GOOD`, M16 rendu AGAPIC validé sous WinUAE
 
-## M16/R46 — `Aga Image Draw` : candidate CPU/CI Gate A PASS, WinUAE Gate B à tester
+## M16/R46 — Gates A/B PASS, LAST_GOOD
+
+**R46 validée le 12/11/2026** : [bibliothèque courante](../dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R46](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib), 29 288 octets, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. [ASC WinUAE exact](../tests/passed/M16_R46_IMAGE_DRAW_01.asc) (4 240 octets, blob `83eff57323b1cacd0ea58a131ef1ebcec079eceb`) archivé ; aucun ASC courant. Pour préserver les builds reproductibles, les builders historiques R40–R45 et le prototype expérimental Compiler restent ancrés sur l'archive R44 figée. Gates C/D non validées.
+
+### Historique de la candidate R46 avant validation WinUAE
 
 **R46 v0.12.1 :** [émetteur 68000 R45/R46](m16_image_draw_r45_emit.py), [builder R46](build_m16_image_draw_r46.py), [tests CPU R46](test_m16_image_draw_r46.py) (**258 scénarios natifs PASS**), [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43221899949), [rapport](../docs/M16_R46_FLAGS0_FIX.md). Le correctif accepte les flags natifs **0/1/3** observés après `Load` d'une banque DATA ABK. [Binaire courant R46](../dist/AMOSPro_AGA.Lib), 29 288 octets, SHA256 `5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580`. [Test courant R46](../tests/current/M16_R46_IMAGE_DRAW_01.asc), **Gate B NON TESTÉE**. R45 défaillante, 29 280 octets, reste [en archive](../dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib), [ASC R45 original en échec](../tests/failed/M16_R45_IMAGE_DRAW_01.asc) gelé. **R44 `LAST_GOOD` intacte.**
 
