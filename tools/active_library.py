@@ -1,15 +1,14 @@
-"""Active installable candidate (dist root) vs independently frozen LAST_GOOD.
+"""One current working binary in dist/ and independently frozen LAST_GOOD.
 
-Only versioned, pinned artifacts are permitted in the active distribution.
-A candidate may be current WITHOUT being promoted; the prior official last
-good is never overwritten by Gate A / CPU diagnostics.
+R55 may be the current test build without being promoted or archived elsewhere.
 """
 from hashlib import sha256
 from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"  # Official R54 0.12.9, validated Gates A/B/C
+LAST_GOOD_SHA="f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0"  # Promoted R54 0.12.9, Gates A/B/C
+R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Current development file in dist/AMOSPro_AGA.Lib, Gate A only
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib": "4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26",
@@ -37,6 +36,9 @@ def verify_active(root: Path):
     assert is_compiler_wrapped(cur),"Active library must be Compiler-safe"
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
+    if sha256(cur).hexdigest()==R55_SHA:
+        assert cur!=good,"R55 candidate must not overwrite R54 LAST_GOOD"
+        return cur,good,"R55 v0.13.0 current Gate A candidate"
     if cur==good:
         r54=(root/"dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib").read_bytes()
         assert r54==cur,"Promoted R54 differs from immutable 0.12.9 archive"

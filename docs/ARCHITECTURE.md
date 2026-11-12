@@ -1,12 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État actuel — M17/R55 Gate A PASS, base officielle M16/R54 (12/11/2026)
+## État actuel — M17/R55 dans dist, M16/R54 LAST_GOOD (12/11/2026)
 
-**Bibliothèque officielle :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = [archive R54](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes / 60 entrées AP20**. Le pont AMOS Compiler-safe contient un monolithe de **30 160 octets** ; la version R46 C1 de 29 964 octets reste uniquement dans son [archive figée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib). Les wrappers R54 `Aga Bank Image Draw` et `Aga Bank Font Select` sont additifs ; les anciennes API restent disponibles. [Contrat et validation R54](M16_R54_BANK_NUMBER.md).
+**`dist/AMOSPro_AGA.Lib` = R55 0.13.0 en cours de validation**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes / 60 entrées AP20, monolithe Compiler-safe 30 780 octets. [Unique ASC courant](../tests/current/M17_R55_BLIT_GROUP_01.asc) : Fill/Clear/Copy/40 swaps. Gate A CPU/CI PASS, **B/C/D R55 NON TESTÉES**. Pas de branche, de fichier binaire R55 versionné ni de circuit expérimental supplémentaire.
 
-**Validations R54 :** Gate A CPU/CI PASS ; Gate B AMOS interprété/WinUAE PASS ; Gate C nouvel exécutable AMOS Compiler/WinUAE PASS **sur le scénario R54 testé** ; Gate D Amiga AGA physique NON TESTÉE. [CI complète du HEAD de publication](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43272147778). Aucune preuve d'exhaustivité des 53 commandes ni de vitesse sur Amiga physique.
-
-**M17 (R55 candidate Gate A PASS ; B/C/D à tester) :** [artefact WinUAE expérimental](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835), **32 988 octets**, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad` ; R54 reste l'officielle. optimiser `Aga Blit Fill` et `Aga Blit Clear` sans changer leur signature, leurs retours, leur garde non bloquante `Safe`, ni le back buffer AGA. La conception héritée de M12 effectue les blits plan par plan et attend `WaitBlit` après chacun ; le coût exact reste à profiler dans la R54. [Diagnostic source](M17_BLITTER_DIAGNOSTIC.md) · [baseline R44 WinUAE V2 à ne pas modifier](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md). Les sections suivantes décrivent des **états historiques**, pas la version installable actuelle.
+**`dist/AMOSPro_AGA_LAST_GOOD.Lib` = R54 v0.12.9 protégée**, 32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C validées sur leurs scénarios, Gate D physique non testée. Les archives antérieures sont historiques et intouchables. [Règles](../EXTENSION_SOURCE_RULES.md) · [rapport M17](M17_BLITTER_DIAGNOSTIC.md).
 
 ## Historique — M16/R46 v0.12.1, ancien checkpoint Gates A/B (12/11/2026)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible frozen R46 C1 bridge plus verification of active R54 LAST_GOOD.
+"""Reproducible historical R46 bridge plus verification of current R55 or R54.
 
 New versions MUST derive native parts from the compiler-safe LAST_GOOD
 with compiler_relocation.native_from_promoted(), modify the native parts,
@@ -49,7 +49,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if "BANK_NUMBER_R54" in active:
+    if active.startswith("R55 v0.13.0"):
+        from build_m17_blit_group_r55 import build as r55_build
+        candidate,meta = r55_build()
+        assert candidate==current, "R55 current dist library differs from deterministic builder"
+        print("CURRENT M17 R55 FILL/CLEAR BUILDER PASS",
+              {k:v for k,v in meta.items() if k!="helper_labels"})
+    elif active=="promoted R54 v0.12.9" or "BANK_NUMBER_R54" in active:
         from build_m16_bank_api_r54 import build as bank_build
         candidate,details_candidate=bank_build()
         assert candidate==current, "R54 candidate does not match its compiler-safe builder"

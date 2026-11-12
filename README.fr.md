@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Dernière version promue `LAST_GOOD` : R54 v0.12.9** — **53 commandes AMOS / 60 entrées AP20**, **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. [Bibliothèque installable](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 figée](dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib). **Gate A CPU/CI PASS ; Gates B WinUAE interprété et C nouvel exécutable compilé PASS sur le scénario des commandes par numéro de banque ; Gate D Amiga physique NON TESTÉE.** Les commandes image/fonte par identifiant sont ajoutées sans modifier les anciennes signatures ni les exemples. [Test R54 archivé](tests/passed/M16_R54_BANK_NUMBER_01.asc) · [rapport R54](docs/M16_R54_BANK_NUMBER.md) · [ancienne archive R46 C1 Compiler-safe](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib).
+**Dernière version promue `LAST_GOOD` : R54 v0.12.9** — référence validée [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32 364 octets, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0` ; Gates A CPU/CI et B/C interprété/compilé WinUAE PASS sur le scénario R54, Gate D physique NON TESTÉE. **Bibliothèque de travail actuelle : R55 v0.13.0**, [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes / 60 entrées AP20 ; Fill/Clear groupés, Gate A CPU/CI PASS, **Gates B/C WinUAE et D physique NON TESTÉES**. [Test AMOS actif unique](tests/current/M17_R55_BLIT_GROUP_01.asc). Travail exclusivement sur `main`, aucun doublon R55.
 
 
 **Images AGAPIC en Fast RAM :** les images compressées peuvent être conservées dans une banque DATA AMOS en **Fast RAM**. `Aga Image Draw` les lit et les décompresse au **CPU** directement vers le back buffer AGA en **Chip RAM**, sans décompression intégrale en Chip et sans Blitter pour lire la source. L'emplacement réel de la banque est choisi par AMOS ; celui de l'ABK de test n'a pas été mesuré. [Format AGAPIC](docs/M16_AGAPIC_FORMAT_DESIGN.md).
@@ -30,7 +30,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R54 0.12.9** — **53 commandes AP20**. Les 51 signatures antérieures (dont `Aga Image Capture` à six arguments) sont inchangées. R53 capture et R54 fonctions par banque ont passé les essais WinUAE interprété et compilé sur leurs scénarios respectifs.
+**API de la bibliothèque courante R55 0.13.0 (53 commandes héritées de R54)** — **53 commandes AP20**. Les 51 signatures antérieures (dont `Aga Image Capture` à six arguments) sont inchangées. R53 capture et R54 fonctions par banque ont passé les essais WinUAE interprété et compilé sur leurs scénarios respectifs.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|

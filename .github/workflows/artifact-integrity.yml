@@ -150,16 +150,6 @@ jobs:
           python -B tools/build_m17_blit_group_r55.py
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
-      - name: Export checked R55 candidate to runner temporary directory
-        run: |
-          python -B tools/build_m17_blit_group_r55.py --ci-output "${RUNNER_TEMP}/r55/AMOSPro_AGA_M17_R55_CANDIDATE.Lib"
-      - name: Upload R55 experimental WinUAE test artifact (NOT LAST_GOOD)
-        uses: actions/upload-artifact@v4
-        with:
-          name: AMOSPro_AGA_M17_R55_EXPERIMENTAL_GateA_ONLY
-          path: ${{ runner.temp }}/r55/AMOSPro_AGA_M17_R55_CANDIDATE.Lib
-          if-no-files-found: error
-          retention-days: 30
 
   pre_release_r54_full:
     # R54 pre-release and promotion: execute the manually maintained full

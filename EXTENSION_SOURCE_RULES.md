@@ -1,5 +1,18 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE ABSOLUE DE L'AUTEUR — un seul circuit de travail AGA (12/11/2026)
+
+**Cette règle explicite prévaut sur toutes les instructions et pratiques historiques contradictoires du dépôt. Aucun assistant, script, workflow ni agent ne doit improviser un autre circuit.**
+
+1. **GitHub : exclusivement la branche `main`.** Ne jamais créer, sélectionner ou utiliser une branche de travail, PR ou dépôt différent sans demande explicite de l'auteur. Pour une modification autorisée, committer directement sur `main`.
+2. **UN SEUL BINAIRE DE TRAVAIL : `dist/AMOSPro_AGA.Lib`.** Toute version en cours de développement ou à tester sous WinUAE est publiée **à cet emplacement exact**. Ne pas créer de deuxième candidate dans `dist/experimental/`, `archive/`, un répertoire de build, une release ni un artefact GitHub Actions comme alternative à ce fichier.
+3. **UN SEUL PROGRAMME AMOS ACTIF : `tests/current/*.asc` (un fichier maximum).** Dès qu'une nouvelle révision doit être testée, mettre **son** programme de validation dans `tests/current/`; pas de deuxième copie active, pas de renvoi à un ASC historique en lieu et place du test courant. Les ressources ABK déjà nécessaires peuvent rester dans ce répertoire.
+4. **Les deux livrables actifs du jalon sont donc `dist/AMOSPro_AGA.Lib` et `tests/current/<test_du_jalon>.asc` : c'est tout.** Les sources, scripts de contrôle et documents techniques restent naturellement dans leurs dossiers habituels, mais ils ne doivent pas produire d'autres candidates ou tests actifs.
+5. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` est uniquement la référence validée protégée** : ne pas l'écraser lors de la préparation d'une candidate. Les archives historiques déjà figées et `tests/passed/` restent intacts. Après Gates et approbation de l'auteur, une promotion de `LAST_GOOD` se traite séparément.
+6. **Fin du processus parallèle :** ne pas créer de script CI qui pousse des binaires vers `dist/experimental/`, de doublon versionné, de ZIP de test ou de candidate téléchargeable ailleurs. Les contrôles CI doivent inspecter le binaire directement dans `dist/`, le test unique dans `tests/current/` et conserver la Gate A/B/C/D distincte.
+
+Cette consigne est **permanente** pour les versions suivantes ; ne pas redemander le choix d'emplacement.
+
 ## RÈGLE PERMANENTE — usage économe de Codex : diagnostic avant développement (12/11/2026)
 
 **Codex consomme un quota limité : privilégier une mission courte et ciblée.** Par défaut, lors d'un bug difficile, la **première demande à Codex doit être un diagnostic seulement**, pas la prise en charge de tout le chantier.

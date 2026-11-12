@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""R55: READ-ONLY in-memory candidate based on exact promoted R54.
+"""R55: deterministic current candidate, based on protected R54 LAST_GOOD.
 
-No direct writes to dist/, no historical archive changes, no publication.
+The ONLY working binary lives at dist/AMOSPro_AGA.Lib; build() is read-only.
 A forward BRA.W at native Fill entry 20 delegates to a new native helper
 APPENDED to existing last entry 58. This preserves ALL old native offsets,
 existing Clear BSR.W (-572), dispatcher/state links and public tokens.
@@ -9,7 +9,6 @@ The final binary uses wrap_native_ap20, not an unwrapped native output.
 """
 from __future__ import annotations
 
-import argparse
 from hashlib import sha256
 from pathlib import Path
 from struct import pack, unpack_from
@@ -38,7 +37,7 @@ TITLE += bytes(len(TITLE) % 2)
 def build():
     stable = BASE.read_bytes()
     assert len(stable) == 32364 and sha256(stable).hexdigest() == BASE_SHA
-    assert CURRENT.read_bytes() == R54_ARCHIVE.read_bytes() == stable, "R54 LAST_GOOD drift"
+    assert R54_ARCHIVE.read_bytes() == stable, "Frozen R54 source archive drift"
     assert is_compiler_wrapped(stable)
     tokens, original = unwrap_native_parts(stable)
     assert len(original) == 59
@@ -81,6 +80,7 @@ def build():
     before = [x for x in inspect(parse(stable))["tokens"] if x["name"].startswith("aga ")]
     after = [x for x in inspect(parse(result))["tokens"] if x["name"].startswith("aga ")]
     assert before == after and len(after) == 53
+    assert CURRENT.read_bytes() in (stable, result), "Current dist library must be exact R54 or built R55"
     return result, {
         "version": VERSION, "size": len(result),
         "sha256": sha256(result).hexdigest(),
@@ -98,24 +98,7 @@ def build():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--ci-output", type=Path, default=None,
-                        help="write only a fresh temporary artifact OUTSIDE the repository")
-    args = parser.parse_args()
     raw, info = build()
     assert raw == build()[0], "R55 builder not deterministic"
-    print("R55 IN-MEMORY Compiler-safe candidate (no promotion):",
-          {k: v for k, v in info.items() if k != "helper_labels"}, flush=True)
-    if args.ci_output is not None:
-        output = args.ci_output
-        assert output.is_absolute(), "CI output must use an absolute path"
-        output = output.resolve()
-        assert not output.is_relative_to(ROOT.resolve()), (
-            "R55 export inside source repository is forbidden"
-        )
-        assert output.suffix.lower() == ".lib" and "R55" in output.name.upper()
-        assert not output.exists(), "CI artifact destination already exists"
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_bytes(raw)
-        assert output.read_bytes() == raw
-        print("R55 EXPERIMENTAL CI ARTIFACT", output, info["sha256"], flush=True)
+    print("R55 current dist/ candidate verified in memory:",
+          {k:v for k,v in info.items() if k != "helper_labels"}, flush=True)

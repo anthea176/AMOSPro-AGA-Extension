@@ -1,12 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M17 — R55 Gate A PASS, artefact WinUAE disponible (12/11/2026)
+## M17/R55 v0.13.0 — bibliothèque de travail sur main, Gate A PASS (12/11/2026)
 
-**M16 est clôturée en R54 v0.12.9.** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) = [archive R54 figée](../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib) (**32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`). R54 conserve **Gates A/B/C PASS sur son scénario** ; Gate D sur Amiga physique non testée. Aucun test `.asc` actif dans `tests/current/`.
+**Règle de l'auteur :** uniquement `main` ; **un seul binaire actif : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)** ; **un seul ASC actif : [`tests/current/M17_R55_BLIT_GROUP_01.asc`](../tests/current/M17_R55_BLIT_GROUP_01.asc)**. Aucun binaire R55 dans `dist/experimental/`, aucun workflow d'archivage R55. [Règle permanente](../EXTENSION_SOURCE_RULES.md).
 
-**Historique de l'ouverture M17 :** diagnostic en lecture seule de `Aga Blit Fill` et `Aga Blit Clear`, puis `Aga Blit Copy` uniquement si le profilage le justifie. Le code hérité de M12 passe par un contrôle non bloquant `Safe`, `BltBitMap` par bitplane et `WaitBlit` après chaque plan ; cette structure est prouvée par la source historique, **pas encore qualifiée comme cause des écarts ni optimisée dans R54**. [Premier rapport M17](M17_BLITTER_DIAGNOSTIC.md) ; [baseline V2 R44/R46 C1](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md), à rejouer à l'identique après une future candidate.
+**État exact : R55 v0.13.0**, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, **53 commandes / 60 entrées AP20**. Fill/Clear groupés, Copy inchangée ; **Gate A CPU/CI PASS** sur [run R55](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835). **Gates B interprété/WinUAE, C nouvel exécutable AMOS Compiler/WinUAE, D Amiga physique NON TESTÉES.** [Rapport technique](M17_BLITTER_DIAGNOSTIC.md).
 
-**R55 est implémentée, Gate A CPU/CI PASS** ; [artefact expérimental pour WinUAE](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835) disponible (**32 988 octets**, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`). Le point d'entrée natif Fill délègue au helper groupé (jusqu'à deux `BltBitMap` / `WaitBlit` pour 1–8 plans) sans déplacer les offsets existants ; Copy et Clear restent inchangées dans leurs octets natifs. [Rapport et contrat R55](M17_BLITTER_DIAGNOSTIC.md). **Gates B/C/D R55 NON TESTÉES** ; l'artefact expérimental R55 est disponible hors dépôt ; **R54 `LAST_GOOD` demeure officielle et inchangée**. Étape suivante : candidate versionnée contrôlée, installation WinUAE, test interprété, puis recompilation AMOS Compiler et mesure du benchmark historique identique. Préserver les archives, résultats et programmes PASS. `main` exclusivement.
+**R54 reste `LAST_GOOD` dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`**, inchangée, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, ses Gates A/B/C historiques PASS. **R55 n'est pas promue**.
+
+**Essai suivant :** installer `dist/AMOSPro_AGA.Lib` R55 dans APSystem, redémarrer AMOS, lancer le seul ASC courant avec `examples/demo.iff` et vérifier `RESULT 1`, `CLOSE RETURNED`, rendu et swaps ; ensuite [benchmark V2 historique inchangé](../benchmarks/graphics_32c_v2.asc) pour mesurer le gain, puis compiler à nouveau les programmes pour Gate C.
 
 ## M16/R54 v0.12.9 — PROMUE LAST_GOOD, Gates A/B/C PASS (12/11/2026)
 

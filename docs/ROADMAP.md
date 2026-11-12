@@ -1,8 +1,8 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
-## M17 — R55 Gate A PASS, artefact WinUAE expérimental disponible (12/11/2026)
+## M17/R55 — candidate courante dans dist, Gate A PASS (12/11/2026)
 
-M16/R54 v0.12.9 est clôturée et reste `LAST_GOOD` (**32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, Gates A/B/C PASS sur leurs scénarios ; Gate D physique non testée). **M17/R55 : code Fill/Clear groupé implémenté, builder Compiler-safe reproductible en mémoire, tests natifs CPU/ABI/bitplanes et CI Gate A PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276651112)). [Diagnostic et R55](M17_BLITTER_DIAGNOSTIC.md) · [baseline V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md). **Artefact expérimental R55 disponible** ([CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43276919835), 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`) ; **R54 reste officielle ; Gates B/C/D R55 NON TESTÉES.** Aucun nouveau token, pas de promotion ; R44 est uniquement la référence historique du benchmark.
+**Workflow fixé par l'auteur : `main` uniquement ; 1 binaire de travail `dist/AMOSPro_AGA.Lib` + 1 programme `tests/current/M17_R55_BLIT_GROUP_01.asc`, sans doublon R55 ailleurs.** R55 v0.13.0, 32 988 octets, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, 53 commandes/60 entrées AP20, Fill/Clear groupés ; **Gate A CPU/CI PASS**. **B/C/D NON TESTÉES**, aucune promotion. R54 reste dans `dist/AMOSPro_AGA_LAST_GOOD.Lib` validée. [Contrat M17](M17_BLITTER_DIAGNOSTIC.md) · [baseline V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md).
 
 ## M16/R54 v0.12.9 — Clôture A/B/C et LAST_GOOD (12/11/2026)
 

@@ -1,9 +1,7 @@
-# Tests AMOS — aucun ASC actif après promotion R54
+# Test AMOS actif — M17/R55 Blitter groupé
 
-**R54 v0.12.9 est maintenant `LAST_GOOD`** : Gates A CPU/CI, B WinUAE interprété et C WinUAE compilé **PASS sur le scénario testé** ; Gate D machine AGA réelle NON TESTÉE. [Bibliothèque installable](../../dist/AMOSPro_AGA.Lib) et [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) sont identiques à l'[archive R54](../../dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib).
+**Unique test actif :** [`M17_R55_BLIT_GROUP_01.asc`](M17_R55_BLIT_GROUP_01.asc). Il exerce `Aga Blit Fill`, `Aga Blit Clear`, `Aga Blit Copy`, `Safe` et les 40 swaps sur `examples/demo.iff` 320×256×256 couleurs, avec couleurs mixtes 3/28/224 ; attendu : `RESULT 1`, `CLOSE RETURNED`, image correcte et aucun blocage.
 
-Le programme exact confirmé par l'utilisateur est archivé sans modification dans [`tests/passed/M16_R54_BANK_NUMBER_01.asc`](../passed/M16_R54_BANK_NUMBER_01.asc) ; il a donné `RESULT 1` et `CLOSE RETURNED` en interprété, avec rendu conforme, puis PASS compilé. [R53 Image Capture](../passed/M16_R53_IMAGE_CAPTURE_01.asc) et les autres preuves historiques sont préservées.
+**Unique bibliothèque de travail :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R55 v0.13.0**, SHA256 `97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad`, Gate A CPU/CI PASS ; **Gate B AMOS interprété, Gate C nouvel exécutable compilé et Gate D Amiga physique NON TESTÉES**.
 
-Les ressources `M16_AGAPIC_SAMPLE_BANK10.abk`, `Hwarf1252S.abk` et la licence Hwarf sont encore ici pour rejouer le scénario archivé. Attention : le test utilise `Load` sur les banques 10 et 25 dans une configuration WinUAE jetable.
-
-Aucun nouveau test actif. Le prochain développement n'est pas encore engagé.
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` conserve R54 v0.12.9 validée, sans changement. Les ressources ABK déjà présentes restent pour les tests historiques, qui ne sont plus actifs dans ce dossier. À la validation de R55, archiver uniquement l'ASC approuvé selon la procédure du projet.
