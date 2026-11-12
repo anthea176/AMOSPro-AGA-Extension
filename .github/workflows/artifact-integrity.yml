@@ -92,6 +92,7 @@ jobs:
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_draw_r41 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R41_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R41_GateA.Lib --out /tmp/amos-aga-r41-native --baseline none --strict
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_draw_r41 import build,BASE,LAST_GOOD; b,meta=build(); assert BASE.read_bytes()==LAST_GOOD.read_bytes(); assert len(b)>len(BASE.read_bytes()); print('R41 reproducible in-memory Gate A:',meta['sha256'],meta['size'])"
+          python -B tools/build_m15_draw_r41.py --emit-base64
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
 
       - name: M15 R40 Aga Plot promoted — native 68000 CPU, integrity, strict source

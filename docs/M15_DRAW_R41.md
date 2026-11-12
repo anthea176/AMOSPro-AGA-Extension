@@ -1,5 +1,7 @@
 # M15/R41 v0.11.2 — Aga Draw : préparation de Gate A
 
+**R41 Gate A CPU/CI PASS (12/11/2026) :** **325 scénarios CPU 68000**, audit des 46 jetons AP20/52 segments, clipping par Bresenham en dehors des bords, accès direct `Move/Draw` uniquement dans les bornes, structure bitmap, état `Safe/Disp`, intégrité des anciens segments, pile et registres ; export natif 68000 strict PASS et [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43193933457). **Gate B AMOS/WinUAE non testée**, R40 `LAST_GOOD` inchangée. Binaire déterministe R41 généré en mémoire : **24 816 octets**, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`. Publication de candidate en préparation, aucun `.Lib` R41 encore dans `dist/`.
+
 **Décision utilisateur du 12 novembre 2026 :** développer **une seule nouvelle commande**, `_OK=Aga Draw(X1,Y1,X2,Y2,Pen)`, après la validation de R40. **R41 en préparation, Gate A CPU/CI pas encore vérifiée, Gate B WinUAE non testée.** La bibliothèque `R40 v0.11.1` (**45 commandes AP20**) reste `LAST_GOOD` et son archive immuable.
 
 ## Contrat public de R41
