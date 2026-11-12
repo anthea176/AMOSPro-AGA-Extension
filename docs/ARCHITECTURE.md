@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État actuel — M17/R59 compact V2 Gate A PASS, Gates B/C en attente (12/11/2026)
+## État actuel — M17/R59 compact V2 Gates A/B/C PASS sur WinUAE (12/11/2026)
 
 **Candidate active unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), R59 0.13.4, 32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. **53 commandes, 60 entrées AP20, 59 routines natives R57 strictement identiques**. Le dispatcher V2 de 34 octets traite des offsets non signés avec `MOVEQ #0,D0` et `ADDA.L`. Monolithe **30 782 octets** (34 dispatcher + 30 748 natifs). Les stubs AP20 et le code natif de R57 sont identiques ; seule l'enveloppe de 32 à 34 octets et le titre changent. `Aga Probe` utilise son chemin d'origine, **sans routine témoin à 40 Ko**.
 
-**Gate A R59 CPU/CI PASS**, tests de déterminisme, ABI, BSR/JSR CPU et source strict. **Gates B/C R59 WinUAE NON TESTÉES**, Gate D physique non testée. R58 v0.13.3 a validé séparément un témoin **à l'offset 40 000** sous WinUAE interprété/compilé, mais contenait 9 252 octets de remplissage ; l'ancien [test R58](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc) reste archivé. **[Test R59 actif](../tests/current/M17_R59_COMPACT_V2_01.asc)**. **`LAST_GOOD` R57 v0.13.2 protégée**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, Gates A/B/C historiques PASS. [Rapport compact R59](M17_R59_COMPACT_V2.md) · [Rapport R58 40K](GATE_C_COMPILER_BRIDGE_V2_PROBE.md).
+**Gate A R59 CPU/CI PASS**, tests de déterminisme, ABI, BSR/JSR CPU et source strict. **Gates B interprétée et C nouvel exécutable compilé R59 WinUAE PASS**, deux captures utilisateur distinctes du 12/11/2026 (`RESULT 1`, `CLOSE RETURNED`, aucun Guru visible) ; Gate D physique non testée. La régression complète R59 reste à lancer avant toute promotion. R58 v0.13.3 a validé séparément un témoin **à l'offset 40 000** sous WinUAE interprété/compilé, mais contenait 9 252 octets de remplissage ; l'ancien [test R58](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc) reste archivé. **[Test R59 actif](../tests/current/M17_R59_COMPACT_V2_01.asc)**. **`LAST_GOOD` R57 v0.13.2 protégée**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, Gates A/B/C historiques PASS. [Rapport compact R59](M17_R59_COMPACT_V2.md) · [Rapport R58 40K](GATE_C_COMPILER_BRIDGE_V2_PROBE.md).
 
 ## Historique — M16/R46 v0.12.1, ancien checkpoint Gates A/B (12/11/2026)
 

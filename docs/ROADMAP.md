@@ -6,7 +6,7 @@
 
 | Référence | Statut / preuves | Action |
 |---|---|---|
-| **R59 v0.13.4** — M17, candidate active | `dist/AMOSPro_AGA.Lib`, **32 984 octets**, **53 commandes / 60 entrées AP20**, monolithe V2 30 782 octets, sans remplissage artificiel ; **Gate A CPU/CI PASS**, Gates B/C WinUAE en attente, D physique non testée. | Installer et tester `M17_R59_COMPACT_V2_01.asc` en interprété puis nouvel exécutable compilé ; régression complète et accord de l'auteur avant promotion. |
+| **R59 v0.13.4** — M17, candidate active | `dist/AMOSPro_AGA.Lib`, **32 984 octets**, **53 commandes / 60 entrées AP20**, monolithe V2 30 782 octets, sans remplissage artificiel ; **Gates A CPU/CI, B interprété WinUAE et C compilé WinUAE PASS** (deux captures distinctes du 12/11/2026 ; `RESULT 1`, `CLOSE RETURNED`, sans Guru visible) ; D physique non testée. | Effectuer la régression complète **R59** sur le HEAD exact puis demander l'accord distinct de l'auteur avant toute promotion. |
 | **R58 v0.13.3** — témoin V2 historique | 40 000 natifs atteints dans une bibliothèque **42 264 octets**, **Gates A/B/C PASS** sur son scénario ; [ASC archivé](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc). | Preuve de franchissement 32 Ko conservée ; ne pas publier le padding comme release finale. |
 | **R57 v0.13.2** — dernier `LAST_GOOD` promu | `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **32 980 octets**, Gates A/B/C PASS sur les scénarios validés ; Gate D non testée. | **Préserver** ce binaire et les archives. |
 | **M17 — performances** | R57 : benchmark Fill/Clear compilé PASS et diagnostics Copy sous WinUAE. Petit rectangle aligné : `Screen Copy` 35 ticks contre `Aga Blit Copy` 69 ; cause exacte non identifiée. | Poursuivre le diagnostic / comparer les API AmigaOS avant tout changement ; aucune optimisation nouvelle automatiquement approuvée. |
@@ -17,7 +17,7 @@
 
 | Étape | Périmètre | Situation / condition |
 |---|---|---|
-| **M17** | Valider la candidate compacte R59 et conserver les mesures R57 Blitter/Copy | **En cours** ; Gates B/C R59 et régression à confirmer avant promotion |
+| **M17** | Valider la candidate compacte R59 et conserver les mesures R57 Blitter/Copy | **Gates A/B/C R59 PASS** ; régression complète R59 et décision explicite de l'auteur encore nécessaires avant promotion |
 | **Publication Aminet** | Publication initiale signalée comme déjà réalisée par l'auteur | **Déjà faite** ; aucune nouvelle publication imposée pour commencer l'étude M18. Toute nouvelle version reste sur décision de l'auteur. |
 | **M18** | AGAPIC animations/atlas, capture-restauration CBlock, équivalent fonctionnel `F 16 Icon` | **Planifié, non engagé** ; étudier voies CPU Fast→Chip et Blitter Chip→Chip, option AUTO seulement après mesures |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
