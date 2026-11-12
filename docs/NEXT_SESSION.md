@@ -1,16 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M17/R57 0.13.2 — correctif de placement du helper, Gate A PASS (12/11/2026)
+## M17/R57 0.13.2 — Gates A et C PASS, B non confirmée (12/11/2026)
 
 **Règle utilisateur :** branche `main` uniquement, **un seul binaire actif [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)**, **un seul programme actif [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc)**. Aucune autre copie R57 dans `dist/experimental/`. `LAST_GOOD` R54 intacte.
 
-**R57 :** 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, **monolithe 30 780 octets**, identique en taille et offsets à la R55 dont l'exécution compilée fonctionnait. Les 620 octets de l'ancien helper R55 ont été remplacés directement par **580 octets de RastPort R56 + 40 NOP**, sans changer stubs, dispatcher, saut Fill ni branchement Clear. **Gate A CPU/CI PASS** ([run 43286230339](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B/C/D R57 non testées**. L'hypothèse du placement reste à confirmer dans AMOS Compiler.
+**R57 :** 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, **monolithe 30 780 octets**, identique en taille et offsets à la R55 compilée PASS. Ancien helper R55 de 620 octets remplacé sur place par 580 octets de RastPort R56 + 40 NOP, sans changer les stubs, le dispatcher, le saut Fill ni le branchement Clear. **Gate A CPU/CI PASS** ([run 43286230339](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)). **Gate C AMOS Compiler/WinUAE PASS confirmée par capture utilisateur** : `DONE 40 C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, **pas de Guru**. **Gate B R57 interprétée non confirmée**, Gate D physique non testée. Le retour à un placement R55 rétablit le compilé sur ce scénario ; mécanisme exact du Guru R56 non prouvé.
 
 **Incident R56 :** le benchmark V2 a fonctionné sous **AMOS interprété** (`AGA ERR 0`, `V2 FINISHED - CLOSE RETURNED`, Bar G 40/41/41, Clear G 59/58/58). Le programme **compilé** plante avec Guru `8000000B` (Line-F). L'utilisateur a une boucle finale `Do / Wait Vbl / Loop`, pas de `Wait Key`. Ne pas attribuer l'incident à un dépassement de limite : R56 utilisait 31 360 octets, inférieur à 32 768 ; pas de PC de faute connu.
 
 **R55 :** Gates A/B/C PASS sur son scénario, benchmark compilé sans gain Fill/Clear robuste. **R54 `LAST_GOOD`** : SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, inchangée. Tests historiques et archives figés.
 
-**Suite unique :** télécharger R57 du chemin `dist/`, redémarrer AMOS et exécuter l'ASC R57 avec `examples/demo.iff`. Il faut ensuite compiler **ce même ASC avec R57** pour tester la Gate C ; l'ancien exécutable R56 n'est pas représentatif. Les tests R54/R55 déjà acquis ne sont pas à refaire.
+**Suite :** ne pas refaire la Gate C R57 : elle est validée sur capture. Ne pas refaire R54/R55. Gate B R57 interprétée demeure non confirmée, mais ne bloque pas l'analyse des performances. **Prochaine mesure utile :** recompiler et exécuter `benchmarks/graphics_32c_v2.asc` inchangé avec R57 pour comparer `BAR 100 G` et `CLEAR 80 G` aux références R55 (54 et 115 ticks médians) et R56 interprétée (41 et 58 ticks médians, comparaison de modes distincts à ne pas confondre). **Ne pas promouvoir `LAST_GOOD` sans décision de l'auteur.**
 
 ## M16/R54 v0.12.9 — PROMUE LAST_GOOD, Gates A/B/C PASS (12/11/2026)
 

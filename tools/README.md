@@ -2,9 +2,9 @@
 
 ## R57 — code rastport dans dist, test unique dans tests/current
 
-**R57 en cours :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc) est l'unique test actif, fin `Do / Wait Vbl / Loop`. **Gate A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B/C/D R57 non testées**.
+**R57 en cours :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc) est l'unique test actif, fin `Do / Wait Vbl / Loop`. **Gates A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)) **et C AMOS Compiler/WinUAE PASS** (capture utilisateur : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, pas de Guru). **B R57 interprétée non confirmée, D physique non testée**.
 
-Générateur `tools/build_m17_r57_rastport.py` : remplacera en mémoire le helper R55 de 620 octets par RastPort R56 de 580 octets + 40 NOP ; aucun autre binaire écrit. Test natif `tools/test_m17_r57_rastport.py` ; binaire courant vérifié par `python -B tools/build_aga_current.py --verify`. Le binaire R56 a subi le Guru compilé `8000000B` ; cette architecture de placement n'est pas encore validée sous AMOS Compiler.
+Générateur `tools/build_m17_r57_rastport.py` : remplacera en mémoire le helper R55 de 620 octets par RastPort R56 de 580 octets + 40 NOP ; aucun autre binaire écrit. Test natif `tools/test_m17_r57_rastport.py` ; binaire courant vérifié par `python -B tools/build_aga_current.py --verify`. Le binaire R56 a subi le Guru compilé `8000000B` ; cette architecture de placement a désormais **PASS en compilé sur le test courant R57** ; le mécanisme exact du Guru R56 n'est pas prouvé.
 
 **R54 `LAST_GOOD` préservée**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. Seule branche `main`, aucun autre livrable actif.
 

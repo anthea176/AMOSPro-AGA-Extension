@@ -1,6 +1,6 @@
 # M17 — Diagnostic initial du Blitter AGA (12/11/2026)
 
-## R57 0.13.2 — correctif ciblé après Guru compilé R56
+## R57 0.13.2 — correctif ciblé, Gate C compilée PASS après Guru R56
 
 **Faits utilisateur :** benchmark V2 R56 sous AMOS interprété **PASS** (`AGA ERR 0`, clôture sans erreur, Bar G 40/41/41, Clear G 59/58/58). En compilé, `Software Failure 8000000B` (Line-F), **Gate C R56 FAIL**. Le programme compilé de l'auteur utilise `Do / Wait Vbl / Loop` et non le `Wait Key` du test historique. Le PC de faute n'est pas disponible.
 
@@ -8,7 +8,7 @@
 
 **R57 :** nouvelle implémentation `RectFill`/`SetRast` de 580 octets **à l'emplacement 30128**, ancien helper R55 de 620 octets remplacé (40 NOP de remplissage). **Saut Fill, BSR de Clear, stubs, dispatcher, offsets et taille du monolithe 30 780 octets = R55**. Aucun nouveau token, 53 commandes / 60 entrées AP20. [Binaire actif](../dist/AMOSPro_AGA.Lib) **32 980 octets**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0` ; [ASC actif unique](../tests/current/M17_R57_RAST_FILL_01.asc) avec boucle VBL. Pas de deuxième bibliothèque ni de branche. `LAST_GOOD` R54 inchangée.
 
-**Validation :** [CI R57 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339) : 111 scénarios CPU, pixels, double buffering, Safe, ABI, branchement de Clear et égalité des stubs Compiler R55. **Gates B/C/D R57 non testées**. La R57 vérifie l'hypothèse de placement, **n'est pas encore une preuve de correction du Guru**. Recompiler le même ASC R57 sous AMOS Compiler/WinUAE, sans refaire R54/R55.
+**Validation :** [CI R57 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339) : 111 scénarios CPU, pixels, double buffering, Safe, ABI, branchement de Clear et égalité des stubs Compiler R55. **Gate C R57 compilée/WinUAE PASS sur capture utilisateur du 12/11/2026** : `M17-R57-RAST-FILL-01`, `IMAGE 320 X 256 PLANES 8`, `OPEN 1 DB 1 LOAD 1`, `DONE 40 C 14 F 13 P 13`, `C0 13 F0 13 P0 13 SWAP0 0`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, aucun Guru. **Gate B R57 interprétée non confirmée ; Gate D physique non testée.** Le symptôme Line-F compilé de R56 disparaît dans la R57 sur ce scénario, conformément à l'hypothèse de placement, **sans preuve définitive du mécanisme exact**. Prochaine tâche : mesurer le benchmark V2 compilé, sans refaire les anciennes validations R54/R55 ni le test compilé R57.
 
 ---
 

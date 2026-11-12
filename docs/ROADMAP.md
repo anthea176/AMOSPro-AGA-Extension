@@ -1,10 +1,10 @@
 # Roadmap — AMOS Professional 365 / Extension AGA
 
-## M17/R57 0.13.2 — code RastPort en place, Gate A CPU PASS (12/11/2026)
+## M17/R57 0.13.2 — Gates A/C PASS, B non confirmée, benchmark à mesurer (12/11/2026)
 
-**`main` uniquement. Bibliothèque courante unique : `dist/AMOSPro_AGA.Lib` R57 (32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`) ; programme courant unique : `tests/current/M17_R57_RAST_FILL_01.asc`.** 53 commandes, 60 entrées AP20, monolithe 30 780 octets. R57 retire le helper mort R55 et substitue le code RectFill/SetRast **à l'offset natif 30128**, sans déplacer les stubs Compiler. Gate A CPU/CI **PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **Gates B/C/D R57 en attente** ; R54 `LAST_GOOD` non modifiée.
+**`main` uniquement. Bibliothèque courante unique : `dist/AMOSPro_AGA.Lib` R57 (32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`) ; programme courant unique : `tests/current/M17_R57_RAST_FILL_01.asc`.** 53 commandes, 60 entrées AP20, monolithe 30 780 octets. R57 retire le helper mort R55 et substitue le code RectFill/SetRast **à l'offset natif 30128**, sans déplacer les stubs Compiler. Gate A CPU/CI **PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **Gate C compilée/WinUAE PASS sur capture utilisateur** (`RESULT 1`, 40 cycles, erreurs 0, `CLOSE RETURNED`, pas de Guru), **Gate B interprétée R57 non confirmée, Gate D physique non testée** ; R54 `LAST_GOOD` non modifiée.
 
-**Cause de R57 :** R56 a passé le benchmark interprété mais **échoué en compilé (Guru `8000000B`)**. La taille 31 360 octets restait sous la limite ; l'hypothèse de placement n'est pas confirmée. R57 doit être vérifiée sur **un exécutable nouvellement compilé** avant toute conclusion et avant de poursuivre le benchmark. [Rapport](M17_BLITTER_DIAGNOSTIC.md).
+**Cause de R57 :** R56 a passé le benchmark interprété mais **échoué en compilé (Guru `8000000B`)**. La taille 31 360 octets restait sous la limite ; l'hypothèse de placement n'est pas confirmée. **R57 a passé son exécutable compilé, sans plantage.** Le retour au placement R55 élimine le symptôme sur ce scénario mais ne démontre pas le mécanisme exact de R56. **Étape suivante : benchmark V2 compilé inchangé pour mesurer Fill/Clear.** [Rapport](M17_BLITTER_DIAGNOSTIC.md).
 
 ## M16/R54 v0.12.9 — Clôture A/B/C et LAST_GOOD (12/11/2026)
 
