@@ -153,7 +153,7 @@ jobs:
       - name: M14 R37 frozen Font Select — Gate A/B CPU, source, archive integrity
         run: |
           python -B tools/test_m14_font_select_r37.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes(); print('R37 archived:,meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_select_r37 import build,ARCHIVE,LAST_GOOD; raw,meta=build(); assert raw==ARCHIVE.read_bytes(); print('R37 archive validated:',meta['sha256'],meta['size'])"
           python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-r37-integrity --baseline none --strict
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib
@@ -161,7 +161,7 @@ jobs:
       - name: M14 R38 Gate A BankFont — CPU 68000, R38 LAST_GOOD and promoted artifact integrity
         run: |
           python -B tools/test_m14_font_bank_r38.py
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import build,ARCHIVE,DEST,LAST_GOOD,BASE_SHA256; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes() and digest(LAST_GOOD.read_bytes())==meta['sha256']; print('R38 promoted:,meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m14_font_bank_r38 import build,ARCHIVE,DEST,LAST_GOOD,BASE_SHA256; from ap20_utils import digest; raw,meta=build(); assert raw==ARCHIVE.read_bytes()==DEST.read_bytes() and digest(LAST_GOOD.read_bytes())==meta['sha256']; print('R38 promoted:',meta['sha256'],meta['size'])"
           python -B tools/generate_aga_native_source.py --lib dist/AMOSPro_AGA.Lib --out /tmp/amos-aga-r38-integrity --baseline none --strict
           sha256sum dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib

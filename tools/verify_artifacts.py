@@ -392,7 +392,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.11.0_AMCAF_BANK_R38.Lib"]
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
