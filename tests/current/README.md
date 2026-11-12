@@ -7,3 +7,6 @@
 **Sortie attendue si WinUAE valide réellement la candidate :** `CAP 11 12 1 1`, `COLL 0 PRES 1`, tous les refus à `0`, `DRAW O/M/RELOAD 1 1 1 RL 1`, **`RESULT 1` et `CLOSE RETURNED`**. La source du programme est une recette à exécuter, **pas un PASS déclaré**. Si crash, noter l'étape, le PC et la configuration.
 
 **Version officielle inchangée :** [R46 v0.12.1-C1](../../dist/AMOSPro_AGA.Lib) = [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib), 29 964 octets, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`. Les [tests historiques validés](../passed/R46_C1_COMPILER_ALL_IN_ONE.asc) ne changent pas. [Contrat / tests M16](../../docs/M16_AGAPIC_CAPTURE_DESIGN.md).
+
+
+**Premier diagnostic après crash WinUAE :** [test court sans capture](../diagnostics/M16_R47_CRASH_ISOLATION_00.asc), exécuté avec R47 en interprété. Ne pas lancer le test complet à nouveau avant d'avoir identifié si `Detect` et `Open/Close` passent.

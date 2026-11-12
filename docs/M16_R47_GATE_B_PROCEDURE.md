@@ -12,6 +12,10 @@ La procédure ci-dessous est conservée comme recette expérimentale d'origine :
 
 Fichier utilisateur : `winuae_x64_6.0.3_R_2026.11.12_16.12.24.dmp` (268 636 octets, minidump Windows, 16 streams, horodatage interne 15:12:25 UTC). Décodage direct des streams MINIDUMP (sans symboles WinUAE) : **exception Windows `0xC0000005` (access violation)**, paramètre 0 = `0` (**lecture**), adresse lue `0x622A709D`, adresse de l'instruction en faute `0x10559285`, dans `winuae64.exe` chargé à `0x10000000` (**offset `0x00559285`**). Contexte x64 : `RAX=0x622A709A`, `RIP=0x10559285`. Aucune preuve de fonction WinUAE symbolisée ni du PC Motorola 68000 : **ne pas interpréter le RIP Windows comme PC Amiga**. La proximité de RAX et de l'adresse de lecture est un indice, non une cause prouvée. Conserver la candidate R47 historique et effectuer un jalonnement AMOS ciblé, avec la bibliothèque R46 C1 de secours. **Gate B FAIL et Gate C non testée.**
 
+## R47 — test d'isolement du premier crash (sans capture)
+
+Pour éviter de relancer immédiatement le test long qui a fait planter **WinUAE lui-même**, commencer par [`tests/diagnostics/M16_R47_CRASH_ISOLATION_00.asc`](../tests/diagnostics/M16_R47_CRASH_ISOLATION_00.asc), avec **la même candidate R47**, exclusivement dans la configuration de test sauvegardée. Importer par **Project → Merge ASCII** et exécuter **en interprété**. Ce programme n'appelle **pas** `Aga Image Capture` et ne crée aucune banque : il affiche `S01 BEFORE DETECT`, `S02 DETECT RETURNED`, `S03 BEFORE OPEN`, puis tente `Aga Screen Open`/`Aga Screen Close`. En cas de réussite : `S05 OPEN/CLOSE RETURNED 1` et `RESULT 1`. Si crash : noter le **dernier Sxx effectivement affiché**. Cela sépare une défaillance déjà présente dans le pont AP20/des commandes existantes d'un problème spécifique à la capture ; ce test n'établit pas à lui seul la cause du crash. **Ne pas compiler et ne pas promouvoir R47.**
+
 ## Fichiers
 
 - [Bibliothèque R47 candidate](../dist/experimental/AMOSPro_AGA_M16_v0.12.2_IMAGE_CAPTURE_R47_CANDIDATE.Lib), **pas** le binaire officiel `dist/AMOSPro_AGA.Lib`.
