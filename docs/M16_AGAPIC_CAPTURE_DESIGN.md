@@ -33,6 +33,14 @@ La capture est maintenant représentée par [`tools/m16_agapic_capture_model.py`
 
 **Périmètre strict :** ces tests ne font exécuter **aucune instruction 68000**, n'appellent **pas** `Bnk.Reserve`, ne mesurent aucune vitesse sur Amiga, et ne prouvent ni l'emplacement physique de l'allocation ni le fonctionnement du Compiler. **La R46 C1 officielle n'est pas modifiée ; M16 non clôturé.** Prochaine étape : inspecter et valider l'ABI banque/AMOS Compiler, développer la routine native et ses tests Gate A CPU avant tout essai WinUAE.
 
+## R47 — moteur RLE 68000 expérimental (sans banque AMOS)
+
+[`tools/m16_capture_r47_core_emit.py`](../tools/m16_capture_r47_core_emit.py) génère un véritable cœur CPU 68000 pour capturer **une ligne** de 1 à 8 plans et produire des paquets RLE AGAPIC v1. Il code un masque 1 bit indépendant (index -1 opaque, sinon couleur transparent), les 16-pixel groups et la répétition RLE ; toutes les lectures viennent des bitplanes, sans Blitter ni modification de la source. La fonction prend une zone mémoire de sortie bornée et renvoie sa longueur ou 0 sur refus. Elle émet des paquets littéraux unitaires, valides mais moins compacts que l'encodeur hôte sur certaines images.
+
+[`tools/test_m16_capture_r47_core.py`](../tools/test_m16_capture_r47_core.py) utilise Capstone et **Unicorn M68K** pour vérifier le code machine réel, les sorties RLE via le décodeur AGAPIC existant, la transparence, les bords, la sauvegarde des registres, l'absence d'écriture dans les bitplanes et le refus d'un tampon insuffisant. **En attente du verdict CPU/CI.**
+
+**Il ne crée pas encore de banque AMOS** : la future commande doit assembler l'en-tête et la table des lignes, puis appeler l'allocateur AMOS sans écraser un numéro existant, via une liaison relogeable compatible Compiler. Aucune bibliothèque `.Lib`, aucun token AP20 ni exemple validé n'est modifié ; R46 C1 `LAST_GOOD` reste immuable. La qualification sous WinUAE ne peut commencer qu'après raccordement de l'allocateur.
+
 ## Obligation : mettre les exemples à jour avec les commandes livrées
 
 L'utilisateur a expressément demandé de **ne pas oublier les exemples** lors du changement de syntaxe. Inventaire initial des sources touchées :
