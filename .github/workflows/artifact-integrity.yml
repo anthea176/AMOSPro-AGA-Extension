@@ -93,7 +93,7 @@ jobs:
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build; from pathlib import Path; Path('/tmp/AMOSPro_AGA_R42_GateA.Lib').write_bytes(build()[0])"
           python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R42_GateA.Lib --out /tmp/amos-aga-r42-native --baseline none --strict
           python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,BASE,LAST_GOOD; b,meta=build(); assert b==build()[0]==LAST_GOOD.read_bytes(); print('R42 deterministic in-memory Gate A:',meta['sha256'],meta['size'])"
-          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(); print('R42 Gates A/B LAST_GOOD exact:,meta['sha256'],meta['size'])"
+          python -B -c "import sys; sys.path.insert(0,'tools'); from build_m15_box_r42 import build,DEST,ARCHIVE,BASE,LAST_GOOD; b,meta=build(); assert b==ARCHIVE.read_bytes()==LAST_GOOD.read_bytes(); print('R42 Gates A/B LAST_GOOD exact:',meta['sha256'],meta['size'])"
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
 
       - name: M15 R43 Aga Circle candidate — 436 CPU cases, strict source, immutable R42
