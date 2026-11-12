@@ -167,6 +167,10 @@ jobs:
         run: |
           python -B tools/test_m17_r58_compiler_bridge.py
           python -B tools/build_m17_r58_compiler_bridge.py --emit-base64
+      - name: M17/R59 compact V2 no-padding candidate Gate A (in memory)
+        run: |
+          python -B tools/test_m17_r59_compact_v2.py
+          python -B tools/build_m17_r59_compact_v2.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 
