@@ -132,11 +132,14 @@ def source_binary_from_input(raw):
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2, wrap_native_ap20_v2
     if is_v2_wrapped(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
-        # R58 is the historical 40K witness; R59 is the compact candidate.
+        # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R59_SHA:
+        if sha(raw) == R60_SHA:
+            from build_m18_r60_image_region import build as pinned_build
+            release = "R60"
+        elif sha(raw) == R59_SHA:
             from build_m17_r59_compact_v2 import build as pinned_build
             release = 'R59'
         elif sha(raw) == R58_SHA:
@@ -441,6 +444,22 @@ def verified_current_compiler_seeds(parsed):
     raw = parsed['raw']
     sections = parsed['section']
     r58_case = (len(sections) == 61)
+    r60_case = (len(sections) == 60)
+    region_getadr_pos = None
+    if r60_case:
+        # SHA-authenticated, reproducible native R60 with one additive
+        # source-backed routine and its source-derived Rjsr marker.
+        from build_m18_r60_image_region import build as build_r60
+        from m18_image_region_emit import emit_image_region, GETADR_MARKER
+        v2_blob, _meta = build_r60()
+        need(raw == reconstruct(v2_blob),
+             'Strict source: R60 native differs from deterministic builder')
+        region_core, _labels = emit_image_region()
+        need(sections[59]['core'] == region_core,
+             'Strict source: R60 image region body changed')
+        need(region_core.count(GETADR_MARKER) == 1,
+             'Strict source: R60 Bnk.GetAdr relocation marker changed')
+        region_getadr_pos = region_core.index(GETADR_MARKER)
     if r58_case:
         # Treat the new padding as DATA, never a speculative 68000 routine.
         from build_m17_r58_compiler_bridge import build as build_r58, FAR_PROBE
@@ -451,9 +470,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif len(sections) != 59:
+    elif not r60_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not r58_case:
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r60_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -496,6 +515,10 @@ def verified_current_compiler_seeds(parsed):
         seeds[58].add(110)
     if r58_case:
         seeds[60] = {0}  # only the two source-proven NOP/RTS instructions
+    if r60_case:
+        # Decode after the literal AMOS linker marker; never interpret
+        # FE11 as Motorola code or trust an arbitrary candidate.
+        seeds[59] = {region_getadr_pos + 6}
     return seeds
 
 

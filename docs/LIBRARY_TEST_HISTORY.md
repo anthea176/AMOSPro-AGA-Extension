@@ -6,6 +6,8 @@ This page preserves the **earlier build, validation and archive notes removed fr
 
 ## Historical checkpoints, newest first
 
+**R60 v0.13.5 — M18 AGAPIC Region, working candidate, NOT PROMOTED (12 Nov 2026):** sole active `dist/AMOSPro_AGA.Lib`, 35,056 bytes, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`, 54 commands / 61 AP20, V2 monolith 32,798 bytes. Additive `Aga Image Region`; 53 previous R59 commands preserved. **Native CPU/CI Gate A PASS 86 real 68000 cases**; WinUAE Gates B/C pending, D physical untested. [Single active ASC](../tests/current/M18_R60_IMAGE_REGION_01.asc) · [report](M18_R60_IMAGE_REGION.md). R59 `LAST_GOOD` intact.
+
 **R59 v0.13.4 — COMPACT V2 PROMOTED `LAST_GOOD` (12 Nov 2026):** active [library](../dist/AMOSPro_AGA.Lib), 32,984 bytes, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. Exact 59 native R57 routines, 53 tokens, 60 AP20 entries; V2 dispatcher 34 bytes, monolith 30,782 bytes. Zero 40K padding. **Gate A 68000/CI PASS** (reproducibility, BSR/JSR, registers, stack); **Gates B interpreted WinUAE / C freshly compiled WinUAE PASS** (two user screenshots 12 Nov 2026, `RESULT 1`, `CLOSE RETURNED`, no visible Guru), Gate D physical untested. [Full R59 regression PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43312486348) on exact HEAD 5f29d78; author's explicit promotion approval; both active and LAST_GOOD binaries identical. [Passed test](../tests/passed/M17_R59_COMPACT_V2_01.asc) · [technical report](M17_R59_COMPACT_V2.md). R57 `LAST_GOOD` protected.
 
 

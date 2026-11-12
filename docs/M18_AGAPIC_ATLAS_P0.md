@@ -1,12 +1,11 @@
 # M18 — AGAPIC atlas, CBlock AGA, équivalent F 16 Icon
 
 **Ouverture le 12 novembre 2026 — uniquement sur main.**
-**Statut : P0 modèle hôte expérimental.** Il ne s'agit PAS d'une nouvelle
-commande AMOS, d'une nouvelle bibliothèque installable ni d'une Gate A 68000.
+**Statut du jalon P0 : modèle hôte expérimental.** Le développement natif R60 a ensuite reçu sa **Gate A CPU PASS** ; [rapport R60](M18_R60_IMAGE_REGION.md). Le P0 Python seul ne constitue pas une Gate native.
 
 **Référence inchangée : R59 v0.13.4 LAST_GOOD**, 32 984 octets,
 SHA256 00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d.
-Aucun binaire alternatif, aucun programme ASC actif, aucune nouvelle branche.
+R59 reste la référence `LAST_GOOD` protégée. R60 est maintenant la seule candidate dans `dist/AMOSPro_AGA.Lib` ; son seul ASC actif est `tests/current/M18_R60_IMAGE_REGION_01.asc`. `main` exclusivement.
 
 ## 1. Première tranche : atlas dans une banque AGAPIC v1 inchangée
 
@@ -151,11 +150,7 @@ Pas de nombre de FPS promis sans mesure WinUAE contrôlée ou matériel.
 ## 5. Prochaine tranche, sans promotion automatique
 
 1. **P0** : modèle et tests hôte AGAPIC v1 / atlas (en cours).
-2. **P1 R60** : choisir une unique signature native de dessin
-   sous-rectangle ; partir de R59 avec les fonctions
-   unwrap_native_parts_v2 / wrap_native_ap20_v2.
-   Tests CPU 68000, ABI, Safe, pixels/masque, mémoire, AP20 et
-   relocalisation AVANT de publier une candidate.
+2. **P1 R60** : signature `Aga Image Region(Bank,SrcX,SrcY,Width,Height,X,Y,Mode)` et moteur 68000 depuis R59 avec `unwrap_native_parts_v2` / `wrap_native_ap20_v2`, **Gate A CPU/CI PASS sur 86 cas** ; [rapport R60](M18_R60_IMAGE_REGION.md). Gates WinUAE B/C en attente.
 3. **B/C R60** : seulement après Gate A, un seul binaire de
    travail dist/AMOSPro_AGA.Lib et un seul ASC tests/current.
    WinUAE interprété puis un NOUVEL exécutable Compiler.

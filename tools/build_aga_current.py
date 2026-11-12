@@ -49,7 +49,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith(("R59 0.13.4", "promoted R59 v0.13.4")):
+    if active.startswith("R60 0.13.5"):
+        from build_m18_r60_image_region import build as build_r60
+        candidate,meta = build_r60()
+        assert candidate==current, "R60 candidate must be byte-exact to deterministic builder"
+        print("CURRENT M18 R60 AGAPIC REGION V2 GATE A BUILDER PASS",
+              {k:v for k,v in meta.items() if k!="labels"})
+    elif active.startswith(("R59 0.13.4", "promoted R59 v0.13.4")):
         from build_m17_r59_compact_v2 import build as build_r59
         candidate,meta=build_r59()
         assert candidate==current, "R59 candidate not byte-exact to deterministic builder"

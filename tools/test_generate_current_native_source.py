@@ -11,6 +11,7 @@ from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
 from build_m17_r59_compact_v2 import build as build_r59
+from build_m18_r60_image_region import build as build_r60
 import generate_aga_native_source as exp
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,6 +67,17 @@ def main() -> None:
     assert not exp.unclassified_gaps(exp.parse_lib(native59)), "R59 untrusted native gaps"
     assert meta59["padding_bytes"] == 0 and meta59["compiler_unit_bytes"] == 30782
     print("R59 V2 STRICT NATIVE EXPORT PASS (in memory): 60 -> 59 AP20 entries")
+
+    # R60 SHA-pinned new native region must also round-trip strict,
+    # without accepting arbitrary FE31 or FE11 markers.
+    region, meta60 = build_r60()
+    native60, ctx60 = exp.source_binary_from_input(region)
+    assert ctx60 and ctx60["verified_extract_and_rewrap"]
+    assert ctx60["official_entries"] == 61 and ctx60["native_entries"] == 60
+    assert wrap_native_ap20_v2(native60, exp.parse_lib(region)["title"]) == region
+    assert not exp.unclassified_gaps(exp.parse_lib(native60)), "R60 native untrusted gaps"
+    assert meta60["public_commands"] == 54 and meta60["compiler_v2_bytes"] > 32768
+    print("R60 V2 STRICT NATIVE EXPORT PASS (in memory): 61 -> 60 AP20 entries")
 
     # A valid AP20 title mutation must never pass the provenance check.
     tampered = bytearray(current)

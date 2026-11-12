@@ -6,6 +6,7 @@
 
 | Référence | Statut / preuves | Action |
 |---|---|---|
+| **R60 v0.13.5 — candidate M18** | `dist/AMOSPro_AGA.Lib`, **35 056 octets**, 54 commandes / 61 AP20, V2 **32 798 octets**. `Aga Image Region` sous-rectangles AGAPIC v1. **Gate A native CPU/CI PASS (86 cas)**, Gates B/C WinUAE/D physique non testées. R59 `LAST_GOOD` inchangée. | [ASC actif unique](../tests/current/M18_R60_IMAGE_REGION_01.asc) ; tester interprété puis nouvel exécutable compilé. [Rapport R60](M18_R60_IMAGE_REGION.md). |
 | **R59 v0.13.4** — M17, `LAST_GOOD` PROMUE | `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` (**32 984 octets**, 53 commandes / 60 entrées AP20, bloc V2 30 782 octets, sans remplissage 40 Ko). **Gates A/B/C PASS** interprété/compilé WinUAE ; [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43312486348) sur le HEAD exact `5f29d78`, puis promotion explicitement approuvée le 12/11/2026. D physique non testée. | Pont V2 compact validé et promu ; [test R59 exact archivé](../tests/passed/M17_R59_COMPACT_V2_01.asc). Nouvelles fonctions uniquement sur décision de l'auteur. | |
 | **R58 v0.13.3** — témoin V2 historique | 40 000 natifs atteints dans une bibliothèque **42 264 octets**, **Gates A/B/C PASS** sur son scénario ; [ASC archivé](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc). | Preuve de franchissement 32 Ko conservée ; ne pas publier le padding comme release finale. |
 | **R57 v0.13.2** — ancien `LAST_GOOD` | **32 980 octets**, Gates A/B/C PASS historiques, [ancienne référence dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/5f29d78e65b666f7260f5a32e28bd4e8bcf59a4a/dist/AMOSPro_AGA_LAST_GOOD.Lib), builder R57 déterministe. | Historique reproductible, sans duplication d'une bibliothèque candidate. |
@@ -19,7 +20,7 @@
 |---|---|---|
 | **M17** | Pont Compiler V2 compact R59, résultats Blitter/Copy R57 conservés | **R59 A/B/C + régression PASS, `LAST_GOOD` promue** ; diagnostic Copy différé sans modification du moteur |
 | **Publication Aminet** | Publication initiale signalée comme déjà réalisée par l'auteur | **Déjà faite** ; aucune nouvelle publication imposée pour commencer l'étude M18. Toute nouvelle version reste sur décision de l'auteur. |
-| **M18** | AGAPIC animations/atlas, capture-restauration CBlock, équivalent fonctionnel `F 16 Icon` | **P0 atlas hôte PASS ; décision CBlock approuvée : coordonnées/dimensions au pixel près, optimisation interne possible sur multiples de 16, sans arrondi silencieux** ([contrat M18](M18_AGAPIC_ATLAS_P0.md)). Mesurer CPU Fast→Chip / Blitter Chip→Chip avant choix de moteur ou AUTO. Aucun token/binaire/ASC ajouté. |
+| **M18** | Atlas/animations AGAPIC, CBlock pixel-exact et `F 16 Icon` | P0 hôte PASS, **R60 `Aga Image Region` Gate A M68000 PASS ; B/C WinUAE à confirmer**. CBlock au pixel près et optimisation 16 pixels à mesurer. `F 16 Icon` et choix AUTO en attente d'audit. |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
 | **M20** | Scrolling AGA, caméra, surfaces plus grandes que l'écran | **Planifié, non engagé** ; dépendances avec tilemaps à examiner |
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |
