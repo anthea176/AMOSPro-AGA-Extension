@@ -1,10 +1,10 @@
-# AMOSPro AGA — 10 exemples simples
+# AMOSPro AGA — 11 exemples simples
 
 [English](README.md) | **Français** · [Installation](../INSTALL.fr.md)
 
-**R44 v0.11.5 / M15 et M15bis clôturés :** les deux validations WinUAE utilisateur sont PASS : test curseur (500 bascules sans erreur, Chip RAM stable) et [exemple global](m15_2d_cursor.asc) (« ça marche super »). La bibliothèque R44 est maintenant `LAST_GOOD`. Les Gates C Compiler et D Amiga AGA physique ne sont pas testées. [Rapport de clôture](../docs/M15_M15BIS_R44_CLOSURE.md).
+**Version actuelle : R46 v0.12.1**, `LAST_GOOD` en AMOS interprété/WinUAE (Gates A/B). La candidate expérimentale **R46 C1** a passé les essais compilés Open/Close, graphique et Image Draw ; la Gate C complète reste ouverte. [Suivi Gate C](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md).
 
-Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. Ils utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) dans **AMOS Professional interprété**.
+Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. La plupart utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) en **AMOS Professional interprété** ; le nouvel exemple tout-en-un en compilé nécessite la candidate expérimentale **R46 C1**.
 
 | Fichier | Démonstration | Utilisation |
 |---|---|---|
@@ -18,6 +18,9 @@ Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non 
 | [`fade_to_bank_r33.asc`](fade_to_bank_r33.asc) | **Démo visuelle R33 :** trois bandes colorées, rouge → vert → bleu → rouge, fondus de 150 VBL | Aucun IFF. **Écrase la banque AMOS 12** ; `Aga Swap` et `Amos To Back` sont exécutés **avant** les fondus. Pauses entre changements ; résultats après fermeture. **Démo testée par l'utilisateur sous WinUAE : fondu visible et fonctionnel (11/11/2026), sans mesure de FPS ni de durée réelle.** |
 | [`font_bank_r38.asc`](font_bank_r38.asc) | **Démo BankFont AMCAF R38 :** afficher `Hwarf1252S.abk` et `Pix3M-1252L.abk` sur un même écran AGA 320×256 | Nécessite R38 v0.11.0 ; lancer depuis le répertoire `examples/` avec `Amcaf Fonts/` présent ; **remplace la banque AMOS 25** ; une touche pour quitter. |
 | [`m15_2d_cursor.asc`](m15_2d_cursor.asc) | **Démo complète M15 + M15bis (R44) :** étoiles Plot, axes et réticule mobile Draw, cadres Box, radar et viseur Circle, puis affichage/masquage local du curseur avec `Aga Mouse Cursor` | **Sans IFF ni banque de fontes.** Déplacer la souris, **clic droit** pour afficher/masquer le pointeur, **clic gauche ou touche** pour quitter (600 images au maximum). R44 v0.11.5 nécessaire ; **démo validée par l'utilisateur sous WinUAE (12/11/2026).** |
+| [`compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc`](compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc) | **Test Compiler R46 C1 tout-en-un :** images AGAPIC opaque/masquée, clipping, Plot/Draw/Box/Circle, double buffering, deux polices, 500 bascules du curseur et fermeture complète | **Un seul ASC et deux ABK fournis.** Conserver le dossier complet et compiler avec la candidate R46 C1. Vérifier `RESULT 1` et `CLOSE RETURNED`. **Nouvel exemple non encore testé.** |
+
+**Test Compiler R46 tout-en-un :** [dossier autonome](compiler_r46_all_in_one/) et [mode d'emploi](compiler_r46_all_in_one/README.md). Le programme ASC charge ses deux fichiers ABK inclus ; **le dossier doit être le répertoire courant AmigaDOS pendant l'exécution compilée**. Aucune modification de la bibliothèque officielle `LAST_GOOD`.
 
 **Démo interactive M15 + M15bis — `m15_2d_cursor.asc` :** scène AGA autonome 320×256, palette 256 couleurs et double buffering sécurisé. Elle dessine 23 étoiles avec Plot, des axes et un réticule mobile avec Draw, des cadres Box, des anneaux de radar et le viseur avec Circle, et pilote le curseur local R44. Le pointeur système commence masqué : **clic droit** pour l'afficher/le masquer, **clic gauche ou touche** pour quitter, ou arrêt après 600 images. La fermeture restaure automatiquement le curseur. `Aga Blit Clear` et `Aga Swap` ont chacun 12 tentatives bornées en cas de refus Safe. De retour dans AMOS, succès : `ERROR 0`, `RESULT 1`, `CLOSE RETURNED`. **Nécessite R44 ; rendu et interaction confirmés par l'utilisateur sous WinUAE (12/11/2026), sans relevé chiffré joint.** Aucun IFF, ABK ou fichier externe.
 
@@ -27,7 +30,7 @@ Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non 
 
 Les `.asc` sont des **sources texte ASCII**, pas des programmes AMOS tokenisés. Dans AMOS, repartir d'un programme vide puis utiliser **Project → Merge ASCII** pour chaque fichier. Le menu `Load` classique ne convient pas. Pour `Fsel$("**")`, sélectionner `examples/demo.iff` depuis un volume visible par AmigaOS.
 
-`demo.iff` est une mire originale 320×256, 8 bitplanes et 256 couleurs, également conservée dans `iff-TEST/`. Les dix exemples disposent de contrôles statiques. **La démo de fondu R33 est confirmée visible et fonctionnelle sous WinUAE par l'utilisateur ; les autres exemples ne sont pas tous validés de bout en bout.** Les tests de régression R23 (souris/clavier/Ctrl+C) et R25 (collisions) ont, eux, été validés sous AMOS interprété/WinUAE ; cela ne valide pas automatiquement ces versions pédagogiques.
+`demo.iff` est une mire originale 320×256, 8 bitplanes et 256 couleurs, également conservée dans `iff-TEST/`. Les dix exemples précédents disposent de contrôles statiques ; le nouveau programme intégré doit encore être testé sous WinUAE. **La démo de fondu R33 est confirmée visible et fonctionnelle sous WinUAE par l'utilisateur ; les autres exemples ne sont pas tous validés de bout en bout.** Les tests de régression R23 (souris/clavier/Ctrl+C) et R25 (collisions) ont, eux, été validés sous AMOS interprété/WinUAE ; cela ne valide pas automatiquement ces versions pédagogiques.
 
 **Pourquoi charger un IFF pour `collide.asc` ?** `demo.iff` fournit le mode PAL et la palette (index 3 = bleu, 28 = vert, 224 = rouge). L'exemple efface tout le back buffer à chaque image : **les pixels de l'IFF ne sont pas affichés et ne participent pas aux collisions**. La fonction `Aga Rect Overlap` fonctionne sans IFF ni écran ; le fichier n'est utilisé ici que pour obtenir les bonnes couleurs.
 

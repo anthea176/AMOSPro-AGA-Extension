@@ -52,6 +52,10 @@ La partie AGA du benchmark utilise trois séries chronométrées, en 320×256×3
 
 **Limite de preuve :** aucune capture ni transcription chiffrée des lignes finales n'a été fournie dans ce retour ; ne pas inventer `ERRORS 0 RESULT 1`, les valeurs de `CLIP`, ni une égalité mesurée entre Chip RAM avant/après. Ne pas refaire cet essai sans modification de code pertinente.
 
+## Test intégré proposé : un seul ASC, toutes les régressions restantes
+
+Un [dossier autonome `examples/compiler_r46_all_in_one/`](../examples/compiler_r46_all_in_one/) a été préparé : **un seul programme ASCII** `COMPILER_R46_ALL_IN_ONE.asc`, la banque image AGAPIC (10), la fonte AMCAF Hwarf (25), son attribution et la [procédure FR/EN](../examples/compiler_r46_all_in_one/README.md). Il regroupe les tests AGA 2D, `Aga Image Draw`, clipping, modes invalides, double buffer/Swap/Safe, fontes AMCAF et Topaz, **500 bascules du curseur** et restitution du pointeur lors de `Aga Screen Close`, avec bilan `RESULT` après fermeture. Tous les essais se font avec la **candidate expérimentale C1** déjà installée ; aucune bibliothèque officielle modifiée. **Cet exemple intégré est NON TESTÉ sous AMOS/WinUAE** à sa publication : ne pas marquer Gate C PASS sans retour utilisateur. Attention aux banques AMOS 10 et 25 remplacées. Suivre le dossier pour le répertoire courant AmigaDOS.
+
 ## Prochaines validations ciblées — les essais Open/Close, benchmark et Image Draw sont déjà passés
 
 1. Compiler **sans modifier** [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) avec la **même C1 installée**. Vérifier la disparition/réapparition du pointeur, sa restauration à la fermeture, `RESULT 1`, `CLOSE RETURNED` et l'absence de fuite Chip RAM. Cette recette fait 500 bascules ; conserver l'original archivé.
