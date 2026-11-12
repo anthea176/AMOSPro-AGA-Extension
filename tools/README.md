@@ -1,6 +1,10 @@
-# Outils Python — R57 active, R54 `LAST_GOOD` Compiler-safe
+# Outils Python — R58 candidate Compiler V2, R57 `LAST_GOOD` Compiler-safe
 
-## R57 — code rastport dans dist, test unique dans tests/current
+## R58 — pont Compiler V2, témoin à 40 Ko
+
+**Candidate active :** `dist/AMOSPro_AGA.Lib` R58 v0.13.3, **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, pont V2 de 34 octets, seul ASC actif `tests/current/M17_R58_COMPILER_BRIDGE_01.asc`. La commande historique `Aga Probe` pointe vers une routine à 40 000 octets. Builder déterministe `tools/build_m17_r58_compiler_bridge.py` et tests CPU `tools/test_m17_r58_compiler_bridge.py`, avec conservation des 59 routines natives R57. **Gate A/CI PASS ; Gates B/C WinUAE et D physique R58 non testées.** R57 `LAST_GOOD` protégée après promotion indépendante de l'auteur ; R54 en archive historique.
+
+## Historique R57 — code RastPort (ancien test archivé)
 
 **R57 en cours :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc) est l'unique test actif, fin `Do / Wait Vbl / Loop`. **Gates A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B AMOS interprété/WinUAE PASS** et **C AMOS Compiler/WinUAE PASS** (captures utilisateur : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, pas de Guru). L'arrêt interprété à la ligne 169 dans `Wait Vbl` est volontaire, sur la boucle d'attente. **D physique non testée**.
 

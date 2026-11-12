@@ -1,6 +1,6 @@
 # AMOS Compiler — pont V2 32 Ko → ~64 Ko (phase expérimentale)
 
-**12 novembre 2026 — diagnostic + prototype non installable.** Travail sur **main** uniquement. **Aucun changement** à R57 `dist/AMOSPro_AGA.Lib` ni à R54 `dist/AMOSPro_AGA_LAST_GOOD.Lib`, ni à `tests/current/`. **Aucune Gate B/C WinUAE revendiquée.**
+**12 novembre 2026 — candidate R58 v0.13.3 de validation du Compiler V2 sur `main`.** Unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, **53 commandes, 62 entrées AP20** et bloc monolithique de **40 038 octets**. `Aga Probe` atteint désormais l'offset natif **40 000**. La `LAST_GOOD` protégée est **R57** (SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`), promue indépendamment par l'auteur. **Gate A CPU/CI PASS ; Gates B/C WinUAE et D physique R58 NON TESTÉES.**
 
 ## Pourquoi le plafond actuel est de 32 Ko
 
@@ -13,15 +13,15 @@ Les [sources AMOS Professional 365 du Compiler](https://github.com/marc365/AMOS-
 - [Émetteur V2 expérimental](../tools/compiler_bridge_v2_probe.py) : dispatcher **34 octets**, ajout de `MOVEQ #0,D0` avant `MOVE.W (A0)+,D0`, remplacement de `ADDA.W` par `ADDA.L`. Base PC après `LEA 14(PC),A0` recalculée : 20 + 14 = 34.
 - [Test du pont](../tools/test_compiler_bridge_v2_probe.py) : AP20 synthétique pour offsets **0, 30 000, 32 766, 32 768, 40 000, 65 496** ; limite **65 534** ; refus **65 536**, double enveloppe C1/V2 et offsets impairs. Vérifie aussi tous les **59 segments natifs et stubs exacts de R57** en mémoire avec SHA R57/R54 et fabrique une cible fictive à l'offset **40 000** sans publier le binaire.
 - **CPU réel 68000 simulé dans Unicorn en CI** : exécute le dispatcher V2 avec appels pseudo-`Rbsr` résolus en **BSR.W** et **JSR absolu**, puis vérifie D0/A0/D2, la pile et le retour depuis la cible. Exécute le code 68000, pas une simple arithmétique Python.
-- Les outils de production restent sur [le dispatcher C1 historique](../tools/compiler_relocation.py), **inchangé**. En particulier `is_compiler_wrapped()` et l'exporteur ne savent **pas encore traiter V2** : **interdiction d'utiliser ce prototype pour une release ou une candidate R58.**
+- L'ancien pont [C1](../tools/compiler_relocation.py) reste inchangé et reproductible pour les versions précédentes. Le [builder R58 V2](../tools/build_m17_r58_compiler_bridge.py) est séparé ; l'exporteur natif refuse toute V2 non conforme au SHA et au builder exact. **R58 est une candidate de test, pas une release validée.**
 
 **Gate A ciblée V2 — CPU 68000 + AP20 PASS sur CI** : [Artifact integrity, run 43299842904](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43299842904), job `verify` et étape `Experimental Compiler V2 68000 bridge Gate A (in-memory only)` **success**. Logs : `STATIC PASS: V2 AP20 offsets [0, 30000, 32766, 32768, 40000, 65496] MAX 65534 R57 REPACK PASS` et `M68000 CPU PASS: 14 68k ABI/stack/call tests, real R57 preserved, no generated files`. La CI complète conclut **success** ; le contrôle final `Ensure no official or historical Lib was written` est PASS. **Cela ne constitue pas une Gate B ou C WinUAE**, ni une validation par le Compiler réel au-delà de 32 Ko.
 
-## Risques restant à lever avant toute candidate
+## Risques restant à lever avant validation de R58
 
 1. **Compiler réel** : valider qu'une routine AP20 d'au moins **40 Ko** est effectivement chargée et relogée par AMOS Compiler sans plantage. Le code AMOS365 suggère une possibilité, pas une validation.
 2. **Appels internes** : les `BSR.W`, `BRA.W` et accès PC relatifs à l'intérieur de notre monolithe peuvent encore déborder après croissance ; le dispatcher V2 ne les modifie pas.
 3. **Placement** : l'incident R56 a démontré qu'un changement de placement apparemment valide peut planter en compilé ; les Gates B et C devront être indépendantes.
 4. **Outillage** : faire évoluer strictement `wrap_native_ap20()`, `unwrap_native_parts()`, l'auditeur/exporteur et les tests de provenance seulement après décision explicite, sans casser la reproductibilité C1/R54/R57.
 
-**Étape suivante si Gate A passe :** définir avec l'auteur la candidate unique à installer dans `dist/AMOSPro_AGA.Lib` et l'unique ASC `tests/current/`, puis la tester sous AMOS interprété et **dans un nouvel exécutable compilé**. R54 `LAST_GOOD` restera intacte tant que toutes les validations nécessaires ne seront pas acquises.
+**Candidate publiée et Gate A confirmée :** [CI du binaire R58 actif — PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43302842699) ; [test CPU 68000 avec trace PC à 40 Ko](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43302242028). Les **59 segments natifs R57** sont intacts ; seul le token de l'instruction diagnostique existante `Aga Probe` est redirigé. [ASC actif unique](../tests/current/M17_R58_COMPILER_BRIDGE_01.asc). **Pour les Gates B/C :** installer R58 dans `APSystem`, redémarrer AMOS et Compiler, lancer le test interprété, puis **compiler un nouvel exécutable à partir du même ASC**. Attendu : `FAR AGA PROBE RETURNED`, `FAR PROBE AFTER CLOSE RETURNED`, `RESULT 1`, `CLOSE RETURNED`, sans Guru. **R57 `LAST_GOOD` reste protégée.**

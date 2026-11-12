@@ -1,8 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M17/R57 0.13.2 — Gates A/B/C PASS, benchmark compilé accéléré (12/11/2026)
+## M17/R58 0.13.3 — candidate Compiler V2 au-delà de 32 Ko
 
-**Règle utilisateur :** branche `main` uniquement, **un seul binaire actif [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)**, **un seul programme actif [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc)**. Aucune autre copie R57 dans `dist/experimental/`. `LAST_GOOD` R54 intacte.
+**Binaire de travail unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, **53 commandes, 62 entrées AP20**, monolithe Compiler **40 038 octets**. **Seul ASC actif :** [`tests/current/M17_R58_COMPILER_BRIDGE_01.asc`](../tests/current/M17_R58_COMPILER_BRIDGE_01.asc), sans ressources externes. L'instruction historique `Aga Probe` atteint une routine NOP/RTS à l'offset natif **40 000**, via le nouveau dispatcher V2 ; les **59 routines natives de R57** sont conservées octet pour octet. [Rapport V2](GATE_C_COMPILER_BRIDGE_V2_PROBE.md).
+
+**Gate A CPU 68000/CI R58 : PASS** ([run 43302842699](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43302842699), [traçage PC 40 Ko](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43302242028)). **Gate B interprétée WinUAE : NON TESTÉE ; Gate C compilée WinUAE : NON TESTÉE ; Gate D Amiga réel : NON TESTÉE.** Installer R58 dans APSystem, redémarrer AMOS et AMOS Compiler, importer l'ASC par `Project → Merge ASCII`, exécuter en interprété puis recompiler **le même source** pour Gate C. Attendu : `FAR AGA PROBE RETURNED`, `FAR PROBE AFTER CLOSE RETURNED`, `RESULT 1`, `CLOSE RETURNED`. La boucle finale `Do / Wait Vbl / Loop` se termine par interruption manuelle normale.
+
+**`LAST_GOOD` R57 v0.13.2 protégée**, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, promue indépendamment par l'auteur dans le commit `b4a05ea`. R54 est conservée dans son archive historique. **`main` uniquement**, aucun deuxième binaire candidat ni deuxième test ASC actif.
+
+## Historique M17/R57 0.13.2 — Gates A/B/C PASS avant promotion (12/11/2026)
+
+**État historique au moment de R57 :** branche `main` uniquement, **un seul binaire actif [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib)**, **un seul programme actif [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc)**. Aucune autre copie R57 dans `dist/experimental/`. `LAST_GOOD` R54 intacte.
 
 **R57 :** 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, 53 commandes / 60 entrées AP20, **monolithe 30 780 octets**, identique en taille et offsets à la R55 compilée PASS. Ancien helper R55 de 620 octets remplacé sur place par 580 octets de RastPort R56 + 40 NOP, sans changer les stubs, le dispatcher, le saut Fill ni le branchement Clear. **Gate A CPU/CI PASS** ([run 43286230339](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)). **Gate C AMOS Compiler/WinUAE PASS confirmée par capture utilisateur** : `DONE 40 C 14 F 13 P 13`, `SAFEERR 0 SWAPERR 0 DRAWERR 0`, `CLOSED -1 RESULT 1`, `CLOSE RETURNED`, **pas de Guru**. **Gate B R57 interprétée PASS sur capture utilisateur** du même test : `RESULT 1`, erreurs 0, `CLOSE RETURNED`. L'éditeur indique `Program interrupted at line 169` car le programme a été arrêté manuellement dans sa boucle `Do / Wait Vbl / Loop` ; **ce n'est pas un Guru**. Gate D physique non testée. Le retour à un placement R55 rétablit le compilé sur ce scénario ; mécanisme exact du Guru R56 non prouvé.
 
