@@ -67,7 +67,7 @@ def run() -> None:
     emulate(abs_call, bridge, start, absolute=True, expected_d3=0)
     print("R59 COMPACT V2 GATE A PASS: R57 native code, 53 tokens, 60 AP20 entries,")
     print("no padding, BSR/JSR 68000 stack and registers PASS", flush=True)
-    print("R59 GATES B/C WINUAE NOT TESTED (requires new executable)", flush=True)
+    print("R59 B/C WinUAE author-confirmed separately; this script is CPU Gate A only", flush=True)
 
 
 if __name__ == "__main__":

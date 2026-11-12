@@ -1,19 +1,20 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R57 is the user-promoted LAST_GOOD on main; preserve its SHA. R58 proved the
-40K V2 boundary; current R59 removes that artificial test padding.
+R59 v0.13.4 is the user-promoted LAST_GOOD on main, SHA-pinned and byte-identical
+to the current installable library. R57 is a reproducible historical checkpoint.
+R58 proved the 40K boundary; R59 removes its artificial test padding.
 """
 from hashlib import sha256
 from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # User-promoted R57 0.13.2, Gates A/B/C
+LAST_GOOD_SHA="00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"  # User-promoted R59 0.13.4, Gates A/B/C + full regression on exact pre-promotion HEAD
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
-R59_SHA="00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"  # M17/R59 v0.13.4 compact V2, candidate (Gate A only)
-R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # R57 current Gate A binary in dist/AMOSPro_AGA.Lib
+R59_SHA="00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"  # M17/R59 v0.13.4 compact V2, promoted LAST_GOOD
+R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
     "dist/experimental/AMOSPro_AGA_M16_v0.12.8_IMAGE_CAPTURE_LINK_FIX_R53.Lib": "4cc7d78998720748e70a1498ec28375b03a4f5b98e02b3510d253f797af7ae26",
@@ -47,13 +48,13 @@ def verify_active(root: Path):
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
     if current_sha==R59_SHA:
-        assert cur!=good, "R59 must not overwrite protected R57 LAST_GOOD"
-        return cur,good,"R59 0.13.4 compact V2 Gate A candidate"
+        assert cur==good, "Promoted R59 LAST_GOOD must exactly equal active R59 binary"
+        return cur,good,"promoted R59 v0.13.4 compact V2 Gates A/B/C PASS"
     if current_sha==R58_SHA:
-        assert cur!=good, "R58 must not overwrite promoted R57 LAST_GOOD"
+        assert cur!=good, "R58 must not overwrite promoted R59 LAST_GOOD"
         return cur,good,"R58 0.13.3 V2 Gate A candidate"
     if current_sha==R57_SHA:
-        return cur,good,("promoted R57 v0.13.2" if cur==good else "R57 v0.13.2 current Gate A candidate")
+        return cur,good,"historical R57 v0.13.2 (not current LAST_GOOD)"
     if sha256(cur).hexdigest()==R56_SHA:
         assert cur!=good,"R56 must not overwrite validated R57 LAST_GOOD"
         return cur,good,"R56 v0.13.1 current Gate A candidate"

@@ -1,16 +1,20 @@
-# Outils Python — R58 candidate Compiler V2, R57 `LAST_GOOD` Compiler-safe
+# Outils Python — R59 v0.13.4 `LAST_GOOD` Compiler V2
 
-## R58 — pont Compiler V2, témoin à 40 Ko
+## Référence active : R59 compacte, promue le 12/11/2026
 
-**Candidate active :** `dist/AMOSPro_AGA.Lib` R58 v0.13.3, **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, pont V2 de 34 octets, seul ASC actif `tests/current/M17_R58_COMPILER_BRIDGE_01.asc`. La commande historique `Aga Probe` pointe vers une routine à 40 000 octets. Builder déterministe `tools/build_m17_r58_compiler_bridge.py` et tests CPU `tools/test_m17_r58_compiler_bridge.py`, avec conservation des 59 routines natives R57. **Gate A/CI PASS ; Gates B/C WinUAE et D physique R58 non testées.** R57 `LAST_GOOD` protégée après promotion indépendante de l'auteur ; R54 en archive historique.
+**`dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` : R59 v0.13.4**, **32 984 octets**, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`, **53 commandes / 60 entrées AP20**, bloc Compiler V2 **30 782 octets**. Pont V2 non signé de 34 octets, sans les 9 252 octets artificiels de R58 ; les **59 routines natives R57** et les stubs AP20 sont inchangés. Gates **A CPU/CI, B AMOS interprété/WinUAE et C AMOS Compiler/WinUAE PASS** sur [l'ASC R59 archivé](../tests/passed/M17_R59_COMPACT_V2_01.asc) ; **régression complète [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43312486348)** sur le HEAD exact `5f29d78`, puis **promotion explicitement autorisée** par l'auteur. Gate D Amiga physique non testée. **Aucun ASC actif** dans `tests/current/`.
+
+**Outils actuels :** [`build_m17_r59_compact_v2.py`](build_m17_r59_compact_v2.py) (reconstruction déterministe), [`test_m17_r59_compact_v2.py`](test_m17_r59_compact_v2.py) (Gate A 68000), [`active_library.py`](active_library.py) (empreintes de `LAST_GOOD` et courant), [`build_aga_current.py`](build_aga_current.py) (vérification du binaire actif), [`generate_aga_native_source.py`](generate_aga_native_source.py) (export V2 strict), [`compiler_bridge_v2_probe.py`](compiler_bridge_v2_probe.py) (dispatcher V2 et déballage). **Pour la prochaine évolution**, partir du `LAST_GOOD` R59 avec `unwrap_native_parts_v2`, puis terminer par `wrap_native_ap20_v2`. Ne jamais passer le binaire V2 directement dans l'ancien wrapper V1.
+
+**Historique :** R58 a démontré les appels au-delà de 32 Ko, à l'offset 40 000, Gates A/B/C PASS. [Test R58 archivé](../tests/passed/M17_R58_COMPILER_BRIDGE_01.asc) ; [rapport](../docs/GATE_C_COMPILER_BRIDGE_V2_PROBE.md). R57 était le précédent `LAST_GOOD`, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, et reste reproductible avec [son builder](build_m17_r57_rastport.py) ou récupérable dans le [commit antérieur](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/5f29d78e65b666f7260f5a32e28bd4e8bcf59a4a/dist/AMOSPro_AGA_LAST_GOOD.Lib). Les archives historiques restent figées.
 
 ## Historique R57 — code RastPort (ancien test archivé)
 
-**R57 en cours :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/current/M17_R57_RAST_FILL_01.asc`](../tests/current/M17_R57_RAST_FILL_01.asc) est l'unique test actif, fin `Do / Wait Vbl / Loop`. **Gates A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B AMOS interprété/WinUAE PASS** et **C AMOS Compiler/WinUAE PASS** (captures utilisateur : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, pas de Guru). L'arrêt interprété à la ligne 169 dans `Wait Vbl` est volontaire, sur la boucle d'attente. **D physique non testée**.
+**R57 à son checkpoint historique :** [ancienne référence figée dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/5f29d78e65b666f7260f5a32e28bd4e8bcf59a4a/dist/AMOSPro_AGA_LAST_GOOD.Lib), 32 980 octets, SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`, monolithe 30 780 octets. [`tests/passed/M17_R57_RAST_FILL_01.asc`](../tests/passed/M17_R57_RAST_FILL_01.asc) conserve l'ancien test, alors actif, fin `Do / Wait Vbl / Loop`. **Gates A CPU/CI PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43286230339)), **B AMOS interprété/WinUAE PASS** et **C AMOS Compiler/WinUAE PASS** (captures utilisateur : `RESULT 1`, erreurs 0, `CLOSE RETURNED`, pas de Guru). L'arrêt interprété à la ligne 169 dans `Wait Vbl` est volontaire, sur la boucle d'attente. **D physique non testée**.
 
 Générateur `tools/build_m17_r57_rastport.py` : remplacera en mémoire le helper R55 de 620 octets par RastPort R56 de 580 octets + 40 NOP ; aucun autre binaire écrit. Test natif `tools/test_m17_r57_rastport.py` ; binaire courant vérifié par `python -B tools/build_aga_current.py --verify`. Le binaire R56 a subi le Guru compilé `8000000B` ; cette architecture de placement a désormais **PASS en compilé sur le test courant R57** et sur le **benchmark V2 compilé** (Fill médiane 41 ticks, Clear médiane 58 ; R55 : 54/115, gains en temps **24,1 % / 49,6 %**). [Mesures](../benchmarks/RESULTATS_32C_R57_COMPILER_2026-11-12.md). Le mécanisme exact du Guru R56 n'est pas prouvé.
 
-**R54 `LAST_GOOD` préservée**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. Seule branche `main`, aucun autre livrable actif.
+**R54, ancienne `LAST_GOOD` à l'époque, archivée**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`. Seule branche `main`, aucun autre livrable actif.
 
 ## Historique — R53 capture et sondes R47–R52
 
@@ -29,9 +33,9 @@ Les builders et sondes R47–R52 sont conservés pour la reproductibilité, sans
 - Les workflows R33–R38 restent archivés et déclenchés seulement par modification de leurs fichiers respectifs ou manuellement. **La rapidité de la CI ne réduit pas le contrat de validation des nouvelles commandes ni les Gates B/C/D.**
 - **Ne pas confondre :** cette séparation diminue le temps des workflows GitHub, pas le temps d'exécution des programmes sur Amiga. Aucun binaire ni archive historique modifiés par cette optimisation.
 
-## Construction Compiler-safe obligatoire — R54 courante, R46 C1 figée
+## Construction Compiler-safe — R59 promue, R46 C1 figée
 
-**Courant :** [R54 0.12.9](../dist/AMOSPro_AGA.Lib) est la bibliothèque installable et `LAST_GOOD` validée sur Gates A/B/C (scénarios R54) ; **32 364 octets**, SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **53 commandes / 60 entrées AP20**. La référence antérieure [R46 C1](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) demeure figée, **29 964 octets**, SHA256 `d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b`, 50 commandes / 57 entrées AP20. L'ancienne [R46 native](../dist/experimental/AMOSPro_AGA_M16_v0.12.1_IMAGE_DRAW_R46.Lib) (29 288 octets) reste une **archive historique non Compiler-safe**, et ne doit pas remplacer R54.
+**Courant : R59 0.13.4**, [installable](../dist/AMOSPro_AGA.Lib) et [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques (32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`, Gates A/B/C et régression complète PASS). La R57 v0.13.2 est un checkpoint historique reproductible ; la R46 C1 reste [archivée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) à l'octet près.
 
 **Vérifier l'officielle et son pont :**
 
@@ -42,11 +46,11 @@ python -B tools/test_compiler_relocation.py
 python -B tools/verify_artifacts.py
 ```
 
-`build_aga_current.py` vérifie la reproductibilité de R54 **et** celle de R46 C1 depuis son archive. Il ne génère pas une nouvelle version M17. Les anciens scripts R40–R46 restent dédiés aux références historiques.
+`build_aga_current.py` vérifie la reproductibilité de R59 **et** celle de R46 C1 depuis son archive. Il ne réécrit aucun binaire. Les anciens scripts R40–R46 restent dédiés aux références historiques.
 
-**Toute candidate postérieure à R54** doit partir du `LAST_GOOD` R54 en vigueur : extraire en mémoire les parties natives via `compiler_relocation.native_from_promoted()`, modifier uniquement les fonctions auditées dans un builder reproductible, et terminer par `compiler_relocation.wrap_native_ap20()`. Auditer l'AP20, l'ABI, les branches et les cibles relogeables avant tout binaire installable. Il n'y a **aucun retour automatique** à une bibliothèque native non Compiler-safe.
+**Pour toute candidate postérieure à R59**, partir du `LAST_GOOD` V2 en vigueur : déballer les parties natives avec `compiler_bridge_v2_probe.unwrap_native_parts_v2()`, modifier uniquement des fonctions auditées dans un builder reproductible, puis terminer avec `wrap_native_ap20_v2()`. Vérifier AP20, ABI, offsets non signés, source strict, Gate A CPU et Gate B/C WinUAE avant toute promotion. Ne jamais appliquer automatiquement l'enveloppe V1 à un binaire V2.
 
-**Limite de taille à surveiller pour M17 :** le monolithe R54 est de **30 160 octets**, contre la limite stricte de **32 768 octets** par routine copiée (marge arithmétique : **2 608 octets**, avant autres contraintes d'offset et de structure). Le builder doit refuser un dépassement ; ne pas engager une modularisation de l'AP20 sans audit et recette Compiler dédiés. Aucune nouvelle candidate, aucun nouveau test runtime ni aucune promotion ne sont affirmés ici.
+**Limite de taille du V2 :** bloc Compiler R59 de **30 782 octets** ; borne théorique de l'unité **65 534 octets** (compteur WORD AMOS Compiler). La routine témoin R58 à 40 000 a été validée en compilé ; la borne supérieure de 65 534 octets reste une hypothèse de format, pas une validation WinUAE. Ne pas extrapoler les performances ni le comportement mémoire sans tests.
 
 [Instructions impératives](../EXTENSION_SOURCE_RULES.md) · [diagnostic M17](../docs/M17_BLITTER_DIAGNOSTIC.md) · [relocalisation C1 historique](../docs/GATE_C_R46_MONOLITH_CANDIDATE.md). Travail exclusivement sur `main`, archives et `tests/passed/` immuables.
 

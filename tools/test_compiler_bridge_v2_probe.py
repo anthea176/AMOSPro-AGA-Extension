@@ -23,10 +23,10 @@ from compiler_relocation import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-ACTIVE_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'  # Promoted reference R57
+R57_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'  # Historical deterministic native reference
 R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
 R59_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'
-LAST_GOOD_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0'
+LAST_GOOD_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'  # User-promoted R59, matches current
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -95,25 +95,23 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
     bad = repack_ap20(template(), token, damaged, name)
     reject(lambda: unwrap_native_parts_v2(bad), 'corrupted offset')
 
-    # The real R57 is read-only. The V2 image must reproduce all 59 native
-    # parts and retain exactly the already validated C1/R57 public stubs.
+    # Rebuild exact historical R57 without treating the newly promoted
+    # R59 LAST_GOOD as the old V1 source. All 59 native routines and
+    # already validated R57 public stubs must be byte-identical.
     active = ROOT / 'dist/AMOSPro_AGA.Lib'
     last_good = ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
     realistic = None
     if active.is_file() or last_good.is_file():
-        assert active.is_file() and last_good.is_file(), 'incomplete real R57 fixture'
+        assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (ACTIVE_SHA256, R58_SHA256, R59_SHA256)
-        if active_hash == R58_SHA256:
-            from build_m17_r58_compiler_bridge import build as build_r58
-            assert current_bytes==build_r58()[0]
-        elif active_hash == R59_SHA256:
-            from build_m17_r59_compact_v2 import build as build_r59
-            assert current_bytes==build_r59()[0]
+        assert active_hash == R59_SHA256, "Current library must be promoted compact R59"
+        from build_m17_r59_compact_v2 import build as build_r59
+        assert current_bytes == protected_bytes == build_r59()[0]
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        # The reference is the user-promoted R57 LAST_GOOD, never R58.
-        source_bytes=protected_bytes
+        from build_m17_r57_rastport import build as build_r57
+        source_bytes, _ = build_r57()
+        assert sha256(source_bytes).hexdigest() == R57_SHA256, "R57 historical source changed"
         tokens, original = unwrap_native_parts(source_bytes)
         assert len(original) == 59 and len(tokens) > 6
         old_parts = unpack_ap20(source_bytes)[1]
@@ -140,7 +138,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert unwrap_native_parts_v2(extended_v2) == (tokens, extended)
         realistic = far_segments[-1]
         # No generated AP20 is written to disk.
-        assert sha256(active.read_bytes()).hexdigest() in (ACTIVE_SHA256, R58_SHA256, R59_SHA256)
+        assert sha256(active.read_bytes()).hexdigest() == R59_SHA256
         assert sha256(last_good.read_bytes()).hexdigest() == LAST_GOOD_SHA256
     print('STATIC PASS: V2 AP20 offsets', offsets, 'MAX', MAX_UNIT_BYTES,
           'R57', 'REPACK PASS' if realistic is not None else 'not mounted', flush=True)

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Reproducible R46 bridge plus version-pinned verification of current R59/R58/R57.
+"""Verify the SHA-pinned promoted R59 V2 and frozen historical R46 C1.
 
-New versions MUST derive native parts from the compiler-safe LAST_GOOD
-with compiler_relocation.native_from_promoted(), modify the native parts,
-and call compiler_relocation.wrap_native_ap20() as the FINAL production step.
-Never publish the raw output of historical build_m16_image_draw_r46.py.
+Future revisions MUST unwrap the V2 LAST_GOOD via
+compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
+native parts and rewrap with wrap_native_ap20_v2(). The old V1 wrapper is
+historical and must not be silently applied to the current R59 image.
 """
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R59 0.13.4"):
+    if active.startswith(("R59 0.13.4", "promoted R59 v0.13.4")):
         from build_m17_r59_compact_v2 import build as build_r59
         candidate,meta=build_r59()
         assert candidate==current, "R59 candidate not byte-exact to deterministic builder"
@@ -92,8 +92,8 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: native_from_promoted(LAST_GOOD.read_bytes(), native_title)")
-    print("Next revision must use an audited Compiler-safe wrapper; R59 uses wrap_native_ap20_v2")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (audited R59)")
+    print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 
 if __name__ == "__main__":
