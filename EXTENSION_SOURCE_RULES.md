@@ -1,5 +1,10 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE DE DIAGNOSTIC — ne pas confondre table de collecte des paramètres et limite API
+
+Le 12/11/2026, l'erreur R47 `Non dimensioned array` a conduit à une **fausse hypothèse** : « AMOS limite toute fonction d'extension à cinq arguments ». **Ne pas reproduire ce diagnostic.** Le `cmp.w #6` / `moveq #5` dans `+B.s` (`Library_GetParams`) sélectionne le traitement des appels ayant **5 paramètres ou plus** ; ce n'est pas une preuve de rejet des signatures à 6+. Comparer d'abord avec les **régressions runtime** déjà validées : R46 expose `Aga Blit Copy` (6), `Aga Hotspot Hit` (6), `Aga Rect Overlap` (8). La R47 possède son token dans le binaire, mais le diagnostic 01/02 montre un échec AMOS sur `Aga Image Capture(...)` malgré une installation R47 confirmée. **Isoler la reconnaissance des tokens, les trampolines GetP, les segments AP20 et l'ABI runtime avant de réécrire l'API ou les routines 68000.** Les faux correctifs/limitations R48 ont été retirés ; R46 C1 `LAST_GOOD` reste inchangée.
+
+
 ## RÈGLE PERMANENTE — suivi des exemples lors des changements d'API (M16)
 
 **Aucune nouvelle signature publique ne peut être déclarée livrée tant que les exemples et les notices ne correspondent pas réellement au binaire installé.** Pour chaque ajout/changement de commande (ex. `Aga Image Draw`, `Aga Image Capture`, `Aga Font Bank Select`) :

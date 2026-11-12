@@ -2,6 +2,10 @@
 
 **État au 12/11/2026 : Gate B FAIL au premier essai utilisateur sous AMOS interprété/WinUAE.** Version candidate R47 v0.12.2, **32 012 octets** et SHA256 `a550e9662cda1890aa8331c6e849e702300e6070e8e2caaf2fab9918613944d5`. **R46 C1 reste la bibliothèque officielle `LAST_GOOD`**. Le pont Compiler-safe a passé son audit structurel, mais les appels aux routines internes AMOS **n'ont encore jamais été testés sous WinUAE**. Un plantage reste possible ; utiliser **une configuration WinUAE de test / snapshot**, pas un Workbench ou disque de production.
 
+## Diagnostic 02 / exclusion d'une fausse cause
+
+Le diagnostic 02 reproduce l'erreur AMOS `Non dimensioned array at line 1` sur l'expression `Aga Image Capture(...)` ; le code sans cette ligne fonctionne. L'utilisateur indique avoir correctement installé R47. **Ne pas répéter la vérification d'installation comme hypothèse par défaut.** La R47 contient le token dans son AP20, mais sa reconnaissance/exécution réelle n'est pas expliquée par le seul audit structurel. Une tentative de conclusion « maximum 5 paramètres » a été annulée : R46 déjà validée contient des fonctions à 6 et 8 paramètres. Le code AMOS `Library_GetParams` utilise une voie de traitement `5+`, et non une interdiction générale. Aucun nouveau binaire correctif n'a été validé ; R46 C1 demeure `LAST_GOOD`. Vérifier les chemins de tokenisation, liaisons `GetP`, choix du stub/dispatcher et ABI dans le runtime avant de créer une autre candidate.
+
 ## Retours des diagnostics 00 et 01 (12/11/2026)
 
 - [Diagnostic 00](../tests/diagnostics/M16_R47_CRASH_ISOLATION_00.asc) **PASS en interprété, capture utilisateur** : `S02 DETECT RETURNED -1`, `S05 OPEN/CLOSE RETURNED 1`, `RESULT 1`. Cette recette n'appelle **pas** `Aga Image Capture`, elle ne prouve donc pas la présence de la R47 chargée ni l'intégrité du nouveau token.
