@@ -277,6 +277,7 @@ def emit_draw():
     c.move(A(2), A(1))
     c.move(D(2), D(0))
     c.move(D(4), D(1))
+    c.move(I(2), M(7, MODE))      # mark any attempted pixel, even on OS error
     c.call_os(LVO_WRITE_PIXEL)
     c.tst(D(0))
     c.branch(6, "skip_pixel")
@@ -313,7 +314,9 @@ def emit_draw():
     c.branch(0, "raster_loop")
 
     c.label("draw_finished")
-    c.call_os(LVO_WAIT_BLIT)      # never release a temporary RP during a blit
+    c.tst(M(7, MODE))
+    c.branch(7, "bad")           # invisible line: no blit, no needless wait
+    c.call_os(LVO_WAIT_BLIT)      # never release a temp RP during a blit
     c.label("bad")
     c.raw("4fef00a0")             # LEA +160(SP),SP
     c.raw("4cdf77f7")             # restore same registers as R40
