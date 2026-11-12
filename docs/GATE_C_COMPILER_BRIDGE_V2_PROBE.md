@@ -1,6 +1,6 @@
 # AMOS Compiler — pont V2 32 Ko → ~64 Ko (phase expérimentale)
 
-**12 novembre 2026 — candidate R58 v0.13.3 de validation du Compiler V2 sur `main`.** Unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, **53 commandes, 62 entrées AP20** et bloc monolithique de **40 038 octets**. `Aga Probe` atteint désormais l'offset natif **40 000**. La `LAST_GOOD` protégée est **R57** (SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`), promue indépendamment par l'auteur. **Gate A CPU/CI PASS ; Gates B/C WinUAE et D physique R58 NON TESTÉES.**
+**12 novembre 2026 — candidate R58 v0.13.3 de validation du Compiler V2 sur `main`.** Unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **42 264 octets**, SHA256 `c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b`, **53 commandes, 62 entrées AP20** et bloc monolithique de **40 038 octets**. `Aga Probe` atteint désormais l'offset natif **40 000**. La `LAST_GOOD` protégée est **R57** (SHA256 `aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0`), promue indépendamment par l'auteur. **Gate A CPU/CI PASS ; capture WinUAE R58 conforme reçue le 12/11/2026, mode interprété/compilé à préciser pour qualifier séparément les Gates B/C ; Gate D physique NON TESTÉE.**
 
 ## Pourquoi le plafond actuel est de 32 Ko
 
@@ -16,6 +16,12 @@ Les [sources AMOS Professional 365 du Compiler](https://github.com/marc365/AMOS-
 - L'ancien pont [C1](../tools/compiler_relocation.py) reste inchangé et reproductible pour les versions précédentes. Le [builder R58 V2](../tools/build_m17_r58_compiler_bridge.py) est séparé ; l'exporteur natif refuse toute V2 non conforme au SHA et au builder exact. **R58 est une candidate de test, pas une release validée.**
 
 **Gate A ciblée V2 — CPU 68000 + AP20 PASS sur CI** : [Artifact integrity, run 43299842904](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43299842904), job `verify` et étape `Experimental Compiler V2 68000 bridge Gate A (in-memory only)` **success**. Logs : `STATIC PASS: V2 AP20 offsets [0, 30000, 32766, 32768, 40000, 65496] MAX 65534 R57 REPACK PASS` et `M68000 CPU PASS: 14 68k ABI/stack/call tests, real R57 preserved, no generated files`. La CI complète conclut **success** ; le contrôle final `Ensure no official or historical Lib was written` est PASS. **Cela ne constitue pas une Gate B ou C WinUAE**, ni une validation par le Compiler réel au-delà de 32 Ko.
+
+## Retour utilisateur WinUAE — 12/11/2026
+
+Capture du programme actif `M17-R58-COMPILER-BRIDGE-01` : les deux appels `Aga Probe` reviennent (`FAR AGA PROBE RETURNED` puis `FAR PROBE AFTER CLOSE RETURNED`), les opérations écran/Blitter/Swap affichent `1`, `CLOSED -1`, `RESULT 1`, `CLOSE RETURNED`, et aucun Guru n'est visible. Le résultat fonctionnel **de cette exécution affichée est PASS**. Le PC à l'offset 40 000 est établi indépendamment par le traçage CPU de Gate A ; le texte `OFFSET 40000` imprimé par l'ASC ne constitue pas à lui seul une preuve de PC sous WinUAE.
+
+**Limite de preuve :** le même ASC imprime exactement ces lignes en interprété et depuis un exécutable Compiler. La capture ne permet donc pas, isolément, de classifier une Gate B ou Gate C. Préciser si l'utilisateur a lancé l'interprété ou un **exécutable compilé après installation de R58** ; obtenir l'autre mode si nécessaire avant de marquer A/B/C PASS. La promotion de `LAST_GOOD` exige en outre l'approbation de l'auteur et la régression complète sur le HEAD exact, conformément aux règles. **R57 `LAST_GOOD` reste inchangée.**
 
 ## Risques restant à lever avant validation de R58
 
