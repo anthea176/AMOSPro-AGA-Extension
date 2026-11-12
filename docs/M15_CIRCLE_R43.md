@@ -1,8 +1,10 @@
-# M15/R43 — Aga Circle : Gate A CPU/CI PASS, candidate R43 v0.11.4 (WinUAE en attente)
+# M15/R43 — Aga Circle : Gates A et B PASS, LAST_GOOD (12/11/2026)
 
-**Statut au 12/11/2026 : contrat explicitement approuvé par l'utilisateur (« oui c tous bon »).** Implémentation 68000, builder et **436 tests CPU 68000 Gate A / CI PASS** [preuve](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354). `dist/AMOSPro_AGA.Lib` est la candidate R43 v0.11.4 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`) ; archive versionnée identique. **Gate B WinUAE NON TESTÉE ; `LAST_GOOD` reste R42**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. La dernière `LAST_GOOD` demeure **R42 v0.11.3**, Gates A et B PASS, 47 commandes AP20, 25 896 octets et SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. Gates C/D non testées. Le présent texte décrit le **contrat approuvé** ; la promotion d'un binaire reste soumise aux Gates réelles.
+**R43 v0.11.4 VALIDÉE sous AMOS interprété / WinUAE :** l'utilisateur confirme le rendu (« parfait !!! ») après **436 scénarios CPU 68000 et [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950)**. Capture : `OPEN 1 DB 1 CLEAR 1`, `CIRCLES 1 1 1 1 DOT 1`, `CORNERS 1 1 1 1`, `CLIPPED 1 1 1 1`, `PEN0 1 OUTSIDE 0 0 0 0`, `WRAP 0 BADR 0 0`, `BADXY 0 0 BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**. Rendu visuel confirmé.
 
-## Une seule commande proposée
+**Promotion GitHub :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib` octet pour octet, **27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, **48 commandes AP20 / 54 segments**. [Test original archivé sans modification](../tests/passed/M15_R43_CIRCLE_01.asc), blob Git `088158365a64accf0417fdda3fbba74e2e58ebf7` (**3 466 octets**) ; `tests/current/` ne contient plus d'ASC actif. **R42 reste archivée intégralement**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. **Gates C Compiler et D matériel Amiga AGA NON TESTÉES.**
+
+## Commande implémentée et validée
 
 ```amos
 _OK=Aga Circle(CX,CY,Radius,Pen)
@@ -15,7 +17,7 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 - Cercle **de contour 1 pixel**, sans remplissage, XOR, anticrénelage, motifs ou épaisseur variable. Points cardinaux aux coordonnées `(CX+-Radius,CY)` et `(CX,CY+-Radius)` ; rasterisation entière déterministe et symétrique sur huit octants.
 - **Succès 1** si au moins un pixel a été effectivement écrit (y compris écriture de Pen 0 ou valeur déjà présente) ; **retour 0** si l'ensemble du contour est invisible, si un argument/état est invalide, si Safe manque ou si aucune écriture ne réussit. Un échec système après la première écriture n'est **pas atomique**.
 
-## Algorithme de sécurité envisagé
+## Algorithme de sécurité implémenté
 
 - **Midpoint Circle / Bresenham entier**, même séquence de points pour le cercle visible et le cercle tronqué. Aucun appel à `graphics.library/DrawEllipse` sur le RastPort non-layered, évitant la dépendance à un clipping non garanti et les divergences de rasterisation.
 - Calculs du centre +/- rayon, de l'erreur et des coordonnées intermédiaires en **32 bits signés**, afin d'éviter les débordements 16 bits. Maximum proposé : rayon 32767, donc boucle bornée ; aucun arrêt arbitraire n'interrompt un cercle normalement autorisé.
@@ -25,7 +27,7 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 - `Safe` non bloquant : au plus un `Exec/GetMsg` si message Safe en attente ; pas de `WaitPort`, pas de `ReplyMsg` sur Safe/Disp, aucun effacement de Disp. Aucune écriture tant que Safe n'est pas obtenu.
 - RastPort temporaire sur la pile, `InitRastPort`, `SetAPen`, `SetDrMd` JAM1, `WritePixel` uniquement dans les bornes. Traduire le succès OS `WritePixel=0` en succès logique. `WaitBlit` avant de restituer le RastPort. **Aucune allocation persistante Chip/Fast**, aucun swap ou VBL implicite et aucun effet sur palette/Workbench/écran AMOS natif.
 
-## ABI et construction prévues
+## ABI et construction
 
 - Entrée AP20 envisagée **53** (après l'entrée R42 52), **48 commandes / 54 segments** après ajout ; token fonction numérique à **quatre paramètres** de signature `00,0,0,0`.
 - Registres d'entrée attendus : `D3=Pen`, les trois arguments AMOS restants `(A3)+` consommés dans l'ordre **Radius, CY, CX** (trois LONG sur A3). Retour `D3` 0/1, `D2=0`, pile et autres registres préservés comme en R42.
@@ -34,6 +36,6 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 - Après seulement une **Gate A complète PASS** : publier `dist/AMOSPro_AGA.Lib` et archive R43 dédiée, plus **un seul test WinUAE actif** sous `tests/current/` ; mettre à jour les deux README et la documentation dans le même commit. Ne pas modifier `LAST_GOOD`.
 - **Gate B** : AMOS interprété via Project -> Merge ASCII, rendu et résultat/fermeture confirmés par l'utilisateur ; promotion et archivage du test exact **uniquement après PASS utilisateur**. Gates C (Compiler) et D (AGA réel) restent indépendantes.
 
-## Décision à obtenir
+## Clôture et suite
 
-**Contrat approuvé et Gate A CPU/CI PASS.** Candidate exacte publiée ; ne promouvoir vers LAST_GOOD qu'après confirmation utilisateur de Gate B WinUAE. R39 reste reportée ; les études M15bis souris et M16 Fast RAM restent séparées. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.
+**R43 promue `LAST_GOOD` après Gate B utilisateur PASS.** M15 Plot/Draw/Box/Circle clôturée pour Gates A/B. R39 fontes bitmap reste reportée. **Prochain chantier à discuter : M15bis**, visibilité du pointeur souris AGA sans perturber Workbench, avant M16 banques d'images compressées en Fast RAM. Ces commandes futures ne sont ni implémentées ni approuvées par la seule clôture R43. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.

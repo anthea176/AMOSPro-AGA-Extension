@@ -1,8 +1,8 @@
-# Outils Python actifs — R43 0.11.4 candidate Gate A PASS, R42 LAST_GOOD
+# Outils Python actifs — R43 0.11.4 Gates A/B PASS, WinUAE LAST_GOOD
 
-## M15/R43 — Aga Circle, CPU/CI Gate A PASS
+## M15/R43 — Aga Circle, Gates A CPU/CI et B WinUAE PASS
 
-**Outils R43 actifs :** `m15_circle_r43_emit.py`, `build_m15_circle_r43.py`, `test_m15_circle_r43.py`. **436 tests CPU 68000 PASS** et [CI source complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354) ; export natif strict PASS. `dist/AMOSPro_AGA.Lib` = archive R43 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`), 48 commandes AP20. **`LAST_GOOD` reste R42 WinUAE PASS**, Gate B R43 NON TESTÉE. Les sections R36 et antérieures ci-dessous sont historiques.
+**Outils R43 :** `m15_circle_r43_emit.py`, `build_m15_circle_r43.py`, `test_m15_circle_r43.py`. **436 tests CPU 68000 PASS** et [CI complète candidate PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43204551950), export source natif strict PASS. **Gate B AMOS/WinUAE PASS confirmé utilisateur**, `RESULT 1`, `CLOSE RETURNED`, rendu OK. `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive R43 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`), 48 commandes AP20. [Test R43 original archivé](../tests/passed/M15_R43_CIRCLE_01.asc) sans modification, aucun ASC courant ; R42 archive figée. Gates C/D non testées. Les sections R36 et antérieures ci-dessous sont historiques.
 
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 

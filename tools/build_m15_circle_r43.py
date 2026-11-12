@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """M15/R43 v0.11.4: deterministic Aga Circle from immutable WinUAE-PASS R42.
 
-In-memory build only: never mutates the R42 LAST_GOOD or any archive.
+In-memory build only: never mutates the current LAST_GOOD or any archive.
 """
 import argparse
 import base64
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"
 BASE_SHA256 = "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc"
 LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-LAST_GOOD_SHA256 = BASE_SHA256
+LAST_GOOD_SHA256 = "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf"
 DEST = ROOT / "dist/AMOSPro_AGA.Lib"
 ARCHIVE = ROOT / "dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"
 GETP = b"GetP"
@@ -27,7 +27,7 @@ VERSION = "R43 0.11.4"
 def build():
     frozen = BASE.read_bytes()
     assert digest(frozen) == BASE_SHA256, "immutable R42 archive changed"
-    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "R42 LAST_GOOD changed"
+    assert digest(LAST_GOOD.read_bytes()) == LAST_GOOD_SHA256, "current LAST_GOOD changed"
     old_tokens, old_segments, _ = split(frozen)
     assert len(old_segments) == ENTRY_INDEX == 53
     assert not old_segments[-1].endswith(GETP)

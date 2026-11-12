@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R43 candidate Gate A PASS, R42 immutable WinUAE Gate B LAST_GOOD."""
+"""Integrity: R43 user-confirmed WinUAE Gate B PASS and exact promoted LAST_GOOD, historical R42 frozen."""
 from pathlib import Path
 import hashlib
 import struct
@@ -39,7 +39,7 @@ HASHES = {
     "dist/experimental/AMOSPro_AGA_M6_v0.7.2_BLIT_CLEAR_R15.Lib": "44530d28cc33ab2aa1bb9bd81aa3f9799e3aca67a714c36891888c3ece4c6e6e",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.1_BLIT_FILL_R14.Lib": "a8c43c478efdb2ddcb3547a807a2dba60bd125fc0d7ab5bb791ef565aeb90e4f",
     "dist/experimental/AMOSPro_AGA_M6_v0.7.0_BLIT_COPY_R13.Lib": "c71cab88d2294ed70c019f546d6c60ac72c278c1b625ded07d0aa6603e50a0cf",
-    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc",
+    "dist/AMOSPro_AGA_LAST_GOOD.Lib": "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.3_NEWSCREEN_A0_R12.Lib": "b4b06bedb955a23dc048ead7f2ecac8bab955591c6bcc094d4d6e6c4bad4eaec",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.2_JEFF_POSITION_R11.Lib": "0e2419965f411c4e9419b1c7c8d07debdde525f13f7b8da80e2ed9d3ee30ea7b",
     "dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib": "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3",
@@ -110,7 +110,7 @@ def main():
     candidate = binaries["dist/AMOSPro_AGA.Lib"]
     r10 = binaries["dist/experimental/AMOSPro_AGA_M5_v0.6.1_NTSC_PAL_R10.Lib"]
     r27 = binaries["dist/experimental/AMOSPro_AGA_M12_v0.9.3_SAFE_BLITTER_R27.Lib"]
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"] == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"]
     r28 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.0_PALETTE_BASE_R28.Lib"]
     r29 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.1_PALETTE_SAVE_R29.Lib"]
     r30 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.2_AGAPAL_BANK_INIT_R30.Lib"]
@@ -400,7 +400,7 @@ def main():
         assert len(matched)==1 and (matched[0]["instruction"],matched[0]["function"],matched[0]["signature"])==(1,index,sig)
     built36,meta36=build_r36()
     assert r36==built36==build_r36()[0], "R36 immutable archive not reproducible"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"]
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"]
     built37,meta37=build_r37()
     assert built37==build_r37()[0]==binaries["dist/experimental/AMOSPro_AGA_M14_v0.10.9_FONT_SELECT_R37.Lib"], "R37 archived build not reproducible"
     tok37,seg37,_=split(built37)
@@ -460,7 +460,7 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc")) == ["M15_R43_CIRCLE_01.asc"], "R43 must have exactly one active ASC"
+    assert not list((ROOT/"tests/current").glob("*.asc")), "R43 Gate B PASS: tests/current must have no ASC"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
@@ -512,9 +512,9 @@ def main():
     box_data=(ROOT/"tests/passed/M15_R42_BOX_01.asc").read_bytes()
     box_blob=b"blob "+str(len(box_data)).encode("ascii")+bytes([0])+box_data
     assert hashlib.sha1(box_blob).hexdigest()=="dbf5cefb215cc0ae1359d648ea34c855a92b2012", "R42 passed ASC modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==built42, "R42 LAST_GOOD changed"
+    assert binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"]==built42, "R42 historical archive changed"
     built43,meta43=build_r43()
-    assert candidate==built43==build_r43()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"], "R43 candidate build mismatch"
+    assert candidate==built43==build_r43()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"]==binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"], "R43 promoted binary mismatch"
     assert meta43["sha256"]=="9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf" and meta43["size"]==27092, "R43 candidate hash/size mismatch"
     tok43,seg43,_=split(candidate)
     assert len(seg43)==54 and len(seg42)==53, "R43 AP20 segment count"
@@ -530,10 +530,15 @@ def main():
         found=[x for x in named43 if x["name"]==name]
         assert len(found)==1 and (found[0]["instruction"],found[0]["function"],found[0]["signature"])==(1,index,sig)
     assert any(x["index"]==ENTRY_CIRCLE and x["parameters"]==4 and x["getp"] for x in audit43["parameter_checks"])
-    assert (ROOT/"tests/current/M15_R43_CIRCLE_01.asc").is_file(), "R43 candidate ASC missing"
-    assert not (ROOT/"tests/passed/M15_R43_CIRCLE_01.asc").exists(), "R43 Gate B untested"
-    print("PASS: R43 48 AP20 tokens / 54 segments, candidate archive and SHA exact;")
-    print("      R42 Gates A/B LAST_GOOD immutable; R43 Gate B NOT TESTED")
+    test_r43=ROOT/"tests/passed/M15_R43_CIRCLE_01.asc"
+    assert test_r43.is_file(), "R43 Gate B PASS ASC must be archived"
+    assert not (ROOT/"tests/current/M15_R43_CIRCLE_01.asc").exists(), "R43 test must not remain active after PASS"
+    test_data=test_r43.read_bytes()
+    test_blob=b"blob "+str(len(test_data)).encode("ascii")+bytes([0])+test_data
+    assert len(test_data)==3466 and hashlib.sha1(test_blob).hexdigest()=="088158365a64accf0417fdda3fbba74e2e58ebf7", "R43 passed ASC bytes changed"
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built43, "R43 LAST_GOOD promotion mismatch"
+    print("PASS: R43 48 AP20 tokens / 54 segments, immutable test ASC,")
+    print("      R43 native Gate A and user WinUAE Gate B PASS; LAST_GOOD promoted, R42 frozen")
 
 
 if __name__ == "__main__":
