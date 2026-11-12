@@ -5,6 +5,7 @@ from build_m16_r48_token_probe import build,native_probe,GOOD,OFFICIAL,R47
 from compiler_relocation import unpack_ap20,unwrap_native_parts
 from test_m16_capture_r47_unicorn import CaptureMachine, NEW_CODE
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
+from pathlib import Path
 
 def run():
     probe=native_probe()
@@ -25,7 +26,7 @@ def run():
         assert 11 not in m.banks, "R48 probe created bank"
     candidate,info=build()
     assert candidate==build()[0] and len(candidate)==len(R47.read_bytes())
-    assert OFFICIAL.read_bytes()==GOOD.read_bytes()
+    assert GOOD.read_bytes()==(Path(__file__).resolve().parents[1]/'dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib').read_bytes()
     tok,parts,_=unpack_ap20(candidate)
     assert len(parts)==58 and tok==unpack_ap20(R47.read_bytes())[0]
     source=unwrap_native_parts(candidate)[1]
