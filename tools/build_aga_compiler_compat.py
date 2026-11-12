@@ -56,7 +56,7 @@ def offset_of_cursor_state_lea(cursor: bytes, state_offset: int, close_offset: i
 
 
 def rebuild_with_added_entries(base: bytes, tokens: bytes, parts: list[bytes], title: bytes) -> bytes:
-    assert all(len(part) % 2 == 0 and 0 < len(part) <= 131070 for part in parts)
+    assert all(len(part) % 2 == 0 and len(part) <= 131070 for part in parts)  # AP20 permits empty slot 16
     code = b"".join(parts)
     payload = (pack(">4I", len(parts) * 2, len(tokens), len(code), len(title))
         + b"\0\0AP20" + b"".join(pack(">H", len(part) // 2) for part in parts)
