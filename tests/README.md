@@ -1,4 +1,6 @@
-# Tests AMOS — R41 WinUAE PASS, LAST_GOOD (12/11/2026)
+# Tests AMOS — R43 Gate A PASS, test WinUAE en attente ; R42 LAST_GOOD (12/11/2026)
+
+**Test unique courant :** [`current/M15_R43_CIRCLE_01.asc`](current/M15_R43_CIRCLE_01.asc), import via **Project → Merge ASCII** sous AMOS interprété / WinUAE. R43 v0.11.4 `Aga Circle(CX,CY,Radius,Pen)` : **Gate A CPU/CI PASS, 436 cas**, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354), 48 commandes AP20, 54 segments, candidate `dist/AMOSPro_AGA.Lib` SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`. **Gate B R43 non testée** ; `LAST_GOOD` reste R42 v0.11.3 (SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, Gates A/B PASS). C/D non testées. Historique R42 et versions précédentes ci-dessous.
 
 **M15/R42 v0.11.3 — Gate A CPU 68000 / CI et Gate B WinUAE PASS (12/11/2026) :** [test exact archivé](passed/M15_R42_BOX_01.asc), blob Git `dbf5cefb215cc0ae1359d648ea34c855a92b2012` (3 264 octets). Capture : `OPEN 1 DB 1 CLEAR 1`, `BOXES 1 1 1 REV 1`, `CLIPPED 1 1 1 1`, `LINES 1 1 DOT 1`, `OUTSIDE 0 0 0 0`, `WRAP 0 BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, `RESULT 1`, `CLOSE RETURNED` (ligne 119). L'utilisateur confirme le rendu. **47 commandes AP20**, **360 tests CPU PASS**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc` et binaire R42 promu `LAST_GOOD` à l'octet près ; archives R41 et R40 conservées. **`tests/current/` sans ASC actif**. Gates C Compiler et D Amiga AGA réel non testées.
 

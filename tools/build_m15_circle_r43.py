@@ -70,7 +70,7 @@ def build():
     return candidate, dict(version=VERSION, sha256=digest(candidate),
         size=len(candidate), named_commands=48, segments=54,
         new_command=API[0], changed_segments=[52, 53],
-        labels=labels, Gate_A="PENDING", Gate_B="NOT_TESTED")
+        labels=labels, Gate_A="CPU_CI_PASS", Gate_B="NOT_TESTED")
 
 
 if __name__ == "__main__":

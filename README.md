@@ -19,7 +19,9 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**R42 v0.11.3 — LATEST WinUAE-validated release (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib) byte-for-byte (**25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`), **47 named AP20 commands**. `Aga Box(X1,Y1,X2,Y2,Pen)` passed **360 native 68000 CPU cases and CI**, then user-confirmed interpreted AMOS/WinUAE Gate B: rectangles, reversed corners, clipping, degenerate edges/point, off-screen and invalid inputs, `SWAP 1 BACKSAFE 1`, `RESULT 1`, `CLOSE RETURNED`, visually correct. [Original test archived](tests/passed/M15_R42_BOX_01.asc). Compiler Gate C / physical AGA Gate D untested.
+**R43 v0.11.4 — CURRENT Gate-A-PASS CANDIDATE (12 Nov 2026):** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) = [R43 Circle archive](dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib), **27,092 bytes**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, **48 named AP20 commands**. `Aga Circle(CX,CY,Radius,Pen)` passed **436 native CPU 68000 scenarios, strict source export and [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354)**. **Gate B AMOS/WinUAE NOT TESTED:** [unique R43 test](tests/current/M15_R43_CIRCLE_01.asc). Compiler Gate C and physical AGA Gate D untested. **Do not promote without user-confirmed Gate B.**
+
+**R42 v0.11.3 — LAST WinUAE-VALIDATED (`LAST_GOOD`):** [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [frozen R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib), **25,896 bytes**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, 47 AP20 commands. **Gate A 360 native tests and user-confirmed Gate B PASS**, [test unchanged](tests/passed/M15_R42_BOX_01.asc). R41 and earlier archives unchanged.
 
 **R41 v0.11.2 — previous WinUAE-PASS release:** [R41 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib), 24,816 bytes, SHA256 `0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc`, [passed test](tests/passed/M15_R41_DRAW_01.asc). Frozen archive.
 
@@ -28,10 +30,10 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 **R38 Chip RAM endurance passed in WinUAE (12 Nov 2026):** [500 font switches, zero errors and zero measured Chip RAM loss](tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc). Total Chip free **1,582,088 bytes** and largest free block **1,320,664 bytes** remained constant at every 100-switch checkpoint. `RESULT 1`, normal AMOS return. R38 archive unchanged.
 
 
-**Latest validated release: R42 v0.11.3** — 47 named AP20 commands, CPU/CI Gate A and WinUAE Gate B PASS; Gates C/D untested.
+**Latest WinUAE-validated release: R42 v0.11.3** — 47 named AP20 commands in LAST_GOOD, Gates A/B PASS. **Current candidate: R43 v0.11.4**, 48 commands, Gate A PASS, Gate B pending; Gates C/D untested.
 
-- **Libraries:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), and the [R42 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib) are byte-identical. R41/R40 and earlier archives unchanged.
-- **Validation:** R42 native CPU 68000/CI Gate A PASS (360 cases) and WinUAE Gate B PASS; Compiler Gate C and physical AGA Gate D untested.
+- **Libraries:** [`AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) is the R43 candidate and equals its [R43 archive](dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib). [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains byte-identical to the frozen R42 archive. Earlier archives unchanged.
+- **Validation:** R43 Gate A CPU 68000/CI PASS (436 cases), Gate B WinUAE pending. R42 LAST_GOOD Gates A/B PASS. Compiler Gate C and physical AGA Gate D untested.
 - **Fonts:** `Aga Font Select` supports AmigaOS fonts; `Aga Font Bank Select` supports fixed and proportional monochrome AMCAF BankFont, using a private Chip RAM copy. The WinUAE 500-switch stress test showed no reduction in free Chip RAM or largest free block.
 - **Evidence and history:** [R38 technical report](docs/M14_FONT_BANK_R38.md) · [passed R38 test](tests/passed/M14_R38_FONT_BANK_01.asc) · [technical history](docs/NEXT_SESSION.md) · [passed tests](tests/passed/).
 
@@ -39,7 +41,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R42 0.11.3** — **47 named AP20 commands**, native CPU/CI Gate A and WinUAE Gate B PASS; Gates C/D untested.
+**Current library API R43 0.11.4** — **48 named AP20 commands**, native CPU/CI Gate A PASS; Gate B WinUAE NOT TESTED. R42 LAST_GOOD Gates A/B PASS; C/D untested.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
@@ -90,6 +92,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Plot`** (M15 R40, Gates A/B PASS) | `_OK=Aga Plot(X,Y,Pen)` | Draws **one pixel** at `(X,Y)` in the private AGA **back buffer**. X/Y from zero through width/height minus one, indexed `Pen` from 0 to 2^Depth−1 (1–8 bitplanes). Returns `1` on successful `WritePixel`, otherwise `0` (invalid arguments/state or back buffer not `Safe`). No out-of-bounds clipping or implicit swap/VBL. **CPU/CI Gate A and WinUAE Gate B PASS.** |
 | **`Aga Draw`** (M15 R41, Gates A/B PASS) | `_OK=Aga Draw(X1,Y1,X2,Y2,Pen)` | Draws a **one-pixel line** into the private AGA **back buffer**, including both endpoints. Fast in-bounds line drawing; **bounds-checked Bresenham** for partly off-screen segments. Signed 16-bit coordinates, depth-indexed `Pen`. Returns `1` if at least one pixel was painted, otherwise `0`. No implicit swap/VBL. **CPU/CI Gate A and WinUAE Gate B PASS.** |
 | **`Aga Box`** (M15 R42, Gates A/B PASS) | `_OK=Aga Box(X1,Y1,X2,Y2,Pen)` | Draws a **one-pixel rectangle outline** on the private AGA **back buffer**. **Inclusive unordered corner coordinates**, not width/height. **Safe clipping of the four original edges** without inventing a border at the screen bounds. Signed 16-bit coordinates, indexed `Pen`; returns `1` if at least one pixel is painted, otherwise `0`. No implicit swap/VBL; not filled. **Native CPU/CI Gate A and WinUAE Gate B PASS.** |
+| **`Aga Circle`** (M15 R43, Gate A PASS, B pending) | `_OK=Aga Circle(CX,CY,Radius,Pen)` | Draws a **one-pixel circle outline** centred at signed-16 `CX,CY`, integer pixel `Radius` 0..32767 and indexed colour `Pen` (0..2^Depth-1). `Radius=0` paints one pixel; negative/excessive radius and invalid arguments return `0`. Eight-way integer symmetry and bounds-checked `WritePixel` clip the original contour without a fake edge. Only the private `Safe` back buffer; no filling or implicit swap/VBL. Returns `1` if at least one pixel was written, else `0`. **436 CPU 68000 cases / CI Gate A PASS, WinUAE Gate B not tested.** |
 
 **Example: save the current AGA palette**, after opening the private AGA screen:
 

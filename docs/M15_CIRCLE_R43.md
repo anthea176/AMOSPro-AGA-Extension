@@ -1,6 +1,6 @@
-# M15/R43 — Aga Circle : contrat approuvé, implémentation Gate A en cours
+# M15/R43 — Aga Circle : Gate A CPU/CI PASS, candidate R43 v0.11.4 (WinUAE en attente)
 
-**Statut au 12/11/2026 : contrat explicitement approuvé par l'utilisateur (« oui c tous bon »).** Implémentation 68000, builder reproductible et tests Gate A déposés. Gate A/CI R43 non encore vérifiée ; aucun binaire candidat R43 publié ni test WinUAE actif. La dernière `LAST_GOOD` demeure **R42 v0.11.3**, Gates A et B PASS, 47 commandes AP20, 25 896 octets et SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. Gates C/D non testées. Le présent texte décrit le **contrat approuvé** ; la promotion d'un binaire reste soumise aux Gates réelles.
+**Statut au 12/11/2026 : contrat explicitement approuvé par l'utilisateur (« oui c tous bon »).** Implémentation 68000, builder et **436 tests CPU 68000 Gate A / CI PASS** [preuve](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354). `dist/AMOSPro_AGA.Lib` est la candidate R43 v0.11.4 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`) ; archive versionnée identique. **Gate B WinUAE NON TESTÉE ; `LAST_GOOD` reste R42**, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. La dernière `LAST_GOOD` demeure **R42 v0.11.3**, Gates A et B PASS, 47 commandes AP20, 25 896 octets et SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. Gates C/D non testées. Le présent texte décrit le **contrat approuvé** ; la promotion d'un binaire reste soumise aux Gates réelles.
 
 ## Une seule commande proposée
 
@@ -36,4 +36,4 @@ _OK=Aga Circle(CX,CY,Radius,Pen)
 
 ## Décision à obtenir
 
-**Contrat confirmé par l'utilisateur ; Gate A en cours.** Ne publier la bibliothèque R43 qu'après tests CPU et CI PASS. R39 reste reportée ; les études M15bis souris et M16 Fast RAM restent séparées. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.
+**Contrat approuvé et Gate A CPU/CI PASS.** Candidate exacte publiée ; ne promouvoir vers LAST_GOOD qu'après confirmation utilisateur de Gate B WinUAE. R39 reste reportée ; les études M15bis souris et M16 Fast RAM restent séparées. Dépôt unique `anthea176/AMOSPro-AGA-Extension`, branche **`main` seulement**.

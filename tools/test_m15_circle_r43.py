@@ -223,7 +223,7 @@ def run():
     assert len(m.pixels)==1 and m.waits==1 and m.snapshot()==before
     cases += 1
 
-    print("M15/R43 native CPU 68000 preliminary Gate A PASS:",cases,"cases")
+    print("M15/R43 native CPU 68000 Gate A PASS:",cases,"cases")
     print("48 named AP20 commands / 54 segments; R42 frozen entries unchanged")
     print("Eight symmetric octants, zero-radius one pixel, no out-of-bounds writes")
     print("Gate B AMOS/WinUAE, C Compiler and D physical AGA: NOT TESTED")

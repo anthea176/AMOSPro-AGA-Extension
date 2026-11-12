@@ -1,4 +1,8 @@
-# Outils Python actifs — R36 0.10.8 Gates A/B PASS, WinUAE-LAST_GOOD
+# Outils Python actifs — R43 0.11.4 candidate Gate A PASS, R42 LAST_GOOD
+
+## M15/R43 — Aga Circle, CPU/CI Gate A PASS
+
+**Outils R43 actifs :** `m15_circle_r43_emit.py`, `build_m15_circle_r43.py`, `test_m15_circle_r43.py`. **436 tests CPU 68000 PASS** et [CI source complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354) ; export natif strict PASS. `dist/AMOSPro_AGA.Lib` = archive R43 (**27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`), 48 commandes AP20. **`LAST_GOOD` reste R42 WinUAE PASS**, Gate B R43 NON TESTÉE. Les sections R36 et antérieures ci-dessous sont historiques.
 
 ## R36 0.10.8 — Aga Palette Cycle : Gates A CPU/CI et B AMOS/WinUAE PASS (11/11/2026)
 

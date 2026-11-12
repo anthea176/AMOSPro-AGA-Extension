@@ -1,9 +1,7 @@
 # Tests AMOS actifs
 
-**Aucun test `.asc` actif.** La R42 v0.11.3 `Aga Box(X1,Y1,X2,Y2,Pen)` est validée en **Gate A CPU 68000 / CI (360 cas) et Gate B AMOS interprété / WinUAE** le **12/11/2026**. Le [test `M15_R42_BOX_01.asc`](../passed/M15_R42_BOX_01.asc) est archivé **sans modifier un octet** : Git blob `dbf5cefb215cc0ae1359d648ea34c855a92b2012`, 3 264 octets.
+**R43 v0.11.4 — Aga Circle, Gate B AMOS/WinUAE NON TESTÉE.** Un seul test à importer via **Project → Merge ASCII** : [`M15_R43_CIRCLE_01.asc`](M15_R43_CIRCLE_01.asc). Vérifier les cercles concentriques, les quatre coins, le clipping, les paramètres invalides, le double buffering et **`RESULT 1` / `CLOSE RETURNED`**, puis confirmer le rendu.
 
-**Capture WinUAE utilisateur :** `OPEN 1 DB 1 CLEAR 1`, `BOXES 1 1 1 REV 1`, `CLIPPED 1 1 1 1`, `LINES 1 1 DOT 1`, `OUTSIDE 0 0 0 0`, `WRAP 0 BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne 119. L'utilisateur confirme que le rendu fonctionne (« ça marche ! bravo »).
+**Bibliothèque candidate à installer sans renommage :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), 27 092 octets, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`, 48 commandes AP20 ; Gate A 436 tests CPU 68000 + [CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354).
 
-**Bibliothèque de référence actuelle : R42 v0.11.3 `LAST_GOOD`**, 47 commandes AP20, 25 896 octets, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`. `dist/AMOSPro_AGA.Lib`, son archive R42 et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont strictement identiques. Archives R41 et antérieures inchangées. Gates C (AMOS Compiler) et D (Amiga AGA réel) non testées.
-
-Tests précédents : [R41 Draw](../passed/M15_R41_DRAW_01.asc) · [R40 Plot](../passed/M15_R40_PLOT_01.asc).
+**Dernière version WinUAE validée : R42 `LAST_GOOD`**, [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib), 25 896 octets, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, [test R42 archivé intact](../passed/M15_R42_BOX_01.asc). **Ne pas promouvoir R43 avant Gate B confirmée par l'utilisateur.** Gates C/D R43 non testées.

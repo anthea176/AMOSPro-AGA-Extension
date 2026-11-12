@@ -1,8 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M15/R43 — étude du contrat Aga Circle (non approuvée, 12/11/2026)
+## M15/R43 v0.11.4 — Aga Circle : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE (12/11/2026)
 
-La nouvelle fonction envisagée `_OK=Aga Circle(CX,CY,Radius,Pen)` fait l'objet d'un [contrat proposé](M15_CIRCLE_R43.md). **Aucun code R43, aucun nouveau token, aucun test WinUAE ni binaire candidat** n'ont été créés. Attendre l'accord explicite de l'utilisateur sur le contrat avant toute implémentation. Le dernier état validé reste **R42 v0.11.3**, `LAST_GOOD` et Gates A/B PASS ; voir le checkpoint ci-dessous. Travail uniquement sur `main`, aucune autre branche ou dépôt.
+**Contrat approuvé par l'utilisateur et implémenté.** `_OK=Aga Circle(CX,CY,Radius,Pen)` dessine un cercle de contour d'un pixel (Midpoint/Bresenham en 32 bits signés) sur le back buffer AGA privé, avec clipping avant chaque `WritePixel` des huit octants. `Radius=0` dessine un pixel ; rayons hors 0..32767, coordonnées hors signed16 et couleurs non indexées retournent 0 sans dessin. Aucun `DrawEllipse` hors limites, aucune bordure artificielle, aucun Swap/VBL implicite.
+
+**Gate A complète PASS : 436 scénarios CPU 68000**, contrôle pixel/bitplanes, commandes AP20, ABI, Safe/Disp, régressions et export natif strict. [CI source PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354). **48 commandes AP20, 54 segments.** Builder déterministe `tools/build_m15_circle_r43.py` depuis l'archive R42 figée.
+
+**Candidate :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib` à l'octet près, **27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`. **R42 v0.11.3 reste `LAST_GOOD`**, 25 896 octets, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, Gate B WinUAE confirmée. Archives antérieures conservées.
+
+**Un seul test WinUAE courant :** `tests/current/M15_R43_CIRCLE_01.asc`, import via **Project → Merge ASCII** ; vérifier les tracés, le clipping, `RESULT 1` et `CLOSE RETURNED`. **Gate B R43 NON TESTÉE**, donc pas de promotion vers `LAST_GOOD` sans validation utilisateur explicite. Gates C Compiler/D Amiga AGA physique NON TESTÉES. [Contrat et détails](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/M15_CIRCLE_R43.md). Travail sur `main` uniquement, pas d'autre branche.
 
 ## M15/R42 v0.11.3 — Aga Box : Gates A CPU/CI et B WinUAE PASS, LAST_GOOD (12/11/2026)
 

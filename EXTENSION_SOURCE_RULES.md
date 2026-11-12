@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## M15/R43 v0.11.4 — Aga Circle : Gate A CPU/CI PASS, Gate B WinUAE NON TESTÉE (12/11/2026)
+
+**Contrat approuvé par l'utilisateur et implémenté.** `_OK=Aga Circle(CX,CY,Radius,Pen)` dessine un cercle de contour d'un pixel (Midpoint/Bresenham en 32 bits signés) sur le back buffer AGA privé, avec clipping avant chaque `WritePixel` des huit octants. `Radius=0` dessine un pixel ; rayons hors 0..32767, coordonnées hors signed16 et couleurs non indexées retournent 0 sans dessin. Aucun `DrawEllipse` hors limites, aucune bordure artificielle, aucun Swap/VBL implicite.
+
+**Gate A complète PASS : 436 scénarios CPU 68000**, contrôle pixel/bitplanes, commandes AP20, ABI, Safe/Disp, régressions et export natif strict. [CI source PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43203755354). **48 commandes AP20, 54 segments.** Builder déterministe `tools/build_m15_circle_r43.py` depuis l'archive R42 figée.
+
+**Candidate :** `dist/AMOSPro_AGA.Lib` = `dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib` à l'octet près, **27 092 octets**, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf`. **R42 v0.11.3 reste `LAST_GOOD`**, 25 896 octets, SHA256 `6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc`, Gate B WinUAE confirmée. Archives antérieures conservées.
+
+**Un seul test WinUAE courant :** `tests/current/M15_R43_CIRCLE_01.asc`, import via **Project → Merge ASCII** ; vérifier les tracés, le clipping, `RESULT 1` et `CLOSE RETURNED`. **Gate B R43 NON TESTÉE**, donc pas de promotion vers `LAST_GOOD` sans validation utilisateur explicite. Gates C Compiler/D Amiga AGA physique NON TESTÉES. [Contrat et détails](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/M15_CIRCLE_R43.md). Travail sur `main` uniquement, pas d'autre branche.
+
 ## M15/R42 v0.11.3 — Aga Box : Gates A CPU/CI et B WinUAE PASS, LAST_GOOD (12/11/2026)
 
 **R42 VALIDÉE :** `_OK=Aga Box(X1,Y1,X2,Y2,Pen)`, **47 commandes AP20**, **360 tests CPU 68000 + export source natif strict + CI PASS**, Gate B AMOS interprété/WinUAE **PASS confirmé par l'utilisateur** (« ça marche ! bravo »). Capture : `OPEN 1 DB 1 CLEAR 1`, `BOXES 1 1 1 REV 1`, `CLIPPED 1 1 1 1`, `LINES 1 1 DOT 1`, `OUTSIDE 0 0 0 0`, `WRAP 0 BADLONG 0 0`, `BADPEN 0 0`, `SWAP 1 BACKSAFE 1`, `NOSCREEN 0 CLOSED -1`, **`RESULT 1`**, **`CLOSE RETURNED`**, fin ligne **119** ; rendu validé. [Test original archivé sans retouche](tests/passed/M15_R42_BOX_01.asc), Git blob `dbf5cefb215cc0ae1359d648ea34c855a92b2012` (**3 264 octets**). **`tests/current/` ne contient aucun ASC actif.**

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Integrity: R42 Gate A CPU/CI and user-confirmed WinUAE Gate B PASS, R42 LAST_GOOD; archives frozen."""
+"""Integrity: R43 candidate Gate A PASS, R42 immutable WinUAE Gate B LAST_GOOD."""
 from pathlib import Path
 import hashlib
 import struct
@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HASHES = {
-    "dist/AMOSPro_AGA.Lib": "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc",
+    "dist/AMOSPro_AGA.Lib": "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf",
+    "dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib": "9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib": "6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib": "0dee80beb83ea6d01f0fa6d74dc41dbb6374cf51bbc89ffc47c6191077c51bdc",
     "dist/experimental/AMOSPro_AGA_M15_v0.11.1_PLOT_R40.Lib": "0282fbf8eacd0c3e68e710a6ffa89bda2fed689674b2b5ea01aedbc1a3378231",
@@ -98,6 +99,7 @@ def main():
     from build_m15_plot_r40 import build as build_r40, ENTRY_INDEX as ENTRY_PLOT, API as API_R40
     from build_m15_draw_r41 import build as build_r41, ENTRY_INDEX as ENTRY_DRAW, API as API_R41
     from build_m15_box_r42 import build as build_r42, ENTRY_INDEX as ENTRY_BOX, API as API_R42
+    from build_m15_circle_r43 import build as build_r43, ENTRY_INDEX as ENTRY_CIRCLE, API as API_R43
 
     binaries = {}
     for relative, expected in HASHES.items():
@@ -118,7 +120,7 @@ def main():
     r34 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.6_AGA_FADE_TO_BLACK_R34.Lib"]
     r35 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.7_AGA_FADE_TO_WHITE_R35.Lib"]
     r36 = binaries["dist/experimental/AMOSPro_AGA_M13_v0.10.8_PALETTE_CYCLE_R36.Lib"]
-    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"], "R42 candidate/archive mismatch"
+    assert candidate == binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"], "R43 candidate/archive mismatch"
     r26 = binaries["dist/experimental/AMOSPro_AGA_M11_v0.9.2_TEXT_R26.Lib"]
     r25 = binaries["dist/experimental/AMOSPro_AGA_M10_v0.9.1_RECT_OVERLAP_R25.Lib"]
     assert hashlib.sha256(r10).hexdigest() == "e1d64b37ff85e786562af20e8959ccb2e8bd1ffa75edd67f4b69d6847d8593b3", "historical R10 archive mutated"
@@ -458,7 +460,7 @@ def main():
     assert any(x["index"]==ENTRY_PLOT and x["parameters"]==3 and x["getp"] for x in audit40["parameter_checks"])
     assert (ROOT/"tests/passed/M15_R40_PLOT_01.asc").is_file(), "R40 WinUAE test must be archived"
     assert not (ROOT/"tests/current/M15_R40_PLOT_01.asc").exists(), "R40 passed test must be removed from current"
-    assert not list((ROOT/"tests/current").glob("*.asc")), "R42 passed: tests/current must have no ASC"
+    assert sorted(p.name for p in (ROOT/"tests/current").glob("*.asc")) == ["M15_R43_CIRCLE_01.asc"], "R43 must have exactly one active ASC"
     plot_data=(ROOT/"tests/passed/M15_R40_PLOT_01.asc").read_bytes()
     plot_blob=b"blob "+str(len(plot_data)).encode("ascii")+bytes([0])+plot_data
     assert hashlib.sha1(plot_blob).hexdigest()=="6ab9cf4a91cca9f8097ffba40a32e2b85b049c38", "R40 passed ASC bytes modified"
@@ -489,15 +491,15 @@ def main():
     assert binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.2_DRAW_R41.Lib"]==built41, "R41 historical archive changed"
 
     built42,meta42=build_r42()
-    assert candidate==built42==build_r42()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"], "R42 candidate not reproducible"
+    assert built42==build_r42()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.3_BOX_R42.Lib"], "R42 archive not reproducible"
     assert meta42["sha256"]=="6028ff508fb78019e1b53d30a37ec1d0cdcd9012285abd3e09caa44fe3fa98cc" and meta42["size"]==25896
-    tok42,seg42,_=split(candidate)
+    tok42,seg42,_=split(built42)
     assert len(seg42)==53 and len(seg41)==52, "R42 AP20 segment count"
     assert seg42[:51]==seg41[:51], "R42 changed frozen R41 entries"
     assert seg42[51]==seg41[51]+b"GetP", "R42 changed R41 Draw beyond final GetP"
     assert seg42[52], "R42 missing Box entry"
     assert tok42.startswith(tok41[:-6]) and tok42!=tok41, "R42 token addition invalid"
-    audit42=inspect(parse(candidate))
+    audit42=inspect(parse(built42))
     assert not audit42["issues"], audit42["issues"]
     named42=[x for x in audit42["tokens"] if x["name"].startswith("aga ")]
     assert len(named42)==47 and sum(x["name"]=="aga box" for x in named42)==1
@@ -510,9 +512,28 @@ def main():
     box_data=(ROOT/"tests/passed/M15_R42_BOX_01.asc").read_bytes()
     box_blob=b"blob "+str(len(box_data)).encode("ascii")+bytes([0])+box_data
     assert hashlib.sha1(box_blob).hexdigest()=="dbf5cefb215cc0ae1359d648ea34c855a92b2012", "R42 passed ASC modified"
-    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==candidate==built42, "R42 promotion byte mismatch"
-    print("PASS: R42 47 AP20 tokens native CPU 68000 Gate A and user WinUAE Gate B PASS;"
-          " R42 LAST_GOOD promoted and all historical archives frozen")
+    assert binaries["dist/AMOSPro_AGA_LAST_GOOD.Lib"]==built42, "R42 LAST_GOOD changed"
+    built43,meta43=build_r43()
+    assert candidate==built43==build_r43()[0]==binaries["dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib"], "R43 candidate build mismatch"
+    assert meta43["sha256"]=="9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf" and meta43["size"]==27092, "R43 candidate hash/size mismatch"
+    tok43,seg43,_=split(candidate)
+    assert len(seg43)==54 and len(seg42)==53, "R43 AP20 segment count"
+    assert seg43[:52]==seg42[:52], "R43 altered frozen R42 entries"
+    assert seg43[52]==seg42[52]+b"GetP", "R43 changed R42 Box beyond GetP"
+    assert seg43[53], "R43 Circle entry missing"
+    assert tok43.startswith(tok42[:-6]) and tok43!=tok42, "R43 token addition invalid"
+    audit43=inspect(parse(candidate))
+    assert not audit43["issues"], audit43["issues"]
+    named43=[x for x in audit43["tokens"] if x["name"].startswith("aga ")]
+    assert len(named43)==48 and sum(x["name"]=="aga circle" for x in named43)==1
+    for name,index,sig in API_R43:
+        found=[x for x in named43 if x["name"]==name]
+        assert len(found)==1 and (found[0]["instruction"],found[0]["function"],found[0]["signature"])==(1,index,sig)
+    assert any(x["index"]==ENTRY_CIRCLE and x["parameters"]==4 and x["getp"] for x in audit43["parameter_checks"])
+    assert (ROOT/"tests/current/M15_R43_CIRCLE_01.asc").is_file(), "R43 candidate ASC missing"
+    assert not (ROOT/"tests/passed/M15_R43_CIRCLE_01.asc").exists(), "R43 Gate B untested"
+    print("PASS: R43 48 AP20 tokens / 54 segments, candidate archive and SHA exact;")
+    print("      R42 Gates A/B LAST_GOOD immutable; R43 Gate B NOT TESTED")
 
 
 if __name__ == "__main__":
