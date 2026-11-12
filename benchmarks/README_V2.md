@@ -1,6 +1,6 @@
 # Second run — benchmark graphique 320x256x32 (V2)
 
-**Statut : source preparee, pre-verification de syntaxe PASS, execution AMOS interprete / WinUAE EN ATTENTE.** Le premier programme reste intact dans `graphics_32c.asc`.
+**Statut : benchmark V2 exécuté sous AMOS interprété / WinUAE le 12/11/2026, capture utilisateur reçue (`AGA ERR 0`, `V2 FINISHED - CLOSE RETURNED`).** [Données brutes et baseline M17](RESULTATS_32C_BASELINE_R44_2026-11-12.md). Le premier programme reste intact dans `graphics_32c.asc`.
 
 ## Fichier a utiliser
 
@@ -55,8 +55,8 @@ V2 FINISHED - CLOSE RETURNED
 
 Si `AGA ERR` differe de zero, les mesures AGA ne peuvent pas etre considerees comme fiables.
 
-**Envoyer une capture de la sortie finale** avec les trois nombres de chaque ligne, ainsi que le profil CPU WinUAE (68020/030/040/060, cycle exact/JIT si connu). Les gains seront estimes a partir des medians, sans modifier l'extension avant un diagnostic.
+**Capture V2 reçue et archivée :** les trois valeurs de chaque ligne figurent dans [le rapport de référence](RESULTATS_32C_BASELINE_R44_2026-11-12.md). Le profil CPU WinUAE exact (68020/030/040/060, cycle exact/JIT, Chip/Fast) n'a pas été relevé : l'enregistrer lors du prochain essai. Aucune modification de bibliothèque n'est déduite de ce benchmark.
 
-**Validation :** preverification statique de structure et syntaxe texte effectuee. **Execution sous WinUAE, Compiler AMOS et Amiga AGA reel non testees pour V2.**
+**Validation :** pré-vérification statique du programme et exécution AMOS interprété/WinUAE **confirmée par l'utilisateur**. **AMOS Compiler et Amiga AGA réel non testés pour V2.**
 
 Documentation precedente : [V1 et protocole original](README.md) ; [manuel AMCAF v1.40](https://www.ultimateamiga.com/HostedProjects/AMOSFactory/AMCAFguide/manual/graphicblitter.html).

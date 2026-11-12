@@ -4,6 +4,8 @@
 
 ## Second run
 
+**Résultats mesurés V1/V2 et référence avant M17 :** [rapport de benchmark](RESULTATS_32C_BASELINE_R44_2026-11-12.md). Données brutes, médianes, limites et protocole de nouveau test après M16/M17.
+
 **[Nouveau benchmark V2 : graphique 320x256x32 avec trois temps séparés](README_V2.md)** — source [`graphics_32c_v2.asc`](graphics_32c_v2.asc), sans changer la bibliothèque AGA. La V1 est conservée telle quelle.
 
 **Mesures V1, ticks cumulés sur 3 passages :** PLOT (AMOS/AMCAF/AGA) 5/3/6 ; DRAW 105/105/107 ; BOX 160/159/159 ; CIRCLE 0/1/0 (mesure non exploitable) ; BAR 121/N/A/164 ; CLEAR 261/174/352. Une seule exécution, statistiques non établies.
