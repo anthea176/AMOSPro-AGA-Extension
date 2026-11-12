@@ -2,7 +2,7 @@
 
 ## Diagnostic complémentaire : synchronisation Copy (AMOS interprété, R57)
 
-[**copy_wait_32c_r57.asc**](copy_wait_32c_r57.asc) — [protocole](README_COPY_WAIT_32C.md). Copie 64×48 : `Screen Copy` normal (**A**), `Screen Copy` + `Blitter Wait` **après chaque appel** (**W**), `Aga Blit Copy` R57 (**G**). Trois positions, trois passages, 1 200 appels ; **mesures en attente**. Bibliothèque et test courant inchangés.
+[**copy_wait_32c_r57.asc**](copy_wait_32c_r57.asc) — [protocole](README_COPY_WAIT_32C.md). Copie 64×48 : `Screen Copy` normal (**A**), `Screen Copy` + `Blitter Wait` **après chaque appel** (**W**), `Aga Blit Copy` R57 (**G**). Trois positions, trois passages, 1 200 appels ; **AMOS interprété PASS sur capture utilisateur** : médianes A/W/G **35/35/69 aligné**, **85/85/85 X+1**, **35/35/69 Y+72**. [Données des 3 passages](RESULTATS_COPY_WAIT_R57_2026-11-12.md). Bibliothèque et test courant inchangés.
 
 ## Benchmark cible : Copy (M17/R57)
 
