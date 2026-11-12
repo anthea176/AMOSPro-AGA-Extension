@@ -116,5 +116,9 @@ jobs:
         run: |
           python -B tools/test_m16_r49_getadr_probe.py
           python -B tools/build_m16_r49_getadr_probe.py --emit-base64
+      - name: M16 R50 benign FnOne Rjsr control (Gate A only)
+        run: |
+          python -B tools/test_m16_r50_fnone_probe.py
+          python -B tools/build_m16_r50_fnone_probe.py --emit-base64
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
