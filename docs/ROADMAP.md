@@ -258,9 +258,13 @@ M13/R28 0.10.0 : Gate A 159 cas 68000 PASS, CI précédente 29/29 PASS ; Gate B 
 | **M15bis — VISIBILITÉ DU POINTEUR AGA (avant M16)** | **Afficher/masquer à la demande le curseur souris uniquement dans la fenêtre Intuition AGA de l'extension** | Idée à étudier, aucune commande implémentée ; visible par défaut, souris toujours active | Utiliser un pointeur transparent propre à la fenêtre, restaurer le pointeur normal sur demande, au changement de fenêtre et à la fermeture ; tester Workbench, Ctrl+C et erreurs |
 | **M16/R46 — candidate 0.12.1 Gate A CPU/CI PASS** | **`Aga Image Draw`** depuis AGAPIC compressé en banque AMOS DATA : rendu CPU dans le back buffer AGA, opaque ou masque 1 bit | [P0 ABK WinUAE PASS](M16_AGAPIC_WINUAE_P0_PASS.md) ; **R45 Gate B FAIL** (`NATIVE FLAGS 0` refusés) ; [R46 Gate A PASS 258 scénarios 68000 et export strict](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43221899949), 50 AP20 / 56 segments, [candidate R46](../dist/AMOSPro_AGA.Lib) 29 288 octets | **Gate B R46 NON TESTÉE** : [un seul ASC courant](../tests/current/M16_R46_IMAGE_DRAW_01.asc) et [diagnostic/fix R46](M16_R46_FLAGS0_FIX.md). R45 défaillante archivée, **R44 `LAST_GOOD` intacte**. |
 | **M17 — OPTIMISATION BLITTER (APRÈS M16, NON ENGAGÉE)** | **Profilage et optimisation de `Aga Blit Fill` et `Aga Blit Clear`**, puis `Aga Blit Copy` seulement si nécessaire | **Baseline R44 WinUAE V1/V2 archivée :** [résultats 320×256×32](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md) ; médianes V2 : Fill 54 ticks contre `Bar` AMOS 40 ; Clear 117 contre AMCAF 58 | **Après clôture M16 uniquement :** diagnostic `BltBitMap` / `WaitBlit` / Safe par bitplane, candidate isolée, tests Gates A/B ; **rejouer `graphics_32c_v2.asc` à l'identique**, résultats avant/après ; préserver R44 `LAST_GOOD` |
-| M18+ — OPTIONS ULTÉRIEURES | Sprites matériels, scrolling, dual playfield, Copper avancé et autres optimisations | Pistes distinctes, à réexaminer après M16/M17 | Aucun développement ni nouvelle API engagé |
+| **M18 — AGAPIC animations + CBlock AGA (APRÈS M17)** | Sous-images/atlas, animations multiframe ; capture, conservation et restitution de zones du back buffer façon `Get Cblock`/`Put Cblock` | **Planifié, non engagé** ; évaluer compression et stockage en Fast RAM, rendu CPU vers Chip RAM | Définir contrat, modes opaque/masqué, clipping, `Safe/Disp`, performances et mémoire, puis tests A/B/C |
+| **M19 — Objets/sprites AGA et passerelle AMAL (APRÈS M18)** | Étude des sprites matériels AGA ; prototype de pilotage AGAPIC par AMAL via `Amal ... To adresse` (X/Y/image) | **Planifié, non engagé** ; compatibilité mémoire et AMOS Compiler à démontrer | Commencer par un prototype sans changement de `.Lib` ; pas de rendu graphique depuis l'interruption AMAL ; définir API seulement après essais |
+| **M20 — Scrolling AGA (APRÈS M19)** | Scrolling horizontal/vertical, caméra, cartes plus larges que l'écran | **Piste planifiée, non engagée** | Évaluer défilement matériel et gestion des buffers avant API |
+| **M21 — Dual Playfield (APRÈS M20)** | Deux couches, transparence et parallaxe | **Piste planifiée, non engagée** | Définir modes AGA compatibles, profondeur/palette et synchronisation |
+| **M22 — Copper AGA avancé (APRÈS M21)** | Effets raster, palettes AGA et possibilités avancées du Copper | **Piste planifiée, non engagée** | Étudier matériel/Intuition, propriétés des listes et sécurité des registres |
 
-**Ordre actuel : M13 palettes → M14 fontes → M15 dessin 2D → M15bis curseur AGA (R44 validée) → M16 AGAPIC (R45 candidate Gate A PASS, WinUAE B en diagnostic après échec utilisateur) → M17 optimisation Blitter (après M16, non engagée) → M18+ autres pistes.** La référence chiffrée avant M17 est le [benchmark V1/V2 archivé](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md). **M16 n'est pas clôturé ; aucune modification Blitter M17 n'est lancée.**
+**Ordre des chantiers futurs retenu (planification, sans développement) : M17 optimisation Blitter → M18 AGAPIC animations / CBlock AGA → M19 objets/sprites et passerelle AMAL → M20 scrolling → M21 Dual Playfield → M22 Copper AGA avancé.** **Dépendance impérative : aucun travail M18+ avant clôture et validation de M17.** Avant M17, conserver la [baseline V1/V2](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md). Les statuts R45/R46 figurant dans les sections historiques ci-dessus ne remplacent pas l'[état courant](NEXT_SESSION.md).
 
 ## 2. M7 — Copper RGB4, bilan du scénario validé
 
@@ -365,7 +369,27 @@ Pour M14, étudier dans cet ordre : **sélection/chargement et libération des f
 - **Recette de fin de M17 :** **relancer exactement [`graphics_32c_v2.asc`](../benchmarks/graphics_32c_v2.asc)** avec **le même profil CPU/WinUAE, PAL 320×256×32, charges, trois passages et réglages** ; contrôler visuellement les pixels, swaps et retours, mesurer temps bruts et médianes, comparer à la [baseline R44](../benchmarks/RESULTATS_32C_BASELINE_R44_2026-11-12.md) et publier **un nouveau MD avant/après dans `benchmarks/`**. Pas de validation de performance si le gain n'est pas reproductible.
 - **Dépendance stricte :** **commencer M17 uniquement après clôture de M16** ; ce texte n'autorise ni nouveau token AP20 ni changement du binaire actuel.
 
-**M18+** : sprites matériels, scrolling, dual playfield, extensions Copper et autres optimisations à réexaminer séparément après M16/M17. Aucun développement engagé.
+### Chantiers retenus après clôture de M17 — planification uniquement
+
+**Règle de priorité :** M17 reste prioritaire ; **ne pas démarrer M18, M19, un prototype AMAL ou une nouvelle commande avant la clôture validée de M17**. Les numéros et thèmes M18–M22 organisent les études futures, sans autoriser de nouveau code, binaire ou publication. Préserver la `LAST_GOOD` alors en vigueur et travailler uniquement sur `main`.
+
+**M18 — AGAPIC animations et CBlock AGA :**
+- Étendre le format AGAPIC à des sous-images/atlas et plusieurs frames ; étudier une décompression par ligne ou bloc, avec ressources pouvant résider en Fast RAM et écriture CPU dans le back buffer AGA en Chip RAM.
+- Étudier des équivalents fonctionnels de `Get Cblock` / `Put Cblock` pour capturer et restaurer des zones du back buffer ; ne pas présumer du format de compression, de l'alignement ni des conventions exactes d'AMOS sans audit.
+- Contractualiser stockage, ownership/libération, modes opaque/transparent, positions et clipping, arbitrage `Safe/Disp`, double buffering et tests de performance/mémoire ; aucune signature AP20 figée.
+
+**M19 — Objets/sprites AGA et passerelle AMAL :**
+- Premier essai **sans toucher à la bibliothèque** : utiliser le moteur AMAL existant avec destination mémoire (`Amal ... To adresse`), lire X/Y et numéro d'image depuis AMOS puis dessiner une ressource AGAPIC par `Aga Image Draw` dans la boucle de rendu.
+- Vérifier la structure mémoire AMAL et la synchronisation : lecture cohérente des données, cadence, comportement interprété et **AMOS Compiler**, puis double buffering ; AMAL n'écrit pas directement dans nos bitplanes et **n'appelle aucune routine graphique AGA depuis son interruption**.
+- Ensuite seulement, étudier les sprites matériels AGA (capacités, limites de couleurs/largeurs, DMA, Chip RAM, pointeur Intuition, nettoyage) et décider s'il faut une passerelle/gestionnaire d'objets. Ne pas annoncer une compatibilité AMAL native de nos sprites avant une preuve sous WinUAE et Compiler.
+
+**M20 — Scrolling AGA :** défilement H/V, caméra, surfaces plus grandes que l'écran et synchronisation avec présentation/double buffering ; choisir approche matérielle ou logicielle après benchmarks.
+
+**M21 — Dual Playfield :** deux plans graphiques, découpage des bitplanes, palettes/transparence et parallaxe ; évaluer restrictions des modes AGA et des écrans Intuition.
+
+**M22 — Copper AGA avancé :** effets raster et couleur plus riches, en respectant le propriétaire Intuition/Copper, les ressources DMA et les transitions d'écran ; contrats et tests séparés.
+
+**Critères communs avant promotion :** tests CPU/CI Gate A, WinUAE interprété Gate B, **AMOS Compiler Gate C** et matériel AGA Gate D séparés ; mémoire Chip/Fast, stress swaps, Ctrl+C, fermeture/réouverture et absence de régression sur la `.Lib` officielle.
 
 ## 6. Règles de décision, livraison et suivi
 
