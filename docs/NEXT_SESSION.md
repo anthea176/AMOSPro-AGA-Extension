@@ -1,8 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M16 — AGAPIC v1 / P0 : ABK AMOS/WinUAE PASS, futur R45 non engagé (12/11/2026)
+## M16/R45 — Aga Image Draw : candidate native expérimentale, Gate A en cours (12/11/2026)
 
 Le chantier [M16 AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md) a validé son format : encodage planaire par groupes de 16 pixels, RLE indépendant par ligne et masque 1 bit indépendant de l'index couleur. **P0 hôte/CI PASS** : 432 contrôles ABK, 1 344 rendus planaires comparatifs et 31 cas invalides, [CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43214342325). **P0 chargement AMOS/WinUAE PASS utilisateur** : [`M16_AGAPIC_ABK_PREVIEW_01.asc`](../tests/design/M16_AGAPIC_ABK_PREVIEW_01.asc) charge [`M16_AGAPIC_SAMPLE_BANK10.abk`](../tests/design/M16_AGAPIC_SAMPLE_BANK10.abk) (1 856 octets ABK / 1 836 octets DATA), puis affiche `AGAPIC V 1`, `MASK 1 CODEC 1`, `W 64 H 40`, `DEPTH 4`, `ROW0 196 END 1836`, **`ABK FORMAT RESULT 1`**. Comparatif R30 AGAPAL `ABK SAVE/LOAD RESULT 1`. **Placement Fast non formellement prouvé** (`List Bank` montre `S: $40413010` et non F/C). [Rapport de preuve](M16_AGAPIC_WINUAE_P0_PASS.md) · [contrat proposé R45](M16_R45_IMAGE_DRAW_CONTRACT.md). **Aucun dessin natif 68000, aucune Gate A/B R45, aucun nouveau token AP20. R44 v0.11.5 demeure `LAST_GOOD` ; dépôt `main` uniquement.**
+
+**Implémentation R45 expérimentale engagée :** [émetteur CPU 68000](../tools/m16_image_draw_r45_emit.py), [builder AP20 en mémoire](../tools/build_m16_image_draw_r45.py), [tests natifs Unicorn](../tools/test_m16_image_draw_r45.py). Une seule nouvelle fonction envisagée : `_OK=Aga Image Draw(Start(_B),Length(_B),X,Y,Mode)` ; lecture AGAPIC v1 depuis banque DATA, **prévalidation RLE complète avant toute écriture**, mode opaque et masque 1 bit, clipping, Safe non bloquant et dessin CPU sur bitplanes du back buffer. **La candidate n'a pas encore passé Gate A/CI ni WinUAE Gate B : ne pas remplacer R44 `LAST_GOOD` et ne déclarer aucun rendu validé.**
 
 ## M15 + M15bis — R44 v0.11.5 : CLÔTURE Gates A/B et LAST_GOOD (12/11/2026)
 

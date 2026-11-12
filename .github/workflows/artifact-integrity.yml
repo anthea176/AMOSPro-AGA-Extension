@@ -47,6 +47,7 @@ on:
       - "tools/m13_aga_fade_white_r35_emit.py"
       - "tools/m13_palette_cycle_r36_emit.py"
       - "tools/m15bis_cursor_r44_emit.py"
+      - "tools/m16_image_draw_r45_emit.py"
       - "tools/m15_box_r42_emit.py"
       - "tools/m15_draw_r41_emit.py"
       - "tools/m15_plot_r40_emit.py"
@@ -96,6 +97,14 @@ jobs:
           git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib
       - name: Install 68000 verification dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M16 R45 image CPU draw experimental candidate — Unicorn Gate A (R44 LAST_GOOD frozen)
+        run: |
+          python -B tools/build_m16_image_draw_r45.py
+          python -B tools/test_m16_image_draw_r45.py
+          python -B -c "from pathlib import Path; import sys; sys.path.insert(0,'tools'); from build_m16_image_draw_r45 import build; Path('/tmp/AMOSPro_AGA_R45_GateA.Lib').write_bytes(build()[0])"
+          python -B tools/generate_aga_native_source.py --lib /tmp/AMOSPro_AGA_R45_GateA.Lib --out /tmp/amos-aga-r45-native --baseline none --strict
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib
+
       - name: M15 R42 Aga Box frozen — native 68000 CPU, clipping and strict source
         run: |
           python -B tools/test_m15_box_r42.py
