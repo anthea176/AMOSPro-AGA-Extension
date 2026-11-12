@@ -31,7 +31,7 @@ def native_probe():
     return out
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)
     prev=R49.read_bytes()
     assert sha256(prev).hexdigest()==R49_HASH and len(prev)==32012

@@ -56,7 +56,7 @@ def native_probe():
     return raw
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)       # active may be R48 now or R49 after publication
     r48=R48.read_bytes()
     assert sha256(r48).hexdigest()==R48_SHA

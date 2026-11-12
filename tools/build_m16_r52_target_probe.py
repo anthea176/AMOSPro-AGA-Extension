@@ -93,7 +93,7 @@ def emit_probe():
     return raw,c.labels
 def build():
     good=GOOD.read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    assert sha256(good).hexdigest()==C1_SHA
     verify_active(ROOT)
     old=R51.read_bytes()
     assert sha256(old).hexdigest()==R51_SHA and len(old)==32012
