@@ -12,4 +12,6 @@
 **Premier diagnostic après crash WinUAE :** [test court sans capture](../diagnostics/M16_R47_CRASH_ISOLATION_00.asc), exécuté avec R47 en interprété. Ne pas lancer le test complet à nouveau avant d'avoir identifié si `Detect` et `Open/Close` passent.
 
 
+**Nouveaux retours WinUAE :** diagnostic 00 **PASS** (`Aga Detect=-1`, Open/Close=1, RESULT 1). Diagnostic 01 **non concluant**, erreur AMOS `Non dimensioned array at line 1` et non Guru. La [recette 02 sans commentaires](../diagnostics/M16_R47_CAPTURE_MINIMAL_02.asc) remplace le diagnostic 01 pour le prochain essai dans une configuration isolée, après vérification que R47 est chargée et banque 11 libre. Le test complet demeure Gate B FAIL et ne doit pas être relancé avant isolement.
+
 **Deuxième étape seulement si le diagnostic 00 affiche `RESULT 1` :** [capture minimale 01](../diagnostics/M16_R47_CAPTURE_MINIMAL_01.asc) — une seule capture opaque 16x16, pas de `Draw`, pas de Save/Load, aucune compilation. La banque 11 doit être libre au départ ; WinUAE peut encore planter : configuration de test isolée obligatoire.
