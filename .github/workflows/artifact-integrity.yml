@@ -149,7 +149,7 @@ jobs:
   pre_release_r54_full:
     # R54 pre-release and promotion: execute the manually maintained full
     # regression at the exact pushed main SHA via its workflow_call entry.
-    if: ${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54')) }}
+    if: "${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54')) }}"
     needs: verify
     uses: ./.github/workflows/artifact-regression-full.yml
     permissions:
