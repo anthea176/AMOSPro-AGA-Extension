@@ -1,12 +1,13 @@
-# R44 v0.11.5 — Gate C AMOS Compiler : analyse du plantage
+# AMOS Compiler Gate C — plantage R45 à la fermeture, risque hérité de R44
 
-**Date : 12/11/2026.** Les Gates A CPU/CI et B AMOS interprété/WinUAE sont PASS pour R44 ; **Gate C est en échec sur un scénario Open/Close compilé**, Gate D Amiga réel non testée. Aucun correctif binaire ni PASS Gate C à ce stade.
+**Date : 12/11/2026.** **Gate C en échec sur la R45 installée (déclaration utilisateur)** ; `Aga Screen Open` retourne `1`, puis `Aga Screen Close` provoque un Guru `80000004`. R44 est la source de la routine de fermeture incriminée, **mais sa Gate C n'a pas été testée dans les captures**. R44 a Gates A/B PASS en interprété ; R45 est toujours en cours (Gate A native PASS, rendu Image Draw WinUAE non validé). Gate D physique non testée. Voir la [candidate R44 relogeable et sa méthode de transposition R45](GATE_C_R44_R45_PORTABLE_FIX.md).
 
 ## Observations vérifiées
 
 - Benchmark AMOS/AMCAF/AGA 320x256x32 : exécution interprétée OK, mais exécutable compilé -> `Software Failure 80000004` (exception CPU 4).
 - Un programme AMOS Compiler sans extension, limité à `Print` et `Wait`, fonctionne (message `ETAPE 2 - OK`).
 - Le test compilé minimal affiche `ETAPE 1 - AVANT OPEN` puis provoque `80000004` ; il contient à la suite `Aga Screen Open`, `Wait` et `Aga Screen Close` **sans message intermédiaire** : **il ne prouve pas encore si Open ou Close plante**.
+- **La trace à six étapes a maintenant été exécutée en compilé sur R45** : `02 AGA PROBE RETURNED`, **`04 OPEN RETURNED 1`**, `05 BEFORE AGA SCREEN CLOSE`, puis Guru `80000004`, **sans `06`**. Le défaut est donc localisé dans la fermeture ou son retour.
 - Un précédent essai avec `Wait Key` a donné `HALT3` avant l'ouverture : symptôme distinct, évité dans cette nouvelle recette.
 - Les dumps à `PC=$00F81472` (`STOP #$2000`) sont dans Kickstart après le Guru, pas à l'adresse fautive ; `tx` exécuté après l'arrêt a intercepté une interruption de niveau 2 (`Exception 26`).
 
@@ -46,6 +47,6 @@ Un Guru après `03` sans `04` implique le chemin Open ou son retour ABI ; après
 
 ## Suite
 
-Après ce test, préparer **une candidate distincte de R44**. Si Close est en défaut, corriger les références inter-routines avec des mécanismes explicitement compatibles avec le compilateur ; si Open est en défaut, vérifier `D3/A3`, `A5`, état d'extension et résultat entier. Ne modifier aucune bibliothèque validée sans candidate, Gate A CPU/CI, Gate B interprétée puis Gate C Compiler réellement rejouée. **R44 et `LAST_GOOD` restent inchangées.**
+**La trace confirme Close, pas Open.** Une [candidate R44 expérimentale](GATE_C_R44_R45_PORTABLE_FIX.md) a été préparée avec des marqueurs `Rbsr` et deux routines internes ajoutées. Le même générateur effectue une transposition **en mémoire** sur la R45 de référence, sans modifier R45 ni `LAST_GOOD`. **Gate C ne sera considérée PASS qu'après exécution du binaire corrigé sous AMOS Compiler/WinUAE**, puis régressions. D'autres branches historiques inter-routines restent à examiner.
 
 Références : [règles ABI](../EXTENSION_SOURCE_RULES.md) · [compiler 365](https://github.com/marc365/AMOS-Professional-365/blob/master/%2BAPComp.s) · [builder R44](../tools/build_m15bis_cursor_r44.py).

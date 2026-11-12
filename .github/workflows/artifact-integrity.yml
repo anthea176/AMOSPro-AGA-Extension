@@ -76,6 +76,10 @@ jobs:
           python-version: "3.12"
       - name: Verify current HUNK files and exact committed artifacts
         run: python -B tools/verify_artifacts.py
+      - name: Gate C candidate: portable R44 rebuild + R45 in-memory transposition (STATIC ONLY)
+        run: |
+          python -B tools/test_aga_compiler_compat.py
+          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib dist/experimental/AMOSPro_AGA_M16_v0.12.0_IMAGE_DRAW_R45.Lib
       - name: R30 AGAPAL in-memory layout and reference ABK envelope (format only)
         run: python -B tools/test_agapal_r30_layout.py
       - name: M16 AGAPIC P0 host-only planar RLE and reference bank model (NOT AP20 Gate A)
