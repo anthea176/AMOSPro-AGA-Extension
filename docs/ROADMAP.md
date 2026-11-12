@@ -26,7 +26,7 @@
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |
 | **M22** | Copper AGA avancé | **Planifié, non engagé** |
 
-**Principe :** les numéros et l'ordre M18–M22 ne valent pas autorisation de coder. Ne pas démarrer un nouveau chantier sans demande explicite. **Uniquement la branche `main`** ; pas de création/changement de branche sans instruction.
+**Chantier actif unique : M18/R60 `Aga Image Region`.** Le support de `c2p.library` n'est pas engagé. Les numéros et l'ordre M18–M22 ne valent pas autorisation de coder. Ne pas démarrer un nouveau chantier sans demande explicite. **Uniquement la branche `main`** ; pas de création/changement de branche sans instruction.
 
 ## 3. Études en attente — aucun développement autorisé
 
@@ -54,16 +54,16 @@
 
 **Statut : BACKLOG LONG TERME, NON PRIORITAIRE.** Une commande optionnelle de type `Aga Blit16 Copy` a été évoquée, **sans nom ni signature validés**. Étudier uniquement si la comparaison d'API AmigaOS apporte un bénéfice reproductible pour les copies alignées ; pas d'accès direct aux registres Blitter ni de dégradation de `Aga Blit Copy`. [Résultats Copy/Wait R57](../benchmarks/RESULTATS_COPY_WAIT_R57_2026-11-12.md).
 
-### D. Cible native 68020+ — après le chantier C2P en cours
+### D. Cible native 68020+ — après le chantier actif M18/R60
 
-**Décision de l'auteur (13/11/2026) : à traiter APRÈS le chantier d'intégration de `c2p.library`, sans interrompre ni modifier la candidate M18/R60 actuellement en attente des Gates B/C.** Aucun changement de binaire, de test actif ou d'ABI n'est autorisé par cette seule inscription.
+**Décision de l'auteur (13/11/2026) : à traiter APRÈS la clôture du chantier actif M18/R60 (`Aga Image Region`), actuellement en attente des Gates B/C WinUAE.** L'intégration de `c2p.library` est une piste distincte et **n'a pas commencé**. Aucun changement de binaire, de test actif ou d'ABI n'est autorisé par cette seule inscription.
 
 - **Processeur minimum visé pour le code natif de l'extension : Motorola 68020 / 68EC020**, puis 68030, 68040 et 68060 ; aucune exigence de compatibilité d'exécution avec un 68000 seul.
 - **Compilateur/assembleur et nouveaux générateurs natifs : cible `68020` minimale réelle**, et pas seulement un contrôle de présence du CPU au démarrage. Employer les instructions et modes d'adressage du 68020 lorsqu'ils sont utiles, sans réécrire artificiellement les routines 68000 existantes qui fonctionnent déjà sur 68020.
 - **Revoir les contrôles de prérequis CPU**, la documentation, l'installation et les tests Gate A pour inclure une exécution effective des instructions 68020 (68020/68EC020), puis vérifier AMOS interprété (B), **nouvel exécutable AMOS Compiler** (C) et Amiga AGA physique (D). Les tests M68000 historiques restent des preuves de leur code d'origine, pas la cible de qualification des futurs ajouts 020.
 - Conserver l'ABI AP20, les règles de relocation/compiler, la gestion du back buffer, `Safe`, les tests de non-régression et **`LAST_GOOD` protégée**. Ne proposer des optimisations spécifiques 030/040/060 qu'après mesures et en maintenant la compatibilité 020.
 
-**Ordre :** terminer le chantier C2P en cours et ses validations, puis ouvrir séparément cette migration de cible CPU. **Pas de modification du moteur existant dans ce lot de roadmap.**
+**Ordre :** terminer et valider R60 en cours, puis étudier séparément la cible native 68020+ ; l'intégration de `c2p.library` reste un chantier futur non engagé, sans priorité décidée vis-à-vis des autres études. **Pas de modification du moteur existant dans ce lot de roadmap.**
 
 ## 4. Règles de validation et de livraison
 
