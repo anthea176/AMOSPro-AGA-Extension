@@ -99,8 +99,23 @@ def build():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
+    parser.add_argument("--ci-output", type=Path, default=None,
+                        help="write only a fresh temporary artifact OUTSIDE the repository")
+    args = parser.parse_args()
     raw, info = build()
     assert raw == build()[0], "R55 builder not deterministic"
-    print("R55 IN-MEMORY Compiler-safe candidate (no publication):",
+    print("R55 IN-MEMORY Compiler-safe candidate (no promotion):",
           {k: v for k, v in info.items() if k != "helper_labels"}, flush=True)
+    if args.ci_output is not None:
+        output = args.ci_output
+        assert output.is_absolute(), "CI output must use an absolute path"
+        output = output.resolve()
+        assert not output.is_relative_to(ROOT.resolve()), (
+            "R55 export inside source repository is forbidden"
+        )
+        assert output.suffix.lower() == ".lib" and "R55" in output.name.upper()
+        assert not output.exists(), "CI artifact destination already exists"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(raw)
+        assert output.read_bytes() == raw
+        print("R55 EXPERIMENTAL CI ARTIFACT", output, info["sha256"], flush=True)
