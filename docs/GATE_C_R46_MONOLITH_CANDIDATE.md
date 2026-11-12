@@ -1,6 +1,6 @@
 # AMOS Compiler Gate C — R46 C1 experimental single-segment bridge
 
-**12 novembre 2026 — essai minimal Compiler/WinUAE C1 PASS (confirmation utilisateur). Gate C complète PAS ENCORE VALIDÉE.** La bibliothèque C1 reste expérimentale : aucune promotion ni remplacement des binaires canoniques.
+**12 novembre 2026 — tests utilisateur Compiler/WinUAE C1 : trace Open/Close, benchmark graphique et `Aga Image Draw` fonctionnels. Gate C complète PAS ENCORE VALIDÉE.** La bibliothèque C1 reste expérimentale : aucune promotion ni remplacement des binaires canoniques.
 
 The user-supplied AMOSPro_AGA.Lib is exactly R46 v0.12.1 (29,288 bytes; SHA256 5214f444b3b6e0ed1b1d2a354da0b44fb44ed4cbbc4787634415308a4d099580). The GitHub main branch has since promoted the same R46 to LAST_GOOD after interpreted AMOS/WinUAE Gate B PASS. This experimental compiler bridge does not replace that validated R46, historical R44 or frozen R45.
 
@@ -46,12 +46,17 @@ La partie AGA du benchmark utilise trois séries chronométrées, en 320×256×3
 
 **Décision :** R46 C1 reste une candidate Gate C expérimentale distincte ; aucune promotion. Les binaires canoniques R46 LAST_GOOD, les archives R44/R45 et la branche `main` restent préservés.
 
-## Prochaine validation Compiler — réutiliser les sources déjà passées en interprété
+## Troisième résultat utilisateur : `Aga Image Draw` compilé
 
-1. Compiler **sans modifier** [`tests/passed/M16_R46_IMAGE_DRAW_01.asc`](../tests/passed/M16_R46_IMAGE_DRAW_01.asc) avec la même candidate C1 installée. Placer [`M16_AGAPIC_SAMPLE_BANK10.abk`](../tests/current/M16_AGAPIC_SAMPLE_BANK10.abk) dans le répertoire courant AMOS. Attention : le test charge la banque 10 et l'écrase si déjà présente. Le nom affiché `R45` dans le dessin est un ancien libellé du test R46, pas une bibliothèque erronée.
-2. Exécuter **le nouvel exécutable compilé** sous WinUAE : vérifier que les trois images (opaque/masquées) et le clipping quatre côtés sont visibles, puis que `ERRORS 0 RESULT 1` et `CLOSE RETURNED` s'affichent sans Guru. Ce seul test couvre aussi `Aga Double Buffer`, `Aga Swap`, `Aga Text`, `Aga Box` et le retour à AMOS.
-3. Si PASS : compiler ensuite **sans modifier** [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) pour la restauration du curseur et les 500 bascules. Vérifier `RESULT 1`, `CLOSE RETURNED`, absence de perte Chip RAM significative.
-4. Si PASS : vérifier la sélection et la libération des fontes via [`tests/passed/M14_R38_FONT_BANK_01.asc`](../tests/passed/M14_R38_FONT_BANK_01.asc), avec son fichier `RAM:AMCAF_FONT9.abk`. Vérifier `RESULT 1` et `CLOSE RETURNED`. Les banques/test sources validés restent inchangés.
+**Fonctionnement confirmé par l'utilisateur le 12/11/2026** après exécution sous AMOS Compiler/WinUAE du test proposé `tests/passed/M16_R46_IMAGE_DRAW_01.asc` avec la candidate **R46 C1**. La recette utilise la banque `M16_AGAPIC_SAMPLE_BANK10.abk` (DATA AGAPIC), ouvre un écran AGA, exerce `Aga Image Draw` en modes opaque/masqué, avec décalage et clipping, puis appelle `Aga Screen Close`. Le retour « ça fonctionne ! » valide le **test fonctionnel compilé déclaré par l'utilisateur**.
+
+**Limite de preuve :** aucune capture ni transcription chiffrée des lignes finales n'a été fournie dans ce retour ; ne pas inventer `ERRORS 0 RESULT 1`, les valeurs de `CLIP`, ni une égalité mesurée entre Chip RAM avant/après. Ne pas refaire cet essai sans modification de code pertinente.
+
+## Prochaines validations ciblées — les essais Open/Close, benchmark et Image Draw sont déjà passés
+
+1. Compiler **sans modifier** [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc) avec la **même C1 installée**. Vérifier la disparition/réapparition du pointeur, sa restauration à la fermeture, `RESULT 1`, `CLOSE RETURNED` et l'absence de fuite Chip RAM. Cette recette fait 500 bascules ; conserver l'original archivé.
+2. Ensuite, tester les fontes avec [`tests/passed/M14_R38_FONT_BANK_01.asc`](../tests/passed/M14_R38_FONT_BANK_01.asc) et le fichier `RAM:AMCAF_FONT9.abk`, vérifier le rendu, la libération après `Erase 10`, `RESULT 1` et `CLOSE RETURNED`.
+3. Ne décider d'une intégration définitive qu'après vérification des résultats de ces tests, de la pile/ABI des trampolines et du coût du bloc monolithique (environ 28 Kio copiés par programme compilé utilisant l'extension). Ne pas promouvoir la C1 en `LAST_GOOD` uniquement sur les essais fonctionnels déjà réalisés.
 
 Ne pas repasser le test minimal inchangé : il a déjà passé. En cas de Guru, relever le dernier repère et, si possible, le véritable PC de l'exception avant réinitialisation. Pour l'instant, **l'intégration Compiler et les tests de non-régression complets restent à valider**.
 
@@ -63,4 +68,4 @@ Ne pas repasser le test minimal inchangé : il a déjà passé. En cas de Guru, 
 4. Execute under WinUAE. Pass criterion for this diagnostic is 06 AFTER AGA SCREEN CLOSE and clean program exit without Guru. If Guru returns, capture the true exception PC and preceding trace; a ROM STOP after reset is not the fault PC.
 5. If the minimal compiler trace passes, verify mouse cursor cleanup, fonts, double buffer and Aga Image Draw in BOTH interpreted and compiled contexts before a promotion or closure.
 
-**Bilan : tests statiques PASS ; trace minimale compilée sous WinUAE PASS sur retour utilisateur ; non-régression compilée des fonctionnalités non testée.** Ne pas promouvoir C1 en LAST_GOOD à ce stade.
+**Bilan au 12/11/2026 : tests statiques PASS ; compilé/WinUAE : Open/Close PASS, benchmark graphique fonctionnel, `Aga Image Draw` fonctionnel d'après le retour utilisateur.** Les tests curseur et fontes en compilé et la validation ABI/performances restent ouverts. **Ne pas promouvoir C1 en `LAST_GOOD` à ce stade.**
