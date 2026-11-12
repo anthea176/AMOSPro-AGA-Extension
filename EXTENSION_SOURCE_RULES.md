@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE PERMANENTE — export assembleur depuis une bibliothèque Compiler-safe
+
+L'exporteur `tools/generate_aga_native_source.py` doit distinguer les **marqueurs de liaison AP20 `Rbsr` (`FE31`)** des véritables instructions Motorola 68000. Depuis R46 C1, `dist/AMOSPro_AGA.Lib` contient **57 segments** : 54 stubs `Rbsr`, deux entrées vides/`GetP`, et un segment monolithique avec dispatcher de 32 octets et code natif de 27 856 octets.
+
+- Pour la **C1 officielle exactement identifiée par SHA256**, extraire en mémoire les **56 segments natifs**, vérifier leur égalité octet par octet avec l'archive native R46 figée, puis vérifier que la ré-enveloppe Compiler redonne **exactement** l'original. Ne jamais modifier la bibliothèque en entrée.
+- Ne jamais interpréter `FE31` comme une instruction 68000 ou ignorer `--strict`. Un pont inconnu, une empreinte modifiée, un dispatcher incorrect ou des offsets invalides doivent faire échouer l'export.
+- Le fichier `src/generated/AMOSPro_AGA_R46_C1_NATIVE.s` représente le **code natif**, non une bibliothèque installable. La comparaison vasm doit d'abord reconstruire le natif, puis vérifier la ré-enveloppe Compiler avant toute qualification du résultat.
+- Pour R47 et suivantes, toute nouvelle enveloppe doit recevoir un audit de provenance explicite. Le succès d'extraction ne dispense pas de la règle de build `wrap_native_ap20`.
+- Régression dédiée : `python -m unittest discover -s tests -p 'test_native_source_c1.py' -v`. Le `BAT` exporte toujours en lecture seule.
+
 ## RÈGLE PERMANENTE — README publics : concision et historique (12/11/2026)
 
 **Les fichiers `README.md` (anglais) et `README.fr.md` (français) décrivent les fonctions disponibles et leur utilisation, et non un journal de développement.** Cette règle est indépendante du numéro de build.
