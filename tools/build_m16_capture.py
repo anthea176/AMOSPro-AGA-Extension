@@ -8,7 +8,7 @@ from pathlib import Path
 from hashlib import sha256
 import argparse
 from audit_ap20 import token, parse, inspect
-from active_library import LAST_GOOD_SHA, verify_active
+from active_library import C1_SHA, verify_active
 from compiler_relocation import (native_from_promoted, unpack_ap20,
     repack_ap20, wrap_native_ap20, unwrap_native_parts)
 from m16_capture_emit import emit_capture
@@ -20,8 +20,8 @@ TITLE=b"AMOSPro AGA M16 Image Capture R53 0.12.8 link fix\0$VER: AMOSPro_AGA 0.1
 TITLE+=bytes(len(TITLE)%2)
 
 def build():
-    good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(good).hexdigest()==LAST_GOOD_SHA
+    good=(ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib").read_bytes()
+    assert sha256(good).hexdigest()==C1_SHA
     native=native_from_promoted(good,TITLE)
     tokens,parts,_=unpack_ap20(native)
     original=list(parts)

@@ -25,7 +25,7 @@ TITLE=b"AMOSPro AGA M16 Bank Number R54 0.12.9 candidate\0$VER: AMOSPro_AGA 0.12
 TITLE+=bytes(len(TITLE)%2)
 
 def build():
-    lastgood=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    lastgood=(ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib").read_bytes()  # frozen R46 ancestor
     assert sha256(lastgood).hexdigest()=="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
     stable=R53.read_bytes()
     assert sha256(stable).hexdigest()==R53_SHA and len(stable)==32008

@@ -20,7 +20,7 @@ from m16_capture_r47_emit import emit_capture
 from active_library import verify_active
 
 ROOT=Path(__file__).resolve().parents[1]
-LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+LAST_GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"  # frozen R46 C1 source
 CURRENT=ROOT/"dist/AMOSPro_AGA.Lib"
 LAST_GOOD_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 ENTRY=56

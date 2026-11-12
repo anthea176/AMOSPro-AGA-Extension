@@ -12,7 +12,7 @@ from struct import unpack_from
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_000
 
 from build_m16_capture import build, ROOT, API
-LAST_GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+LAST_GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"  # frozen R46 C1 source
 CURRENT=ROOT/"dist/AMOSPro_AGA.Lib"
 from m16_capture_emit import (
     emit_capture, IDX_GETADR, IDX_EFF, IDX_RESERVE, IDX_CHANGE,

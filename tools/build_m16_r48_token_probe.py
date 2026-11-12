@@ -21,7 +21,7 @@ from m68k_emit import Code,D,POST,I
 from active_library import verify_active
 
 ROOT=Path(__file__).resolve().parents[1]
-GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 OFFICIAL=ROOT/"dist/AMOSPro_AGA.Lib"
 R47=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.2_IMAGE_CAPTURE_R47_CANDIDATE.Lib"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.3_R48_TOKEN_ABI_PROBE.Lib"

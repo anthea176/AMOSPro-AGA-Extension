@@ -16,12 +16,12 @@ from pathlib import Path
 from hashlib import sha256
 from struct import pack
 from audit_ap20 import inspect,parse
-from active_library import verify_active,LAST_GOOD_SHA
+from active_library import verify_active,C1_SHA
 from compiler_relocation import (unpack_ap20,unwrap_native_parts,
                                  native_from_promoted,repack_ap20,wrap_native_ap20)
 from m68k_emit import Code,D,A,M,POST,I
 ROOT=Path(__file__).resolve().parents[1]
-GOOD=ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib"
+GOOD=ROOT/"dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 R51=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.6_R51_RJSR_RELOCATION_PROBE.Lib"
 R51_SHA="04808ea9c89afb171a2c82f1ab61efd8bc912a0449d13cb20e942ad655ba7aea"
 ARCHIVE=ROOT/"dist/experimental/AMOSPro_AGA_M16_v0.12.7_R52_FNONE_TARGET_PROBE.Lib"
