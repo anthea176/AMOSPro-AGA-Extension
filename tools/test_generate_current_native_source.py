@@ -27,7 +27,7 @@ def main() -> None:
         assert wrap_native_ap20(native, exp.parse_lib(wrapped)["title"]) == wrapped
         with tempfile.TemporaryDirectory(prefix="aga-native-source-") as tmp:
             assert exp.main(["--lib", str(path), "--out", tmp,
-                             "--baseline", "none", "--strict"]) == 0
+                             "--baseline", "auto", "--strict"]) == 0
             reports = list(Path(tmp).glob("AMOSPro_AGA_*_NATIVE.json"))
             asm = list(Path(tmp).glob("AMOSPro_AGA_*_NATIVE.s"))
             assert len(reports) == len(asm) == 1
