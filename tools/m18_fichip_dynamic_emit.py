@@ -29,7 +29,7 @@ RESERVE_MARKER=rjsr(main_index("Bnk.Reserve"))
 CHANGE_MARKER=rjsr(main_index("Bnk.Change"))
 EFF_MARKER=rjsr(main_index("Bnk.Eff"))
 
-CREATE_F=dict(count=0,bank=4,total=8,pointer=12)
+CREATE_F=dict(count=0,bank=4,total=8,pointer=12,last=16)
 CREATE_FRAME=64
 
 def emit_chip_bank_create():
