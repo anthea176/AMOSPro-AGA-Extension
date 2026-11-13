@@ -227,12 +227,12 @@ class StageMachine(Services):
             elif what=="flags":self.uc.mem_write(target-12,bytes.fromhex("0002"))
             elif what=="len":self.put(target-20,
                      (len(self.cache) if target==NEW else len(self.source))+17)
-            elif what=="w":self.uc.mem_write(target+6,bytes.fromhex("0010"))
+            elif what=="w":self.uc.mem_write(target+6,bytes.fromhex("0020"))
             elif what=="count":self.uc.mem_write(target+4,bytes.fromhex("0003"))
             elif what=="mask":
                 self.uc.mem_write(target+12,bytes.fromhex("ffff"))
             elif what=="marker":
-                off=12+cache_count*288
+                off=12+cache_count*288+1 # tested icon=2
                 self.uc.mem_write(NEW+off,b"\x03")
             else:raise ValueError(corrupt)
         self.cache_before=bytes(self.uc.mem_read(NEW,len(self.cache)))
