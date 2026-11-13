@@ -59,6 +59,13 @@ class CBlockMachine(Machine):
                  occupied=False,safe=True,corrupt=None):
         super().__init__(raw,None,meta=dict(width=WIDTH,height=HEIGHT,
                                            depth=DEPTH,row_bytes=RBYTES,camg=0x21000))
+        # Distinct, nonuniform colour planes: catches swapped planes,
+        # skipped scanlines and accidental copying of row padding.
+        for pi,plane in enumerate(self.planes):
+            pattern=bytes(((pi*37+(i//self.stride)*11+
+                            (i%self.stride)*23)^((i//self.stride)*pi))&255
+                          for i in range(self.plane_size))
+            self.uc.mem_write(plane,pattern)
         self.lib=raw
         self.native_base=ENTRY if layout=="interpreted" else MOVED
         self.entry=self.native_base
@@ -354,6 +361,10 @@ def main():
                     for p in m.planes]==list(expected_restore.signature()),(
                     "R68 native restore pixels differ",layout,method,w)
             assert m.reserved==1
+            # Capture/Draw/Restore were loaded at distinct immutable PCs.
+            # Never reuse a Unicorn-translated Capture block for Draw!
+            assert sorted(m.loaded_entry)==[ENTRY_CAPTURE,ENTRY_DRAW,ENTRY_RESTORE]
+            assert len(set(m.loaded_entry.values()))==3
             assert bytes(m.uc.mem_read(NEW+m.new_total,len(GUARD)))==GUARD
         for invalid in (
             dict(bank=4),dict(bank=-1),dict(bank=65536),
