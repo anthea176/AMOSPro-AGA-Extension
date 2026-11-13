@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Working candidate R68 v0.13.13 — native Gate A PASS, WinUAE interpreted Gate B PENDING, NOT PROMOTED.** [Single installable AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commands / 71 AP20 entries. [Single current R68 ASC](tests/current/M18_R68_CBLOCK_CHIP_01.asc) to test **interpreted only**; AMOS Compiler Gate C deferred until the **end of M18**. Protected [R63 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
+**Working candidate R68 v0.13.13 — native Gate A and interpreted WinUAE Gate B PASS, NOT PROMOTED.** [Single installable AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commands / 71 AP20 entries. [Exact validated R68 ASC](tests/passed/M18_R68_CBLOCK_CHIP_01.asc) and [Gate B screenshots report](docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md); tested **interpreted only**; AMOS Compiler Gate C deferred until the **end of M18**. Protected [R63 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Status:** R68 v0.13.13 is the sole **working test candidate** (native Gate A PASS, WinUAE B pending); **R63 v0.13.8 remains the protected and separately promoted LAST_GOOD**. Historical [R46 C1 compiler-safe archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) remains immutable. R68 has not completed actual AMOS Compiler Gate C or physical Amiga Gate D.
+**Status:** R68 v0.13.13 is the sole **working test candidate** (native Gate A and WinUAE interpreted B PASS); **R63 v0.13.8 remains the protected and separately promoted LAST_GOOD**. Historical [R46 C1 compiler-safe archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) remains immutable. R68 has not completed actual AMOS Compiler Gate C or physical Amiga Gate D.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

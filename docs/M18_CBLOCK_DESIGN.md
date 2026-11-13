@@ -1,8 +1,8 @@
 # M18 — CBlock AGA : capture/restauration rapide en Chip RAM
 
-**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce document décrit le contrat désormais **implémenté dans R68** et encore en attente de validation WinUAE (Gate B).
+**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce contrat est **implémenté dans R68**, Gates **A native et B WinUAE interprétée PASS** ([rapport R68](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md)). Les mesures CPU à 0 tick restent sous la résolution de Timer ; comparaison sans JIT encore nécessaire.
 
-**État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 entrées AP20 ; Gate A native M68000 48 cas PASS ; Gate B WinUAE interprétée À FAIRE sur [l'ASC unique](../tests/current/M18_R68_CBLOCK_CHIP_01.asc). R63 `LAST_GOOD` protégée ; une seule Gate C manuelle à la fin de M18, D matérielle non testée.**
+**État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20. Gate A M68000 48 cas PASS, Gate B WinUAE interprétée PASS sur les captures auteur du 13/11/2026 ; [ASC R68 exact archivé](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc). Aucun ASC actif. R63 `LAST_GOOD` protégée ; une seule Gate C Compiler manuelle fin M18, D physique non testée.**
 
 ## 1. Usage prioritaire et origine
 

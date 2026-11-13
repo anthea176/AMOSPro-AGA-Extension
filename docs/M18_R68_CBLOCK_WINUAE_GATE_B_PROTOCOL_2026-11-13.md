@@ -1,11 +1,11 @@
 # M18/R68 — Protocole Gate B WinUAE (AMOS interprété)
 
-**13 novembre 2026 — À FAIRE, pas un résultat.** Gate A native M68000 48 cas PASS et CI bloquante PASS ; **aucune Gate B WinUAE R68 réalisée** ; **ne pas tester AMOS Compiler avant la clôture de M18**.
+**13 novembre 2026 — protocole exécuté : Gate B WinUAE interprétée PASS** sur les deux captures auteur, écran et console. [Rapport des résultats](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md). Ne pas tester AMOS Compiler avant la fin de M18.
 
-## Deux livrables actifs seulement
+## Livrables du test validé
 
 - [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **R68 v0.13.13**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 51 064 octets, **64 commandes / 71 entrées AP20**, unique candidate NON PROMUE.
-- [`tests/current/M18_R68_CBLOCK_CHIP_01.asc`](../tests/current/M18_R68_CBLOCK_CHIP_01.asc) : seul ASC actif, test CBlock Chip en AMOS interprété.
+- [`tests/passed/M18_R68_CBLOCK_CHIP_01.asc`](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc) : ASC exact archivé sans modification après Gate B PASS. Aucun ASC actif.
 - [R63 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba` ; aucune modification et aucune promotion.
 
 ## Procédure
@@ -45,4 +45,4 @@ Comparer sur **68020 et 68030 sans JIT**, plusieurs essais avec paramètres iden
 
 ## Gates séparées
 
-**Gate A : PASS**, 48 cas M68000 sur deux dispositions ABI simulées ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469372550)). **Gate B interprétée : EN ATTENTE**. **Gate C Compiler AMOS réelle : une seule fois à la fin M18**. **Gate D Amiga AGA physique : NON TESTÉE**. Aucune promotion automatique de `LAST_GOOD`.
+**Gate A : PASS**, 48 cas M68000 sur deux dispositions ABI simulées ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469372550)). **Gate B interprétée : PASS (2 captures auteur, 13/11/2026)**. **Gate C Compiler AMOS réelle : une seule fois à la fin M18**. **Gate D Amiga AGA physique : NON TESTÉE**. Aucune promotion automatique de `LAST_GOOD`.

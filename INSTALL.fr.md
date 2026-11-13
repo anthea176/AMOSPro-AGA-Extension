@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate R68 v0.13.13 — Gate A native PASS, Gate B WinUAE interprétée À FAIRE, NON PROMUE.** [Unique bibliothèque AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 entrées AP20. [ASC R68 actif unique](tests/current/M18_R68_CBLOCK_CHIP_01.asc) à tester **en interprété uniquement** ; Gate C Compiler AMOS reportée à la **fin de M18**. [R63 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
+**Candidate R68 v0.13.13 — Gates A native et B WinUAE interprétée PASS, NON PROMUE.** [Unique bibliothèque AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 entrées AP20. [ASC R68 validé archivé](tests/passed/M18_R68_CBLOCK_CHIP_01.asc) et [rapport des deux captures](docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), testé **en interprété uniquement** ; Gate C Compiler AMOS reportée à la **fin de M18**. [R63 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -39,7 +39,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**Statut :** R68 v0.13.13 est la seule **candidate active** (Gate A native PASS, B WinUAE à faire) ; **R63 v0.13.8 reste LAST_GOOD promue et protégée séparément**. L'[archive Compiler-safe R46 C1](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) demeure figée. R68 n'a pas passé de Gate C Compiler réelle ni Gate D Amiga physique.
+**Statut :** R68 v0.13.13 est la seule **candidate active** (Gates A native et B WinUAE interprétée PASS) ; **R63 v0.13.8 reste LAST_GOOD promue et protégée séparément**. L'[archive Compiler-safe R46 C1](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) demeure figée. R68 n'a pas passé de Gate C Compiler réelle ni Gate D Amiga physique.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

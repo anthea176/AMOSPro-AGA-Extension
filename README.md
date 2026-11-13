@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R63 v0.13.8**, [protected library](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. **Current working candidate R68 v0.13.13 — NOT PROMOTED**: [single active library](dist/AMOSPro_AGA.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, **64 commands / 71 AP20 entries**. New `Aga C Block Capture/Draw/Restore`: fast, temporary **Chip RAM planar RAW** background capture/restoration with explicit CPU8, CPU16 and Blitter modes and 8/16-pixel horizontal alignment. **Native M68000 Gate A PASS, 48 cases** ([complete preparatory CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469372550)); **WinUAE interpreted Gate B PENDING** on [sole R68 test ASC](tests/current/M18_R68_CBLOCK_CHIP_01.asc). Earlier [R67 interpreted Gate B PASS](docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md). **One AMOS Compiler Gate C manually only at end M18**; physical Gate D untested. No Aminet publication.
+**Latest promoted `LAST_GOOD`: R63 v0.13.8**, [protected library](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. **Current working candidate R68 v0.13.13 — NOT PROMOTED**: [single active library](dist/AMOSPro_AGA.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, **64 commands / 71 AP20 entries**. New `Aga C Block Capture/Draw/Restore`: fast, temporary **Chip RAM planar RAW** background capture/restoration with explicit CPU8, CPU16 and Blitter modes and 8/16-pixel horizontal alignment. **Native M68000 Gate A PASS, 48 cases** ([complete preparatory CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469372550)); **WinUAE interpreted Gate B PASS with both visual and console screenshots**, [report](docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md) and [unchanged archived ASC](tests/passed/M18_R68_CBLOCK_CHIP_01.asc). Earlier [R67 interpreted Gate B PASS](docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md). **Measured capture/draw (300 calls per mode): 0/0/6 ticks CPU8/CPU16/Blitter**, CPU 0 ticks below Timer resolution; benchmark on no-JIT CPU still needed. **One AMOS Compiler Gate C manually only at end M18**; physical Gate D untested. No Aminet publication.
 
 **AGAPIC images in Fast RAM:** compressed images **can be stored in an AMOS DATA bank in Fast RAM**. `Aga Image Draw` reads and decompresses them with the **CPU** into the AGA back buffer in **Chip RAM**, without decompressing the full image into Chip RAM and without Blitter access to the source. AMOS controls the bank's actual placement; the test ABK's Fast/Chip location has not been measured. [AGAPIC format](docs/M16_AGAPIC_FORMAT_DESIGN.md).
 
@@ -29,7 +29,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R68 0.13.13** — 64 commands / 71 AP20 entries; all 61 R67 signatures retained. Native Gate A PASS; WinUAE interpreted B pending, Compiler C only at end M18.
+**Current library API R68 0.13.13** — 64 commands / 71 AP20 entries; all 61 R67 signatures retained. Native Gate A and WinUAE interpreted Gate B PASS; Compiler C only at end M18.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
