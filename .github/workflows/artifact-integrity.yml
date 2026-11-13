@@ -34,6 +34,8 @@ on:
       - "tools/m18_icon_atlas_model.py"
       - "tools/test_m18_icon_atlas_model.py"
       - "tools/m18_ficon16_model.py"
+      - "tools/m18_ficon16_native_aligned_emit.py"
+      - "tools/test_m18_ficon16_native_aligned.py"
       - "tools/test_m18_ficon16_model.py"
       - "tools/m18_ficon16_convert.py"
       - "tools/test_m18_ficon16_convert.py"
@@ -196,6 +198,8 @@ jobs:
         run: |
           python -B tools/test_m18_r60_image_region.py
           python -B tools/build_m18_r60_image_region.py
+      - name: M18/P2 aligned Fast Icon 8-plane real 68000 CPU Gate A (NO AP20)
+        run: python -B tools/test_m18_ficon16_native_aligned.py
       - name: Ensure no official or historical Lib was written
         run: git diff --exit-code -- dist/ archive/
 
