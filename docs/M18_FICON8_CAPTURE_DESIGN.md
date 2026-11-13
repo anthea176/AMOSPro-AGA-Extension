@@ -1,6 +1,6 @@
 # M18 — Capture directe d'un Fast Icon 16×16 depuis l'écran AGA
 
-**Statut : API PROPOSÉE pour une étape ultérieure de M18 ; NON implémentée, aucun token AP20, aucune Gate A/B/C.** Ajout à la demande explicite de l'auteur du 13/11/2026, en parallèle de l'étude du cache Chip dynamique.
+**Statut : prochaine fonction à implémenter après R66 A/B PASS ; pour l'instant API PROPOSÉE, aucun token AP20, aucune Gate A/B/C.** Ajout à la demande de l'auteur du 13/11/2026. La candidate R66 a désormais passé les Gates A (122 cas 68000) et B (deux captures WinUAE avec rendu conforme et `RESULT 1`, [rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md)). La commande de capture n'a pas encore été implémentée.
 
 ## Objectif et API proposée
 

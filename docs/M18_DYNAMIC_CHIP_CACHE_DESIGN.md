@@ -1,6 +1,6 @@
 # M18 — Cache dynamique Fast Icon FICON8 → FICHIP8 en Chip RAM
 
-**Statut : R66 v0.13.11 IMPLÉMENTÉE, NON PROMUE.** L'auteur a confirmé la poursuite (« ok on continu ») après l'accord de principe. Deux commandes `Aga F Chip Bank Create` et `Aga F Chip Stage` ajoutées à l'unique candidate active, **41 804 octets**, SHA256 `e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca`. **Gate A native 68000 PASS (122 cas, deux dispositions ABI simulées) et CI complète PASS** ([workflow](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43453950765)). **Gate B WinUAE interprétée À FAIRE** sur [l'ASC actif R66](../tests/current/M18_R66_FICHIP_DYNAMIC_01.asc). Gate C Compiler manuelle une seule fois en fin M18 ; Gate D Amiga physique non faite. **R63 `LAST_GOOD` inchangée.**
+**Statut : R66 v0.13.11 IMPLÉMENTÉE, NON PROMUE.** L'auteur a confirmé la poursuite (« ok on continu ») après l'accord de principe. Deux commandes `Aga F Chip Bank Create` et `Aga F Chip Stage` ajoutées à l'unique candidate active, **41 804 octets**, SHA256 `e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca`. **Gate A native 68000 PASS (122 cas, deux dispositions ABI simulées) et CI complète PASS** ([workflow](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43453950765)). **Gate B WinUAE interprétée PASS le 13/11/2026**, rendu CPU/Blitter conforme, re-staging et mémoire contrôlés ([rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md)) ; [l'ASC actif R66](../tests/current/M18_R66_FICHIP_DYNAMIC_01.asc) est inchangé. Gate C Compiler manuelle une seule fois en fin M18 ; Gate D Amiga physique non faite. **R63 `LAST_GOOD` inchangée.**
 
 ## Problème à résoudre
 
@@ -40,6 +40,6 @@ _OK=Aga F Chip Stage(10,11,3)
 3. Mesurer séparément **`T_create`**, **`T_stage`**, **`T_cpu`**, **`T_blit`** et un seuil d'amortissement pour N utilisations, idéalement 68020/68030 sans JIT.
 4. **Gate C Compiler** une seule fois **à la fin de M18** ; Gate D matériel séparée.
 
-**Décision auteur actée : R66 candidate active Gate A PASS (122 cas natifs).** Aucun test AMOS WinUAE B revendiqué avant capture auteur, aucune promotion R66. R65 Gates A/B PASS historique ; R63 `LAST_GOOD` protégée. Aucun changement de la capture proposée avant Gate B de R66.
+**Décision auteur actée : R66 candidate active Gates A/B PASS (122 cas natifs, deux captures WinUAE auteur avec `RESULT 1`).** Aucune promotion R66 automatique. R65 Gates A/B PASS historique ; R63 `LAST_GOOD` protégée. Aucun changement de la capture proposée avant Gate B de R66.
 
 Références : [cache M18 validé](M18_FAST_ICON_CACHE.md) · [modèle de cache et staging hôte](../tools/m18_ficon_chip_cache.py) · [noyau staging 68000 historique P2](../tools/m18_ficon16_native_stage_emit.py) · [commande Blitter actuelle](../tools/m18_ficon_chip_ap20_emit.py) · [règles](../EXTENSION_SOURCE_RULES.md).
