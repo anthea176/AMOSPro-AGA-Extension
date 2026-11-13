@@ -30,7 +30,10 @@ def expected_layout(slot):
         for plane in range(9):
             src=(row*9+plane)*2
             dst=plane*32+row*2
-            staged[dst:dst+2]=slot[src:src+2]
+            raw=slot[src:src+2]
+            # The staged mask is VISIBLE=1, inverse of Unity PRESERVE=1.
+            staged[dst:dst+2]=(pack('>H',int.from_bytes(raw,'big') ^ 0xffff)
+                                if plane==0 else raw)
     return bytes(staged)
 
 def execute(code,slot,src=FAST,dst=CHIP):
@@ -92,6 +95,8 @@ def main():
         slot=bank.icon(num)
         status,actual=execute(code,slot)
         assert status==1 and actual==expected_layout(slot),num
+        if num==1: assert actual[:32]==bytes(32), 'transparent icon must have zero visible mask'
+        if num==2: assert actual[:32]==bytes([255])*32, 'opaque icon must have full visible mask'
     source=bank.icon(4)
     bad=((0,CHIP),(FAST+1,CHIP),(FAST,0),(FAST,CHIP+1),
          (CHIP,CHIP),(CHIP-100,CHIP),(CHIP+16,CHIP),

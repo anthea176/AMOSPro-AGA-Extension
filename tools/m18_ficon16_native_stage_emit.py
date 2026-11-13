@@ -1,7 +1,9 @@
 """M18/P2 real 68000 Fast->Chip staging core: 288-byte Unity icon slot.
 
 Source: 16 rows of [preserveMask,plane0..plane7] (9 words per row).
-Destination: mask 32 bytes followed by 8 contiguous 32-byte bitplanes.
+Destination: VISIBLE mask (inverse of Unity preserve mask) 32 bytes,
+followed by 8 contiguous 32-byte bitplanes. VISIBLE bit 1 means copy;
+format matches graphics.library/BltMaskBitMapRastPort mask semantics.
 Inputs A0=prevalidated 288-byte source, A1=288-byte Chip cache target.
 Source and destination must be even, nonzero and NON-OVERLAPPING.
 Reject 32-bit address wrapping. Output D3=1 success/0 refusal, D2=0,
@@ -32,10 +34,15 @@ def emit_ficon16_stage_cpu():
     L('row')
     c.move(A(1),A(4))
     c.word(0xd9c0)                # ADDA.L D0,A4
-    c.move(I(9),D(5))
+    # Unity stores PRESERVE=1 transparent; the OS masked blit uses VISIBLE=1.
+    c.move(POST(0),D(6),'w')      # first row word: preserve mask
+    c.word(0x4646)               # NOT.W D6 -> visible mask for DMA
+    c.move(D(6),M(4),'w')
+    c.raw('49ec0020')            # LEA 32(A4),A4: plane0
+    c.move(I(8),D(5))
     L('word')
-    c.move(POST(0),M(4),'w')      # take next interleaved source word
-    c.raw('49ec0020')            # LEA 32(A4),A4: mask/planes destination
+    c.move(POST(0),M(4),'w')      # source plane word
+    c.raw('49ec0020')            # LEA 32(A4),A4: next staged plane
     c.quick(1,D(5),sub=True);B(6,'word')
     c.quick(2,D(0))
     c.quick(1,D(1),sub=True);B(6,'row')
