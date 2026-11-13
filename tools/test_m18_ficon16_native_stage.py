@@ -54,8 +54,9 @@ def execute(code,slot,src=FAST,dst=CHIP):
     }
     for reg,value in data.items():
         uc.reg_write(reg,value)
-    uc.reg_write(UC_M68K_REG_A7,STACK)
+    # SR supervisor mode selects ISP; set SR BEFORE A7, as in the frozen Gate A fixtures.
     uc.reg_write(UC_M68K_REG_SR,0x2000)
+    uc.reg_write(UC_M68K_REG_A7,STACK)
     try:
         uc.emu_start(CODE,STOP,count=100000)
     except Exception as exc:
