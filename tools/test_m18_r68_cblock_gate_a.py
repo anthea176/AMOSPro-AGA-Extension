@@ -20,6 +20,7 @@ from m18_cblock_bank_emit import (
     ENTRY_RESTORE,GETADR,RESERVE,CHANGE,EFF,HEADER,NAME,MAGIC,
 )
 from m18_cblock_copy_model import Surface,copy_pixel_oracle,copy_blitter_word_model
+from m18_cblock_copy_emit import emit_cblock_copy_core
 
 ENTRY=0x180000
 MOVED=0x1a0000
@@ -185,10 +186,20 @@ class CBlockMachine(Machine):
              "restore":ENTRY_RESTORE}[action]
         self.load_entry(idx)
         self.trace=[]
+        self.core_debug=[]
+        native_core,_=emit_cblock_copy_core()
+        core_off=(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1]["copy_core"]
+        core_watch={core_off+offset for offset in
+                    (0,2,4,6,8,len(native_core)-16,len(native_core)-12,
+                     len(native_core)-8,len(native_core)-4,len(native_core)-2)}
         def trace(uc,address,size,user):
             if self.entry<=address<self.entry+len(self.parts[idx]):
-                self.trace.append(address-self.entry)
+                offset=address-self.entry
+                self.trace.append(offset)
                 if len(self.trace)>55:self.trace.pop(0)
+                if offset in core_watch and len(self.core_debug)<100:
+                    sp=uc.reg_read(AR[7])
+                    self.core_debug.append((offset,hex(sp),hex(self.get(sp))))
         self.uc.hook_add(UC_HOOK_CODE,trace,begin=self.entry,end=self.entry+len(self.parts[idx]))
         values=(bank,x,y,w,h,method) if action=="capture" else (
                  (bank,x,y,method) if action=="draw" else (bank,method))
@@ -212,7 +223,8 @@ class CBlockMachine(Machine):
             "R68 unbalanced stack",action,values,hex(self.a(7)),
             hex(STACK+4),hex(self.uc.reg_read(UC_M68K_REG_PC)),
             self.calls[-12:],self.trace[-45:],
-            "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1]
+            "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1],
+            "CORE_SP",self.core_debug
         )
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
