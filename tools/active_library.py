@@ -2,7 +2,7 @@
 
 R68 v0.13.13 remains the protected promoted LAST_GOOD (A/B/C PASS).
 R69 OPT020/P1e passed CPU/WinUAE and interpreted/compiled benchmarks.
-R70 OPT020/P2 is the SHA-pinned working candidate; WinUAE B/C pending.
+R70 OPT020/P2 remains SHA-pinned in source only after WinUAE Gate B FAILED with Guru $80000004; R69 remains the active candidate.
 R63 remains preserved in Git history; physical Gate D has not been tested.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
@@ -63,13 +63,9 @@ def verify_active(root: Path):
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
     if current_sha==R70_SHA:
-        from build_opt020_p2_r70 import build as build_r70
-        candidate,meta=build_r70()
-        assert cur == candidate and cur != good, "R70 candidate must be exact builder and not LAST_GOOD"
-        assert len(cur) == 51460 and meta["sha256"] == R70_SHA
-        assert meta["ap20_entries"] == 71 and meta["commands"] == 64
-        assert meta["changed_native_entry"] == 55 and meta["retained_region_native_entry"] == 59
-        return cur,good,"R70 0.13.15 OPT020/P1e+P2 CPU Gate A PASS; WinUAE interpreted Gate B pending; Compiler C pending"
+        # Fail closed: exact SHA/structural CI cannot override a fatal WinUAE
+        # illegal instruction. Keep the P2 builder in memory until fixed.
+        raise AssertionError("R70 FAILED WinUAE Gate B (Guru $80000004); restore the pinned R69 working library")
     if current_sha==R69_SHA:
         from build_opt020_p1e_r69 import build as build_r69
         candidate,meta=build_r69()

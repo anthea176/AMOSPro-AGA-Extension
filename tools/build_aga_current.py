@@ -61,7 +61,7 @@ def main() -> None:
         candidate,meta=build_r69()
         assert candidate == current and meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert sha256(LAST_GOOD.read_bytes()).hexdigest() == "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
-        print("CURRENT R69 OPT020/P1e Gate A candidate; WinUAE B/C pending",meta)
+        print("CURRENT R69 OPT020/P1e tested: WinUAE Gate B and interpreted/compiled Region benchmark PASS; P2/R70 Gate B failed",meta)
     elif active.startswith("R68 0.13.13"):
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()

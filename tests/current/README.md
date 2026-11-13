@@ -1,44 +1,15 @@
-# OPT020/P2 R70 v0.13.15 — unique active WinUAE Gate B program
+# OPT020/P1e — R69 en service, P2/R70 bloquée
 
-**Active library:** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), R70 (51,460 bytes). SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad`. **R70 is a working candidate only**, not the promoted reference; R68 [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`.
+**Binaire unique de travail :** `dist/AMOSPro_AGA.Lib` **R69 v0.13.14**, 51 240 octets, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`. P1e Gate A/CI et Gate B WinUAE interprétée **PASS** ; benchmarks R60/R69 **interprétés et compilés PASS** sur 68020 14 MHz JIT OFF (jusqu'à 3,39× en opaque 32×20 compilé). R69 non promue.
 
-**R70 Gate B OBSERVED FAIL (13/11/2026)**: the author reports a solid pink private AGA screen with a white Intuition title bar and AMOS unresponsive, although switching to Workbench remains possible. **No `RESULT 1` / `CLOSE RETURNED` capture. Do not promote or compile R70.** CI native regression with the *exact 64x40 bank* and 8 WinUAE positions passes 256 cases under Musashi, so the real failure is still unidentified.
+**R68 LAST_GOOD protégée** : `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Ne modifier ni `LAST_GOOD`, ni archives, ni `tests/passed/`.
 
-**DIAGNOSTIC RERUN**: the same single ASC now changes **palette colour 0** before and after each P2 Draw call. On the stuck screen, the last background colour identifies the last executed checkpoint:
+**ASC actif unique :** [`OPT020_P1E_R69_INTERPRETED_01.asc`](OPT020_P1E_R69_INTERPRETED_01.asc). Banque `M16_AGAPIC_SAMPLE_BANK10.abk` ; ce programme P1e est déjà validé sous WinUAE. L'ancien ASC R70 est conservé dans [l'historique du commit du diagnostic](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/208d7b30c091ac2be4e38003166976f2ee3b59af/tests/current/OPT020_P2_R70_INTERPRETED_01.asc), **ne pas l'exécuter normalement**.
 
-| Colour on screen | Meaning |
-|---|---|
-| Original pink | Before the P2 entry checkpoint (or after final Swap) |
-| Red | Before first Image Draw (OPA) |
-| Green | After OPA (before masked Draw) |
-| Blue | After masked Draw |
-| Yellow | After shifted Draw |
-| Cyan | After left clipping |
-| Bright magenta | After right clipping |
-| Orange | After top clipping |
-| White | After bottom clipping |
-| Dark green | After fully offscreen |
-| Dark blue | After invalid pointer |
-| Dark red | After invalid length |
-| Purple | After invalid mode |
-| Grey | After invalid X |
-| Brown | After P1e Regions and legacy Draw, before Swap |
+## Incident P2/R70
 
-After successful Swap the script restores the original pink, closes the screen, then reports `DIAG LAST STAGE 150`. **If the screen stays pink continuously**, the hang occurs *before* marker 10 (opening, initial Swap, Safe acquisition, or fill), not necessarily inside P2. This is a temporary diagnostic, not a Gate B PASS.
+Le 13/11/2026, l'ASC R70 a provoqué un blocage graphique suivi d'une alerte Workbench **AMOS / `80000004` (Illegal Instruction)**, deux reproductions. **Gate B P2 FAIL ; pas de Gate C R70 ni de benchmark P2**. Après 256 cas Musashi incluant la vraie banque 64×40 (PASS), la cause réelle doit être isolée par l'adresse de l'instruction (PC) dans le débogueur WinUAE, plutôt que par de nouveaux appels au hasard.
 
-**Only active ASC:** [`OPT020_P2_R70_INTERPRETED_01.asc`](OPT020_P2_R70_INTERPRETED_01.asc). Supersedes the P1e R69 ASC in `tests/current/` (the old revision stays accessible in Git history). This is **Gate B interpreted-only**. No new executable may be compiled for this check.
+[Rapport détaillé et méthode de collecte PC](../../docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md). Sources/constructeur P2 et Git historique intacts ; aucune nouvelle bibliothèque R70 ajoutée au dépôt.
 
-## Run under WinUAE
-
-1. WinUAE: AGA, **68020 or 68030, JIT OFF**, record CPU/RAM. Install the active R70 library in the existing AGA extension slot in `APSystem`, restart AMOS completely.
-2. In a disposable test environment, place [`M16_AGAPIC_SAMPLE_BANK10.abk`](M16_AGAPIC_SAMPLE_BANK10.abk) alongside the ASC; `Load` replaces bank 10. Open a **blank** AMOS program then **Project → Merge ASCII** the one current ASC.
-3. Run using **AMOS interpreted mode only**. Do not launch AMOS Compiler. Photograph the AGA graphics and the final console. The program shows the screen for 125 VBL before closing.
-
-## Expected results (not a claimed WinUAE PASS)
-
-- `P2 O/M/SHIFT 1 1 1`; `P2 CLIP L/R/T/B 1 1 1 1`; `P2 OUT/BAD P/L/M/X/NOS 1 0 0 0 0 0`.
-- P1e regression: `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, invalid bank/coords/size/mode all `0`.
-- `LEGACY 1`, `CLOSE -1`, `NOS 0`, `RESULT 1`, `CLOSE RETURNED`.
-- `CHIP BEFORE/END` must show **the same value** within the session; no freeze, Guru or obvious stray drawing.
-
-The native CPU Gate A covers 248 real P2 scenarios (Musashi M68EC020/M68020), malformed RLE, pixel-accurate compare, canaries, front/back, DATA flags, Safe and 68000 refusal. [Technical details](../../docs/OPT020_P2_IMAGE_DRAW_68020_2026-11-13.md). **This does not establish R70's WinUAE Gate B/C or a speedup for Image Draw.** Those require the actual captures and later benchmark.
+**Pour retrouver un environnement stable** : copier la R69 active dans le slot AGA d'`APSystem`, puis redémarrer entièrement AMOS. Utiliser **68020 14 MHz JIT OFF** comme lors des mesures validées. Ne pas lancer le Compiler pendant l'enquête.

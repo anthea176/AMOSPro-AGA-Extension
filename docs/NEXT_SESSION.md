@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P2 — Guru `$80000004` confirmé, R70 retirée de l'actif (13/11/2026)
+
+**ALERTE CRITIQUE, GATE B R70 FAIL :** l'auteur a reproduit le blocage de l'écran AGA rose puis Workbench a affiché **`AMOS / Software Failure / erreur n°80000004` = exception CPU instruction illégale**. Il ne s'agit pas d'une simple attente VBL/Safe. Les marqueurs de palette ne localisent pas de façon fiable le PC. **Cause racine encore inconnue**, demander le PC réel avec le débogueur WinUAE avant toute nouvelle modification du noyau. [Rapport d'incident et procédure de capture PC](OPT020_P2_R70_GURU_80000004_2026-11-13.md).
+
+**REPLI :** unique `dist/AMOSPro_AGA.Lib` replacée à **R69 v0.13.14**, **51 240 octets / SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`** ; unique ASC actif de nouveau `tests/current/OPT020_P1E_R69_INTERPRETED_01.asc` (Gate B P1e WinUAE réussie). **R68 `LAST_GOOD` intacte** : SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Pas de branche, pas d'archive, pas de compilation AMOS. Sources P2, tests Musashi 256 PASS et builder R70 déterministe conservés sur `main` ; R70 ne doit PAS être réinstallée sans correction et nouvelle Gate A/CI.
+
+### Historique R70 échouée (sections antérieures non autoritatives sur l'actif)
+
 ## OPT020/P2 — R70 v0.13.15 : Gate B WinUAE bloquée, diagnostic en cours
 
 **Incident 13/11/2026 :** l'ASC P2 R70 laisse un écran privé AGA rose avec barre blanche en haut, AMOS ne répond plus tandis que le Workbench reste accessible. **Gate B NON VALIDÉE (échec observé)** : pas de `RESULT 1` ni fermeture. CI P2 augmentée avec la vraie banque AGAPIC 64×40 et les huit positions WinUAE : **256 cas Musashi PASS**, donc il faut isoler l'écart entre émulation CPU et AMOS réel. **R70 non promue, R68 `LAST_GOOD` inchangée, aucun Compiler.** L'unique [ASC actif](../tests/current/OPT020_P2_R70_INTERPRETED_01.asc) comporte désormais des marqueurs de couleur par étape (voir [légende](../tests/current/README.md)) ; relever la dernière couleur de l'écran au blocage avant tout changement du moteur.
