@@ -2,10 +2,9 @@
 """M18/P1 host-only safe AGAPIC->Unity AGA Fast Icon conversion regression."""
 from __future__ import annotations
 
-from dataclasses import replace
 import random
 
-from m16_agapic import pack_image, parse_payload
+from m16_agapic import pack_image, parse_payload, unpack_image
 from m18_icon_atlas_model import IconAtlas, IconRect
 from m18_ficon16_convert import export_fast_icons
 from m18_ficon16_model import draw_cpu
@@ -50,12 +49,6 @@ def test_conversion() -> int:
         assert len(exported.bank.raw) == 1164
         for number in selected:
             rect = atlas.rect(number)
-            source = bytes(
-                next_pixel
-                for y in range(rect.y, rect.y + 16)
-                for next_pixel in atlas.image_pixel_placeholder
-            ) if False else None  # pixel oracle below uses an unpacked copy
-            from m16_agapic import unpack_image
             pixels, _ = unpack_image(atlas.image)
             icon = bytes(pixels[y * 64 + x]
                          for y in range(rect.y, rect.y + 16)
@@ -87,7 +80,6 @@ def test_conversion() -> int:
 def test_refusals() -> int:
     atlas = fixture()
     source = (1,3,7,65535)
-    from test_m18_agapic_atlas_model import as_planar
     planes,_ = as_planar(bytes([0] * (65*43)),65,43,8)
     invalids = (
         ("opaque colour-zero mask", lambda: export_fast_icons(fixture(wrong_mask=1), source)),
