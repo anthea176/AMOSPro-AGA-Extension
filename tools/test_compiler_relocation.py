@@ -48,8 +48,12 @@ def main():
     assert len([v for v in inspect(parse(official))["tokens"] if v["name"].startswith("aga ")]) == 50
     checks = inspect(parse(official))["parameter_checks"]
     assert checks and all(x["getp"] for x in checks)
-    assert (ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes() == (
-        ROOT/"examples/compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc").read_bytes()
+    # Public example uses clean filenames, while the exact historically
+    # compiled R46 C1 source stays immutable in tests/passed and the ZIP.
+    historical = (ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
+    public = (ROOT/"examples/compiler_all_in_one/COMPILER_ALL_IN_ONE.asc").read_bytes()
+    assert public == historical.replace(
+        b"M16_AGAPIC_SAMPLE_BANK10.abk", b"AGAPIC_SAMPLE_BANK10.abk")
 
     # Simulate R47: future source is derived from the *promoted* C1,
     # changed as native segments, then wrapped again. No stale bridge index.
