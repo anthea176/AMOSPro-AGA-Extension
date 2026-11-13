@@ -64,8 +64,7 @@ figés. **Une seule bibliothèque de travail**, un **seul ASC actif**.
 Le commit de promotion `release: R73` déclenche **une seule fois**
 la CI d'intégrité rapide puis la régression historique complète sur le
 SHA final publié. Les workflows P1 et P3 redondants ne sont pas rejoués.
-**Résultat du contrôle de release : à relever après exécution** ; un
-contrôle CI statique/CPU ne remplace pas les captures Gates B/C.
+**Résultat de la release : PASS** sur le [workflow du commit exact 857620b](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43529036652) : **53 étapes d'intégrité rapide et 54 étapes de régression historique complète réussies**. Les workflows natifs P1/P3 redondants ont été sautés intentionnellement. Cette CI statique/CPU complète les preuves WinUAE Gates B/C sans les remplacer.
 
 **Suite de roadmap :** OPT020 terminé et R73 promue ; prochain chantier
 `c2p.library`, puis AGAPIC v2. Pas de modification de code c2p/AGAPIC
