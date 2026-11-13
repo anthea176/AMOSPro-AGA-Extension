@@ -9,6 +9,7 @@ historical and must not be silently applied to the current R59 image.
 from __future__ import annotations
 
 import argparse
+from hashlib import sha256
 from pathlib import Path
 from ap20_utils import digest
 from audit_ap20 import inspect, parse
@@ -49,7 +50,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R68 0.13.13"):
+    if active.startswith("R69 0.13.14"):
+        from build_opt020_p1e_r69 import build as build_r69
+        candidate,meta=build_r69()
+        assert candidate == current and meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest() == "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
+        print("CURRENT R69 OPT020/P1e Gate A candidate; WinUAE B/C pending",meta)
+    elif active.startswith("R68 0.13.13"):
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()
         assert candidate==current and meta["sha256"]=="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"

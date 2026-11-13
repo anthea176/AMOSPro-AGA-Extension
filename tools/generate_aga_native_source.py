@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R68_SHA:
+        if sha(raw) == R69_SHA:
+            from build_opt020_p1e_r69 import build as pinned_build
+            release = "R69"
+        elif sha(raw) == R68_SHA:
             from build_m18_r68_cblock import build as pinned_build
             release = "R68"
         elif sha(raw) == R67_SHA:
@@ -476,6 +479,35 @@ def verified_current_compiler_seeds(parsed):
             emit_capture,emit_draw,emit_restore,
             GETADR as CBGET,RESERVE as CBRES,CHANGE as CBCHG,EFF as CBEFF)
         blob68,_=build_r68()
+        if raw != reconstruct(blob68):
+            # R69 shares all 69 unaffected R68 units verbatim. Only the
+            # audited Image Region (59) is replaced, within the same V2 unit.
+            # Derive seeds from the exact R68 source audit; never guess.
+            from build_opt020_p1e_r69 import build as build_r69
+            from m18_image_region_emit import emit_image_region, GETADR_MARKER as R69_GETADR
+            blob69,_ = build_r69()
+            need(raw == reconstruct(blob69),
+                 "Strict source: unknown 70-unit native AP20; R69 source audit required")
+            old68=parse_lib(reconstruct(blob68))
+            original_seeds=verified_current_compiler_seeds(old68)
+            need(bool(original_seeds), "Strict source: inherited R68 seeds not verified")
+            before=old68['section']
+            for i in range(70):
+                if i==59:
+                    continue
+                need(sections[i]['core'] == before[i]['core']
+                     and sections[i]['getp'] == before[i]['getp'],
+                     f"Strict source: R69 changes unrelated native entry {i}")
+            body, labels=emit_image_region(opt020=True)
+            need(sections[59]['core']==body and sections[59]['getp'],
+                 "Strict source: R69 entry 59 differs from exact 020 emitter")
+            need(body.count(R69_GETADR)==1 and
+                 {'decode_rows','paint_group','p1e_full_16','p1e_fragment','safe'} <= set(labels),
+                 "Strict source: R69 R60 preflight/kernels untrusted")
+            at=body.index(R69_GETADR)
+            seeds=dict(original_seeds)
+            seeds[59]={0,at+len(R69_GETADR)}
+            return seeds
         need(raw==reconstruct(blob68),
              "Strict source: R68 native code not the deterministic builder")
         blob67,_=build_r67()

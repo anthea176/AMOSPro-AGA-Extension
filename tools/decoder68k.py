@@ -227,6 +227,23 @@ class Decoder:
                 source=f'#{self.u16(p+2)}' if im else f'd{(w>>9)&7}'
                 ea,end,ref=self.ea((w>>3)&7,w&7,p+(4 if im else 2),'b',False)
                 if ea:return Insn(end-p,op,source+','+ea,data_refs=ref)
+        if g==14 and (w&0xfff8) in (0xe9d0,0xefd0):
+            # OPT020: validated BFEXTU/BFINS register-indexed fields.
+            # Restrict to (An); do not reinterpret unknown 020 encodings.
+            ext=self.u16(p+2)
+            if ext&0x8600:return None  # reserved bit15 + bits10/9
+            reg=(ext>>12)&7
+            offset=(f'd{(ext>>6)&7}' if ext&0x0800
+                    else str((ext>>6)&31))
+            width=(f'd{ext&7}' if ext&0x20
+                   else str((ext&31) or 32))
+            if ext&0x20 and ext&0x18:return None
+            ea,end,ref=self.ea(2,w&7,p+4,'l',False)
+            if not ea:return None
+            field=f'{ea}{{{offset}:{width}}}'
+            if (w&0xfff8)==0xe9d0:
+                return Insn(end-p,'bfextu',f'{field},d{reg}',data_refs=ref)
+            return Insn(end-p,'bfins',f'd{reg},{field}',data_refs=ref)
         if g==14:
             if (w&0x00c0)==0x00c0:
                 direction='l' if w&0x100 else 'r';typ=['as','ls','rox','ro'][(w>>9)&3]

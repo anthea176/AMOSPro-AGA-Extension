@@ -69,6 +69,20 @@ def main():
         print(f"PASS: {path.name} has matched IF/END IF and FOR/NEXT; no single-line THEN")
     if not files:
         print("PASS: no active AMOS test (zero is valid after archiving)")
+    # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
+    if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
+        source = files[0].read_bytes().decode("latin-1")
+        needed = (
+            "Aga Image Region(10,0,0,32,20,20,65,0)",
+            "Aga Image Region(10,32,0,32,20,88,65,1)",
+            "Aga Image Region(10,0,0,16,16,304,208,0)",
+            "Aga Image Region(10,1,1,17,12,313,240,1)",
+            "Aga Image Region(4,0,0,16,16,10,10,0)",
+            "Aga Screen Close", 'Print "RESULT ";_RESULT',
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(x in source for x in needed), "P1e interpreted Gate B scenario incomplete"
+        print("PASS: P1e active ASC covers opaque/masked, aligned/clip, reject, close (STATIC only)")
     # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
     if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
         source = files[0].read_text("ascii")
