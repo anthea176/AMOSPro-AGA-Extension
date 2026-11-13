@@ -53,7 +53,7 @@ def main() -> None:
         from build_m18_r64_ficon_bank_create import build as build_r64
         candidate,meta=build_r64()
         assert candidate==current,"R64 current differs from deterministic source"
-        print("CURRENT R64 FICON8 BANK CREATE GATE A PASS; WinUAE B pending",meta)
+        print("CURRENT R64 FICON8 BANK CREATE A/B PASS (interpreted+visual); Compiler C end M18",meta)
     elif active.startswith("R63 0.13.8"):
         from build_m18_r63_chip_blit import build as build_r63
         candidate,meta=build_r63()

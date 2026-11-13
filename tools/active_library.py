@@ -1,8 +1,9 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R63 v0.13.8 is user-promoted LAST_GOOD, SHA-pinned and identical to
-the active library. Historical R60 remains reconstructible from its builder
-and preserved in the Git history.
+R63 v0.13.8 is user-promoted protected LAST_GOOD, SHA-pinned and
+separate from the current R64 v0.13.9 working candidate. R64 passed
+native Gate A and interpreted WinUAE Gate B with visual confirmation.
+Historical R60 remains reconstructible and preserved in Git history.
 No synthetic 40K padding is included.
 """
 from hashlib import sha256
@@ -19,7 +20,7 @@ R60_SHA="00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8"  # M1
 R61_SHA="ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f"  # Historical R61, WinUAE A/B/C PASS
 R62_SHA="9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6"  # Historical R62 Gate A PASS, WinUAE interpreted RESULT 0
 R63_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # Promoted R63 A/B PASS; visual pixels pending, C end M18
-R64_SHA="4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c"  # R64 FICON8 Create Gate A PASS, B pending, NOT PROMOTED
+R64_SHA="4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c"  # R64 FICON8 Create Gates A/B interpreted + visual PASS, NOT PROMOTED; C end M18
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -58,7 +59,7 @@ def verify_active(root: Path):
         candidate,meta=build_r64()
         assert candidate==cur and cur!=good and sha256(good).hexdigest()==R63_SHA, (
             "R64 builder mismatch or protected R63 LAST_GOOD changed")
-        return cur,good,"R64 0.13.9 FICON8 Create Gate A PASS; WinUAE B PENDING, Compiler C end M18"
+        return cur,good,"R64 0.13.9 FICON8 Create Gates A/B PASS (interpreted+visual), NOT PROMOTED; Compiler C end M18"
     if current_sha==R63_SHA:
         from build_m18_r63_chip_blit import build as build_r63
         candidate,meta=build_r63()
