@@ -37,14 +37,20 @@ def emit_ap20_shaped_probe() -> bytes:
     c.raw("48e7efee")                      # MOVEM.L preserved regs,-(SP)
     c.move(D(3), D(4))                     # original Mode 0 opaque, 1 masked
     c.word(0x7600)                        # default failure D3=0
+    # Always pop the ENTIRE GetP tuple before ANY argument refusal,
+    # matching R60's cursor behavior and the AMOS extension convention.
     for idx, _name in enumerate(GETP_PARAMS):
-        c.move(POST(3), D(5))              # consume all seven GetP params
-        if idx in (2, 3):                  # only synthetic nonzero W/H sanity
-            c.tst(D(5))
-            c.branch(15, "reject")         # BLE signed, rejects zero/negative
-        elif idx == 6:
-            c.imm("cmp", 5, D(5))
-            c.branch(5, "reject")          # BCS, bank number under 5
+        c.move(POST(3), D(5))
+        if idx == 2:
+            c.move(D(5), D(6))             # height, scratch only
+        elif idx == 3:
+            c.move(D(5), D(7))             # width, scratch only
+    c.tst(D(6))
+    c.branch(15, "reject")                 # invalid height
+    c.tst(D(7))
+    c.branch(15, "reject")                 # invalid width
+    c.imm("cmp", 5, D(5))
+    c.branch(5, "reject")                  # bank number under 5
     c.imm("cmp", 1, D(4))
     c.branch(2, "reject")                  # BHI, mode outside 0..1
 
