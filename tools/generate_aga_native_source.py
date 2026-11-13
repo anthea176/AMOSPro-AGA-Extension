@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R60_SHA:
+        if sha(raw) == R61_SHA:
+            from build_m18_r61_ficon import build as pinned_build
+            release = "R61"
+        elif sha(raw) == R60_SHA:
             from build_m18_r60_image_region import build as pinned_build
             release = "R60"
         elif sha(raw) == R59_SHA:
@@ -443,7 +446,12 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
-    r58_case = (len(sections) == 61)
+    r61_case = False
+    if len(sections) == 61:
+        from build_m18_r61_ficon import build as build_r61
+        r61_blob,_=build_r61()
+        r61_case = (raw == reconstruct(r61_blob))
+    r58_case = (len(sections) == 61 and not r61_case)
     r60_case = (len(sections) == 60)
     # R59 is now historical: it is no longer the current/LAST_GOOD.
     # Trust only its deterministic SHA-pinned reconstruction, not
@@ -454,6 +462,21 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r61_case:
+        # Entire R61 image must match the deterministic source-backed builder.
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON_MARKER
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION_MARKER
+        from build_m18_r61_ficon import build as build_r61
+        candidate,_=build_r61()
+        need(raw==reconstruct(candidate),'Strict source: R61 differs from builder')
+        region,_=emit_image_region()
+        ficon,ficon_labels=emit_ficon_ap20()
+        need(sections[59]['core']==region and sections[59]['getp'],
+             'Strict source: R61 changed old R60 native or GetP')
+        need(sections[60]['core']==ficon,
+             'Strict source: R61 FIcon emitter mismatch')
+        need(region.count(REGION_MARKER)==1 and ficon.count(FICON_MARKER)==1,
+             'Strict source: R61 GetAdr marker count changed')
     if r60_case:
         # SHA-authenticated, reproducible native R60 with one additive
         # source-backed routine and its source-derived Rjsr marker.
@@ -478,9 +501,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and len(sections) != 59:
+    elif not r60_case and not r61_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -527,6 +550,10 @@ def verified_current_compiler_seeds(parsed):
         # Decode after the literal AMOS linker marker; never interpret
         # FE11 as Motorola code or trust an arbitrary candidate.
         seeds[59] = {region_getadr_pos + 6}
+    if r61_case:
+        # Exact source-proven AMOS linker boundaries in both native sections.
+        seeds[59] = {region.index(REGION_MARKER)+6}
+        seeds[60] = {ficon.index(FICON_MARKER)+6, ficon_labels["core"]}
     return seeds
 
 

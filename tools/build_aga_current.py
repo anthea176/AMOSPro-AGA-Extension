@@ -49,7 +49,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith(("R60 0.13.5", "promoted R60 v0.13.5")):
+    if active.startswith("R61 0.13.6"):
+        from build_m18_r61_ficon import build as build_r61
+        candidate,meta=build_r61()
+        assert candidate==current, "R61 candidate differs from deterministic builder"
+        print("CURRENT M18 R61 FICON V2 GATE A BUILDER PASS (B/C pending)",
+              {k:v for k,v in meta.items() if k!="labels"})
+    elif active.startswith(("R60 0.13.5", "promoted R60 v0.13.5")):
         from build_m18_r60_image_region import build as build_r60
         candidate,meta = build_r60()
         assert candidate==current, "R60 candidate must be byte-exact to deterministic builder"
