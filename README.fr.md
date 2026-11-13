@@ -107,6 +107,8 @@ Ces commandes restent disponibles pour le diagnostic ou l'accès direct aux poin
 
 **Sécurité AGAPIC :** ne pas modifier une banque source pendant le dessin. Si les données RLE changent entre leur validation et le rendu, des pixels peuvent déjà être écrits même si la fonction renvoie 0.
 
+### Exemples de commandes
+
 **Exemple : masquer puis réafficher le curseur sur notre écran AGA** (après ouverture de l'écran privé) :
 
 ```amos
