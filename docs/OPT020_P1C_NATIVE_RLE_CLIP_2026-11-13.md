@@ -1,6 +1,6 @@
 # OPT020/P1c — décodage RLE et géométrie de clipping en code 68EC020/68020
 
-**Ouverture : 13 novembre 2026. État initial : sources et CI soumises, résultat CPU en attente.** Travail sur la seule branche `main`, **R68 `LAST_GOOD` strictement protégée**.
+**Validation réelle le 13 novembre 2026 : PASS sur 68EC020 et 68020**, [CI P1c 43492252934](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43492252934), 11/11 étapes réussies. Les routines RLE, clipping X/Y et peinture partagent un seul émulateur Musashi. Travail sur la seule branche `main`, **R68 `LAST_GOOD` strictement protégée**.
 
 Sources : [décodeur natif + clipping](../tools/opt020_p1c_rle_clip_emit.py) · [exécution Musashi](../tools/opt020_p1c_native_runner.py) · [orchestration AGAPIC](../tools/opt020_p1c_region.py) · [tests](../tools/test_opt020_p1c_rle_clip_native.py) · [workflow P1/P1b/P1c](../.github/workflows/opt020-p1.yml).
 
@@ -26,7 +26,34 @@ P1b exécutait les écritures planaires 1–8 plans et `BFEXTU/BFINS` sur un 680
 
 ### Périmètre de la qualification
 
-Le banc exécute toutes les sous-routines, y compris le peintre multiplan, **dans une seule instance Musashi**, car deux instances simultanées partagent certains états internes de retour. Ce détail est indispensable pour éviter un faux échec de test. Il compare les adresses et mots RLE décodés à l'implémentation AGAPIC historique, les intervalles X/Y à un oracle mathématique indépendant, et les bitplanes finaux au modèle de pixels. Il inclut 1/2/4/8 plans, masques pleins/vides, source index couleur 0, groupes répétés et littéraux, dernier groupe partiel, clipping gauche/droite/haut/bas, et refus de corruption. **La CI est la seule preuve réelle de ce prototype** ; l'existence du code ne suffit pas pour annoncer PASS.
+Le banc exécute toutes les sous-routines, y compris le peintre multiplan, **dans une seule instance Musashi**, car deux instances simultanées partagent certains états internes de retour. Ce détail est indispensable pour éviter un faux échec de test. Il compare les adresses et mots RLE décodés à l'implémentation AGAPIC historique, les intervalles X/Y à un oracle mathématique indépendant, et les bitplanes finaux au modèle de pixels. Il inclut 1/2/4/8 plans, masques pleins/vides, source index couleur 0, groupes répétés et littéraux, dernier groupe partiel, clipping gauche/droite/haut/bas, et refus de corruption. **La CI P1c confirme PASS** sur ces scénarios d'émulation CPU ; ce résultat ne constitue ni Gate B WinUAE ni Gate C Compiler ni preuve de performance Amiga.
+
+### Résultats certifiés par la CI
+
+[Exécution réussie sur le code du commit `08a3f34`](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43492252934).
+
+| Test | 68EC020 | 68020 | Total |
+|---|---:|---:|---:|
+| Lignes RLE décodées exactement | 136 | 136 | **272** |
+| Refus du décodeur RLE | 13 | 13 | **26** |
+| Intersections horizontales natives contrôlées | 918 | 918 | **1 836** |
+| Intersections verticales natives contrôlées | 150 | 150 | **300** |
+| Régions AGAPIC confrontées à l'oracle planaire | 216 | 216 | **432** |
+| Groupes entiers réellement peints par BFINS | 2 676 | 2 676 | **5 352** |
+| Pixels des fragments rendus par repli scalaire | 12 908 | 12 908 | **25 816** |
+| Lignes décodées durant les rendus complets | 1 488 | 1 488 | **2 976** |
+| Refus de prévalidation non destructifs | 7 | 7 | **14** |
+
+**Zéro erreur détectée** dans les comparaisons de bitplanes complets, les canaries, les bornes de ligne et de table, la pile ou les registres protégés. La première CI avait échoué au moment de combiner deux instances Musashi indépendantes : le mécanisme de retour est partagé. Le [correctif `08a3f34`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/08a3f34bd3f5d7468b6146aa7b0f09a8f54bc689) regroupe les quatre sous-routines dans **une seule machine**, sans modifier leur logique de pixels.
+
+| Binaire natif autonome | Taille | SHA256 |
+|---|---:|---|
+| Décodeur ligne RLE | 176 octets | `c73d081f803c79a6fd67abd401aa1a37b3566e87638585f796dc8b22f98872f9` |
+| Clipping horizontal | 78 octets | `9f534893960967e75f3dffcdedbefd0c40286cb00b82f7a9d7edeb5439e8a4f7` |
+| Clipping vertical | 26 octets | `43fa47029d50a064964ccba0baaa7c02eb5af410ae5f70703bd22acdab0775a1` |
+| Peintre 8 plans P1b (déjà validé) | 36 octets | `74ef53d4f0e5d53fee8603553daea0cf2de834271b63475fa62c37bcca218138` |
+
+**Qualification atteinte :** comportement des sous-routines CPU sous Musashi, pas un chemin AP20 020 complet. Le validateur de banque global et les fragments restent en Python ; ces composants doivent être portés/validés avant toute candidate installable.
 
 ## Limite de l'étape
 

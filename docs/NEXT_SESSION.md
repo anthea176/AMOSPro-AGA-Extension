@@ -1,8 +1,8 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## OPT020/P1c — décodeur RLE et clipping natifs 020 soumis à la CI (13/11/2026)
+## OPT020/P1c — RLE et clipping X/Y 68020 NATIFS PASS (13/11/2026)
 
-[Contrat P1c](OPT020_P1C_NATIVE_RLE_CLIP_2026-11-13.md) : l'encodage 68EC020/68020 nouveau traite **les paquets RLE littéraux/répétés en table de pointeurs bornée** et **les intersections X/Y du sous-rectangle** ; le noyau natif multiplan P1b traite les groupes 16 pixels complets. Orchestration/contrôle global AGAPIC/fallback partiel encore en Python. **CI P1c non encore qualifiée** ; ne pas revendiquer une bibliothèque native AGAPIC complète, AP20, WinUAE ni gain matériel. `main` uniquement, bibliothèques R68/`LAST_GOOD` et ASC actif inchangés.
+[Contrat P1c](OPT020_P1C_NATIVE_RLE_CLIP_2026-11-13.md) : l'encodage 68EC020/68020 nouveau traite **les paquets RLE littéraux/répétés en table de pointeurs bornée** et **les intersections X/Y du sous-rectangle** ; le noyau natif multiplan P1b traite les groupes 16 pixels complets. Orchestration/contrôle global AGAPIC/fallback partiel encore en Python. **CI P1c PASS** ([43492252934](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43492252934)) : **272 lignes RLE**, **1 836 clips X**, **300 clips Y**, **432 rendus comparés**, **5 352 groupes peints**, **40 refus attendus**, **zéro erreur**. [Rapport et SHA natifs](OPT020_P1C_NATIVE_RLE_CLIP_2026-11-13.md). **Suite :** développer l'adaptateur AP20/020 et porter la prévalidation globale de banque ainsi que le fallback fragmentaire en natif, puis Gates A/B/C et benchmark JIT OFF avant toute candidate. Aucun gain matériel revendiqué. `main` uniquement, bibliothèques R68/`LAST_GOOD` et ASC actif inchangés.
 
 ## OPT020/P1b — noyau 8 plans et orchestration RLE/clipping PASS CPU (13/11/2026)
 
