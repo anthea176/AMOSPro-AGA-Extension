@@ -23,7 +23,7 @@ La ligne GEM et la ligne CAPTURE doivent être identiques. Chaque ligne doit avo
 
 ## Installation et démarrage
 
-1. Installer la [bibliothèque R68 promue AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) dans l'emplacement APSystem habituel, **sans remplacer `LAST_GOOD`**, puis redémarrer AMOS Professional.
+1. Installer la [bibliothèque R68 promue AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) dans l'emplacement APSystem habituel, **sans remplacer `LAST_GOOD`**, puis redémarrer AMOS Professional.
 2. Vérifier que les **banques AMOS 11, 12 et 13 sont libres**. Le code crée 12 (source `FICON8`, 8 slots) et 11 (cache `FICHIP8`, 8 slots), puis utilise Reserve As Data 13,256 pour le tampon chunky. **Cette instruction native AMOS peut écraser la banque 13** : travailler sur un programme et une session de test vierges.
 3. Dans AMOS, créer un **nouveau programme vide**, puis importer [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc) avec **Project → Merge ASCII**. Ne pas utiliser le Load de programme AMOS pour un fichier texte.
 4. Exécuter **en interprété**. Cliquer ou appuyer sur une touche pour quitter ; arrêt automatique après **1 200 itérations**, avec gestion des refus `Safe` et `Swap` par tentatives limitées.

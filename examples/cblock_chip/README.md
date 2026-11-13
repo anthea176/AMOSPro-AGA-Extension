@@ -4,7 +4,7 @@
 
 A small, **self-contained AMOS interpreted-mode example** for temporary **Chip RAM RAW planar background saves** using `Aga C Block Capture`, `Draw`, and `Restore`. **No image, IFF, ABK, palette file or AMCAF dependency**.
 
-**Source:** [CBLOCK_CHIP_LAB.asc](CBLOCK_CHIP_LAB.asc). Requires [R68 v0.13.13, promoted LAST_GOOD](../../dist/AMOSPro_AGA.Lib) (or a compatible later release). The **API passed native Gate A and WinUAE interpreted Gate B** on separate archived tests ([Gate B](../../docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), [6-size PERF-02](../../docs/M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md)). **This public example has only been checked statically and has not been independently run in WinUAE or compiled.** The R68 extension passed its separate integrated Compiler Gate C, but that does not certify this showcase.
+**Source:** [CBLOCK_CHIP_LAB.asc](CBLOCK_CHIP_LAB.asc). Requires [R68 v0.13.13, promoted LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) (or a compatible later release). The **API passed native Gate A and WinUAE interpreted Gate B** on separate archived tests ([Gate B](../../docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), [6-size PERF-02](../../docs/M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md)). **This public example has only been checked statically and has not been independently run in WinUAE or compiled.** The R68 extension passed its separate integrated Compiler Gate C, but that does not certify this showcase.
 
 ## Method is the programmer's choice — no automatic selection
 
@@ -19,7 +19,7 @@ The `Method` parameter is mandatory for **every call**, including `Restore`. The
 ## Run
 
 1. Ensure **AMOS bank 11 is FREE**. This demo creates one temporary `AGACBLK ` DATA bank in *physical Chip RAM* and releases it with `Erase 11` after closing the AGA screen. Do not use it in a program that already owns bank 11.
-2. Install the current `dist/AMOSPro_AGA.Lib` as `AMOSPro_AGA.Lib` in `APSystem` with the **same extension slot**; restart AMOS.
+2. Copy `dist/AMOSPro_AGA_LAST_GOOD.Lib` to `APSystem/AMOSPro_AGA.Lib` with the **same extension slot**; restart AMOS.
 3. In AMOS, open a **new empty program → Project → Merge ASCII** → `CBLOCK_CHIP_LAB.asc`. Run interpreted for the documented scenario. No separately compiled execution of this **example** is claimed; the extension's R68 integrated Compiler Gate C has already passed.
 4. The 320×256×256-colour AGA screen shows one **white square with a black centre** near the top, then three identical copies on a dark blue background: **CPU8 at X8**, **Blitter at X96**, **CPU16 at X176** (Y144). It remains visible for ~180 PAL VBL; then closes.
 5. On the AMOS console, expect `DRAW CPU8/BLIT/CPU16 1 1 1`, `RECAP/SAME 1 1`, `BANK LEN 1064`, equal Chip Free before/after, `ERROR 0`, `RESULT 1` and `CLOSE RETURNED`. Those values are **expected**, not claimed observed for this new example.

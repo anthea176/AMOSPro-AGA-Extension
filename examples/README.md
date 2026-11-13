@@ -1,8 +1,8 @@
 # AMOSPro AGA — examples
 
-[Français](README.fr.md) · [Installation](../INSTALL.md) · [Current extension](../dist/AMOSPro_AGA.Lib)
+[Français](README.fr.md) · [Installation](../INSTALL.md) · [Promoted R68 library](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
-**Installable reference:** **R68 v0.13.13, promoted `LAST_GOOD`**. The extension has passed its native/CI, interpreted WinUAE and integrated Compiler validation scenarios (Gates A/B/C); physical Amiga testing (Gate D) remains outstanding. An example's own runtime status is stated separately below — a passing extension test does not automatically certify every demo.
+**Installable reference:** **R68 v0.13.13, promoted `LAST_GOOD`**. The working file `dist/AMOSPro_AGA.Lib` may hold an unvalidated development candidate (currently R69); for published examples, copy `dist/AMOSPro_AGA_LAST_GOOD.Lib` into `APSystem` under the filename `AMOSPro_AGA.Lib`. The extension has passed its native/CI, interpreted WinUAE and integrated Compiler validation scenarios (Gates A/B/C); physical Amiga testing (Gate D) remains outstanding. An example's own runtime status is stated separately below — a passing extension test does not automatically certify every demo.
 
 ## Run an example
 

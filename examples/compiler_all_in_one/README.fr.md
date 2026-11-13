@@ -11,7 +11,7 @@ Ce dossier contient une **copie renommée pour la distribution** de la démonstr
 - [`Hwarf1252S.abk`](Hwarf1252S.abk) et [sa licence](Hwarf-12xxS.licence) — fonte chargée en banque **25**.
 
 1. Copier **tout le dossier** sur un volume AmigaDOS. L'exécutable doit être lancé avec ce dossier comme **répertoire courant**, car `Load` utilise des chemins relatifs.
-2. Installer la [bibliothèque R68 promue](../../dist/AMOSPro_AGA.Lib) dans le slot d'extension `APSystem` configuré, redémarrer AMOS et le Compiler, puis importer `COMPILER_ALL_IN_ONE.asc` dans un programme vierge par **Project → Merge ASCII**.
+2. Installer la [bibliothèque R68 promue](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) sous le nom `AMOSPro_AGA.Lib` dans le slot d'extension `APSystem` configuré, redémarrer AMOS et le Compiler, puis importer `COMPILER_ALL_IN_ONE.asc` dans un programme vierge par **Project → Merge ASCII**.
 3. Produire un **nouvel exécutable** et le lancer depuis le dossier contenant les ABK. Pour reproduire la **validation historique exacte R46 C1**, utiliser le ZIP original ci-dessous et la [bibliothèque Compiler-safe historique](../../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) dans une installation de test distincte.
 
 Le programme **écrase les banques 10 et 25**. Historiquement, il affichait `RESULT 1`, `CLOSE RETURNED`, `CUR 500 ERR 0`, `IMAGE O/M/S 1 1 1` et `CLIP L/R/T/B 1 1 1 1`. Ce sont des **résultats attendus**, pas de nouvelles mesures sur le programme public renommé.

@@ -23,7 +23,7 @@ GEM and CAPTURE should be visually identical. All four drawing modes preserve th
 
 ## Setup
 
-1. Install [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) in the normal APSystem extension location, **without touching `LAST_GOOD`**; restart AMOS Professional.
+1. Install [the promoted R68 library](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) as `APSystem/AMOSPro_AGA.Lib` in the normal extension slot, **without touching `LAST_GOOD`**; restart AMOS Professional.
 2. Ensure **bank numbers 11, 12 and 13 are free**. This demo creates source `FICON8` bank 12 (8 slots), Chip cache `FICHIP8` bank 11 (8 slots), and a 256-byte chunky DATA bank 13. Native Reserve As Data 13,256 **can overwrite bank 13**; start from a clean, disposable AMOS session.
 3. Open a **new empty AMOS program** and use **Project → Merge ASCII** to import [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc). Do not use the ordinary AMOS program Load command for an ASCII source file.
 4. Run **interpreted only**. Press any key or click to exit. The loop has a **1,200-frame upper bound**; `Safe`/`Swap` failures have bounded retry loops.

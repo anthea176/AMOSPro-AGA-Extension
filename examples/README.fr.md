@@ -1,8 +1,8 @@
 # AMOSPro AGA — exemples et démonstrations
 
-[English](README.md) · [Installation](../INSTALL.fr.md) · [Extension courante](../dist/AMOSPro_AGA.Lib)
+[English](README.md) · [Installation](../INSTALL.fr.md) · [Bibliothèque R68 promue](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
-**Bibliothèque installable de référence : R68 v0.13.13, promue `LAST_GOOD`.** L'extension a passé les scénarios CPU/CI, WinUAE interprété et Compiler intégré (Gates A/B/C). La Gate D sur Amiga physique reste à effectuer. Le résultat de chaque **exemple individuel** est précisé séparément : une Gate validée pour l'API ne valide pas automatiquement toutes les démonstrations.
+**Bibliothèque installable de référence : R68 v0.13.13, promue `LAST_GOOD`.** Le fichier de travail `dist/AMOSPro_AGA.Lib` peut être une candidate de développement non validée (actuellement R69) ; pour les exemples publics, copier `dist/AMOSPro_AGA_LAST_GOOD.Lib` dans `APSystem` sous le nom `AMOSPro_AGA.Lib`. L'extension a passé les scénarios CPU/CI, WinUAE interprété et Compiler intégré (Gates A/B/C). La Gate D sur Amiga physique reste à effectuer. Le résultat de chaque **exemple individuel** est précisé séparément : une Gate validée pour l'API ne valide pas automatiquement toutes les démonstrations.
 
 ## Lancer un exemple
 

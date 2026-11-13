@@ -2,7 +2,7 @@
 
 [English](README.md) · [Tous les exemples](../README.fr.md) · [Installation](../../INSTALL.fr.md)
 
-Cet exemple compare `Aga Bank Image Draw(Bank,X,Y,Mode)` et `Aga Bank Font Select(Bank)` aux anciennes fonctions graphiques prenant une adresse et une longueur. Ces commandes ont été introduites avec **R54** et figurent dans la [R68 actuellement promue `LAST_GOOD`](../../dist/AMOSPro_AGA.Lib).
+Cet exemple compare `Aga Bank Image Draw(Bank,X,Y,Mode)` et `Aga Bank Font Select(Bank)` aux anciennes fonctions graphiques prenant une adresse et une longueur. Ces commandes ont été introduites avec **R54** et figurent dans la [R68 actuellement promue `LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 ## Contenu du dossier
 
