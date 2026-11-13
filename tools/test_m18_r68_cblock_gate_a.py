@@ -59,7 +59,13 @@ class CBlockMachine(Machine):
                  occupied=False,safe=True,corrupt=None):
         super().__init__(raw,None,meta=dict(width=WIDTH,height=HEIGHT,
                                            depth=DEPTH,row_bytes=RBYTES,camg=0x21000))
-        self.lib=raw;self.entry=ENTRY if layout=="interpreted" else MOVED
+        self.lib=raw
+        self.native_base=ENTRY if layout=="interpreted" else MOVED
+        self.entry=self.native_base
+        self.loaded_entry={}
+        # Emulator translated-code caches are not guaranteed to invalidate
+        # after uc.mem_write() overwrites an already executed 68000 routine.
+        # Each AP20 function gets its OWN immutable executable address.
         self.banks={10:OLD}
         self.uc.mem_write(OLD,b"DO-NOT-OVERWRITE-OLD-BANK")
         self.nonchip=nonchip;self.fail_at=fail_at;self.corrupt=corrupt
@@ -86,8 +92,13 @@ class CBlockMachine(Machine):
 
     def load_entry(self,index):
         assert index in (ENTRY_CAPTURE,ENTRY_DRAW,ENTRY_RESTORE)
-        self.uc.mem_write(self.entry,relocate(self.parts[index],self.entry,
-                          {index+1:self.entry+0x3000},self.uc))
+        self.entry=self.native_base+0x10000*(index-ENTRY_CAPTURE)
+        assert self.entry+len(self.parts[index])<self.native_base+0x10000*(index-ENTRY_CAPTURE+1)
+        if index not in self.loaded_entry:
+            self.uc.mem_write(self.entry,relocate(self.parts[index],self.entry,
+                              {index+1:self.entry+0x3000},self.uc))
+            self.loaded_entry[index]=self.entry
+        assert self.loaded_entry[index]==self.entry
         self.current_index=index
 
     def prepare_bank(self,w=24,h=16,x=8,y=4,corrupt=None):
