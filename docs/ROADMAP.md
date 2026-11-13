@@ -46,6 +46,14 @@
 
 **Fonctions suivantes — contrats distincts, non autorisées par l'accord R64 :** (1) remplir/mettre à jour une icône depuis une source validée en définissant la transparence index zéro et l'invalidation du cache ; (2) créer une banque de cache `FICHIP8` en Chip et transférer dynamiquement les slots Fast→Chip, validité 0→1 après copie complète, contrôle réel `MEMF_CHIP` ; (3) mesurer le coût total du staging et du rendu CPU/Blitter. Ne pas confondre déplacement `Bank To Chip` et conversion du format masque/plans.
 
+### M18 — Étape suivante : cache Chip dynamique, puis capture directe des icônes
+
+**Accord de principe de l'auteur (13/11/2026) pour poursuivre M18** après les Gates A/B réussies de R65. **Deux chantiers distincts** : [cache `FICHIP8` créé et rempli depuis AMOS](M18_DYNAMIC_CHIP_CACHE_DESIGN.md), puis [capture d'une icône 16×16 directement depuis l'écran AGA](M18_FICON8_CAPTURE_DESIGN.md). **Ce sont des contrats de conception ; les nouvelles signatures ne sont pas encore livrées ni testées.**
+
+- **Cache dynamique** : proposition `Aga F Chip Bank Create(CacheBank,Count)` pour réserver une banque `FICHIP8` en Chip réelle, puis `Aga F Chip Stage(SourceBank,CacheBank,IconID)` pour convertir le slot `FICON8` vers le format masque/8 plans et ne marquer `ready=1` qu'après la copie complète. R65 `Aga F Icon Bank Put` **n'actualise pas automatiquement** le cache ; restaging explicite.
+- **Capture** : proposition `Aga F Icon Capture(Bank,IconID,X,Y)`. Copier directement **16×16 indices de palette** depuis le **back buffer AGA privé inactif** vers un slot `FICON8` existant, sans banque chunky intermédiaire ni création d'AGAPIC. Refus des rectangles hors écran, index 0 transparent en mode masqué comme le format actuel. Capturer le buffer visible (front) doit être discuté séparément.
+- **Mesurer les performances réelles** CPU vs Blitter **avec coût de création et staging** ; pas de conclusion sur les seuls appels `Aga F Blit`. Compiler manuelle **une seule fois à la fin M18**. R65 candidate active et R63 `LAST_GOOD` restent inchangées.
+
 ## 3. Études en attente — aucun développement autorisé
 
 ### A. AGE v1.01 — Tilemaps et blocs graphiques

@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18 — Suite enregistrée après R65 : cache dynamique et capture d'icône
+
+**Demande de l'auteur du 13/11/2026 :** étudier le cache Chip dynamique et **ne pas oublier la commande de capture directe**. [Contrat cache `FICHIP8`](M18_DYNAMIC_CHIP_CACHE_DESIGN.md) : `Aga F Chip Bank Create(CacheBank,Count)` et `Aga F Chip Stage(SourceBank,CacheBank,IconID)` proposés pour une création réelle en Chip, conversion depuis la source FICON8 et marqueurs de validité. [Capture `FICON8` depuis le back buffer AGA](M18_FICON8_CAPTURE_DESIGN.md) : `Aga F Icon Capture(Bank,IconID,X,Y)` proposée, 16×16×256 indices, masque index zéro. **Aucune nouvelle commande compilée ou testée à ce stade ; signatures à approuver avant code.**
+
+**État inchangé : R65 v0.13.10 Gates A/B PASS**, [binaire actif](../dist/AMOSPro_AGA.Lib), [ASC actif unique](../tests/current/M18_R65_FICON8_PUT_01.asc), [rapport WinUAE](M18_R65_FICON8_PUT_WINUAE_GATE_B_2026-11-13.md). **R63 `LAST_GOOD` protégée**. Une seule Gate C Compiler manuelle à la fin du chantier M18 ; Gate D matériel non effectuée. `Bank To Chip` seul ne convertit pas le format `FICON8` en `FICHIP8`.
+
 ## M18/R65 — Gate B interprétée WinUAE PASS, rendu visuel confirmé (13/11/2026)
 
 **Deux captures auteur** de `M18-R65-FICON8-PUT-01` : cadre blanc et diagonales rouges/vertes visibles sur deux icônes 16×16 ; intérieur bleu au `X=30` (transparent) et intérieur noir au `X=90` (opaque). Console : **`RESULT 1`, `CLOSE RETURNED`**, créations `1/1`, doublon `0`, `PUT 1/1/1/1`, `SIZE/COUNT 1164/4`, `LOAD 1164/4`, masques `0/16380`, plans `65535/32771`, icône vide `65535/0`, cinq erreurs `0`, `OPEN/DB/SHOW 1/1/1`, `TRANSPARENT/OPAQUE/EMPTY 1/1/1`, `NOS/CLOSE 0/-1`. **Chip Free `1 801 664` avant/après `Erase`**, Fast Free identique avant/après. **R65 v0.13.10 Gates A/B PASS** ([rapport](M18_R65_FICON8_PUT_WINUAE_GATE_B_2026-11-13.md), [régression binaire R65 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43445143595)). 

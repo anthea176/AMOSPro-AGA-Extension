@@ -1,5 +1,7 @@
 # M18 — Cache des Fast Icons AGA 256 couleurs
 
+**Suite enregistrée le 13/11/2026 :** création et staging dynamique depuis AMOS ([contrat proposé](M18_DYNAMIC_CHIP_CACHE_DESIGN.md)), puis capture directe d'icônes dans `FICON8` depuis le back buffer AGA ([contrat proposé](M18_FICON8_CAPTURE_DESIGN.md)). R65 Gates A/B WinUAE PASS ; pas de nouvel AP20, pas de nouvelle candidate binaire à cette étape, pas de Compiler avant fin M18. Les mentions historiques « non implémenté » ci-dessous concernent la fonctionnalité cache dynamique et non les commandes de création/remplissage source `FICON8` déjà validées R64/R65.
+
 **R63 promue `LAST_GOOD` le 13/11/2026 après [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490) et accord de l'auteur.** Gate B interprétée PASS ; pixels à vérifier, Compiler C en fin M18, D non testée. [ASC R63 original archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc).
 
 ## Objet et état d'implémentation
