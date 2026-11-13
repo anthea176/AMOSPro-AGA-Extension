@@ -445,6 +445,14 @@ def verified_current_compiler_seeds(parsed):
     sections = parsed['section']
     r58_case = (len(sections) == 61)
     r60_case = (len(sections) == 60)
+    # R59 is now historical: it is no longer the current/LAST_GOOD.
+    # Trust only its deterministic SHA-pinned reconstruction, not
+    # any arbitrary 59-entry image.
+    r59_case = False
+    if len(sections) == 59:
+        from build_m17_r59_compact_v2 import build as build_r59
+        r59_blob, _ = build_r59()
+        r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
     if r60_case:
         # SHA-authenticated, reproducible native R60 with one additive
@@ -472,7 +480,7 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 far diagnostic marker changed')
     elif not r60_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r60_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
