@@ -1,6 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18 / R68 — PERF-02 NO-JIT prêt pour essai interprété (13/11/2026)
+## M18 / R68 — PERF-02 JIT OFF : 68020 et 68030 PASS, 6 tailles (13/11/2026)
+
+**R68 v0.13.13 (binaire inchangé) : Gates A/B PASS, candidate NON PROMUE.** [Rapport PERF-02 complet](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md), [ASC archivé, inchangé](../tests/passed/M18_R68_CBLOCK_PERF_02.asc). **Aucun ASC actif `tests/current/`** après validation de deux essais.
+
+- **68020 / 14 MHz / 128 Mo Fast Z3 / JIT OFF / AMOS interprété** : `S0..S5` = 6 tailles **16×16, 24×16, 32×16, 64×48, 128×96, 320×64**, de 1200 à 70 appels. `RUNS/ERR/MIS/MEM 17 0 0 0`, `CHIP START/END 1845800 1845800`, `RESULT 1`, `CLOSE RETURNED`. **Blitter légèrement devant CPU16 dans la majorité des cas**, CPU8 plus lent.
+- **68030 / 28 MHz / 128 Mo Fast Z3 / JIT OFF / AMOS interprété** : mêmes scénarios, `RUNS/ERR/MIS/MEM 17 0 0 0`, `CHIP START/END 1845768 1845768`, `RESULT 1`, `CLOSE RETURNED`. **CPU16 devant Blitter en capture 16×16 et 320×64**, égalité au dessin pour ces tailles ; Blitter généralement devant sur les tailles intermédiaires.
+- **24×16 CPU16 = `-1` attendu**, largeur non alignée sur 16 pixels. Les durées `Timer` couvrent **2 passes** par taille et méthode ; quelques ticks d'écart demandent répétition avant une optimisation automatique.
+- **R68 inchangée** : `dist/AMOSPro_AGA.Lib`, **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. **R63 `LAST_GOOD` inchangée**. [CI complète du PERF-02 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43477512578).
+- **Prochaine décision technique** : privilégier CPU16 ou Blitter selon largeur/alignement/CPU, ou confirmer d'abord la variabilité par mesures supplémentaires ; **ne pas changer le code juste pour un gain non démontré**.
+- **Gate C Compiler AMOS réelle : NON TESTÉE, une seule fois en fin de M18. Gate D matériel : NON TESTÉE.** Uniquement `main`, aucune branche/PR, aucune promotion automatique.
+
+## Historique — PERF-02 préparé avant essais (13/11/2026)
 
 **NOUVEAU TEST ACTIF UNIQUE :** [`tests/current/M18_R68_CBLOCK_PERF_02.asc`](../tests/current/M18_R68_CBLOCK_PERF_02.asc), 6 tailles (**16×16, 24×16, 32×16, 64×48, 128×96, 320×64**), deux passes par méthode, **17 combinaisons méthode/taille** ; deux chronos séparés `Capture`/`Draw`. Alignement 8 pixels pour CPU8/Blitter ; **CPU16 sur 24×16 volontairement sauté `-1`**. Pour chaque combinaison, recapture planaires destination et comparaison byte-for-byte hors temps, contrôles `Chip Free` et banque réemployée. Attendu : **`RUNS/ERR/MIS/MEM 17 0 0 0`, `RESULT 1`, `CLOSE RETURNED`**. [Instructions, comptages et résultats attendus](../tests/current/README.md).
 
