@@ -25,6 +25,8 @@ on:
       - "tools/test_opt020_p2_image_draw.py"
       - "tools/build_opt020_p2_r70.py"
       - "tools/build_opt020_p2_r71.py"
+      - "tools/build_opt020_p2_r72.py"
+      - "tools/test_opt020_p2_r72_d3.py"
       - "tools/native_relative_links.py"
       - "tools/test_opt020_p2_r71_links.py"
       - "dist/AMOSPro_AGA.Lib"
@@ -72,6 +74,10 @@ jobs:
         run: |
           python -B tools/test_opt020_p2_r71_links.py
           python -B tools/build_opt020_p2_r71.py
+      - name: R72 P2 late mutation regression and deterministic in-memory candidate
+        run: |
+          python -B tools/test_opt020_p2_r72_d3.py
+          python -B tools/build_opt020_p2_r72.py --emit-base64
       - name: Guard R71 active candidate, frozen R70 failure, R68 LAST_GOOD and unique ASC
         run: |
           python -B tools/verify_fast.py

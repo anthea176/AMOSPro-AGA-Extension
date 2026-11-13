@@ -39,7 +39,10 @@ F020 = dict(F, srcx=128, srcy=132, regionw=136, regionh=140)
 assert max(F.values()) == 124 and F020["regionh"] + 4 <= 148
 
 
-def emit_image_draw(*, accept_loaded_flags_zero=False, opt020=False):
+def emit_image_draw(*, accept_loaded_flags_zero=False, opt020=False,
+                    reset_failure_d3=False):
+    if reset_failure_d3 and not opt020:
+        raise ValueError("D3 rejection hardening is only defined for OPT020/P2")
     c = Code()
     def L(name): c.label(name)
     def B(cond,name): c.branch(cond,name)
@@ -263,7 +266,16 @@ def emit_image_draw(*, accept_loaded_flags_zero=False, opt020=False):
     c.tst(D(0)); B(7,"reject")  # impossible unless bank is modified in flight
     L("success")
     c.move(I(1),D(3))
+    if reset_failure_d3:
+        # P1e 020 paint kernels may leave D3=1 even when PASS 1 rejects
+        # a bank modified *after* successful PASS 0.  Keep the validated
+        # R46/R70/R71 emitters byte-for-byte identical unless explicitly
+        # enabled by a new candidate. A successful return must skip reset.
+        B(0,"p2_exit")
     L("reject")
+    if reset_failure_d3:
+        c.word(0x7600)  # MOVEQ #0,D3: all rejection paths return false
+        L("p2_exit")
     c.raw("4fef00c0")           # LEA +192(SP),SP
     c.raw("4cdf77f7")           # restore all except result D3,D2 and cursor A3
     c.raw("74004e75")           # D2=0 ; RTS

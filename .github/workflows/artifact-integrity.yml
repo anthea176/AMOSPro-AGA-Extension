@@ -166,7 +166,9 @@ jobs:
       - name: OPT020/P2 R71 three relative links and fault-injection guard
         run: python -B tools/test_opt020_p2_r71_links.py
       - name: Install current native Gate A dependencies
-        run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+        run: python -m pip install capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
+      - name: OPT020/P2 R72 late PASS-1 bank mutation D3=0 guard (in-memory)
+        run: python -B tools/test_opt020_p2_r72_d3.py
       - name: M18 CBlock host model and standalone M68000 CPU8 CPU16 Blitter tests
         run: |
           python -B tools/test_m18_cblock_copy_model.py
