@@ -1,6 +1,6 @@
 # M18 / R60 — benchmark 16×16 CPU AGAPIC vs copie Blitter (13/11/2026)
 
-**Source :** [programme ASC](m18_r60_cpu_vs_blit_16x16.asc) · [protocole](README_M18_CPU_BLIT_16X16.md). **Preuves : trois captures WinUAE transmises par l'auteur le 13/11/2026 : AMOS interprété 68030/JIT, puis AMOS interprété et compilé 68020 sans JIT.** **Conditions précisées par l'auteur après la capture : AMOS interprété sous WinUAE, processeur 68030 avec JIT activé (configuration boostée).** La capture seule ne permettait pas de le savoir. La fréquence exacte, le réglage cycle-exact et la configuration RAM ne sont pas consignés. Ce relevé ne constitue **pas** une référence de performance 68020/68EC020 sans JIT.
+**Source :** [programme ASC](m18_r60_cpu_vs_blit_16x16.asc) · [protocole](README_M18_CPU_BLIT_16X16.md). **Preuves : quatre captures WinUAE transmises par l'auteur le 13/11/2026 : AMOS interprété 68030/JIT, AMOS interprété et compilé 68020 sans JIT, puis 68030 à 50 MHz sans JIT (**mode AMOS non précisé pour ce quatrième passage**).** **Conditions précisées par l'auteur après la capture : AMOS interprété sous WinUAE, processeur 68030 avec JIT activé (configuration boostée).** La capture seule ne permettait pas de le savoir. La fréquence exacte, le réglage cycle-exact et la configuration RAM ne sont pas consignés. Ce relevé ne constitue **pas** une référence de performance 68020/68EC020 sans JIT.
 
 La sortie indique PAL 320×256×16 couleurs (4 bitplanes), 3 essais par géométrie, 1 tick Timer = 20 ms, N = 1 200 appels par essai.
 
@@ -64,9 +64,28 @@ D'après les médianes, temps **moyens** par appel (durée de série / 1 200) : 
 
 Le compilé **n'élimine pas** le coût CPU observé : celui-ci reste voisin de **19,6 ms/appel**, alors que la voie Blitter se situe entre **0,27 et 0,35 ms/appel**. L'overhead de l'interpréteur n'explique donc vraisemblablement **pas l'essentiel** du temps mesuré pour `Aga Image Region` dans ce scénario. La proximité d'une période PAL **n'est pas une preuve de synchronisation VBL** ; il faut lire le code natif et vérifier les étapes chronométrées avant de conclure.
 
+## 4. Quatrième relevé : WinUAE 68030 à 50 MHz, sans JIT
+
+**Preuve : nouvelle capture de l'auteur le 13/11/2026.** Il précise **68030 à 50 MHz, JIT désactivé**. Le bandeau indique `68030 no JIT 128Mo Z3Fast cycle exact` : configuration déclarée, non vérifiée depuis les options WinUAE. **Mode AMOS interprété ou compilé non précisé** dans le message et non identifiable sur la capture. Ne pas l'attribuer à l'un des deux modes sans confirmation.
+
+| Géométrie | CPU Aga Image Region (ticks) | Blitter Aga Blit Copy (ticks) | Médiane CPU | Médiane Blitter | Avantage observé du Blitter |
+|---|---|---|---:|---:|---:|
+| **ALIGNÉ** | **415 / 415 / 415** | **10 / 10 / 10** | **415 ticks** | **10 ticks** | **41,50×** |
+| **SHIFT X+1** | **415 / 415 / 415** | **15 / 15 / 15** | **415 ticks** | **15 ticks** | **27,67×** |
+
+PAL 320×256×16 couleurs, 3 répétitions, 1 200 appels par série, `Timer` PAL = 20 ms/tick. Temps moyens déduits des médianes : **CPU 415×20/1200 = 6,917 ms/appel** dans les deux cas ; **Blitter aligné 0,167 ms/appel** ; **Blitter X+1 0,250 ms/appel**. Les ratios décrivent **Aga Image Region (RLE + dessin CPU) versus Aga Blit Copy (source préparée en Chip hors chronométrage)**, pas les futurs Fast Icons.
+
+**Fin de série visible :** `ERR 0`, `CLOSE -1`, `CHIP BEFORE/END 1894528 1894528`, `BENCH FINISHED - CLOSE RETURNED`. Pas de fuite Chip apparente sur ce passage. Identité SHA de la bibliothèque réellement chargée non prouvée.
+
+**Comparaison indicative aux relevés compilés 68020 sans JIT (mode 68030 encore inconnu)** : le CPU passe de 1179 à 415 ticks aligné (temps ≈2,84× inférieur), le Blitter de 16 à 10 (≈1,60×), et en X+1 CPU de 1178 à 415 (≈2,84×), Blitter de 21 à 15 (≈1,40×). **Ce n'est pas une comparaison contrôlée de fréquences**, car les processeurs, la fréquence, l'émulation et potentiellement le mode AMOS diffèrent.
+
+**Incidence sur le diagnostic précédent :** avec ce profil 68030 à 50 MHz sans JIT, le CPU prend ≈**6,9 ms/appel**, contre ≈**19,6–20,5 ms/appel** sur le profil 68020 sans JIT. Cette variation importante **affaiblit** l'idée d'une attente fixe d'un VBL PAL (~20 ms) à chaque appel ; elle est compatible avec un temps majoritairement dépensé en calculs et accès mémoire (parcours RLE double passe et écriture pixel/bitplane), **mais ne démontre ni l'absence totale de synchronisation ni la proportion de chaque coût**. L'émetteur natif R60 n'appelle pas explicitement `Wait Vbl` ni `WaitBlit` dans le chemin `Aga Image Region`.
+
+**Traçabilité :** le bandeau de configuration 68030 est absent du programme ASC conservé sur GitHub, comme ceux des captures 68020. Rien ne prouve une modification fonctionnelle des boucles, mais l'identité du programme local n'est pas vérifiée.
+
 ## Comparaison et limites
 
-**Observations :** dans le premier test (**68030 + JIT interprété**), la commande CPU `Aga Image Region` finit les séries plus rapidement que `Aga Blit Copy`. Dans les deux autres (**68020 sans JIT interprété et compilé, cycle-exact indiqué**), le **Blitter** est plus rapide dans les deux géométries. Décaler X de 1 pixel pénalise le Blitter dans les deux profils. **Ne pas comparer ces deux captures comme si seule la présence du JIT avait changé** : CPU, mode d'émulation et RAM diffèrent, et le binaire local exact n'est pas authentifié.
+**Observations :** dans le premier test (**68030 + JIT interprété**), la commande CPU `Aga Image Region` finit les séries plus rapidement que `Aga Blit Copy`. Dans les **trois relevés sans JIT** (**68020 interprété, 68020 compilé, 68030 50 MHz mode non précisé, cycle-exact indiqué**), le **Blitter** est plus rapide dans les deux géométries. Décaler X de 1 pixel pénalise le Blitter dans les deux profils. **Ne pas comparer ces deux captures comme si seule la présence du JIT avait changé** : CPU, mode d'émulation et RAM diffèrent, et le binaire local exact n'est pas authentifié.
 
 **Hypothèses NON démontrées :** le coût fixe de validation Safe, de préparation et de synchronisation Blitter pourrait dominer sur une surface de 16×16. Les opérations supplémentaires sur les mots non alignés pourraient expliquer une part de l'écart. Les résultats ne prouvent pas que le Blitter est intrinsèquement moins rapide que le CPU. **Le JIT modifie fortement les coûts du code CPU et du pilotage du Blitter : les rapports 4×/6× ne doivent pas être transposés à un 68020 réel, ni à un 68020 WinUAE sans JIT.**
 
@@ -74,9 +93,9 @@ Le compilé **n'élimine pas** le coût CPU observé : celui-ci reste voisin de 
 
 ## Suite
 
-1. **Relevés réalisés :** AMOS interprété 68030/JIT ; interprété 68020 sans JIT ; compilé 68020 sans JIT. Le dernier scénario **s'exécute et se ferme sans erreur visible**, mais il ne constitue pas une nouvelle qualification exhaustive Gate C de la bibliothèque.
-2. **Suite technique prioritaire, lecture seule :** examiner le chemin natif de `Aga Image Region` et les éventuelles attentes/synchronisations, appels pixel et contrôles par appel ; déterminer pourquoi la durée CPU reste proche de 20 ms/appel en interprété comme en compilé. Ne pas attribuer arbitrairement le phénomène au VBL.
-3. **Clarifier la traçabilité :** comparer le programme AMOS effectivement exécuté/compilé au fichier ASC du dépôt et consigner précisément le profil WinUAE ; le bandeau de configuration 68020 affiché n'est pas présent dans l'ASC GitHub. Pour une mesure plus fine, envisager un banc **distinct** sans modifier cette référence historique.
+1. **Relevés réalisés :** AMOS interprété 68030/JIT ; interprété 68020 sans JIT ; compilé 68020 sans JIT ; **68030 50 MHz sans JIT (mode AMOS à préciser)**. Le dernier scénario **s'exécute et se ferme sans erreur visible**, mais il ne constitue pas une nouvelle qualification exhaustive Gate C de la bibliothèque.
+2. **Diagnostic en lecture seule du code R60 effectué :** parcours RLE strict en deux passes sur l'image source, puis écriture CPU pixel par pixel et plan par plan, sans appel VBL ou WaitBlit explicite dans `Aga Image Region`. Le nouveau 68030 sans JIT descend à ~6,9 ms/appel, contre ~20 ms sur 68020 ; cela va à l'encontre de l'hypothèse d'une **attente fixe** de 20 ms par appel mais ne constitue pas une mesure isolant le coût de chaque opération.
+3. **Clarifier le mode du quatrième relevé** (interprété ou compilé), puis la traçabilité : comparer le programme AMOS effectivement exécuté/compilé au fichier ASC du dépôt et consigner précisément le profil WinUAE ; les bandeaux de configuration 68020/68030 affichés ne figurent pas dans l'ASC GitHub. Pour une mesure plus fine, envisager un banc **distinct** sans modifier cette référence historique.
 4. Réaliser ensuite le moteur Fast Icon natif et mesurer **CPU Fast→Chip contre Blitter Chip→Chip**, y compris le staging, les attentes et le résultat pixel par pixel en opaque/masqué. Garder M18 actif pour CBlock après les icônes.
 
 **Dépôt :** R60 v0.13.5 LAST_GOOD non modifiée, 35 056 octets. Pas de R61, pas de nouvel ASC actif, pas de promotion. Gate D Amiga physique non testée.
