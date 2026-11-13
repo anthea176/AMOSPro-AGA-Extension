@@ -38,6 +38,7 @@ on:
       - "tools/m18_ficon16_native_shifted_emit.py"
       - "tools/m18_ficon_ap20_emit.py"
       - "tools/m18_ficon_bank_put_emit.py"
+      - "tools/m18_fichip_dynamic_emit.py"
       - "tools/m18_ficon_bank_put_model.py"
       - "tools/m18_ficon16_abk.py"
       - "tools/m18_ficon_chip_cache.py"
