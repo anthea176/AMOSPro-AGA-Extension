@@ -44,23 +44,23 @@ STACK = 0xe0000
 WIDTH, HEIGHT, STRIDE = 64, 42, 12
 
 
-def expected_planes(original, payload, sx, sy, w, h, x, y, mode):
+def expected_planes(original, payload, sx, sy, w, h, x, y, mode, *, screen_width=WIDTH, screen_height=HEIGHT, stride=STRIDE):
     image = parse_payload(payload)
     colours, mask = unpack_image(image)
     out = [bytearray(p) for p in original]
     for iy in range(h):
         dy = y + iy
-        if not 0 <= dy < HEIGHT:
+        if not 0 <= dy < screen_height:
             continue
         for ix in range(w):
             dx = x + ix
-            if not 0 <= dx < WIDTH:
+            if not 0 <= dx < screen_width:
                 continue
             at = (sy + iy) * image.width + sx + ix
             if mode and not mask[at]:
                 continue
             colour = colours[at]
-            offset = dy * STRIDE + (dx >> 3)
+            offset = dy * stride + (dx >> 3)
             bit = 0x80 >> (dx & 7)
             for plane in range(image.depth):
                 if colour & (1 << plane):
@@ -72,7 +72,9 @@ def expected_planes(original, payload, sx, sy, w, h, x, y, mode):
 
 class LiveRegionCPU:
     def __init__(self, kind, native, payload, *, base, depth, front,
-                 bank_flag=1, pending=0, safe_ready=True, attnflags=2):
+                 bank_flag=1, pending=0, safe_ready=True, attnflags=2,
+                 screen_width=WIDTH, screen_height=HEIGHT, stride=STRIDE,
+                 invalid_mem_at=0):
         self.m = Machine(kind, 1024)
         self.cpu = self.m.cpu
         self.mem = self.m.mem
@@ -82,6 +84,12 @@ class LiveRegionCPU:
         self.payload = payload
         self.depth = depth
         self.base = base
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.stride = stride
+        self.invalid_mem_at = invalid_mem_at
+        assert 1 <= screen_width <= 128 and 1 <= screen_height <= 64
+        assert stride >= ((screen_width + 15) // 16) * 2 and stride % 2 == 0
         m = self.m
         m.mem.w32(0, STACK)
         m.mem.w32(4, base)
@@ -103,8 +111,8 @@ class LiveRegionCPU:
         # The real R60 context in A5: private AGA screen and two
         # Intuition ScreenBuffers. Only the INACTIVE one may be written.
         for off, val in (
-            (0, 0x34a00), (8, 0x34b00), (12, WIDTH),
-            (16, HEIGHT), (28, depth), (32, DB),
+            (0, 0x34a00), (8, 0x34b00), (12, screen_width),
+            (16, screen_height), (28, depth), (32, DB),
         ):
             self.mem.w32(STATE + off, val)
         self.mem.w32(AMOS + 0x1c8, STATE)
@@ -124,15 +132,20 @@ class LiveRegionCPU:
             self.backplanes.append(bp)
             self.frontplanes.append(fp)
             self.mem.w_block(bp, bytes((i * 29 + j * 17 + 0xa5) & 255
-                                       for j in range(STRIDE * HEIGHT)))
-            self.mem.w_block(fp, bytes([0x33]) * (STRIDE * HEIGHT))
+                                       for j in range(stride * screen_height)))
+            self.mem.w_block(fp, bytes([0x33]) * (stride * screen_height))
+            # 16-byte canaries outside each real planar allocation.
+            for addr in (bp, fp):
+                self.mem.w_block(addr - 16, bytes([0xc3]) * 16)
+                self.mem.w_block(addr + stride * screen_height,
+                                 bytes([0x5c]) * 16)
         # front=0 means SB0 is the displayed bitmap, SB1 the inactive;
         # front=1 reverses them.
         for bitmap, addresses in (
             (BITMAP0, self.frontplanes if front == 0 else self.backplanes),
             (BITMAP1, self.backplanes if front == 0 else self.frontplanes),
         ):
-            self.mem.w_block(bitmap, pack(">HHBBH", STRIDE, HEIGHT, 0, depth, 0))
+            self.mem.w_block(bitmap, pack(">HHBBH", stride, screen_height, 0, depth, 0))
             for i, ptr in enumerate(addresses):
                 self.mem.w32(bitmap + 8 + 4 * i, ptr)
 
@@ -141,7 +154,7 @@ class LiveRegionCPU:
                          pack(">IIIHH8s", 0, len(payload) + 16, 10,
                               bank_flag, 0, b"AGAPIC  "))
         self.before = self.snapshot()
-        self.front_before = tuple(self.mem.r_block(p, STRIDE * HEIGHT)
+        self.front_before = tuple(self.mem.r_block(p, stride * screen_height)
                                   for p in self.frontplanes)
 
     def _trap(self, address, callback):
@@ -174,6 +187,8 @@ class LiveRegionCPU:
         self.type_calls += 1
         address = self.cpu.r_reg(Register.A1)
         ok = int(BANK - 24 <= address < BANK + len(self.payload))
+        if self.invalid_mem_at == self.type_calls:
+            ok = 0
         self.return_to_caller(ok)
 
     def get_msg(self, _opcode, _pc):
@@ -182,8 +197,13 @@ class LiveRegionCPU:
         self.return_to_caller(0x34900 if self.safe_ready else 0)
 
     def snapshot(self):
-        return tuple(self.mem.r_block(p, STRIDE * HEIGHT)
+        return tuple(self.mem.r_block(p, self.stride * self.screen_height)
                      for p in self.backplanes)
+
+    def guard_ok(self):
+        for addr in self.backplanes + self.frontplanes:
+            assert self.mem.r_block(addr - 16, 16) == bytes([0xc3]) * 16
+            assert self.mem.r_block(addr + self.stride * self.screen_height, 16) == bytes([0x5c]) * 16
 
     def run(self, *, bank=10, sx=3, sy=2, w=21, h=9, x=5, y=7,
             mode=0, expect_ok=True):
@@ -247,16 +267,26 @@ class LiveRegionCPU:
         for reg, val in preserved.items():
             assert cpu.r_reg(reg) == val, ("preserved AP20 register", reg)
         assert self.snapshot() == (
-            expected_planes(self.before, self.payload, sx, sy, w, h, x, y, mode)
+            expected_planes(self.before, self.payload, sx, sy, w, h, x, y, mode,
+                            screen_width=self.screen_width,
+                            screen_height=self.screen_height, stride=self.stride)
             if expect_ok else self.before
         ), ("pixel or padding mismatch", self.base, mode, sx, sy, w, h, x, y)
-        assert tuple(self.mem.r_block(p, STRIDE * HEIGHT)
+        assert tuple(self.mem.r_block(p, self.stride * self.screen_height)
                      for p in self.frontplanes) == self.front_before
-        assert self.mem.r32(DB + 20) == (
-            self.pending & ~1 if expect_ok and
-            0 <= x < WIDTH and 0 <= y < HEIGHT
-            else self.pending
-        ) or (expect_ok and self.mem.r32(DB + 20) == self.pending)
+        # "Safe" must not be consumed for invalid or fully invisible regions.
+        visible = (x < self.screen_width and y < self.screen_height and
+                   x + w > 0 and y + h > 0)
+        should_poll = bool((self.pending & 1) and visible and
+                           (expect_ok or not self.safe_ready))
+        if not expect_ok and self.safe_ready:
+            should_poll = False
+        assert self.getmsg_calls == int(should_poll), (
+            "Safe polling", self.getmsg_calls, should_poll, x, y, w, h)
+        expected_pending = self.pending & ~1 if expect_ok and visible else self.pending
+        assert self.mem.r32(DB + 20) == expected_pending, (
+            "Safe pending changed", self.mem.r32(DB + 20), expected_pending)
+        self.guard_ok()
         return self.cpu.r_reg(Register.D3)
 
     def close(self):

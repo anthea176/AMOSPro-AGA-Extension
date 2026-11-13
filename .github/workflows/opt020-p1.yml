@@ -19,6 +19,7 @@ on:
       - "tools/opt020_p1d_region.py"
       - "tools/opt020_p1e_painter_emit.py"
       - "tools/test_opt020_p1e_region.py"
+      - "tools/test_opt020_p1e_matrix.py"
       - "tools/m18_image_region_emit.py"
       - "tools/test_opt020_p1d_fragments.py"
       - "tools/test_opt020_p1d_abi.py"
@@ -49,6 +50,8 @@ jobs:
       - name: Test synthetic AP20 ABI CPU gate and in-memory Compiler V2 round trip
         run: python -B tools/test_opt020_p1d_abi.py
       - name: Execute full R60 preflight and native CPU020 Image Region integration
-        run: python -B tools/test_opt020_p1e_region.py
+        run: |
+          python -B tools/test_opt020_p1e_region.py
+          python -B tools/test_opt020_p1e_matrix.py
       - name: Guard R68, LAST_GOOD, archives, and single active ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
