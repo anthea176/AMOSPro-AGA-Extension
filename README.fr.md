@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Dernière version promue `LAST_GOOD` : R68 v0.13.13**, [bibliothèque validée](dist/AMOSPro_AGA_LAST_GOOD.Lib), **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` ; Gates A/B/C WinUAE PASS sur les scénarios documentés, Gate D physique non testée. **Bibliothèque de travail active, candidate NON PROMUE : R69 v0.13.14 (OPT020/P1e)**, [unique bibliothèque active](dist/AMOSPro_AGA.Lib), **51 240 octets**, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`, **64 commandes / 71 entrées AP20**. Seule `Aga Image Region` change : conservation de la validation R60 DATA/RLE/Safe et remplacement du peintre par des bitfields natifs 68020. **Gate A CPU : 321 cas PASS** ; Gates B WinUAE interprétée et C AMOS Compiler réelle **NON TESTÉES** pour R69. Aucun gain de vitesse revendiqué. [Rapport P1e](docs/OPT020_P1E_R60_NATIVE_WIRING_2026-11-13.md) · [test interprété actif unique](tests/current/OPT020_P1E_R69_INTERPRETED_01.asc) · [historique](docs/LIBRARY_TEST_HISTORY.fr.md).
+**Dernière version promue `LAST_GOOD` : R68 v0.13.13**, [bibliothèque validée](dist/AMOSPro_AGA_LAST_GOOD.Lib), **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` ; Gates A/B/C WinUAE PASS sur les scénarios documentés, Gate D physique non testée. **Bibliothèque de travail active, candidate NON PROMUE : R69 v0.13.14 (OPT020/P1e)**, [unique bibliothèque active](dist/AMOSPro_AGA.Lib), **51 240 octets**, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`, **64 commandes / 71 entrées AP20**. Seule `Aga Image Region` change : conservation de la validation R60 DATA/RLE/Safe et remplacement du peintre par des bitfields natifs 68020. **Gate A CPU : 321 cas PASS ; Gate B WinUAE interprétée PASS** sur les captures graphique et console de l'auteur (`RESULT 1`, `CLOSE RETURNED`, Chip Free identique). [Rapport Gate B](docs/OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md). **Gate C AMOS Compiler réelle NON TESTÉE** pour R69. Aucun gain de vitesse revendiqué. [Rapport P1e](docs/OPT020_P1E_R60_NATIVE_WIRING_2026-11-13.md) · [test interprété actif unique](tests/current/OPT020_P1E_R69_INTERPRETED_01.asc) · [historique](docs/LIBRARY_TEST_HISTORY.fr.md).
 
 **Images AGAPIC en Fast RAM :** les images compressées peuvent être conservées dans une banque DATA AMOS en **Fast RAM**. `Aga Image Draw` les lit et les décompresse au **CPU** directement vers le back buffer AGA en **Chip RAM**, sans décompression intégrale en Chip et sans Blitter pour lire la source. L'emplacement réel de la banque est choisi par AMOS ; celui de l'ABK de test n'a pas été mesuré. [Format AGAPIC](docs/M16_AGAPIC_FORMAT_DESIGN.md).
 
@@ -29,7 +29,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R69 0.13.14** — 64 commandes / 71 entrées AP20, mêmes signatures publiques que R68. Candidate de travail : Gate A CPU PASS ; Gates B WinUAE interprétée et C Compiler en attente.
+**API de la bibliothèque courante R69 0.13.14** — 64 commandes / 71 entrées AP20, mêmes signatures publiques que R68. Candidate de travail : Gate A CPU PASS, Gate B WinUAE interprétée PASS (essai documenté) ; Gate C Compiler en attente.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|

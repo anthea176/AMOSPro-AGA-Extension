@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R68 v0.13.13**, [validated library](dist/AMOSPro_AGA_LAST_GOOD.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`; WinUAE Gates A/B/C PASS on documented scenarios, physical Gate D untested. **Current installable WORKING candidate: R69 v0.13.14 (OPT020/P1e)**, [single active library](dist/AMOSPro_AGA.Lib), **51,240 bytes**, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`, **64 commands / 71 AP20 entries**. Only `Aga Image Region` is changed: R60 DATA/RLE/Safe validation is retained, with a native 68020 bitfield painter. **CPU Gate A: 321 cases PASS**; WinUAE interpreted Gate B and actual AMOS Compiler Gate C **NOT YET TESTED** for R69. No performance gain is claimed. [P1e technical record](docs/OPT020_P1E_R60_NATIVE_WIRING_2026-11-13.md) · [single active interpreted test](tests/current/OPT020_P1E_R69_INTERPRETED_01.asc) · [historical evidence](docs/LIBRARY_TEST_HISTORY.md).
+**Latest promoted `LAST_GOOD`: R68 v0.13.13**, [validated library](dist/AMOSPro_AGA_LAST_GOOD.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`; WinUAE Gates A/B/C PASS on documented scenarios, physical Gate D untested. **Current installable WORKING candidate: R69 v0.13.14 (OPT020/P1e)**, [single active library](dist/AMOSPro_AGA.Lib), **51,240 bytes**, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`, **64 commands / 71 AP20 entries**. Only `Aga Image Region` is changed: R60 DATA/RLE/Safe validation is retained, with a native 68020 bitfield painter. **CPU Gate A: 321 cases PASS; interpreted WinUAE Gate B PASS** on author-supplied console and graphics screenshots (`RESULT 1`, `CLOSE RETURNED`, unchanged Chip Free). [Gate B record](docs/OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md). Actual AMOS Compiler Gate C **NOT YET TESTED** for R69. No performance gain is claimed. [P1e technical record](docs/OPT020_P1E_R60_NATIVE_WIRING_2026-11-13.md) · [single active interpreted test](tests/current/OPT020_P1E_R69_INTERPRETED_01.asc) · [historical evidence](docs/LIBRARY_TEST_HISTORY.md).
 
 **AGAPIC images in Fast RAM:** compressed images **can be stored in an AMOS DATA bank in Fast RAM**. `Aga Image Draw` reads and decompresses them with the **CPU** into the AGA back buffer in **Chip RAM**, without decompressing the full image into Chip RAM and without Blitter access to the source. AMOS controls the bank's actual placement; the test ABK's Fast/Chip location has not been measured. [AGAPIC format](docs/M16_AGAPIC_FORMAT_DESIGN.md).
 
@@ -29,7 +29,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R69 0.13.14** — 64 commands / 71 AP20 entries, same public signatures as R68. Working candidate: CPU Gate A PASS; WinUAE interpreted B and Compiler C pending.
+**Current library API R69 0.13.14** — 64 commands / 71 AP20 entries, same public signatures as R68. Working candidate: CPU Gate A PASS, WinUAE interpreted Gate B PASS (documented test); Compiler Gate C pending.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

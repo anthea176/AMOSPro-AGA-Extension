@@ -2,7 +2,7 @@
 
 **Programme actif unique :** [`OPT020_P1E_R69_INTERPRETED_01.asc`](OPT020_P1E_R69_INTERPRETED_01.asc). L'ancien ASC R68 est conservé à l'identique dans [`tests/passed/`](../passed/M18_R68_COMPILER_FINAL_01.asc) ; il n'est plus actif.
 
-**Statut :** Gate A CPU Musashi PASS (321 cas P1e + régressions P1–P1d). **Gate B sous WinUAE non exécutée. Gate C AMOS Compiler non exécutée : conserver l'unique essai final.** Ne pas déclarer la candidate validée tant que WinUAE n'a pas été vérifié.
+**Statut :** Gate A CPU Musashi PASS (321 cas P1e + régressions P1–P1d) ; **Gate B WinUAE interprétée PASS** sur deux captures utilisateur (graphique et console : `RESULT 1`, `CLOSE RETURNED`, Chip Free stable). [Rapport Gate B](../../docs/OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md). **Gate C AMOS Compiler réelle non exécutée : conserver l'unique essai final.** Candidate R69 NON PROMUE.
 
 ## Prérequis
 
@@ -16,6 +16,6 @@
 
 L'essai couvre les 4 sous-images, source maskée/opaque, groupes de 16 pixels, fragment non aligné, recadrage, clipping sur quatre bords, deux cas additionnels à droite/en bas, image complètement hors écran, banques/rectangles/modes invalides, commande Image Draw historique, fermeture et refus post-fermeture.
 
-Attendu (si réussite réelle) : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru, et rendu visuel correct des masques et pixels en bord. Les chiffres attendus ne sont **pas** une preuve de WinUAE tant qu'ils ne sont pas observés.
+Valeurs attendues et observées sur la capture console du 13/11/2026 : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru, et rendu visuel correct des masques et pixels en bord. Leurs valeurs ont bien été **observées sous WinUAE** ; le contrôle visuel est cohérent, sans vérification automatique pixel par pixel.
 
-Après Gate B : éventuels correctifs et requalification CPU/CI, puis **une seule Gate C Compiler** sur la candidate définitivement figée. Les mesures de vitesse se font séparément sous **WinUAE JIT OFF**, jamais déduites de Musashi.
+Gate B validée sans changement du binaire. Suite : figer la candidate, puis **une seule Gate C Compiler** sur la candidate définitivement arrêtée. Mesures de vitesse séparées sous **WinUAE JIT OFF**, configuration CPU notée ; ne pas déduire un gain de Musashi ni du compteur FPS.
