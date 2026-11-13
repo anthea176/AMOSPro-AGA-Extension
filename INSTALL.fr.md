@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**R54 v0.12.9 `LAST_GOOD` promue :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) = [`AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 32 364 octets, 53 commandes. **Gate A CPU/CI PASS ; Gates B/C WinUAE interprété/nouvel exécutable compilé PASS sur le scénario testé ; Gate D physique non testée.** Les raccourcis image/fonte par numéro de banque préservent les anciennes signatures. [Rapport R54](docs/M16_R54_BANK_NUMBER.md) · [test original archivé](tests/passed/M16_R54_BANK_NUMBER_01.asc).
+**Candidate actuelle R61 v0.13.6 :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36 816 octets (Gate A PASS ; Gates B/C WinUAE interprété/compilé NON TESTÉES). **LAST_GOOD protégée : R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35 056 octets, Gates A/B/C R60 PASS. Pour R61, utiliser [l'unique ASC actif](tests/current/M18_R61_FICON_01.asc) et [sa banque FICON8](tests/current/M18_FICON8_SAMPLE_BANK10.abk), puis créer un nouvel exécutable compilé : ne pas réutiliser un ancien programme R60.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
