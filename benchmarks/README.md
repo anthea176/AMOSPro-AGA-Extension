@@ -2,7 +2,7 @@
 
 ## OPT020/P1e — comparaison R60 (R68 LAST_GOOD) / R69, WinUAE JIT OFF
 
-[**Benchmark comparatif R60 vs R69**](opt020_p1e_r60_vs_r69.asc) · [protocole de mesure](README_OPT020_P1E_R60_VS_R69.md). **Préparé, mesures WinUAE en attente**. Même ASC, même banque AGAPIC, même WinUAE 68020 / 14 MHz / PAL / JIT OFF, en **interprété uniquement**. La R68 protégée fournit le peintre R60 inchangé ; R69 active apporte le noyau 68020. Dix géométries, trois séries de 240 appels, masque réellement rempli et vérification de tous les retours. Aucun binaire et aucun ASC de `tests/current/` modifiés. **AMOS Compiler non lancé**, aucune conclusion de vitesse avant les deux captures.
+[**Benchmark comparatif R60 vs R69**](opt020_p1e_r60_vs_r69.asc) · [protocole de mesure](README_OPT020_P1E_R60_VS_R69.md). **Mesures WinUAE INTERPRÉTÉ / 68020 14 MHz / JIT OFF : PASS (13/11/2026).** Même ASC, même banque AGAPIC, même WinUAE 68020 / 14 MHz / PAL / JIT OFF, en **interprété uniquement**. La R68 protégée fournit le peintre R60 inchangé ; R69 active apporte le noyau 68020. Dix géométries, trois séries de 240 appels, masque réellement rempli et vérification de tous les retours. [Résultats bruts et analyse R60/R69](RESULTATS_OPT020_P1E_R60_VS_R69_2026-11-13.md) : opaque 16×16 **2,17×**, opaque 32×20 **3,32×**, masqué 32×20 **3,25×** ; jusqu'à 69,9 % de temps en moins. `ERR 0`, `RESULT 1`, Chip Free stable dans les deux passages. Aucun binaire ni ASC actif modifié, **AMOS Compiler non lancé** ; ces gains concernent ce benchmark interprété, pas le matériel physique.
 
 ## M18 — baseline CPU/Blitter 16×16 R60 (première exécution PASS)
 

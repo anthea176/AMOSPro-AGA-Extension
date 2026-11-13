@@ -1,6 +1,6 @@
 # OPT020/P1e — comparaison R60 / R69, WinUAE JIT OFF
 
-**Statut : benchmark PREPARE, pas encore executé sous WinUAE. Aucun gain mesure.**
+**Statut : exécuté le 13/11/2026 sous WinUAE, AMOS interprété pour LES DEUX passages, 68020 14 MHz, JIT OFF, 128 Mo Fast Z3 (légendes utilisateur). Résultat fonctionnel PASS et accélération mesurée pour R69. [Rapport complet et données brutes](RESULTATS_OPT020_P1E_R60_VS_R69_2026-11-13.md).** Gate C AMOS Compiler non lancée.
 
 [Source ASCII unique du benchmark](opt020_p1e_r60_vs_r69.asc). Elle se trouve dans `benchmarks/` (et **non** dans `tests/current/`), qui conserve son unique programme actif Gate B. Ce fichier n'est pas une seconde candidate. Le protocole reprend le chronometrage `Timer` du [bench R60 valide](m18_r60_cache_cost_v2.asc), en evitant son biais du masque a 1 pixel sur 256.
 
@@ -46,7 +46,7 @@ La source centrale utilise le masque du disque autour de (32,20), et non (0,0) :
 
 ## Interpretation, resultat attendu et prochain jalon
 
-Le programme affiche **trois nombres de ticks pour chaque ligne**, toujours en ordre essais 1/2/3. Sous PAL, **1 tick AMOS `Timer` ~= 20 ms**. Comparer uniquement les **medians** de chaque triplet, puis :
+Le programme a affiché **trois nombres de ticks pour chaque ligne**, toujours en ordre essais 1/2/3 ; les valeurs observées et leurs médianes figurent dans le [rapport](RESULTATS_OPT020_P1E_R60_VS_R69_2026-11-13.md). Sous PAL, **1 tick AMOS `Timer` ~= 20 ms**. Comparer uniquement les **medians** de chaque triplet, puis :
 
 - `ms/appel = median(ticks) * 20 / 240` ;
 - `gain R69 / R60 = median_ticks_R68 / median_ticks_R69` ; **valeur > 1** = R69 plus rapide.
