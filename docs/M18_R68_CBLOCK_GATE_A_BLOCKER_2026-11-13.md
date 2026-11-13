@@ -1,4 +1,10 @@
-# M18/R68 — Gate A BLOQUÉE : retour de pile sur Draw
+# M18/R68 — Incident Gate A : retour de pile sur Draw (résolu)
+
+> **RÉSOLU — 13/11/2026.** Le refus de pile n'était pas un défaut du code CBlock. Le banc Unicorn chargeait successivement plusieurs wrappers 68000 à la **même adresse déjà exécutée**, et l'émulateur réutilisait des blocs traduits en cache. La trace indiquait une transition impossible après un `MOVE.L` vers `copy_core+210`, sans `JSR` ni prologue du noyau. [Correctif du test](../tools/test_m18_r68_cblock_gate_a.py) : adresses immuables distinctes pour `Capture`, `Draw` et `Restore`, pour les deux layouts ; aucun réécriture de code déjà exécuté. **Gate A R68 = 48 cas M68000 PASS**, même avec huit plans graphiques non uniformes ([CI 43469031161](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469031161)). Builder **R68 uniquement en mémoire** : 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Toujours **pas de Gate B WinUAE** ni de Gate C Compiler réel ; R67 installée et R63 LAST_GOOD protégée.
+
+**Les notes qui suivent décrivent l'incident historique *avant correction*, et non l'état courant.**
+
+---
 
 **13 novembre 2026. Diagnostic natif Unicorn M68000, non WinUAE.**
 
