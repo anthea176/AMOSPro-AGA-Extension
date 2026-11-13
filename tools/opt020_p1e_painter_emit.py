@@ -132,7 +132,7 @@ def emit_paint_group_020(c, f):
     c.raw("45ea0098")             # LEA 152(A2),A2 = plane table
     b(1, "p1e_fragment")
     l("p1e_restore_frame")
-    c.move(A(7), A(2))            # restore R60 frame pointer after P1d
+    c.raw("45ef0004")             # LEA 4(SP),A2: BSR return address occupies 4 bytes
     l("paint_done")
     c.word(0x4e75)                # RTS to R60 group loop
 
