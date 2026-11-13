@@ -284,7 +284,10 @@ def emit_cblock_bank_action(action):
         get("x",D(2));get("y",D(3))
     get("w",D(4));get("h",D(5))
     get("method",D(6));get("gfx",A(6))
-    B(1,"copy_core")
+    # Use exact PC-relative address + JSR. No fallthrough into the middle
+    # of the embedded core: its MOVEM/stack prologue is mandatory.
+    c.lea(4,"copy_core")  # LEA copy_core(PC),A4 ; relocated with wrapper
+    c.raw("4e94")        # JSR (A4), balanced call to the validated P0 core
     c.tst(D(3));B(7,"reject")
     if action=="capture":
         get("base",A(0))
