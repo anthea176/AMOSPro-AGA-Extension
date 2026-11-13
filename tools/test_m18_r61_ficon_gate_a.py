@@ -95,7 +95,10 @@ def case(binary,*,layout="interpreted",mode=1,bank=10,icon=4,
             assert m.uc.reg_read(reg)==value,("clobbered ABI register",reg)
     assert [bytes(m.uc.mem_read(a,m.plane_size)) for a in m.frontplanes]==m.front_before
     assert m.alloc_count==m.free_count==m.reserve_count==m.erase_count==0
-    assert m.main_calls==(["Bnk.GetAdr"] if 5<=bank<=65535 else []),m.main_calls
+    prevalid=(5<=bank<=65535 and 1<=icon<=4096 and 0<=mode<=1
+              and -32768<=x<=32767 and -32768<=y<=32767)
+    assert m.main_calls==(["Bnk.GetAdr"] if prevalid else []),(
+        "wrong bank call ordering",m.main_calls,bank,icon,x,y,mode)
     if expect_ok:
         got=sample_pixels(m.snapshot(),SW,SH,8,m.stride)
         expected=oracle(background,x=x,y=y,icon=icon,mode=mode)
