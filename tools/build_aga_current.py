@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R64 0.13.9"):
+    if active.startswith("R65 0.13.10"):
+        from build_m18_r65_ficon_bank_put import build as build_r65
+        candidate,meta=build_r65()
+        assert candidate==current,"R65 must match exact deterministic source builder"
+        print("CURRENT R65 FICON8 BANK PUT GATE A CPU PASS, B pending, C end M18",meta)
+    elif active.startswith("R64 0.13.9"):
         from build_m18_r64_ficon_bank_create import build as build_r64
         candidate,meta=build_r64()
         assert candidate==current,"R64 current differs from deterministic source"
