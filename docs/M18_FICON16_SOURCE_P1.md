@@ -48,6 +48,10 @@ Le prototype limite volontairement le compte à 4096, **ce n'est pas une limite 
 
 ## 4. Suite avant toute R61
 
+**Baseline WinUAE à réaliser (R60 inchangée) :** [bench R60 16×16](../benchmarks/m18_r60_cpu_vs_blit_16x16.asc) · [protocole](../benchmarks/README_M18_CPU_BLIT_16X16.md). CPU AGAPIC RLE depuis la banque 10 contre Blitter Chip→Chip sur icône préchargée ; les préparations étant différentes, **ne pas appeler cette mesure un benchmark définitif Fast Icon**. Aucune vitesse Amiga relevée à ce stade.
+
+
+
 **Pont AGAPIC → Fast Icon P1 ajouté :** [m18_ficon16_convert.py](../tools/m18_ficon16_convert.py), [tests](../tools/test_m18_ficon16_convert.py). Il sélectionne des icônes AGAPIC 16×16 en profondeur 8 et remappe explicitement les ID sources éventuellement épars sur des slots Unity compacts. **Si l'AGAPIC a un masque indépendant, la conversion impose, pixel par pixel, que la visibilité corresponde à (couleur différente de zéro).** Sinon, la conversion est refusée : pas de perte silencieuse d'alpha. Pour une AGAPIC sans masque, les couleurs sont conservées en mode opaque ; le collage Fast Icon masqué ajoutera volontairement la transparence couleur zéro. Le résultat est un *payload* hôte, **pas un fichier ABK ou une commande installable**.
 
 

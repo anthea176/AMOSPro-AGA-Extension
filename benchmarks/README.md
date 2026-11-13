@@ -1,4 +1,9 @@
-# Benchmark graphique 320×256×32 — AMOS / AMCAF / AGA
+# Benchmarks graphiques AMOS / AMCAF / AGA
+
+## M18 — baseline CPU/Blitter 16×16 R60 (À TESTER WinUAE)
+
+[Source ASCII](m18_r60_cpu_vs_blit_16x16.asc) · [protocole et réserves](README_M18_CPU_BLIT_16X16.md). CPU = rendu AGAPIC RLE par `Aga Image Region` ; Blitter = `Aga Blit Copy` depuis une zone Chip déjà initialisée. **Comparatif préliminaire des commandes actuelles, pas du futur moteur F Icon non compressé.** Trois essais de 1 200 appels par cas, PAL 16 couleurs ; résultats sous WinUAE non encore recueillis. Aucun changement de R60 `LAST_GOOD`, aucun ASC de test actif.
+
 
 ## Diagnostic complémentaire : synchronisation Copy (AMOS interprété, R57)
 
