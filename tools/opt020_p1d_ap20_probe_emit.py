@@ -50,7 +50,8 @@ def emit_ap20_shaped_probe() -> bytes:
 
     # All instructions before this test are legal on a plain 68000.
     c.raw("2c780004")                     # MOVEA.L 4.W,A6 = ExecBase
-    c.tst(A(6))
+    c.move(A(6), D(0))                   # TST An illegal on MC68000
+    c.tst(D(0))                          # safe 68000 pointer check
     c.branch(7, "reject")
     c.move(M(6, EXECBASE_ATTNFLAGS), D(0), "w")
     c.word(0x0800)                        # BTST #1,D0
@@ -58,7 +59,8 @@ def emit_ap20_shaped_probe() -> bytes:
     c.branch(7, "reject")                  # no 020 -> return 0, never BFEXTU
 
     # Synthetic prevalidated structure, NOT the actual AMOS bank.
-    c.tst(A(0))
+    c.move(A(0), D(5))                   # avoid TST An here as well
+    c.tst(D(5))
     c.branch(7, "reject")
     c.move(A(0), A(4))
     c.move(M(4, 0), A(0))
@@ -69,7 +71,8 @@ def emit_ap20_shaped_probe() -> bytes:
     c.move(M(4, 20), D(6))
     c.move(M(4, 24), D(7))
     for ptr in (A(0), A(1), A(2)):
-        c.tst(ptr)
+        c.move(ptr, D(5))
+        c.tst(D(5))
         c.branch(7, "reject")
     c.imm("cmp", 7, D(0))
     c.branch(2, "reject")                  # dest bit offset <=7 unsigned

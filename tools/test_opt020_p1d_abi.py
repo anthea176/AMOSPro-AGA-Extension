@@ -136,14 +136,12 @@ def run_abi(cpu_type, *, flags, depth, left, width, shift,
 
 def cpu_tests():
     tests=passes=rejects=0
-    # OPT020 minimum is 68EC020; emulate the missing CPU capability
-    # flag on these target CPUs rather than interpreting the M68000 A-line
-    # end-of-run trap as an ABI return signal.
-    for cpu in (CPUType.M68EC020,CPUType.M68020):
+    # Confirm the pre-020 guard is executable on a true 68000.
+    for cpu in (CPUType.M68000,CPUType.M68EC020,CPUType.M68020):
         for width,left,shift in ((1,0,0),(3,5,2),(8,4,7),(16,0,3),(1,15,7)):
             for depth in (1,2,4,8):
                 for mask,mode in ((0xffff,0),(0xa55a,1)):
-                    ok=run_abi(cpu,flags=2,
+                    ok=run_abi(cpu,flags=0 if cpu==CPUType.M68000 else 2,
                                depth=depth,left=left,width=width,
                                shift=shift,mask=mask,mode=mode)
                     passes+=int(ok)
@@ -202,6 +200,14 @@ def decode_check():
     assert names.count("rts")>=2
     assert code.startswith(bytes.fromhex("48e7efee"))
     assert bytes.fromhex("4cdf77f774004e75") in code
+    # Before the first 020 opcode, ALL instructions must decode on 68000.
+    from capstone import CS_MODE_M68K_000
+    from opt020_p1d_fragment_emit import emit_fragment_020
+    start = code.index(emit_fragment_020())
+    pre_020 = list(Cs(CS_ARCH_M68K, CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000).
+                   disasm(code[:start],CODE))
+    assert sum(item.size for item in pre_020)==start, (
+        'CPU000-unsafe opcode before gate', [v.mnemonic for v in pre_020])
     return len(code),sha256(code).hexdigest()
 
 
