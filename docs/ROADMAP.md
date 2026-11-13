@@ -4,11 +4,11 @@
 
 ## OPT020 — État actuel R72, 13 novembre 2026
 
-**OPT020/P1e + P2 : R72 v0.13.17 candidate active NON PROMUE.** Binaire unique `dist/AMOSPro_AGA.Lib`, **51 468 octets**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`, 64 commandes / 71 AP20. Unique ASC `tests/current/OPT020_P2_R72_INTERPRETED_01.asc`. **Gate A native/CI préparatoire PASS**, après correction de `D3` en cas de rejet de PASS 1 dû à une mutation RLE entre les deux passes ; [rapport](OPT020_P2_R72_D3_REJECT_2026-11-13.md). La **Gate B R72 WinUAE est à tester**, C Compiler (fin de chantier) et D physique NON TESTÉES.
+**OPT020/P1e + P2 : R72 v0.13.17 candidate active NON PROMUE.** Binaire unique `dist/AMOSPro_AGA.Lib`, **51 468 octets**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`, 64 commandes / 71 AP20. Unique ASC `tests/current/OPT020_P2_R72_INTERPRETED_01.asc`. **Gate A native/CI préparatoire PASS**, après correction de `D3` en cas de rejet de PASS 1 dû à une mutation RLE entre les deux passes ; [rapport](OPT020_P2_R72_D3_REJECT_2026-11-13.md). La **Gate B R72 WinUAE interprétée est PASS** sur les captures auteur (`RESULT 1`, `CLOSE RETURNED`, Chip `1661536/1661536`, aucun Guru observé) ; C Compiler (fin de chantier) et D physique NON TESTÉES.
 
 **R71 historique : Gate A/CI PASS, Gate B WinUAE interprétée PASS** (`RESULT 1`, `CLOSE RETURNED`, Chip `1661542/1661542`), [captures et rapport](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). R70 FAIL historique Guru `80000004`, trois branchements erronés détectés et protégés par des contrôles binaires. R69 P1e historique benchmark compilé jusqu'à **3,39×**. **R68 `LAST_GOOD` intacte**, 51 064 octets SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` ; aucune promotion de R72.
 
-**Ordre du plan inchangé :** clore R72 Gate B, contrôler les pixels et mesurer les performances P2 avec le même profil 68020/14 MHz JIT OFF (puis 68030/28 MHz JIT OFF) ; optimiser les Fast Icons uniquement si un goulot est démontré ; ensuite `c2p.library`, puis AGAPIC v2. Aucune autre API ou projet ouvert à ce jalon. Travail exclusivement sur `main`, aucun Compiler intermédiaire.
+**Ordre du plan explicite :** P1e `Aga Image Region` validé → P2 `Aga Image Draw` R72 A/B PASS → **P3 Fast Icons : capture ET dessin** (8 plans, opaque/masqué, X non aligné), [prototype 68020 opt-in](OPT020_P3_FAST_ICONS_68020_2026-11-13.md) en préparation → **une seule Gate C AMOS Compiler en fin d'OPT020** → `c2p.library` → AGAPIC v2. **Aucun benchmark de gain demandé.** Sur `main` uniquement, pas de CI complète systématique, R68 `LAST_GOOD` protégée.
 
 ### Jalons antérieurs (tableau historique conservé)
 

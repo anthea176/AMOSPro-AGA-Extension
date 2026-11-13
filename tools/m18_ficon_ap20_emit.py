@@ -37,7 +37,7 @@ F = dict(mode=0,y=4,x=8,icon=12,bank=16,base=20,length=24,count=28,
          slot=32,scrw=36,scrh=40,stride=44,bitmap=48)
 FRAME = 96
 
-def emit_ficon_ap20():
+def emit_ficon_ap20(*, opt020=False):
     c=Code()
     B,L=c.branch,c.label
     def ld(field,reg):c.move(M(2,F[field]),reg)
@@ -214,7 +214,7 @@ def emit_ficon_ap20():
     c.raw("74004e75")           # MOVEQ #0,D2 ; RTS
 
     L("core")
-    native,core_labels=emit_ficon16_shifted_cpu()
+    native,core_labels=emit_ficon16_shifted_cpu(opt020=opt020)
     c.raw(native.hex())
     result=c.out()
     assert result.count(GETADR_MARKER)==1

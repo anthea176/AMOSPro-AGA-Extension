@@ -13,6 +13,7 @@ No error paths inside the 288-byte write loop. Bytes outside slot untouched.
 AMOS ABI: D3=Y; A3 stacked X, IconID, Bank (in pop order).
 """
 from m68k_emit import Code,D,A,M,POST,I
+from opt020_p1_bitfield_emit import bitfield_020
 from amos_main_abi import main_index,rjsr
 
 ENTRY_INDEX=66
@@ -33,7 +34,7 @@ F=dict(y=0,x=4,icon=8,bank=12,base=16,length=20,count=24,
        rowoff=64,firstoff=68,lastoff=72,rowptr=76)
 FRAME=128
 
-def emit_ficon_capture():
+def emit_ficon_capture(*, opt020=False):
     c=Code();B,L=c.branch,c.label
     def get(k,reg):c.move(M(2,F[k]),reg)
     def put(reg,k):c.move(reg,M(2,F[k]))
@@ -146,7 +147,11 @@ def emit_ficon_capture():
 
     get("x",D(0));c.shift(0,3,left=False);put(D(0),"xbyte")
     get("x",D(0));c.imm("and",7,D(0))
-    c.move(I(7),D(1));c.alu("sub",D(0),1);put(D(1),"initbit")
+    if opt020:
+        # 020 BFEXTU offset in bits from MSB of the first byte, 0..7.
+        put(D(0),"initbit")
+    else:
+        c.move(I(7),D(1));c.alu("sub",D(0),1);put(D(1),"initbit")
     get("y",D(0));get("stride",D(1))
     c.word(0xc0c1)          # MULU.W stride, y -> LONG row offset
     put(D(0),"rowoff")
@@ -197,24 +202,31 @@ def emit_ficon_capture():
     c.move(POST(0),A(4))       # next bitplane
     get("rowoff",D(0));c.word(0xd9c0) # ADDA.L D0,A4
     get("xbyte",D(0));c.word(0xd9c0)
-    c.move(I(0),D(4))         # planar row output
-    c.move(I(0x8000,"w"),D(2),"w")
-    get("initbit",D(1))
-    c.move(I(16),D(0))
-    L("pixel")
-    c.move(I(0),D(3))
-    c.move(M(4),D(3),"b")     # read one source bitplane byte
-    c.word(0x0303)           # BTST D1,D3 (1 if bit set)
-    B(7,"no_pixel")
-    c.alu("or",D(2),4,"w")
-    L("no_pixel")
-    c.word(0xe24a)           # LSR.W #1,D2 -> next destination bit
-    c.quick(1,D(1),sub=True)
-    B(10,"bit_pos_ok")        # BPL
-    c.quick(1,A(4))
-    c.move(I(7),D(1))
-    L("bit_pos_ok")
-    c.quick(1,D(0),sub=True);B(6,"pixel")
+    if opt020:
+        # Extract the precise 16 visible bits from the physical bitplane,
+        # including X%8 != 0 (up to three validated source bytes).
+        # No per-pixel branch or read/write outside the selected FICON8 slot.
+        get("initbit",D(1))
+        c.raw(bitfield_020(0xe9c0,4,4,offset_reg=1,width=16).hex())
+    else:
+        c.move(I(0),D(4))         # planar row output
+        c.move(I(0x8000,"w"),D(2),"w")
+        get("initbit",D(1))
+        c.move(I(16),D(0))
+        L("pixel")
+        c.move(I(0),D(3))
+        c.move(M(4),D(3),"b")     # read one source bitplane byte
+        c.word(0x0303)           # BTST D1,D3 (1 if bit set)
+        B(7,"no_pixel")
+        c.alu("or",D(2),4,"w")
+        L("no_pixel")
+        c.word(0xe24a)           # LSR.W #1,D2 -> next destination bit
+        c.quick(1,D(1),sub=True)
+        B(10,"bit_pos_ok")        # BPL
+        c.quick(1,A(4))
+        c.move(I(7),D(1))
+        L("bit_pos_ok")
+        c.quick(1,D(0),sub=True);B(6,"pixel")
     c.move(D(4),POST(1),"w")
     c.alu("or",D(4),7,"w")
     c.quick(1,D(5),sub=True);B(6,"plane")

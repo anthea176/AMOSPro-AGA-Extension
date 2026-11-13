@@ -1,14 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## État actuel OPT020/P2 — R72 candidate, Gate A/CI PASS (13/11/2026)
+## État actuel OPT020/P3 — Fast Icons capture et dessin, R72 A/B PASS (13/11/2026)
 
 **Unique candidate :** `dist/AMOSPro_AGA.Lib` R72 v0.13.17, **51 468 octets**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`. **Unique ASC actif :** `tests/current/OPT020_P2_R72_INTERPRETED_01.asc` (+ banque AGAPIC déjà présente). Aucun fichier de `tests/passed/`, archive ou binaire `LAST_GOOD` modifié.
 
 **Motif R72 :** après PASS 0, la modification de la dernière ligne RLE pendant GetMsg/Safe provoque un rejet tardif alors qu'un peintre 020 a déjà mis `D3=1`. R71 retourne faussement succès ; R72 ajoute un reset explicite sur `reject`, sans changer l'API ni la routine P1e. [Preuve CPU native reproductible](OPT020_P2_R72_D3_REJECT_2026-11-13.md) ; [CI native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43519680726) et [intégrité préparatoire PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43519680832).
 
-**À faire :** vérifier la CI d'intégrité sur l'unique R72 active puis effectuer **Gate B réelle sous WinUAE interprété** (68020 14 MHz JIT OFF PAL). Contrôler `RESULT 1`, `CLOSE RETURNED`, image conforme, `Clear → Fill`, absence Guru et mémoire stable. Ne pas annoncer PASS avant captures. Puis benchmark P2 et égalité pixels. Ne pas lancer AMOS Compiler avant la fin du chantier ; **R68 LAST_GOOD** SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` protégée. **R71 Gate B PASS historique** : [preuve](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). R70 FAIL Guru `80000004` préservée dans Git.
+**Validation R72 acquise :** [CI intégrité 52 étapes PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43520420351), [CI OPT020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43520288586), **Gate B WinUAE interprétée PASS** sur les deux captures auteur : `RESULT 1`, `CLOSE RETURNED`, Chip `1661536/1661536`, aucun Guru observé. Pas d'égalité pixel automatique. **R71 Gate B PASS historique** : [rapport](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). R70 FAIL Guru `80000004` préservée. **R68 LAST_GOOD** SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` protégée.
 
-**Plan de suite :** OPT020 final → Fast Icons si bénéfice mesuré → `c2p.library` → AGAPIC v2, sur `main` exclusivement, sans branche/PR.
+**Prochaine étape P3 — Fast Icons capture ET dessin :** émetteurs opt-in `opt020=True` préparés pour les entrées natives **66 Capture** (`BFEXTU`, 8 plans) et **60 Draw** (`BFINS` opaque/masqué, positions non alignées, fallback pour clipping). [Rapport prototype](OPT020_P3_FAST_ICONS_68020_2026-11-13.md). Modèle hôte indépendant testé ; exécution native 68020, ABI AP20 et Gate B nouvelle candidate **non validées**. Ne pas remplacer R72 avant validation CPU et audit de TOUS les branchements relatifs du monolithe (incident R70). Pas de benchmark, pas de CI complète à chaque pas. Fast Icons terminés → **une seule Gate C Compiler finale** → `c2p.library` → AGAPIC v2. `main` seulement, aucun autre dépôt/branche/PR.
 
 ### Anciennes notes (historique, non autoritaires pour la candidate actuelle)
 

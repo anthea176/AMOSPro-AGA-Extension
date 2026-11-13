@@ -17,10 +17,12 @@ palette, Swap or VBL. Caller must validate actual ownership, bank/header,
 canonical mask, allocations, depth=8, back buffer and Safe BEFORE call.
 """
 from m68k_emit import Code, D, A, M, POST, I
+from opt020_p1_bitfield_emit import bitfield_020
 
 F = dict(x=0,y=4,stride=8,width=12,height=16,mode=20,
          shift=24,backshift=28,baseword=32,lastword=36,lastmask=40,
-         offset0=44,offset1=48,mask0=52,mask1=56)
+         offset0=44,offset1=48,mask0=52,mask1=56,
+          p3_byte=60,p3_bit=64)
 FRAME = 96
 
 def _lsrw(count_reg, dest_reg):
@@ -31,7 +33,7 @@ def _lslw(count_reg, dest_reg):
     """LSL.W Dcount,Ddest, register count (Motorola 68000)."""
     return 0xe168 | (count_reg << 9) | dest_reg
 
-def emit_ficon16_shifted_cpu():
+def emit_ficon16_shifted_cpu(*, opt020=False):
     c = Code()
     B, L = c.branch, c.label
     c.raw('48e7efee')                  # Save D0/D1,D4..D7,A0..A2/A4..A6.
@@ -118,6 +120,51 @@ def emit_ficon16_shifted_cpu():
     L('opaque_mask')
     c.move(I(0xffff,'w'),D(4),'w')
     L('have_visible')
+    if opt020:
+        # Full 16-pixel rows only: clipped and negative X use original code.
+        # BFINS of width 16 at an arbitrary bit offset never changes pixels
+        # outside the sprite, including the last partial screen word.
+        c.move(M(2,F['x']),D(6))
+        c.tst(D(6));B(11,'p3_fallback')
+        c.imm('add',16,D(6))
+        c.alu('cmp',M(2,F['width']),6)
+        B(14,'p3_fallback')
+        c.tst(D(4),'w');B(7,'skip_planes')
+        c.move(M(2,F['x']),D(6))
+        c.imm('and',15,D(6))
+        c.shift(6,3)
+        c.move(D(6),M(2,F['p3_byte']))
+        c.move(M(2,F['x']),D(6))
+        c.imm('and',7,D(6))
+        c.move(D(6),M(2,F['p3_bit']))
+        c.move(A(1),A(5))
+        c.move(I(8),D(1))
+        L('p3_plane')
+        c.move(POST(6),D(5),'w')
+        c.move(POST(5),A(0))
+        c.move(A(0),A(4))
+        c.move(M(2,F['offset0']),D(7))
+        c.word(0xd9c7)
+        c.move(M(2,F['p3_byte']),D(7))
+        c.word(0xd9c7)
+        c.move(M(2,F['p3_bit']),D(7))
+        c.tst(M(2,F['mode']))
+        B(7,'p3_opaque')
+        # Masked: old 16-bit span survives where preserve is set.
+        c.raw(bitfield_020(0xe9c0,4,0,offset_reg=7,width=16).hex())
+        c.move(D(4),D(6),'w')
+        c.word(0x4646)  # NOT.W D6 -> preserve bitmask
+        c.alu('and',D(6),0,'w')
+        c.alu('and',D(4),5,'w')
+        c.alu('or',D(5),0,'w')
+        c.raw(bitfield_020(0xefc0,4,0,offset_reg=7,width=16).hex())
+        B(0,'p3_next_plane')
+        L('p3_opaque')
+        c.raw(bitfield_020(0xefc0,4,5,offset_reg=7,width=16).hex())
+        L('p3_next_plane')
+        c.quick(1,D(1),sub=True);B(6,'p3_plane')
+        B(0,'next_row')
+        L('p3_fallback')
     c.move(D(4),D(5),'w')
     c.move(M(2,F['shift']),D(7))
     c.word(_lsrw(7,5))
