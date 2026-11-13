@@ -46,7 +46,7 @@ def check_decoding() -> None:
             (ref, CS_MODE_M68K_000, ("btst", "bset", "bclr")),
             (candidate, CS_MODE_M68K_020, ("bfextu", "bfins"))):
         ins = list(Cs(CS_ARCH_M68K, CS_MODE_BIG_ENDIAN | mode).disasm(data, CODE))
-        names = [i.mnemonic.lower() for i in ins]
+        names = [i.mnemonic.lower().split(".", 1)[0] for i in ins]
         assert sum(i.size for i in ins) == len(data), (data.hex(), names)
         assert names[-1] == "rts", names
         assert all(name in names for name in needs), names
