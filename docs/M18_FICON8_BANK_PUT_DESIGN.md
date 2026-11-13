@@ -1,8 +1,8 @@
 # M18 / R65 — Remplir une icône FICON8 depuis une banque DATA (contrat)
 
-**Décision de travail du 13/11/2026 :** suite à l'accord « go go soldat » de l'auteur pour la phase de remplissage. Contrat proposé pour la première commande de **remplissage complet**, sans tentative de capture d'écran ni conversion AGAPIC native implicite. L'API doit être validée par des tests indépendants avant d'être livrée en bibliothèque ; ce document n'est pas une preuve de Gate B/C.
+**Décision de travail du 13/11/2026 :** suite à l'accord « go go soldat » de l'auteur pour la phase de remplissage. Contrat proposé pour la première commande de **remplissage complet**, sans tentative de capture d'écran ni conversion AGAPIC native implicite. **API R65 implémentée et validée en Gate A** (98 exécutions natives 68000, deux dispositions ABI simulées ; modèle hôte 44 cas ; [CI complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43444242260)). **Gate B WinUAE interprétée non exécutée ; pas de Gate C Compiler ni de promotion.**
 
-## API proposée : copie chunky indexée -> Fast Icon
+## API implémentée R65 : copie chunky indexée -> Fast Icon
 
 ```amos
 _OK=Aga F Icon Bank Put(DestBank,IconID,PixelBank,ByteOffset)
@@ -53,7 +53,7 @@ Le programme de validation devra créer cette banque source **depuis AMOS**, cha
 - **Gate A CPU/CI** : émuler les instructions 68000 *effectives* et le contrat AP20, tests d'ABI/relocation, validation des banques et de la taille, non-altération en échec, garde de fin de slot, à la fois disposition interpréteur et disposition Compiler V2 simulée.
 - **Gate B** : **unique ASC** actif `tests/current/M18_R65_FICON8_PUT_01.asc`, WinUAE **AMOS interprété uniquement**, bannière R65 ; vérifier `RESULT 1`, checksum/planaires, affichage d'un véritable motif multicolore, `Save/Erase/Load` et mémoire.
 - **Gate C** : un seul nouveau programme réellement compilé **à la fin de M18** ; Gate D matériel distinct.
-- **R63 LAST_GOOD protégée** ; R64 v0.13.9 validée A/B conservée comme base déterministe de R65. Aucune promotion automatique.
+- **R63 LAST_GOOD protégée** ; R64 v0.13.9 validée A/B conservée comme base déterministe de R65. **Candidate active R65 v0.13.10 : 40 116 octets, SHA256 `6a1f3228b695331a37cd2b352679a07888fe6b94dd53e6c7f15c8f76151b17f2`, 58 commandes / 65 AP20, routine de 968 octets. Gate A native PASS (98 cas) + hôte PASS (44 cas), [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43444242260).** [Test unique R65](../tests/current/M18_R65_FICON8_PUT_01.asc) ; Gate B WinUAE interprétée À FAIRE. Aucune promotion automatique.
 
 **Périmètre non autorisé dans cette étape :** commande de dessin pixel à pixel, capture AGA, décompression AGAPIC, import PNG, cache `FICHIP8` dynamique, modification d'AMCAF ou publication Aminet.
 
