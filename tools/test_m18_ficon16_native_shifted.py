@@ -20,7 +20,8 @@ def main():
              .disasm(code,0x10000))
     assert sum(x.size for x in ins)==len(code), 'non-68000 encoding detected'
     assert code==emit_ficon16_shifted_cpu()[0], 'non-deterministic emission'
-    assert len(labels)>20
+    assert {'row','plane','half1','skip_row','mask0_clipped',
+            'invalid','success','done'} <= set(labels)
     assert not any(i.mnemonic.lower() in ('jsr','jmp','trap','stop') for i in ins)
     rng=Random(0xF0162027)
     icons=(
