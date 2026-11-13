@@ -48,6 +48,10 @@ Le prototype limite volontairement le compte à 4096, **ce n'est pas une limite 
 
 ## 4. Suite avant toute R61
 
+**Pont AGAPIC → Fast Icon P1 ajouté :** [m18_ficon16_convert.py](../tools/m18_ficon16_convert.py), [tests](../tools/test_m18_ficon16_convert.py). Il sélectionne des icônes AGAPIC 16×16 en profondeur 8 et remappe explicitement les ID sources éventuellement épars sur des slots Unity compacts. **Si l'AGAPIC a un masque indépendant, la conversion impose, pixel par pixel, que la visibilité corresponde à (couleur différente de zéro).** Sinon, la conversion est refusée : pas de perte silencieuse d'alpha. Pour une AGAPIC sans masque, les couleurs sont conservées en mode opaque ; le collage Fast Icon masqué ajoutera volontairement la transparence couleur zéro. Le résultat est un *payload* hôte, **pas un fichier ABK ou une commande installable**.
+
+
+
 À décider sur contrat, sans toucher R60 LAST_GOOD : commande 16×16 numérotée et banque sélectionnée explicitement ; si conversion AGAPIC, sort du masque indépendant ; mode historique 16 pixels **optionnel** versus pixel exact par défaut ; chemins CPU Fast→Chip et Blitter Chip→Chip identiques bit à bit ; Gateway AP20/Compiler V2 validée par Gate A native puis B et C WinUAE avec un seul ASC actif.
 
 **Après les icônes, terminer CBlock AGA pixel-exact avant 68020+ puis c2p.library.** Pas de nouvelle bibliothèque native, ASC ni publication Aminet dans ce P1 hôte.
