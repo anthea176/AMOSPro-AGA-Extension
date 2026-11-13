@@ -189,6 +189,9 @@ class CBlockMachine(Machine):
         self.core_debug=[]
         self.first_core=[]
         self.call_debug=[]
+        self.transition_debug=[]
+        self.recent_wrapper=[]
+        self.previous_pc=None
         native_core,_=emit_cblock_copy_core()
         wrapper_bin,wrapper_labels=(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()
         core_off=wrapper_labels["copy_core"]
@@ -200,6 +203,21 @@ class CBlockMachine(Machine):
         def trace(uc,address,size,user):
             if self.entry<=address<self.entry+len(self.parts[idx]):
                 offset=address-self.entry
+                if core_off<=offset<core_off+len(native_core) and (
+                    self.previous_pc is None or
+                    not core_off<=self.previous_pc<core_off+len(native_core)
+                ):
+                    self.transition_debug.append((
+                        "entered core",self.previous_pc,offset,
+                        hex(uc.reg_read(AR[7])),hex(uc.reg_read(AR[4]))
+                    ))
+                if offset<core_off:
+                    self.recent_wrapper.append((
+                        offset,bytes(uc.mem_read(address,4)).hex(),
+                        hex(uc.reg_read(AR[7]))
+                    ))
+                    if len(self.recent_wrapper)>40:self.recent_wrapper.pop(0)
+                self.previous_pc=offset
                 self.trace.append(offset)
                 if len(self.trace)>55:self.trace.pop(0)
                 if core_off<=offset<core_off+len(native_core) and len(self.first_core)<36:
@@ -240,7 +258,9 @@ class CBlockMachine(Machine):
             "FIRST_CORE_PC",self.first_core,
             "CORE_HEADER",bytes(self.uc.mem_read(self.entry+core_off,16)).hex(),
             "JSR_OFFSET",jsr_off,
-            "CALL_DEBUG",self.call_debug
+            "CALL_DEBUG",self.call_debug,
+            "TRANSITIONS",self.transition_debug,
+            "LAST_WRAPPER_INSNS",self.recent_wrapper
         )
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
