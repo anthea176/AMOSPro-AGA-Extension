@@ -20,6 +20,7 @@ on:
       - "tools/opt020_p1e_painter_emit.py"
       - "tools/test_opt020_p1e_region.py"
       - "tools/test_opt020_p1e_matrix.py"
+      - "tools/build_opt020_p1e_r69.py"
       - "tools/m18_image_region_emit.py"
       - "tools/test_opt020_p1d_fragments.py"
       - "tools/test_opt020_p1d_abi.py"
@@ -53,5 +54,7 @@ jobs:
         run: |
           python -B tools/test_opt020_p1e_region.py
           python -B tools/test_opt020_p1e_matrix.py
+      - name: Verify deterministic R69 AP20 V2 Gate A candidate in memory only
+        run: python -B tools/build_opt020_p1e_r69.py --emit-base64
       - name: Guard R68, LAST_GOOD, archives, and single active ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
