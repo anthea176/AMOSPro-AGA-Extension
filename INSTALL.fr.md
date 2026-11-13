@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate actuelle R61 v0.13.6 :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36 816 octets (Gate A PASS ; Gates B/C WinUAE interprété/compilé NON TESTÉES). **LAST_GOOD protégée : R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35 056 octets, Gates A/B/C R60 PASS. Pour R61, utiliser [l'unique ASC actif](tests/current/M18_R61_FICON_01.asc) et [sa banque FICON8](tests/current/M18_FICON8_SAMPLE_BANK10.abk), puis créer un nouvel exécutable compilé : ne pas réutiliser un ancien programme R60.
+**Candidate R61 v0.13.6 — WinUAE Gates A/B/C PASS sur le scénario testé, NON PROMUE :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36 816 octets. [Rapport](docs/M18_R61_FICON_WINUAE_GATES_BC.md). **LAST_GOOD protégée reste R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35 056 octets. [Seul ASC R61 actif](tests/current/M18_R61_FICON_01.asc) et [banque FICON8](tests/current/M18_FICON8_SAMPLE_BANK10.abk) disponibles. Gate D sur Amiga réel non réalisée.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)

@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Current R61 v0.13.6 working candidate:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36,816 bytes (Gate A PASS; interpreted/compiled WinUAE B/C NOT TESTED). **Protected LAST_GOOD remains R60 v0.13.5:** [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35,056 bytes, R60 Gates A/B/C PASS. For R61, use the [single active test](tests/current/M18_R61_FICON_01.asc) with its [FICON8 sample bank](tests/current/M18_FICON8_SAMPLE_BANK10.abk), then create a new compiled executable; do not reuse R60 compiled tests.
+**R61 v0.13.6 working candidate — WinUAE Gates A/B/C PASS for the tested scenario, NOT PROMOTED:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36,816 bytes. [Report](docs/M18_R61_FICON_WINUAE_GATES_BC.md). **Protected LAST_GOOD is still R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35,056 bytes. [Single R61 ASC](tests/current/M18_R61_FICON_01.asc) and [FICON8 sample bank](tests/current/M18_FICON8_SAMPLE_BANK10.abk) remain available. Hardware Gate D not tested.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)

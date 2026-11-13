@@ -1,6 +1,8 @@
-# Tests AMOS — R46 v0.12.1-C1 LAST_GOOD, Gates A/B + C intégrée WinUAE PASS
+# Tests AMOS — candidate R61 v0.13.6, Gates A/B/C WinUAE PASS
 
-## Test actif — capture fonctionnelle R53 0.12.8
+**État courant au 13/11/2026 :** [M18_R61_FICON_01.asc](current/M18_R61_FICON_01.asc) valide la nouvelle fonction AGA Fast Icon sous AMOS interprété et en compilé WinUAE : `RESULT 1`, `CLOSE RETURNED`, Chip Free avant/après stable. [Rapport B/C](../docs/M18_R61_FICON_WINUAE_GATES_BC.md). **R61 reste candidate, R60 est LAST_GOOD** ; Gate D matérielle non effectuée. Les mentions R53/R46 ci-dessous sont des états historiques.
+
+## Historique — capture fonctionnelle R53 (étape antérieure)
 
 Seul programme à exécuter : [M16_R53_IMAGE_CAPTURE_01.asc](current/M16_R53_IMAGE_CAPTURE_01.asc). [Procédure, empreinte et résultats attendus](../docs/M16_MAIN_LINKAGE_FIX.md). Gate A locale PASS ; AMOS interprété puis **nouvel exécutable Compiler** à valider séparément. R46 C1 LAST_GOOD intacte. La sonde R52 est archivée à l'identique en `diagnostics/`. Les états ci-dessous sont historiques.
 
