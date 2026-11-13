@@ -1,8 +1,8 @@
 # M18 — Capture directe d'un Fast Icon 16×16 depuis l'écran AGA
 
-**Statut : R67 v0.13.12 IMPLÉMENTÉE, Gate A native 240 cas M68000 PASS, Gate B interprétée WinUAE À FAIRE.** [Seule bibliothèque active](../dist/AMOSPro_AGA.Lib) **43 180 octets**, SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5` ; [CI complète préparatoire](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43456641279) ; [ASC R67 actif](../tests/current/M18_R67_FICON8_CAPTURE_01.asc). Ajout à la demande de l'auteur du 13/11/2026. La candidate R66 a désormais passé les Gates A (122 cas 68000) et B (deux captures WinUAE avec rendu conforme et `RESULT 1`, [rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md)). La commande de capture n'a pas encore été implémentée.
+**Statut : R67 v0.13.12 IMPLÉMENTÉE, Gates A (240 cas natifs 68000) et B (WinUAE interprété) PASS ; candidate NON PROMUE.** [Seule bibliothèque candidate](../dist/AMOSPro_AGA.Lib) **43 180 octets**, SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5` ; [CI complète préparatoire PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43456641279) ; [ASC R67 archivé](../tests/passed/M18_R67_FICON8_CAPTURE_01.asc) ; [rapport Gate B](M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md). La capture console indique `RESULT 1` et `CLOSE RETURNED` ; le rendu graphique a été confirmé conforme par l'auteur **sans capture d'écran graphique**. R66 Gates A/B PASS [rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md). Compiler C en fin M18 uniquement ; matériel D non testé. R63 `LAST_GOOD` protégée.
 
-## Objectif et API proposée
+## Objectif et API implémentée
 
 ```amos
 _OK=Aga F Icon Capture(Bank,IconID,X,Y)
@@ -10,7 +10,7 @@ _OK=Aga F Icon Capture(Bank,IconID,X,Y)
 
 La commande **met à jour un emplacement existant** de la banque DATA AMOS `FICON8  ` (créée par `Aga F Icon Bank Create`, R64), directement depuis un rectangle de **16×16 pixels de l'écran AGA privé**. La banque n'est pas recréée, n'est pas effacée et reste sauvegardable avec `Save` / `Load` ABK AMOS. Le travail est effectué au CPU ; il ne crée pas de `FICHIP8`.
 
-| Argument | Proposition |
+| Argument | Contrat R67 |
 |---|---|
 | `Bank` | Banque DATA `FICON8  ` existante, numéro 5…65535, **sans la remplacer** |
 | `IconID` | Index d'icône **1…Count** |
@@ -48,18 +48,18 @@ Conséquence importante : **l'index 0 est transparent uniquement lorsque l'icôn
 |---|---|---|
 | `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` | Back buffer AGA | **Nouvelle banque AGAPIC RLE** (et masque indépendant optionnel) |
 | `Aga F Icon Bank Put(DestBank,IconID,PixelBank,ByteOffset)` | Banque DATA de **256 indices chunky** | Slot 16×16 **FICON8** existant |
-| **`Aga F Icon Capture(Bank,IconID,X,Y)` (PROPOSÉE)** | **Back buffer AGA directement, 8 plans** | Slot 16×16 **FICON8** existant, sans intermédiaire chunky |
+| **`Aga F Icon Capture(Bank,IconID,X,Y)` (R67)** | **Back buffer AGA directement, 8 plans** | Slot 16×16 **FICON8** existant, sans intermédiaire chunky |
 
 Une capture de l'écran visible/Workbench, des icônes autres que 16×16 ou une profondeur inférieure à 8 plans sont hors périmètre.
 
-## Test requis avant toute validation
+## Validation R67 et limites
 
-**Code natif R67 :** [émetteur](../tools/m18_ficon_capture_emit.py), [builder](../tools/build_m18_r67_ficon_capture.py), [240 cas 68000](../tools/test_m18_r67_ficon_capture_gate_a.py) PASS. Le code contrôle les huit bitplanes en Chip, le rectangle entier, la banque AMOS et son slot avant écriture ; attend `Safe` et `WaitBlit` (pas de VBL) avant lecture. Un `Aga F Chip Stage` explicite est requis après la capture. Les validations WinUAE B, Compiler C et matériel D sont **distinctes et en attente**.
+**Code natif R67 :** [émetteur](../tools/m18_ficon_capture_emit.py), [builder](../tools/build_m18_r67_ficon_capture.py), [240 cas 68000](../tools/test_m18_r67_ficon_capture_gate_a.py) PASS. Le code contrôle les huit bitplanes en Chip, le rectangle entier, la banque AMOS et son slot avant écriture ; attend `Safe` et `WaitBlit` (pas de VBL) avant lecture. Un `Aga F Chip Stage` explicite est requis après la capture. La Gate B WinUAE interprétée est **PASS** sur capture console et confirmation visuelle par l'auteur (pas de capture graphique). Compiler C et matériel D restent **distincts et non exécutés**.
 
 1. **Gate A CPU/ABI réelle** : cas alignés/non alignés (X=0,1,7,15,16, etc.), bords droit/bas exacts, refus de tous les dépassements, vérification des huit plans et du masque ligne par ligne, slot et banques voisins intacts ; disposition interpréteur et Compiler V2 simulée.
 2. **Gate B WinUAE en AMOS interprété** : dessiner un motif AGA 256 couleurs dans le **back buffer**, capturer le carré, changer le fond et redessiner avec `Aga F Icon` en opaque/masqué, vérifier X/Y à 1 pixel, `Save / Erase / Load` ABK, résultat et rendu visuel, retour mémoire identique après nettoyage.
 3. **Gate C Compiler** : un seul passage manuel final pour **l'ensemble de M18**, pas de test Compiler prématuré ; **Gate D** séparée sur Amiga physique.
 
-**Prérequis** : R66 est désormais candidate Create+Stage, Gate A native PASS et Gate B WinUAE à faire ; la capture d'icône reste un chantier ultérieur, aucun token AP20 ajouté ici. R65 Gates A/B passées et R63 `LAST_GOOD` protégée. Ne pas attribuer R67 sans clôture du périmètre R66.
+**État de clôture de l'essai R67 :** R66 et R67 ont leurs Gates A/B PASS, sans promotion automatique. L'ASC R67 est archivé dans `tests/passed/` et `tests/current/` ne comporte plus de test actif. R63 reste `LAST_GOOD`, Compiler C sera testé une seule fois en fin de M18. Le prochain chantier à contractualiser est CBlock.
 
 Références : [rapport de validation R65](M18_R65_FICON8_PUT_WINUAE_GATE_B_2026-11-13.md) · [capture AGAPIC M16](M16_AGAPIC_CAPTURE_DESIGN.md) · [format FICON8](M18_FICON16_SOURCE_P1.md) · [règles](../EXTENSION_SOURCE_RULES.md).
