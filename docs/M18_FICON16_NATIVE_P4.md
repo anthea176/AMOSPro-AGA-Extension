@@ -1,6 +1,6 @@
-# M18/P4 — raccordement AMOS/Fast Icon et Safe (prototype Gate A)
+# M18/P4 — raccordement AMOS Fast Icon/Bank/Safe, Gates A/B/C PASS
 
-**État : Gate A native 68000 PASS (226 cas) sur [CI 43419369202](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43419369202).** Candidate unique de travail R61 0.13.6 dans [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), 36 816 octets, SHA256 `ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f`. R60 LAST_GOOD conservée ; **Gates B/C WinUAE et D matériel non encore exécutées**.
+**État au 13/11/2026 : Gate A CPU/CI PASS (226 cas), Gate B AMOS interprété PASS, Gate C compilé WinUAE PASS pour le scénario testé.** [Rapport B/C](M18_R61_FICON_WINUAE_GATES_BC.md). Candidate R61 v0.13.6, [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), 36 816 octets, SHA256 `ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f`. **R60 LAST_GOOD protégée ; R61 NON PROMUE. Gate D physique non testée.**
 
 ## API proposée
 
@@ -16,6 +16,6 @@ La nouvelle routine [émetteur P4](../tools/m18_ficon_ap20_emit.py) résout Bnk.
 
 Le [builder mémoire](../tools/build_m18_r61_ficon.py) reconstruit la R60 SHA-épinglée et ajoute un seul token/point d'entrée AP20 sans modifier les anciennes fonctions. Le [test Gate A](../tools/test_m18_r61_ficon_gate_a.py) vérifie les deux dispositions AP20, les pixels, ABI, mémoire front et rejets sans écriture.
 
-**Gate A CPU PASS ; Gates B/C/D absentes.** R61 est publiée sous le circuit unique : `dist/AMOSPro_AGA.Lib` et `tests/current/<un seul programme>.asc`, tandis que `dist/AMOSPro_AGA_LAST_GOOD.Lib` est intangible.
+**Gates A/B/C PASS sur le seul scénario WinUAE documenté ; Gate D non réalisée.** Circuit unique conservé : `dist/AMOSPro_AGA.Lib` et `tests/current/M18_R61_FICON_01.asc`, sans promotion automatique ni changement de `LAST_GOOD`.
 
 **Ressources de validation :** [test ASC R61](../tests/current/M18_R61_FICON_01.asc), [banque ABK FICON8](../tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [instructions](../tests/current/README.md). Le flag Fast de la banque ne garantit pas sa position physique : le vérifier dans WinUAE. Aucun backend DMA/Blitter masqué ni cache Chip natif n'est fourni dans R61.
