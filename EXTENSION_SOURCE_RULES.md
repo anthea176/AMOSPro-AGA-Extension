@@ -22,6 +22,14 @@ Rapport : [OPT020/P2 R71 link repair](docs/OPT020_P2_R71_LINK_REPAIR_2026-11-13.
 
 [Rapport R72](docs/OPT020_P2_R72_D3_REJECT_2026-11-13.md).
 
+## GARDE-FOU PERMANENT — Fast Icons OPT020/P3 et refus sur CPU000
+
+Pour les variantes `opt020=True` de `Aga F Icon Capture` (entrée 66), `Aga F Icon` public (entrée 60) et son noyau de dessin : **vérifier `ExecBase.AttnFlags/AFF_68020` avec des opcodes 68000** avant toute instruction `BFEXTU/BFINS`, avant la recherche de banque, `Safe` et la première écriture. Sur 68000 ou avec `AFF_68020` absent, retour `D3=0`, `D2=0`, ABI/pile préservées et aucun pixel/banque modifié. La vérification doit aussi exister dans le noyau interne, même lorsque le wrapper la réalise déjà.
+
+Pour chaque évolution OPT020/P3, exiger : (1) identité octet-à-octet des émetteurs historiques `opt020=False` R61/R67 ; (2) test CPU Musashi réel 68EC020/68020, 8 plans, modes opaque/masqué, coordonnées non alignées, clipping, registres/canaries/front/back ; (3) exécution du **wrapper public AP20**, pas uniquement du noyau, et tests négatifs CPU000 / drapeaux CPU erronés ; (4) manifeste `native_relative_links` vérifié après insertion des entrées **60 et 66 dans les 70 corps**, sur les octets du monolithe final ; (5) Gate B interprétée réelle sur la seule bibliothèque active avant toute promotion.
+
+[Rapport P3 et CI ciblée](docs/OPT020_P3_FAST_ICONS_68020_2026-11-13.md) · [CI P3 144 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43523606901). Le sélecteur de commit `[p3-target]` lance seulement le workflow P3 ; la CI d'intégrité générale est **sautée**, pas validée. Pas de benchmark de gains, ni nouveau Compiler avant le jalon final OPT020.
+
 ## RÈGLE DE VALIDATION M18 — Compiler une seule fois à la fin du chantier (13/11/2026)
 
 **Instruction explicite de l'auteur : ne pas lui demander un nouvel essai AMOS Compiler à chaque fonction ou correctif.** Durant le développement M18, les tests manuels se font **en AMOS interprété** ; les tests CPU natifs, ABI et disposition Compiler V2 simulée continuent en CI. Un **seul passage de validation manuelle Compiler sous WinUAE est prévu à la fin du chantier M18**, sur un exécutable nouvellement compilé depuis la candidate finalisée et l'ASC actif unique. Ce choix ne transforme pas une Gate A simulée en Gate C réelle, ne promeut aucune bibliothèque, et n'autorise pas à annoncer une Gate C PASS tant que l'auteur ne l'a pas effectuée.
