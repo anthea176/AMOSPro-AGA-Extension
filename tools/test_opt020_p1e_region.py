@@ -89,7 +89,7 @@ class LiveRegionCPU:
         self.stride = stride
         self.invalid_mem_at = invalid_mem_at
         self.draw_api = draw_api
-        assert 1 <= screen_width <= 128 and 1 <= screen_height <= 64
+        assert 1 <= screen_width <= 320 and 1 <= screen_height <= 256
         assert stride >= ((screen_width + 15) // 16) * 2 and stride % 2 == 0
         m = self.m
         m.mem.w32(0, STACK)

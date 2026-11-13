@@ -19,6 +19,7 @@ from audit_ap20 import inspect, parse
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, wrap_native_ap20_v2
 from compiler_relocation import GETP, repack_ap20, unpack_ap20
 from m16_agapic import pack_image
+from m16_agapic_sample import sample
 from m16_image_draw_r45_emit import ENTRY_INDEX, emit_image_draw, F, F020
 from test_opt020_p1e_region import LiveRegionCPU
 
@@ -31,10 +32,11 @@ R68_SHA = "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 def check(native, blob, depth, *, x, y, mode, front=0, flag=0,
           cpu_type=CPUType.M68020, attnflags=2, pending=0,
           safe_ready=True, expect_ok=True, source_len=None,
-          source_start=None, invalid_mem_at=0, w=17, h=7, stride=12):
+          source_start=None, invalid_mem_at=0, w=17, h=7, stride=12,
+          screen_width=64, screen_height=42):
     m = LiveRegionCPU(
         cpu_type, native, blob, base=0x1c000, depth=depth,
-        screen_width=64, screen_height=42, stride=stride,
+        screen_width=screen_width, screen_height=screen_height, stride=stride,
         front=front, bank_flag=flag, pending=pending,
         safe_ready=safe_ready, attnflags=attnflags,
         invalid_mem_at=invalid_mem_at, draw_api=True,
@@ -127,6 +129,22 @@ def main():
                         check(native, blob, depth, x=x, y=y, front=front,
                               mode=mode, flag=flag, cpu_type=kind, w=w, h=h)
                         cases += 1
+    # REAL 64x40x4 AGAPIC bank, same 1836-byte DATA payload and positions
+    # as the R70 WinUAE ASC. Earlier 17x7 synthetic tests cannot catch
+    # group-per-row/real-bank/physical-screen edge or nested-RTS failures.
+    actual_bank, _, _ = sample()
+    assert len(actual_bank) == 1836
+    for mode, x, y in (
+        (0, 18, 20), (1, 108, 20), (1, 197, 22),
+        (1, -15, 196), (0, 291, 182), (1, 256, -17),
+        (1, 105, 241), (0, 320, 256),
+    ):
+        check(native, actual_bank, 4, x=x, y=y, mode=mode,
+              w=64, h=40, stride=40, screen_width=320,
+              screen_height=256, flag=0)
+        cases += 1
+        print("P2 ACTUAL AGAPIC 64x40 PASS:", mode, x, y, flush=True)
+    print("P2 actual full-size bank/WinUAE positions CPU PASS", flush=True)
     blob = pack_image(17, 7, 4, bytes((i * 3) & 15 for i in range(119)),
                       bytes((i % 7) != 0 for i in range(119)))
     for flag in (0, 1, 3):
