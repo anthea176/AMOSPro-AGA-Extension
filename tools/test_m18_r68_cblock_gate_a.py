@@ -64,7 +64,7 @@ class CBlockMachine(Machine):
         self.nonchip=nonchip;self.fail_at=fail_at;self.corrupt=corrupt
         self.safeready=safe
         self.calls=[];self.draws=0;self.waits=0;self.getmsg=0;self.reserved=0
-        self.type_calls=[];self.freed=0
+        self.type_calls=[];self.type_results=[];self.freed=0
         self.new_total=0
         self.uc.mem_write(NEW+0x200,b"\xf9"*16)
         self.put(DB+20,1)
@@ -154,6 +154,7 @@ class CBlockMachine(Machine):
             chip|=any(base<=p<base+self.plane_size for base in self.planes)
             # Plane defaults from Machine are real Chip; other memory is not.
             if p==self.fail_at:chip=False
+            self.type_results.append((hex(p),bool(chip)))
             self._return(3 if chip else 0)
         elif address==EXEC-372:
             self.getmsg+=1
@@ -180,6 +181,12 @@ class CBlockMachine(Machine):
         idx={"capture":ENTRY_CAPTURE,"draw":ENTRY_DRAW,
              "restore":ENTRY_RESTORE}[action]
         self.load_entry(idx)
+        self.trace=[]
+        def trace(uc,address,size,user):
+            if self.entry<=address<self.entry+len(self.parts[idx]):
+                self.trace.append(address-self.entry)
+                if len(self.trace)>55:self.trace.pop(0)
+        self.uc.hook_add(UC_HOOK_CODE,trace,begin=self.entry,end=self.entry+len(self.parts[idx]))
         values=(bank,x,y,w,h,method) if action=="capture" else (
                  (bank,x,y,method) if action=="draw" else (bank,method))
         for i,r in enumerate(DR):self.uc.reg_write(r,0x1200+i)
@@ -202,7 +209,9 @@ class CBlockMachine(Machine):
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
         assert self.d(3)==expected,(action,values,self.d(3),self.calls[-9:],
-                                    list(map(hex,self.type_calls[-8:])))
+                                    self.type_results[-8:],
+                                    "TRACE",self.trace,
+                                    "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1])
         for r,value in saved.items():
             if r not in (DR[2],DR[3],AR[3]):
                 assert self.uc.reg_read(r)==value,("R68 clobbered register",r)
