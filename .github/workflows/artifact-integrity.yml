@@ -39,6 +39,8 @@ on:
       - "tools/m18_ficon_ap20_emit.py"
       - "tools/m18_ficon16_abk.py"
       - "tools/m18_ficon_chip_cache.py"
+      - "tools/m18_ficon16_chip_blit_emit.py"
+      - "tools/test_m18_ficon16_chip_blit.py"
       - "tools/test_m18_ficon_chip_cache.py"
       - "tools/test_m18_ficon16_abk.py"
       - "tools/build_m18_r61_ficon.py"
@@ -151,6 +153,8 @@ jobs:
         run: python -B tools/test_m18_ficon16_native_shifted.py
       - name: M18/P5 persistent Chip cache host model Gate A
         run: python -B tools/test_m18_ficon_chip_cache.py
+      - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
+        run: python -B tools/test_m18_ficon16_chip_blit.py
       - name: M18/P4 FIcon bank and Safe AP20 Compiler V2 Gate A (in memory)
         run: |
           python -B tools/test_m18_r61_ficon_gate_a.py

@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/P5 — cache Chip et noyau DMA masqué expérimentaux (13/11/2026)
+
+[Contrat P5](M18_FICON16_NATIVE_P5.md) · [cache AMOS FICHIP8](../tools/m18_ficon_chip_cache.py) · [noyau Blitter 68000](../tools/m18_ficon16_chip_blit_emit.py) · [tests](../tools/test_m18_ficon16_chip_blit.py). Préparation d'une banque cache Chip indépendante des ScreenBuffers (slots de 288 octets, bit de validité) et d'un rendu Blitter opaque/masqué avec WaitBlit et rejet des sources non `MEMF_CHIP`. **Gate A en attente** ; pas d'API installée, pas d'ASC supplémentaire, pas de promotion. **R61 candidate et R60 LAST_GOOD inchangées**. Après Gate A, connecter AP20 Bank + Safe et chronométrer préparation/staging séparément de la réutilisation DMA.
+
 ## M18/R61 — Fast Icon 16×16×8, Gates A/B/C PASS, R61 NON PROMUE (13/11/2026)
 
 **R61 v0.13.6, Gate A (226 cas CPU 68000) PASS, Gates B AMOS interprété et C compilé WinUAE PASS** selon captures de l'auteur du 13/11/2026. Icônes/SHIFT/clipping/invalides conformes, `RESULT 1`, `CLOSE RETURNED`, Chip Free interprété **1 797 840** et compilé **1 861 944**, identique avant/après chaque essai. Interruption `Wait Vbl` terminal ligne 141 de l'interprété, après réussite, sans crash. [Rapport complet](M18_R61_FICON_WINUAE_GATES_BC.md), [CI intégrité/CPU](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43420547089). Candidate unique [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), 36 816 octets, SHA256 `ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f` ; [ASC actif](../tests/current/M18_R61_FICON_01.asc) et [ABK FICON8](../tests/current/M18_FICON8_SAMPLE_BANK10.abk). **R60 LAST_GOOD intacte, aucune promotion R61, Gate D physique non testée.** Suite : contrôle emplacement Fast, cache Chip / Blitter masqué, benchmark natif, CBlock puis 68020+ et C2P.
