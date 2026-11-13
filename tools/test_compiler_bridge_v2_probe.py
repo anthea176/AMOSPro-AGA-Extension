@@ -27,7 +27,8 @@ R57_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0' 
 R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
 R59_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'
 R60_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'
-LAST_GOOD_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'  # User-promoted R60, matches current
+LAST_GOOD_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'  # Protected R60 independent of current candidate
+R61_SHA256 = 'ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -106,12 +107,17 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash == R60_SHA256, "Current library must be promoted R60"
+        assert active_hash in (R60_SHA256,R61_SHA256), "Current must be pinned R60 or R61"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
-        assert current_bytes == protected_bytes == build_r60()[0], "Promoted R60 builder mismatch"
+        assert protected_bytes == build_r60()[0], "Protected R60 LAST_GOOD builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
+        if active_hash == R61_SHA256:
+            from build_m18_r61_ficon import build as build_r61
+            assert current_bytes == build_r61()[0] and current_bytes != protected_bytes, "R61 pinned candidate mismatch"
+        else:
+            assert current_bytes == protected_bytes, "R60 current mismatch"
         from build_m17_r57_rastport import build as build_r57
         source_bytes, _ = build_r57()
         assert sha256(source_bytes).hexdigest() == R57_SHA256, "R57 historical source changed"
@@ -141,8 +147,9 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert unwrap_native_parts_v2(extended_v2) == (tokens, extended)
         realistic = far_segments[-1]
         # No generated AP20 is written to disk.
-        assert sha256(active.read_bytes()).hexdigest() == R60_SHA256
-        assert sha256(last_good.read_bytes()).hexdigest() == LAST_GOOD_SHA256
+        assert active.read_bytes() == current_bytes and sha256(current_bytes).hexdigest()==active_hash
+        assert last_good.read_bytes() == protected_bytes
+        assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
     print('STATIC PASS: V2 AP20 offsets', offsets, 'MAX', MAX_UNIT_BYTES,
           'R57', 'REPACK PASS' if realistic is not None else 'not mounted', flush=True)
     return tests, realistic
