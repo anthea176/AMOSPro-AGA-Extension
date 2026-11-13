@@ -26,7 +26,7 @@ F=dict(mode=0,y=4,x=8,icon=12,bank=16,base=20,length=24,count=28,
        slot=32,scrw=36,scrh=40,bitmap=44,marker=48)
 FRAME=96
 
-def emit_ficon_chip_ap20():
+def emit_ficon_chip_ap20(*, allow_reloaded_flags_zero=False):
     c=Code()
     B,L=c.branch,c.label
     def ld(key,dest):c.move(M(2,F[key]),dest)
@@ -77,8 +77,19 @@ def emit_ficon_chip_ap20():
     c.move(M(0,-16),D(0))
     ld("bank",D(1));c.alu("cmp",D(1),0);B(6,"reject")
     uw(0,-12)
-    c.imm("and",3,D(0),"w")
-    c.imm("cmp",3,D(0),"w");B(6,"reject") # AmBk DATA+CHIP bank flags
+    # AMOS on WinUAE can normalize a reloaded DATA bank's native flags
+    # to 0 (confirmed for AGAPIC/R46). The ABK *on-disk* Chip flag 3
+    # is not the same as this runtime word. Actual DMA safety is proven
+    # by TypeOfMem(MEMF_CHIP) on the allocation and source slot.
+    # Keep the original strict R62 code path byte-identical for history.
+    if allow_reloaded_flags_zero:
+        c.tst(D(0));B(7,"loaded_data_flags_ok")  # real reloaded DATA: zero
+        c.imm("and",0xfffd,D(0),"w")            # DATA 1 or 3
+        c.imm("cmp",1,D(0),"w");B(6,"reject")
+        L("loaded_data_flags_ok")
+    else:
+        c.imm("and",3,D(0),"w")
+        c.imm("cmp",3,D(0),"w");B(6,"reject")  # old strict R62 logic
     c.move(M(0,-8),D(0))
     c.imm("cmp",0x46494348,D(0));B(6,"reject") # "FICH"
     c.move(M(0,-4),D(0))

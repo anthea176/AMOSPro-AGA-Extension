@@ -1,5 +1,9 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLE DE VALIDATION M18 — Compiler une seule fois à la fin du chantier (13/11/2026)
+
+**Instruction explicite de l'auteur : ne pas lui demander un nouvel essai AMOS Compiler à chaque fonction ou correctif.** Durant le développement M18, les tests manuels se font **en AMOS interprété** ; les tests CPU natifs, ABI et disposition Compiler V2 simulée continuent en CI. Un **seul passage de validation manuelle Compiler sous WinUAE est prévu à la fin du chantier M18**, sur un exécutable nouvellement compilé depuis la candidate finalisée et l'ASC actif unique. Ce choix ne transforme pas une Gate A simulée en Gate C réelle, ne promeut aucune bibliothèque, et n'autorise pas à annoncer une Gate C PASS tant que l'auteur ne l'a pas effectuée.
+
 ## RÈGLE ABSOLUE DE L'AUTEUR — un seul circuit de travail AGA (12/11/2026)
 
 **Cette règle explicite prévaut sur toutes les instructions et pratiques historiques contradictoires du dépôt. Aucun assistant, script, workflow ni agent ne doit improviser un autre circuit.**
