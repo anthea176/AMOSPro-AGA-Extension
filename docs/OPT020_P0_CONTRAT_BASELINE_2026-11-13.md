@@ -56,3 +56,5 @@ Les mesures R60 AGAPIC et R68 CBlock ne portent **pas** sur le même algorithme 
 **Étape d'implémentation suivante :** concevoir et valider le **banc d'exécution réelle 68020** et le premier noyau autonome de référence/variante `Aga Image Region` avant toute nouvelle bibliothèque.
 
 **P1 ouvert (13/11/2026) :** [sous-noyau opaque 16 pixels AGAPIC et validation native 68020](OPT020_P1_BITFIELD_PROTOTYPE_2026-11-13.md). La qualification CPU indépendante est en attente au commit initial, aucune version R69 ni test WinUAE revendiqués.
+
+**Résultat P1 du 13/11/2026 :** le [noyau opaque 16 pixels AGAPIC](OPT020_P1_BITFIELD_PROTOTYPE_2026-11-13.md) a été exécuté dans Musashi sur 68000, 68EC020 et 68020 : **768/768 PASS** ([CI 43489837368](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43489837368)). Cela qualifie la faisabilité du sous-noyau uniquement, **pas** le moteur RLE complet, un gain réel de temps ou les Gates AMOS B/C/D.

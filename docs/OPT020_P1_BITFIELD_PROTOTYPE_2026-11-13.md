@@ -1,6 +1,6 @@
 # OPT020/P1 — Noyau opaque AGAPIC 16 pixels, 68000 vs 68020
 
-**Ouverture : 13 novembre 2026. État à la publication : code soumis, exécution CPU Musashi / CI en attente.** Travail exclusivement sur `main`.
+**Validation P1 du 13 novembre 2026 : PASS sur le noyau autonome 68000 / 68EC020 / 68020, [CI 43489837368](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43489837368).** Travail exclusivement sur `main`. Aucune bibliothèque 020 installable.
 
 [Émetteur source](../tools/opt020_p1_bitfield_emit.py) · [Test natif](../tools/test_opt020_p1_bitfield_native.py) · [Workflow P1](../.github/workflows/opt020-p1.yml)
 
@@ -20,11 +20,21 @@ La variante 68020 occupe **12 octets** de code autonome. Les mots sont encodés 
 
 **Non traité à P1 :** flux RLE et limites des paquets, mode masqué, clipping, bords de lignes, taille/validité d'une banque, 8 plans à la fois, allocation, resynchronisation Blitter, ABI AP20/Compiler V2, émission du binaire installable. Ces cas nécessitent un fallback ou des validations avant toute intégration. La source AGAPIC peut rester en Fast RAM puisque les accès sont CPU.
 
-## 3. Validation prévue
+## 3. Validation réelle — CPU 020 autonome PASS
 
 Le [test](../tools/test_opt020_p1_bitfield_native.py) utilise la bibliothèque **Musashi via `machine68k==0.4.0`**, capable d'exécuter du vrai code **68EC020 et 68020**, en plus du témoin 68000. Les opcodes sont contrôlés par **Capstone 5.0.9** avec les modes 000 et 020.
 
-Le protocole couvre **256 couples (offset, motif)** par CPU, soit **768 exécutions** indépendantes, avec fond aléatoire, oracle bit-à-bit, comparaison de **tout le buffer** pour détecter les modifications hors champ, contrôles de la source, du retour, d'A3/D5 et de la pile. Les opcodes ne sont pas intégrés à un exécutable AMOS : c'est un **test CPU autonome**. Le workflow P1 isolé ne modifie aucun livrable et n'allonge pas les vérifications R68 normales.
+Le protocole a réellement exécuté **256 couples (offset, motif)** sur chacun des trois CPU, soit **768 exécutions Musashi PASS**, avec fond aléatoire, oracle bit-à-bit, comparaison de **tout le buffer** (dont les canaries), contrôles de la source, du retour, d'A3/D5 et de la pile. **Zéro différence et zéro erreur**. La CI atteste le décodage Capstone et l'exécution native complète du sous-noyau. Les opcodes ne sont pas intégrés à un exécutable AMOS ; le workflow P1 isolé ne modifie aucun livrable.
+
+| Cible | Source exécutée | Octets de code | SHA256 du code natif | Résultat |
+|---|---|---:|---|---|
+| **68000** | Boucle de référence | 54 | `be7d3d5ba8352b12805e9d20197b9166ca24673c27434bf9721ef4ab0f87a0cf` | PASS 256/256 |
+| **68EC020** | `BFEXTU` + `BFINS` | 12 | `27b068d79e7e8b043e1d453dcca36846b75c08c5dfb0d626017f0618be55e6b5` | PASS 256/256 |
+| **68020** | Même binaire 020 | 12 | `27b068d79e7e8b043e1d453dcca36846b75c08c5dfb0d626017f0618be55e6b5` | PASS 256/256 |
+
+**Estimation Musashi cumulée (à ne pas utiliser comme chronométrage Amiga) :** 68000 `312256` cycles, 68EC020 `14336`, 68020 `14336` pour les 256 cas par cible. Les nombres reflètent le sous-noyau autonome dans Musashi, **sans** coût de décodage RLE, API AMOS, Fast/Chip, DMA, caches ou Clip ; ne pas en faire un ratio de performance réel.
+
+[Journal de validation complet](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43489837368) · [Commit des opcodes/test](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/17df14a8e4a677fdefa59b59bc6e0b2145518231).
 
 **Les cycles Musashi ne sont pas des mesures WinUAE/Amiga**. Aucun gain ne sera affirmé avant un benchmark WinUAE sans JIT à conditions comparables (68020/14 MHz puis 68030/28 MHz). La prochaine phase devra traiter les 8 plans, le masquage, les groupes RLE et les bords de ligne avant toute bibliothèque.
 
