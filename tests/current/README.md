@@ -1,11 +1,7 @@
-# OPT020/P2 R71 - Gate B WinUAE interpree pending
+# OPT020/P2 — R72 candidate — Gate B interpreted pending
 
-**Seule bibliotheque active :** `dist/AMOSPro_AGA.Lib`, candidate **R71 v0.13.16**, 51 460 octets, SHA256 `1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0`. R71 conserve le code natif P1e (entree 59) de R69 et le peintre P2 de R70, mais corrige trois branchements relatifs dans les entrees 20, 57 et 58. **Gate A/CI PASS. Gate B WinUAE interprétée PASS sur le scénario documenté ; Gate C Compiler NON TESTÉE.** Ne pas promouvoir.
+**Active single binary**: `dist/AMOSPro_AGA.Lib` **R72 v0.13.17**, **51,468 bytes**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`. The preceding R71 passed real interpreted WinUAE Gate B (see [R71 report](../../docs/OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md)); R72 fixes the late PASS-1 RLE mutation rejection result `D3=0`, without changing the API. **R72 Gate A CPU/CI PASS; real Gate B NOT TESTED, Gate C Compiler NOT TESTED.**
 
-**R68 LAST_GOOD immuable :** `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R69 conserve sa validation WinUAE et ses benchmarks dans les historiques ; R70 a echoue en interprete avec Guru `80000004`.
+**Only active test:** [OPT020_P2_R72_INTERPRETED_01.asc](OPT020_P2_R72_INTERPRETED_01.asc) with `M16_AGAPIC_SAMPLE_BANK10.abk`. Checks `Clear → Fill → Draw`, Region, old Bank Draw, opaque/masked, clips, bad parameters, Swap/Safe and close. Install R72 in the existing APSystem slot, fully restart AMOS, run in interpreted mode on WinUAE AGA 68020 14 MHz JIT OFF PAL. Record `RESULT 1`, `CLOSE RETURNED`, unchanged Chip Free and no Guru. Do not run AMOS Compiler until the final validation milestone. The source mutation race itself is tested in [Musashi Gate A](../../docs/OPT020_P2_R72_D3_REJECT_2026-11-13.md), not by this visual ASC.
 
-**ASC unique :** [OPT020_P2_R71_INTERPRETED_01.asc](OPT020_P2_R71_INTERPRETED_01.asc) avec `M16_AGAPIC_SAMPLE_BANK10.abk`. Scenario integre : `Aga Blit Clear` puis `Aga Blit Fill` avant `Aga Image Draw`, `Aga Image Region`, et `Aga Bank Image Draw`. Les valeurs de retour, l'image, `RESULT 1`, `CLOSE RETURNED` et l'absence de Guru doivent etre verifies sous WinUAE 68020 14 MHz, JIT OFF, PAL, AMOS interprete. Gate B interprétée confirmée PASS par les captures auteur (RESULT 1, CLOSE RETURNED, CHIP 1661542/1661542) ; voir docs/OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md.
-
-**Important :** installer le binaire correspondant dans le slot AGA d'AMOS/APSystem et redemarrer AMOS. Ne pas lancer AMOS Compiler. Les tests Musashi, la CI et la reconstruction AP20 ne prouvent jamais la Gate B.
-
-[Incident R70](../../docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md) | [Correctif R71](../../docs/OPT020_P2_R71_LINK_REPAIR_2026-11-13.md)
+**Frozen R68 LAST_GOOD** remains `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R71 and R70 remain in Git history; R70 failed interpreted Gate B with Guru `80000004`. No extra binary/ASC candidates, no branch, no automatic promotion.

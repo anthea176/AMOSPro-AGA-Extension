@@ -50,7 +50,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R71 0.13.16"):
+    if active.startswith("R72 0.13.17"):
+        from build_opt020_p2_r72 import build as build_r72
+        candidate, meta = build_r72()
+        assert candidate == current and meta["sha256"] == "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
+        print("CURRENT R72 OPT020/P2 late D3 fix: native Gate A PASS; WinUAE B/Compiler C PENDING", meta)
+    elif active.startswith("R71 0.13.16"):
         from build_opt020_p2_r71 import R71_SHA, build as build_r71
         candidate, meta = build_r71()
         assert candidate == current and meta["sha256"] == R71_SHA

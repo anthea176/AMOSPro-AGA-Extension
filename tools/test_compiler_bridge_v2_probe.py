@@ -13,7 +13,7 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack, unpack_from
 
-from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA  # SHA-pinned releases.
+from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA  # SHA-pinned releases.
 
 from compiler_bridge_v2_probe import (
     DISPATCH_V2, MAX_UNIT_BYTES, is_v2_wrapped,
@@ -40,7 +40,8 @@ R67_SHA256 = 'ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5'
 R68_SHA256 = 'ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed'
 R69_SHA256 = R69_SHA  # Historical OPT020/P1e R69.
 R70_SHA256 = R70_SHA  # Historical R70, failed WinUAE; cannot be active.
-R71_SHA256 = R71_SHA  # R71 corrected native relative links, WinUAE pending.
+R71_SHA256 = R71_SHA  # R71 corrected relative links, WinUAE interpreted PASS.
+R72_SHA256 = R72_SHA  # R72 P2 late failure D3 reset, WinUAE Gate B pending.
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -119,13 +120,20 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256), "Current must be an exact pinned V2 candidate"
+        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256,R72_SHA256), "Current must be an exact pinned V2 candidate"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
         assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        if active_hash == R71_SHA256:
+        if active_hash == R72_SHA256:
+            from build_opt020_p2_r72 import build as build_r72
+            from native_relative_links import assert_native_links
+            candidate, meta = build_r72()
+            assert current_bytes == candidate and current_bytes != protected_bytes, "R72 deterministic source mismatch"
+            assert meta["size"] == 51468 and meta["commands"] == 64 and meta["ap20_entries"] == 71
+            assert_native_links(unwrap_native_parts_v2(current_bytes)[1])
+        elif active_hash == R71_SHA256:
             from build_opt020_p2_r71 import build as build_r71
             from native_relative_links import assert_native_links
             candidate, meta = build_r71()

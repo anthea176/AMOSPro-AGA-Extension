@@ -83,8 +83,8 @@ def main():
         )
         assert all(x in source for x in needed), "P1e interpreted Gate B scenario incomplete"
         print("PASS: P1e active ASC covers opaque/masked, aligned/clip, reject, close (STATIC only)")
-    # R71 integrated Gate B: include Clear -> Fill before first P2 Draw.
-    if files and files[0].name == "OPT020_P2_R71_INTERPRETED_01.asc":
+    # R71/R72 integrated Gate B: Clear -> Fill before first P2 Draw.
+    if files and files[0].name in ("OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc"):
         source = files[0].read_bytes().decode("latin-1")
         required = (
             "Aga Blit Clear(0,0,320,256)",
@@ -112,7 +112,7 @@ def main():
         assert all(x in source for x in required), "P2 active test misses R69 or P2 cases"
         assert source.count('Print "CLOSE RETURNED"') == 1
         assert source.index("Aga Blit Clear(") < source.index("Aga Blit Fill(") < source.index("Aga Image Draw(")
-        print("PASS: R71 active ASC exercises Clear -> Fill -> Draw, Region and legacy Bank Draw (STATIC only)")
+        print("PASS: P2 active ASC exercises Clear -> Fill -> Draw, Region and legacy Bank Draw (STATIC only)")
     # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
     if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
         source = files[0].read_text("ascii")

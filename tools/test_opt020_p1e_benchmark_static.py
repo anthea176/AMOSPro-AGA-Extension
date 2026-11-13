@@ -23,6 +23,7 @@ BANK = ROOT / "tests/current/M16_AGAPIC_SAMPLE_BANK10.abk"
 R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
 R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 R71_SHA = "1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"
+R72_SHA = "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
 
 
 def main() -> None:
@@ -38,10 +39,16 @@ def main() -> None:
     assert sha256(GOOD.read_bytes()).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha == R71_SHA:
+    if active_sha == R72_SHA:
+        from build_opt020_p2_r72 import build as build_r72
+        from native_relative_links import assert_native_links
+        assert active == build_r72()[0], "Current R72 changed"
+        assert_native_links(unwrap_native_parts_v2(active)[1])
+        assert unwrap_native_parts_v2(active)[1][IMAGE_REGION_INDEX] == unwrap_native_parts_v2(candidate)[1][IMAGE_REGION_INDEX]
+    elif active_sha == R71_SHA:
         from build_opt020_p2_r71 import build as build_r71
         from native_relative_links import assert_native_links
         assert active == build_r71()[0], "Current R71 changed"

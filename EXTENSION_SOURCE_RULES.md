@@ -12,6 +12,16 @@
 
 Rapport : [OPT020/P2 R71 link repair](docs/OPT020_P2_R71_LINK_REPAIR_2026-11-13.md).
 
+## GARDE-FOU PERMANENT — résultat D3 en cas de rejet tardif P2 (R72)
+
+`Aga Image Draw` utilise `D3` comme code de retour AMOS, mais les noyaux de peinture 68020 utilisent aussi `D3` comme résultat intermédiaire. **Aucun chemin de rejet, y compris après écriture partielle en PASS 1, ne doit laisser `D3=1`.** Lorsqu'un flux RLE est modifié entre PASS 0 et PASS 1, l'exécution peut avoir déjà écrit certains groupes ; le retour doit rester `0`, et le code ne doit promettre aucun rollback non implémenté.
+
+- Exiger un test CPU qui modifie le flux pendant `GetMsg/Safe` après PASS 0, vérifie le rejet de la dernière ligne après peinture des lignes précédentes et contrôle D3, A3, A7, D2, registres préservés, canaries et mémoire front.
+- La correction R72 est **optionnelle** dans l'émetteur : ne pas altérer les binaires R46/R70/R71 historiques ni `LAST_GOOD`. Toujours recalculer et contrôler les trois liens inter-routines pour une variation de longueur de l'entrée 55.
+- La Gate A CPU ne vaut pas une Gate B WinUAE, et aucun benchmark/Compiler C n'est présumé.
+
+[Rapport R72](docs/OPT020_P2_R72_D3_REJECT_2026-11-13.md).
+
 ## RÈGLE DE VALIDATION M18 — Compiler une seule fois à la fin du chantier (13/11/2026)
 
 **Instruction explicite de l'auteur : ne pas lui demander un nouvel essai AMOS Compiler à chaque fonction ou correctif.** Durant le développement M18, les tests manuels se font **en AMOS interprété** ; les tests CPU natifs, ABI et disposition Compiler V2 simulée continuent en CI. Un **seul passage de validation manuelle Compiler sous WinUAE est prévu à la fin du chantier M18**, sur un exécutable nouvellement compilé depuis la candidate finalisée et l'ASC actif unique. Ce choix ne transforme pas une Gate A simulée en Gate C réelle, ne promeut aucune bibliothèque, et n'autorise pas à annoncer une Gate C PASS tant que l'auteur ne l'a pas effectuée.

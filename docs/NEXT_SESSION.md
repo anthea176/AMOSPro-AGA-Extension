@@ -1,12 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## État actuel R71 — Gate B interprétée PASS (13 novembre 2026)
+## État actuel OPT020/P2 — R72 candidate, Gate A/CI PASS (13/11/2026)
 
-R71 v0.13.16 P2 a été exécutée dans AMOS interprété sous WinUAE avec deux captures auteur : écran AGA conforme au scénario et console `RESULT 1`, `CLOSE RETURNED`, `CHIP BEFORE/END 1661542 1661542`. **Gate A/CI PASS, Gate B PASS sur le scénario, Gate C et D NON TESTÉES.** [Preuve R71](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). Il ne s'agit pas d'une égalité pixel par pixel automatique.
+**Unique candidate :** `dist/AMOSPro_AGA.Lib` R72 v0.13.17, **51 468 octets**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`. **Unique ASC actif :** `tests/current/OPT020_P2_R72_INTERPRETED_01.asc` (+ banque AGAPIC déjà présente). Aucun fichier de `tests/passed/`, archive ou binaire `LAST_GOOD` modifié.
 
-**Unique binaire :** `dist/AMOSPro_AGA.Lib`, R71, 51 460 octets, SHA256 `1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0`. **Unique ASC actif :** `tests/current/OPT020_P2_R71_INTERPRETED_01.asc`. **R68 LAST_GOOD intangible** (`ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`). R70 défaillante (Guru `80000004`) préservée dans Git ; cause de déplacement de trois sauts démontrée et corrigée R71. Aucun nouveau débogage de l'exception R70 nécessaire.
+**Motif R72 :** après PASS 0, la modification de la dernière ligne RLE pendant GetMsg/Safe provoque un rejet tardif alors qu'un peintre 020 a déjà mis `D3=1`. R71 retourne faussement succès ; R72 ajoute un reset explicite sur `reject`, sans changer l'API ni la routine P1e. [Preuve CPU native reproductible](OPT020_P2_R72_D3_REJECT_2026-11-13.md) ; [CI native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43519680726) et [intégrité préparatoire PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43519680832).
 
-**Prochain correctif approuvé par l'auteur :** isoler et corriger `D3` sur rejet tardif de PASS 1 en cas de banque RLE modifiée entre les deux passes. Ajouter test CPU ciblé avec mutation du flux après PASS 0. Ne pas modifier le binaire R71 historique dans Git, `LAST_GOOD`, les archives ou `tests/passed/`. Travail exclusivement sur `main`, une seule candidate active ; WinUAE réel indispensable pour Gate B de la prochaine candidate. **AMOS Compiler uniquement au jalon final.**
+**À faire :** vérifier la CI d'intégrité sur l'unique R72 active puis effectuer **Gate B réelle sous WinUAE interprété** (68020 14 MHz JIT OFF PAL). Contrôler `RESULT 1`, `CLOSE RETURNED`, image conforme, `Clear → Fill`, absence Guru et mémoire stable. Ne pas annoncer PASS avant captures. Puis benchmark P2 et égalité pixels. Ne pas lancer AMOS Compiler avant la fin du chantier ; **R68 LAST_GOOD** SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed` protégée. **R71 Gate B PASS historique** : [preuve](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). R70 FAIL Guru `80000004` préservée dans Git.
+
+**Plan de suite :** OPT020 final → Fast Icons si bénéfice mesuré → `c2p.library` → AGAPIC v2, sur `main` exclusivement, sans branche/PR.
 
 ### Anciennes notes (historique, non autoritaires pour la candidate actuelle)
 

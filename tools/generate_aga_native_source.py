@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R71_SHA:
+        if sha(raw) == R72_SHA:
+            from build_opt020_p2_r72 import build as pinned_build
+            release = "R72"
+        elif sha(raw) == R71_SHA:
             from build_opt020_p2_r71 import build as pinned_build
             release = "R71"
         elif sha(raw) == R70_SHA:
@@ -499,17 +502,35 @@ def verified_current_compiler_seeds(parsed):
                 from m16_image_draw_r45_emit import emit_image_draw
                 blob70,_ = build_r70()
                 r71_case = raw != reconstruct(blob70)
+                r72_case = False
                 if r71_case:
                     from build_opt020_p2_r71 import build as build_r71
                     from native_relative_links import relink_native_parts
                     from compiler_bridge_v2_probe import unwrap_native_parts_v2
                     blob71,_ = build_r71()
-                    need(raw == reconstruct(blob71),
-                         "Strict source: unknown native AP20; R71 audit required")
-                    t70, p70 = unwrap_native_parts_v2(blob70)
-                    repaired = relink_native_parts(p70)
-                    need(raw == repack_ap20(blob70, t70, repaired, parsed['title']),
-                         "Strict source: R71 native differs from exactly three repaired links")
+                    r72_case = raw != reconstruct(blob71)
+                    if r72_case:
+                        from build_opt020_p2_r72 import build as build_r72
+                        from compiler_relocation import GETP
+                        blob72,_ = build_r72()
+                        need(raw == reconstruct(blob72),
+                             "Strict source: unknown native AP20; R72 audit required")
+                        t71, p71 = unwrap_native_parts_v2(blob71)
+                        trial = list(p71)
+                        new55,_ = emit_image_draw(
+                            accept_loaded_flags_zero=True, opt020=True,
+                            reset_failure_d3=True)
+                        trial[55] = new55 + GETP
+                        repaired = relink_native_parts(trial)
+                        need(raw == repack_ap20(blob71, t71, repaired, parsed['title']),
+                             "Strict source: R72 differs from audited D3 and three re-linked branches")
+                    else:
+                        need(raw == reconstruct(blob71),
+                             "Strict source: unknown native AP20; R71 audit required")
+                        t70, p70 = unwrap_native_parts_v2(blob70)
+                        repaired = relink_native_parts(p70)
+                        need(raw == repack_ap20(blob70, t70, repaired, parsed['title']),
+                             "Strict source: R71 differs from exactly three repaired links")
                 original69 = parse_lib(reconstruct(blob69))
                 old_seeds = verified_current_compiler_seeds(original69)
                 need(bool(old_seeds), "Strict source: inherited R69 seeds not verified")
@@ -520,9 +541,11 @@ def verified_current_compiler_seeds(parsed):
                     need(sections[i]['core'] == inherited[i]['core']
                          and sections[i]['getp'] == inherited[i]['getp'],
                          f"Strict source: R70/R71 changes unrelated native entry {i}")
-                native55, labels55 = emit_image_draw(accept_loaded_flags_zero=True, opt020=True)
+                native55, labels55 = emit_image_draw(
+                    accept_loaded_flags_zero=True, opt020=True,
+                    reset_failure_d3=r72_case)
                 need(sections[55]['core'] == native55 and sections[55]['getp'],
-                     "Strict source: R70/R71 Image Draw differs from exact P2 emitter")
+                     "Strict source: R70/R71/R72 Image Draw differs from exact P2 emitter")
                 need({'decode_rows','paint_group','p1e_full_16','p1e_fragment','safe'} <= set(labels55),
                      "Strict source: P2 Image Draw source provenance incomplete")
                 seeds = dict(old_seeds)
