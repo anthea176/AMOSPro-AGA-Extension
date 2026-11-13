@@ -10,7 +10,9 @@
 
 **ASC actif unique :** [`tests/current/OPT020_P1E_R69_INTERPRETED_01.asc`](../tests/current/OPT020_P1E_R69_INTERPRETED_01.asc), adapté du test R60 déjà validé ; banque `M16_AGAPIC_SAMPLE_BANK10.abk`. **Gate B interprétée PASS :** [rapport avec console et analyse des deux captures](OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md) : `RESULT 1`, `CLOSE RETURNED`, 4 sous-images, masques/clipping et `Chip Free 1800320 → 1800320`. **Gate C non testée**, vitesse non mesurée, CPU/JIT exact non attesté sur les captures. Ne lancer l'unique compilation réelle qu'après gel de la candidate finale. R69 non promue ; R68 `LAST_GOOD` intacte.
 
-### Benchmark comparatif R60 → R69 (préparé, mesures en attente)
+### Benchmark comparatif R60 → R69 (prêt, CI PASS, mesures WinUAE en attente)
+
+**Préflight benchmark + intégrité complète : [CI SUCCESS 43503814027](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43503814027), commit [`37abb18`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/37abb18bbdf15f1b17e0ec173007c72f2eec3599).** Identité de la routine R60 dans R68 `LAST_GOOD` et correspondance déterministe R69 vérifiées, aucune modification du binaire ou de l'ASC actif. Cette CI ne constitue **pas** un résultat chronométrique WinUAE.
 
 Nouveau [benchmark comparatif interprété](../benchmarks/opt020_p1e_r60_vs_r69.asc) et [protocole détaillé](../benchmarks/README_OPT020_P1E_R60_VS_R69.md). Baseline **R68 `LAST_GOOD` : routine `Aga Image Region` R60 identique**, puis candidate R69, **même WinUAE 68020 à 14 MHz, JIT OFF, PAL, même banque, même ASC**. Dix cas (source centre/masque dense, opaque, x+1, 17 pixels, clip, 32×20), trois séries de 240 appels ; retours de tous les appels et restitution Chip contrôlés. Benchmark source placé dans `benchmarks/`, **l'unique ASC actif de `tests/current/` inchangé**. **Aucun chiffre de vitesse ni Gate C Compiler à ce stade.** Avant toute publication de gain : les deux captures et leurs paramètres WinUAE, calcul des médianes, vérification `ERR 0`, `RESULT 1`, `CLOSE -1` et Chip Free identique.
 
