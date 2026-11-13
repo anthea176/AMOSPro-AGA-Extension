@@ -48,7 +48,7 @@ Le prototype limite volontairement le compte à 4096, **ce n'est pas une limite 
 
 ## 4. Suite avant toute R61
 
-**Baseline WinUAE à réaliser (R60 inchangée) :** [bench R60 16×16](../benchmarks/m18_r60_cpu_vs_blit_16x16.asc) · [protocole](../benchmarks/README_M18_CPU_BLIT_16X16.md). CPU AGAPIC RLE depuis la banque 10 contre Blitter Chip→Chip sur icône préchargée ; les préparations étant différentes, **ne pas appeler cette mesure un benchmark définitif Fast Icon**. Aucune vitesse Amiga relevée à ce stade.
+**Baseline WinUAE à réaliser (R60 inchangée) :** [bench R60 16×16](../benchmarks/m18_r60_cpu_vs_blit_16x16.asc) · [protocole](../benchmarks/README_M18_CPU_BLIT_16X16.md). CPU AGAPIC RLE depuis la banque 10 contre Blitter Chip→Chip sur icône préchargée ; les préparations étant différentes, **ne pas appeler cette mesure un benchmark définitif Fast Icon**. **Première baseline WinUAE R60 mesurée** ([rapport](../benchmarks/RESULTATS_M18_R60_CPU_BLIT_16X16_2026-11-13.md)) : médianes CPU AGAPIC / Blitter Chip **2/8 ticks aligné** et **2/12 en X+1**, 1 200 appels par série ; ERR 0 et Chip Free stable. **Mode interprété/compilé inconnu, Timer 20 ms, résultats non représentatifs des Fast Icons natifs.** Le vrai benchmark CPU/Blitter Fast Icon reste à préparer après la réalisation de la commande native.
 
 
 

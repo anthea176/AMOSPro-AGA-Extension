@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18 — première capture benchmark R60 16×16 PASS (13/11/2026)
+
+[**Rapport brut**](../benchmarks/RESULTATS_M18_R60_CPU_BLIT_16X16_2026-11-13.md) · [programme ASC](../benchmarks/m18_r60_cpu_vs_blit_16x16.asc). CPU AGAPIC **3/2/2** contre Blitter **8/7/8** ticks aligné ; CPU **2/1/2** contre Blitter **12/12/11** en X+1. 1 200 appels par essai, tick PAL = 20 ms ; médianes CPU/Blitter **2/8** et **2/12**. **ERR 0, CLOSE -1, Chip Free 1 799 968 identique avant/après, fin normale.** Mode **interprété/compilé non identifiable** : demander cette information puis le passage manquant. La comparaison CPU AGAPIC compressée / Blitter Chip préchargée est asymétrique et très courte, **pas un benchmark du moteur Fast Icon natif 8 plans**. R60 LAST_GOOD et tests archivés non modifiés, aucun ASC actif, M18 poursuit le moteur d'icônes puis CBlock avant 68020+/C2P.
+
 ## M18 — benchmark WinUAE 16×16 à mesurer avec R60 (13/11/2026)
 
 **Programme de mesure préliminaire :** [ASC](../benchmarks/m18_r60_cpu_vs_blit_16x16.asc) et [protocole](../benchmarks/README_M18_CPU_BLIT_16X16.md), avec la banque exemple AGAPIC déjà connue. Deux chemins **R60 existants** : `Aga Image Region` décompresse et peint les pixels au CPU ; `Aga Blit Copy` recopie une icône préchargée dans le back buffer en Chip, staging non chronométré. Aligned et X+1, 3 essais de 1200 appels, PAL 16 couleurs, aucun Wait Vbl dans les boucles. **Résultats réels WinUAE à relever en interprété et compilé ; aucune mesure inventée. Ce test ne valide PAS la performance du futur F Icon CPU non compressé/Blitter.** ASC dans `benchmarks/` seulement, **tests/current/ sans ASC**, R60 `LAST_GOOD` inchangée. P1 host CPU/mots Blitter et conversion AGAPIC sont déjà PASS CI. M18 poursuit l'API native et CBlock après la mesure initiale, sans lancer 68020+/c2p.
