@@ -15,6 +15,7 @@ from machine68k import Machine, CPUType, Register
 
 from m18_ficon16_model import build_bank, parse_bank, draw_cpu
 from m18_ficon16_native_shifted_emit import emit_ficon16_shifted_cpu
+from m18_ficon_ap20_emit import emit_ficon_ap20
 from m18_ficon_capture_emit import emit_ficon_capture, GETADR_MARKER
 from opt020_p1_bitfield_emit import bitfield_020
 
@@ -175,10 +176,12 @@ class Harness:
         self.mem.w32(STACK,STOP)
         for reg,value in SAVE.items():
             self.cpu.w_reg(reg,value)
-        if entry=="capture":
-            self.cpu.w_reg(Register.D3,y&0xffffffff)
+        if entry in ("capture","wrapper"):
+            self.cpu.w_reg(Register.D3,(
+                y if entry=="capture" else mode)&0xffffffff)
             self.cpu.w_reg(Register.A3,PARAMS)
-            for i,value in enumerate((x,icon,bank)):
+            values=(x,icon,bank) if entry=="capture" else (y,x,icon,bank)
+            for i,value in enumerate(values):
                 self.mem.w32(PARAMS+i*4,value&0xffffffff)
         else:
             self.cpu.w_reg(Register.A0,BANK+12+(icon-1)*288)
@@ -192,7 +195,7 @@ class Harness:
             self.cpu.w_reg(Register.D5,HEIGHT)
             self.cpu.w_reg(Register.A3,0x2F000)
         saved={reg:self.cpu.r_reg(reg) for reg in SAVE}
-        if entry!="capture":
+        if entry=="draw":
             # A0/A1/D0/D1/D4/D5 are genuine core inputs.
             for key in (Register.A0,Register.A1,Register.D0,Register.D1,
                         Register.D4,Register.D5):
@@ -206,7 +209,8 @@ class Harness:
                                        entry,x,y,self.cpu.r_pc(),res)
         assert self.cpu.r_sp()==STACK+4,"A7 leak"
         assert self.cpu.r_reg(Register.A3)==(
-            PARAMS+12 if entry=="capture" else 0x2F000),"A3 modified"
+            PARAMS+12 if entry=="capture" else
+            PARAMS+16 if entry=="wrapper" else 0x2F000),"A3 modified"
         assert self.cpu.r_reg(Register.D2)==0,"AP20 D2 not cleared"
         for reg,val in saved.items():
             assert self.cpu.r_reg(reg)==val,("register clobber",reg,
@@ -267,11 +271,44 @@ def draw_one(core,*,cpu_type,x,y,mode):
     finally:m.close()
 
 
+def wrapper_one(wrapper,*,cpu_type,front,x,y,mode=0,bank=12,icon=2,
+                pending=0,safe_ready=True,expected_ok=True):
+    assert wrapper.count(GETADR_MARKER)==1
+    code=wrapper.replace(GETADR_MARKER,b"\x4e\xb9"+pack(">I",BANK_SERVICE))
+    m=Harness(code,cpu_type,"Draw AP20",front=front,
+              pending=pending,safe_ready=safe_ready)
+    try:
+        baseline=[bytearray(p) for p in m.back_before]
+        target=[bytearray(p) for p in baseline]
+        if expected_ok:
+            draw_cpu(parse_bank(m.bankraw),icon,x,y,mode,target,
+                     WIDTH,HEIGHT,STRIDE,alignment="pixel")
+        result=m.run(x=x,y=y,mode=mode,icon=icon,bank=bank,entry="wrapper")
+        assert result==int(expected_ok),("Aga F Icon return",cpu_type,
+                                         x,y,mode,bank,icon,result)
+        assert m.read_planes(m.backptrs)==tuple(bytes(p) for p in target),(
+            "Aga F Icon AP20 pixels",cpu_type,x,y,mode,front)
+        assert m.mem.r_block(BANK,len(m.bankraw))==m.bankraw
+        assert m.calls["waitblit"]==0
+        if expected_ok:
+            assert m.calls["bank"]==1,"Bnk.GetAdr not invoked"
+            visible=(-16<x<WIDTH and -16<y<HEIGHT)
+            assert m.calls["getmsg"]==int(bool(pending&1) and visible)
+        else:
+            assert m.calls["getmsg"]<=int(bool(pending&1))
+        m.checks()
+        return 1
+    finally:m.close()
+
+
 def main():
     old_core,_=emit_ficon16_shifted_cpu()
     new_core,l_draw=emit_ficon16_shifted_cpu(opt020=True)
     old_capture,_=emit_ficon_capture()
     new_capture,l_cap=emit_ficon_capture(opt020=True)
+    wrapper,l_wrapper=emit_ficon_ap20(opt020=True)
+    assert wrapper.endswith(new_core)
+    assert l_wrapper["core"] < len(wrapper)
     assert old_core!=new_core and old_capture!=new_capture
     assert "p3_plane" in l_draw and "pixel" not in l_cap
     decoder=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
@@ -305,6 +342,19 @@ def main():
     for x,y in ((-1,3),(49,3),(3,-1),(3,27)):
         tested+=capture_one(new_capture,cpu_type=CPUType.M68020,
                             front=0,x=x,y=y,expected=False)
+    for cpu_type in (CPUType.M68EC020,CPUType.M68020):
+        for x,y,mode in ((0,0,0),(1,1,1),(7,8,0),(15,5,1),
+                         (32,13,0),(48,26,1),(-7,9,1),
+                         (54,14,0),(64,3,0)):
+            tested+=wrapper_one(wrapper,cpu_type=cpu_type,front=0,
+                                x=x,y=y,mode=mode,pending=x&1)
+        for x,y,mode,bank,icon,safe_ready in (
+            (8,8,2,12,2,True), (8,8,1,4,2,True),
+            (8,8,1,12,0,True),(8,8,1,12,2,False)):
+            tested+=wrapper_one(wrapper,cpu_type=cpu_type,front=1,
+                                x=x,y=y,mode=mode,bank=bank,icon=icon,
+                                pending=1,safe_ready=safe_ready,
+                                expected_ok=False)
     print("OPT020 P3 NATIVE CPU GATE A PASS",tested,
           "capture+draw real 68EC020/68020 cases, 8 planes, ABI, guards")
     print("Only source emitters tested; P3 AP20/WinUAE candidate NOT validated.")
