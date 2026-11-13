@@ -10,7 +10,7 @@
 
 ## M18 / R60 — rendu natif AGAPIC par sous-rectangle, Gates A/B/C PASS
 
-**Unique binaire de travail `dist/AMOSPro_AGA.Lib` : R60 v0.13.5**, 35 056 octets, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`, 54 commandes / 61 entrées AP20, V2 32 798 octets. Nouveau `Aga Image Region` (8 arguments). [`m18_image_region_emit.py`](m18_image_region_emit.py) (2 012 octets 68000), [builder](build_m18_r60_image_region.py), [test M68000](test_m18_r60_image_region.py) : **86 cas CPU Gate A PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43318155860)) et reconstruction déterministe. **Gates B/C WinUAE PASS sur l'ASC R60** (captures auteur du 13/11/2026, `RESULT 1`, `CLOSE RETURNED` ; régression complète de pré-release en attente) ; un seul ASC [actif](../tests/current/M18_R60_IMAGE_REGION_01.asc). `LAST_GOOD` R59 inchangée. [Rapport](../docs/M18_R60_IMAGE_REGION.md).
+**Unique binaire de travail `dist/AMOSPro_AGA.Lib` : R60 v0.13.5**, 35 056 octets, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`, 54 commandes / 61 entrées AP20, V2 32 798 octets. Nouveau `Aga Image Region` (8 arguments). [`m18_image_region_emit.py`](m18_image_region_emit.py) (2 012 octets 68000), [builder](build_m18_r60_image_region.py), [test M68000](test_m18_r60_image_region.py) : **86 cas CPU Gate A PASS** ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43318155860)) et reconstruction déterministe. **Gates B/C WinUAE PASS sur l'ASC R60** (captures auteur du 13/11/2026, `RESULT 1`, `CLOSE RETURNED` ; [régression complète de pré-release PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638) sur commit exact `a8b14bc`) ; un seul ASC [actif](../tests/current/M18_R60_IMAGE_REGION_01.asc). `LAST_GOOD` R59 inchangée. [Rapport](../docs/M18_R60_IMAGE_REGION.md).
 
 ## M18 / P0 — atlas AGAPIC v1, modèle hôte (pas de bibliothèque)
 
@@ -43,7 +43,7 @@ Les builders et sondes R47–R52 sont conservés pour la reproductibilité, sans
 
 ## Construction Compiler-safe — R59 promue, R46 C1 figée
 
-**Courant : R59 0.13.4**, [installable](../dist/AMOSPro_AGA.Lib) et [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques (32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`, Gates A/B/C et régression complète PASS). La R57 v0.13.2 est un checkpoint historique reproductible ; la R46 C1 reste [archivée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) à l'octet près.
+**Candidate courante : R60 0.13.5**, [bibliothèque installable](../dist/AMOSPro_AGA.Lib) 35 056 octets, Gates A/B/C PASS sur le test R60, [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638). **Référence protégée : R59 0.13.4**, [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) 32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. La R57 v0.13.2 est un checkpoint historique reproductible ; la R46 C1 reste [archivée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) à l'octet près.
 
 **Vérifier l'officielle et son pont :**
 

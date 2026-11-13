@@ -32,7 +32,7 @@ Les images restent au format AGAPIC **v1**, aucune nouvelle compression ni gesti
 
 **Attendu** : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru. La boucle finale `Do / Wait Vbl / Loop` s'arrête manuellement. Les retours numériques ne suffisent pas à qualifier un rendu incorrect : contrôler visuellement les sous-images.
 
-**R60 non promue** : Gates B/C confirmées, régression complète sur le SHA exact de pré-release et accord explicite de l'auteur requis avant remplacement de `LAST_GOOD`. CBlock et `F 16 Icon` restent des lots séparés M18 ; pas de choix CPU/Blitter AUTO avant mesures.
+**Régression complète R60 PASS** : [GitHub Actions 43382293638](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638), commit exact `a8b14bc1f4e73e4a5d70bfceffa375447497c86d`, les deux jobs SUCCESS. **R60 NON PROMUE** : accord explicite de l'auteur encore requis avant tout remplacement de `LAST_GOOD`. CBlock et `F 16 Icon` restent des lots séparés M18 ; pas de choix CPU/Blitter AUTO avant mesures.
 
 ## Sources
 
