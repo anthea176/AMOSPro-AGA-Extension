@@ -187,6 +187,7 @@ class CBlockMachine(Machine):
         self.load_entry(idx)
         self.trace=[]
         self.core_debug=[]
+        self.first_core=[]
         native_core,_=emit_cblock_copy_core()
         core_off=(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1]["copy_core"]
         core_watch={core_off+offset for offset in
@@ -197,6 +198,9 @@ class CBlockMachine(Machine):
                 offset=address-self.entry
                 self.trace.append(offset)
                 if len(self.trace)>55:self.trace.pop(0)
+                if core_off<=offset<core_off+len(native_core) and len(self.first_core)<36:
+                    self.first_core.append((offset,hex(uc.reg_read(AR[7])),
+                                            bytes(uc.mem_read(address,2)).hex()))
                 if offset in core_watch and len(self.core_debug)<100:
                     sp=uc.reg_read(AR[7])
                     self.core_debug.append((offset,hex(sp),hex(self.get(sp))))
@@ -224,7 +228,9 @@ class CBlockMachine(Machine):
             hex(STACK+4),hex(self.uc.reg_read(UC_M68K_REG_PC)),
             self.calls[-12:],self.trace[-45:],
             "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1],
-            "CORE_SP",self.core_debug
+            "CORE_SP",self.core_debug,
+            "FIRST_CORE_PC",self.first_core,
+            "CORE_HEADER",bytes(self.uc.mem_read(self.entry+core_off,16)).hex()
         )
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
