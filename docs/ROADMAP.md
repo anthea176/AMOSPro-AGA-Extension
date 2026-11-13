@@ -42,6 +42,8 @@
 
 ### M18 — CBlock AGA : **vitesse prioritaire / banque temporaire Chip** (contrat corrigé 13/11/2026)
 
+**AVERTISSEMENT R68 / Gate A FAIL (13/11/2026)** : [diagnostic du wrapper](M18_R68_CBLOCK_GATE_A_BLOCKER_2026-11-13.md). Les premières captures CPU8 et la recapture sans allocation sont testées, mais la première restitution `Draw` échoue sur la pile native sous Unicorn. **R68 n'est pas publiée**, pas de test WinUAE ni de benchmark ; le test R68 est **manuel uniquement** dans Actions pour éviter les échecs récurrents sur `main`. R67 seule candidate A/B PASS, R63 LAST_GOOD protégée. Le P0 standalone reste PASS et distinct.
+
 **R68 EN COURS, NON INSTALLÉE (Gate A préparée) :** trois wrappers natifs expérimentaux [Capture/Draw/Restore](../tools/m18_cblock_bank_emit.py) avec argument Method (0 CPU8, 1 CPU16, 2 Blitter), banque Chip temporaire réutilisable, modèle natif 68000 et tests en CI. [Builder R68 en mémoire](../tools/build_m18_r68_cblock.py), aucune modification de la Lib candidate R67 ou de LAST_GOOD avant validation Gate A. Suite : un seul ASC interprété pour WinUAE, mesurer les trois chemins, pas de Compiler jusqu'à la clôture M18.
 
 **P0 — copie CPU8 / CPU16 / BLIT8** : [rapport de prototype](M18_CBLOCK_CPU_BLITTER_PROTOTYPE.md) et noyau 68000 standalone (872 octets générés localement). Modèle hôte **1 250 comparaisons PASS** ; test natif Unicorn/Capstone en CI ; **aucun timing WinUAE ou choix du chemin rapide encore justifié**. Aucun token AP20 ou binaire modifié. Suite : banque Chip temporaire + wrapper sécurisé, puis un seul ASC interprété pour chronos 8/16 pixels.

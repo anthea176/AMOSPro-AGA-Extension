@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R68 — Gate A BLOQUÉE (13/11/2026)
+
+[Rapport de diagnostic et reprise](M18_R68_CBLOCK_GATE_A_BLOCKER_2026-11-13.md). **Gate A native du wrapper R68 : FAIL**, malgré P0 CPU8/CPU16/Blitter autonome PASS. Les deux premières captures/recaptures CPU8 sont atteintes ; `Draw` échoue sur l'ABI **A7 `$EFFF84` au lieu de `$F00004`**, avec entrée anormale au sein du noyau (`copy_core+210`) sans exécution observée de son prologue. Cause exacte non déterminée. **Ne pas installer R68 ni annoncer Gate A/B PASS.** Son workflow de test natif ne s'exécute plus automatiquement à chaque push, mais reste accessible en `workflow_dispatch`. **R67 v0.13.12 reste la seule candidate A/B PASS, R63 LAST_GOOD est intacte**, `tests/current/` vide ; aucune compilation AMOS avant fin M18, `main` uniquement.
+
 ## M18/R68 — Wrapper Chip CBlock EN GATE A, non publié (13/11/2026)
 
 **Code source natif en cours de qualification**, [émetteur](../tools/m18_cblock_bank_emit.py), [builder in-memory](../tools/build_m18_r68_cblock.py), [test M68000 Gate A](../tools/test_m18_r68_cblock_gate_a.py). Trois commandes expérimentales avec **Method explicite** pour mesurer précisément les modes **0 CPU8, 1 CPU16, 2 Blitter** : `Aga C Block Capture(Bank,X,Y,Width,Height,Method)`, `Aga C Block Draw(Bank,X,Y,Method)`, `Aga C Block Restore(Bank,Method)`. Banque `AGACBLK ` temporaire RAW dans Chip physique, réutilisation sans réallocation à taille/profondeur identiques, `TypeOfMem` début/fin de chaque plan, Safe et WaitBlit, source/destination back buffer privé AGA.
