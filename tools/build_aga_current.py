@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the SHA-pinned promoted R59 V2 and frozen historical R46 C1.
+"""Verify the SHA-pinned promoted R60 V2 and frozen historical R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -49,7 +49,7 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R60 0.13.5"):
+    if active.startswith(("R60 0.13.5", "promoted R60 v0.13.5")):
         from build_m18_r60_image_region import build as build_r60
         candidate,meta = build_r60()
         assert candidate==current, "R60 candidate must be byte-exact to deterministic builder"
@@ -98,7 +98,7 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (audited R59)")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R60)")
     print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 

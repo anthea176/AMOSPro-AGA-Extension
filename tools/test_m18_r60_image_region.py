@@ -197,7 +197,7 @@ def main() -> None:
           "actual 68000 pixel/ABI cases (interpreted/compiled layouts)")
     print("R60 additive 54 tokens, 61 AP20 entries, V2 >32K,",
           meta["region_routine_bytes"],"bytes new 68000 code")
-    print("R59 LAST_GOOD untouched; R60 Gate B/C WinUAE NOT TESTED")
+    print("Gate A is CPU-only; WinUAE B/C author-confirmed separately")
 
 
 if __name__=="__main__":

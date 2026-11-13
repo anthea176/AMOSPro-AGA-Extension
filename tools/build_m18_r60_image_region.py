@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """M18/R60 0.13.5: ADDITIVE AGAPIC v1 atlas region, Compiler V2 candidate.
 
-Read-only builder from exact R59 promoted LAST_GOOD. Preserve every existing
-token and original native function byte-for-byte. Add a GetP marker and one
-new native 68000 region renderer. No archive, LAST_GOOD or working Lib writes.
+Read-only deterministic builder from historical SHA-pinned R59 builder.
+Independent of the CURRENT LAST_GOOD, which now points to R60. Append only
+one GetP marker and native 68000 routine, preserving all R59 public stubs.
 """
 from __future__ import annotations
 
@@ -18,9 +18,10 @@ from compiler_bridge_v2_probe import (
 )
 from compiler_relocation import GETP, repack_ap20, unpack_ap20
 from m18_image_region_emit import ENTRY_INDEX, GETADR_MARKER, emit_image_region
+from build_m17_r59_compact_v2 import build as build_r59
 
 ROOT = Path(__file__).resolve().parents[1]
-LAST_GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+# R59 is reconstructed via build_r59; no dependency on current LAST_GOOD.
 R59_SHA = "00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"
 API = ("aga image region", 1, ENTRY_INDEX, "00,0,0,0,0,0,0,0")
 TITLE = (
@@ -31,8 +32,8 @@ TITLE += bytes(len(TITLE) % 2)
 
 
 def build() -> tuple[bytes, dict]:
-    r59 = LAST_GOOD.read_bytes()
-    assert sha256(r59).hexdigest() == R59_SHA, "promoted R59 changed"
+    r59, _ = build_r59()
+    assert sha256(r59).hexdigest() == R59_SHA, "historical R59 builder changed"
     assert is_v2_wrapped(r59)
     old_tokens, original = unwrap_native_parts_v2(r59)
     _, old_parts, _ = unpack_ap20(r59)
@@ -72,7 +73,7 @@ def build() -> tuple[bytes, dict]:
                and x["getp"] for x in report["parameter_checks"])
     assert len(new_entries[-1]) < 65534
     return binary, {
-        "version": "M18/R60 0.13.5 candidate (CPU Gate A only)",
+        "version": "M18/R60 0.13.5 promoted (A/B/C + full regression)",
         "bytes": len(binary),
         "sha256": sha256(binary).hexdigest(),
         "public_commands": len(named),

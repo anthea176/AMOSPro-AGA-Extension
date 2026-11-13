@@ -1,6 +1,6 @@
-# M18/R60 v0.13.5 — AGAPIC Image Region (candidate)
+# M18/R60 v0.13.5 — AGAPIC Image Region, `LAST_GOOD` PROMUE
 
-**12 novembre 2026.** Développement directement sur `main`. **Unique binaire de travail** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **35 056 octets**, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`. **R59 v0.13.4 `LAST_GOOD` inchangée** (32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`). Aucune nouvelle branche, archive ou binaire alternatif.
+**13 novembre 2026 — promotion sur `main` après validation et accord de l'auteur.** **Binaire installable = `LAST_GOOD`** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **35 056 octets**, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`. **R59 v0.13.4 est désormais un checkpoint historique** (32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`) via son builder déterministe et [Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/3f7957632781e06816a1019fae24a4cd7eb58aac/dist/AMOSPro_AGA_LAST_GOOD.Lib). Aucun binaire alternatif créé.
 
 ## Fonctionnalité et API
 
@@ -32,7 +32,7 @@ Les images restent au format AGAPIC **v1**, aucune nouvelle compression ni gesti
 
 **Attendu** : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru. La boucle finale `Do / Wait Vbl / Loop` s'arrête manuellement. Les retours numériques ne suffisent pas à qualifier un rendu incorrect : contrôler visuellement les sous-images.
 
-**Régression complète R60 PASS** : [GitHub Actions 43382293638](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638), commit exact `a8b14bc1f4e73e4a5d70bfceffa375447497c86d`, les deux jobs SUCCESS. **R60 NON PROMUE** : accord explicite de l'auteur encore requis avant tout remplacement de `LAST_GOOD`. CBlock et `F 16 Icon` restent des lots séparés M18 ; pas de choix CPU/Blitter AUTO avant mesures.
+**Régression complète R60 PASS** : [GitHub Actions 43382293638](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638), commit exact `a8b14bc1f4e73e4a5d70bfceffa375447497c86d`, les deux jobs SUCCESS. **R60 `LAST_GOOD` PROMUE (13/11/2026)** avec accord explicite. Les deux fichiers `dist/` sont identiques ; [ASC R60 archivé à l'octet près](../tests/passed/M18_R60_IMAGE_REGION_01.asc), aucun ASC actif. **M18 continue** pour `F 16 Icon` et CBlock. CBlock et `F 16 Icon` restent des lots séparés M18 ; pas de choix CPU/Blitter AUTO avant mesures.
 
 ## Sources
 
