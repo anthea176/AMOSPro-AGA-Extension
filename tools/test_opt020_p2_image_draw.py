@@ -28,6 +28,7 @@ R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
 R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 R71_SHA = "1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"
 R72_SHA = "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
+R73_SHA = "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 R68_SHA = "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 
 
@@ -58,7 +59,7 @@ def v2_check(native):
     active = path.read_bytes()
     protected = protected_path.read_bytes()
     actual_sha = sha256(active).hexdigest()
-    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA), "Unrecognized active P1e/P2 candidate"
+    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA), "Unrecognized active P1e/P2 candidate"
     assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
     assert emit_image_draw(accept_loaded_flags_zero=True)[0] == old
@@ -68,6 +69,13 @@ def v2_check(native):
         assert active == build_r70()[0], "Installed R70 differs from deterministic source"
         from build_opt020_p1e_r69 import build as build_r69
         baseline = build_r69()[0]  # Historical Image Draw core for isolated P2
+    elif actual_sha == R73_SHA:
+        from build_opt020_p3_r73 import build as build_r73
+        from build_opt020_p1e_r69 import build as build_r69
+        from native_relative_links import assert_native_links
+        assert active==build_r73()[0],"Installed R73 differs from deterministic source"
+        assert_native_links(unwrap_native_parts_v2(active)[1])
+        baseline=build_r69()[0]
     elif actual_sha == R72_SHA:
         from build_opt020_p2_r72 import build as build_r72
         from build_opt020_p1e_r69 import build as build_r69

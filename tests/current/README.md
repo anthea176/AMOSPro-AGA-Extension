@@ -1,7 +1,13 @@
-# OPT020/P2 — R72 candidate — Gate B interpreted pending
+# OPT020/P3 — R73 v0.13.18 : Gate B WinUAE interprétée
 
-**Active single binary**: `dist/AMOSPro_AGA.Lib` **R72 v0.13.17**, **51,468 bytes**, SHA256 `fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b`. The preceding R71 passed real interpreted WinUAE Gate B (see [R71 report](../../docs/OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md)); R72 fixes the late PASS-1 RLE mutation rejection result `D3=0`, without changing the API. **R72 Gate A CPU/CI PASS; real Gate B NOT TESTED, Gate C Compiler NOT TESTED.**
+**Unique bibliothèque de travail :** `dist/AMOSPro_AGA.Lib` R73, **51 608 octets**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`, 64 commandes, 71 entrées AP20. **Gate A native/ABI ciblée PASS**, **Gate B R73 NON TESTÉE**, Compiler Gate C **différée jusqu’à la fin d’OPT020**. [Rapport P3](../../docs/OPT020_P3_FAST_ICONS_68020_2026-11-13.md).
 
-**Only active test:** [OPT020_P2_R72_INTERPRETED_01.asc](OPT020_P2_R72_INTERPRETED_01.asc) with `M16_AGAPIC_SAMPLE_BANK10.abk`. Checks `Clear → Fill → Draw`, Region, old Bank Draw, opaque/masked, clips, bad parameters, Swap/Safe and close. Install R72 in the existing APSystem slot, fully restart AMOS, run in interpreted mode on WinUAE AGA 68020 14 MHz JIT OFF PAL. Record `RESULT 1`, `CLOSE RETURNED`, unchanged Chip Free and no Guru. Do not run AMOS Compiler until the final validation milestone. The source mutation race itself is tested in [Musashi Gate A](../../docs/OPT020_P2_R72_D3_REJECT_2026-11-13.md), not by this visual ASC.
+**Unique ASC actif :** `OPT020_P3_R73_INTERPRETED_01.asc`. Utilise deux banques distinctes, **10 = AGAPIC v1** `M16_AGAPIC_SAMPLE_BANK10.abk` et **11 = FICON8** `M18_FICON8_SAMPLE_BANK10.abk`. Ces `Load` remplacent les banques 10/11 existantes : exécuter dans une session WinUAE de test.
 
-**Frozen R68 LAST_GOOD** remains `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R71 and R70 remain in Git history; R70 failed interpreted Gate B with Guru `80000004`. No extra binary/ASC candidates, no branch, no automatic promotion.
+- WinUAE **AGA, 68020 à 14 MHz, JIT OFF, PAL**, AMOS Professional **interprété seulement**. Installer la R73 dans l’unique slot AGA d’`APSystem`, redémarrer complètement AMOS.
+- L’ASC ouvre un écran **320×256, 256 couleurs**, double buffering, `Clear → Fill`, puis teste les dessins `Aga Image Draw` (P2) et `Aga Image Region` (P1e), le Bank Image Draw historique, les bords et paramètres invalides.
+- P3 : `Aga F Icon` opaque, masqué, décalé, clipping gauche/droite/haut/bas ; `Aga F Icon Capture` en X non aligné après dessin opaque ; compare **288 octets** capturés au slot d'origine ; refuse banque/ID/coordonnées invalides ; contrôle les retours après fermeture.
+- La console doit montrer les retours attendus, **`FICON CAP/EQ288 1 1`**, `RESULT 1`, `CLOSE RETURNED`, **Chip Free avant/après identique**, et **aucun Guru**. Le résultat sera à confirmer par les captures réelles de l’auteur : la CI ne remplace pas WinUAE.
+- Ne pas mesurer de gains et **ne pas lancer AMOS Compiler** dans ce jalon. Gate C unique en fin de chantier OPT020.
+
+**Intouchables :** R68 `dist/AMOSPro_AGA_LAST_GOOD.Lib` (51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`), archives, `tests/passed/`. R72 interprétée A/B PASS conservée dans l’historique Git (51 468 octets). Aucun second binaire ni ASC de travail.

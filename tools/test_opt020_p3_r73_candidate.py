@@ -16,6 +16,7 @@ from native_relative_links import LINKS,assert_native_links
 ROOT=Path(__file__).resolve().parents[1]
 R68="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 R72="fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
+R73="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 
 
 def main():
@@ -56,12 +57,13 @@ def main():
     assert len(candidate)<65536,"unexpected binary expansion"
     # A new R73 candidate may be installed only in a separate later commit.
     current_sha=sha256(original_active).hexdigest()
-    assert current_sha==R72,("R73 test initial run expects the validated R72 active",current_sha)
+    assert current_sha in (R72,R73),("Unexpected active library",current_sha)
+    assert original_active==(previous if current_sha==R72 else candidate)
     assert active_path.read_bytes()==original_active
     assert protected_path.read_bytes()==original_good
     print("R73 EXACT IN-MEMORY RELEASE CANDIDATE GATE A PASS",meta,flush=True)
     print("3 negative relative link corruption cases rejected; R72/R68 bytes unchanged",flush=True)
-    print("NO R73 active Lib and NO AMOS Compiler or WinUAE tests performed",flush=True)
+    print("Active Lib unchanged by test; NO AMOS Compiler or WinUAE test",flush=True)
 
 if __name__=="__main__":
     main()

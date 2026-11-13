@@ -50,7 +50,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R72 0.13.17"):
+    if active.startswith("R73 0.13.18"):
+        from build_opt020_p3_r73 import build as build_r73
+        candidate, meta = build_r73()
+        assert candidate == current and meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R73 OPT020/P3 Fast Icon CAP+DRAW: native Gate A PASS; WinUAE B/Compiler C PENDING", meta)
+    elif active.startswith("R72 0.13.17"):
         from build_opt020_p2_r72 import build as build_r72
         candidate, meta = build_r72()
         assert candidate == current and meta["sha256"] == "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"

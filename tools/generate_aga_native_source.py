@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R72_SHA:
+        if sha(raw) == R73_SHA:
+            from build_opt020_p3_r73 import build as pinned_build
+            release = "R73"
+        elif sha(raw) == R72_SHA:
             from build_opt020_p2_r72 import build as pinned_build
             release = "R72"
         elif sha(raw) == R71_SHA:
@@ -503,6 +506,7 @@ def verified_current_compiler_seeds(parsed):
                 blob70,_ = build_r70()
                 r71_case = raw != reconstruct(blob70)
                 r72_case = False
+                r73_case = False
                 if r71_case:
                     from build_opt020_p2_r71 import build as build_r71
                     from native_relative_links import relink_native_parts
@@ -513,8 +517,26 @@ def verified_current_compiler_seeds(parsed):
                         from build_opt020_p2_r72 import build as build_r72
                         from compiler_relocation import GETP
                         blob72,_ = build_r72()
-                        need(raw == reconstruct(blob72),
-                             "Strict source: unknown native AP20; R72 audit required")
+                        r73_case = raw != reconstruct(blob72)
+                        if r73_case:
+                            from build_opt020_p3_r73 import build as build_r73
+                            from m18_ficon_ap20_emit import emit_ficon_ap20
+                            from m18_ficon_capture_emit import emit_ficon_capture
+                            blob73,_ = build_r73()
+                            need(raw == reconstruct(blob73),
+                                 "Strict source: unknown native AP20; R73 audit required")
+                            t72, p72 = unwrap_native_parts_v2(blob72)
+                            trial73 = list(p72)
+                            d73,_ = emit_ficon_ap20(opt020=True)
+                            c73,_ = emit_ficon_capture(opt020=True)
+                            trial73[60] = d73 + GETP
+                            trial73[66] = c73 + GETP
+                            repaired73 = relink_native_parts(trial73)
+                            need(raw == repack_ap20(blob72, t72, repaired73, parsed['title']),
+                                 "Strict source: R73 changed something besides the audited Fast Icon entries")
+                        else:
+                            need(raw == reconstruct(blob72),
+                                 "Strict source: unknown native AP20; R72 audit required")
                         t71, p71 = unwrap_native_parts_v2(blob71)
                         trial = list(p71)
                         new55,_ = emit_image_draw(
@@ -536,7 +558,7 @@ def verified_current_compiler_seeds(parsed):
                 need(bool(old_seeds), "Strict source: inherited R69 seeds not verified")
                 inherited = original69['section']
                 for i in range(70):
-                    if i == 55 or (r71_case and i in (20, 57, 58)):
+                    if i == 55 or (r71_case and i in (20, 57, 58)) or (r73_case and i in (60, 66)):
                         continue
                     need(sections[i]['core'] == inherited[i]['core']
                          and sections[i]['getp'] == inherited[i]['getp'],
@@ -550,6 +572,21 @@ def verified_current_compiler_seeds(parsed):
                      "Strict source: P2 Image Draw source provenance incomplete")
                 seeds = dict(old_seeds)
                 seeds[55] = {0}
+                if r73_case:
+                    from m18_ficon_ap20_emit import emit_ficon_ap20, GETADR_MARKER as F73GET
+                    from m18_ficon_capture_emit import emit_ficon_capture, GETADR_MARKER as C73GET
+                    draw73, draw73_labels = emit_ficon_ap20(opt020=True)
+                    cap73, cap73_labels = emit_ficon_capture(opt020=True)
+                    need(sections[60]['core'] == draw73 and sections[60]['getp']
+                         and sections[66]['core'] == cap73 and sections[66]['getp'],
+                         "Strict source: R73 Fast Icon source differs from opt-in emitters")
+                    need(draw73.count(F73GET)==cap73.count(C73GET)==1,
+                         "Strict source: R73 AMOS Bnk.GetAdr markers changed")
+                    # The wrapper enters its appended core through source-backed
+                    # JSR; the AMOS Rjsr continuation is an independent CFG seed.
+                    seeds[60] = {0, draw73_labels['core'],
+                                 draw73.index(F73GET)+len(F73GET)}
+                    seeds[66] = {0, cap73.index(C73GET)+len(C73GET)}
                 return seeds
             old68=parse_lib(reconstruct(blob68))
             original_seeds=verified_current_compiler_seeds(old68)

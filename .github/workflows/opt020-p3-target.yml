@@ -33,7 +33,14 @@ jobs:
         run: python -B tools/test_opt020_p3_ap20_probe.py
       - name: Verify R73 deterministic native entries and mutated branch rejection (in memory)
         run: python -B tools/test_opt020_p3_r73_candidate.py
-      - name: Emit R73 base64 from verified deterministic in-memory source
-        run: python -B tools/build_opt020_p3_r73.py --emit-base64
+      - name: Verify installed R73 and strict native source without running AMOS Compiler
+        run: |
+          python -B tools/verify_fast.py
+          python -B tools/build_aga_current.py
+          python -B tools/test_current_amos_blocks.py
+          python -B tools/test_compiler_bridge_v2_probe.py
+          python -B tools/test_generate_current_native_source.py
+      - name: Verify deterministic R73 binary without exporting the base64 again
+        run: python -B tools/build_opt020_p3_r73.py
       - name: Guard active library and ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/

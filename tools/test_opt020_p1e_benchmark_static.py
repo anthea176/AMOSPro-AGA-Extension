@@ -24,6 +24,7 @@ R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
 R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 R71_SHA = "1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"
 R72_SHA = "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
+R73_SHA = "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 
 
 def main() -> None:
@@ -39,10 +40,16 @@ def main() -> None:
     assert sha256(GOOD.read_bytes()).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha == R72_SHA:
+    if active_sha == R73_SHA:
+        from build_opt020_p3_r73 import build as build_r73
+        from native_relative_links import assert_native_links
+        assert active==build_r73()[0],"Current R73 not reproducible"
+        assert_native_links(unwrap_native_parts_v2(active)[1])
+        assert unwrap_native_parts_v2(active)[1][IMAGE_REGION_INDEX]==unwrap_native_parts_v2(candidate)[1][IMAGE_REGION_INDEX]
+    elif active_sha == R72_SHA:
         from build_opt020_p2_r72 import build as build_r72
         from native_relative_links import assert_native_links
         assert active == build_r72()[0], "Current R72 changed"
@@ -99,7 +106,8 @@ def main() -> None:
     active_asc = list((ROOT / "tests/current").glob("*.asc"))
     assert len(active_asc) == 1 and active_asc[0].name in (
         "OPT020_P1E_R69_INTERPRETED_01.asc", "OPT020_P2_R70_INTERPRETED_01.asc",
-        "OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc")
+        "OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc",
+        "OPT020_P3_R73_INTERPRETED_01.asc")
     print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
     print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
     print("only native entry 59 differs in pinned R69 baseline; R70/R71/R72 preserve it.")

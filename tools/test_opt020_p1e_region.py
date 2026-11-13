@@ -314,17 +314,20 @@ def v2_structure(native):
         from build_opt020_p2_r70 import build as build_r70
         from build_opt020_p2_r71 import build as build_r71, R71_SHA
         from build_opt020_p2_r72 import build as build_r72
+        from build_opt020_p3_r73 import build as build_r73
         from native_relative_links import assert_native_links
         r69, r69meta = build_r69()
         r70, r70meta = build_r70()
         r71, r71meta = build_r71()
         r72, r72meta = build_r72()
-        assert current in (r69, r70, r71, r72), "current must be EXACT pinned OPT020 R69/R70/R71/R72"
+        r73, r73meta = build_r73()
+        assert current in (r69, r70, r71, r72, r73), "current must be EXACT pinned OPT020 R69/R70/R71/R72/R73"
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
         assert r72meta["sha256"] == "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
-        if current in (r71, r72):
+        assert r73meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        if current in (r71, r72, r73):
             assert_native_links(unwrap_native_parts_v2(current)[1])
     tokens, parts = unwrap_native_parts_v2(old)
     _, installed, title = unpack_ap20(old)

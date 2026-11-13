@@ -84,7 +84,7 @@ def main():
         assert all(x in source for x in needed), "P1e interpreted Gate B scenario incomplete"
         print("PASS: P1e active ASC covers opaque/masked, aligned/clip, reject, close (STATIC only)")
     # R71/R72 integrated Gate B: Clear -> Fill before first P2 Draw.
-    if files and files[0].name in ("OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc"):
+    if files and files[0].name in ("OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc", "OPT020_P3_R73_INTERPRETED_01.asc"):
         source = files[0].read_bytes().decode("latin-1")
         required = (
             "Aga Blit Clear(0,0,320,256)",
@@ -113,6 +113,37 @@ def main():
         assert source.count('Print "CLOSE RETURNED"') == 1
         assert source.index("Aga Blit Clear(") < source.index("Aga Blit Fill(") < source.index("Aga Image Draw(")
         print("PASS: P2 active ASC exercises Clear -> Fill -> Draw, Region and legacy Bank Draw (STATIC only)")
+    # R73: preserve all R72 P1e/P2 cases, plus P3 capture+draw.
+    if files and files[0].name == "OPT020_P3_R73_INTERPRETED_01.asc":
+        source = files[0].read_bytes().decode("latin-1")
+        needed = (
+            'Load "M18_FICON8_SAMPLE_BANK10.abk",11',
+            'Aga Screen Open(320,256,256,$00021000)',
+            '_FOPA=Aga F Icon(11,1,31,104,0)',
+            '_FCAP=Aga F Icon Capture(11,4,31,104)',
+            "For _I=0 To 287",
+            "Peek(Start(11)+12+864+_I)",
+            "_FMASK=Aga F Icon(11,4,61,105,1)",
+            "_FSHIFT=Aga F Icon(11,2,133,110,0)",
+            "_FCL=Aga F Icon(11,3,-7,154,1)",
+            "_FCR=Aga F Icon(11,3,314,154,1)",
+            "_FCT=Aga F Icon(11,1,220,-5,0)",
+            "_FCB=Aga F Icon(11,2,251,252,0)",
+            "_FBADBANK=Aga F Icon(4,2,120,120,0)",
+            "_FCBADID=Aga F Icon Capture(11,5,31,44)",
+            "_FNOS=Aga F Icon(11,2,25,25,0)",
+            "_FCAPNOS=Aga F Icon Capture(11,4,25,25)",
+            "Erase 11", "Erase 10",
+            "If _CF0<>_CF1", "If _FCAP<>1", # replaced by full condition below?
+            'Print "FICON CAP/EQ288 ";_FCAP;" ";_FEQ',
+        )
+        assert all(x in source for x in needed if x != "If _FCAP<>1"), (
+            "R73 ASC misses a Fast Icon Capture or Draw safety case"
+        )
+        assert "or _FCAP<>1 or _FEQ<>1" in source
+        assert source.index("Aga Blit Clear(") < source.index("Aga Blit Fill(") < source.index("Aga Image Draw(") < source.index("Aga F Icon(") < source.index("Aga F Icon Capture(")
+        assert source.count('Print "CLOSE RETURNED"')==1
+        print("PASS: R73 single ASC has P2 regressions and P3 FICON8 opaque/masked/capture/288-byte compare/bounds (STATIC only)")
     # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
     if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
         source = files[0].read_text("ascii")
