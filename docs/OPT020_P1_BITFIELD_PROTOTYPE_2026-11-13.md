@@ -41,3 +41,5 @@ Le protocole a réellement exécuté **256 couples (offset, motif)** sur chacun 
 ## 4. Protection de la version promue
 
 **R68 v0.13.13 reste la `LAST_GOOD` inchangée :** 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Gates A/B/C déjà qualifiées sur R68, D physique non testée. **Aucune Gate OPT020 B/C/D ni nouvelle `.Lib` revendiquée.** `tests/current/` garde son seul ASC R68 ; aucun autre ASC actif. `c2p.library` reste hors chantier.
+
+**Suite du 13/11/2026 :** [P1b multi-plans, masques, RLE et clipping](OPT020_P1B_AGAPIC_RLE_MASK_2026-11-13.md) **PASS sous Musashi** sur 68EC020 et 68020 : 320 contrôles directs, 432 rendus complets, 5 352 groupes natifs, huit refus sans écriture. Le noyau multiplan autonome fait 36 octets ; le décodage RLE et le clipping restent orchestrés en Python. Aucune accélération mesurée dans WinUAE et aucun binaire AMOS modifié.

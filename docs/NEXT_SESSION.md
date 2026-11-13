@@ -1,8 +1,8 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## OPT020/P1b — groupe 1–8 plans masqué + RLE/clipping (13/11/2026)
+## OPT020/P1b — noyau 8 plans et orchestration RLE/clipping PASS CPU (13/11/2026)
 
-**Prototype natif 68EC020/68020 soumis à la CI**, [contrat détaillé](OPT020_P1B_AGAPIC_RLE_MASK_2026-11-13.md) : boucle de plans utilisant `BFEXTU/BFINS`, masque indépendant, lecture des paquets AGAPIC v1 RLE (littéraux/répétés), source recadrée et clipping sans dépassement de lignes par fallback scalaire. Le **noyau de copie** s'exécute en émulateur CPU ; **orchestration RLE/clip encore en Python**, aucune intégration AP20 ni nouveau binaire. **Validation P1b en attente**, ne pas annoncer Gate B/C ou gain de vitesse. P1 simple reste PASS. R68/`LAST_GOOD` protégées.
+**Prototype natif 68EC020/68020 soumis à la CI**, [contrat détaillé](OPT020_P1B_AGAPIC_RLE_MASK_2026-11-13.md) : boucle de plans utilisant `BFEXTU/BFINS`, masque indépendant, lecture des paquets AGAPIC v1 RLE (littéraux/répétés), source recadrée et clipping sans dépassement de lignes par fallback scalaire. Le **noyau de copie** s'exécute en émulateur CPU ; **orchestration RLE/clip encore en Python**, aucune intégration AP20 ni nouveau binaire. **P1b PASS sur Musashi 68EC020/68020** : 320 contrôles directs + 432 rendus complets, 5 352 appels natifs, 25 816 pixels en fallback, 8 refus non destructifs, 0 erreur ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43490985555)). Noyau **36 octets** SHA256 `74ef53d4f0e5d53fee8603553daea0cf2de834271b63475fa62c37bcca218138`. **Aucune Gate AMOS B/C ni gain de vitesse matériel validé.** P1 simple reste PASS. R68/`LAST_GOOD` protégées.
 
 ## OPT020/P1 — premier sous-noyau natif 68020 PASS (13/11/2026)
 
