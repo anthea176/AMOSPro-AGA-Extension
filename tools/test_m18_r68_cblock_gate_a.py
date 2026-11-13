@@ -208,7 +208,12 @@ class CBlockMachine(Machine):
                 hex(self.uc.reg_read(UC_M68K_REG_PC)),action,values,
                 self.calls[-10:],list(map(hex,self.type_calls[-8:])))) from exc
         assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
-        assert self.a(7)==STACK+4
+        assert self.a(7)==STACK+4,(
+            "R68 unbalanced stack",action,values,hex(self.a(7)),
+            hex(STACK+4),hex(self.uc.reg_read(UC_M68K_REG_PC)),
+            self.calls[-12:],self.trace[-45:],
+            "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1]
+        )
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
         assert self.d(3)==expected,(action,values,self.d(3),self.calls[-9:],
