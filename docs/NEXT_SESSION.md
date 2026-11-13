@@ -6,6 +6,14 @@
 
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P1e — R69 0.13.14, candidate unique prête pour Gate B (13/11/2026)
+
+**Gate A élargie CPU/CI PASS : 321 scénarios intégrés** (51 existants + **270 complémentaires** : profondeurs 1/2/4/8, strides exacts, canaries, banques DATA 0/1/3, RLE altérés, bits inutilisés, Bitmap, `Safe`, registres et refus). [CI P1e 90526e2](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43499755913). Le builder R69 déterministe **en mémoire** a aussi passé [la CI 43499966863](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43499966863).
+
+**Livrable de travail P1e :** une seule `dist/AMOSPro_AGA.Lib`, **R69 v0.13.14 / 51 240 octets / SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`** ; 64 commandes inchangées, 71 entrées AP20, unité V2 48 528 octets. Seule la routine `Aga Image Region` passe au peintre BFINS CPU020 ; ABI R60 conservée. **`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R68** (51 064 octets / SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`). Aucun autre binaire, aucune archive modifiée.
+
+**ASC actif unique :** [`tests/current/OPT020_P1E_R69_INTERPRETED_01.asc`](../tests/current/OPT020_P1E_R69_INTERPRETED_01.asc), adapté du test R60 déjà validé ; banque `M16_AGAPIC_SAMPLE_BANK10.abk`. **Prochain jalon : Gate B AMOS interprété sous WinUAE AGA 68020 ou 68030 JIT OFF, contrôles console et visuel.** **Aucune Gate B/C exécutée**, pas de benchmark de vitesse, **ne pas lancer AMOS Compiler** : un seul essai final après stabilisation de la candidate. R69 non promue.
+
 ## OPT020/P1d — BFINS fragments natifs + sonde ABI AP20 PASS (13/11/2026)
 
 **P1d PASS sous Musashi** ([CI dédiée 43494522268](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43494522268), 13/13 étapes) : **4 096 essais de fragments**, **432 rendus AGAPIC**, **5 352 groupes entiers et 3 672 fragments écrits en code CPU020**, **14 refus non destructifs**. Sonde ABI **140 appels** (80 succès / 60 refus) sur **68000, 68EC020 et 68020**, sept paramètres A3 consommés avant rejet, registres/pile/retours conformes. **Compiler V2 : enveloppe reconstruite en mémoire seulement**, 70 segments / 49 308 octets, [rapport et empreintes](OPT020_P1D_FRAGMENT_AP20_PROBE_2026-11-13.md).

@@ -17,8 +17,18 @@
 
 `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeurent la R68 v0.13.13, empreinte protégée SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Ni binaire de travail, ni ASC actif, ni archives, ni `tests/passed/` n'ont été modifiés. Aucun autre candidat produit.
 
+## P1e élargie et candidate R69 0.13.14 — Gate A seulement
+
+- **270 scénarios CPU supplémentaires PASS**, en plus des 51 premiers : matrice 1/2/4/8 plans, largeur destination 16/17/64/65, `BytesPerRow` minimal ou rembourré, clips en bord de bitplane, canaries, masque indépendant, mode opaque, offsets et paquets RLE malformés, DATA flags 0/1/3 acceptés, autres refusés, `Safe` non bloquant et bitmap inactif. [CI étendue](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43499755913).
+- Builder [`build_opt020_p1e_r69.py`](../tools/build_opt020_p1e_r69.py) : reconstruit exclusivement en mémoire depuis `LAST_GOOD` R68 SHA-pinnée ; **une seule routine modifiée** (entrée native 59), sans changement des 64 commandes, signatures ou autres 69 unités. [CI construction mémoire](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43499966863) PASS.
+- Candidate de travail **R69 v0.13.14** : `dist/AMOSPro_AGA.Lib` ; **51 240 octets**, **SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`**. Native Region 68020 **2 174 octets**, SHA256 `504a61d49ac95967cfddab041841c72f09df11d86845c71366c950d1d742a8c9` ; bloc monolithique Compiler V2 **48 528 octets**.
+- **Seul ASC actif :** [`OPT020_P1E_R69_INTERPRETED_01.asc`](../tests/current/OPT020_P1E_R69_INTERPRETED_01.asc), test interprété WinUAE préparé depuis l'ancien R60 ; ancien test R68 figé dans `tests/passed/`.
+- `LAST_GOOD` **R68 0.13.13** totalement protégé, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Aucun autre binaire candidat, aucune archive changée.
+
+**État de validation :** Gate A CPU PASS et enveloppe Compiler V2 structurelle en mémoire PASS. **Gate B WinUAE NON TESTÉE, Gate C AMOS Compiler réel NON TESTÉE, Gate D matériel NON TESTÉE.** Prochain essai : WinUAE **interprété** 68020/68030 JIT OFF, contrôle visuel et console. Réserver l'unique essai de compilation à la candidate finale ; pas de gain de performances annoncé avant benchmark JIT OFF.
+
 ## Limites et prochaine étape
 
 La CI prouve **Gate A CPU uniquement**, pas l'installation de l'extension sous AMOS ni le comportement du Compiler réel. Le banc utilise des hooks simulés pour `Bnk.GetAdr`, `TypeOfMem` et `GetMsg`, et le modèle Intuition mémoire ; il ne remplace pas WinUAE.
 
-Compléter la matrice profondeurs 1/2/4/8, stride/clip aux bords, source RLE malformée, échecs `Safe`, flags DATA 0/1/3 et scénarios de relocation AP20, puis produire **une seule candidate** dans `dist/AMOSPro_AGA.Lib`, après Gate A/CI. Gate B AMOS interprété ensuite ; réserver la **seule** compilation AMOS Compiler à la fin de P1e (Gate C) ; bench WinUAE JIT OFF avant tout chiffre de performance.
+La matrice CPU a été complétée et la candidate unique R69 préparée. **Prochaine validation :** Gate B sous WinUAE interprété, puis correction si nécessaire et requalification CPU/CI. Réserver la **seule** compilation AMOS Compiler à la fin de P1e (Gate C), et les benchmarks WinUAE JIT OFF avant tout chiffre de performance.

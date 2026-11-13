@@ -1,11 +1,21 @@
-# M18/R68 - one active AMOS test: final Compiler Gate C preparation
+# OPT020/P1e R69 — test actif unique, Gate B WinUAE interprétée
 
-**Active file:** [M18_R68_COMPILER_FINAL_01.asc](M18_R68_COMPILER_FINAL_01.asc). This is the **only** ASC in `tests/current/`. It has **PASSED its integrated Gate B** in **AMOS interpreted mode under WinUAE 68030 with JIT ON** on 13 November 2026: `RESULT 1`, `CLOSE RETURNED`, 1,064-byte CBlock and CPU8/Blitter/CPU16 paths all returned success. [Observed console report](../../docs/M18_R68_INTEGRATED_GATE_B_68030_JIT_2026-11-13.md). **AMOS Compiler Gate C PASS** on the same integrated scenario under WinUAE, confirmed by the author: RESULT 1 and CLOSE RETURNED. [Gate C report](../../docs/M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md).
+**Programme actif unique :** [`OPT020_P1E_R69_INTERPRETED_01.asc`](OPT020_P1E_R69_INTERPRETED_01.asc). L'ancien ASC R68 est conservé à l'identique dans [`tests/passed/`](../passed/M18_R68_COMPILER_FINAL_01.asc) ; il n'est plus actif.
 
-**Promoted current and LAST_GOOD:** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R68 v0.13.13**, 51,064 bytes; SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R68 `LAST_GOOD` now matches this candidate byte for byte; the previous R63 remains frozen in Git history.
+**Statut :** Gate A CPU Musashi PASS (321 cas P1e + régressions P1–P1d). **Gate B sous WinUAE non exécutée. Gate C AMOS Compiler non exécutée : conserver l'unique essai final.** Ne pas déclarer la candidate validée tant que WinUAE n'a pas été vérifié.
 
-Use disposable WinUAE with AMOS banks **11, 12, 13, 14 free**, and writable `RAM:`. This program overwrites `RAM:M18_R68_FINAL_FICON8.ABK`. Install the exact R68 library at `APSystem/AMOSPro_AGA.Lib` in its existing extension slot, then **restart AMOS**. Import through **New -> Project -> Merge ASCII** in a blank program. The combined interpreted-mode scenario has **already passed** with 68030/JIT ON (console only). The author has completed the one final AMOS Compiler test. This single active ASC remains unchanged, with an [exact frozen copy in tests/passed](../passed/M18_R68_COMPILER_FINAL_01.asc). No repeat Compiler run is requested.
+## Prérequis
 
-One program covers M18 R64-R67 Fast Icon creation, Bank Put, Chip creation and staging, direct capture and masked/opaque blitting, plus R68 CBlock Capture/Draw/Restore with **Method=0 CPU8, =1 CPU16, =2 Blitter** (no auto). It checks 288 icon bytes, bad calls, CBlock **32x32x8=1064 bytes**, recapture without allocation, black index 0 restored opaquely, clean screen closing, and expected post-close refusal. Expect **`RESULT 1`** and **`CLOSE RETURNED`**, then a console hold loop. These console results **were observed** under AMOS interpreted WinUAE 68030/JIT ON; graphic appearance was not independently captured.
+- WinUAE avec chipset **AGA**, CPU **68020 ou 68030**, **JIT OFF** pour les vérifications. Relever CPU/fréquence/RAM de la configuration.
+- Installer exactement [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) (candidate R69) dans le slot de l'extension déjà configuré sous `APSystem`, puis **redémarrer AMOS**. La bibliothèque **R68 LAST_GOOD** reste séparée, inchangée dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
+- Banque 10 libre, session WinUAE jetable : le programme charge et remplace la banque 10. Copier [`M16_AGAPIC_SAMPLE_BANK10.abk`](M16_AGAPIC_SAMPLE_BANK10.abk) dans le répertoire courant d'AMOS.
+- Dans AMOS Pro : nouveau programme vide puis **Project → Merge ASCII** sur le fichier ASC actif.
+- **Exécuter en interprété, ne pas lancer AMOS Compiler.**
 
-Existing individual Gate B evidence remains [R67](../../docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md), [R68](../../docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), and [PERF-02](../../docs/M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md). Do not edit any `tests/passed/` or `LAST_GOOD`.
+## Vérifications Gate B
+
+L'essai couvre les 4 sous-images, source maskée/opaque, groupes de 16 pixels, fragment non aligné, recadrage, clipping sur quatre bords, deux cas additionnels à droite/en bas, image complètement hors écran, banques/rectangles/modes invalides, commande Image Draw historique, fermeture et refus post-fermeture.
+
+Attendu (si réussite réelle) : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru, et rendu visuel correct des masques et pixels en bord. Les chiffres attendus ne sont **pas** une preuve de WinUAE tant qu'ils ne sont pas observés.
+
+Après Gate B : éventuels correctifs et requalification CPU/CI, puis **une seule Gate C Compiler** sur la candidate définitivement figée. Les mesures de vitesse se font séparément sous **WinUAE JIT OFF**, jamais déduites de Musashi.

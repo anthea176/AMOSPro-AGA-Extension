@@ -55,6 +55,9 @@ jobs:
           python -B tools/test_opt020_p1e_region.py
           python -B tools/test_opt020_p1e_matrix.py
       - name: Verify deterministic R69 AP20 V2 Gate A candidate in memory only
-        run: python -B tools/build_opt020_p1e_r69.py --emit-base64
-      - name: Guard R68, LAST_GOOD, archives, and single active ASC
-        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
+        run: python -B tools/build_opt020_p1e_r69.py
+      - name: Guard R69 working candidate, R68 LAST_GOOD, archives and unique ASC
+        run: |
+          python -B tools/verify_fast.py
+          python -B tools/test_current_amos_blocks.py
+          git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
