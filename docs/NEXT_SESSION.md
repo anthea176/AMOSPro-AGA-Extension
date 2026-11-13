@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/P4 — Fast Icon : raccordement AMOS Bank/Safe en cours (13/11/2026)
+
+[Contrat et limites](M18_FICON16_NATIVE_P4.md) · [émetteur](../tools/m18_ficon_ap20_emit.py) · [builder en mémoire](../tools/build_m18_r61_ficon.py) · [test Gate A](../tools/test_m18_r61_ficon_gate_a.py). Fonction proposée `Aga F Icon(Bank,IconID,X,Y,Mode)` ; nouvelle banque DATA `FICON8  ` 8 plans, vérification canonique du slot, ciblage du back buffer inactif et Safe non bloquant. **Gate A soumise à CI, pas encore validée ; ni binaire R61 installé ni ASC actif.** R60 LAST_GOOD conservée. Prochain contrôle : gate CPU complète AP20 interprété/compilé, puis préparation de la seule candidate de travail et du seul ASC actif si la gate réussit.
+
 ## M18/P3 — Fast Icon 16×16 AGA : X libre, CPU Gate A PASS (13/11/2026)
 
 [Implémentation du chemin général X libre](../tools/m18_ficon16_native_shifted_emit.py) · [test CPU Unicorn](../tools/test_m18_ficon16_native_shifted.py) · [contrat détaillé](M18_FICON16_NATIVE_P3.md). **Nouveau noyau interne natif 68000**, 8 bitplanes, 288 octets par icône Unity, 0/1 opaque/masqué, pixel exact pour X négatif, X décalé de 1..15, bords et Y : au maximum deux mots planaires par ligne et plan. Contrôle des entrées et des huit pointeurs avant toute écriture, préservation registres/stack, comparaison au modèle de référence P1 et au noyau aligné P2. **Gate A PASS [run 43398986441](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43398986441) : noyau 696 octets, 528 cas pixel/ABI, 16 équivalences avec P2, 18 refus sans écriture. Défaut corrigé : masque de dernier mot `$8000` stocké en WORD et non LONG.** Ni AP20 ni R61 installable ; aucun Blitter matériel, backend AUTO, mesure de vitesse ou Gate B/C/D. R60 et `LAST_GOOD` intacts, aucun programme ASC actif.
