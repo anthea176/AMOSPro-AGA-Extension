@@ -21,9 +21,12 @@ on:
       - "tools/test_opt020_p1e_region.py"
       - "tools/test_opt020_p1e_matrix.py"
       - "tools/build_opt020_p1e_r69.py"
+      - "tools/m16_image_draw_r45_emit.py"
+      - "tools/test_opt020_p2_image_draw.py"
       - "tools/m18_image_region_emit.py"
       - "tools/test_opt020_p1d_fragments.py"
       - "tools/test_opt020_p1d_abi.py"
+      - "tools/test_opt020_p1e_region.py"
       - ".github/workflows/opt020-p1.yml"
   workflow_dispatch:
 
@@ -54,6 +57,8 @@ jobs:
         run: |
           python -B tools/test_opt020_p1e_region.py
           python -B tools/test_opt020_p1e_matrix.py
+      - name: P2 Image Draw whole-AGAPIC real 68020 CPU probe (no candidate)
+        run: python -B tools/test_opt020_p2_image_draw.py
       - name: Verify deterministic R69 AP20 V2 Gate A candidate in memory only
         run: python -B tools/build_opt020_p1e_r69.py
       - name: Guard R69 working candidate, R68 LAST_GOOD, archives and unique ASC

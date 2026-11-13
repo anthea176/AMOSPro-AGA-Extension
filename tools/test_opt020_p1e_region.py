@@ -74,7 +74,7 @@ class LiveRegionCPU:
     def __init__(self, kind, native, payload, *, base, depth, front,
                  bank_flag=1, pending=0, safe_ready=True, attnflags=2,
                  screen_width=WIDTH, screen_height=HEIGHT, stride=STRIDE,
-                 invalid_mem_at=0):
+                 invalid_mem_at=0, draw_api=False):
         self.m = Machine(kind, 1024)
         self.cpu = self.m.cpu
         self.mem = self.m.mem
@@ -88,6 +88,7 @@ class LiveRegionCPU:
         self.screen_height = screen_height
         self.stride = stride
         self.invalid_mem_at = invalid_mem_at
+        self.draw_api = draw_api
         assert 1 <= screen_width <= 128 and 1 <= screen_height <= 64
         assert stride >= ((screen_width + 15) // 16) * 2 and stride % 2 == 0
         m = self.m
@@ -102,9 +103,15 @@ class LiveRegionCPU:
         self._trap(EXEC - 534, self.type_of_mem)
         self._trap(EXEC - 372, self.get_msg)
 
-        assert native.count(GETADR_MARKER) == 1
-        patched = native.replace(GETADR_MARKER,
-                                 bytes.fromhex("4eb9") + pack(">I", BANK_SERVICE))
+        if draw_api:
+            # P2 Image Draw receives Start/Length directly; it must NEVER
+            # perform R60's Bnk.GetAdr lookup or change the public ABI.
+            assert native.count(GETADR_MARKER) == 0
+            patched = native
+        else:
+            assert native.count(GETADR_MARKER) == 1
+            patched = native.replace(GETADR_MARKER,
+                                     bytes.fromhex("4eb9") + pack(">I", BANK_SERVICE))
         assert len(patched) == len(native)
         self.mem.w_block(base, patched)
 
@@ -206,8 +213,13 @@ class LiveRegionCPU:
             assert self.mem.r_block(addr + self.stride * self.screen_height, 16) == bytes([0x5c]) * 16
 
     def run(self, *, bank=10, sx=3, sy=2, w=21, h=9, x=5, y=7,
-            mode=0, expect_ok=True):
-        args = (y, x, h, w, sy, sx, bank)
+            mode=0, expect_ok=True, source_len=None, source_start=None):
+        if self.draw_api:
+            # R46 current public API: Start(bank), Length(bank), X, Y, Mode.
+            args = (y, x, len(self.payload) if source_len is None else source_len,
+                    BANK if source_start is None else source_start)
+        else:
+            args = (y, x, h, w, sy, sx, bank)
         for i, value in enumerate(args):
             self.mem.w32(PARAMS + 4 * i, value & 0xffffffff)
         self.mem.w32(STACK, END_TRAP)
@@ -236,7 +248,7 @@ class LiveRegionCPU:
         result = self.m.execute(4_000_000)
         assert result.result is self.end, (self.base, cpu.r_pc(), result)
         assert cpu.r_sp() == STACK + 4, ("unbalanced A7", hex(cpu.r_sp()))
-        assert cpu.r_reg(Register.A3) == PARAMS + 28
+        assert cpu.r_reg(Register.A3) == PARAMS + len(args) * 4
         assert cpu.r_reg(Register.D2) == 0
         if cpu.r_reg(Register.D3) != int(expect_ok):
             print("P1e first-failure diagnostic", {

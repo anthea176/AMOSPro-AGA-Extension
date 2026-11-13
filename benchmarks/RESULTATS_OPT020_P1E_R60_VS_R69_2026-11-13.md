@@ -1,6 +1,6 @@
 # OPT020/P1e — benchmark R60/R68 vs R69 sous WinUAE (13/11/2026)
 
-**Résultat : R69 OPT020/P1e plus rapide en dessin natif 68020, jusqu'à 3,32× sur les dix cas mesurés.** Les deux passages sont **AMOS interprété**, 68020 à 14 MHz, **JIT OFF**, PAL 50 Hz, 128 Mo de Fast RAM Z3 indiqués sur les captures auteur. Aucun résultat AMOS Compiler réel et aucun résultat matériel physique. La candidate R69 **n'est pas promue**.
+**Résultat : R69 OPT020/P1e plus rapide en dessin natif 68020, jusqu'à 3,32× sur les dix cas mesurés en mode interprété.** **Complément ultérieur : [le même benchmark a été réellement compilé et validé sur les deux versions](RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md)**, avec jusqu'à 3,39× sur OPA32. Les deux passages sont **AMOS interprété**, 68020 à 14 MHz, **JIT OFF**, PAL 50 Hz, 128 Mo de Fast RAM Z3 indiqués sur les captures auteur. Aucun résultat AMOS Compiler réel et aucun résultat matériel physique. La candidate R69 **n'est pas promue**.
 
 ## Protocole et provenance
 
@@ -58,7 +58,7 @@ Le contrôle `ERR 0` vérifie **les 240 valeurs de retour de chacun des 3 essais
 
 - **Gate A CPU et CI : PASS** ; test P1e 321 cas et [CI intégrité du benchmark PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43503814027).
 - **Gate B WinUAE interprétée : PASS** sur [le test graphique R69](../docs/OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md), et maintenant **benchmark comparatif R60/R69 JIT OFF PASS**.
-- **Gate C AMOS Compiler réel : NON TESTÉE** ; maintenir la règle d'un unique essai final, sans compilation exploratoire intermédiaire.
+- **Gate C du benchmark réel : PASS ultérieurement** sur les deux exécutions compilées fournies par l'auteur ([résultats](RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md)). **Gate C intégrée exhaustive de la bibliothèque non établie** par le seul benchmark ; aucun test Compiler supplémentaire demandé à ce stade.
 - **Gate D Amiga physique : NON TESTÉE**.
 - **R68 `LAST_GOOD` protégée et R69 candidate active inchangées**, un ASC actif unique dans `tests/current/` ; aucune promotion de R69.
 

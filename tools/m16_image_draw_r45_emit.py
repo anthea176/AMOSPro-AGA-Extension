@@ -30,8 +30,16 @@ F = dict(mode=0, y=4, x=8, length=12, base=16,
          bit=100, dx=104, dy=108, destoff=112,
          bytebit=116, planesleft=120, srcbit=124)
 
+# P2 only: share the *tested* P1e 020 painter with the historical R46
+# decoder, which has no source crop. The free end of the existing 192-byte
+# frame holds zero source offsets and full-image extents. P1e reserves
+# offset 148 for the mask, 152..183 for 8 bitplane pointers and 184 for
+# the visible width. The historical emit_image_draw() remains byte-identical.
+F020 = dict(F, srcx=128, srcy=132, regionw=136, regionh=140)
+assert max(F.values()) == 124 and F020["regionh"] + 4 <= 148
 
-def emit_image_draw(*, accept_loaded_flags_zero=False):
+
+def emit_image_draw(*, accept_loaded_flags_zero=False, opt020=False):
     c = Code()
     def L(name): c.label(name)
     def B(cond,name): c.branch(cond,name)
@@ -55,6 +63,14 @@ def emit_image_draw(*, accept_loaded_flags_zero=False):
     c.move(POST(3),D(4)); st(D(4),"length")
     c.move(POST(3),D(5)); st(D(5),"base")
     c.move(I(0),D(3))             # default failure
+    if opt020:
+        # Entire check uses 68000-safe opcodes. Reject 68000 before 020
+        # instructions, Safe acquisition or any pixel write.
+        c.raw("20780004")          # MOVEA.L 4.W,A0: ExecBase
+        c.move(A(0),D(0)); c.tst(D(0)); B(7,"reject")
+        c.move(M(0,0x128),D(0),"w")  # ExecBase.AttnFlags
+        c.word(0x0800); c.word(1)  # BTST #AFF_68020,D0
+        B(7,"reject")
     ld("mode",D(0))
     c.imm("cmp",1,D(0)); B(2,"reject")  # unsigned: includes negative
     c.imm("cmp",32,D(4)); B(5,"reject")
@@ -234,6 +250,14 @@ def emit_image_draw(*, accept_loaded_flags_zero=False):
     c.imm("and",0xfffffffe,D(0))
     c.move(D(0),M(0,20))
     L("safe")
+    if opt020:
+        # P1e painter accepts a crop; Image Draw is the WHOLE AGAPIC.
+        # All four words live in the previously unused local frame.
+        c.move(I(0),D(0))
+        c.move(D(0),M(2,F020["srcx"]))
+        c.move(D(0),M(2,F020["srcy"]))
+        ld("width",D(0)); c.move(D(0),M(2,F020["regionw"]))
+        ld("height",D(0)); c.move(D(0),M(2,F020["regionh"]))
     c.move(I(1),M(2,F["passno"]))
     B(1,"decode_rows")
     c.tst(D(0)); B(7,"reject")  # impossible unless bank is modified in flight
@@ -352,69 +376,73 @@ def emit_image_draw(*, accept_loaded_flags_zero=False):
     # All destination words/bytes are in the *inactive* Intuition bitmap,
     # and pixel/byte offsets are clipped before a memory write.
     L("paint_group")
-    ld("row",D(0)); c.alu("add",M(2,F["y"]),0)
-    c.tst(D(0)); B(11,"paint_done")
-    c.alu("cmp",M(2,F["scrh"]),0); B(12,"paint_done")
-    st(D(0),"dy")
-    c.move(I(0),M(2,F["bit"]))
-    L("pixel_loop")
-    ld("bit",D(0)); c.imm("cmp",16,D(0))
-    B(12,"paint_done")
-    ld("decoded",D(1))
-    c.shift(1,4,left=True)
-    c.alu("add",D(0),1)          # source pixel index in scanline
-    c.alu("cmp",M(2,F["width"]),1)
-    B(12,"paint_done")         # padding in last group
-    c.alu("add",M(2,F["x"]),1)
-    c.tst(D(1)); B(11,"pixel_next")
-    c.alu("cmp",M(2,F["scrw"]),1); B(12,"pixel_next")
-    st(D(1),"dx")
-    c.move(I(15),D(0))
-    c.alu("sub",M(2,F["bit"]),0)
-    st(D(0),"srcbit")
-    ld("mode",D(2)); c.tst(D(2)); B(7,"pixel_opaque")
-    ld("group",A(0))
-    c.move(I(0),D(2)); c.move(M(0),D(2),"w")
-    c.word(0x0102)             # BTST D0,D2 (mask bit)
-    B(7,"pixel_next")
-    L("pixel_opaque")
-    # destoff = dy * BytesPerRow + (dx / 8); 68000 MULU.W.
-    ld("dy",D(0)); ld("stride",D(1))
-    c.word(0xc0c1)             # MULU.W D1,D0
-    ld("dx",D(1)); c.shift(1,3,left=False)
-    c.alu("add",D(1),0)
-    st(D(0),"destoff")
-    ld("dx",D(1)); c.imm("and",7,D(1))
-    c.move(I(7),D(0)); c.alu("sub",D(1),0)
-    st(D(0),"bytebit")
-    ld("group",A(1))
-    ld("flags",D(0)); c.tst(D(0)); B(7,"start_planes")
-    c.quick(2,A(1))            # skip independent mask WORD
-    L("start_planes")
-    ld("bitmap",A(6))
-    c.quick(8,A(6))            # pointer to Bitmap.Planes[0]
-    ld("depth",D(0)); st(D(0),"planesleft")
-    L("plane_loop")
-    c.move(I(0),D(2)); c.move(POST(1),D(2),"w")
-    c.move(POST(6),A(0))      # destination Plane*
-    c.move(A(0),D(4))
-    c.alu("add",M(2,F["destoff"]),4)
-    c.move(D(4),A(0))
-    ld("srcbit",D(0)); ld("bytebit",D(1))
-    c.word(0x0102)            # BTST D0,D2
-    B(7,"plane_clear")
-    c.word(0x03d0)            # BSET D1,(A0), bit 7 = leftmost
-    B(0,"plane_next")
-    L("plane_clear")
-    c.word(0x0390)            # BCLR D1,(A0), also writes colour 0
-    L("plane_next")
-    ld("planesleft",D(0)); c.quick(1,D(0),sub=True)
-    st(D(0),"planesleft"); B(6,"plane_loop")
-    L("pixel_next")
-    ld("bit",D(0)); c.quick(1,D(0)); st(D(0),"bit")
-    B(0,"pixel_loop")
-    L("paint_done")
-    c.raw("4e75")
+    if opt020:
+        from opt020_p1e_painter_emit import emit_paint_group_020
+        emit_paint_group_020(c, F020)
+    else:
+        ld("row",D(0)); c.alu("add",M(2,F["y"]),0)
+        c.tst(D(0)); B(11,"paint_done")
+        c.alu("cmp",M(2,F["scrh"]),0); B(12,"paint_done")
+        st(D(0),"dy")
+        c.move(I(0),M(2,F["bit"]))
+        L("pixel_loop")
+        ld("bit",D(0)); c.imm("cmp",16,D(0))
+        B(12,"paint_done")
+        ld("decoded",D(1))
+        c.shift(1,4,left=True)
+        c.alu("add",D(0),1)          # source pixel index in scanline
+        c.alu("cmp",M(2,F["width"]),1)
+        B(12,"paint_done")         # padding in last group
+        c.alu("add",M(2,F["x"]),1)
+        c.tst(D(1)); B(11,"pixel_next")
+        c.alu("cmp",M(2,F["scrw"]),1); B(12,"pixel_next")
+        st(D(1),"dx")
+        c.move(I(15),D(0))
+        c.alu("sub",M(2,F["bit"]),0)
+        st(D(0),"srcbit")
+        ld("mode",D(2)); c.tst(D(2)); B(7,"pixel_opaque")
+        ld("group",A(0))
+        c.move(I(0),D(2)); c.move(M(0),D(2),"w")
+        c.word(0x0102)             # BTST D0,D2 (mask bit)
+        B(7,"pixel_next")
+        L("pixel_opaque")
+        # destoff = dy * BytesPerRow + (dx / 8); 68000 MULU.W.
+        ld("dy",D(0)); ld("stride",D(1))
+        c.word(0xc0c1)             # MULU.W D1,D0
+        ld("dx",D(1)); c.shift(1,3,left=False)
+        c.alu("add",D(1),0)
+        st(D(0),"destoff")
+        ld("dx",D(1)); c.imm("and",7,D(1))
+        c.move(I(7),D(0)); c.alu("sub",D(1),0)
+        st(D(0),"bytebit")
+        ld("group",A(1))
+        ld("flags",D(0)); c.tst(D(0)); B(7,"start_planes")
+        c.quick(2,A(1))            # skip independent mask WORD
+        L("start_planes")
+        ld("bitmap",A(6))
+        c.quick(8,A(6))            # pointer to Bitmap.Planes[0]
+        ld("depth",D(0)); st(D(0),"planesleft")
+        L("plane_loop")
+        c.move(I(0),D(2)); c.move(POST(1),D(2),"w")
+        c.move(POST(6),A(0))      # destination Plane*
+        c.move(A(0),D(4))
+        c.alu("add",M(2,F["destoff"]),4)
+        c.move(D(4),A(0))
+        ld("srcbit",D(0)); ld("bytebit",D(1))
+        c.word(0x0102)            # BTST D0,D2
+        B(7,"plane_clear")
+        c.word(0x03d0)            # BSET D1,(A0), bit 7 = leftmost
+        B(0,"plane_next")
+        L("plane_clear")
+        c.word(0x0390)            # BCLR D1,(A0), also writes colour 0
+        L("plane_next")
+        ld("planesleft",D(0)); c.quick(1,D(0),sub=True)
+        st(D(0),"planesleft"); B(6,"plane_loop")
+        L("pixel_next")
+        ld("bit",D(0)); c.quick(1,D(0)); st(D(0),"bit")
+        B(0,"pixel_loop")
+        L("paint_done")
+        c.raw("4e75")
     raw = c.out()
     assert len(raw)%2 == 0
     return raw,c.labels
