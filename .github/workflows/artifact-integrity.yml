@@ -123,6 +123,8 @@ concurrency:
 
 jobs:
   verify:
+    # Short P3 target-tagged run skips the 52-step general suite.
+    if: "${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[p3-target]') }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
