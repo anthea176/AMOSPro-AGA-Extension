@@ -15,7 +15,7 @@
 
 ## Contrat de protection
 
-`dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeurent la R68 v0.13.13, empreinte protégée SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Ni binaire de travail, ni ASC actif, ni archives, ni `tests/passed/` n'ont été modifiés. Aucun autre candidat produit.
+Au premier raccordement CPU P1e (51 cas), les deux bibliothèques étaient encore R68. **Depuis la préparation R69**, seul `dist/AMOSPro_AGA.Lib` a été remplacé par la candidate R69 Gate A de **51 240 octets** (SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`). `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure **R68 v0.13.13 protégée**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. L'ASC actif unique est `tests/current/OPT020_P1E_R69_INTERPRETED_01.asc`; `tests/passed/` et les archives restent intacts. Aucun autre binaire de travail n'a été produit.
 
 ## P1e élargie et candidate R69 0.13.14 — Gate A seulement
 
@@ -26,6 +26,12 @@
 - `LAST_GOOD` **R68 0.13.13** totalement protégé, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Aucun autre binaire candidat, aucune archive changée.
 
 **État de validation :** Gate A CPU PASS et enveloppe Compiler V2 structurelle en mémoire PASS. **Gate B WinUAE NON TESTÉE, Gate C AMOS Compiler réel NON TESTÉE, Gate D matériel NON TESTÉE.** Prochain essai : WinUAE **interprété** 68020/68030 JIT OFF, contrôle visuel et console. Réserver l'unique essai de compilation à la candidate finale ; pas de gain de performances annoncé avant benchmark JIT OFF.
+
+## CI complète de la candidate R69 — PASS
+
+[Artifact integrity 43501573321](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43501573321) : **SUCCESS 47/47 étapes** sur le commit [`9086e14`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9086e14332bc46970ff79959d665567eb864d1af), avec la R69 effectivement présente dans `dist/AMOSPro_AGA.Lib` et la R68 `LAST_GOOD` protégée. Audit HUNK/AP20, contrôle déterministe, source native strict, Compiler V2 **simulé**, API EN/FR, exemples et regressions M16–M18 : PASS. [CI OPT020 dédiée 43500643740](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43500643740) : **SUCCESS** (P1–P1e, ABI, R69 exact, ASC actif unique). Les correctifs de préflight réalisés pendant cette CI ont concerné les assertions de version R69 et les chemins des exemples publics renommés ; aucun correctif supplémentaire du moteur P1e ni changement des binaires protégés.
+
+**Cette réussite ne vaut pas Gate B WinUAE ni Gate C Compiler réel.**
 
 ## Limites et prochaine étape
 
