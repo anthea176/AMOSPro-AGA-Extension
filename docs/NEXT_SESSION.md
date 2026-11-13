@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18 — Étude CBlock AGA au pixel près (13/11/2026 ; CONTRAT PROPOSÉ)
+
+**Audit d'origine effectué** : l'AMOS Professional historique fournit `Get Cblock`/`Put Cblock`/`Del Cblock` avec compaction RLE d'octets de bitplanes et alignement horizontal sur 8 pixels ; contrôle croisé avec le manuel et les sources `+Lib.s` / `+W.s`. **Nouveau [contrat CBlock AGA proposé](M18_CBLOCK_DESIGN.md)** : capture du back buffer privé, **X et largeur au pixel près**, stockage de données planaires normalisées dans une banque DATA `AGACBLK ` (Fast privilégiée), codec RLE léger avec fallback RAW, restauration CPU opaque avec clipping exact, Save/Load ABK. **API proposée, non implémentée** : `Aga C Block Capture(Bank,X,Y,Width,Height)`, `Aga C Block Draw(Bank,X,Y)` et `Aga C Block Restore(Bank)`. Restent à approuver signatures, format, profondeurs et sémantique hors écran.
+
+**Ne pas lancer de code, builder, révision R68 ou ASC WinUAE sur la seule base de cette étude**. R67 v0.13.12 est **toujours l'unique candidate**, Gates A/B PASS et non promue ; R63 `LAST_GOOD` protégée. `tests/current/` ne contient aucun ASC actif ; **Compiler C manuel une seule fois en fin M18**, D Amiga physique non testée ; **`main` uniquement**, sans branche ni PR.
+
 ## M18/R67 — Gates A/B PASS, test WinUAE archivé (13/11/2026)
 
 **Candidate R67 v0.13.12 NON PROMUE**, [bibliothèque unique](../dist/AMOSPro_AGA.Lib) **43 180 octets**, SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5`, 61 commandes / 68 AP20. **Gate A CPU 68000 : 240 cas PASS ; régression CI complète PASS. Gate B WinUAE AMOS interprété : PASS** sur [l'ASC R67 archivé](../tests/passed/M18_R67_FICON8_CAPTURE_01.asc) et [le rapport](M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md). Capture console : `RESULT 1`, `CLOSE RETURNED`, captures alignée/non alignée `1/1`, comparaison de 288 octets `1/1`, six appels invalides `0`, ABK `1164/1164`, staging `1/1`, `ready=1/1/0`, CPU/Blitter `1/1/1/0`, mémoire Chip/Fast stable pendant la capture. **L'auteur confirme le rendu graphique conforme mais n'a pas eu le temps de le capturer : aucune image de l'écran graphique n'est disponible.** Ne pas transformer cette confirmation en preuve photographique ni en Gate C.
