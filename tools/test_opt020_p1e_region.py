@@ -231,6 +231,16 @@ class LiveRegionCPU:
                 "D0": hex(cpu.r_reg(Register.D0)),
                 "D3": cpu.r_reg(Register.D3),
                 "AttnFlags": self.mem.r16(EXEC + 0x128),
+                "frame": {
+                    key: hex(self.mem.r32(STACK - 4 * (0xefee).bit_count()
+                                         - 192 + off))
+                    for key, off in {
+                        "row": 88, "pass": 92, "current": 96,
+                        "end": 100, "decoded": 104, "left": 108,
+                        "repeat": 112, "group": 116, "groups": 60,
+                        "srcbit": 144, "visible_width": 184,
+                    }.items()
+                },
             }, flush=True)
         assert cpu.r_reg(Register.D3) == int(expect_ok), (
             "D3", self.base, cpu.r_reg(Register.D3), expect_ok)
