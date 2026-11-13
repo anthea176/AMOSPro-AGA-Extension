@@ -69,7 +69,8 @@ def build() -> tuple[bytes, dict]:
     assert token2 == tokens and title2 == TITLE and len(entries) == 71
     assert len(entries[-1]) < 65534
     assert not inspect(parse(output))["issues"], "R72 AP20 structure failed"
-    assert len(output) == len(r71) + 6
+    # 6 native bytes, plus 2 bytes of 4-byte-aligned AP20/HUNK padding.
+    assert len(output) == len(r71) + 8, "R72 HUNK/AP20 alignment drift"
     assert good_path.read_bytes() == good, "R68 LAST_GOOD mutated"
     return output, {
         "version": "R72 v0.13.17 P2 late D3 reject hardening, Gate A only",
