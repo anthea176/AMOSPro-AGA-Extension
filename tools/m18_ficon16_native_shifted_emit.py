@@ -91,7 +91,9 @@ def emit_ficon16_shifted_cpu():
     c.word(0xe34e)                # LSL.W #1,D6
     c.quick(1,D(0),sub=True);B(6,'mask_shift')
     L('lastmask_done')
-    c.move(D(6),M(2,F['lastmask']))
+    # Keep the 16-bit mask at the FIRST word of this local slot:
+    # AND.W <disp>(A2),D7 reads the high half of a MOVE.L slot.
+    c.move(D(6),M(2,F['lastmask']),'w')
 
     c.move(A(0),A(6))            # Source 18-byte rows
     c.move(I(0),D(2))            # Row index 0..15
