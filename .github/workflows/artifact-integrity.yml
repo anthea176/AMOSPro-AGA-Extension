@@ -37,6 +37,8 @@ on:
       - "tools/m18_ficon16_native_aligned_emit.py"
       - "tools/m18_ficon16_native_shifted_emit.py"
       - "tools/m18_ficon_ap20_emit.py"
+      - "tools/m18_ficon16_abk.py"
+      - "tools/test_m18_ficon16_abk.py"
       - "tools/build_m18_r61_ficon.py"
       - "tools/test_m18_r61_ficon_gate_a.py"
       - "tools/test_m18_ficon16_native_shifted.py"
@@ -146,7 +148,11 @@ jobs:
       - name: M18/P3 pixel-exact arbitrary X native Fast Icon CPU Gate A
         run: python -B tools/test_m18_ficon16_native_shifted.py
       - name: M18/P4 FIcon bank and Safe AP20 Compiler V2 Gate A (in memory)
-        run: python -B tools/test_m18_r61_ficon_gate_a.py
+        run: |
+          python -B tools/test_m18_r61_ficon_gate_a.py
+          python -B tools/test_m18_ficon16_abk.py
+          python -B tools/build_m18_r61_ficon.py --emit-base64
+          python -B tools/m18_ficon16_abk.py --emit-base64
       - name: Corrected capture linkage and public AP20 CPU regression
         run: |
           python -B tools/test_amos_main_linkage.py

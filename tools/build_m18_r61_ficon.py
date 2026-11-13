@@ -56,6 +56,16 @@ def build():
     }
 
 if __name__=="__main__":
+    import argparse,base64
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--emit-base64",action="store_true")
+    args=parser.parse_args()
     binary,meta=build()
     assert build()[0]==binary
     print("M18/R61 IN-MEMORY BUILDER",meta)
+    if args.emit_base64:
+        encoded=base64.b64encode(binary).decode("ascii")
+        print("M18_R61_LIB_BASE64_BEGIN")
+        for at in range(0,len(encoded),120):
+            print("M18_R61_LIB_BASE64",encoded[at:at+120])
+        print("M18_R61_LIB_BASE64_END")
