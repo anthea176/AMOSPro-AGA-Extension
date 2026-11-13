@@ -102,16 +102,11 @@ def run_abi(cpu_type, *, flags, depth, left, width, shift,
         assert result.result is end, (
             cpu_type,flags,depth,left,width,shift,mode,
             cpu.r_pc(),result)
-        # On plain 68000 the A-line end trap enters an exception stack;
-        # its *active* SP is not the user-mode RTS stack boundary. Do not
-        # confuse that emulator trap frame with the worker's real SP.
-        # 020/EC020 have a verified direct return path and strict SP gate.
-        if cpu_type != CPUType.M68000:
-            assert cpu.r_sp()==STACK+4, (
-                'SP IMBALANCE',cpu_type,flags,depth,left,width,shift,mode,
-                hex(cpu.r_sp()),hex(cpu.r_pc()),hex(STACK+4),
-                'D3',cpu.r_reg(Register.D3),
-                'A3',hex(cpu.r_reg(Register.A3)))
+        assert cpu.r_sp()==STACK+4, (
+            'SP IMBALANCE',cpu_type,flags,depth,left,width,shift,mode,
+            hex(cpu.r_sp()),hex(cpu.r_pc()),hex(STACK+4),
+            'D3',cpu.r_reg(Register.D3),
+            'A3',hex(cpu.r_reg(Register.A3)))
         assert cpu.r_reg(Register.A3)==PARAMS+28
         assert cpu.r_reg(Register.D2)==0
         for reg,val in SAVED.items():
@@ -141,12 +136,14 @@ def run_abi(cpu_type, *, flags, depth, left, width, shift,
 
 def cpu_tests():
     tests=passes=rejects=0
-    # Plain M68000 MUST return failure without touching a 020 opcode.
-    for cpu in (CPUType.M68000,CPUType.M68EC020,CPUType.M68020):
+    # OPT020 minimum is 68EC020; emulate the missing CPU capability
+    # flag on these target CPUs rather than interpreting the M68000 A-line
+    # end-of-run trap as an ABI return signal.
+    for cpu in (CPUType.M68EC020,CPUType.M68020):
         for width,left,shift in ((1,0,0),(3,5,2),(8,4,7),(16,0,3),(1,15,7)):
             for depth in (1,2,4,8):
                 for mask,mode in ((0xffff,0),(0xa55a,1)):
-                    ok=run_abi(cpu,flags=0 if cpu==CPUType.M68000 else 2,
+                    ok=run_abi(cpu,flags=2,
                                depth=depth,left=left,width=width,
                                shift=shift,mask=mask,mode=mode)
                     passes+=int(ok)
