@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/P0 — Prototype de comparaison CBlock Chip (13/11/2026)
+
+[Compte rendu et protocole](M18_CBLOCK_CPU_BLITTER_PROTOTYPE.md) : copie bas niveau **CPU8 (MOVE.B)**, **CPU16 (MOVE.W)** et **Blitter graphics.library**, capture/restauration sur deux BitMaps Chip, 8 ou 16 **pixels** d'alignement. **1 250 équivalences pixel PASS sur le modèle hôte local**, 23 refus. Émetteur du noyau 68000 : **872 octets localement** ; test natif Unicorn et appels OS simulés ajouté à la CI (vérifier son verdict sur le commit final). **Aucune mesure WinUAE ni vainqueur de vitesse établi.** Ce noyau n'est pas une commande AP20 utilisable par AMOS.
+
+**R67 v0.13.12** : candidate unique, Gates A/B PASS, non promue ; **R63 LAST_GOOD** protégée. Aucune nouvelle .Lib, aucun ASC actif. Étape suivante : wrapper banque Chip temporaire réutilisable, Safe, puis un seul benchmark **interprété** CPU8/CPU16/BLIT8 sous WinUAE ; Compiler manuelle uniquement en fin M18. Branche **main** exclusivement, sans PR.
+
 ## M18 — CBlock AGA : contrat RECTIFIÉ pour la vitesse (13/11/2026)
 
 **Décision explicite de l'auteur : viser la rapidité**, **banque temporaire en Chip RAM**, **alignement horizontal sur 8 PIXELS** si avantageux (il s'agit bien de **pixels**, pas d'octets). [Contrat CBlock corrigé](M18_CBLOCK_DESIGN.md) : **RAW planar sans compression**, copies Chip→Chip via Blitter quand plus rapides, CPU possible pour petits rectangles, pas de sauvegarde ABK ni décompression en boucle. Banque DATA `AGACBLK ` en **Chip vérifiée**, capturée une première fois puis **réutilisée sans allocation** si mêmes dimensions/profondeur, libérée par `Erase`. X/Width et X destination multiples de 8 proposés, sans arrondi silencieux ; stockage interne à mots de 16 bits et masque du dernier mot ; comparer 8 et 16 pixels au benchmark. API `Aga C Block Capture/Draw/Restore` toujours **proposée, non implémentée** : aucun token ni code livré.

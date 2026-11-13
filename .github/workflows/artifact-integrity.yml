@@ -157,6 +157,10 @@ jobs:
         run: python -B tools/test_m18_benchmark_static.py
       - name: Install current native Gate A dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
+      - name: M18 CBlock host model and standalone M68000 CPU8 CPU16 Blitter tests
+        run: |
+          python -B tools/test_m18_cblock_copy_model.py
+          python -B tools/test_m18_cblock_copy_native.py
       - name: M18/P2 288-byte native Fast to Chip staging CPU Gate A
         run: python -B tools/test_m18_ficon16_native_stage.py
       - name: M18/P3 pixel-exact arbitrary X native Fast Icon CPU Gate A

@@ -42,6 +42,9 @@
 
 ### M18 — CBlock AGA : **vitesse prioritaire / banque temporaire Chip** (contrat corrigé 13/11/2026)
 
+**P0 — copie CPU8 / CPU16 / BLIT8** : [rapport de prototype](M18_CBLOCK_CPU_BLITTER_PROTOTYPE.md) et noyau 68000 standalone (872 octets générés localement). Modèle hôte **1 250 comparaisons PASS** ; test natif Unicorn/Capstone en CI ; **aucun timing WinUAE ou choix du chemin rapide encore justifié**. Aucun token AP20 ou binaire modifié. Suite : banque Chip temporaire + wrapper sécurisé, puis un seul ASC interprété pour chronos 8/16 pixels.
+
+
 **Décision auteur :** [contrat CBlock corrigé](M18_CBLOCK_DESIGN.md). Le projet CBlock n'est **pas** un autre format d'image compressé : l'objectif est de **capturer/restaurer très rapidement un morceau du back buffer AGA privé**, dans une **unique banque DATA temporaire physiquement en Chip**, **réutilisable sans réallocation**. Format **RAW planar non compressé**, copie **Blitter Chip→Chip** quand plus performante, éventuel CPU pour les très petits blocs. **Alignement envisagé : 8 PIXELS horizontaux** (pas 8 octets), avec étude des groupes 16 pixels pour les transferts en mots DMA ; aucun arrondi implicite. Pas de Fast RAM, RLE, transcodage CPU systématique ou Save/Load ABK dans le chemin v1. **Le gain réel 8 vs 16 et CPU vs Blitter doit être mesuré.**
 
 **API Capture/Draw/Restore à approuver**, aucune commande CBlock native, nouveau binaire ou ASC en place ; [R67 Gates A/B PASS](M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md), non promue, **R63 LAST_GOOD protégée**. Gate C Compiler manuelle une fois en fin M18 ; 68020+ et `c2p.library` ensuite, pas maintenant.
