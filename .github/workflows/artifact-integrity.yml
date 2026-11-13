@@ -40,6 +40,9 @@ on:
       - "tools/m18_ficon16_abk.py"
       - "tools/m18_ficon_chip_cache.py"
       - "tools/m18_ficon16_chip_blit_emit.py"
+      - "tools/m18_ficon_chip_ap20_emit.py"
+      - "tools/build_m18_r62_chip_blit.py"
+      - "tools/test_m18_r62_chip_blit_gate_a.py"
       - "tools/test_m18_ficon16_chip_blit.py"
       - "tools/test_m18_ficon_chip_cache.py"
       - "tools/test_m18_ficon16_abk.py"
@@ -155,6 +158,8 @@ jobs:
         run: python -B tools/test_m18_ficon_chip_cache.py
       - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
         run: python -B tools/test_m18_ficon16_chip_blit.py
+      - name: M18/R62 Chip cache AP20 wrapper and Compiler V2 Gate A (in memory)
+        run: python -B tools/test_m18_r62_chip_blit_gate_a.py
       - name: M18/P4 FIcon bank and Safe AP20 Compiler V2 Gate A (in memory)
         run: |
           python -B tools/test_m18_r61_ficon_gate_a.py
