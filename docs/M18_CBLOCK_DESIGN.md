@@ -132,9 +132,23 @@ Le choix d'un stockage Chip et sans compression est **un choix d'architecture de
 
 ## 6. Gates et suite de M18
 
-- **Gate A** (après validation des signatures) : modèle des copies planaires 8/16, masques de dernier mot, absence de corruption des voisins, vrais chemins natifs 68000, allocations Chip, réemplois, invalides, ABI/AP20 + CI ; tous les cas doivent vérifier **premier/dernier octet**.
-- **Gate B** : un seul nouveau test dans `tests/current/`, sous WinUAE **en interprété** ; allocation/reprise de banque, capture et restauration, trois profondeurs si supportées, comparaisons CPU/Blitter et mesure de temps, fermeture propre, `RESULT 1` et `CLOSE RETURNED` ; pas de nouvelle compilation AMOS.
+- **Gate A : PASS** — 48 cas natifs M68000, modèle planaire CPU8/CPU16/Blitter, mémoire Chip, réemploi, erreurs, ABI et CI.
+- **Gate B : PASS** — scénarios R68 et PERF-02 sur WinUAE interprété 68020/68030 **sans JIT**, visuel, copies, reprise de banque, comparaisons planaires, mémoire, fermeture et `RESULT 1`. [Rapport PERF-02](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md).
 - **Gate C** : **un seul test Compiler manuel à la toute fin de M18**, sur binaire alors finalisé ; **Gate D** : AGA physique distincte.
-- **R67** reste la bibliothèque candidate non promue ; **R63 LAST_GOOD** inchangée. Après M18 : 68020+ puis `c2p.library`, sans mélange de chantiers.
+- **R68 v0.13.13** reste la candidate unique NON PROMUE, Gates **A native et B WinUAE interprétée PASS** ; **R63 LAST_GOOD** inchangée. Après M18 : 68020+ puis `c2p.library`, sans mélange de chantiers.
 
-**Le sens du correctif est fixé par l'auteur : performances, banque temporaire en Chip, alignement en pixels.** Les **signatures** et les **choix du chemin CPU/Blitter selon taille** restent à confirmer par tests. Ne pas annoncer une R68 créée par ce seul document.
+**Le sens du correctif est fixé par l'auteur : performances, banque temporaire en Chip, alignement en pixels.** **Signatures R68 validées ; décision du 13/11/2026 : choix CPU8/CPU16/Blitter laissé au programmeur par `Method`, aucune sélection automatique selon CPU, dimensions ou benchmark.** La bibliothèque R68 existe et ses Gates A/B sont PASS ; ceci ne valide pas Gate C ni Gate D.
+
+## 7. Décision finale M18 — méthode explicite, sans automatisme (13/11/2026)
+
+**Décision de l'auteur : laisser le choix au programmeur AMOS.** `Method` est un argument **obligatoire** de `Aga C Block Capture`, `Aga C Block Draw` et `Aga C Block Restore`. Aucun `Method=3` ou mode `Auto` : l'extension n'effectue **aucune détection CPU**, aucun calcul de seuil, aucune substitution silencieuse de méthode.
+
+| `Method` | Voie native | X et largeur (pixels) | Usage |
+|---:|---|---|---|
+| `0` | CPU8 / octets planaires | Multiples de **8** | Accès à des coordonnées X de 8 pixels non alignées sur 16 |
+| `1` | CPU16 / mots planaires | Multiples de **16** | Voie CPU alignée, parfois plus rapide sur certaines tailles/CPU |
+| `2` | Blitter Chip→Chip | Multiples de **8** | Bonne option pour la majorité des rectangles mesurés, sans être imposée |
+
+**Motif :** [PERF-02 sans JIT](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md) confirme que le Blitter est souvent plus rapide mais **pas toujours**, et que des écarts de 1 à 3 ticks ne justifient pas une politique automatique dépendante de WinUAE. Le code appelant choisit explicitement une méthode valide pour ses contraintes. Les refus d'alignement ou de zone restent `0`, sans clipping ni réinterprétation automatique.
+
+**Aucune modification du binaire R68** n'est nécessaire pour cette décision. [Exemple autonome R68](../examples/cblock_chip_r68/README.fr.md) : source prête à être essayée en AMOS interprété, **pas encore validée indépendamment sous WinUAE**. Les exemples validés et l'ASC PERF-02 restent archivés sans modification. **Gate C réelle toujours non testée**, une seule fois en fin M18 ; Gate D matérielle non testée, R63 `LAST_GOOD` protégée.

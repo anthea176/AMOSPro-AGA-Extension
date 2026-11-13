@@ -1,5 +1,13 @@
 # AMOSPro AGA — exemples et démonstrations
 
+## Nouveau — CBlock Chip Lab R68 : CPU8 / CPU16 / Blitter au choix du programmeur
+
+**[CBlock Chip Lab — démo AMOS autonome](cblock_chip_r68/README.fr.md)** · [source ASC](cblock_chip_r68/CBLOCK_CHIP_LAB.asc) · [English](cblock_chip_r68/README.md)
+
+Démonstration 320×256×256 couleurs de `Aga C Block Capture`, `Draw` et `Restore` avec **`Method` explicite pour chaque appel** : `0` CPU8 (alignement 8 pixels), `1` CPU16 (16 pixels), `2` Blitter (8 pixels). Un carré blanc à centre noir 32×32 est enregistré dans **la banque Chip 11 temporaire**, restitué dans les trois modes, puis effacé. **Aucun choix CPU automatique, IFF, ABK ou art externe.** R68 requise (ou ultérieure compatible), **banque 11 libre**.
+
+L'API R68 a passé les Gates A native et B WinUAE interprétée sur les tests archivés ; **cette nouvelle démo publique n'a reçu qu'un contrôle statique et n'a pas encore été exécutée séparément sous WinUAE**. Aucune Gate C Compiler revendiquée ; une seule validation manuelle à la fin de M18.
+
 ## Nouveau — Fast Icon Lab R67 : CPU, Blitter, capture et cache Chip
 
 **[Fast Icon Lab — démo interactive](fast_icons_r67/README.fr.md)** · [Source AMOS ASCII](fast_icons_r67/FAST_ICON_LAB.asc) · [English](fast_icons_r67/README.md)
@@ -15,12 +23,13 @@ Une interface 320×256×256 couleurs générée **entièrement par AMOS** : cinq
 
 [English](README.md) | **Français** · [Installation](../INSTALL.fr.md)
 
-**État de la bibliothèque pour les exemples :** R67 v0.13.12 est l'unique **candidate** (Gates A/B PASS sur son scénario) ; R63 est la dernière **`LAST_GOOD` protégée**. Le programme R54 ci-dessous reste un exemple historique validé avec sa version. Aucune Gate C Compiler R67 n'est revendiquée. L'[exemple compilé R46 C1](compiler_r46_all_in_one/) reste une démonstration historique figée, utile pour la compatibilité.
+**Bibliothèque pour les nouveaux exemples :** R68 v0.13.13 est l'unique **candidate** (Gates A native et B interprétée WinUAE PASS) ; R63 reste la **`LAST_GOOD` protégée**. Les démonstrations R67 et R54 sont des exemples historiques versionnés. **La Gate C Compiler M18 n'a pas encore eu lieu**. L'[exemple compilé R46 C1](compiler_r46_all_in_one/) reste une démonstration historique figée, utile pour la compatibilité.
 
 Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. La plupart utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) en **AMOS Professional interprété** ; l'exemple tout-en-un compilé archivé utilisait la **R46 C1 historique**.
 
 | Fichier | Démonstration | Utilisation |
 |---|---|---|
+| [`cblock_chip_r68/CBLOCK_CHIP_LAB.asc`](cblock_chip_r68/CBLOCK_CHIP_LAB.asc) | **Nouvelle démo R68 CBlock Chip :** banque temporaire en Chip, méthodes CPU8/CPU16/Blitter explicites, index 0 opaque, recapture sans réallocation | **Sans ressource.** R68 requise, banque 11 libre ; Merge ASCII interprété. **Exemple non encore essayé séparément dans WinUAE**, contrairement à la Gate B R68 archivée. |
 | [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **Nouveau showcase M18/R67** : banques `FICON8`/`FICHIP8`, pixels chunky, `Bank Put`, re-staging, capture écran X non aligné et rendu CPU/Blitter dans quatre modes | **Sans ressource externe.** Installer R67, libérer 11/12/13, importer ASCII. Touche/clic pour quitter ; attendre `ERROR 0` et `RESULT 1`. **Fonctionnement confirmé par l'auteur sous WinUAE en interprété (sans capture).** |
 | [`screen.asc`](screen.asc) | Ouvrir/fermer un écran 320×256×256 couleurs | Affiche un motif environ 3 secondes, sans image |
 | [`picture.asc`](picture.asc) | Lire une image IFF, la charger, faire le Swap | Choisir [`demo.iff`](demo.iff), puis appuyer sur une touche |

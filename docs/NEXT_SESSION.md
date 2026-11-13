@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18 / R68 — PERF-02 JIT OFF : 68020 et 68030 PASS, 6 tailles (13/11/2026)
+## M18 — décision API CBlock figée et exemple public R68 ajouté (13/11/2026)
+
+**Décision explicite de l'auteur : CHOIX AU PROGRAMMEUR, AUCUN AUTO**. `Method=0` CPU8 (alignement X/largeur sur 8 pixels), `Method=1` CPU16 (16 pixels), `Method=2` Blitter (8 pixels), obligatoire sur **Capture/Draw/Restore** ; l'extension ne choisit ni selon le CPU, ni selon la taille. [Contrat final](M18_CBLOCK_DESIGN.md), appuyé par [PERF-02 WinUAE sans JIT 68020/68030 PASS](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md).
+
+**Nouveau [CBlock Chip Lab R68](../examples/cblock_chip_r68/README.fr.md)** : [source ASC](../examples/cblock_chip_r68/CBLOCK_CHIP_LAB.asc), notice FR/EN, banque 11 Chip temporaire, sauvegarde/restauration opaque, trois méthodes explicites et recapture sans réallocation. **Exemple vérifié statiquement uniquement, pas de PASS WinUAE sur ce nouvel exemple, aucune Gate C Compiler revendiquée**. Les tests déjà validés restent dans `tests/passed/` ; **`tests/current/` n'a aucun ASC actif**. Aucune modification du binaire R68, ni de `LAST_GOOD`.
+
+**M18 : Gates A/B R68 PASS, Gate C Compiler réelle non exécutée (UN seul essai manuel à la fin M18), Gate D matérielle non testée.** R68 reste candidate NON PROMUE, R63 LAST_GOOD protégée. Uniquement `main`, pas de PR ni branche parallèle, pas d'automatisme CPU/Blitter.
+
+## Historique — PERF-02 JIT OFF validé (13/11/2026)
 
 **R68 v0.13.13 (binaire inchangé) : Gates A/B PASS, candidate NON PROMUE.** [Rapport PERF-02 complet](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md), [ASC archivé, inchangé](../tests/passed/M18_R68_CBLOCK_PERF_02.asc). **Aucun ASC actif `tests/current/`** après validation de deux essais.
 

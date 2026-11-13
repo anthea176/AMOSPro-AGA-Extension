@@ -198,6 +198,45 @@ def main() -> None:
             "Bundled IFF is not the documented 320x256x256 PAL test card")
     require(len(planes) == 8 and consumed == len(body), "Incomplete IFF decoding")
 
+    # R68 public Chip CBlock demo (new example only; NO WinUAE runtime claim).
+    cbdir = EXAMPLE_DIR / "cblock_chip_r68"
+    cbsource = (cbdir / "CBLOCK_CHIP_LAB.asc").read_bytes()
+    require(b"\r" not in cbsource and cbsource.endswith(b"End\n"),
+            "R68 Chip CBlock demo must be ASCII/LF and end with End")
+    cbtext = cbsource.decode("ascii")
+    cblines = [line.strip() for line in cbtext.splitlines()
+               if line.strip() and not line.lstrip().startswith("'")]
+    require(sum(line.startswith("If ") for line in cblines)
+            == sum(line=="End If" for line in cblines),
+            "Unbalanced If/End If in R68 CBlock demo")
+    require(sum(line.startswith("For ") for line in cblines)
+            == sum(line.startswith("Next ") for line in cblines),
+            "Unbalanced For/Next in R68 CBlock demo")
+    require(not any(re.search(r"\bThen\b", line) for line in cblines),
+            "AMOS CBlock demo must not use Then")
+    require(all(call in cbtext for call in (
+        "Aga C Block Capture(11,16,48,32,32,_CAPMODE)",
+        "Aga C Block Restore(11,_RESTMODE)",
+        "Aga C Block Draw(11,8,144,0)",
+        "Aga C Block Draw(11,96,144,2)",
+        "Aga C Block Draw(11,176,144,1)",
+        "Aga C Block Capture(11,16,48,32,32,0)",
+        "Erase 11", "Chip Free", "Aga Screen Close", "Amos To Front",
+        'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"'
+    )), "R68 CBlock demo missing explicit modes, recapture or cleanup")
+    require(cbtext.count("Aga C Block Capture(")>=2
+            and "_CAPMODE=2" in cbtext and "_RESTMODE=1" in cbtext,
+            "CBlock mode must remain explicit; no auto dispatcher")
+    current = inspect(parse((ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()))
+    current_names = {tok["name"].casefold() for tok in current["tokens"]}
+    require(not current["issues"] and all(cmd in current_names for cmd in (
+        "aga c block capture","aga c block draw","aga c block restore")),
+        "Current R68 candidate does not expose the documented CBlock API")
+    for name in ("README.md","README.fr.md"):
+        require((cbdir/name).is_file()
+                and "Method" in (cbdir/name).read_text("utf-8"),
+                f"R68 CBlock demonstration guide missing or incomplete: {name}")
+
     for p in ("README.md", "README.fr.md", "INSTALL.md", "INSTALL.fr.md"):
         require((EXAMPLE_DIR / p).is_file() if p.startswith("README")
                 else (ROOT / p).is_file(), f"Missing documentation: {p}")
@@ -205,7 +244,7 @@ def main() -> None:
         text = (ROOT / p).read_text("utf-8")
         require("examples/README" in text and "INSTALL" in text,
                 f"Missing distribution links in root {p}")
-    print(f"Distribution examples PASS: {len(EXAMPLES)+1} distinct ASCII demos, "
+    print(f"Distribution examples PASS: {len(EXAMPLES)+2} distinct ASCII demos, "
           "all AP20 calls recognized, cleanup checks and matching 320x256x256 ILBM. "
           "AMOS/WinUAE execution still required.")
 
