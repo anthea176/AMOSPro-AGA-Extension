@@ -127,7 +127,6 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
         if active_hash == R71_SHA256:
             from build_opt020_p2_r71 import build as build_r71
-            from compiler_bridge_v2_probe import unwrap_native_parts_v2
             from native_relative_links import assert_native_links
             candidate, meta = build_r71()
             assert current_bytes == candidate and current_bytes != protected_bytes, "R71 deterministic source mismatch"
