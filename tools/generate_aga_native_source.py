@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R65_SHA:
+        if sha(raw) == R66_SHA:
+            from build_m18_r66_fichip_dynamic import build as pinned_build
+            release = "R66"
+        elif sha(raw) == R65_SHA:
             from build_m18_r65_ficon_bank_put import build as pinned_build
             release = "R65"
         elif sha(raw) == R64_SHA:
@@ -462,6 +465,11 @@ def verified_current_compiler_seeds(parsed):
     r63_case = False
     r64_case = False
     r65_case = False
+    r66_case = False
+    if len(sections) == 66:
+        from build_m18_r66_fichip_dynamic import build as build_r66
+        x66,_=build_r66()
+        r66_case=(raw==reconstruct(x66))
     if len(sections) == 64:
         from build_m18_r65_ficon_bank_put import build as build_r65
         x65,_=build_r65()
@@ -493,6 +501,39 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r66_case:
+        # Exact SHA-pinned, source-backed R66: do not infer linker offsets.
+        from build_m18_r66_fichip_dynamic import build as build_r66
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION66
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON66
+        from m18_ficon_chip_ap20_emit import emit_ficon_chip_ap20,GETADR_MARKER as CHIP66
+        from m18_ficon_bank_create_emit import (
+            emit_ficon_bank_create,GETADR_MARKER as FCREATE66)
+        from m18_ficon_bank_put_emit import emit_ficon_bank_put,GETADR_MARKER as FPUT66
+        from m18_fichip_dynamic_emit import (
+            emit_chip_bank_create,emit_chip_stage,
+            GETADR_MARKER as CCGET66,RESERVE_MARKER as CCRES66,
+            CHANGE_MARKER as CCCHG66,EFF_MARKER as CCEFF66)
+        original66,_=build_r66()
+        need(raw==reconstruct(original66),"Strict source: R66 differs from pinned builder")
+        region66,_=emit_image_region()
+        ficon66,flabel66=emit_ficon_ap20()
+        chip66,clabel66=emit_ficon_chip_ap20(allow_reloaded_flags_zero=True)
+        fcreate66,_=emit_ficon_bank_create()
+        fput66,_=emit_ficon_bank_put()
+        ccreate66,cclabel66=emit_chip_bank_create()
+        cstage66,cslabel66=emit_chip_stage()
+        for idx,body,has_getp in (
+            (59,region66,True),(60,ficon66,True),(61,chip66,True),
+            (62,fcreate66,True),(63,fput66,True),
+            (64,ccreate66,True),(65,cstage66,False)):
+            need(sections[idx]['core']==body and sections[idx]['getp']==has_getp,
+                 f"Strict source: R66 entry {idx} differs from verified emitter")
+        need(region66.count(REGION66)==ficon66.count(FICON66)==chip66.count(CHIP66)==1
+             and fcreate66.count(FCREATE66)==fput66.count(FPUT66)==2
+             and ccreate66.count(CCGET66)==cstage66.count(CCGET66)==2
+             and all(ccreate66.count(x)==1 for x in (CCRES66,CCCHG66,CCEFF66)),
+             "Strict source: R66 AMOS linker markers changed")
     if r65_case:
         # Only the exact SHA-pinned R65 emitter output is trusted by the
         # strict native source exporter. Do not infer linker markers.
@@ -629,9 +670,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and not r61_case and not r62_case and not r63_case and not r64_case and not r65_case and len(sections) != 59:
+    elif not r60_case and not r61_case and not r62_case and not r63_case and not r64_case and not r65_case and not r66_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case or r64_case or r65_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case or r64_case or r65_case or r66_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -721,6 +762,35 @@ def verified_current_compiler_seeds(parsed):
             if pos<0:break
             seeds[63].add(pos+len(PUT65))
             pos+=len(PUT65)
+    if r66_case:
+        seeds[59]={region66.index(REGION66)+6}
+        seeds[60]={ficon66.index(FICON66)+6,flabel66["core"]}
+        seeds[61]={chip66.index(CHIP66)+6,clabel66["core"]}
+        seeds[62]={0}
+        from m18_ficon_bank_create_emit import (
+            RESERVE_MARKER as FCRES66,CHANGE_MARKER as FCCHG66,
+            EFF_MARKER as FCEFF66)
+        for marker in (FCREATE66,FCRES66,FCCHG66,FCEFF66):
+            pos=0
+            while True:
+                pos=fcreate66.find(marker,pos)
+                if pos<0:break
+                seeds[62].add(pos+len(marker));pos+=len(marker)
+        seeds[63]={0}
+        for pos in range(len(fput66)):
+            if fput66.startswith(FPUT66,pos):
+                seeds[63].add(pos+len(FPUT66))
+        seeds[64]={0}
+        for marker in (CCGET66,CCRES66,CCCHG66,CCEFF66):
+            pos=0
+            while True:
+                pos=ccreate66.find(marker,pos,cclabel66["bank_name"])
+                if pos<0:break
+                seeds[64].add(pos+len(marker));pos+=len(marker)
+        seeds[65]={0}
+        for pos in range(len(cstage66)):
+            if cstage66.startswith(CCGET66,pos):
+                seeds[65].add(pos+len(CCGET66))
     return seeds
 
 

@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R65 0.13.10"):
+    if active.startswith("R66 0.13.11"):
+        from build_m18_r66_fichip_dynamic import build as build_r66
+        candidate,meta=build_r66()
+        assert candidate==current,"R66 current differs from deterministic native builder"
+        print("CURRENT R66 CHIP CACHE CREATE+STAGE GATE A 122 PASS; WinUAE B pending",meta)
+    elif active.startswith("R65 0.13.10"):
         from build_m18_r65_ficon_bank_put import build as build_r65
         candidate,meta=build_r65()
         assert candidate==current,"R65 must match exact deterministic source builder"
