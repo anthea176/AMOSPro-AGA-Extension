@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R68 — Gate B intégrée PASS, 68030 JIT ON (13/11/2026)
+
+**Validation utilisateur du [test intégré R68](../tests/current/M18_R68_COMPILER_FINAL_01.asc)** sous WinUAE **68030 + JIT activé / AMOS interprété** : capture console `RESULT 1`, `CLOSE RETURNED`, Fast Icon R64–R67 PASS (288 octets identiques, staging/ABK), CBlock `CAP/REST/RECAP/SAME 1 1 1 1`, `DRAW CPU8/BLIT/CPU16 1 1 1`, banque **1064 octets**, invalides 0 et après fermeture 0. **Pas de capture de l'écran graphique** pour ce test ; aucun benchmark. [Rapport détaillé](M18_R68_INTEGRATED_GATE_B_68030_JIT_2026-11-13.md).
+
+**[CI du commit préparatoire 88841fe](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43485335139) : PASS.** L'ASC unique reste actif **sans modification** pour l'ultime Gate C Compiler manuelle. **Gate C NON TESTÉE**, Gate D NON TESTÉE. Candidate R68 inchangée, R63 `LAST_GOOD` protégée, uniquement `main`.
+
 ## M18/R68 - Gate C intégrée préparée, non exécutée (13/11/2026)
 
 **Test actif unique :** [`tests/current/M18_R68_COMPILER_FINAL_01.asc`](../tests/current/M18_R68_COMPILER_FINAL_01.asc), fondé sur le scénario interprété R67 archivé, étendu pour couvrir CBlock R68. Les API Fast Icon R64-R67 et les méthodes CBlock 0/1/2 explicitement choisies, les refus et la fermeture sont réunis dans **un seul ASC**. Banques 11/12/13/14 libres et `RAM:` inscriptible requises ; voir [instructions](../tests/current/README.md).
