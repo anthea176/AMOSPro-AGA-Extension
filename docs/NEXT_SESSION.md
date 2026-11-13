@@ -1,3 +1,9 @@
+## OPT020/P1e — vrai raccordement natif R60/020, Gate A CPU PASS (13/11/2026)
+
+**[CI OPT020 43497183949](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43497183949) : PASS**, HEAD [`91de56f`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/91de56fcbec4a3ba544fe969ae92a34d0aac92ab). **51 scénarios CPU** intégrés Musashi, 68EC020/68020, et refus 68000 : l'entrée n'emploie plus le descripteur artificiel P1d ; elle reprend directement la prévalidation **R60** native (banque DATA via `Bnk.GetAdr`, en-tête et RLE sur deux passes, `Safe` non bloquant, vrai bitmap privé Intuition inactif) et raccorde les peintres **P1b plein groupe** et **P1d fragment BFINS** avec le clipping natif P1c. ABI AP20, contrôle CPU avant instructions 020, canaries, fond, front, refus et deux placements de code contrôlés. Source historique R60 intacte si `opt020=False` (2 012 octets), variante P1e **2 174 octets**, SHA256 `504a61d49ac95967cfddab041841c72f09df11d86845c71366c950d1d742a8c9`. Enveloppe Compiler V2 **en mémoire uniquement** : 51 228 octets, unité monolithique 48 528 octets, PASS structurel.
+
+**P1e reste un prototype Gate A, et non une candidate installée :** `dist/AMOSPro_AGA.Lib`, `LAST_GOOD`, archives et `tests/current/` sont inchangés. **Aucune Gate B WinUAE ni Gate C Compiler réelle, aucun benchmark ni R69.** Prochaine étape : compléter les cas limites natifs/ABI (profondeurs, stride/clipping), construire la candidate unique `dist/AMOSPro_AGA.Lib` à partir de R68, lancer CI puis test interprété WinUAE ; réserver l'unique passage AMOS Compiler au candidat final. [Compte rendu P1e](OPT020_P1E_R60_NATIVE_WIRING_2026-11-13.md).
+
 # Reprise actuelle — AMOSPro AGA Extension
 
 ## OPT020/P1d — BFINS fragments natifs + sonde ABI AP20 PASS (13/11/2026)
