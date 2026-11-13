@@ -1,67 +1,50 @@
-# AMOSPro AGA — examples and showcases
+# AMOSPro AGA — examples
 
-## New — CBlock Chip Lab R68: programmer-selected CPU8 / CPU16 / Blitter
+[Français](README.fr.md) · [Installation](../INSTALL.md) · [Current extension](../dist/AMOSPro_AGA.Lib)
 
-**[CBlock Chip Lab — standalone AMOS demo](cblock_chip_r68/README.md)** · [ASCII source](cblock_chip_r68/CBLOCK_CHIP_LAB.asc) · [Français](cblock_chip_r68/README.fr.md)
+**Installable reference:** **R68 v0.13.13, promoted `LAST_GOOD`**. The extension has passed its native/CI, interpreted WinUAE and integrated Compiler validation scenarios (Gates A/B/C); physical Amiga testing (Gate D) remains outstanding. An example's own runtime status is stated separately below — a passing extension test does not automatically certify every demo.
 
-A tiny 320×256×256-colour demonstration of `Aga C Block Capture`, `Draw` and `Restore` with **Method explicitly chosen for every call**: `0` CPU8 (8-pixel alignment), `1` CPU16 (16-pixel alignment), `2` Blitter (8-pixel alignment). One 32×32 white/black tile is saved in a **temporary Chip RAM bank 11**, restored and drawn by all three methods, then erased. **No CPU-based auto-selection, IFF, ABK or external art**. Requires R68 or a compatible later library, and **bank 11 must be free**.
+## Run an example
 
-The R68 APIs passed native Gate A and interpreted WinUAE Gate B on archived tests; **this new public demo has only been statically checked so far, not independently run under WinUAE**. Do not claim its Gate C Compiler success; the single manual M18 Compiler test is reserved for the end of M18.
+1. Install `AMOSPro_AGA.Lib` in the appropriate AMOS `APSystem` extension slot, then restart AMOS Professional.
+2. Use a **new empty program → Project → Merge ASCII** to import a `.asc` file. The files are ASCII source, not tokenized AMOS programs.
+3. Keep any required `.abk` and `.iff` resources in the directory expected by the source, and check that the AMOS bank numbers used by the demo are free.
+4. For IFF-based demos, select [`demo.iff`](demo.iff) from AmigaOS. Close the AGA screen and return to AMOS before trying another example.
 
-## New — Fast Icon Lab R67: CPU, Blitter, capture and Chip cache
+## Self-contained graphics demonstrations
 
-**[Fast Icon Lab — interactive showcase](fast_icons_r67/README.md)** · [AMOS ASCII source](fast_icons_r67/FAST_ICON_LAB.asc) · [Français](fast_icons_r67/README.fr.md)
-
-A fully self-contained **320×256×256-colour AMOS graphics lab**: five 16×16 icons in four drawing modes (**CPU masked/opaque, Blitter masked/opaque**), a recoloured gem explicitly re-staged into Chip RAM, and an icon **captured directly from the AGA back buffer at unaligned X=31**. The icons are generated with `Poke`; **no IFF, ABK, font bank or file I/O**. Press any key/click to exit; banks are released.
-
-**Requires the R67 v0.13.12 working candidate.** R67's own native/interpreted function tests passed, but **the author confirmed this new public showcase works under interpreted WinUAE on 13 November 2026, without a screenshot or console log**, and the final M18 AMOS Compiler test remains pending. **Banks 11/12/13 must be free**: `Reserve As Data 13,256` may overwrite an existing bank 13. Import into a new AMOS program through **Project → Merge ASCII** and run **interpreted only**.
-
-
-## R54 v0.12.9 — additional validated example
-
-[R54 Bank Number Helpers](bank_number_r54/) demonstrates the new `Aga Bank Image Draw(Bank,X,Y,Mode)` and `Aga Bank Font Select(Bank)` alongside the legacy image/font calls. **Interpreted and freshly compiled WinUAE user test PASS (`RESULT 1`, `CLOSE RETURNED`)**. The validated ASCII source and both ABK resources are packaged in the versioned folder; [original passed test](../tests/passed/M16_R54_BANK_NUMBER_01.asc) is preserved unchanged. The eleven simple examples below are not rewritten.
-
-**English** | [Français](README.fr.md) · [Installation](../INSTALL.md)
-
-**Current library for new examples:** R68 v0.13.13 is the sole working **candidate** (native Gate A and interpreted WinUAE Gate B PASS); R63 is the protected **`LAST_GOOD`**. The R67 and R54 examples remain versioned historical showcases, not the active candidate version. **M18 Compiler Gate C is not yet run**. The [former R46 C1 compiled example](compiler_r46_all_in_one/) remains a frozen historical demonstration, still useful for compatibility checks.
-
-**Chip RAM endurance:** a separate [500-switch WinUAE stress test](../tests/passed/M14_R38_CHIP_RAM_STRESS_01.asc) passed on 12 November 2026 with no measured loss of total or largest free Chip RAM.
-
-These are **user-facing examples**, not historical regression tests. Most run in interpreted AMOS with the [current release](../dist/AMOSPro_AGA.Lib); the archived all-in-one compiled example was validated using historical **R46 C1**.
-
-| File | Demonstrates | What to do |
+| Source | What it shows | Requirements / validation |
 |---|---|---|
-| [`cblock_chip_r68/CBLOCK_CHIP_LAB.asc`](cblock_chip_r68/CBLOCK_CHIP_LAB.asc) | **New R68 Chip CBlock demo:** temporary Chip bank, explicit CPU8, CPU16 and Blitter Capture/Draw/Restore, opaque index 0, recapture without reallocation | **No external asset.** Requires R68, free bank 11; Merge ASCII interpreted. **Example itself not yet WinUAE-tested**, unlike the archived R68 Gate B. |
-| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **New M18/R67 interactive showcase:** `FICON8`/`FICHIP8` banks, chunky pixels, `Bank Put`, restaging, unaligned screen capture and CPU/Blitter masked/opaque drawing | **No external asset.** Install R67, free banks 11/12/13, merge ASCII. Click/keypress to exit; expect `ERROR 0`, `RESULT 1`. **User-confirmed working in interpreted WinUAE (no screenshot provided).** |
-| [`screen.asc`](screen.asc) | Open/close a 320×256×256-colour screen | Runs a pattern for about 3 seconds; no image required |
-| [`picture.asc`](picture.asc) | Read IFF metadata, load image, swap buffers | Select the included [`demo.iff`](demo.iff), then press a key |
-| [`blitter.asc`](blitter.asc) | `Aga Blit Fill`, `Clear`, `Copy` | Select `demo.iff`, look at the shapes, then press a key |
-| [`copper.asc`](copper.asc) | RGB4 Copper raster via `Wait`/`Move` | Shows red/green/blue/black horizontal bands, then press a key |
-| [`mouse.asc`](mouse.asc) | Coordinates, click edges, keyboard polling | Click left/right, then press a key or let the 5-second timer end |
-| [`collide.asc`](collide.asc) | R25 `Aga Rect Overlap`, mouse, Blitter, double buffering and VBL | Select `demo.iff`, move into/out of the blue rectangle (green = free, red = overlap); left-click to exit, or wait 900 frames |
-| [`show.asc`](show.asc) | **R27 animated showcase:** native AGA text, a neon-style HUD, safe double-buffered Blitter Fill/Clear/Copy, moving and mirrored rectangles, AABB collision and mouse position | Select `demo.iff`, watch the moving green/red blocks, move the cursor; **left-click or press a key** to exit (automatic stop after up to 600 frames) |
-| [`fade_to_bank_r33.asc`](fade_to_bank_r33.asc) | **R33 visible RGB24 fade demo:** three large coloured strips, RED → GREEN → BLUE → RED, each transition 150 VBL | No IFF needed. **Overwrites bank 12**; `Aga Swap` and `Amos To Back` run **before** the fades. Pauses between transitions; results appear after the screen closes. **User-confirmed visible, working fade in WinUAE (11 Nov 2026); no FPS/timing measurement.** |
-| [`font_bank_r38.asc`](font_bank_r38.asc) | **R38 AMCAF BankFont showcase:** draw text with `Hwarf1252S.abk` and `Pix3M-1252L.abk` on the same 320×256 AGA screen | Requires R38 v0.11.0; run from the `examples/` directory with `Amcaf Fonts/` present; **replaces AMOS bank 25**; press a key to exit. |
-| [`m15_2d_cursor.asc`](m15_2d_cursor.asc) | **M15 + M15bis combined showcase (R44):** Plot stars, Draw axes and a moving crosshair, Box frames, Circle radar rings and custom reticle, plus window-local `Aga Mouse Cursor` visibility | **No IFF or font bank needed.** Move the mouse, **right-click** to show/hide the system cursor, **left-click or press a key** to exit (automatic stop at 600 frames). R44 v0.11.5 or later required; **user-confirmed WinUAE working (12 Nov 2026).** |
-| [`compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc`](compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc) | **R46 C1 all-in-one Compiler test:** AGAPIC opaque/masked images, clipping, Plot/Draw/Box/Circle, double buffer, two fonts, 500 cursor toggles and full screen cleanup | **One ASC plus two included ABKs.** Keep the bundled directory together; compile with official R46 C1. Report `RESULT 1` and `CLOSE RETURNED`. **Compiled WinUAE PASS (12 Nov 2026): `RESULT 1`, cursor errors 0, Chip drop 0.** |
+| [`screen.asc`](screen.asc) | Opens and closes a 320×256, 256-colour AGA screen | No external image |
+| [`picture.asc`](picture.asc) | IFF metadata, image loading, double buffering | Select `demo.iff` |
+| [`blitter.asc`](blitter.asc) | Blitter fill, clear and copy | Select `demo.iff` |
+| [`copper.asc`](copper.asc) | RGB4 Copper raster bands | No assets |
+| [`mouse.asc`](mouse.asc) | Pointer position, buttons and keyboard | Click / press a key |
+| [`collide.asc`](collide.asc) | AABB overlap, mouse and animated back buffer | `demo.iff` provides the PAL mode/palette; left-click to exit |
+| [`show.asc`](show.asc) | Animated HUD, text, drawing, collision and safe swaps | `demo.iff` supplies the mode/palette; click/key to exit |
+| [`fade_to_bank.asc`](fade_to_bank.asc) | Three coloured bars and RGB24 palette transitions | Replaces bank **12**; **visible fade user-confirmed in interpreted WinUAE** |
+| [`font_bank.asc`](font_bank.asc) | AMCAF BankFonts: Hwarf and Pix3M | Run from `examples/` with [`Amcaf Fonts/`](Amcaf%20Fonts/), replaces bank **25**; user-confirmed interpreted WinUAE |
+| [`2d_cursor.asc`](2d_cursor.asc) | Plot, Draw, Box, Circle, moving reticle and local pointer visibility | No external files; right-click toggles pointer, left-click/key exits; **user-confirmed WinUAE** |
 
-**R46 Compiler all-in-one test:** [download the single ZIP package](COMPILER_R46_ALL_IN_ONE.zip), or [open the self-contained folder](compiler_r46_all_in_one/) and follow its [setup instructions](compiler_r46_all_in_one/README.md). The single ASC uses two bundled ABKs; **run the compiled executable with that folder as the AmigaDOS current directory**. The test does not modify any official `LAST_GOOD` library.
+The basic graphics demos are statically checked. Only the specific user-confirmed scenarios above have direct WinUAE evidence; other standalone programs have not all been validated end-to-end.
 
-**M15 + M15bis interactive demo — `m15_2d_cursor.asc`:** a self-contained 320×256 AGA scene with a 256-colour palette and safe double buffering. It draws 23 stars using Plot, axes and a moving crosshair with Draw, frames with Box, concentric radar rings and a moving reticle using Circle, and controls the R44 private-window cursor. The system pointer starts hidden; **right-click** toggles it, **left-click or any key** exits, or it stops after 600 frames. Closing the window automatically restores the system cursor. Bounded 12-attempt Safe/VBL retries protect `Aga Blit Clear` and `Aga Swap`. After return to AMOS, success prints `ERROR 0`, `RESULT 1`, `CLOSE RETURNED`. **Requires R44; user-confirmed rendering and interaction under WinUAE (12 Nov 2026), without a separate numerical result screenshot.** No IFF, ABK or other files.
+## Extended examples
 
-**R38 font demo — `font_bank_r38.asc`:** load `Amcaf Fonts/Hwarf1252S.abk` and `Amcaf Fonts/Pix3M-1252L.abk` **one after the other** using `Load "...",25`, `Aga Font Bank Select(Start(25),Length(25))` and `Aga Text`. Both ABKs have bank number 25, which the demo overwrites. `Erase 25` is safe after a successful selection because R38 creates its own Chip RAM copy. The example resets the system font with `Aga Font Select("",0)` and closes the screen. Use `/` as the **AmigaDOS directory separator** (Windows paths may show `\\`); run with `examples/` as the current AmigaDOS directory, for example after copying the complete `examples/` folder to an Amiga volume. **No AMCAF extension is required at runtime.** **The R38 font demo was run successfully under interpreted AMOS/WinUAE (user-confirmed, 12 November 2026).** No long-duration Chip RAM stress test is claimed.
+| Example | Description | Bank use / validation |
+|---|---|---|
+| [**CBlock Chip Lab**](cblock_chip/README.md) · [ASC](cblock_chip/CBLOCK_CHIP_LAB.asc) | Temporary planar Chip background capture, draw and restore. **Method is mandatory:** `0` CPU8, `1` CPU16, `2` Blitter; **no AUTO** | Requires free bank **11** and R68+; **this standalone showcase is only statically checked**. The R68 API passed separate WinUAE/Compiler tests |
+| [**Fast Icon Lab**](fast_icons/README.md) · [ASC](fast_icons/FAST_ICON_LAB.asc) | `FICON8` source, `FICHIP8` staging, unaligned capture, CPU/Blitter masked/opaque rendering | Requires free banks **11, 12, 13**, R67+ commands (included in R68); **user-confirmed interpreted WinUAE**; showcase not separately compiled |
+| [**Bank-number helpers**](bank_number/README.md) · [ASC](bank_number/BANK_NUMBER_HELPERS.asc) | Draw AGAPIC and select font by bank number, versus address/length calls | Replaces banks **10/25**, requires bundled ABK files. Original R54 regression passed interpreted + freshly compiled WinUAE; public copy has a renamed asset path and has not been rerun independently |
+| [**Compiler all-in-one**](compiler_all_in_one/README.md) · [ASC](compiler_all_in_one/COMPILER_ALL_IN_ONE.asc) | Historical R46 C1 integrated image, 2D, fonts, cursor and cleanup showcase | Replaces banks **10/25**. Original compiled WinUAE test passed; renamed public ASC has an adapted resource filename and has **not** been recompiled |
 
-**Font attribution:** Hwarf BankFont: [Hwarf licence/attribution](Amcaf%20Fonts/Hwarf-12xxS.licence). Pix3M font: [Pix3M attribution (CC BY 3.0)](Amcaf%20Fonts/Pix3M-12xxL.licence). The ABK artwork is not covered by the source-code MIT licence.
+**Historical ZIP:** [`COMPILER_ALL_IN_ONE.zip`](COMPILER_ALL_IN_ONE.zip) is **byte-for-byte the original R46 C1 validated archive**, with its **original versioned internal filenames**. Its outer name is simplified, but the ZIP contents are intentionally not rewritten. To reproduce the exact old Compiler validation, extract the ZIP and use its original names. For clean public filenames, use [`compiler_all_in_one/`](compiler_all_in_one/) instead; the modified public copy needs a new Compiler run to claim separate runtime validation.
 
-The `.asc` files are plain ASCII source. In AMOS, select **New → Project / Merge ASCII** to import one file at a time. Do **not** use the normal `Load` command for these files. When asked to choose an image via `Fsel$("**")`, browse to `examples/demo.iff` **from AmigaOS**.
+## Resources and safety
 
-The bundled `demo.iff` is a 320×256, 8-bitplane, 256-colour original test card also kept in `iff-TEST/`. The ten earlier examples have static checks; the new compiler integration example has now passed under compiled WinUAE (user screenshot, 12 Nov 2026). **The R33 fade demo was run successfully with visible transitions under WinUAE (user-confirmed); the other standalone examples have not all been validated end-to-end.** The separate R23 input/Ctrl+C and R25 collision regression scenarios passed interpreted AMOS/WinUAE; those results do not automatically certify these shortened examples.
+- The included [`demo.iff`](demo.iff) is a 320×256×256-colour PAL test card. In `collide.asc` and `show.asc` it primarily establishes the video mode and palette; the drawing is generated by AGA commands.
+- **Bank numbers matter.** `Reserve As Data` and `Load` may overwrite an existing AMOS bank. Start from a fresh, disposable program or back up your banks.
+- For `font_bank.asc`, use the exact relative paths `Amcaf Fonts/Hwarf1252S.abk` and `Amcaf Fonts/Pix3M-1252L.abk`. **No separate AMCAF extension is needed** to display these bank fonts through the AGA extension.
+- `.asc` sources should be imported with **Merge ASCII**, not the normal AMOS `Load` command.
+- The original, version-labelled regression sources live in [`tests/passed/`](../tests/passed/), not in these cleaned-up public example names. Renaming a bundled asset does **not** retroactively validate the adapted ASC.
 
-**Why load an IFF for `collide.asc`?** `demo.iff` supplies the PAL video mode and the palette (index 3 = blue, 28 = green, 224 = red). The example clears the entire back buffer before every frame, so **the picture itself is not displayed and does not take part in collision detection**. An `Aga Rect Overlap` test needs no IFF or screen; the file is only needed here for predictable display colours.
-
-
-**R27 showcase — `show.asc`:** the bundled IFF supplies the PAL mode and indexed colours only (0 = background, 3 = blue, 28 = green, 224 = red). The example **redraws every pixel through AGA functions**; the IFF image itself is not used as art. The first `Aga Blit Clear` of each frame has a **12-attempt VBL-bounded Safe retry**; `Aga Swap` is retried with the same bound. It illustrates the R27 automatic Safe protection, native `Aga Text`, `Aga Blit Copy`, `Aga Rect Overlap` and mouse/keyboard input. **This is an unverified example, not a WinUAE-PASS regression test and not an FPS benchmark.** See [the R27 validation test](../tests/passed/M12_R27_SAFE_BLIT_01.asc) for the separate 40-swap evidence.
-
-Development/regression cases remain in [`tests/current/`](../tests/current/), [`tests/passed/`](../tests/passed/) and [`tests/historical/`](../tests/historical/). **Do not distribute those versioned test scripts as beginner examples.**
-
-**Licensing:** example script source is [MIT](../LICENSE). The bundled font artwork has separate [Hwarf](Amcaf%20Fonts/Hwarf-12xxS.licence) and [Pix3M](Amcaf%20Fonts/Pix3M-12xxL.licence) attribution terms. The included image is **not MIT**: [visual asset terms](../ASSETS_LICENSE.md), local testing permitted; redistribution/reuse of the artwork separately requires permission.
+**Licensing:** example source is [MIT](../LICENSE). Hwarf and Pix3M fonts retain their [Hwarf](Amcaf%20Fonts/Hwarf-12xxS.licence) and [Pix3M](Amcaf%20Fonts/Pix3M-12xxL.licence) licences. The IFF/art assets have [separate terms](../ASSETS_LICENSE.md). 

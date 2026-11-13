@@ -35,7 +35,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 | Cannot find `demo.iff` | The file selector needs the **Amiga-visible** path. Move `demo.iff` into a mounted drive/drawer and browse to it. |
 | Screen does not open | Confirm that the emulator/Amiga has **AGA**, that PAL 320×256 is available, and that the screen can use 256 colours. |
 | `.asc` is not recognized by Load | Use **Project → Merge ASCII**, not the normal native-AMOS Load command. |
-| Something goes wrong during a demo | Check the output. The [all-in-one compiled R46 C1 test](examples/compiler_r46_all_in_one/) has passed WinUAE; other examples have different test coverage. |
+| Something goes wrong during a demo | Check the output. The [all-in-one compiled R46 C1 test](examples/compiler_all_in_one/) has passed WinUAE; other examples have different test coverage. |
 
 ## Release and licence
 

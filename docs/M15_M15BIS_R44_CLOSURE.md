@@ -1,6 +1,6 @@
 # M15 + M15bis — Clôture R44 v0.11.5 (12/11/2026)
 
-**Statut : CLÔTURÉ pour les Gates A (CPU/CI) et B (AMOS interprété/WinUAE).** Deux retours utilisateur distincts valident d'abord le test R44 du curseur, puis l'[exemple interactif réunissant M15 et M15bis](../examples/m15_2d_cursor.asc) (« ça marche super »). Le second retour confirme le fonctionnement visible de la démo ; aucun relevé de sortie chiffré de cette démo n'a été fourni. Les **Gates C (AMOS Compiler) et D (Amiga AGA physique) ne sont pas testées** et ne sont pas déduites de WinUAE.
+**Statut : CLÔTURÉ pour les Gates A (CPU/CI) et B (AMOS interprété/WinUAE).** Deux retours utilisateur distincts valident d'abord le test R44 du curseur, puis l'[exemple interactif réunissant M15 et M15bis](../examples/2d_cursor.asc) (« ça marche super »). Le second retour confirme le fonctionnement visible de la démo ; aucun relevé de sortie chiffré de cette démo n'a été fourni. Les **Gates C (AMOS Compiler) et D (Amiga AGA physique) ne sont pas testées** et ne sont pas déduites de WinUAE.
 
 ## Fonctionnalités livrées
 
@@ -14,13 +14,13 @@
 
 **Gate B AMOS/WinUAE PASS — test curseur R44 :** capture utilisateur avec `OPEN 1 DB 1 SWAP 1`, `SHOW 1 1 1`, `HIDE 1 1`, `BAD 0 0 NOSCREEN 0`, `SWITCHES 500 ERR 0`, `CHIP FREE 1631384 1631384 DROP 0`, `BIG FREE 1630656 1630656 DROP 0`, `CHIP WARN 0`, `CHIP BEFORE/END 1801928 1801928`, `CLOSED -1 RESULT 1` et `CLOSE RETURNED`. Aucune perte de Chip RAM **mesurée sur ce test** ; cela ne prouve pas tous les scénarios prolongés ou matériels.
 
-**Gate B WinUAE PASS — démonstration globale :** l'utilisateur confirme ensuite « ça marche super » pour [`examples/m15_2d_cursor.asc`](../examples/m15_2d_cursor.asc), qui rassemble Plot/Draw/Box/Circle et la visibilité du pointeur. Aucune image IFF, banque de fontes ni fichier supplémentaire n'est nécessaire. Test visuel confirmé ; le texte exact `RESULT 1` de cette démo **n'a pas été fourni**.
+**Gate B WinUAE PASS — démonstration globale :** l'utilisateur confirme ensuite « ça marche super » pour [`examples/2d_cursor.asc`](../examples/2d_cursor.asc), qui rassemble Plot/Draw/Box/Circle et la visibilité du pointeur. Aucune image IFF, banque de fontes ni fichier supplémentaire n'est nécessaire. Test visuel confirmé ; le texte exact `RESULT 1` de cette démo **n'a pas été fourni**.
 
 ## Promotion et intégrité
 
 - **`dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/experimental/AMOSPro_AGA_M15BIS_v0.11.5_MOUSE_CURSOR_R44.Lib`**, même binaire exact R44, 27 460 octets, SHA256 `0902c9c58f9c0de7d65fc5dbf8782d552b113b85263af1653778b1a706b4e2dc`.
 - **Test WinUAE R44 archivé à l'octet près** : [`tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc`](../tests/passed/M15BIS_R44_MOUSE_CURSOR_01.asc), **3 053 octets**, Git blob `099f7125260c340dfbb4819f5770d1dbafd6789d`. Aucune correction des commentaires historiques dans le fichier.
-- **Exemple combiné conservé** : [`examples/m15_2d_cursor.asc`](../examples/m15_2d_cursor.asc), **6 495 octets**, Git blob `b9db059c7c3554d8f3bb59fca61ff2d54270a23b`.
+- **Exemple combiné conservé** : [`examples/2d_cursor.asc`](../examples/2d_cursor.asc), **6 495 octets**, Git blob `b9db059c7c3554d8f3bb59fca61ff2d54270a23b`.
 - `tests/current/` ne contient plus aucun test `.asc` actif après promotion.
 - **R43 v0.11.4** reste archivée séparément dans `dist/experimental/AMOSPro_AGA_M15_v0.11.4_CIRCLE_R43.Lib`, 27 092 octets, SHA256 `9c410229e9831c4170194a933451f1d30a2cf69791a88785627b88fad8fcdecf` ; R42 et toutes les archives antérieures restent conservées, non réécrites.
 

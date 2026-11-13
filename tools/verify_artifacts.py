@@ -587,7 +587,7 @@ def main():
     r44_bytes=r44_test.read_bytes()
     r44_blob=b"blob "+str(len(r44_bytes)).encode("ascii")+bytes([0])+r44_bytes
     assert len(r44_bytes)==3053 and hashlib.sha1(r44_blob).hexdigest()=="099f7125260c340dfbb4819f5770d1dbafd6789d", "R44 passed ASC modified"
-    demo=ROOT/"examples/m15_2d_cursor.asc"
+    demo=ROOT/"examples/2d_cursor.asc"
     assert demo.is_file(), "M15/M15bis combined demonstration missing"
     demo_bytes=demo.read_bytes()
     demo_blob=b"blob "+str(len(demo_bytes)).encode("ascii")+bytes([0])+demo_bytes
@@ -657,7 +657,7 @@ def main():
     audit_c1=inspect(parse(promoted))
     assert not audit_c1["issues"] and audit_c1["tokens"]==aud46["tokens"]
     verified_asc=(ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
-    assert verified_asc==(ROOT/"examples/compiler_r46_all_in_one/COMPILER_R46_ALL_IN_ONE.asc").read_bytes()
+    assert (ROOT/"examples/compiler_all_in_one/COMPILER_ALL_IN_ONE.asc").read_bytes()==verified_asc.replace(b"M16_AGAPIC_SAMPLE_BANK10.abk",b"AGAPIC_SAMPLE_BANK10.abk"), "Renamed public example differs beyond asset path"
     git_blob=b"blob "+str(len(verified_asc)).encode("ascii")+bytes([0])+verified_asc
     assert len(verified_asc)==5404 and hashlib.sha1(git_blob).hexdigest()=="eded9040e382e9177b3c929bfa19e3c61ee9dd69"
     print("PASS: official Compiler-safe R46 C1, 57 entries, 29964 bytes, 50 tokens, WinUAE integrated Gate C PASS;")

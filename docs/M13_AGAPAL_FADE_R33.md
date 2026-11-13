@@ -23,7 +23,7 @@ Fonction unique : `_OK=Aga Fade To Bank(Start(_B),_INDEX,_VBL)`.
 
 **Limite importante :** la capture confirme les valeurs finales et le retour propre, mais ne vérifie pas la fluidité du fondu. Le programme original dessinait en back buffer, lançait les transitions (12/1/2 VBL), puis exécutait `Aga Swap` et `Amos To Back` seulement **après les fades**. Les rectangles ne pouvaient donc pas servir d'observation visible pendant les transitions.
 
-**Démo visuelle complémentaire confirmée par l'utilisateur sous WinUAE (11/11/2026), fondu visible et fonctionnel :** [`examples/fade_to_bank_r33.asc`](../examples/fade_to_bank_r33.asc). Trois bandes, rouge → vert → bleu → rouge. Elle appelle `Aga Swap` puis `Amos To Back` **avant** les fondus, utilise 150 VBL par transition et attend entre les changements pour observer les couleurs. **Elle écrase la banque DATA AMOS 12**. Ne pas confondre la démo avec le test de Gate B archivé.
+**Démo visuelle complémentaire confirmée par l'utilisateur sous WinUAE (11/11/2026), fondu visible et fonctionnel :** [`examples/fade_to_bank.asc`](../examples/fade_to_bank.asc). Trois bandes, rouge → vert → bleu → rouge. Elle appelle `Aga Swap` puis `Amos To Back` **avant** les fondus, utilise 150 VBL par transition et attend entre les changements pour observer les couleurs. **Elle écrase la banque DATA AMOS 12**. Ne pas confondre la démo avec le test de Gate B archivé.
 
 **Promotion binaire R33 :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` = archive `dist/experimental/AMOSPro_AGA_M13_v0.10.5_AGAPAL_FADE_TO_BANK_R33.Lib`, 20 208 octets, SHA256 `e0db41e282bfb8ac92fd5dfa68ab2bee50e1c7ae2a86429d587964337b797b2f`. Toutes copies utilisent exactement le même blob binaire, aucune recompilation.
 

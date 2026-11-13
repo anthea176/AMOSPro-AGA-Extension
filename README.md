@@ -171,7 +171,7 @@ If _FADE=1
 End If
 ```
 
-This call waits for 25 VBLs and applies a new palette on each step. `_VBL=0` is rejected; use `Aga Palette Bank Apply` for an instant change. At 256 colors and slower 68000 configurations, each step is not guaranteed to fit within one refresh. [R33 Gate A contract](docs/M13_AGAPAL_FADE_R33.md) · [Archived R33 WinUAE test](tests/passed/M13_R33_AGAPAL_FADE_01.asc). For a visible fade, use the [150-VBL three-band demo](examples/fade_to_bank_r33.asc) (bank 12 overwritten; visible fade confirmed under WinUAE).
+This call waits for 25 VBLs and applies a new palette on each step. `_VBL=0` is rejected; use `Aga Palette Bank Apply` for an instant change. At 256 colors and slower 68000 configurations, each step is not guaranteed to fit within one refresh. [R33 Gate A contract](docs/M13_AGAPAL_FADE_R33.md) · [Archived R33 WinUAE test](tests/passed/M13_R33_AGAPAL_FADE_01.asc). For a visible fade, use the [150-VBL three-band demo](examples/fade_to_bank.asc) (bank 12 overwritten; visible fade confirmed under WinUAE).
 
 **Copper RGB4** has been available since R18, **Mouse X/Y** since R19, **Mouse Buttons** since R20 (with RMBTRAP in R21), and **Mouse Pressed/Released** since R22. **R23 uses IDCMP events to capture button transitions and protect RAWKEY input**. The quick-click, keyboard FIFO and Ctrl+C WinUAE scenarios passed; focus-switch and stress scenarios remain untested. Sprites, a `Aga Set Colour` command, and comprehensive input-stress validation are outside the current scope.
 

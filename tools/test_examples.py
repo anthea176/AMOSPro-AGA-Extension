@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from audit_ap20 import inspect, parse
 from validate_ilbm import inspect as inspect_ilbm, decode as decode_ilbm
 
-EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank_r33", "font_bank_r38", "m15_2d_cursor")
+EXAMPLES = ("screen", "picture", "blitter", "copper", "mouse", "collide", "show", "fade_to_bank", "font_bank", "2d_cursor")
 EXAMPLE_DIR = ROOT / "examples"
 AP20_NAME = re.compile(r"\bAga\s+[A-Za-z]+(?:\s+[A-Za-z]+){0,3}")
 FUNCTION_BARE = re.compile(
@@ -95,7 +95,7 @@ def main() -> None:
     require("_ERR=1" in showcase and "_ERR=2" in showcase and
             "_ERR=3" in showcase, "show.asc needs bounded failure exits")
 
-    fade = (EXAMPLE_DIR / "fade_to_bank_r33.asc").read_text("ascii")
+    fade = (EXAMPLE_DIR / "fade_to_bank.asc").read_text("ascii")
     instructions = [line.strip() for line in fade.splitlines()
                     if line.strip() and not line.lstrip().startswith("'")]
     require(instructions.index("_SWAP=Aga Swap") <
@@ -118,7 +118,7 @@ def main() -> None:
     require("Save " not in fade and "Load " not in fade,
             "R33 visual demo must not touch files")
 
-    font_demo = (EXAMPLE_DIR / "font_bank_r38.asc").read_text("ascii")
+    font_demo = (EXAMPLE_DIR / "font_bank.asc").read_text("ascii")
     require(all(fragment in font_demo for fragment in (
         'Load "Amcaf Fonts/Hwarf1252S.abk",25',
         'Load "Amcaf Fonts/Pix3M-1252L.abk",25',
@@ -135,7 +135,7 @@ def main() -> None:
         require((EXAMPLE_DIR / "Amcaf Fonts" / name).is_file(),
                 f"Missing bundled R38 font bank {name}")
 
-    combined = (EXAMPLE_DIR / "m15_2d_cursor.asc").read_text("ascii")
+    combined = (EXAMPLE_DIR / "2d_cursor.asc").read_text("ascii")
     require(all(fragment in combined for fragment in (
         "_OPEN=Aga Screen Open(320,256,256,$00021000)",
         "_DB=Aga Double Buffer",
@@ -161,11 +161,15 @@ def main() -> None:
     require(all(x in combined for x in ("_ERR=1","_ERR=2","_ERR=3","_ERR=4")),
             "M15/M15bis example must have bounded failure outcomes")
 
-    # Archived exact R46 C1 integrated Compiler PASS example.
-    kit = EXAMPLE_DIR / "compiler_r46_all_in_one"
-    all_in_one = (kit/"COMPILER_R46_ALL_IN_ONE.asc").read_bytes()
-    assert all_in_one == (ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
-    assert len(all_in_one)==5404 and all_in_one.endswith(b"End\n")
+    # The public folder uses clean names; the byte-exact, user-tested
+    # R46 C1 program is preserved only in tests/passed and the frozen ZIP.
+    kit = EXAMPLE_DIR / "compiler_all_in_one"
+    all_in_one = (kit/"COMPILER_ALL_IN_ONE.asc").read_bytes()
+    original_r46 = (ROOT/"tests/passed/R46_C1_COMPILER_ALL_IN_ONE.asc").read_bytes()
+    assert len(original_r46)==5404
+    assert all_in_one == original_r46.replace(
+        b"M16_AGAPIC_SAMPLE_BANK10.abk", b"AGAPIC_SAMPLE_BANK10.abk")
+    assert all_in_one.endswith(b"End\n")
     lines = all_in_one.decode("ascii").splitlines()
     assert sum(x.strip().startswith("If ") for x in lines) == sum(x.strip()=="End If" for x in lines)
     assert sum(x.strip().startswith("For ") for x in lines) == sum(x.strip().startswith("Next ") for x in lines)
@@ -173,20 +177,48 @@ def main() -> None:
                     "Aga Font Select(", "Aga Swap", "Aga Screen Close",
                     "Aga Plot(", "Aga Draw(", "Aga Box(", "Aga Circle("):
         assert command in all_in_one.decode("ascii"), "C1 example missing "+command
-    assert (kit/"M16_AGAPIC_SAMPLE_BANK10.abk").read_bytes() == (
+    assert (kit/"AGAPIC_SAMPLE_BANK10.abk").read_bytes() == (
         ROOT/"tests/current/M16_AGAPIC_SAMPLE_BANK10.abk").read_bytes()
     assert (kit/"Hwarf1252S.abk").read_bytes() == (
         EXAMPLE_DIR/"Amcaf Fonts/Hwarf1252S.abk").read_bytes()
     assert (kit/"README.md").is_file() and (kit/"Hwarf-12xxS.licence").is_file()
+    # Historical ZIP remains EXACTLY byte-identical (including its
+    # original internal filenames). Only its public filename is cleaner.
     import zipfile
-    with zipfile.ZipFile(EXAMPLE_DIR/"COMPILER_R46_ALL_IN_ONE.zip") as archive:
+    zipfile_path = EXAMPLE_DIR/"COMPILER_ALL_IN_ONE.zip"
+    zipdata = zipfile_path.read_bytes()
+    git_object = b"blob "+str(len(zipdata)).encode("ascii")+b"\x00"+zipdata
+    assert hashlib.sha1(git_object).hexdigest()=="0caec1f3c589ca981c2a193e81ea189301c1970e"
+    with zipfile.ZipFile(zipfile_path) as archive:
         names=archive.namelist()
         root="R46_C1_COMPILER_ALL_IN_ONE/"
         assert set(names)=={root+n for n in (
             "COMPILER_R46_ALL_IN_ONE.asc","M16_AGAPIC_SAMPLE_BANK10.abk",
             "Hwarf1252S.abk","Hwarf-12xxS.licence","README.md")}
-        for name in names:
-            assert archive.read(name)==(kit/name.removeprefix(root)).read_bytes()
+        assert archive.read(root+"COMPILER_R46_ALL_IN_ONE.asc")==original_r46
+        assert archive.read(root+"M16_AGAPIC_SAMPLE_BANK10.abk")==(
+            kit/"AGAPIC_SAMPLE_BANK10.abk").read_bytes()
+        for name in ("Hwarf1252S.abk","Hwarf-12xxS.licence"):
+            assert archive.read(root+name)==(kit/name).read_bytes()
+        assert archive.read(root+"README.md")
+    # The bank-number showcase is the archived R54 program adapted
+    # ONLY to its public resource filename; its passed test is immutable.
+    helpers_dir = EXAMPLE_DIR/"bank_number"
+    helper_source = (helpers_dir/"BANK_NUMBER_HELPERS.asc").read_bytes()
+    original_r54 = (ROOT/"tests/passed/M16_R54_BANK_NUMBER_01.asc").read_bytes()
+    assert helper_source == original_r54.replace(
+        b"M16_AGAPIC_SAMPLE_BANK10.abk", b"AGAPIC_SAMPLE_BANK10.abk")
+    assert (helpers_dir/"AGAPIC_SAMPLE_BANK10.abk").read_bytes()==(
+        ROOT/"tests/current/M16_AGAPIC_SAMPLE_BANK10.abk").read_bytes()
+    for p in EXAMPLE_DIR.rglob("*"):
+        label = p.relative_to(EXAMPLE_DIR).as_posix()
+        assert not re.search(r"(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)",
+                             label, flags=re.I), "Version in public filename: "+label
+    assert (EXAMPLE_DIR/"fast_icons/FAST_ICON_LAB.asc").is_file()
+    for dirname in ("bank_number", "cblock_chip", "fast_icons"):
+        for language in ("README.md", "README.fr.md"):
+            assert (EXAMPLE_DIR/dirname/language).is_file(), dirname+"/"+language
+
     original = (ROOT / "iff-TEST/AGA_TESTCARD_320x256_256C.iff").read_bytes()
     demo = (EXAMPLE_DIR / "demo.iff").read_bytes()
     require(hashlib.sha256(original).digest() == hashlib.sha256(demo).digest()
@@ -199,7 +231,7 @@ def main() -> None:
     require(len(planes) == 8 and consumed == len(body), "Incomplete IFF decoding")
 
     # R68 public Chip CBlock demo (new example only; NO WinUAE runtime claim).
-    cbdir = EXAMPLE_DIR / "cblock_chip_r68"
+    cbdir = EXAMPLE_DIR / "cblock_chip"
     cbsource = (cbdir / "CBLOCK_CHIP_LAB.asc").read_bytes()
     require(b"\r" not in cbsource and cbsource.endswith(b"End\n"),
             "R68 Chip CBlock demo must be ASCII/LF and end with End")
