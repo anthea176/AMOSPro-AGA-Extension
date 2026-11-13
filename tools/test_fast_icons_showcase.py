@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static and current AP20 API preflight for examples/fast_icons_r67.
+"""Static and current AP20 API preflight for examples/fast_icons.
 
 Does NOT execute AMOS, WinUAE or the AMOS Compiler. Do not infer Gate B/C.
 The ten legacy root example ASC files and historical cases are untouched.
@@ -14,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"))
 from audit_ap20 import inspect,parse
 
-PACKAGE=ROOT/"examples/fast_icons_r67"
+PACKAGE=ROOT/"examples/fast_icons"
 SOURCE=PACKAGE/"FAST_ICON_LAB.asc"
 COMMANDS=(
     "Aga Detect",
@@ -91,8 +91,8 @@ def main()->None:
         require(name.casefold() in valid,f"API missing in active library: {name}")
         require(name in source,f"Demo does not exercise {name}")
     for p,index,disclaimer in (
-        ("README.fr.md","fast_icons_r67/","confirmée fonctionnelle par l'auteur"),
-        ("README.md","fast_icons_r67/","author confirmed this public showcase works"),
+        ("README.fr.md","fast_icons/","L'auteur confirme le bon fonctionnement"),
+        ("README.md","fast_icons/","The author confirmed the showcase works"),
     ):
         body=(PACKAGE/p).read_text("utf-8")
         require(disclaimer in body,f"Missing accurate runtime validation status in {p}")
