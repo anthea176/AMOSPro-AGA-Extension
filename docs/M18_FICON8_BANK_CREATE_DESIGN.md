@@ -1,6 +1,6 @@
 # M18 — Proposition R64 : créer une banque Fast Icon depuis AMOS
 
-**Statut : CONTRAT PROPOSÉ, NON VALIDÉ — aucune commande R64, aucun binaire, aucun test WinUAE R64.**
+**Contrat approuvé par l'auteur le 13/11/2026. R64 implémentée : Gate A 68000 PASS, 42 tests ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)). Gate B WinUAE NON TESTÉE ; Compiler C manuel en fin M18, D physique non testé.**
 
 - Dépôt : `anthea176/AMOSPro-AGA-Extension`, branche `main` exclusivement.
 - Référence installable protégée : R63 v0.13.8, `LAST_GOOD`, 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
@@ -10,13 +10,13 @@
 
 Permettre à un programme AMOS de **créer directement une banque source d'icônes `FICON8  `** au lieu de dépendre d'un fichier ABK fabriqué sur PC, et sans devoir réserver manuellement une banque de données au préalable. L'initialisation est distincte du remplissage des icônes et de la création du cache Chip `FICHIP8 `.
 
-## 2. API recommandée — accord de l'auteur encore nécessaire
+## 2. API approuvée par l'auteur
 
 ```amos
 _OK=Aga F Icon Bank Create(10,32)
 ```
 
-Nom public proposé : `Aga F Icon Bank Create` (**fonction entière**).
+Nom public approuvé : `Aga F Icon Bank Create` (**fonction entière**).
 
 | Élément | Proposition |
 |---|---|
@@ -84,7 +84,7 @@ Cette commande **n'importe aucune image**, ne capture aucun pixel, ne manipule p
 2. Création/rafraîchissement d'un cache `FICHIP8` réellement en Chip avec marqueur de validité `0 → copie complète → 1` et contrôle `MEMF_CHIP`.
 3. Benchmarks CPU vs Blitter incluant réellement le coût du staging.
 
-## 6. Recette prévue, sans tests réalisés à cette étape
+## 6. Protocole : Gate A PASS, Gate B à exécuter
 
 **Gate A CPU/CI :** cas limites (4/4096 slots), allocations et collisions simulées, 0/1/3 flags en lecture des banques, requêtes invalides, vérification ligne par ligne des masques et plans à zéro, contrôle exact de l'en-tête, intégrité des banques voisines, nettoyage après échec, ABI complète et export natif strict. Reproductibilité et pont Compiler V2 statique.
 
@@ -92,9 +92,9 @@ Cette commande **n'importe aucune image**, ne capture aucun pixel, ne manipule p
 
 **Gate C :** un **unique** essai manuel Compiler sous WinUAE à la fin de M18, avec l'ensemble des fonctions finalisées ; Gate D physique seulement si possible.
 
-## 7. Décision attendue avant code
+## 7. Décision approuvée et implémentation R64
 
-**Valider ou ajuster la signature `_OK=Aga F Icon Bank Create(Bank,Count)`**, l'allocation **automatique** via AMOS, les bornes **5…65535 / 4…4096** et l'initialisation de chaque icône à **index zéro transparent**. Ce document est une proposition ; il ne vaut pas accord d'implémentation.
+**Signature et paramètres approuvés explicitement.** Candidate R64 v0.13.9 : 39 100 octets, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, 57 commandes / 64 AP20, routine nouvelle de 312 octets. [42 tests natifs Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232). **Ne pas promouvoir sans validation WinUAE B et décision distincte de l'auteur.**
 
 Références :
 - [Format et modèles FICON8](../tools/m18_ficon16_model.py)

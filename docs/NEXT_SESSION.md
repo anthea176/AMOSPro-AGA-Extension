@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R64 — Candidate Gate A PASS, Gate B WinUAE INTERPRÉTÉE À FAIRE (13/11/2026)
+
+L'auteur a approuvé `_OK=Aga F Icon Bank Create(Bank,Count)`. **R64 v0.13.9**, [unique .Lib candidate](../dist/AMOSPro_AGA.Lib) 39 100 octets, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, 57 commandes / 64 AP20, code natif ajouté 312 octets. Crée une banque DATA AMOS `FICON8  ` pour 4..4096 slots, refuse tout numéro occupé, privilégie Fast et initialise les masques `$FFFF` / plans nuls. **Gate A 42 tests 68000 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)), layouts interprété/Compiler simulés, binaire reproductible. **Gate B WinUAE interprétée non réalisée.** [ASC unique](../tests/current/M18_R64_FICON8_CREATE_01.asc) à importer dans AMOS via Project → Merge ASCII, programme vierge ; banque 12 libre requise. Vérifier `RESULT 1`, rendu transparent/opaque, collision, `RAM:M18_R64_FICON8.ABK` Save/Erase/Load, mémoire. **R63 `LAST_GOOD` inchangée**, Compiler C manuel unique seulement à la fin M18 ; Gate D non testée. [Contrat](M18_FICON8_BANK_CREATE_DESIGN.md).
+
+**Ensuite, soumettre séparément à l'auteur** la commande de remplissage d'un slot ; ne pas commencer cache/staging dynamique sans contrat.
+
 ## M18/R63 — PROMUE LAST_GOOD
 
 **Promotion R63 v0.13.8 autorisée le 13/11/2026** après [régression complète de prépromotion PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490) : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, 56 commandes / 63 AP20. Gate A CPU (260 cas) PASS, Gate B WinUAE interprétée PASS (`RESULT 1`, Chip Free 1 796 440 avant/après). [ASC exact archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc). Pixels à contrôler, Compiler C une fois en fin M18, D physique non faite. [Ancienne R60 dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/67315eb0f9dee6b742b841c92b5258e1f7a0f765/dist/AMOSPro_AGA_LAST_GOOD.Lib).

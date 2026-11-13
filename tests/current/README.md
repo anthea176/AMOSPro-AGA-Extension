@@ -1,5 +1,9 @@
-# M18 — Aucun ASC actif après archivage R63
+# M18/R64 — Unique ASC actif pour Gate B WinUAE interprétée
 
-**R63 promue `LAST_GOOD` le 13/11/2026**, après Gate A/B PASS, [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490) et accord auteur. L'[ASC exact du test R63](../passed/M18_R63_CHIP_BLIT_01.asc) est archivé dans `tests/passed/`.
+**R64 v0.13.9**, [librairie candidate](../../dist/AMOSPro_AGA.Lib) de **39 100 octets**, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, [42 tests natifs 68000 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232). **R63 v0.13.8 LAST_GOOD intacte**. Gate B WinUAE **non encore effectuée** ; Gate C Compiler manuelle une seule fois à la fin M18.
 
-Bibliothèques installable et `LAST_GOOD` identiques : 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. Les ressources [FICON8 banque 10](M18_FICON8_SAMPLE_BANK10.abk) et [FICHIP8 banque 11](M18_FICHIP8_SAMPLE_BANK11.abk) restent ici. Visuel pixels non confirmé ; Compiler C seulement à la fin M18 ; matériel D non testé. Le prochain test sera l'unique ASC dans `tests/current/`.
+[Unique test actif : M18_R64_FICON8_CREATE_01.asc](M18_R64_FICON8_CREATE_01.asc). Dans AMOS, importer via **Project → Merge ASCII** depuis un programme vide ; utiliser une configuration WinUAE jetable. **Banque 12 libre obligatoire** : sinon la création est refusée sans écrasement et le test s'arrête. Écrit `RAM:M18_R64_FICON8.ABK` (attention à un fichier du même nom déjà présent).
+
+Le test vérifie la création, les tailles, le masque `$FFFF`, les 8 plans nuls, le refus de collision et des paramètres invalides, l'absence de fuite **avant** écriture dans `RAM:`, Save/Erase/Load ABK et le rendu CPU. **Contrôle visuel : fond bleu, icône transparente à X30, carré noir opaque à X90**, puis `RESULT 1`, `CLOSE RETURNED`. La mémoire après sauvegarde RAM: ne sert pas à juger les fuites.
+
+Les ABK de référence FICON8 10 et FICHIP8 11 restent là mais **ne sont pas nécessaires au test R64**.
