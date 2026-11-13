@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P1b — groupe 1–8 plans masqué + RLE/clipping (13/11/2026)
+
+**Prototype natif 68EC020/68020 soumis à la CI**, [contrat détaillé](OPT020_P1B_AGAPIC_RLE_MASK_2026-11-13.md) : boucle de plans utilisant `BFEXTU/BFINS`, masque indépendant, lecture des paquets AGAPIC v1 RLE (littéraux/répétés), source recadrée et clipping sans dépassement de lignes par fallback scalaire. Le **noyau de copie** s'exécute en émulateur CPU ; **orchestration RLE/clip encore en Python**, aucune intégration AP20 ni nouveau binaire. **Validation P1b en attente**, ne pas annoncer Gate B/C ou gain de vitesse. P1 simple reste PASS. R68/`LAST_GOOD` protégées.
+
 ## OPT020/P1 — premier sous-noyau natif 68020 PASS (13/11/2026)
 
 **Prototype autonome 16 pixels opaques AGAPIC :** témoin CPU 68000 `BTST/BSET/BCLR`, variante **68020 réelle** `BFEXTU/BFINS`, décalage destination X modulo 8, sans modifier les 16 pixels voisins. [Contrat P1](OPT020_P1_BITFIELD_PROTOTYPE_2026-11-13.md), [code](../tools/opt020_p1_bitfield_emit.py), [test Musashi 68000/68EC020/68020](../tools/test_opt020_p1_bitfield_native.py), [CI P1](../.github/workflows/opt020-p1.yml). **Musashi CPU PASS : 256 cas par cible, 768 exécutions, 0 écart pixel/canary/ABI** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43489837368)), code 020 **12 octets** vs témoin 000 **54 octets**. **Aucun gain WinUAE/hardware chiffré**. Pas de RLE complet, masque/clipping ou AP20. R68/`LAST_GOOD` inchangées, aucune Lib candidate ou nouvel ASC.

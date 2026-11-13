@@ -6,6 +6,9 @@ on:
     paths:
       - "tools/opt020_p1_bitfield_emit.py"
       - "tools/test_opt020_p1_bitfield_native.py"
+      - "tools/opt020_p1b_multiplane_emit.py"
+      - "tools/opt020_p1b_region.py"
+      - "tools/test_opt020_p1b_native.py"
       - ".github/workflows/opt020-p1.yml"
   workflow_dispatch:
 
@@ -24,5 +27,7 @@ jobs:
         run: python -m pip install machine68k==0.4.0 capstone==5.0.9
       - name: Execute CPU000, 68EC020 and 68020 machine instructions
         run: python -B tools/test_opt020_p1_bitfield_native.py
+      - name: Execute real masked eight-plane 68EC020 / 68020 and full AGAPIC RLE
+        run: python -B tools/test_opt020_p1b_native.py
       - name: Guard R68, LAST_GOOD, archives, and single active ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
