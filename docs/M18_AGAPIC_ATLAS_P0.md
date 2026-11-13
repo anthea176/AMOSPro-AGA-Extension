@@ -152,7 +152,7 @@ Pas de nombre de FPS promis sans mesure WinUAE contrôlée ou matériel.
 ## 5. Prochaine tranche, sans promotion automatique
 
 1. **P0** : modèle et tests hôte AGAPIC v1 / atlas (en cours).
-2. **P1 R60** : signature `Aga Image Region(Bank,SrcX,SrcY,Width,Height,X,Y,Mode)` et moteur 68000 depuis R59 avec `unwrap_native_parts_v2` / `wrap_native_ap20_v2`, **Gate A CPU/CI PASS sur 86 cas** ; [rapport R60](M18_R60_IMAGE_REGION.md). Gates WinUAE B/C en attente.
+2. **P1 R60** : signature `Aga Image Region(Bank,SrcX,SrcY,Width,Height,X,Y,Mode)` et moteur 68000 depuis R59 avec `unwrap_native_parts_v2` / `wrap_native_ap20_v2`, **Gate A CPU/CI PASS sur 86 cas** ; [rapport R60](M18_R60_IMAGE_REGION.md). **Gates B/C WinUAE PASS, régression complète PASS, R60 promue en `LAST_GOOD` ; le test a été archivé sans modification.**
 3. **B/C R60** : seulement après Gate A, un seul binaire de
    travail dist/AMOSPro_AGA.Lib et un seul ASC tests/current.
    WinUAE interprété puis un NOUVEL exécutable Compiler.

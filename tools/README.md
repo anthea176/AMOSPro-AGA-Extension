@@ -10,7 +10,7 @@
 
 ## M18 / P0 — atlas AGAPIC v1, modèle hôte (pas de bibliothèque)
 
-[`m18_agapic_atlas_model.py`](m18_agapic_atlas_model.py) propose le rendu partiel par ligne d'une seule banque AGAPIC v1, avec sélection de frames de grille sans allouer une image intermédiaire. [`test_m18_agapic_atlas_model.py`](test_m18_agapic_atlas_model.py) vérifie pixels, masques, clipping, profondeur et erreurs sans écriture. **P0 Python seulement, pas de Gate A CPU native ni Gate B/C WinUAE.** R59 `LAST_GOOD` et les binaires restent inchangés. [Contrat](../docs/M18_AGAPIC_ATLAS_P0.md).
+[`m18_agapic_atlas_model.py`](m18_agapic_atlas_model.py) propose le rendu partiel par ligne d'une seule banque AGAPIC v1, avec sélection de frames de grille sans allouer une image intermédiaire. [`test_m18_agapic_atlas_model.py`](test_m18_agapic_atlas_model.py) vérifie pixels, masques, clipping, profondeur et erreurs sans écriture. **Ce modèle P0 Python n'est pas une Gate A native ni une Gate B/C WinUAE.** Il n'a pas ajouté de bibliothèque ; R60 est désormais la `LAST_GOOD` officielle. [Contrat](../docs/M18_AGAPIC_ATLAS_P0.md).
 
 ## Historique R57 — code RastPort (ancien test archivé)
 
@@ -39,7 +39,7 @@ Les builders et sondes R47–R52 sont conservés pour la reproductibilité, sans
 
 ## Construction Compiler-safe — R60 promue, R46 C1 figée
 
-**Candidate courante : R60 0.13.5**, [bibliothèque installable](../dist/AMOSPro_AGA.Lib) 35 056 octets, Gates A/B/C PASS sur le test R60, [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638). **Référence protégée : R59 0.13.4**, [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) 32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. La R57 v0.13.2 est un checkpoint historique reproductible ; la R46 C1 reste [archivée](../dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) à l'octet près.
+**Officielle : R60 v0.13.5**, [bibliothèque installable](../dist/AMOSPro_AGA.Lib) et [`LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques à l'octet près, **35 056 octets**, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`, Gates A/B/C et [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638), promotion autorisée. **R59 v0.13.4** est l'ancienne référence, reproductible avec [`build_m17_r59_compact_v2.py`](build_m17_r59_compact_v2.py) et conservée au [commit historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/3f7957632781e06816a1019fae24a4cd7eb58aac/dist/AMOSPro_AGA_LAST_GOOD.Lib). R57 et R46 C1 restent des checkpoints historiques.
 
 **Vérifier l'officielle et son pont :**
 
@@ -52,7 +52,7 @@ python -B tools/verify_artifacts.py
 
 `build_aga_current.py` vérifie la reproductibilité de R59 **et** celle de R46 C1 depuis son archive. Il ne réécrit aucun binaire. Les anciens scripts R40–R46 restent dédiés aux références historiques.
 
-**Pour toute candidate postérieure à R59**, partir du `LAST_GOOD` V2 en vigueur : déballer les parties natives avec `compiler_bridge_v2_probe.unwrap_native_parts_v2()`, modifier uniquement des fonctions auditées dans un builder reproductible, puis terminer avec `wrap_native_ap20_v2()`. Vérifier AP20, ABI, offsets non signés, source strict, Gate A CPU et Gate B/C WinUAE avant toute promotion. Ne jamais appliquer automatiquement l'enveloppe V1 à un binaire V2.
+**Pour toute candidate postérieure à R60**, partir du `LAST_GOOD` V2 en vigueur : déballer les parties natives avec `compiler_bridge_v2_probe.unwrap_native_parts_v2()`, modifier uniquement des fonctions auditées dans un builder reproductible, puis terminer avec `wrap_native_ap20_v2()`. Vérifier AP20, ABI, offsets non signés, source strict, Gate A CPU et Gate B/C WinUAE avant toute promotion. Ne jamais appliquer automatiquement l'enveloppe V1 à un binaire V2.
 
 **Limite de taille du V2 :** bloc Compiler R59 de **30 782 octets** ; borne théorique de l'unité **65 534 octets** (compteur WORD AMOS Compiler). La routine témoin R58 à 40 000 a été validée en compilé ; la borne supérieure de 65 534 octets reste une hypothèse de format, pas une validation WinUAE. Ne pas extrapoler les performances ni le comportement mémoire sans tests.
 
