@@ -1,5 +1,7 @@
 # Bibliothèques et tests — historique des versions
 
+**Dernière promotion : R63 v0.13.8** — installable et LAST_GOOD identiques, 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, Gates A/B PASS et [régression complète de prépromotion PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490), accord auteur. [ASC original archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc) ; [ancienne R60 dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/67315eb0f9dee6b742b841c92b5258e1f7a0f765/dist/AMOSPro_AGA_LAST_GOOD.Lib). Pixels à vérifier, Compiler C fin M18, D matériel non faite ; les anciens statuts ci-dessous sont historiques.
+
 Cette page conserve les **anciens comptes rendus de builds, validations et archives déplacés du README public**. Chaque paragraphe décrit une étape passée : les mentions de R44 comme `LAST_GOOD` correspondent à cette époque et non à l'état actuel.
 
 **Candidate de travail actuelle : R63 v0.13.8** — [unique .Lib active](../dist/AMOSPro_AGA.Lib) 38 736 octets, Gate A native PASS, **Gate B interprétée WinUAE PASS sur le test ASC corrigé (`RESULT 1`)**. Chip Free 1 796 440 avant/après, Blitter/clip à 1, invalides à 0, cache Chip de 1 192 octets libéré. [Rapport Gate B](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Rendu graphique non visible sur la capture de résultats**, contrôle visuel encore nécessaire ; Gate C Compiler à la fin de M18, D physique non faite, non promue. R60 LAST_GOOD conservée.

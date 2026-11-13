@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R63 — PROMUE LAST_GOOD
+
+**Promotion R63 v0.13.8 autorisée le 13/11/2026** après [régression complète de prépromotion PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490) : `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, 56 commandes / 63 AP20. Gate A CPU (260 cas) PASS, Gate B WinUAE interprétée PASS (`RESULT 1`, Chip Free 1 796 440 avant/après). [ASC exact archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc). Pixels à contrôler, Compiler C une fois en fin M18, D physique non faite. [Ancienne R60 dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/67315eb0f9dee6b742b841c92b5258e1f7a0f765/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+
+**Suite :** commande de création de banque source FICON8 à contractualiser, puis remplissage des icônes, staging Chip dynamique et benchmarks ; aucun nouveau token autorisé à cette étape. Aucun ASC actif après archivage du test R63.
+
 ## M18/R63 — Gate B interprétée PASS (ASC RESULT 1), visuel à confirmer (13/11/2026)
 
 **Quatrième essai R63 interprété WinUAE : `RESULT 1`, retours `ICON/BLIT/BCLP/CLIP/OUT = 1`, rejets `0`, `CLOSE -1`, mémoire Chip `1 796 440` octets avant/après.** Cache forcé en Chip par AMCAF : flags 0→3, 1 192 octets consommés pendant son utilisation (`CHIP CACHE ACTIVE 1 795 248`), libérés après `Erase`. **Gate B du protocole d'essai interprété PASS** ; cette capture ne montre pas le rendu graphique (contrôle visuel/pixel en attente). **R63 .Lib inchangée, aucune promotion ; Gate C Compiler manuelle seulement à la fin de M18.** [Rapport R63](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md) · [Test actif](../tests/current/M18_R63_CHIP_BLIT_01.asc) · [Contrat cache](M18_FAST_ICON_CACHE.md). Prochaine étape M18 : finaliser le staging dynamique et les mesures de cache ; **pas de compilation manuelle avant la fin du chantier**. R60 LAST_GOOD inchangée.

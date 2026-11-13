@@ -1,12 +1,14 @@
 # M18 — Cache des Fast Icons AGA 256 couleurs
 
+**R63 promue `LAST_GOOD` le 13/11/2026 après [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490) et accord de l'auteur.** Gate B interprétée PASS ; pixels à vérifier, Compiler C en fin M18, D non testée. [ASC R63 original archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc).
+
 ## Objet et état d'implémentation
 
 Le cache accélère l'affichage répété d'icônes **16×16 pixels / 8 bitplanes / 256 couleurs** en séparant la **source en Fast RAM**, la **préparation en Chip RAM** et les **copies par Blitter**. Il ne remplace pas les banques Icon classiques d'AMOS, ni les banques AGAPIC RLE.
 
 - **R61 :** `Aga F Icon(Bank,IconID,X,Y,Mode)`, chemin CPU direct depuis `FICON8 ` vers le back buffer AGA, validé WinUAE en interprété et compilé. La banque source peut être en Fast ou en Chip.
 - **R62 :** `Aga F Blit(CacheBank,IconID,X,Y,Mode)`, chemin Blitter depuis un cache `FICHIP8 ` pré-stagé en Chip. Gate A CPU/OS simulé PASS ; **essai WinUAE interprété du 13/11/2026 : RESULT 0**, tous les BLIT=0. Pas de Gate B validée, Gate C différée.
-- **R63 v0.13.8 :** [candidate active](../dist/AMOSPro_AGA.Lib) 38 736 octets ; Gate A CPU 260 cas PASS, **Gate B WinUAE interprétée PASS sur l'ASC (`RESULT 1`)** après déplacement réel en Chip par AMCAF (flags 0→3, 1 192 octets de cache, Chip Free identique avant/après). [Rapport B](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Rendu visuel non attesté par la capture texte ; Gate C Compiler en fin de chantier M18**. Aucun benchmark réel du staging Fast→Chip intégré.
+- **R63 v0.13.8 :** [bibliothèque promue `LAST_GOOD`](../dist/AMOSPro_AGA.Lib) 38 736 octets ; Gate A CPU 260 cas PASS, **Gate B WinUAE interprétée PASS sur l'ASC (`RESULT 1`)** après déplacement réel en Chip par AMCAF (flags 0→3, 1 192 octets de cache, Chip Free identique avant/après). [Rapport B](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Rendu visuel non attesté par la capture texte ; Gate C Compiler en fin de chantier M18**. Aucun benchmark réel du staging Fast→Chip intégré.
 - **Pas encore implémentés :** création/re-staging **dynamique** d'un cache depuis AMOS, cache à la demande, éviction automatique, benchmark CPU/Blitter avec coût de staging réel.
 
 ## Pipeline et responsabilité mémoire

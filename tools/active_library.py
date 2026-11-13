@@ -1,7 +1,8 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R60 v0.13.5 is the user-promoted LAST_GOOD, SHA-pinned and identical to
-the active library. Historical R59 remains reconstructible from its builder.
+R63 v0.13.8 is user-promoted LAST_GOOD, SHA-pinned and identical to
+the active library. Historical R60 remains reconstructible from its builder
+and preserved in the Git history.
 No synthetic 40K padding is included.
 """
 from hashlib import sha256
@@ -9,7 +10,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8"  # User-promoted R60 0.13.5, A/B/C and full regression on a8b14bc
+LAST_GOOD_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # User-promoted R63, A/B PASS; C deferred to end M18
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -17,7 +18,7 @@ R59_SHA="00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d"  # Hi
 R60_SHA="00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8"  # M18/R60 v0.13.5 AGAPIC region, promoted LAST_GOOD
 R61_SHA="ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f"  # Historical R61, WinUAE A/B/C PASS
 R62_SHA="9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6"  # Historical R62 Gate A PASS, WinUAE interpreted RESULT 0
-R63_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # R63 native reloaded bank flags fix; Gate A CPU PASS 260 cases, B pending; C deferred
+R63_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # Promoted R63 A/B PASS; visual pixels pending, C end M18
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -54,8 +55,8 @@ def verify_active(root: Path):
     if current_sha==R63_SHA:
         from build_m18_r63_chip_blit import build as build_r63
         candidate,meta=build_r63()
-        assert candidate==cur and cur!=good, "R63 must match pinned builder and preserve R60 LAST_GOOD"
-        return cur,good,"R63 0.13.8 M18 Chip masked Blitter Gate A CPU PASS; WinUAE B pending; C end of M18"
+        assert candidate==cur and cur==good, "Promoted R63 must equal deterministic candidate and LAST_GOOD"
+        return cur,good,"R63 0.13.8 M18 Chip masked Blitter PROMOTED LAST_GOOD; A/B PASS, visual pending, C end M18"
     if current_sha==R62_SHA:
         from build_m18_r62_chip_blit import build as build_r62
         candidate,meta=build_r62()

@@ -1,7 +1,9 @@
 # M18/R63 — Gate B WinUAE interprétée, cache Chip / Blitter 256 couleurs
+
+**Promotion approuvée le 13/11/2026 après [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43436834490).** Lib active et `LAST_GOOD` identiques (38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`) ; [ASC archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc), [R60 historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/67315eb0f9dee6b742b841c92b5258e1f7a0f765/dist/AMOSPro_AGA_LAST_GOOD.Lib). Aucun changement du natif ni compilation R63.
 **Date du test : 13 novembre 2026 — résultat de l'ASC : PASS.**
 
-**Version testée :** R63 v0.13.8, [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`). [Seul ASC actif `M18_R63_CHIP_BLIT_01.asc`](../tests/current/M18_R63_CHIP_BLIT_01.asc), exécuté **en interprété** sous WinUAE. **Aucune compilation manuelle effectuée pour R63.**
+**Version testée :** R63 v0.13.8, [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`). [ASC exact archivé](../tests/passed/M18_R63_CHIP_BLIT_01.asc), exécuté **en interprété** sous WinUAE. **Aucune compilation manuelle effectuée pour R63.**
 
 ## Résultats relevés sur la capture utilisateur
 
@@ -45,4 +47,4 @@ Un essai intermédiaire renvoyait tous les `BLIT = 1`, mais `RESULT 0` à cause 
 - **Gate D : non testée** sur Amiga physique.
 - **Performances : non mesurées pour R63**. La banque `FICHIP8` est pré-stagée sur PC ; le futur staging dynamique Fast→Chip et son coût seront étudiés séparément.
 
-**Aucun changement au code natif R63 ni au binaire `dist/AMOSPro_AGA.Lib`. `dist/AMOSPro_AGA_LAST_GOOD.Lib` (R60) reste protégé, aucune promotion décidée.** L'ASC actif unique reste celui de R63.
+**Aucun changement au code natif R63 ni au binaire `dist/AMOSPro_AGA.Lib`. `dist/AMOSPro_AGA_LAST_GOOD.Lib` est maintenant une copie binaire exacte de R63 après approbation et régression complète PASS ; R60 est préservée dans Git.** L'ASC actif unique reste celui de R63.

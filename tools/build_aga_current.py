@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the SHA-pinned promoted R60 V2 and frozen historical R46 C1.
+"""Verify the SHA-pinned promoted R63 V2 and frozen historical R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -53,7 +53,7 @@ def main() -> None:
         from build_m18_r63_chip_blit import build as build_r63
         candidate,meta=build_r63()
         assert candidate==current, "R63 candidate differs from exact deterministic source"
-        print("CURRENT R63 CHIP BLIT GATE A BUILDER PASS (WinUAE B pending, C deferred)",meta)
+        print("CURRENT R63 CHIP BLIT PROMOTED LAST_GOOD A/B PASS (pixels pending, C end M18)",meta)
     elif active.startswith("R62 0.13.7"):
         from build_m18_r62_chip_blit import build as build_r62
         candidate,meta=build_r62()
@@ -114,7 +114,7 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R60)")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R63)")
     print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 
