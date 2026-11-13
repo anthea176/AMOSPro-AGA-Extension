@@ -1,4 +1,6 @@
-# Outils Python — R60 v0.13.5 `LAST_GOOD`, M18 en cours
+# Outils Python — R64 v0.13.9 candidate, R63 `LAST_GOOD`, M18 en cours
+**Candidate active R64 v0.13.9** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) 39 100 octets, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, 57 commandes / 64 entrées AP20. Création native de banques `FICON8` : [émetteur](m18_ficon_bank_create_emit.py), [builder déterministe](build_m18_r64_ficon_bank_create.py), [42 tests Gate A PASS](test_m18_r64_ficon_bank_create_gate_a.py) ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)). [Unique ASC R64 actif](../tests/current/M18_R64_FICON8_CREATE_01.asc), Gate B interprétée non testée, Compiler C à la fin M18. **R63 v0.13.8 `LAST_GOOD` reste protégée**.
+
 
 **Lib installable = `LAST_GOOD` : R60 v0.13.5**, 35 056 octets, SHA256 `00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8`, 54 commandes / 61 entrées AP20, unité V2 32 798 octets. Gates A/B/C WinUAE et [régression complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43382293638), promotion explicitement autorisée. [Test R60 archivé](../tests/passed/M18_R60_IMAGE_REGION_01.asc). R59 0.13.4 reste disponible depuis `build_m17_r59_compact_v2.py` et l'ancien commit Git. Aucun ASC actif.
 

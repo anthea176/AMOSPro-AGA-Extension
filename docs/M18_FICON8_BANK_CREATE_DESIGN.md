@@ -86,7 +86,7 @@ Cette commande **n'importe aucune image**, ne capture aucun pixel, ne manipule p
 
 ## 6. Protocole : Gate A PASS, Gate B à exécuter
 
-**Gate A CPU/CI :** cas limites (4/4096 slots), allocations et collisions simulées, 0/1/3 flags en lecture des banques, requêtes invalides, vérification ligne par ligne des masques et plans à zéro, contrôle exact de l'en-tête, intégrité des banques voisines, nettoyage après échec, ABI complète et export natif strict. Reproductibilité et pont Compiler V2 statique.
+**Gate A CPU/CI PASS, 42 cas natifs M68000** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)) : cas limites (4/4096 slots), allocations et collisions simulées, requêtes invalides, contrôle des masques/plans vides, format et taille, intégrité des banques existantes, nettoyage, ABI et dispositions interpréteur/Compiler V2 simulées. Le builder R64 est déterministe et la nouvelle routine occupe 312 octets. Les simulations ne prouvent pas la Gate B/C WinUAE.
 
 **Gate B AMOS interprété/WinUAE :** un seul ASC actif, création de la banque 10, refus de doublon sans destruction, test de slots vides opaque/transparent, `Save/Erase/Load` ABK, contrôle de `Start`/taille/nom après rechargement, absence de fuite Fast/Chip et conservation de l'écran/palette. Ne pas déduire de ces retours l'exactitude du rendu sans vérification graphique.
 
