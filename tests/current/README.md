@@ -2,6 +2,30 @@
 
 **Active library:** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), R70 (51,460 bytes). SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad`. **R70 is a working candidate only**, not the promoted reference; R68 [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`.
 
+**R70 Gate B OBSERVED FAIL (13/11/2026)**: the author reports a solid pink private AGA screen with a white Intuition title bar and AMOS unresponsive, although switching to Workbench remains possible. **No `RESULT 1` / `CLOSE RETURNED` capture. Do not promote or compile R70.** CI native regression with the *exact 64x40 bank* and 8 WinUAE positions passes 256 cases under Musashi, so the real failure is still unidentified.
+
+**DIAGNOSTIC RERUN**: the same single ASC now changes **palette colour 0** before and after each P2 Draw call. On the stuck screen, the last background colour identifies the last executed checkpoint:
+
+| Colour on screen | Meaning |
+|---|---|
+| Original pink | Before the P2 entry checkpoint (or after final Swap) |
+| Red | Before first Image Draw (OPA) |
+| Green | After OPA (before masked Draw) |
+| Blue | After masked Draw |
+| Yellow | After shifted Draw |
+| Cyan | After left clipping |
+| Bright magenta | After right clipping |
+| Orange | After top clipping |
+| White | After bottom clipping |
+| Dark green | After fully offscreen |
+| Dark blue | After invalid pointer |
+| Dark red | After invalid length |
+| Purple | After invalid mode |
+| Grey | After invalid X |
+| Brown | After P1e Regions and legacy Draw, before Swap |
+
+After successful Swap the script restores the original pink, closes the screen, then reports `DIAG LAST STAGE 150`. **If the screen stays pink continuously**, the hang occurs *before* marker 10 (opening, initial Swap, Safe acquisition, or fill), not necessarily inside P2. This is a temporary diagnostic, not a Gate B PASS.
+
 **Only active ASC:** [`OPT020_P2_R70_INTERPRETED_01.asc`](OPT020_P2_R70_INTERPRETED_01.asc). Supersedes the P1e R69 ASC in `tests/current/` (the old revision stays accessible in Git history). This is **Gate B interpreted-only**. No new executable may be compiled for this check.
 
 ## Run under WinUAE

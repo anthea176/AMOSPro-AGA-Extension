@@ -1,6 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## OPT020/P2 — R70 v0.13.15 installée pour Gate B, pas encore validée sous WinUAE
+## OPT020/P2 — R70 v0.13.15 : Gate B WinUAE bloquée, diagnostic en cours
+
+**Incident 13/11/2026 :** l'ASC P2 R70 laisse un écran privé AGA rose avec barre blanche en haut, AMOS ne répond plus tandis que le Workbench reste accessible. **Gate B NON VALIDÉE (échec observé)** : pas de `RESULT 1` ni fermeture. CI P2 augmentée avec la vraie banque AGAPIC 64×40 et les huit positions WinUAE : **256 cas Musashi PASS**, donc il faut isoler l'écart entre émulation CPU et AMOS réel. **R70 non promue, R68 `LAST_GOOD` inchangée, aucun Compiler.** L'unique [ASC actif](../tests/current/OPT020_P2_R70_INTERPRETED_01.asc) comporte désormais des marqueurs de couleur par étape (voir [légende](../tests/current/README.md)) ; relever la dernière couleur de l'écran au blocage avant tout changement du moteur.
+
+### État du commit de la R70 installée (historique)
+
 
 **Seul binaire actif :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **51 460 octets**, SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad` (builder `tools/build_opt020_p2_r70.py`). **R68 `LAST_GOOD`** protégée, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R69 P1e validée précédemment mais n'est plus le binaire actif. **64 commandes / 71 AP20 identiques** ; seule l'entrée native 55 (`Aga Image Draw`) change par rapport à R69, l'entrée 59 (`Aga Image Region`) reste identique.
 
