@@ -246,8 +246,8 @@ jobs:
 
   pre_release_full:
     # Full regression on the exact pushed pre-release/release main SHA.
-    # R60 runs only on explicit pre-release/release commits, not ordinary pushes.
-    if: "${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54') || startsWith(github.event.head_commit.message, 'pre-release: R60') || startsWith(github.event.head_commit.message, 'release: R60')) }}"
+    # Full regression runs only for explicitly marked pre-release/release commits, not ordinary pushes.
+    if: "${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54') || startsWith(github.event.head_commit.message, 'pre-release: R60') || startsWith(github.event.head_commit.message, 'release: R60') || startsWith(github.event.head_commit.message, 'pre-release: R63') || startsWith(github.event.head_commit.message, 'release: R63')) }}"
     needs: verify
     uses: ./.github/workflows/artifact-regression-full.yml
     permissions:

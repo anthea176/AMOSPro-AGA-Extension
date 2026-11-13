@@ -36,6 +36,15 @@
 
 **Ordre prioritaire révisé le 13/11/2026 par l'auteur : (1) R60 promue → (2) terminer M18 (`F 16 Icon` et CBlock) → (3) optimisation 68020+ → (4) `c2p.library`.** Les chantiers CPU et C2P ne sont pas engagés. Les autres numéros de jalons M18–M22 ne valent pas autorisation de coder. Ne pas démarrer un nouveau chantier sans demande explicite. **Uniquement la branche `main`** ; pas de création/changement de branche sans instruction.
 
+### M18 — création de banques Fast Icon depuis AMOS (proposition, API non validée)
+
+**Demande de l'auteur du 13/11/2026 : ajouter une commande AMOS pour créer une banque d'icônes.** Avant de coder, contractualiser séparément :
+- **Création de la banque source** `FICON8 ` par numéro de banque et nombre d'emplacements (nom de travail : `Aga F Icon Bank Init`, **signature non approuvée**). Banque DATA native AMOS, sauvegardable/rechargeable en ABK, taille interne `12 + 288 × N` octets pour les icônes 16×16×8 ; mémoire Fast privilégiée sans la présumer physiquement. Refuser un numéro occupé ou une allocation impossible sans effacer les données existantes ; préciser initialisation des slots/masques, limites et retour 1/0.
+- **Remplissage / mise à jour des icônes** : définir comment transférer des pixels depuis un atlas AGAPIC, une capture ou une source fournie, comment choisir l'ID (base 1), l'index transparent 0 et comment invalider le cache lorsque la source change. La seule initialisation d'une banque vide ne fournit encore aucune icône exploitable.
+- **Cache `FICHIP8 ` distinct** : spécifier ensuite sa création en Chip et le staging sélectif Fast→Chip (conversion masque + bitplanes, validité 0→1 uniquement après copie complète). Ne pas confondre cette préparation avec `Bank To Chip` qui ne fait que déplacer une banque existante ; préserver le contrôle réel `TypeOfMem(MEMF_CHIP)` et les deux buffers AGA.
+
+**Statut : intention de conception uniquement** ; aucun nouveau token AP20, code 68000, builder, test ASC ou binaire n'est autorisé par cette note. Le nom, la syntaxe, les limites et le périmètre de la première commande devront recevoir un accord séparé.
+
 ## 3. Études en attente — aucun développement autorisé
 
 ### A. AGE v1.01 — Tilemaps et blocs graphiques

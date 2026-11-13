@@ -59,6 +59,10 @@ Données utiles de cache : **`12 + N × 289` octets**, N étant le nombre d'icô
 
 Le format permet théoriquement 4 à 4 096 icônes, **pas** la garantie qu'une telle banque tiendra dans la Chip disponible. Ces tailles ne sont pas les valeurs exactes de `Chip Free` après allocation : AMOS ajoute ses propres frais de gestion.
 
+## Banque d'icônes créée à l'exécution — à concevoir, NON implémenté
+
+La demande de l'auteur porte d'abord sur la possibilité de **créer une banque source `FICON8 ` directement depuis AMOS**, et pas seulement charger une ABK générée sur PC. Étudier une commande d'initialisation avec numéro de banque et nombre de slots, refus atomique si la banque est occupée, initialisation sûre et conservation du format DATA/ABK `12 + N × 288` octets. Une étape de remplissage/capture ou conversion depuis AGAPIC sera nécessaire. Le cache `FICHIP8 ` en Chip RAM et le staging dynamique constituent **une étape distincte** : créer une banque ne transfère aucune icône, et déplacer une banque ne convertit pas le masque. [Contrat à discuter et décision de priorité](ROADMAP.md). **Aucune API publique nouvelle approuvée ni implémentée.**
+
 ## Cycle de vie : actuel et futur
 
 1. **Charger** la source `FICON8` (banque 10) et un cache `FICHIP8` préparé (banque 11), puis **forcer le cache en Chip : `Bank Permanent 11` et `Bank To Chip 11` avec AMCAF, après le `Load`**. La préparation des pixels se fait toujours sur PC avec [`tools/m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) : `--prepared --write M18_FICHIP8_SAMPLE_BANK11.abk`. Le déplacement en Chip n'est pas le staging des icônes.
