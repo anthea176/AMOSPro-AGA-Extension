@@ -2,7 +2,7 @@
 
 **Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce contrat est **implémenté dans R68**, Gates **A native et B WinUAE interprétée PASS** ([rapport R68](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md)). Sur le 68020 à 14 MHz **sans JIT**, CPU8/CPU16/Blitter donnent capture **34/28/30** et Draw **35/29/29** ticks ; sur le 68030 **avec JIT**, les mesures sont **0/0/6** dans les deux sens, les zéros CPU étant sous la résolution de Timer. Ne pas mélanger ces profils.
 
-**État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20. Gate A M68000 48 cas PASS, Gate B WinUAE interprétée PASS sur les captures auteur du 13/11/2026 ; [ASC R68 exact archivé](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc). ASC intégré [toujours actif dans tests/current](../tests/current/M18_R68_COMPILER_FINAL_01.asc) : **Gate B interprétée WinUAE 68030 JIT ON PASS** (`RESULT 1`, [rapport](M18_R68_INTEGRATED_GATE_B_68030_JIT_2026-11-13.md)) ; **Gate C Compiler réelle NON exécutée**. R63 `LAST_GOOD` protégée ; une seule Gate C Compiler manuelle fin M18, D physique non testée.**
+**État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20. Gate A M68000 48 cas PASS, Gate B WinUAE interprétée PASS sur les captures auteur du 13/11/2026 ; [ASC R68 exact archivé](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc). ASC intégré [toujours actif dans tests/current](../tests/current/M18_R68_COMPILER_FINAL_01.asc) : **Gate B interprétée WinUAE 68030 JIT ON PASS** (`RESULT 1`, [rapport](M18_R68_INTEGRATED_GATE_B_68030_JIT_2026-11-13.md)) ; **Gate C Compiler réelle PASS** ([rapport de l'ASC compilé](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md)). R68 `LAST_GOOD` PROMUE après Gates A/B/C ; R63 préservée dans l'historique Git. D physique non testée.**
 
 ## 1. Usage prioritaire et origine
 
@@ -134,10 +134,10 @@ Le choix d'un stockage Chip et sans compression est **un choix d'architecture de
 
 - **Gate A : PASS** — 48 cas natifs M68000, modèle planaire CPU8/CPU16/Blitter, mémoire Chip, réemploi, erreurs, ABI et CI.
 - **Gate B : PASS** — scénarios R68 et PERF-02 sur WinUAE interprété 68020/68030 **sans JIT**, visuel, copies, reprise de banque, comparaisons planaires, mémoire, fermeture et `RESULT 1`. [Rapport PERF-02](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md).
-- **Gate C** : **un seul test Compiler manuel à la toute fin de M18**, sur binaire alors finalisé ; **Gate D** : AGA physique distincte.
-- **R68 v0.13.13** reste la candidate unique NON PROMUE, Gates **A native et B WinUAE interprétée PASS** ; **R63 LAST_GOOD** inchangée. Après M18 : 68020+ puis `c2p.library`, sans mélange de chantiers.
+- **Gate C : PASS** — essai unique AMOS Compiler réel sous WinUAE, [rapport](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md). **Gate D** : AGA physique distincte, non testée.
+- **R68 v0.13.13 PROMUE `LAST_GOOD`** : Gates **A/B/C PASS** sur les scénarios validés, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Après M18 : 68020+ puis `c2p.library`, sans mélange de chantiers.
 
-**Le sens du correctif est fixé par l'auteur : performances, banque temporaire en Chip, alignement en pixels.** **Signatures R68 validées ; décision du 13/11/2026 : choix CPU8/CPU16/Blitter laissé au programmeur par `Method`, aucune sélection automatique selon CPU, dimensions ou benchmark.** La bibliothèque R68 existe et ses Gates A/B sont PASS ; ceci ne valide pas Gate C ni Gate D.
+**Le sens du correctif est fixé par l'auteur : performances, banque temporaire en Chip, alignement en pixels.** **Signatures R68 validées ; décision du 13/11/2026 : choix CPU8/CPU16/Blitter laissé au programmeur par `Method`, aucune sélection automatique selon CPU, dimensions ou benchmark.** La bibliothèque R68 a passé les Gates A/B/C et est promue ; Gate D physique reste non testée.
 
 ## 7. Décision finale M18 — méthode explicite, sans automatisme (13/11/2026)
 
@@ -151,4 +151,4 @@ Le choix d'un stockage Chip et sans compression est **un choix d'architecture de
 
 **Motif :** [PERF-02 sans JIT](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md) confirme que le Blitter est souvent plus rapide mais **pas toujours**, et que des écarts de 1 à 3 ticks ne justifient pas une politique automatique dépendante de WinUAE. Le code appelant choisit explicitement une méthode valide pour ses contraintes. Les refus d'alignement ou de zone restent `0`, sans clipping ni réinterprétation automatique.
 
-**Aucune modification du binaire R68** n'est nécessaire pour cette décision. [Exemple autonome R68](../examples/cblock_chip_r68/README.fr.md) : source prête à être essayée en AMOS interprété, **pas encore validée indépendamment sous WinUAE**. Les exemples validés et l'ASC PERF-02 restent archivés sans modification. **Gate C réelle toujours non testée**, une seule fois en fin M18 ; Gate D matérielle non testée, R63 `LAST_GOOD` protégée.
+**Aucune modification du binaire R68** n'est nécessaire pour cette décision. [Exemple autonome R68](../examples/cblock_chip_r68/README.fr.md) : source prête à être essayée en AMOS interprété, **pas encore validée indépendamment sous WinUAE**. Les exemples validés et l'ASC PERF-02 restent archivés sans modification. **Gate C réelle PASS** ([rapport](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md)), Gate D matérielle non testée ; R68 promue `LAST_GOOD`, R63 historique préservée.

@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18 — R68 v0.13.13 PROMUE LAST_GOOD (13/11/2026)
+
+**Accord explicite de l'auteur et Gates A/B/C PASS** : R68 (CBlock Chip RAW, méthodes obligatoires 0 CPU8 / 1 CPU16 / 2 Blitter, sans AUTO) est maintenant la référence `LAST_GOOD`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont **identiques octet pour octet**, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20.
+
+**Gate C AMOS Compiler réelle PASS** (`RESULT 1`, `CLOSE RETURNED`) : [rapport](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md) et [ASC original archivé immuable](../tests/passed/M18_R68_COMPILER_FINAL_01.asc). **Gate D physique NON TESTÉE.** Régression complète prépromotion sur le [checkpoint R68](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/564eb80cfcb599dd93a1d111eee26c5d67338827) ; cette promotion nécessite sa confirmation PASS. Le contrôle post-promotion doit valider les hashes et reconstruire la R68 exactement. Les archives et l'ancienne R63 restent disponibles dans l'historique Git.
+
+**Fin M18 :** pas de nouvelle Gate C à demander pour ce scénario ; priorités suivantes à discuter séparément avant implémentation (optimisation 68020+, puis `c2p.library`). Uniquement `main`, pas de PR, aucune nouvelle publication Aminet automatique.
 ## M18/R68 — Gate C compilée PASS, promotion autorisée (13/11/2026)
 
 L'auteur confirme l'exécution **compilée** du programme intégré [M18_R68_COMPILER_FINAL_01.asc](../tests/current/M18_R68_COMPILER_FINAL_01.asc) sous WinUAE : **RESULT 1**, **CLOSE RETURNED**, Fast Icon R64–R67 et CBlock R68 (CPU8/CPU16/Blitter explicites) conformes, banque 1064 octets, invalides 0. [Rapport Gate C](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md) · [ASC exact dans tests/passed](../tests/passed/M18_R68_COMPILER_FINAL_01.asc). **A/B/C PASS**, D physique non testée.

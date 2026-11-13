@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the SHA-pinned promoted R63 V2 and frozen historical R46 C1.
+"""Verify the SHA-pinned promoted R68 V2 and frozen historical R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -53,7 +53,8 @@ def main() -> None:
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()
         assert candidate==current and meta["sha256"]=="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
-        print("CURRENT R68 Chip CBlock native Gate A 48 PASS; WinUAE interpreted Gate B PASS; Compiler Gate C pending",meta)
+        assert candidate == LAST_GOOD.read_bytes(), "Promoted R68 differs from LAST_GOOD"
+        print("CURRENT R68 PROMOTED LAST_GOOD; Gates A/B/C PASS, D physical untested",meta)
     elif active.startswith("R67 0.13.12"):
         from build_m18_r67_ficon_capture import build as build_r67
         candidate,meta=build_r67()
@@ -139,7 +140,7 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R63)")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R68)")
     print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 

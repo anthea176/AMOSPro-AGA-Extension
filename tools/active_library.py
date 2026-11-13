@@ -1,8 +1,8 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R63 v0.13.8 is user-promoted protected LAST_GOOD, SHA-pinned and
-separate from the current R68 v0.13.13 Chip CBlock working candidate.
-R68 native Gate A PASS (48 cases); WinUAE B pending. R67 Gates A/B PASS.
+R68 v0.13.13 is promoted protected LAST_GOOD, SHA-pinned and byte-identical
+to the current working Chip CBlock binary following WinUAE Gates A/B/C PASS.
+R63 remains preserved in Git history; physical Gate D has not been tested.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
 No synthetic 40K padding is included.
@@ -12,7 +12,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # User-promoted R63, A/B PASS; C deferred to end M18
+LAST_GOOD_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # Promoted R68 v0.13.13, Gates A/B/C PASS; D physical untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -25,7 +25,7 @@ R64_SHA="4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c"  # R6
 R65_SHA="6a1f3228b695331a37cd2b352679a07888fe6b94dd53e6c7f15c8f76151b17f2"  # R65 FICON8 Bank Put Gates A/B interpreted + visual PASS; C end M18
 R66_SHA="e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca"  # R66 FICHIP8 Create+Stage Gates A/B interpreted+visual PASS
 R67_SHA="ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5"  # R67 FICON8 Capture Gates A/B PASS
-R68_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # R68 Chip CBlock native 48 cases PASS; WinUAE B pending
+R68_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # R68 Chip CBlock Gates A/B/C PASS, promoted LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -62,9 +62,9 @@ def verify_active(root: Path):
     if current_sha==R68_SHA:
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()
-        assert candidate==cur and cur!=good and sha256(good).hexdigest()==R63_SHA
+        assert candidate==cur==good and sha256(good).hexdigest()==R68_SHA
         assert len(cur)==51064 and meta["commands"]==64 and meta["ap20_entries"]==71
-        return cur,good,"R68 0.13.13 Chip CBlock native Gate A 48 PASS; WinUAE B pending, Compiler C end M18"
+        return cur,good,"R68 0.13.13 Chip CBlock PROMOTED LAST_GOOD; Gates A/B/C PASS, D physical untested"
     if current_sha==R67_SHA:
         from build_m18_r67_ficon_capture import build as build_r67
         candidate,meta=build_r67()
