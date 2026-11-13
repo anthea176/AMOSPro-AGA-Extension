@@ -29,7 +29,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R69 0.13.14 (P1e) :** 64 commandes / 71 entrées AP20, signatures publiques inchangées. **R70 (P2) a été retirée du binaire actif après un Guru WinUAE interprété `$80000004` (instruction illégale)** ; ses tests CPU/CI PASS ne prouvent pas son fonctionnement réel. [Incident et repli sécurisé](docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md). R69 fonctionnelle reste l'unique binaire de travail ; sources et builder R70 conservés pour diagnostic. [Benchmarks interprétés et compilés R69](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md). Aucun gain P2 revendiqué.
+**API de la bibliothèque courante R69 0.13.14** (P1e) : 64 commandes / 71 entrées AP20, signatures publiques inchangées. **R70 (P2) a été retirée du binaire actif après un Guru WinUAE interprété `$80000004` (instruction illégale)** ; ses tests CPU/CI PASS ne prouvent pas son fonctionnement réel. [Incident et repli sécurisé](docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md). R69 fonctionnelle reste l'unique binaire de travail ; sources et builder R70 conservés pour diagnostic. [Benchmarks interprétés et compilés R69](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md). Aucun gain P2 revendiqué.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|

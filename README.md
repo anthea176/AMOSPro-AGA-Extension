@@ -29,7 +29,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R69 0.13.14 (P1e):** 64 commands / 71 AP20 entries, same public signatures as R68. **R70 (P2) was withdrawn from the active path after a real interpreted WinUAE Guru `$80000004` (illegal instruction)**; its CPU/CI PASS does not qualify it for runtime. [Incident and guarded recovery](docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md). Only the proven R69 is active; the R70 builder/source remain available for diagnosis. R69's interpreted and compiled `Aga Image Region` benchmarks [remain documented](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md). No P2 performance gain is claimed.
+**Current library API R69 0.13.14** (P1e): 64 commands / 71 AP20 entries, same public signatures as R68. **R70 (P2) was withdrawn from the active path after a real interpreted WinUAE Guru `$80000004` (illegal instruction)**; its CPU/CI PASS does not qualify it for runtime. [Incident and guarded recovery](docs/OPT020_P2_R70_GURU_80000004_2026-11-13.md). Only the proven R69 is active; the R70 builder/source remain available for diagnosis. R69's interpreted and compiled `Aga Image Region` benchmarks [remain documented](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md). No P2 performance gain is claimed.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
