@@ -1,8 +1,8 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
 R63 v0.13.8 is user-promoted protected LAST_GOOD, SHA-pinned and
-separate from the current R66 v0.13.11 dynamic Chip cache candidate.
-R66 native Gate A PASS (122 cases); WinUAE B pending, no manual Compiler.
+separate from the current R67 v0.13.12 FICON8 screen capture candidate.
+R67 native Gate A PASS (240 cases); WinUAE B pending. R66 Gates A/B PASS.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
 No synthetic 40K padding is included.
@@ -23,7 +23,8 @@ R62_SHA="9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6"  # Hi
 R63_SHA="fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba"  # Promoted R63 A/B PASS; visual pixels pending, C end M18
 R64_SHA="4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c"  # R64 FICON8 Create Gates A/B interpreted + visual PASS, NOT PROMOTED; C end M18
 R65_SHA="6a1f3228b695331a37cd2b352679a07888fe6b94dd53e6c7f15c8f76151b17f2"  # R65 FICON8 Bank Put Gates A/B interpreted + visual PASS; C end M18
-R66_SHA="e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca"  # R66 FICHIP8 Cache Create+Stage Gate A 122 native CPU PASS, B pending, C end M18
+R66_SHA="e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca"  # R66 FICHIP8 Create+Stage Gates A/B interpreted+visual PASS
+R67_SHA="ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5"  # R67 FICON8 screen capture Gate A 240 CPU PASS; B pending, C end M18
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -50,13 +51,19 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA):
+    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"
     else:
         assert is_compiler_wrapped(cur), "Active library must be Compiler-safe"
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
+    if current_sha==R67_SHA:
+        from build_m18_r67_ficon_capture import build as build_r67
+        candidate,meta=build_r67()
+        assert candidate==cur and cur!=good and sha256(good).hexdigest()==R63_SHA, (
+            "R67 candidate differs from exact builder or R63 LAST_GOOD changed")
+        return cur,good,"R67 0.13.12 FICON8 screen Capture Gate A 240 CPU PASS; WinUAE B pending, Compiler C end M18"
     if current_sha==R66_SHA:
         from build_m18_r66_fichip_dynamic import build as build_r66
         candidate,meta=build_r66()

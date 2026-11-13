@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R66_SHA:
+        if sha(raw) == R67_SHA:
+            from build_m18_r67_ficon_capture import build as pinned_build
+            release = "R67"
+        elif sha(raw) == R66_SHA:
             from build_m18_r66_fichip_dynamic import build as pinned_build
             release = "R66"
         elif sha(raw) == R65_SHA:
@@ -466,6 +469,11 @@ def verified_current_compiler_seeds(parsed):
     r64_case = False
     r65_case = False
     r66_case = False
+    r67_case = False
+    if len(sections) == 67:
+        from build_m18_r67_ficon_capture import build as build_r67
+        x67,_=build_r67()
+        r67_case=(raw==reconstruct(x67))
     if len(sections) == 66:
         from build_m18_r66_fichip_dynamic import build as build_r66
         x66,_=build_r66()
@@ -501,6 +509,42 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r67_case:
+        # Source-backed whitelist: only the exact R67 deterministic V2 output.
+        from build_m18_r67_ficon_capture import build as build_r67
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION67
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON67
+        from m18_ficon_chip_ap20_emit import emit_ficon_chip_ap20,GETADR_MARKER as CHIP67
+        from m18_ficon_bank_create_emit import (
+            emit_ficon_bank_create,GETADR_MARKER as FCREATE67,
+            RESERVE_MARKER as FCRES67,CHANGE_MARKER as FCCHG67,EFF_MARKER as FCEFF67)
+        from m18_ficon_bank_put_emit import emit_ficon_bank_put,GETADR_MARKER as FPUT67
+        from m18_fichip_dynamic_emit import (
+            emit_chip_bank_create,emit_chip_stage,GETADR_MARKER as CCGET67,
+            RESERVE_MARKER as CCRES67,CHANGE_MARKER as CCCHG67,EFF_MARKER as CCEFF67)
+        from m18_ficon_capture_emit import emit_ficon_capture,GETADR_MARKER as CAP67
+        original67,_=build_r67()
+        need(raw==reconstruct(original67),"Strict source: R67 candidate differs from pinned builder")
+        region67,_=emit_image_region()
+        ficon67,flabel67=emit_ficon_ap20()
+        chip67,clabel67=emit_ficon_chip_ap20(allow_reloaded_flags_zero=True)
+        fcreate67,_=emit_ficon_bank_create()
+        fput67,_=emit_ficon_bank_put()
+        ccreate67,cclabel67=emit_chip_bank_create()
+        cstage67,_=emit_chip_stage()
+        capture67,caplabels67=emit_ficon_capture()
+        for index,body,getp in (
+            (59,region67,True),(60,ficon67,True),(61,chip67,True),
+            (62,fcreate67,True),(63,fput67,True),(64,ccreate67,True),
+            (65,cstage67,True),(66,capture67,False)):
+            need(sections[index]['core']==body and sections[index]['getp']==getp,
+                 f"Strict source: R67 entry {index} differs from audited emitter")
+        need(region67.count(REGION67)==ficon67.count(FICON67)==chip67.count(CHIP67)==1
+             and fcreate67.count(FCREATE67)==fput67.count(FPUT67)==2
+             and ccreate67.count(CCGET67)==cstage67.count(CCGET67)==2
+             and all(ccreate67.count(v)==1 for v in (CCRES67,CCCHG67,CCEFF67))
+             and capture67.count(CAP67)==1,
+             "Strict source: R67 derived AMOS linkage markers differ")
     if r66_case:
         # Exact SHA-pinned, source-backed R66: do not infer linker offsets.
         from build_m18_r66_fichip_dynamic import build as build_r66
@@ -670,9 +714,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and not r61_case and not r62_case and not r63_case and not r64_case and not r65_case and not r66_case and len(sections) != 59:
+    elif not r60_case and not r61_case and not r62_case and not r63_case and not r64_case and not r65_case and not r66_case and not r67_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case or r64_case or r65_case or r66_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case or r64_case or r65_case or r66_case or r67_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -791,6 +835,31 @@ def verified_current_compiler_seeds(parsed):
         for pos in range(len(cstage66)):
             if cstage66.startswith(CCGET66,pos):
                 seeds[65].add(pos+len(CCGET66))
+    if r67_case:
+        seeds[59]={region67.index(REGION67)+6}
+        seeds[60]={ficon67.index(FICON67)+6,flabel67["core"]}
+        seeds[61]={chip67.index(CHIP67)+6,clabel67["core"]}
+        seeds[62]={0}
+        for marker in (FCREATE67,FCRES67,FCCHG67,FCEFF67):
+            pos=0
+            while True:
+                pos=fcreate67.find(marker,pos)
+                if pos<0:break
+                seeds[62].add(pos+len(marker));pos+=len(marker)
+        seeds[63]={0}
+        for pos in range(len(fput67)):
+            if fput67.startswith(FPUT67,pos):seeds[63].add(pos+len(FPUT67))
+        seeds[64]={0}
+        for marker in (CCGET67,CCRES67,CCCHG67,CCEFF67):
+            pos=0
+            while True:
+                pos=ccreate67.find(marker,pos,cclabel67["bank_name"])
+                if pos<0:break
+                seeds[64].add(pos+len(marker));pos+=len(marker)
+        seeds[65]={0}
+        for pos in range(len(cstage67)):
+            if cstage67.startswith(CCGET67,pos):seeds[65].add(pos+len(CCGET67))
+        seeds[66]={0,capture67.index(CAP67)+len(CAP67)}
     return seeds
 
 

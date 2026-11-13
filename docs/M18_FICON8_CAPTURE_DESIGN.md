@@ -1,6 +1,6 @@
 # M18 — Capture directe d'un Fast Icon 16×16 depuis l'écran AGA
 
-**Statut : prochaine fonction à implémenter après R66 A/B PASS ; pour l'instant API PROPOSÉE, aucun token AP20, aucune Gate A/B/C.** Ajout à la demande de l'auteur du 13/11/2026. La candidate R66 a désormais passé les Gates A (122 cas 68000) et B (deux captures WinUAE avec rendu conforme et `RESULT 1`, [rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md)). La commande de capture n'a pas encore été implémentée.
+**Statut : R67 v0.13.12 IMPLÉMENTÉE, Gate A native 240 cas M68000 PASS, Gate B interprétée WinUAE À FAIRE.** [Seule bibliothèque active](../dist/AMOSPro_AGA.Lib) **43 180 octets**, SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5` ; [CI complète préparatoire](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43456641279) ; [ASC R67 actif](../tests/current/M18_R67_FICON8_CAPTURE_01.asc). Ajout à la demande de l'auteur du 13/11/2026. La candidate R66 a désormais passé les Gates A (122 cas 68000) et B (deux captures WinUAE avec rendu conforme et `RESULT 1`, [rapport](M18_R66_FICHIP_DYNAMIC_WINUAE_GATE_B_2026-11-13.md)). La commande de capture n'a pas encore été implémentée.
 
 ## Objectif et API proposée
 
@@ -53,6 +53,8 @@ Conséquence importante : **l'index 0 est transparent uniquement lorsque l'icôn
 Une capture de l'écran visible/Workbench, des icônes autres que 16×16 ou une profondeur inférieure à 8 plans sont hors périmètre.
 
 ## Test requis avant toute validation
+
+**Code natif R67 :** [émetteur](../tools/m18_ficon_capture_emit.py), [builder](../tools/build_m18_r67_ficon_capture.py), [240 cas 68000](../tools/test_m18_r67_ficon_capture_gate_a.py) PASS. Le code contrôle les huit bitplanes en Chip, le rectangle entier, la banque AMOS et son slot avant écriture ; attend `Safe` et `WaitBlit` (pas de VBL) avant lecture. Un `Aga F Chip Stage` explicite est requis après la capture. Les validations WinUAE B, Compiler C et matériel D sont **distinctes et en attente**.
 
 1. **Gate A CPU/ABI réelle** : cas alignés/non alignés (X=0,1,7,15,16, etc.), bords droit/bas exacts, refus de tous les dépassements, vérification des huit plans et du masque ligne par ligne, slot et banques voisins intacts ; disposition interpréteur et Compiler V2 simulée.
 2. **Gate B WinUAE en AMOS interprété** : dessiner un motif AGA 256 couleurs dans le **back buffer**, capturer le carré, changer le fond et redessiner avec `Aga F Icon` en opaque/masqué, vérifier X/Y à 1 pixel, `Save / Erase / Load` ABK, résultat et rendu visuel, retour mémoire identique après nettoyage.

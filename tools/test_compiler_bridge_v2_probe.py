@@ -34,6 +34,7 @@ R63_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'
 R64_SHA256 = '4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c'
 R65_SHA256 = '6a1f3228b695331a37cd2b352679a07888fe6b94dd53e6c7f15c8f76151b17f2'
 R66_SHA256 = 'e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca'
+R67_SHA256 = 'ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -112,13 +113,17 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256), "Current must be pinned R60/R61/R62/R63"
+        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256), "Current must be pinned R60/R61/R62/R63"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
         assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        if active_hash == R66_SHA256:
+        if active_hash == R67_SHA256:
+            from build_m18_r67_ficon_capture import build as build_r67
+            assert current_bytes == build_r67()[0] and current_bytes != protected_bytes, (
+                "R67 must match SHA-pinned native builder; R63 LAST_GOOD protected")
+        elif active_hash == R66_SHA256:
             from build_m18_r66_fichip_dynamic import build as build_r66
             assert current_bytes == build_r66()[0] and current_bytes != protected_bytes, (
                 "R66 working candidate must match exact native builder and preserve R63")

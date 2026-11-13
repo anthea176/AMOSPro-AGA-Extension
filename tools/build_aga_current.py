@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R66 0.13.11"):
+    if active.startswith("R67 0.13.12"):
+        from build_m18_r67_ficon_capture import build as build_r67
+        candidate,meta=build_r67()
+        assert candidate==current,"R67 active differs from exact native builder"
+        print("CURRENT R67 FICON8 SCREEN CAPTURE Gate A 240 PASS; WinUAE interpreted B pending",meta)
+    elif active.startswith("R66 0.13.11"):
         from build_m18_r66_fichip_dynamic import build as build_r66
         candidate,meta=build_r66()
         assert candidate==current,"R66 current differs from deterministic native builder"
