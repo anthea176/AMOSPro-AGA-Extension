@@ -280,6 +280,61 @@ def main() -> None:
                 and "Method" in (cbdir/name).read_text("utf-8"),
                 f"R68 CBlock demonstration guide missing or incomplete: {name}")
 
+    # Standalone IFF <-> AGAPIC/ABK examples must stay consistent with
+    # their palette-only IFF companion. Neither program is an active test.
+    pack = EXAMPLE_DIR / "iff_to_abk"
+    convert = (pack / "IFF_TO_ABK.asc").read_text(encoding="ascii")
+    viewer = (pack / "ABK_VIEWER.asc").read_text(encoding="ascii")
+    for path, source in ((pack / "IFF_TO_ABK.asc", convert),
+                         (pack / "ABK_VIEWER.asc", viewer)):
+        require("\r" not in source and source.endswith("\nEnd\n"),
+                f"Wrong ASCII source format: {path}")
+        active = [line for line in source.splitlines()
+                  if line.strip() and not line.lstrip().startswith("'")]
+        require(sum(bool(re.match(r"^\s*If\b", line)) for line in active)
+                == sum(bool(re.match(r"^\s*End If\b", line)) for line in active),
+                f"Unbalanced If in {path}")
+        require(sum(bool(re.match(r"^\s*For\b", line)) for line in active)
+                == sum(bool(re.match(r"^\s*Next\b", line)) for line in active),
+                f"Unbalanced For in {path}")
+        require(not any(re.search(r"\bThen\b", line) for line in active),
+                f"AMOS syntax Then not allowed in {path}")
+        used = {match.group(0).casefold()
+                for line in active for match in AP20_NAME.finditer(line)}
+        require(used <= valid_commands and used,
+                f"Unknown AGA command in {path}: {used - valid_commands}")
+        require("Erase _B" in source and "Aga Wait Key" in source,
+                f"Missing bank 11 reset / final wait in {path}")
+        require('_PALFILE$=Left$(_ABK$,Len(_ABK$)-4)+".iff"' in source,
+                f"ABK and palette filename pairing differs in {path}")
+        require("_PAL=Aga Palette Load(_PALFILE$)" in source,
+                f"Viewer/converter must restore companion palette: {path}")
+    require('Fsel$("**")' in convert and 'Fsel$("**")' in viewer,
+            "Both demos must select their own input through Fsel$")
+    require("_PSAVE=Aga Palette Save(_PALFILE$)" in convert,
+            "Converter must write the companion palette")
+    require(convert.index("Aga Palette Save(_PALFILE$)") <
+            convert.index("Aga Palette Set(0,0,0,0)"),
+            "Palette must be saved before loading-message colour changes")
+    require(convert.index("Erase _B") <
+            convert.index("Aga Image Capture(_B,0,0,_W,_H,-1)"),
+            "Converter must release bank 11 before capture")
+    require(viewer.index("Erase _B") < viewer.index("Load _ABK$,_B"),
+            "Viewer must release bank 11 before Load")
+    require('Aga Blit Clear(0,0,320,256)' in viewer,
+            "Viewer must clear background before drawing")
+    for name in ("README.md", "README.fr.md"):
+        guide = (pack / name).read_text(encoding="utf-8")
+        require("IFF_TO_ABK.asc" in guide and "ABK_VIEWER.asc" in guide,
+                f"Missing demo links in {name}")
+    for name in ("README.md", "README.fr.md"):
+        index = (EXAMPLE_DIR / name).read_text(encoding="utf-8")
+        require(index.count("iff_to_abk/IFF_TO_ABK.asc") == 1 and
+                index.count("iff_to_abk/ABK_VIEWER.asc") == 1 and
+                index.count("# AMOSPro AGA") == 1 and
+                "Fsel$" in index,
+                f"Public example index malformed or missing viewer in {name}")
+
     for p in ("README.md", "README.fr.md", "INSTALL.md", "INSTALL.fr.md"):
         require((EXAMPLE_DIR / p).is_file() if p.startswith("README")
                 else (ROOT / p).is_file(), f"Missing documentation: {p}")
@@ -287,7 +342,7 @@ def main() -> None:
         text = (ROOT / p).read_text("utf-8")
         require("examples/README" in text and "INSTALL" in text,
                 f"Missing distribution links in root {p}")
-    print(f"Distribution examples PASS: {len(EXAMPLES)+2} distinct ASCII demos, "
+    print(f"Distribution examples PASS: {len(EXAMPLES)+6} distinct ASCII demos, "
           "all AP20 calls recognized, cleanup checks and matching 320x256x256 ILBM. "
           "AMOS/WinUAE execution still required.")
 

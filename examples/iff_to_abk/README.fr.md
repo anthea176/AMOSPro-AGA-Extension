@@ -1,25 +1,30 @@
-# IFF vers ABK AGAPIC — démonstration visuelle
+# IFF ↔ ABK AGAPIC — convertisseur et visionneuse
 
 [English](README.md) · [Tous les exemples](../README.fr.md)
 
-Importer [`IFF_TO_ABK.asc`](IFF_TO_ABK.asc) dans AMOS Professional par **Project → Merge ASCII**. Utiliser de préférence **R68 `AMOSPro_AGA_LAST_GOOD.Lib`**, installée sous le nom `AMOSPro_AGA.Lib` dans le slot `APSystem` habituel. La candidate R70 active rencontre un blocage WinUAE non résolu et **n'est pas recommandée** pour cette démonstration.
+Deux exemples AMOS Professional indépendants sont disponibles. Importer les sources **ASCII** par **Project → Merge ASCII**. Utiliser la **R68 `AMOSPro_AGA_LAST_GOOD.Lib` promue**, installée sous le nom `AMOSPro_AGA.Lib` dans le slot `APSystem` habituel. Ces deux exemples n'ont pas encore été exécutés séparément sous WinUAE.
 
-## Déroulement
+## 1. Conversion IFF vers ABK + palette
 
-1. Sélectionner une image **IFF/ILBM indexée** via `Fsel$("**")`, puis lire les dimensions, la profondeur, le nombre de couleurs et le mode écran.
-2. Ouvrir l'écran AGA adapté avec double buffering, charger les pixels et la palette IFF.
-3. **Avant le premier Swap**, convertir le **back buffer** en banque DATA **AGAPIC v1 opaque n° 11** avec `Aga Image Capture`.
-4. Sauvegarder l'ABK natif AMOS dans **`RAM:IFF_TO_ABK.abk`** ; montrer brièvement l'IFF original ; **Erase 11**.
-5. Effacer l'écran et afficher **CHARGEMENT ABK**.
-6. Recharger l'ABK depuis le disque avec `Load` ; effacer le back buffer ; reconstruire l'image **uniquement à partir des pixels de l'ABK rechargé** avec `Aga Bank Image Draw(11,0,0,0)`.
-7. Restaurer **uniquement la palette IFF** avec `Aga Palette Load`, afficher l'image recomposée, terminer par `Aga Wait Key`. Fermer l'écran AGA et libérer la banque 11 de la démonstration.
+[**IFF_TO_ABK.asc**](IFF_TO_ABK.asc) sélectionne une image IFF/ILBM indexée avec `Fsel$("**")`, ouvre l'écran AGA, charge ses pixels puis capture le **back buffer** dans une banque DATA AGAPIC opaque n° 11. Il sauvegarde **deux fichiers côte à côte** :
 
-**Important :** le format AGAPIC contient les pixels indexés compressés, **pas la palette RGB**. Il faut garder l'IFF original accessible pour restaurer les couleurs ; `Aga Palette Load` recharge seulement le CMAP et **ne redessine aucun pixel**.
+| Sortie | Contenu |
+|---|---|
+| `RAM:IFF_TO_ABK.abk` | Banque ABK AMOS contenant les pixels indexés compressés (AGAPIC v1) |
+| `RAM:IFF_TO_ABK.iff` | IFF de palette uniquement (`FORM ILBM`, `BMHD`, `CMAP`), créé par `Aga Palette Save` ; **pas de BODY image** |
 
-**Sécurité :** la banque **11 doit être libre**. Le programme refuse de démarrer si elle est occupée, et n'efface que la banque qu'il a lui-même créée. Une erreur disque native de `Save` ou `Load` peut interrompre l'interpréteur AMOS.
+L'exemple affiche brièvement l'IFF d'origine, efface la banque 11 et l'écran, puis affiche **CHARGEMENT ABK**. Il recharge ensuite **l'ABK sauvegardé**, efface le back buffer, reconstruit les pixels avec `Aga Bank Image Draw`, restaure **uniquement la palette enregistrée** avec `Aga Palette Load` et termine par `Aga Wait Key`.
 
-**Fichier de sortie :** `RAM:` est temporaire, perdu au redémarrage. Pour sauvegarder définitivement, remplacer `_ABK$="RAM:IFF_TO_ABK.abk"` par un chemin sur un volume inscriptible (par exemple `Work:IFF_TO_ABK.abk`). Une nouvelle exécution écrase le fichier cible.
+Le chemin de la palette est déduit automatiquement du nom de l'ABK. Pour enregistrer les deux fichiers ailleurs, modifier uniquement `_ABK$="RAM:IFF_TO_ABK.abk"` ; le fichier `.iff` sera créé dans le même dossier. Attention : `RAM:` est volatile et vidé au redémarrage.
 
-Pour commencer, choisir [`examples/demo.iff`](../demo.iff), une mire PAL **320×256×256 couleurs**. Les autres IFF indexés restent soumis aux modes acceptés par `Aga Screen Open`/`Aga Iff Load` et à la mémoire disponible.
+## 2. Visionneuse ABK autonome
 
-**Validation :** nouvel exemple public fondé sur des commandes existantes, **non exécuté encore sous AMOS/WinUAE**. Pas de Gate Compiler ni de validation sur Amiga physique revendiquée.
+[**ABK_VIEWER.asc**](ABK_VIEWER.asc) est un programme indépendant. Sélectionner un **`.abk`** avec `Fsel$("**")` ; le programme cherche automatiquement son fichier de palette **`.iff` portant le même nom de base et situé dans le même dossier**. Il lit l'en-tête de la banque AGAPIC pour connaître les dimensions et la profondeur, ouvre un écran AGA PAL LowRes 320×256, efface le back buffer et affiche l'ABK rechargé. L'image reste visible jusqu'à `Aga Wait Key`, sans avoir besoin de l'IFF d'origine.
+
+**Limites de la visionneuse :** AGAPIC v1, 1–8 bitplanes, largeur ≤ 320 et hauteur ≤ 256 pixels ; mode PAL LowRes `$00021000`. Le fichier compagnon de palette `.iff` est obligatoire. L'ABK ne contient ni la palette ni l'identifiant de mode vidéo ; les résolutions supérieures ou modes particuliers ne sont pas gérés ici.
+
+## Précautions et validation
+
+**Les deux programmes exécutent explicitement `Erase 11` avant de créer ou charger la banque 11 : son éventuel contenu précédent est détruit.** Utiliser un programme vierge ou sauvegarder les banques utiles. Les erreurs de fichiers des commandes AMOS `Save`/`Load` peuvent interrompre l'exécution. Les fichiers de sortie sont écrasés lors d'une nouvelle conversion.
+
+Commencer avec [`examples/demo.iff`](../demo.iff), une mire 320×256×256 couleurs. Contrôle statique réalisé, mais **l'exécution visuelle sous AMOS/WinUAE reste à vérifier** ; aucune validation Compiler ou Amiga physique n'est revendiquée.
