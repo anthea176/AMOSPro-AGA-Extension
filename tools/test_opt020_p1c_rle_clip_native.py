@@ -20,7 +20,7 @@ from opt020_p1c_rle_clip_emit import (
     emit_rle_row_020, emit_clip_x_020, emit_clip_y_020)
 from opt020_p1c_native_runner import RealNativeRLEClip
 from opt020_p1c_region import draw_native_plan
-from test_opt020_p1b_native import Real020Writer, make_atlas
+from test_opt020_p1b_native import make_atlas
 from test_m18_agapic_atlas_model import as_planar, reference
 
 
@@ -130,43 +130,39 @@ def check_native_clipping(native):
 
 def check_full_region(native):
     rng = Random(0x199020)
-    writer = Real020Writer(native.kind)
     tests = nat = frag = rows = 0
-    try:
-        for depth in (1, 2, 4, 8):
-            for masked in (False, True):
-                img, pix, mask = make_atlas(depth, masked)
-                for rect in ((0, 0, 65, 11), (3, 1, 47, 8),
-                             (16, 2, 32, 7)):
-                    for x, y in ((0, 0), (1, 3), (5, -2),
-                                 (-19, 1), (36, 8), (57, 22)):
-                        for mode in ((0, 1) if masked else (0,)):
-                            background = bytes(
-                                rng.randrange(1 << depth)
-                                for _ in range(57 * 22))
-                            planes, stride = as_planar(background, 57, 22, depth)
-                            predicted, count = reference(
-                                background, 57, 22, pix, mask,
-                                img.width, rect, x, y, mode)
-                            target, _ = as_planar(predicted, 57, 22, depth)
-                            old = writer.calls
-                            result = draw_native_plan(
-                                img, *rect, x, y, planes, 57, 22, mode,
-                                writer, native, stride)
-                            assert result.pixels == count
-                            assert result.native_groups == writer.calls - old
-                            assert planes == target, (
-                                "full planar mismatch", native.kind, depth,
-                                masked, rect, x, y, mode, result)
-                            assert all(p[-12:] == bytes([0xa5] * 12)
-                                       for p in planes), "guard modified"
-                            tests += 1
-                            nat += result.native_groups
-                            frag += result.fallback_pixels
-                            rows += result.decoded_rows
-        assert nat > 0 and frag > 0 and rows > 0
-    finally:
-        writer.close()
+    for depth in (1, 2, 4, 8):
+        for masked in (False, True):
+            img, pix, mask = make_atlas(depth, masked)
+            for rect in ((0, 0, 65, 11), (3, 1, 47, 8),
+                         (16, 2, 32, 7)):
+                for x, y in ((0, 0), (1, 3), (5, -2),
+                             (-19, 1), (36, 8), (57, 22)):
+                    for mode in ((0, 1) if masked else (0,)):
+                        background = bytes(
+                            rng.randrange(1 << depth)
+                            for _ in range(57 * 22))
+                        planes, stride = as_planar(background, 57, 22, depth)
+                        predicted, count = reference(
+                            background, 57, 22, pix, mask,
+                            img.width, rect, x, y, mode)
+                        target, _ = as_planar(predicted, 57, 22, depth)
+                        old = native.write_calls
+                        result = draw_native_plan(
+                            img, *rect, x, y, planes, 57, 22, mode,
+                            native.write_group, native, stride)
+                        assert result.pixels == count
+                        assert result.native_groups == native.write_calls - old
+                        assert planes == target, (
+                            "full planar mismatch", native.kind, depth,
+                            masked, rect, x, y, mode, result)
+                        assert all(p[-12:] == bytes([0xa5] * 12)
+                                   for p in planes), "guard modified"
+                        tests += 1
+                        nat += result.native_groups
+                        frag += result.fallback_pixels
+                        rows += result.decoded_rows
+    assert nat > 0 and frag > 0 and rows > 0
     return tests, nat, frag, rows
 
 

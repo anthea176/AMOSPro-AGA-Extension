@@ -26,7 +26,7 @@ P1b exécutait les écritures planaires 1–8 plans et `BFEXTU/BFINS` sur un 680
 
 ### Périmètre de la qualification
 
-Le banc compare les adresses et mots RLE décodés à l'implémentation AGAPIC historique, les intervalles X/Y à un oracle mathématique indépendant, et les bitplanes finaux au modèle de pixels. Il inclut 1/2/4/8 plans, masques pleins/vides, source index couleur 0, groupes répétés et littéraux, dernier groupe partiel, clipping gauche/droite/haut/bas, et refus de corruption. **La CI est la seule preuve réelle de ce prototype** ; l'existence du code ne suffit pas pour annoncer PASS.
+Le banc exécute toutes les sous-routines, y compris le peintre multiplan, **dans une seule instance Musashi**, car deux instances simultanées partagent certains états internes de retour. Ce détail est indispensable pour éviter un faux échec de test. Il compare les adresses et mots RLE décodés à l'implémentation AGAPIC historique, les intervalles X/Y à un oracle mathématique indépendant, et les bitplanes finaux au modèle de pixels. Il inclut 1/2/4/8 plans, masques pleins/vides, source index couleur 0, groupes répétés et littéraux, dernier groupe partiel, clipping gauche/droite/haut/bas, et refus de corruption. **La CI est la seule preuve réelle de ce prototype** ; l'existence du code ne suffit pas pour annoncer PASS.
 
 ## Limite de l'étape
 
