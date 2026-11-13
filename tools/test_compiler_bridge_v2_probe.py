@@ -27,7 +27,7 @@ R57_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0' 
 R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
 R59_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'
 R60_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'
-LAST_GOOD_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'  # Protected R60 independent of current candidate
+LAST_GOOD_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'  # Promoted R63 LAST_GOOD; historical R60 is rebuilt independently
 R61_SHA256 = 'ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f'
 R62_SHA256 = '9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6'
 R63_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'
@@ -113,11 +113,11 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
-        assert protected_bytes == build_r60()[0], "Protected R60 LAST_GOOD builder mismatch"
+        assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
         if active_hash == R63_SHA256:
             from build_m18_r63_chip_blit import build as build_r63
-            assert current_bytes == build_r63()[0] and current_bytes != protected_bytes, "R63 pinned candidate mismatch"
+            assert current_bytes == build_r63()[0] and current_bytes == protected_bytes, "Promoted R63 candidate/LAST_GOOD mismatch"
         elif active_hash == R62_SHA256:
             from build_m18_r62_chip_blit import build as build_r62
             assert current_bytes == build_r62()[0] and current_bytes != protected_bytes, "R62 pinned candidate mismatch"
