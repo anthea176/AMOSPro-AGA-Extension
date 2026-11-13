@@ -1,34 +1,39 @@
-# M18/P5 — Cache Chip persistant et Blitter masqué, Gate A expérimentale
+# M18/P5 — Cache Chip et Blitter masqué (R62 / correctif R63)
 
-**État : Gate A CPU/ABI du cache Chip et Blitter PASS sur [CI 43426447385](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43426447385).** R62 v0.13.7 candidate de travail [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **38 732 octets**, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`, **Gates B/C WinUAE et D physique non encore testées**. R60 LAST_GOOD protégée, R61 A/B/C PASS archivée. R61 v0.13.6 validée B/C reste candidate active ; R60 `LAST_GOOD` reste figée. **Aucune nouvelle commande AP20 ni ASC actif.**
+**État 13/11/2026 :** R62 v0.13.7, Gate A CPU/ABI PASS mais **Gate B WinUAE interprétée ÉCHEC** (`RESULT 0`). Le correctif **R63 v0.13.8 passe la Gate A native** pour les banques DATA AMOS rechargées ; il est pour l'instant construit en mémoire, **pas encore validé sous WinUAE**. R61 A/B/C PASS est archivée, R60 `LAST_GOOD` est protégée.
 
-## Cache Chip géré par AMOS
+**Document technique de référence : [fonctionnement, cycle de vie, mémoire et limites du cache](M18_FAST_ICON_CACHE.md).**
 
-Le [format hôte FICHIP8](../tools/m18_ficon_chip_cache.py) réserve explicitement une banque DATA AMOS `FICHIP8 ` (**flags=3, demande mémoire Chip**) qui appartient à AMOS et non aux ScreenBuffers. Elle persiste donc entre Swap, Screen Close et Screen Open ; l'application libère la banque par `Erase Bank`. Elle contient un en-tête 12 octets (taille, compte, 16×16, profondeur 8), `count × 288` octets de slots planaires et `count` octets de validité (un marqueur par icône).
+## Principe et formats
 
-Chaque slot : **32 octets de masque de visibilité (bit 1 = copier) + huit plans contigus de 32 octets**. Le [staging natif P2](../tools/m18_ficon16_native_stage_emit.py) transforme la source Unity `FICON8 ` de Fast/Chip vers ce slot ; les métadonnées de validité doivent être mises à 1 seulement après copie complète. Recharger une banque source implique un nouveau staging, indépendamment de la durée de vie de la banque Chip.
+La banque source `FICON8 ` conserve les icônes 16×16×8 plans ; le CPU peut la lire en Fast RAM. Le Blitter, qui ne peut pas lire cette mémoire, travaille sur une banque DATA distincte `FICHIP8 ` **réellement allouée en Chip RAM**. Le cache ne dépend pas des bitmaps écran et survit aux `Aga Swap`. Une banque de 4 icônes contient **1 168 octets** de payload (12 octets d'en-tête + 4 × [288 octets par icône + 1 octet de validité]) et un fichier ABK de **1 188 octets**.
 
-**Protection DMA :** un drapeau ABK Chip n'est jamais suffisant ; l'adresse effective de toute la source cache doit être de type `MEMF_CHIP` (Exec `TypeOfMem`), avant tout accès DMA. Les slots restent indépendants du front/back buffer.
+Chaque slot cache est composé d'un masque de visibilité **32 octets** et de **8 plans contigus × 32 octets**. Les bits de couleur zéro deviennent invisibles si `Mode=1`; le mode 0 copie toutes les couleurs. Le bit de validité (stocké après tous les slots) doit être à 0 pendant la préparation et à 1 seulement après une copie complète.
 
-## Noyau Blitter
+**Actuellement, le staging se fait sur PC**, avec [`m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) et l'option `--prepared`. Le [noyau natif P2 expérimental](../tools/m18_ficon16_native_stage_emit.py) ne constitue pas une commande AMOS de staging à chaud ; allocation, éviction et re-préparation dynamique ne sont **pas intégrées**. La source peut être modifiée sans mettre le cache à jour : il faut alors recréer/recharger le cache.
 
-Le [noyau M68000](../tools/m18_ficon16_chip_blit_emit.py) reçoit un slot Chip valide, le `BitMap` privé inactif, X/Y et mode. Il prépare un `BitMap` temporaire **2 octets/ligne × 16, huit plans**, un `RastPort` local initialisé avec `InitRastPort`, puis appelle `BltBitMapRastPort` (opaque, minterm `$C0`) ou `BltMaskBitMapRastPort` (transparence couleur zéro, minterm `$E0`, masque 1 bit en Chip). Il applique le clipping aux quatre bords avant DMA ; **`WaitBlit` est systématique après un blit**. Aucune attente VBL, Swap, allocation native ou changement de front.
+## API et sécurité native
 
-L'API AmigaOS donne les LVO `InitRastPort=-198`, `BltBitMapRastPort=-606`, `BltMaskBitMapRastPort=-636`, `WaitBlit=-228`. Le noyau ne remplace pas le wrapper AP20 de R61 : **il reste à raccorder les validations des deux banques, du marqueur de staging, du back buffer et de Safe avant publication d'une nouvelle candidate**.
+Le [wrapper AP20](../tools/m18_ficon_chip_ap20_emit.py) expose `_OK=Aga F Blit(CacheBank,IconID,X,Y,Mode)`. Il résout la banque par `Bnk.GetAdr`, contrôle enveloppe/nom/longueur/slots/masques/validité, cible uniquement le **back buffer privé inactif** et acquiert `Safe` de façon non bloquante. Un appel invalide renvoie 0 sans dessin ; un appel valide entièrement hors écran doit renvoyer 1 sans DMA.
 
-## Validation et suite
+Le [noyau Blitter M68000](../tools/m18_ficon16_chip_blit_emit.py) prépare un `BitMap` de source et un `RastPort` local (`InitRastPort`), appelle `BltBitMapRastPort` (opaque, minterm `$C0`) ou `BltMaskBitMapRastPort` (masqué, minterm `$E0`, masque en Chip), puis `WaitBlit` avant de rendre la main. Les LVO sont `-198`, `-606`, `-636` et `-228`. Il n'appelle aucun `Swap` ou `Wait Vbl`. Référence des minterms : [AmigaOS Graphics Minterms](https://wiki.amigaos.net/wiki/Graphics_Minterms).
 
-- [Test hôte cache](../tools/test_m18_ficon_chip_cache.py) : format ABK, masque, validité, réutilisation de slots, équivalence au rendu CPU P1 sur clipping X/Y.
-- [Test noyau M68000](../tools/test_m18_ficon16_chip_blit.py) : instructions natives exécutées sous Unicorn, interception stricte des appels Exec/graphics, vérification des registres LVO, des huit plans contre l'oracle pixel, de WaitBlit et du refus de source Fast. **Pas de DMA physique émulée** : la copie est simulée côté test.
+**La préférence mémoire ABK ne suffit pas : `TypeOfMem(MEMF_CHIP)` doit confirmer l'accessibilité DMA réelle de la banque.** Le wrapper ne doit pas confondre ce résultat avec le champ `Flags` de l'en-tête DATA native d'AMOS, situé à `Start(bank)-12`.
 
-**Gates B/C WinUAE, Gate D matériel et benchmarks 8 plans non réalisés pour P5.** Il faudra un nouveau candidat unique après Gate A native, puis un seul ASC actif ; les fichiers R61 et `LAST_GOOD` ne sont pas modifiés par cette phase.
+## Test utilisateur R62 interprété : échec ciblé
 
-## Prototype AP20 R62
+Capture du 13/11/2026 : `OPEN/DB/SW0/SAFE=1`, `ICON=1/1/1/1`, `SHIFT=1`, **`BLIT=0/0/0/0`, `BCLP=0/0/0/0`, `BOUT=0`, `RESULT=0`**, `CLOSE=-1`, `NOS=0`, **`CHIP BEFORE/END=1 796 480/1 796 480`**. Le rejet du cas Blitter entièrement hors écran se produit probablement avant les appels graphics.library, lors du contrôle banque ou écran.
 
-Le [wrapper natif](../tools/m18_ficon_chip_ap20_emit.py) expose **la future commande `Aga F Blit(CacheBank,IconID,X,Y,Mode)`**, ajoute l'accès live `Bnk.GetAdr`, vérifie l'en-tête `FICHIP8 `, le marqueur de disponibilité et la canonicité des huit plans, puis les pointeurs du back buffer et Safe avant le DMA. Le [builder in-memory R62](../tools/build_m18_r62_chip_blit.py) ajoute un seul token à R61 ; la Gate A couvre les dispositions AP20 interprétée et Compiler V2 simulées, mais **pas WinUAE**.
+La R62 exigeait `Flags=3` sur l'en-tête DATA natif. Un problème équivalent avait déjà été diagnostiqué et corrigé pour AGAPIC : après `Load`, WinUAE a été observé avec **`Flags=0`** (voir [`m16_image_draw_r45_emit.py`](../tools/m16_image_draw_r45_emit.py)). Le correctif R63 autorise les classes DATA `0/1/3` **uniquement quand la zone est réellement en Chip**, et refuse toujours les autres types. **Cette cause reste à confirmer par un essai WinUAE interprété** ; ne pas enregistrer Gate B PASS avant un `RESULT 1`.
 
-La [banque prête à charger](../tools/m18_ficon_chip_cache.py) se génère par `python -B tools/m18_ficon_chip_cache.py --prepared --write M18_FICHIP8_SAMPLE_BANK11.abk` ; elle reprend exactement les quatre icônes de la banque Fast R61, puis les prépare en Chip au format 32 octets masque + huit plans contigus. Ce staging est **hors du chrono Blitter** et n'est **pas une nouvelle commande AMOS de staging dynamique** ; aucun gain CPU/Blitter effectif n'est encore revendiqué.
+## Validation et planning
 
-## R62 utilisable sous WinUAE (candidate non promue)
+- [Cache hôte](../tools/test_m18_ficon_chip_cache.py) : validation structure/validité, 4 slots et équivalence CPU.
+- [Noyau M68000 et ABI OS simulée](../tools/test_m18_ficon16_chip_blit.py) : masqué/opaque, clipping, `WaitBlit`, source non-Chip refusée.
+- [Wrapper AP20 R62](../tools/test_m18_r62_chip_blit_gate_a.py) : 160 cas interpréteur/Compiler V2 **simulés**, sans preuve WinUAE.
+- [Correctif R63](../tools/test_m18_r63_chip_blit_gate_a.py) : tests natifs des flags rechargés `0/1/3`, protections Chip toujours actives.
+- **Pas de benchmark Fast Icon masqué réel pour cette version**, et surtout pas de comparaison CPU/Blitter avant de mesurer séparément le coût de préparation Fast→Chip.
 
-[ASC de test actif unique](../tests/current/M18_R62_CHIP_BLIT_01.asc), [ABK source FICON8](../tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [ABK FICHIP8 Chip pré-stagée](../tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). Le second ABK a 1 188 octets ; son bit DATA/Chip ne dispense pas de la vérification de mémoire physique. La bibliothèque R62 est la **seule candidate** dans `dist/AMOSPro_AGA.Lib`. **Aucune mesure de vitesse Blitter ni comparaison du staging Fast→Chip sous WinUAE n'est encore disponible.**
+**Règle auteur : durant le chantier M18, essais manuels WinUAE en interprété ; une unique Gate C Compiler manuelle sera réalisée à la fin du chantier**, une fois le moteur et l'ASC finalisés. Les simulations Compiler en CI ne remplacent pas cette Gate C.
+
+Les binaires et tests actifs suivent uniquement [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md) : une seule candidate dans `dist/AMOSPro_AGA.Lib`, un seul ASC dans `tests/current`, et la R60 `LAST_GOOD` conservée.

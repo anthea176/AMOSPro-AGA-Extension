@@ -161,7 +161,9 @@ jobs:
       - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
         run: python -B tools/test_m18_ficon16_chip_blit.py
       - name: M18/R63 reloaded Chip bank native flags Gate A (in memory)
-        run: python -B tools/test_m18_r63_chip_blit_gate_a.py
+        run: |
+          python -B tools/test_m18_r63_chip_blit_gate_a.py
+          python -B tools/build_m18_r63_chip_blit.py --emit-base64
       - name: M18/R62 Chip cache AP20 wrapper and Compiler V2 Gate A (in memory)
         run: |
           python -B tools/test_m18_r62_chip_blit_gate_a.py
