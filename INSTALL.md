@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R63 v0.13.8 working candidate (Gate A PASS, WinUAE B pending, manual C deferred to end of M18):** [only AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 38,736 bytes, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. **R60 LAST_GOOD** stays [separate](dist/AMOSPro_AGA_LAST_GOOD.Lib). Load [R63 active ASC](tests/current/M18_R63_CHIP_BLIT_01.asc) with [FICON8 bank 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) and [pre-staged FICHIP8 bank 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). **Loads overwrite banks 10 and 11**. After loading bank 11, run **`Bank Permanent 11` followed by `Bank To Chip 11` (AMCAF)** before calling `Aga F Blit`; the ABK Chip preference alone does not prove DMA accessibility. The active ASC now performs both operations. Run interpreted during development; one freshly compiled run only when M18 is finalized.
+**Working candidate R68 v0.13.13 — native Gate A PASS, WinUAE interpreted Gate B PENDING, NOT PROMOTED.** [Single installable AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **51,064 bytes**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commands / 71 AP20 entries. [Single current R68 ASC](tests/current/M18_R68_CBLOCK_CHIP_01.asc) to test **interpreted only**; AMOS Compiler Gate C deferred until the **end of M18**. Protected [R63 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. Copy the [R54 validated library](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib` in the same slot, then **restart AMOS and Compiler**. Keep the previous library/configuration. To reproduce the release, run the [archived validated test](tests/passed/M16_R54_BANK_NUMBER_01.asc) interpreted first; after success, compile a **new executable** and test it separately.
+2. Copy the [R68 working library](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib`, after backing up your previously installed candidate. **Keep the same extension slot**, then restart AMOS Professional; do not use Compiler for this test.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -39,7 +39,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**R54 v0.12.9 — currently promoted and Compiler-safe (12 Nov 2026):** [installable](dist/AMOSPro_AGA.Lib) = [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) = [frozen R54 archive](dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib), SHA256 `f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0`, **32,364 bytes / 53 commands / 60 AP20 entries**. Gates A/B/C PASS on the user-tested scenario; real AGA hardware Gate D untested. The former validated [R46 C1 Compiler-safe archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) remains frozen for reproducibility and regression.
+**Status:** R68 v0.13.13 is the sole **working test candidate** (native Gate A PASS, WinUAE B pending); **R63 v0.13.8 remains the protected and separately promoted LAST_GOOD**. Historical [R46 C1 compiler-safe archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) remains immutable. R68 has not completed actual AMOS Compiler Gate C or physical Amiga Gate D.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

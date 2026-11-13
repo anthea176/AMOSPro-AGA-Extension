@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R67_SHA:
+        if sha(raw) == R68_SHA:
+            from build_m18_r68_cblock import build as pinned_build
+            release = "R68"
+        elif sha(raw) == R67_SHA:
             from build_m18_r67_ficon_capture import build as pinned_build
             release = "R67"
         elif sha(raw) == R66_SHA:

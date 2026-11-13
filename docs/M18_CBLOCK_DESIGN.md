@@ -1,8 +1,8 @@
 # M18 — CBlock AGA : capture/restauration rapide en Chip RAM
 
-**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Le présent document est un **contrat de conception corrigé**, pas une implémentation.
+**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce document décrit le contrat désormais **implémenté dans R68** et encore en attente de validation WinUAE (Gate B).
 
-**État projet inchangé** : R67 v0.13.12, candidate unique `dist/AMOSPro_AGA.Lib` (43 180 octets ; SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5` ; Gates A/B PASS), non promue ; R63 `LAST_GOOD` protégée. Aucun ASC actif, nouveau binaire, token AP20 ou test Compiler. Une seule Gate C manuelle à la clôture de M18.
+**État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 entrées AP20 ; Gate A native M68000 48 cas PASS ; Gate B WinUAE interprétée À FAIRE sur [l'ASC unique](../tests/current/M18_R68_CBLOCK_CHIP_01.asc). R63 `LAST_GOOD` protégée ; une seule Gate C manuelle à la fin de M18, D matérielle non testée.**
 
 ## 1. Usage prioritaire et origine
 
@@ -38,13 +38,15 @@ AMOS Professional possède `Get Cblock` / `Put Cblock` / `Del Cblock` avec un RL
 
 **Important** : réserver une banque Chip ne garantit pas automatiquement que sa base DMA, la longueur et chaque plan sont utilisables par le Blitter. Vérifier le placement réel et l'alignement mémoire avant de dessiner.
 
-## 3. API AMOS proposée (signatures non encore validées)
+## 3. API AMOS implémentée en R68 (Gate B à valider)
 
 ```amos
-_OK=Aga C Block Capture(Bank,X,Y,Width,Height)
-_OK=Aga C Block Draw(Bank,X,Y)
-_OK=Aga C Block Restore(Bank)
+_OK=Aga C Block Capture(Bank,X,Y,Width,Height,Method)
+_OK=Aga C Block Draw(Bank,X,Y,Method)
+_OK=Aga C Block Restore(Bank,Method)
 ```
+
+**Argument `Method` :** `0` = CPU 8 pixels (octet), `1` = CPU 16 pixels (mot), `2` = Blitter Chip→Chip 8 pixels. Alignement horizontal des X et de la largeur : 8 pixels pour 0/2, 16 pixels pour 1. Ces modes sont explicites pour mesurer le chemin réellement le plus rapide ; pas de choix automatique avant benchmark.
 
 ### Capture / recapture
 
@@ -56,20 +58,20 @@ _OK=Aga C Block Restore(Bank)
 
 ### Draw et Restore
 
-- `Draw(Bank,X,Y)` restitue la banque temporaire en **opaque**, avec X destination **multiple de 8 pixels** ; `Restore(Bank)` utilise le dernier X/Y enregistrés par Capture.
+- `Draw(Bank,X,Y,Method)` restitue la banque temporaire en **opaque**, avec X destination **multiple de 8 pixels** ; `Restore(Bank,Method)` utilise le dernier X/Y enregistrés par Capture.
 - Première version **pleinement à l'écran seulement**, sans clipping et sans arrondi. Hors écran ou mauvais alignement = `0`, back buffer intact. Une voie de clipping rapide pourra être étudiée séparément après mesure.
 - Banque et profondeur invalides, `TypeOfMem` non Chip, taille incohérente, back buffer fermé ou non prêt : retour `0`.
 - `Erase Bank` ou `Erase` libère la mémoire de la banque après synchronisation des DMA. **Pas de commande CBlock Delete nécessaire**.
 
-Exemple de cycle prévu (**pas encore exécutable avec R67**) :
+Exemple de cycle R68 (**non validé sous WinUAE à ce stade**) :
 
 ```amos
-_OK=Aga C Block Capture(20,32,48,80,48)
+_OK=Aga C Block Capture(20,32,48,80,48,2)
 ' ...dessin d'un panneau...
-_OK=Aga C Block Restore(20)
+_OK=Aga C Block Restore(20,2)
 ' Même banque, nouveau fond, PAS de nouvelle allocation :
-_OK=Aga C Block Capture(20,40,48,80,48)
-_OK=Aga C Block Draw(20,88,96)
+_OK=Aga C Block Capture(20,40,48,80,48,0)
+_OK=Aga C Block Draw(20,88,96,2)
 Erase 20
 ```
 

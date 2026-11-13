@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18/R68 — Gate A native PASS, binaire R68 non publié (13/11/2026)
+## M18/R68 — CBlock Chip : candidate active Gate A PASS / Gate B WinUAE à effectuer (13/11/2026)
+
+**Unique candidate R68 v0.13.13** : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, **64 commandes / 71 entrées AP20**, NON PROMUE. `Aga C Block Capture(Bank,X,Y,Width,Height,Method)`, `Draw(Bank,X,Y,Method)`, `Restore(Bank,Method)`. Method 0 = CPU8, 1 = CPU16, 2 = Blitter. Banque DATA `AGACBLK ` temporaire physiquement Chip, RAW sans RLE, 8 pixels d'alignement (16 en mode CPU16), pas de clipping, restauration opaque (index 0 compris), recapture sans allocation.
+
+**Gate A : PASS 48 cas M68000 natifs**, 2 dispositions ABI simulées, [CI préparatoire 43469372550 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43469372550) ; l'incident de cache Unicorn sur Draw est [résolu](M18_R68_CBLOCK_GATE_A_BLOCKER_2026-11-13.md). **Gate B : NON TESTÉE**. [ASC actif unique](../tests/current/M18_R68_CBLOCK_CHIP_01.asc) et [protocole détaillé](M18_R68_CBLOCK_WINUAE_GATE_B_PROTOCOL_2026-11-13.md). Installer la bibliothèque R68 dans APSystem sous le même slot, redémarrer AMOS, **New → Project → Merge ASCII**, exécuter **en interprété seulement** ; banques 11/12/13 libres. Attendus : visuel des trois blocs, `RESULT 1`, `CLOSE RETURNED`, intégrité RAW et mémoire Chip, six ticks capture/draw CPU8/CPU16/Blitter.
+
+**Compiler AMOS Gate C : une seule validation manuelle à la fin de M18, pas maintenant** ; Gate D AGA physique non testée. **R63 LAST_GOOD intacte**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. R67 A/B PASS [archivée](../tests/passed/M18_R67_FICON8_CAPTURE_01.asc). Exclusivement `main` ; aucun autre binaire candidat, un seul ASC actif ; aucune promotion automatique.
+
+## Historique R68 — Gate A PASS avant publication (13/11/2026)
 
 **Blocage de pile résolu : il provenait du banc de test Unicorn, pas du noyau CBlock.** Le simulateur réécrivait `Capture`, `Draw`, puis `Restore` à une adresse 68000 identique entre plusieurs appels. Unicorn réutilisait une traduction CPU périmée : après un `MOVE.L` de `Draw`, le PC sautait au milieu de l'ancienne routine de copie, sans exécuter son prologue. Correction : **une adresse d'exécution immuable par fonction, dans chacune des deux dispositions interpréteur/Compiler V2 simulé**, plus interdiction de réécrire un bloc déjà exécuté. [Rapport de l'incident résolu](M18_R68_CBLOCK_GATE_A_BLOCKER_2026-11-13.md).
 
@@ -8,7 +16,7 @@
 
 **R67 v0.13.12 reste la seule candidate `dist/AMOSPro_AGA.Lib` et Gates A/B PASS**, R63 `LAST_GOOD` protégée. Aucun ASC actif `tests/current/`. **Suite M18 : préparer la candidate R68 unique et son ASC de benchmark interprété CPU8/CPU16/Blitter**, puis attendre la Gate B WinUAE. **Gate C Compiler AMOS manuelle toujours unique en fin de M18**, aucune nouvelle branche/PR, uniquement `main`. Le test natif R68 est désormais CI **strict**, sans `|| true`.
 
-## M18/R68 — Wrapper Chip CBlock qualifié Gate A, non publié (13/11/2026)
+## Historique R68 — Wrapper avant publication (13/11/2026)
 
 **Code source natif qualifié par Gate A Unicorn**, [émetteur](../tools/m18_cblock_bank_emit.py), [builder in-memory](../tools/build_m18_r68_cblock.py), [test M68000 Gate A](../tools/test_m18_r68_cblock_gate_a.py). Trois commandes expérimentales avec **Method explicite** pour mesurer précisément les modes **0 CPU8, 1 CPU16, 2 Blitter** : `Aga C Block Capture(Bank,X,Y,Width,Height,Method)`, `Aga C Block Draw(Bank,X,Y,Method)`, `Aga C Block Restore(Bank,Method)`. Banque `AGACBLK ` temporaire RAW dans Chip physique, réutilisation sans réallocation à taille/profondeur identiques, `TypeOfMem` début/fin de chaque plan, Safe et WaitBlit, source/destination back buffer privé AGA.
 
