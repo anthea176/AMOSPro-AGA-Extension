@@ -21,8 +21,8 @@ from build_m18_r64_ficon_bank_create import build as build_r64
 from m18_ficon_bank_put_emit import emit_ficon_bank_put,GETADR_MARKER,ENTRY_INDEX
 from hashlib import sha256
 
-DEST=0x900000
-SOURCE=0xb00000
+DEST=0xa50000
+SOURCE=0xd00000
 ENTRY=0x180000
 COMPILED=0x1a0000
 ARGUMENTS=0x58000
@@ -139,7 +139,7 @@ class PutMachine(Machine):
         assert self.uc.reg_read(UC_M68K_REG_PC)==STOP,("No RTS",self.main_calls)
         assert self.a(7)==STACK+4 and self.a(3)==ARGUMENTS+12,"ABI stack"
         assert self.d(2)==0 and self.d(3)==int(expected),(
-            "wrong result",self.d(2),self.d(3),dest_bank,icon,source_bank,offset)
+            "wrong result",self.d(2),self.d(3),dest_bank,icon,source_bank,offset, "AMOS calls",self.main_calls, "Exec TypeOfMem ptrs",list(map(hex,self.type_calls)))
         for reg,val in before.items():
             if reg not in (DR[2],DR[3],AR[3]):
                 assert self.uc.reg_read(reg)==val,("register clobbered",reg)
