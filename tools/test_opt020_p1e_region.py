@@ -218,6 +218,20 @@ class LiveRegionCPU:
         assert cpu.r_sp() == STACK + 4, ("unbalanced A7", hex(cpu.r_sp()))
         assert cpu.r_reg(Register.A3) == PARAMS + 28
         assert cpu.r_reg(Register.D2) == 0
+        if cpu.r_reg(Register.D3) != int(expect_ok):
+            print("P1e first-failure diagnostic", {
+                "cpu": str(self.cpu), "base": hex(self.base),
+                "bank_calls": self.bank_calls,
+                "type_calls": self.type_calls,
+                "getmsg_calls": self.getmsg_calls,
+                "back_changed": self.snapshot() != self.before,
+                "pending": self.mem.r32(DB + 20),
+                "pc": hex(cpu.r_pc()),
+                "A0": hex(cpu.r_reg(Register.A0)),
+                "D0": hex(cpu.r_reg(Register.D0)),
+                "D3": cpu.r_reg(Register.D3),
+                "AttnFlags": self.mem.r16(EXEC + 0x128),
+            }, flush=True)
         assert cpu.r_reg(Register.D3) == int(expect_ok), (
             "D3", self.base, cpu.r_reg(Register.D3), expect_ok)
         for reg, val in preserved.items():

@@ -125,6 +125,7 @@ def emit_paint_group_020(c, f):
     c.imm("cmp", 16, D(6))
     b(6, "p1e_fragment_call")
     c.raw("43ea0098")             # LEA 152(A2),A1 = plane table
+    c.move(D(7), D(6))            # P1b full kernel needs DEPTH in D6, not 16px
     b(1, "p1e_full_16")
     b(0, "p1e_restore_frame")
     l("p1e_fragment_call")
