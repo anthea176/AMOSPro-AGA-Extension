@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Static preflight for the OPT020/P1e R60-vs-R69 WinUAE bench.
+
+This does NOT execute AMOS, change a library, run AMOS Compiler,
+or claim any timing result. R68's native Region is the R60 baseline.
+"""
+from __future__ import annotations
+
+from hashlib import sha256
+from pathlib import Path
+
+from compiler_bridge_v2_probe import unwrap_native_parts_v2
+from compiler_relocation import GETP
+from m18_image_region_emit import emit_image_region
+from test_current_amos_blocks import scan
+from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
+CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
+GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+BANK = ROOT / "tests/current/M16_AGAPIC_SAMPLE_BANK10.abk"
+R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+
+
+def main() -> None:
+    raw = SOURCE.read_bytes()
+    assert raw and all(c < 128 for c in raw), "ASCII source required"
+    assert b"\r" not in raw and raw.endswith(b"Loop\n"), "LF / final Loop required"
+    assert BANK.is_file(), "AGAPIC sample must be available"
+    assert not scan(SOURCE), "AMOS blocks are unbalanced or invalid"
+    src = raw.decode("ascii")
+
+    # Both runs must use the same source. Running it under LAST_GOOD is
+    # specifically a R60 Image Region comparison, not a generic R68 feature.
+    assert sha256(GOOD.read_bytes()).hexdigest() == R68_SHA
+    active = CURRENT.read_bytes()
+    assert sha256(active).hexdigest() == R69_SHA
+    candidate, metadata = build()
+    assert candidate == active and metadata["native_region_index"] == IMAGE_REGION_INDEX
+    old_tokens, old_parts = unwrap_native_parts_v2(GOOD.read_bytes())
+    new_tokens, new_parts = unwrap_native_parts_v2(active)
+    old_region, _ = emit_image_region()
+    new_region, _ = emit_image_region(opt020=True)
+    assert old_tokens == new_tokens and len(old_parts) == len(new_parts) == 70
+    assert old_parts[IMAGE_REGION_INDEX] == old_region + GETP
+    assert new_parts[IMAGE_REGION_INDEX] == new_region + GETP
+    assert all(a == b for i, (a, b) in enumerate(zip(old_parts, new_parts))
+               if i != IMAGE_REGION_INDEX), "Benchmark libraries differ outside Region"
+
+    assert 'Load "M16_AGAPIC_SAMPLE_BANK10.abk",10' in src
+    assert "Aga Screen Open(320,256,16,$00021000)" in src
+    assert "For _CASE=0 To 9" in src and "For _TR=0 To 2" in src
+    assert "For _I=1 To _N" in src and "_N=240" in src
+    assert "Dim _TM(9,2)" in src and "_TM(_CASE,_TR)=Timer-_T0" in src
+    assert "_SUM=_SUM+_OK" in src and "If _SUM<>_N" in src
+    assert 'Print "RESULT ";_RESULT' in src and "CLOSE RETURNED" in src
+    assert 'Print "CHIP BEFORE/END ";_CF0;" ";_CF1' in src
+    for case in range(10):
+        assert f"If _CASE={case}\n" in src, f"Missing geometry for case {case}"
+    for label in ("OFF16", "ONEPX", "OPA16", "MSK16", "OPA+1", "MSK+1",
+                  "CLIP17", "OPA32", "MSK32", "FRG17"):
+        assert f'Print "{label}' in src, f"Missing timing report {label}"
+    assert "_SX=24 : _SY=12 : _W=16 : _H=16" in src, "Masked test must use central pixels"
+    assert "_X=320" in src and "_X=313" in src and "_X=161" in src
+    assert "_X=163 : _Y=160 : _MODE=1" in src
+    begin = src.index("      For _I=1 To _N\n")
+    end = src.index("      Next _I\n", begin)
+    loop = src[begin:end]
+    assert loop.count("Aga Image Region(") == 1
+    assert "_SUM=_SUM+_OK" in loop
+    assert not any(x in loop for x in ("Wait Vbl", "Aga Swap", "Blitter Wait",
+                                      "Aga Blit Clear", "Print ", "Timer",
+                                      "Aga Screen Close", "Aga Bank Image Draw"))
+    # The benchmark is NOT placed into tests/current, preserving the
+    # single ACTIVE WinUAE Gate B ASC and all tests/passed archives.
+    active_asc = list((ROOT / "tests/current").glob("*.asc"))
+    assert len(active_asc) == 1 and active_asc[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc"
+    print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
+    print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
+    print("only native entry 59 differs in pinned R69, one active ASC unchanged.")
+    print("STATIC ONLY: no AMOS execution, WinUAE timings, or AMOS Compiler.")
+
+
+if __name__ == "__main__":
+    main()

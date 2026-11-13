@@ -1,5 +1,9 @@
 # Benchmarks graphiques AMOS / AMCAF / AGA
 
+## OPT020/P1e — comparaison R60 (R68 LAST_GOOD) / R69, WinUAE JIT OFF
+
+[**Benchmark comparatif R60 vs R69**](opt020_p1e_r60_vs_r69.asc) · [protocole de mesure](README_OPT020_P1E_R60_VS_R69.md). **Préparé, mesures WinUAE en attente**. Même ASC, même banque AGAPIC, même WinUAE 68020 / 14 MHz / PAL / JIT OFF, en **interprété uniquement**. La R68 protégée fournit le peintre R60 inchangé ; R69 active apporte le noyau 68020. Dix géométries, trois séries de 240 appels, masque réellement rempli et vérification de tous les retours. Aucun binaire et aucun ASC de `tests/current/` modifiés. **AMOS Compiler non lancé**, aucune conclusion de vitesse avant les deux captures.
+
 ## M18 — baseline CPU/Blitter 16×16 R60 (première exécution PASS)
 
 [Source ASCII](m18_r60_cpu_vs_blit_16x16.asc) · [protocole et réserves](README_M18_CPU_BLIT_16X16.md). CPU = rendu AGAPIC RLE par `Aga Image Region` ; Blitter = `Aga Blit Copy` depuis une zone Chip déjà initialisée. **Comparatif préliminaire des commandes actuelles, pas du futur moteur F Icon non compressé.** Trois essais de 1 200 appels par cas, PAL 16 couleurs ; [première capture WinUAE du 13/11/2026](RESULTATS_M18_R60_CPU_BLIT_16X16_2026-11-13.md) : médianes CPU/Blitter **2/8 ticks aligné** et **2/12 ticks X+1**, ERR 0 et Chip Free stable. **Le mode interprété/compilé de la capture n'est pas déterminé.** Aucun changement de R60 `LAST_GOOD`, aucun ASC de test actif.
