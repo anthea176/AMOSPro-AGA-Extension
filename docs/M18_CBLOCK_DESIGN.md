@@ -1,6 +1,6 @@
 # M18 — CBlock AGA : capture/restauration rapide en Chip RAM
 
-**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce contrat est **implémenté dans R68**, Gates **A native et B WinUAE interprétée PASS** ([rapport R68](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md)). Les mesures CPU à 0 tick restent sous la résolution de Timer ; comparaison sans JIT encore nécessaire.
+**Décision auteur du 13/11/2026 : priorité absolue à la VITESSE ; banque temporaire en CHIP RAM ; alignement horizontal de 8 PIXELS si profitable.** Il s'agit bien de **8 pixels, pas de 8 octets**. Le précédent contrat « Fast RAM + RLE + pixel exact » est **abandonné**. Ce contrat est **implémenté dans R68**, Gates **A native et B WinUAE interprétée PASS** ([rapport R68](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md)). Sur le 68020 à 14 MHz **sans JIT**, CPU8/CPU16/Blitter donnent capture **34/28/30** et Draw **35/29/29** ticks ; sur le 68030 **avec JIT**, les mesures sont **0/0/6** dans les deux sens, les zéros CPU étant sous la résolution de Timer. Ne pas mélanger ces profils.
 
 **État R68 v0.13.13 : unique candidate `dist/AMOSPro_AGA.Lib`, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20. Gate A M68000 48 cas PASS, Gate B WinUAE interprétée PASS sur les captures auteur du 13/11/2026 ; [ASC R68 exact archivé](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc). Aucun ASC actif. R63 `LAST_GOOD` protégée ; une seule Gate C Compiler manuelle fin M18, D physique non testée.**
 
@@ -38,7 +38,7 @@ AMOS Professional possède `Get Cblock` / `Put Cblock` / `Del Cblock` avec un RL
 
 **Important** : réserver une banque Chip ne garantit pas automatiquement que sa base DMA, la longueur et chaque plan sont utilisables par le Blitter. Vérifier le placement réel et l'alignement mémoire avant de dessiner.
 
-## 3. API AMOS implémentée en R68 (Gate B à valider)
+## 3. API AMOS implémentée en R68 (Gate B PASS)
 
 ```amos
 _OK=Aga C Block Capture(Bank,X,Y,Width,Height,Method)
@@ -63,7 +63,7 @@ _OK=Aga C Block Restore(Bank,Method)
 - Banque et profondeur invalides, `TypeOfMem` non Chip, taille incohérente, back buffer fermé ou non prêt : retour `0`.
 - `Erase Bank` ou `Erase` libère la mémoire de la banque après synchronisation des DMA. **Pas de commande CBlock Delete nécessaire**.
 
-Exemple de cycle R68 (**non validé sous WinUAE à ce stade**) :
+Exemple de cycle R68 (**Gate B WinUAE interprétée validée**) :
 
 ```amos
 _OK=Aga C Block Capture(20,32,48,80,48,2)

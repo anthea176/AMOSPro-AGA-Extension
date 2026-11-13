@@ -1,6 +1,6 @@
 # M18/R68 — Gate B CBlock Chip : WinUAE interprété PASS (13/11/2026)
 
-**Verdict : GATE B INTERPRÉTÉE PASS, Y COMPRIS CONTRÔLE VISUEL**, sur le scénario `M18_R68_CBLOCK_CHIP_01.asc`. Deux captures fournies par l'auteur dans la conversation : une de l'écran graphique WinUAE (nom reçu `image(20261113-172717).png`) et une de la console AMOS (`image(20261113-172735).png`). **Les captures ne sont pas copiées dans ce dépôt** ; ce compte rendu transcrit les observations. Ne pas confondre avec un résultat Compiler Gate C ou un essai Amiga physique Gate D.
+**Verdict : GATE B INTERPRÉTÉE PASS, Y COMPRIS CONTRÔLE VISUEL**, sur le scénario `M18_R68_CBLOCK_CHIP_01.asc`. Captures fournies par l'auteur dans la conversation : écran AGA et consoles distinctes **68020 à 14 MHz sans JIT** et **68030 avec JIT**. Les captures elles-mêmes ne sont pas copiées au dépôt. Ce compte rendu transcrit les observations et les deux profils sans les confondre. Ne pas confondre avec un résultat Compiler Gate C ou un essai Amiga physique Gate D.
 
 ## Version et périmètre
 
@@ -15,7 +15,7 @@ L'écran AGA privé 320×256×256 présente un fond bleu uniforme et les motifs 
 
 Les restitutions conservent **la géométrie, les couleurs et les zones noires d'index 0 en mode opaque**, sans trace visible de détérioration du fond bleu ni dépassement autour des blocs. La zone témoin à X240 reste bleue. Contrôle visuel PASS pour les scénarios couverts, **pas une validation exhaustive de toutes les tailles ou des limites mémoire physiques**.
 
-## Console AMOS — valeurs observées
+## Console AMOS — premier relevé (68030 avec JIT, 0/0/6 ticks)
 
 | Ligne | Valeur visible | Verdict |
 |---|---|---|
@@ -29,26 +29,40 @@ Les restitutions conservent **la géométrie, les couleurs et les zones noires d
 | `BAD 8/DIM/WORD/OUT` | `0 0 0 0` | PASS — appels invalides rejetés |
 | `BAD BANK/MODE/X` | `0 0 0` | PASS |
 | `BENCH ERR` | `0` | PASS |
-| `CHIP REC/CURRENT` | `1630912 1630912` | PASS — aucune baisse de Chip Free à la recapture |
-| `CHIP START/END` | `1801960 1801960` | PASS — récupération intégrale mesurée de la mémoire après `Erase` et fermeture |
+| `CHIP REC/CURRENT` | `1630912 1630912` | PASS — 68030 JIT ; le 68020 sans JIT est détaillé plus bas |
+| `CHIP START/END` | `1801960 1801960` | PASS — 68030 JIT ; le 68020 sans JIT est détaillé plus bas |
 | `NOS/CLOSE` | `0 -1` | PASS |
 | Verdict console | `RESULT 1`, `CLOSE RETURNED` | **PASS** |
 
-## Mesures WinUAE préliminaires — 300 appels par mode
+## Mesures WinUAE — deux configurations DISTINCTES
 
-| Chemin `Method` | Capture / 300 | Draw / 300 |
-|---|---:|---:|
-| CPU8 (`0`) | 0 ticks | 0 ticks |
-| CPU16 (`1`) | 0 ticks | 0 ticks |
-| Blitter (`2`) | 6 ticks | 6 ticks |
+**Méthode identique :** 300 appels par méthode, sur des rectangles 32×16×8 plans, AMOS **interprété** ; mesures en ticks `Timer` (environ 20 ms/tick en PAL). La bibliothèque R68 et l'ASC sont identiques entre les deux essais.
 
-**Configuration WinUAE confirmée par l'auteur après les deux captures : 68020 à 14 MHz, 128 Mo de Fast RAM Zorro III (Z3), AMOS exécuté en interprété.** État JIT non explicitement confirmé. Les 128 Mo Z3 sont de la Fast RAM et ne changent pas l'obligation de stocker les CBlocks en Chip RAM.
+| Méthode | 68020 14 MHz, **JIT OFF** : Capture | 68020 14 MHz, **JIT OFF** : Draw | 68030, **JIT ON** : Capture | 68030, **JIT ON** : Draw |
+|---|---:|---:|---:|---:|
+| CPU8 (`0`) | 34 | 35 | 0 | 0 |
+| CPU16 (`1`) | **28** | **29** | 0 | 0 |
+| Blitter (`2`) | 30 | **29** | 6 | 6 |
 
-**Le banc mesure deux séries distinctes de 300 appels**, avec la même banque préallouée et le même rectangle **32×16×8 plans**. En PAL, **6 ticks représentent environ 120 ms par série, soit 0,4 ms/appel**. Les **0 ticks CPU** signifient uniquement que `Timer` ne résout pas la durée entre ses deux lectures ; **cela ne veut pas dire coût CPU nul**.
+### Relevé 1 — 68020 à 14 MHz, sans JIT
 
-La capture WinUAE montre environ **49,7 FPS**. L'auteur a confirmé **68020 / 14 MHz / 128 Mo Fast Z3 / AMOS interprété** ; **le réglage JIT n'est pas établi par sa seule déclaration**. Ces chronos sont une **mesure ponctuelle**, et ne démontrent **pas** une supériorité générale du CPU, ni du Blitter, ni des gains sur Amiga réel.
+- Profil confirmé par l'auteur : **68020, 14 MHz, JIT désactivé, 128 Mo Fast Z3**, AMOS interprété.
+- `BENCH CAP CPU8/16/BLIT 34 28 30` ; `BENCH DRAW CPU8/16/BLIT 35 29 29`.
+- `CHIP REC/CURRENT 1674752 1674752` ; `CHIP START/END 1845800 1845800`.
+- `BENCH ERR 0`, `RESULT 1`, `CLOSE RETURNED` ; appels invalides, égalité planaire, recapture et récupération mémoire conformes.
+- **CPU16 est le plus rapide en capture** (28 contre 30 pour Blitter), et **à égalité avec Blitter en Draw** (29 contre 29). CPU8 est derrière. Une répétition reste utile pour établir la variabilité.
 
-**Pour comparer les performances :** refaire plusieurs séries sur **68020 et 68030 sans JIT**, paramètres WinUAE documentés, éventuellement augmenter fortement N pour sortir de la quantification de `Timer` sur les méthodes CPU. Une nouvelle variante d'ASC devra être créée dans `tests/current/` ; **ne jamais modifier cet ASC R68 désormais archivé et figé**.
+### Relevé 2 — 68030, avec JIT
+
+- Profil précisé par l'auteur sur la capture comparative : **68030, JIT activé**, AMOS interprété. **Fréquence CPU et quantité de RAM non documentées** pour cet essai ; ne pas reprendre automatiquement les 14 MHz / 128 Mo du 68020.
+- `BENCH CAP CPU8/16/BLIT 0 0 6` ; `BENCH DRAW CPU8/16/BLIT 0 0 6`.
+- `CHIP REC/CURRENT 1630912 1630912` ; `CHIP START/END 1801960 1801960`.
+- `BENCH ERR 0`, `RESULT 1`, `CLOSE RETURNED`.
+- Les **0 ticks CPU8/CPU16 sont sous la résolution** de `Timer` et ne prouvent ni un coût nul, ni un gagnant entre CPU8 et CPU16. **6 ticks Blitter ≈ 120 ms pour 300 appels**, sans extrapolation au matériel réel.
+
+**Conclusion limitée au protocole observé :** R68 Gates A/B PASS pour les opérations testées dans **les deux profils**. Les réglages JIT produisent des mesures de vitesse très différentes ; **ne pas attribuer les valeurs 0/0/6 au 68020 sans JIT**. Le test graphique confirme l'affichage du scénario, mais ne constitue pas une nouvelle preuve graphique indépendante pour chaque profil.
+
+**Suite performance :** répéter les mesures sur **68020 et 68030 sans JIT**, documenter fréquences/mémoire, augmenter N si nécessaire et comparer des séries répétées. Les résultats JIT ne sont pas transposables directement à un Amiga physique.
 
 ## Gates indépendantes et suite
 
