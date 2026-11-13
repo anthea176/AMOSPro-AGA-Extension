@@ -7,6 +7,8 @@ on:
       - ".github/workflows/opt020-p3-target.yml"
       - "tools/test_opt020_p3_native_gate_a.py"
       - "tools/test_opt020_p3_ap20_probe.py"
+      - "tools/build_opt020_p3_r73.py"
+      - "tools/test_opt020_p3_r73_candidate.py"
   workflow_dispatch:
 
 permissions:
@@ -29,5 +31,9 @@ jobs:
         run: python -B tools/test_opt020_p3_native_gate_a.py
       - name: Verify P3 V2 AP20 and branch integrity in memory
         run: python -B tools/test_opt020_p3_ap20_probe.py
+      - name: Verify R73 deterministic native entries and mutated branch rejection (in memory)
+        run: python -B tools/test_opt020_p3_r73_candidate.py
+      - name: Emit R73 base64 from verified deterministic in-memory source
+        run: python -B tools/build_opt020_p3_r73.py --emit-base64
       - name: Guard active library and ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
