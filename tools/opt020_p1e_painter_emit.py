@@ -134,6 +134,8 @@ def emit_paint_group_020(c, f):
     l("p1e_restore_frame")
     c.raw("45ef0004")             # LEA 4(SP),A2: BSR return address occupies 4 bytes
     l("paint_done")
+    c.move(M(2, f["decoded"]), D(4))
+    c.move(D(4), M(2, 188))       # temporary P1e diagnostic: frame decoded at painter exit
     c.word(0x4e75)                # RTS to R60 group loop
 
     # All BSR targets inside ONE AP20 unit: Compiler V2 relocation safe.
