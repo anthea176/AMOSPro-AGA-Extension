@@ -467,6 +467,59 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==70:
+        # The exact R68 builder, not a size/pattern guess, authorizes seeds.
+        # Reuse the full historical R67 source audit for inherited routines.
+        from build_m18_r68_cblock import build as build_r68
+        from build_m18_r67_ficon_capture import build as build_r67
+        from m18_cblock_bank_emit import (
+            emit_capture,emit_draw,emit_restore,
+            GETADR as CBGET,RESERVE as CBRES,CHANGE as CBCHG,EFF as CBEFF)
+        blob68,_=build_r68()
+        need(raw==reconstruct(blob68),
+             "Strict source: R68 native code not the deterministic builder")
+        blob67,_=build_r67()
+        prev=parse_lib(reconstruct(blob67))
+        need(len(prev['section'])==67,
+             "Strict source: inherited R67 native layout changed")
+        for index in range(67):
+            earlier=prev['section'][index]
+            newer=sections[index]
+            need(earlier['core']==newer['core']
+                 and newer['getp']==(earlier['getp'] or index==66),
+                 f"Strict source: R68 inherited entry {index} changed")
+        seeds=verified_current_compiler_seeds(prev)
+        need(bool(seeds), "Strict source: R67 inherited seeds not authenticated")
+        for index, emitter, getp in (
+                (67,emit_capture,True),(68,emit_draw,True),
+                (69,emit_restore,False)):
+            body,labels=emitter()
+            need(sections[index]['core']==body
+                 and sections[index]['getp']==getp,
+                 f"Strict source: R68 entry {index} differs from source emitter")
+            need(0<labels['bank_name']<labels['copy_core']<len(body)
+                 and body[labels['bank_name']:labels['copy_core']]==b'AGACBLK '
+                 and body[labels['copy_core']:].startswith(bytes.fromhex('48e7efee')),
+                 f"Strict source: R68 entry {index} data/core boundary")
+            # The embedded P0 core is reached by PC-relative LEA+JSR.
+            # Only exact Rjsr continuations and the source-proven core entry
+            # may be seeded. The bank name stays DATA, never executable.
+            markers={CBGET:2 if index==67 else 1,
+                     CBRES:1 if index==67 else 0,
+                     CBCHG:1 if index==67 else 0,
+                     CBEFF:1 if index==67 else 0}
+            prefix=body[:labels['bank_name']]
+            seeds[index]={0,labels['copy_core']}
+            for marker,count in markers.items():
+                need(prefix.count(marker)==count,
+                     f"Strict source: R68 entry {index} Rjsr marker changed")
+                pos=0
+                while True:
+                    pos=prefix.find(marker,pos)
+                    if pos<0:break
+                    seeds[index].add(pos+len(marker))
+                    pos+=len(marker)
+        return seeds
     r62_case = False
     r63_case = False
     r64_case = False
