@@ -228,7 +228,7 @@ def emit_cblock_bank_action(action):
     get("depth",D(5))
     L("check_planes")
     c.move(POST(4),D(7));c.tst(D(7));B(7,"reject")
-    c.imm("cmp",-1,D(7));B(6,"reject")
+    c.imm("cmp",-1,D(7));B(7,"reject")  # BEQ: reject invalid -1 pointer, not all valid pointers
     c.move(D(7),D(0));c.imm("and",1,D(0));B(6,"reject")
     get("first",D(0));check_add(0,D(7));check_chip(D(0))
     get("last",D(0));check_add(0,D(7));check_chip(D(0))
