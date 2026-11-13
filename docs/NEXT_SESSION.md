@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R68 — Gate C compilée PASS, promotion autorisée (13/11/2026)
+
+L'auteur confirme l'exécution **compilée** du programme intégré [M18_R68_COMPILER_FINAL_01.asc](../tests/current/M18_R68_COMPILER_FINAL_01.asc) sous WinUAE : **RESULT 1**, **CLOSE RETURNED**, Fast Icon R64–R67 et CBlock R68 (CPU8/CPU16/Blitter explicites) conformes, banque 1064 octets, invalides 0. [Rapport Gate C](M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md) · [ASC exact dans tests/passed](../tests/passed/M18_R68_COMPILER_FINAL_01.asc). **A/B/C PASS**, D physique non testée.
+
+L'auteur autorise **R68 v0.13.13 comme prochaine LAST_GOOD**. Avant la copie binaire, exécuter la régression complète sur le HEAD exact. R68 actuellement inchangée ; R63 LAST_GOOD reste protégée jusqu'à la validation. Branche main uniquement, aucune autre compilation demandée.
 ## M18/R68 — Gate B intégrée PASS, 68030 JIT ON (13/11/2026)
 
 **Validation utilisateur du [test intégré R68](../tests/current/M18_R68_COMPILER_FINAL_01.asc)** sous WinUAE **68030 + JIT activé / AMOS interprété** : capture console `RESULT 1`, `CLOSE RETURNED`, Fast Icon R64–R67 PASS (288 octets identiques, staging/ABK), CBlock `CAP/REST/RECAP/SAME 1 1 1 1`, `DRAW CPU8/BLIT/CPU16 1 1 1`, banque **1064 octets**, invalides 0 et après fermeture 0. **Pas de capture de l'écran graphique** pour ce test ; aucun benchmark. [Rapport détaillé](M18_R68_INTEGRATED_GATE_B_68030_JIT_2026-11-13.md).
