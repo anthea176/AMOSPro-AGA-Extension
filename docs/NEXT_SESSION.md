@@ -1,8 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P1d — BFINS fragments natifs + sonde ABI AP20 PASS (13/11/2026)
+
+**P1d PASS sous Musashi** ([CI dédiée 43494522268](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43494522268), 13/13 étapes) : **4 096 essais de fragments**, **432 rendus AGAPIC**, **5 352 groupes entiers et 3 672 fragments écrits en code CPU020**, **14 refus non destructifs**. Sonde ABI **140 appels** (80 succès / 60 refus) sur **68000, 68EC020 et 68020**, sept paramètres A3 consommés avant rejet, registres/pile/retours conformes. **Compiler V2 : enveloppe reconstruite en mémoire seulement**, 70 segments / 49 308 octets, [rapport et empreintes](OPT020_P1D_FRAGMENT_AP20_PROBE_2026-11-13.md).
+
+**État réel :** le rendu expérimental ne dessine plus de pixels en Python ; **la validation globale AGAPIC reste orchestrée en Python** et la sonde ABI utilise un **descripteur artificiel**, pas une vraie banque. **P1e : rebrancher la vraie prévalidation native R60, `Bnk.GetAdr`, `Safe`, bitmap Intuition AGA et le rendu 020 sous conventions AP20, puis tester le chemin installé.** Pas de R69, de Gate AMOS B/C ni de performance WinUAE annoncée. R68 `LAST_GOOD` et unique ASC actif protégés ; `main` uniquement.
+
 ## OPT020/P1d — fragments BFINS natifs + sonde ABI AP20 (13/11/2026)
 
-**Code P1d soumis aux tests CPU et au test structurel Compiler V2**, [contrat complet](OPT020_P1D_FRAGMENT_AP20_PROBE_2026-11-13.md). Les fragments 1–16 pixels sont écrits en opcodes 68EC020/68020, tandis que RLE/clipping et groupes complets restent natifs P1b/P1c. Le rendu d'essai conserve la validation globale AGAPIC en Python ; la **vraie prévalidation AP20 native R60 existe déjà**, mais n'est **pas encore raccordée** au nouveau peintre. Une sonde de convention AP20 consomme sept arguments, préserve la pile/registres et vérifie `ExecBase.AttnFlags` avant le premier opcode 020 ; elle utilise un **descripteur fictif**, pas une vraie banque. **CI P1d en attente**, aucune Gate AMOS B/C ni accélération WinUAE revendiquée. Bibliothèques R68/`LAST_GOOD` et ASC actif protégés, travail exclusivement `main`.
+**Code P1d soumis aux tests CPU et au test structurel Compiler V2**, [contrat complet](OPT020_P1D_FRAGMENT_AP20_PROBE_2026-11-13.md). Les fragments 1–16 pixels sont écrits en opcodes 68EC020/68020, tandis que RLE/clipping et groupes complets restent natifs P1b/P1c. Le rendu d'essai conserve la validation globale AGAPIC en Python ; la **vraie prévalidation AP20 native R60 existe déjà**, mais n'est **pas encore raccordée** au nouveau peintre. Une sonde de convention AP20 consomme sept arguments, préserve la pile/registres et vérifie `ExecBase.AttnFlags` avant le premier opcode 020 ; elle utilise un **descripteur fictif**, pas une vraie banque. **CI P1d PASS** ([log](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43494522268)) : détails dans le premier paragraphe de cette reprise ; aucune Gate AMOS B/C ni accélération WinUAE revendiquée. Bibliothèques R68/`LAST_GOOD` et ASC actif protégés, travail exclusivement `main`.
 
 ## OPT020/P1c — RLE et clipping X/Y 68020 NATIFS PASS (13/11/2026)
 

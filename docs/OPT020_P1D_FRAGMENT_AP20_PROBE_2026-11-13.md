@@ -1,6 +1,6 @@
 # OPT020/P1d — fragments natifs BFINS et sonde ABI AP20 (13/11/2026)
 
-**Statut initial : code soumis à la CI ; PASS NON ENCORE établi pour P1d.** Branche unique `main` ; R68 `LAST_GOOD` et ASC actif inchangés. Cette étape est un prototype technique, **pas une bibliothèque R69**.
+**Statut validé : P1d CPU/sonde ABI PASS — 13 novembre 2026.** [CI native SUCCESS, 13/13 étapes](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43494522268), sur [commit 81c628e](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/81c628e0431fc7c0630ea4c0918254da85cd020e). Branche unique `main` ; R68 `LAST_GOOD` et ASC actif inchangés. Cette étape est un prototype technique, **pas une bibliothèque R69**.
 
 ## Objectif
 
@@ -15,11 +15,33 @@ P1c exécutait déjà le décodage de ligne RLE, le clipping horizontal/vertical
 
 [Émetteur de sonde](../tools/opt020_p1d_ap20_probe_emit.py) · [Test ABI et Compiler V2 simulée](../tools/test_opt020_p1d_abi.py).
 
-La sonde reprend les encodages de **sauvegarde/restauration** du validateur [R60](../tools/m18_image_region_emit.py) : `MOVEM 48e7efee / 4cdf77f7`, avance les sept paramètres `(A3)+` exactement comme `Aga Image Region(Bank,SrcX,SrcY,Width,Height,X,Y,Mode)`, et retourne `D3=0/1, D2=0`. Elle vérifie **avant le premier opcode 68020** `SysBase = *(LONG*)4` puis `ExecBase.AttnFlags` au décalage **0x128 (296)**, bit **AFF_68020 = 1**. Référence : [AmigaOS NDK / execbase.h](https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0609.html). Les routines de garde sont **exclusivement du 68000 légal**. La première sonde avait tenté un `TST.L An` (adressage direct interdit au 68000) avant le contrôle CPU ; le correctif utilise `MOVE.L An,Dn` + `TST.L Dn`. Le banc vérifie désormais aussi par désassemblage 68000 toutes les instructions précédant le bloc 020. Les tests d'exécution 68000 réel émulé restent obligatoires pour annoncer ce refus sécurisé.
+La sonde reprend les encodages de **sauvegarde/restauration** du validateur [R60](../tools/m18_image_region_emit.py) : `MOVEM 48e7efee / 4cdf77f7`, avance les sept paramètres `(A3)+` exactement comme `Aga Image Region(Bank,SrcX,SrcY,Width,Height,X,Y,Mode)`, et retourne `D3=0/1, D2=0`. Elle vérifie **avant le premier opcode 68020** `SysBase = *(LONG*)4` puis `ExecBase.AttnFlags` au décalage **0x128 (296)**, bit **AFF_68020 = 1**. Référence : [AmigaOS NDK / execbase.h](https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node0609.html). Les routines de garde sont **exclusivement du 68000 légal**. La première sonde avait tenté un `TST.L An` (adressage direct interdit au 68000) avant le contrôle CPU ; le correctif utilise `MOVE.L An,Dn` + `TST.L Dn`. Le banc vérifie désormais aussi par désassemblage 68000 toutes les instructions précédant le bloc 020. Les tests d'exécution sur **M68000, 68EC020 et M68020** ont ensuite réussi : le 68000 est refusé sans opcode 020, tandis que 68EC020/68020 sont autorisés lorsque `AFF_68020` est présent. Un second correctif a aligné la consommation des **sept paramètres A3 avant tout refus**, conformément à la routine R60.
 
 **Limite capitale :** A0 pointe dans ce test vers un **descripteur artificiel déjà prévalidé**, PAS vers une banque AMOS. La sonde n'appelle pas encore `Bnk.GetAdr`, ne valide pas réellement la banque DATA et n'acquiert pas le `Safe` du back buffer. Elle **ne doit jamais remplacer l'entrée R60 dans une Lib livrée**.
 
 Le test Compiler V2 ne modifie aucune bibliothèque sur disque : il déplie **en mémoire** la R68 promue, substitue **temporairement dans ce tableau en mémoire** l'entrée expérimentale à la fonction R60, reconstitue l'enveloppe Compiler V2 et vérifie les offsets, stubs `Rbsr`, `GetP` et la taille d'unité. La substitution est **inutilisable en AMOS** par conception ; c'est une preuve de structure AP20, **pas Gate C**.
+
+## Résultats mesurés en CI — PASS
+
+| Vérification sur Musashi | Total | Verdict |
+|---|---:|---|
+| Fragments exécutés directement 68EC020/68020 | **4 096** | PASS |
+| Rendus AGAPIC complets comparés à l'oracle | **432** | PASS |
+| Groupes complets écrits en BFINS natif | **5 352** | PASS |
+| Fragments écrits en BFINS dynamique natif | **3 672** | PASS |
+| Pixels de fragments recopiés | **25 816** | PASS |
+| Lignes RLE parcourues en code natif | **2 976** | PASS |
+| Refus de sources invalides sans écrire | **14** | PASS |
+| Appels de la sonde ABI CPU/paramètres | **140** | **80 succès / 60 refus** |
+| Registres sauvegardés, pile, A3+28, D2=0, D3=0/1 | — | PASS |
+| Enveloppe Compiler V2 reconstruite uniquement en mémoire | **70 segments**, enveloppe **49 308 octets** | PASS structurel |
+
+- **Noyau fragment CPU020** : 36 octets, SHA256 `7ac2e2d9c068bcac868558dd56467539cab6287cdf4235f2d8ad26d340cdbce3`.
+- **Sonde ABI** : 256 octets, SHA256 `ab0ea734ca6c069a8dc4b97ebec7eb6a4a3d7e57f30668e11670a4fe69c1bf30`.
+- L'unité Compiler V2 factice occupe **46 610 octets** à l'intérieur du binaire **provisoire uniquement en mémoire** ; ce fichier n'est **pas** écrit ni livré, et sa fonction Image Region aurait été remplacée par une sonde incompatible avec les vraies banques AMOS.
+- Tous les fonds, les bitplanes, les canaries, les 7 paramètres et le résultat D3/D2 sont conformes aux tests. **Aucune accélération WinUAE n'est mesurée**.
+
+[Log complet de la CI P1d](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43494522268).
 
 ## Prévalidation globale : éviter une réécriture dangereuse
 
