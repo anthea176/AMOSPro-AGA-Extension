@@ -238,7 +238,7 @@ class LiveRegionCPU:
                         "row": 88, "pass": 92, "current": 96,
                         "end": 100, "decoded": 104, "left": 108,
                         "repeat": 112, "group": 116, "groups": 60,
-                        "srcbit": 144, "visible_width": 184, "painter_exit_decoded": 188,
+                        "srcbit": 144, "visible_width": 184,
                     }.items()
                 },
             }, flush=True)
