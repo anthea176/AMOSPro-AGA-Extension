@@ -1,11 +1,13 @@
-# Test actif M18/R61 — Fast Icon A/B/C PASS, candidate non promue
+# Test actif M18/R62 — Chip Blitter masque
 
-**Candidat R61 0.13.6** : Gate A CPU/Unicorn PASS 226 cas ; **B AMOS interprété WinUAE PASS et C compilé WinUAE PASS** sur les captures fournies le 13/11/2026. [Rapport détaillé](../../docs/M18_R61_FICON_WINUAE_GATES_BC.md). Gate D Amiga réel non testée, R60 LAST_GOOD conservée, aucune promotion R61.
+**R62 v0.13.7 candidate Gate A CPU PASS** (160 cas AP20 interpreteur/Compiler V2 simules). **Gates B et C WinUAE non encore effectuees.** Gate D sur Amiga physique non testee. R60 reste `LAST_GOOD`, R61 A/B/C PASS conserve dans [tests/passed](../passed/M18_R61_FICON_01.asc).
 
-Un seul fichier AMOS actif : [M18_R61_FICON_01.asc](M18_R61_FICON_01.asc). Banque nécessaire : [M18_FICON8_SAMPLE_BANK10.abk](M18_FICON8_SAMPLE_BANK10.abk), 1 184 octets AmBk, 1 164 octets DATA, 4 icônes AGA 16×16×8. La bibliothèque R61 candidate est exclusivement [dist/AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 36 816 octets.
+Bibliotheque unique : [dist/AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **38 732 octets**, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`.
 
-**Procédure :** session WinUAE jetable avec R61 installée, banque ABK dans le dossier AMOS, programme vide puis Project → Merge ASCII. Le chargement écrase la banque 10. Exécuter en interprété puis compiler un **nouvel exécutable avec cette R61**, sans réutiliser un ancien compilé R60.
+Test AMOS actif unique : [M18_R62_CHIP_BLIT_01.asc](M18_R62_CHIP_BLIT_01.asc). Necessite [M18_FICON8_SAMPLE_BANK10.abk](M18_FICON8_SAMPLE_BANK10.abk) et [M18_FICHIP8_SAMPLE_BANK11.abk](M18_FICHIP8_SAMPLE_BANK11.abk) (**1 188 octets**, cache Chip prepare). **Load ecrase les banques 10 et 11** : utiliser une session WinUAE jetable.
 
-**Observé interprété et compilé :** OPEN=1, DB=1, SW0=1, SAFE=1, quatre icônes=1, SHIFT=1, CLIP=1, OUT=1, invalides=0, R60 REJECT=0, NOS=0, CLOSE=-1, SWAP=1, CHIP avant/après identique, RESULT=1. Chip Free **interprété 1 797 840 / 1 797 840** et **compilé 1 861 944 / 1 861 944**. Dessin visuellement cohérent avec quatre icônes, SHIFT et clipping. Interruption de `Wait Vbl` ligne 141 en interprété **après** `CLOSE RETURNED` : fin de boucle de maintien, non crash. Cette capture ne vaut pas comparaison exhaustive pixel-à-pixel.
+Procedure : installer R62 dans le slot AMOS habituel, redemarrer AMOS, placer les deux ABK dans le repertoire courant, importer l'ASC dans un programme vide (Project -> Merge ASCII), executer en interprete. Ensuite compiler un **nouvel executable avec R62**, sans reutiliser l'executable compile R61.
 
-Nouvelle API Aga F Icon(Bank,IconID,X,Y,Mode), 8 plans, X/Y pixel-exacts, transparence par couleur zéro, CPU Fast/Chip vers Chip. **Ce n'est pas encore le backend Blitter masqué ni le cache Chip**, et la compatibilité binaire AMOS Unity/Turbo n'est pas revendiquée.
+Attendu : `RESULT 1`, `CLOSE -1`, `NOS 0`, `SWAP 1`, Chip Free identique avant et apres. ICON/BLIT/SHIFT/CLIP/OUT = 1, BAD et BCBAD = 0. Verifier visuellement les icones CPU sur la premiere ligne et Blitter en seconde ligne, y compris transparence et clipping.
+
+Le cache est **pre-stage hors AMOS**, sans staging Fast->Chip pendant le test. `TypeOfMem(MEMF_CHIP)` est controle par la routine, les drapeaux ABK seuls ne garantissant pas l'emplacement physique. Les temps Blitter et couts de staging ne sont pas encore mesures.

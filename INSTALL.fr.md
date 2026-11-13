@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate R61 v0.13.6 — WinUAE Gates A/B/C PASS sur le scénario testé, NON PROMUE :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36 816 octets. [Rapport](docs/M18_R61_FICON_WINUAE_GATES_BC.md). **LAST_GOOD protégée reste R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35 056 octets. [Seul ASC R61 actif](tests/current/M18_R61_FICON_01.asc) et [banque FICON8](tests/current/M18_FICON8_SAMPLE_BANK10.abk) disponibles. Gate D sur Amiga réel non réalisée.
+**Candidate R62 v0.13.7, Gate A CPU PASS, Gates B/C WinUAE en attente :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) (38 732 octets, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`). R60 [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste figée. Utiliser [le seul ASC R62](tests/current/M18_R62_CHIP_BLIT_01.asc) avec les [banques source 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [cache Chip 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk) pré-stagé. **Load écrase les deux banques**. Tester en interprété puis créer un NOUVEL exécutable compilé R62, sans réutiliser celui de R61.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)

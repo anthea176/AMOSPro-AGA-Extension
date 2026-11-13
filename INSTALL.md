@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R61 v0.13.6 working candidate — WinUAE Gates A/B/C PASS for the tested scenario, NOT PROMOTED:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 36,816 bytes. [Report](docs/M18_R61_FICON_WINUAE_GATES_BC.md). **Protected LAST_GOOD is still R60 v0.13.5**, [AMOSPro_AGA_LAST_GOOD.Lib](dist/AMOSPro_AGA_LAST_GOOD.Lib), 35,056 bytes. [Single R61 ASC](tests/current/M18_R61_FICON_01.asc) and [FICON8 sample bank](tests/current/M18_FICON8_SAMPLE_BANK10.abk) remain available. Hardware Gate D not tested.
+**R62 v0.13.7 working candidate, Gate A CPU PASS, WinUAE B/C pending:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) (38,732 bytes, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`). R60 [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) stays frozen. Use [one R62 ASC](tests/current/M18_R62_CHIP_BLIT_01.asc) with [source bank 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) and [pre-staged Chip cache bank 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). **Load replaces both banks**. Run interpreted, then create a NEW R62-compiled executable; do not reuse R61's executable.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)

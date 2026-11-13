@@ -1,6 +1,6 @@
 # M18/P5 — Cache Chip persistant et Blitter masqué, Gate A expérimentale
 
-**État : Gate A CPU/ABI et modèle de cache PASS sur [CI 43426219348](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43426219348).** R62 AP20 additionnelle validée en mémoire, pas encore installée. La R61 candidate A/B/C reste inchangée. R61 v0.13.6 validée B/C reste candidate active ; R60 `LAST_GOOD` reste figée. **Aucune nouvelle commande AP20 ni ASC actif.**
+**État : Gate A CPU/ABI du cache Chip et Blitter PASS sur [CI 43426447385](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43426447385).** R62 v0.13.7 candidate de travail [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **38 732 octets**, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`, **Gates B/C WinUAE et D physique non encore testées**. R60 LAST_GOOD protégée, R61 A/B/C PASS archivée. R61 v0.13.6 validée B/C reste candidate active ; R60 `LAST_GOOD` reste figée. **Aucune nouvelle commande AP20 ni ASC actif.**
 
 ## Cache Chip géré par AMOS
 
@@ -28,3 +28,7 @@ L'API AmigaOS donne les LVO `InitRastPort=-198`, `BltBitMapRastPort=-606`, `BltM
 Le [wrapper natif](../tools/m18_ficon_chip_ap20_emit.py) expose **la future commande `Aga F Blit(CacheBank,IconID,X,Y,Mode)`**, ajoute l'accès live `Bnk.GetAdr`, vérifie l'en-tête `FICHIP8 `, le marqueur de disponibilité et la canonicité des huit plans, puis les pointeurs du back buffer et Safe avant le DMA. Le [builder in-memory R62](../tools/build_m18_r62_chip_blit.py) ajoute un seul token à R61 ; la Gate A couvre les dispositions AP20 interprétée et Compiler V2 simulées, mais **pas WinUAE**.
 
 La [banque prête à charger](../tools/m18_ficon_chip_cache.py) se génère par `python -B tools/m18_ficon_chip_cache.py --prepared --write M18_FICHIP8_SAMPLE_BANK11.abk` ; elle reprend exactement les quatre icônes de la banque Fast R61, puis les prépare en Chip au format 32 octets masque + huit plans contigus. Ce staging est **hors du chrono Blitter** et n'est **pas une nouvelle commande AMOS de staging dynamique** ; aucun gain CPU/Blitter effectif n'est encore revendiqué.
+
+## R62 utilisable sous WinUAE (candidate non promue)
+
+[ASC de test actif unique](../tests/current/M18_R62_CHIP_BLIT_01.asc), [ABK source FICON8](../tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [ABK FICHIP8 Chip pré-stagée](../tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). Le second ABK a 1 188 octets ; son bit DATA/Chip ne dispense pas de la vérification de mémoire physique. La bibliothèque R62 est la **seule candidate** dans `dist/AMOSPro_AGA.Lib`. **Aucune mesure de vitesse Blitter ni comparaison du staging Fast→Chip sous WinUAE n'est encore disponible.**

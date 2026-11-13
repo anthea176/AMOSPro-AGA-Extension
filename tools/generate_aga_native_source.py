@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R61_SHA:
+        if sha(raw) == R62_SHA:
+            from build_m18_r62_chip_blit import build as pinned_build
+            release = "R62"
+        elif sha(raw) == R61_SHA:
             from build_m18_r61_ficon import build as pinned_build
             release = "R61"
         elif sha(raw) == R60_SHA:
@@ -446,6 +449,11 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    r62_case = False
+    if len(sections) == 62:
+        from build_m18_r62_chip_blit import build as build_r62
+        blob62,_=build_r62()
+        r62_case=(raw==reconstruct(blob62))
     r61_case = False
     if len(sections) == 61:
         from build_m18_r61_ficon import build as build_r61
@@ -462,6 +470,25 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r62_case:
+        from build_m18_r62_chip_blit import build as build_r62
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION_MARKER
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON_MARKER
+        from m18_ficon_chip_ap20_emit import emit_ficon_chip_ap20,GETADR_MARKER as CHIP_MARKER
+        exact,_=build_r62()
+        need(raw==reconstruct(exact),"Strict source: R62 differs from exact builder")
+        region62,_=emit_image_region()
+        ficon62,flabels62=emit_ficon_ap20()
+        chip62,clabels62=emit_ficon_chip_ap20()
+        need(sections[59]['core']==region62 and sections[59]['getp'],
+             "Strict source: R62 inherited R60 changed")
+        need(sections[60]['core']==ficon62 and sections[60]['getp'],
+             "Strict source: R62 inherited R61 changed")
+        need(sections[61]['core']==chip62,
+             "Strict source: R62 Chip Blitter emitter mismatch")
+        need(region62.count(REGION_MARKER)==1 and ficon62.count(FICON_MARKER)==1
+             and chip62.count(CHIP_MARKER)==1,
+             "Strict source: R62 GetAdr relocation markers changed")
     if r61_case:
         # Entire R61 image must match the deterministic source-backed builder.
         from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON_MARKER
@@ -501,9 +528,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and not r61_case and len(sections) != 59:
+    elif not r60_case and not r61_case and not r62_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -554,6 +581,10 @@ def verified_current_compiler_seeds(parsed):
         # Exact source-proven AMOS linker boundaries in both native sections.
         seeds[59] = {region.index(REGION_MARKER)+6}
         seeds[60] = {ficon.index(FICON_MARKER)+6, ficon_labels["core"]}
+    if r62_case:
+        seeds[59] = {region62.index(REGION_MARKER)+6}
+        seeds[60] = {ficon62.index(FICON_MARKER)+6, flabels62["core"]}
+        seeds[61] = {chip62.index(CHIP_MARKER)+6, clabels62["core"]}
     return seeds
 
 
