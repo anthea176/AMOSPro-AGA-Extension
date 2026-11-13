@@ -1,6 +1,6 @@
 # M18/P3 — Fast Icon CPU natif 68000, X libre et pixel exact
 
-**Statut : code proposé et tests CPU Unicorn soumis à la Gate A**, sans bibliothèque installable. Travail sur `main`, sans nouvelle branche. Référence protégée : **R60 v0.13.5 LAST_GOOD**.
+**Statut : Gate A CPU 68000 PASS** sur [GitHub Actions 43398986441](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43398986441), sans bibliothèque installable. Travail sur `main`, sans nouvelle branche. Référence protégée : **R60 v0.13.5 LAST_GOOD**.
 
 ## Implémentation
 
@@ -14,7 +14,7 @@
 
 [`test_m18_ficon16_native_shifted.py`](../tools/test_m18_ficon16_native_shifted.py) pilote les vraies instructions dans **Unicorn M68000**, puis compare les huit bitplanes octet par octet au modèle P1 indépendant ; positions négatives, tous les décalages X de 0 à 15, masques opaque/transparent/partiel, quatre côtés, dernier mot partiel. Comparaison aussi avec le noyau aligné P2 sur des positions communes. Vérifications de la source immuable, des gardes mémoire, de l'ABI, de la pile et du refus sans écriture.
 
-**À confirmer :** résultat de la Gate A CI de ce commit. Aucun résultat WinUAE/Compiler n'est déduit du succès du simulateur CPU.
+**Gate A confirmée : PASS sur le commit `328ccb9` et le workflow 43398986441.** Le noyau produit **696 octets de code 68000**. Unicorn valide **528 comparaisons pixel/ABI**, **16 équivalences avec le noyau aligné P2** et **18 refus sans écriture**. Le correctif de bord droit porte sur un piège Motorola 68000 : le masque `$8000` doit être écrit en **WORD**, car `AND.W <disp>(A2),Dn` relit la première moitié d'un slot (et non le mot bas d'un LONG `$00008000`). Tests : huit bitplanes comparés octet par octet au modèle P1, quatre couvertures d'icônes, X libre dont négatif, transparence, clipping aux quatre bords, mémoire sentinelle et préservation pile/registres. **Ce PASS reste CPU sous Unicorn : aucun résultat WinUAE, Compiler, performances, Blitter DMA ni Amiga physique n'en découle.**
 
 ## Après validation
 

@@ -10,7 +10,9 @@ Le noyau reçoit **un slot déjà validé de 288 octets** : 16 lignes de 1 mot d
 
 **P2 ajouté — staging réel CPU Fast→Chip :** [émetteur 68000](../tools/m18_ficon16_native_stage_emit.py), [test Unicorn](../tools/test_m18_ficon16_native_stage.py). Entrée A0=source icon Unity 288 octets, A1=cache Chip privé 288 octets, tous deux alignés et sans chevauchement. Le noyau transforme les 16 lignes intercalées (masque + 8 mots de plans) en un bloc plan par plan : **masque de visibilité 32 octets (complément du masque Unity de préservation), puis 8 plans de 32 octets**. La conversion masque est nécessaire : Unity code 1 = transparent/à préserver ; `BltMaskBitMapRastPort` attend 1 = pixel à remplacer. C'est un format de cache Chip préparatoire, pas encore un appel DMA. L'API d'AmigaOS documente une source masquée avec un masque binaire en Chip et un minterm de copie à travers le masque (`$E0`) ; l'appel effectif, les RastPorts et les attentes DMA ne sont pas implémentés dans ce P2. Il ne fait **aucune allocation**, n'a pas d'appel Blitter/AMOS, ne vérifie pas la nature Fast/Chip des adresses et refuse les zones source/destination chevauchantes ou non alignées. **Pas de mesure de vitesse ni de cache persistant prouvée** à ce stade.
 
-**Non encore implémenté :** chemin général X non aligné, wrapper AP20, lecture banque par numéro/ID via Bnk.GetAdr, allocation/gestion de cache Chip, backend Blitter masqué, double-buffer avec cache indépendant, allocation/libération et chronométrage WinUAE. Il s'agit d'une **première primitive du futur Fast Icon natif**, et **pas de R61 installable**.
+**P3 complémentaire :** le [noyau CPU X quelconque pixel-exact](M18_FICON16_NATIVE_P3.md) est maintenant **Gate A PASS**, y compris les X négatifs et décalés de 1 à 15 ; il n'est pas encore raccordé à un token AMOS.
+
+**Non encore implémenté :** wrapper AP20, lecture banque par numéro/ID via Bnk.GetAdr, allocation/gestion de cache Chip, backend Blitter masqué, double-buffer avec cache indépendant, allocation/libération et chronométrage WinUAE. Il s'agit d'une **première primitive du futur Fast Icon natif**, et **pas de R61 installable**.
 
 ## Validation
 
