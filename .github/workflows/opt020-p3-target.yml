@@ -9,6 +9,8 @@ on:
       - "tools/test_opt020_p3_ap20_probe.py"
       - "tools/build_opt020_p3_r73.py"
       - "tools/test_opt020_p3_r73_candidate.py"
+      - "tools/generate_aga_native_source.py"
+      - "tools/test_current_amos_blocks.py"
   workflow_dispatch:
 
 permissions:
