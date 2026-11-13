@@ -62,6 +62,7 @@ class CaptureMachine(Machine):
         super().__init__(lib,None,meta=dict(width=WIDTH,height=HEIGHT,
             depth=DEPTH,row_bytes=ROW_BYTES,camg=0x21000))
         self.front=front
+        self.pending=pending
         self.main_calls=[]
         self.type_calls=[]
         self.getmsg_count=0
@@ -184,7 +185,8 @@ class CaptureMachine(Machine):
                 next((k for k,(a,b) in enumerate(zip(after,expected_payload)) if a!=b),None))
             assert parse_bank(after).count==4
             assert self.waitblit_count==1
-            assert self.getmsg_count==int(bool(PENDING&self.get(DB+20)^PENDING)) if False else True
+            assert self.getmsg_count==int(bool(self.pending & 1))
+            assert self.get(DB+20)==(self.pending & ~1)
         else:
             assert after==self.before,("rejected capture modified bank",bank,icon,x,y)
             assert self.waitblit_count==0
@@ -250,13 +252,11 @@ def main():
                      "screen_depth","small_width","small_height",
                      "bad_back","front_index","bitmap_depth",
                      "bitmap_stride","bitmap_rows","missing_plane","odd_plane"):
-            cases+=CaptureMachine(lib,layout).check(expected=False,
-                         **({} if kind.startswith("bad") else {})) if False else 0
             cases+=CaptureMachine(lib,layout,mutate=mutated(kind)).check(expected=False)
         cases+=CaptureMachine(lib,layout,pending=1,safe_ready=False).check(expected=False)
         cases+=CaptureMachine(lib,layout,pending=1,safe_ready=True).check()
         cases+=CaptureMachine(lib,layout,fail_at=DEST+len(BANK_DATA)-1).check(expected=False)
-        cases+=CaptureMachine(lib,layout,fail_at=0x600000+7*0x80000+29*18+8).check(expected=False,
+        cases+=CaptureMachine(lib,layout,fail_at=0x600000+7*0x80000+44*18+8).check(expected=False,
                                            x=49,y=29)
     print("M18/R67 FICON8 SCREEN CAPTURE GATE A PASS",cases,
           "native 68000 tests, 2 ABI layouts; planar/edge/mask/flags/safe guards")
