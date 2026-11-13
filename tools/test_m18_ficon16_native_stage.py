@@ -56,7 +56,18 @@ def execute(code,slot,src=FAST,dst=CHIP):
         uc.reg_write(reg,value)
     uc.reg_write(UC_M68K_REG_A7,STACK)
     uc.reg_write(UC_M68K_REG_SR,0x2000)
-    uc.emu_start(CODE,STOP,count=100000)
+    try:
+        uc.emu_start(CODE,STOP,count=100000)
+    except Exception as exc:
+        regs={name:hex(uc.reg_read(reg)) for name,reg in (
+            ('PC',UC_M68K_REG_PC),('A0',UC_M68K_REG_A0),
+            ('A1',UC_M68K_REG_A1),('A4',UC_M68K_REG_A4),
+            ('SP',UC_M68K_REG_A7),('D0',UC_M68K_REG_D0),
+            ('D1',UC_M68K_REG_D1),('D2',UC_M68K_REG_D2),
+            ('D3',UC_M68K_REG_D3),('D4',UC_M68K_REG_D4),
+            ('D5',UC_M68K_REG_D5))}
+        raise AssertionError(('M18 P2 stage native CPU exception',
+                              repr(exc),regs)) from exc
     assert uc.reg_read(UC_M68K_REG_PC)==STOP
     assert uc.reg_read(UC_M68K_REG_A7)==STACK+4
     assert uc.reg_read(UC_M68K_REG_D2)==0
