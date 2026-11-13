@@ -172,7 +172,7 @@ jobs:
       - name: M18/R68 CBlock Chip native 68000 Gate A (strict; no AMOS Compiler)
         run: |
           python -B tools/test_m18_r68_cblock_gate_a.py
-          python -B tools/build_m18_r68_cblock.py
+          python -B tools/build_m18_r68_cblock.py --emit-base64
       - name: M18/R67 screen FICON8 capture native AP20 Gate A (no compiler)
         run: |
           python -B tools/test_m18_r67_ficon_capture_gate_a.py
