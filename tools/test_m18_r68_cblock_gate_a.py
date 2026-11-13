@@ -188,8 +188,12 @@ class CBlockMachine(Machine):
         self.trace=[]
         self.core_debug=[]
         self.first_core=[]
+        self.call_debug=[]
         native_core,_=emit_cblock_copy_core()
-        core_off=(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1]["copy_core"]
+        wrapper_bin,wrapper_labels=(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()
+        core_off=wrapper_labels["copy_core"]
+        jsr_off=wrapper_bin[:wrapper_labels["bank_name"]].find(bytes.fromhex("4e94"))
+        assert jsr_off>=0
         core_watch={core_off+offset for offset in
                     (0,2,4,6,8,len(native_core)-16,len(native_core)-12,
                      len(native_core)-8,len(native_core)-4,len(native_core)-2)}
@@ -201,6 +205,10 @@ class CBlockMachine(Machine):
                 if core_off<=offset<core_off+len(native_core) and len(self.first_core)<36:
                     self.first_core.append((offset,hex(uc.reg_read(AR[7])),
                                             bytes(uc.mem_read(address,2)).hex()))
+                if offset==jsr_off or offset==core_off:
+                    self.call_debug.append((offset,hex(uc.reg_read(AR[4])),
+                          hex(uc.reg_read(AR[7])),
+                          hex(self.get(uc.reg_read(AR[7])))))
                 if offset in core_watch and len(self.core_debug)<100:
                     sp=uc.reg_read(AR[7])
                     self.core_debug.append((offset,hex(sp),hex(self.get(sp))))
@@ -230,7 +238,9 @@ class CBlockMachine(Machine):
             "LABELS",(emit_capture if idx==67 else emit_draw if idx==68 else emit_restore)()[1],
             "CORE_SP",self.core_debug,
             "FIRST_CORE_PC",self.first_core,
-            "CORE_HEADER",bytes(self.uc.mem_read(self.entry+core_off,16)).hex()
+            "CORE_HEADER",bytes(self.uc.mem_read(self.entry+core_off,16)).hex(),
+            "JSR_OFFSET",jsr_off,
+            "CALL_DEBUG",self.call_debug
         )
         assert self.a(3)==ARGS+4*(len(values)-1)
         assert self.d(2)==0
