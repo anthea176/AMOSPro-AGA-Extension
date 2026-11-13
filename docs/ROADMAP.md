@@ -29,6 +29,8 @@
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |
 | **M22** | Copper AGA avancé | **Planifié, non engagé** |
 
+**M18/P4 R61 :** nouvelle commande `Aga F Icon` 16×16×8 plans, Gate A (226 cas) PASS ; **candidate de travail unique 36 816 octets** dans [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), [ASC actif unique](../tests/current/M18_R61_FICON_01.asc), [ABK FICON8](../tests/current/M18_FICON8_SAMPLE_BANK10.abk). **WinUAE Gates B/C et Gate D non réalisées.** R60 LAST_GOOD reste protégée. Après B/C : cache Chip/Blitter masqué et vrai benchmark Fast Icon, ensuite CBlock avant optimisations 68020+/c2p.
+
 **Ordre prioritaire révisé le 13/11/2026 par l'auteur : (1) R60 promue → (2) terminer M18 (`F 16 Icon` et CBlock) → (3) optimisation 68020+ → (4) `c2p.library`.** Les chantiers CPU et C2P ne sont pas engagés. Les autres numéros de jalons M18–M22 ne valent pas autorisation de coder. Ne pas démarrer un nouveau chantier sans demande explicite. **Uniquement la branche `main`** ; pas de création/changement de branche sans instruction.
 
 ## 3. Études en attente — aucun développement autorisé
