@@ -39,7 +39,7 @@ F = dict(mode=0, y=4, x=8, regionh=12, regionw=16,
          bytebit=136, planesleft=140, srcbit=144)
 
 
-def emit_image_region():
+def emit_image_region(*, opt020=False):
     c = Code()
     def L(name): c.label(name)
     def B(cond,name): c.branch(cond,name)
@@ -63,6 +63,14 @@ def emit_image_region():
     for name in ("regionh", "regionw", "srcy", "srcx", "bank"):
         c.move(POST(3),D(7)); st(D(7),name)
     c.move(I(0),D(3))             # default failure
+    if opt020:
+        # Legal on a plain 68000: refuse BEFORE any 020-only instruction,
+        # bank lookup, Safe message or bitmap write. A0/D0 are scratch.
+        c.raw("20780004")         # MOVEA.L 4.W,A0 (ExecBase)
+        c.move(A(0),D(0)); c.tst(D(0)); B(7,"reject")
+        c.move(M(0,0x128),D(0),"w")  # ExecBase.AttnFlags
+        c.word(0x0800); c.word(1)   # BTST #AFF_68020,D0
+        B(7,"reject")
     # Resolve the *live* AMOS bank, not a cached address. 8-parameter
     # calls already occur in the public R59 API (Rect Overlap).
     ld("bank",D(0))
@@ -265,6 +273,8 @@ def emit_image_region():
     L("success")
     c.move(I(1),D(3))
     L("reject")
+    if opt020:
+        c.word(0x7600)           # explicitly clear result after late reject
     c.raw("4fef00c0")           # LEA +192(SP),SP
     c.raw("4cdf77f7")           # restore all except result D3,D2 and cursor A3
     c.raw("74004e75")           # D2=0 ; RTS
@@ -377,6 +387,12 @@ def emit_image_region():
     # All destination words/bytes are in the *inactive* Intuition bitmap,
     # and pixel/byte offsets are clipped before a memory write.
     L("paint_group")
+    if opt020:
+        from opt020_p1e_painter_emit import emit_paint_group_020
+        emit_paint_group_020(c, F)
+        raw=c.out()
+        assert len(raw)%2 == 0
+        return raw,c.labels
     ld("row",D(0)); c.alu("sub",M(2,F["srcy"]),0)
     c.tst(D(0)); B(11,"paint_done")    # row above source crop
     c.alu("cmp",M(2,F["regionh"]),0); B(12,"paint_done")
