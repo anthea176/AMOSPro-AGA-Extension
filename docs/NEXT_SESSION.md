@@ -1,8 +1,8 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## OPT020/P2 — `Aga Image Draw` : prototype CPU020 en mémoire
+## OPT020/P2 — `Aga Image Draw` : Gate A CPU et R70 en mémoire PASS
 
-**Objectif suivant accepté par l'auteur :** accélérer `Aga Image Draw` avec les noyaux P1e natifs (BFINS / 8 plans / fragments) **sans changer R46 DATA/Start/Length/RLE/Safe ni l'API publique**, puis étudier Fast Icons. [Contrat technique et sources P2](OPT020_P2_IMAGE_DRAW_68020_2026-11-13.md). Une variante optionnelle `emit_image_draw(opt020=True)` et son test Musashi/Compiler V2 **en mémoire** sont préparés ; attendre la CI P2 avant toute validation. **R69 v0.13.14 reste le seul binaire actif et R68 la `LAST_GOOD` protégée ; un seul ASC reste actif.**
+**Objectif suivant accepté par l'auteur :** accélérer `Aga Image Draw` avec les noyaux P1e natifs (BFINS / 8 plans / fragments) **sans changer R46 DATA/Start/Length/RLE/Safe ni l'API publique**, puis étudier Fast Icons. [Contrat technique et sources P2](OPT020_P2_IMAGE_DRAW_68020_2026-11-13.md). Une variante optionnelle `emit_image_draw(opt020=True)` et son banc Musashi ont été exécutés : **248 scénarios natifs PASS**, 68000 refusé avant instructions 020, profondeurs 1/2/4/8, opaque/masqué, clips, RLE invalide, canaries, Safe, ABI AP20. [CI P2 43507129614 — SUCCESS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43507129614). Le constructeur déterministe [R70 mémoire](../tools/build_opt020_p2_r70.py) est **PASS** : **51 460 octets**, SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad`, `Image Draw` **2 018 octets**, seul l'index AP20 **55** change par rapport à la candidate R69. **R70 n'est PAS installée et aucune Gate B/C R70 n'a été faite.** **R69 v0.13.14 reste le seul binaire actif et R68 la `LAST_GOOD` protégée ; un seul ASC reste actif.**
 
 ## OPT020/P1e — benchmark compilé par l'auteur PASS
 
