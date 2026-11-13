@@ -60,3 +60,5 @@ Le banc exécute toutes les sous-routines, y compris le peintre multiplan, **dan
 **Ce n'est toujours pas une extension 68020 autonome complète.** Un répartiteur Python appelle les trois sous-routines et la voie P1b, gère les zones mémoire et les petits fragments. L'ABI AP20, la relogeabilité Compiler V2, la gestion `Safe` du bitmap Intuition, le chargement de banque AMOS et les cas limites sur machine restent à intégrer **avant** toute nouvelle candidate R69.
 
 **Aucun binaire `.Lib`, ASC actif, archive validée ou `LAST_GOOD` n'est modifié.** Une fois P1c qualifiée, la suite est un adaptateur de validation AP20/020 indépendant (sans déplacer la R68), puis le benchmark WinUAE JIT OFF et seulement une candidate unique si les tests et les gains le justifient.
+
+**Suite P1d (13/11/2026) :** les fragments partiels ont un [nouveau noyau BFINS dynamique](OPT020_P1D_FRAGMENT_AP20_PROBE_2026-11-13.md), avec tests 68EC020/68020 et une sonde de conventions AP20/Compiler V2 en mémoire. Résultat initial en attente ; P1c reste PASS et la Lib R68 reste protégée. L'intégration réelle à l'entrée native R60 n'est pas effectuée à cette étape.

@@ -13,6 +13,12 @@ on:
       - "tools/opt020_p1c_native_runner.py"
       - "tools/opt020_p1c_region.py"
       - "tools/test_opt020_p1c_rle_clip_native.py"
+      - "tools/opt020_p1d_fragment_emit.py"
+      - "tools/opt020_p1d_ap20_probe_emit.py"
+      - "tools/opt020_p1d_native_runner.py"
+      - "tools/opt020_p1d_region.py"
+      - "tools/test_opt020_p1d_fragments.py"
+      - "tools/test_opt020_p1d_abi.py"
       - ".github/workflows/opt020-p1.yml"
   workflow_dispatch:
 
@@ -35,5 +41,9 @@ jobs:
         run: python -B tools/test_opt020_p1b_native.py
       - name: Execute native RLE pointer decoder and native 68020 crop/clipping
         run: python -B tools/test_opt020_p1c_rle_clip_native.py
+      - name: Execute CPU020 clipped dynamic-width BFINS fragments and full AGAPIC regions
+        run: python -B tools/test_opt020_p1d_fragments.py
+      - name: Test synthetic AP20 ABI CPU gate and in-memory Compiler V2 round trip
+        run: python -B tools/test_opt020_p1d_abi.py
       - name: Guard R68, LAST_GOOD, archives, and single active ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
