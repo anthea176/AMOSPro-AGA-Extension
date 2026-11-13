@@ -1,5 +1,35 @@
 # EXTENSION_SOURCE_RULES.md
 
+## R73 PROMUE LAST_GOOD — état autoritaire (14/11/2026)
+
+**Autorisation explicite de l'auteur : « promotion ok »** après
+validation du chantier OPT020/P1e+P2+P3, **Gates A/B/C PASS**.
+La seule `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`
+doivent contenir les **mêmes 51 608 octets**, SHA256
+`c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`
+(R73 v0.13.18, 64 commandes / 71 AP20). Toute différence est une erreur
+bloquante. **Gate D Amiga physique non testée.** Pas de compilation AMOS
+supplémentaire, de benchmark ni de publication Aminet dans la promotion.
+
+L'ancienne R68 v0.13.13 SHA256
+`ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`
+reste la **source historique R68**, figée par son constructeur
+`tools/build_m18_r68_cblock.py` et le [commit antérieur](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/593963ea88a623c7c349b0250c89380758970928/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+Elle n'est **plus** le fichier courant `LAST_GOOD`. Les constructeurs
+R69/R70/R71/R72/R73 ne doivent jamais tirer leur base historique d'une
+référence `LAST_GOOD` susceptible de changer : reconstruire R68 via son
+constructeur, vérifier son SHA, puis comparer chaque binaire historique
+à ses propres octets épinglés. Protéger R73 en tant que nouvelle
+`LAST_GOOD`, sans effacer les sources ni les branches R70 corrigées.
+
+**Conserver un seul ASC dans `tests/current/`**, aucune modification
+de `tests/passed/` ni des archives historiques. En cas de release, exécuter
+une fois le contrôle d'intégrité et la régression complète sur le SHA
+final de `main` ; ne pas relancer des workflows redondants.
+[Rapport R73](docs/OPT020_R73_LAST_GOOD_PROMOTION_2026-11-14.md).
+
+---
+
 ## GARDE-FOU — Compatibilité des profondeurs dans les ASC intégrés (R73, 14/11/2026)
 
 Un appel `Aga Image Draw` ou `Aga Image Region` doit utiliser **le même nombre de bitplanes dans l'image AGAPIC et le bitmap AGA** : ces deux routines refusent explicitement le mélange (`tools/m16_image_draw_r45_emit.py`, `tools/m18_image_region_emit.py`). Le fichier AGAPIC4 de test (`M16_AGAPIC_SAMPLE_BANK10.abk`) est en **4 plans / 16 couleurs**, alors que `Aga F Icon` et `Aga F Icon Capture` FICON8 nécessitent **8 plans / 256 couleurs**. Le premier ASC R73 avait fait passer tout le scénario en 256 couleurs : tous les succès P1e/P2 sont devenus des rejets `0` sans erreur CPU ; P3 restait PASS, et le résultat final était `0`.

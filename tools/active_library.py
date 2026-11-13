@@ -1,11 +1,12 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R68 v0.13.13 remains the protected promoted LAST_GOOD (A/B/C PASS).
+R73 v0.13.18 is the promoted LAST_GOOD (Gates A/B/C PASS; D untested).
+R68 v0.13.13 remains SHA-pinned in its deterministic builder and Git history.
 R69 OPT020/P1e passed CPU/WinUAE and interpreted/compiled benchmarks.
 R70 OPT020/P2 failed WinUAE Gate B ($80000004) and remains a frozen regression.
 R71 OPT020/P2 repairs relative links; WinUAE interpreted Gate B PASS.
 R72 OPT020/P2 hardens late reject D3, interpreted WinUAE Gate B PASS.
-R73 OPT020/P3 accelerates Fast Icon draw/capture with native 020, Gate B pending.
+R73 OPT020/P3 accelerates Fast Icon draw/capture with native 020, A/B/C PASS.
 R63 remains preserved in Git history; physical Gate D has not been tested.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
@@ -16,7 +17,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # Promoted R68 v0.13.13, Gates A/B/C PASS; D physical untested
+LAST_GOOD_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"  # Promoted R73 v0.13.18, Gates A/B/C PASS; D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -77,12 +78,12 @@ def verify_active(root: Path):
         from compiler_bridge_v2_probe import unwrap_native_parts_v2
         from native_relative_links import assert_native_links
         candidate, meta = build_r73()
-        assert cur == candidate and cur != good, "R73 differs from deterministic P3 builder"
+        assert cur == candidate == good, "Promoted R73 must match current, LAST_GOOD and its deterministic builder"
         assert len(cur)==51608 and meta["ap20_entries"]==71 and meta["commands"]==64
         assert meta["changed_native"]==[60,66]
         assert_native_links(unwrap_native_parts_v2(cur)[1])
-        assert sha256(good).hexdigest()==R68_SHA
-        return cur,good,"R73 0.13.18 OPT020/P3 Fast Icon CAP+DRAW CPU020; Gate A PASS; WinUAE B and Compiler C NOT TESTED"
+        assert sha256(good).hexdigest()==R73_SHA
+        return cur,good,"R73 0.13.18 OPT020/P3 Fast Icon CAP+DRAW CPU020 PROMOTED LAST_GOOD; Gates A/B/C PASS, D physical untested"
     if current_sha==R72_SHA:
         from build_opt020_p2_r72 import build as build_r72
         from compiler_bridge_v2_probe import unwrap_native_parts_v2
@@ -91,7 +92,7 @@ def verify_active(root: Path):
         assert cur == candidate and cur != good, "R72 differs from deterministic builder"
         assert len(cur) == 51468 and meta["ap20_entries"] == 71 and meta["commands"] == 64
         assert_native_links(unwrap_native_parts_v2(cur)[1])
-        assert sha256(good).hexdigest() == R68_SHA
+        assert sha256(good).hexdigest() == LAST_GOOD_SHA
         return cur, good, "R72 0.13.17 OPT020/P2 late D3 fixed; Gates A/B interpreted PASS; Compiler C NOT TESTED"
     if current_sha==R71_SHA:
         from build_opt020_p2_r71 import build as build_r71
@@ -101,21 +102,21 @@ def verify_active(root: Path):
         assert cur == candidate and cur != good, "R71 differs from deterministic builder"
         assert len(cur) == 51460 and meta["ap20_entries"] == 71 and meta["commands"] == 64
         assert_native_links(unwrap_native_parts_v2(cur)[1])
-        assert sha256(good).hexdigest() == R68_SHA
+        assert sha256(good).hexdigest() == LAST_GOOD_SHA
         return cur, good, "R71 0.13.16 OPT020/P2 repaired links; Gate A/CI candidate, WinUAE B and Compiler C NOT TESTED"
     if current_sha==R69_SHA:
         from build_opt020_p1e_r69 import build as build_r69
         candidate,meta=build_r69()
         assert cur == candidate and cur != good, "R69 active differs from exact builder"
-        assert sha256(good).hexdigest() == R68_SHA, "R68 LAST_GOOD protection lost"
+        assert sha256(good).hexdigest() == LAST_GOOD_SHA, "Promoted LAST_GOOD protection lost"
         assert len(cur) == 51240 and meta["ap20_entries"] == 71 and meta["commands"] == 64
         return cur,good,"R69 0.13.14 OPT020/P1e tested candidate; Gate B and interpreted/compiled Region benchmarks PASS"
     if current_sha==R68_SHA:
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()
-        assert candidate==cur==good and sha256(good).hexdigest()==R68_SHA
+        assert candidate==cur and sha256(good).hexdigest()==LAST_GOOD_SHA
         assert len(cur)==51064 and meta["commands"]==64 and meta["ap20_entries"]==71
-        return cur,good,"R68 0.13.13 Chip CBlock PROMOTED LAST_GOOD; Gates A/B/C PASS, D physical untested"
+        return cur,good,"R68 0.13.13 historical CBlock; Gates A/B/C PASS, D physical untested"
     if current_sha==R67_SHA:
         from build_m18_r67_ficon_capture import build as build_r67
         candidate,meta=build_r67()

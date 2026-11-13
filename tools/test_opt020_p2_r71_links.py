@@ -34,7 +34,7 @@ def main() -> None:
     before = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
     protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert sha256(protected).hexdigest() == (
-        "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
+        "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
     )
     r69, _ = build_r69()
     r70, _ = build_r70()

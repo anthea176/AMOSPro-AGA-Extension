@@ -29,9 +29,9 @@ TITLE += bytes(len(TITLE) & 1)
 
 
 def build() -> tuple[bytes, dict]:
-    good_path = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    good = good_path.read_bytes()
-    assert sha256(good).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
+    from build_m18_r68_cblock import build as build_r68
+    good, _ = build_r68()
+    assert sha256(good).hexdigest() == R68_SHA, "Historical R68 builder changed"
 
     r71, previous = build_r71()
     assert sha256(r71).hexdigest() == R71_SHA and previous["size"] == 51460
@@ -71,7 +71,7 @@ def build() -> tuple[bytes, dict]:
     assert not inspect(parse(output))["issues"], "R72 AP20 structure failed"
     # 6 native bytes, plus 2 bytes of 4-byte-aligned AP20/HUNK padding.
     assert len(output) == len(r71) + 8, "R72 HUNK/AP20 alignment drift"
-    assert good_path.read_bytes() == good, "R68 LAST_GOOD mutated"
+    assert build_r68()[0] == good, "Historical R68 builder changed during R72 build"
     return output, {
         "version": "R72 v0.13.17 P2 late D3 reject hardening, Gate A only",
         "size": len(output),

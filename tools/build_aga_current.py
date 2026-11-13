@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the SHA-pinned promoted R68 V2 and frozen historical R46 C1.
+"""Verify the SHA-pinned promoted R73 V2 and frozen historical R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -53,8 +53,8 @@ def main() -> None:
     if active.startswith("R73 0.13.18"):
         from build_opt020_p3_r73 import build as build_r73
         candidate, meta = build_r73()
-        assert candidate == current and meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
-        print("CURRENT R73 OPT020/P3 Fast Icon CAP+DRAW: native Gate A PASS; WinUAE B/Compiler C PENDING", meta)
+        assert candidate == current == LAST_GOOD.read_bytes() and meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R73 PROMOTED LAST_GOOD: OPT020 P1e/P2/P3 Gates A/B/C PASS; D physical untested", meta)
     elif active.startswith("R72 0.13.17"):
         from build_opt020_p2_r72 import build as build_r72
         candidate, meta = build_r72()
@@ -168,7 +168,7 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R68)")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R73)")
     print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 

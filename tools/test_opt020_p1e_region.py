@@ -306,9 +306,10 @@ class LiveRegionCPU:
 
 
 def v2_structure(native):
-    old = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    from build_m18_r68_cblock import build as build_r68
+    old = build_r68()[0]  # Historic R68 baseline, not moving LAST_GOOD.
     current = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
-    assert sha256(old).hexdigest() == R68_SHA, "protected R68 LAST_GOOD changed"
+    assert sha256(old).hexdigest() == R68_SHA, "historical R68 builder changed"
     if current != old:
         from build_opt020_p1e_r69 import build as build_r69
         from build_opt020_p2_r70 import build as build_r70
@@ -343,7 +344,7 @@ def v2_structure(native):
     report = inspect(parse(wrapped))
     assert not report["issues"], report["issues"]
     assert len(entries[-1]) < 65534
-    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == R68_SHA
+    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
     return len(wrapped), len(entries[-1])
 
 

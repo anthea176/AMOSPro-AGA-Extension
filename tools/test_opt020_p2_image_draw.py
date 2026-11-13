@@ -60,7 +60,7 @@ def v2_check(native):
     protected = protected_path.read_bytes()
     actual_sha = sha256(active).hexdigest()
     assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA), "Unrecognized active P1e/P2 candidate"
-    assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
+    assert sha256(protected).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407", "Promoted R73 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
     assert emit_image_draw(accept_loaded_flags_zero=True)[0] == old
     assert not any(n.startswith("p1e_") for n in labels)

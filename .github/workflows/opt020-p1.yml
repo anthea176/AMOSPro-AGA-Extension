@@ -44,7 +44,7 @@ jobs:
   standalone:
     # R73 P3 targeted pushes do not need historical OPT020/P1 reruns.
     # The P3 job checks native CPU, ABI, strict AP20 and guards separately.
-    if: "${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[p3-target]') }}"
+    if: "${{ github.event_name != 'push' || (!contains(github.event.head_commit.message, '[p3-target]') && !startsWith(github.event.head_commit.message, 'release: R73')) }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

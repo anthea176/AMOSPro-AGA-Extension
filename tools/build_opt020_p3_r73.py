@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """OPT020/P3 R73 v0.13.18 deterministic Fast Icon 68020 candidate.
 
-Pure in-memory builder: pinned R72 0.13.17 is the only base, R68 LAST_GOOD
-is read-only, and public tokens/AP20 ABI remain unchanged. Native entry 60
+Pure in-memory builder: pinned R72 0.13.17 is the only base, historical
+R68 is rebuilt independently of the moving LAST_GOOD, and the public
+tokens/AP20 ABI remain unchanged. Native entry 60
 Aga F Icon and 66 Aga F Icon Capture are replaced by the separately
 Musashi-tested 020 opt-in emitters. 68000 guard before any BFxxx.
 Every audited native inter-entry relative branch is relinked and verified.
@@ -37,9 +38,9 @@ TITLE += bytes(len(TITLE) & 1)
 
 
 def build() -> tuple[bytes, dict]:
-    last_good_path = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    last_good = last_good_path.read_bytes()
-    assert sha256(last_good).hexdigest() == R68_SHA, "R68 protected binary modified"
+    from build_m18_r68_cblock import build as build_r68
+    r68_baseline, _ = build_r68()
+    assert sha256(r68_baseline).hexdigest() == R68_SHA, "Historical R68 baseline changed"
 
     r72, meta72 = build_r72()
     assert sha256(r72).hexdigest() == R72_SHA
@@ -88,15 +89,15 @@ def build() -> tuple[bytes, dict]:
     assert not report["issues"], report["issues"]
     assert len([t for t in report["tokens"] if t["name"].startswith("aga ")]) == 64
     assert_native_links(unwrap_native_parts_v2(candidate)[1])
-    assert last_good_path.read_bytes() == last_good
+    assert build_r68()[0] == r68_baseline
 
     return candidate, dict(
         version="R73 v0.13.18 Fast Icon capture+draw 020, Gate A candidate",
         size=len(candidate),sha256=sha256(candidate).hexdigest(),
         commands=64,ap20_entries=71,changed_native=sorted(changed),
         draw_60_size=len(new_draw),capture_66_size=len(new_capture),
-        gate_a="PENDING targeted CPU/ABI run",
-        gate_b="NOT TESTED WinUAE",gate_c="NOT TESTED Compiler"
+        gate_a="PASS native CPU/ABI",gate_b="PASS WinUAE interpreted",
+        gate_c="PASS compiled WinUAE (author capture)"
     )
 
 

@@ -14,7 +14,7 @@ from compiler_relocation import GETP, unpack_ap20
 from native_relative_links import LINKS,assert_native_links
 
 ROOT=Path(__file__).resolve().parents[1]
-R68="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
+R68="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # Historical R68 baseline, rebuilt via build_r68
 R72="fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
 R73="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 
@@ -24,7 +24,7 @@ def main():
     active_path=ROOT/"dist/AMOSPro_AGA.Lib"
     original_good=protected_path.read_bytes()
     original_active=active_path.read_bytes()
-    assert sha256(original_good).hexdigest()==R68
+    assert sha256(original_good).hexdigest()==R73, "Promoted R73 LAST_GOOD mismatch"
     previous,_=build_r72()
     assert sha256(previous).hexdigest()==R72
     old_tokens,old_parts=unwrap_native_parts_v2(previous)
@@ -62,7 +62,7 @@ def main():
     assert active_path.read_bytes()==original_active
     assert protected_path.read_bytes()==original_good
     print("R73 EXACT IN-MEMORY RELEASE CANDIDATE GATE A PASS",meta,flush=True)
-    print("3 negative relative link corruption cases rejected; R72/R68 bytes unchanged",flush=True)
+    print("3 negative relative link corruption cases rejected; R72 historical source and R73 LAST_GOOD stable",flush=True)
     print("Active Lib unchanged by test; NO AMOS Compiler or WinUAE test",flush=True)
 
 if __name__=="__main__":

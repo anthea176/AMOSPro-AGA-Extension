@@ -133,6 +133,8 @@ jobs:
           python-version: "3.12"
       - name: Fast frozen SHA256 HUNK AP20 and compiler-safe artifact integrity
         run: python -B tools/verify_fast.py
+      - name: Promoted R73 LAST_GOOD byte identity and historical R68 source
+        run: python -B tools/test_r73_last_good_promotion.py
       - name: Current compiler-safe builder and relocation regressions
         run: |
           python -B tools/build_aga_current.py --verify
@@ -291,7 +293,7 @@ jobs:
   pre_release_full:
     # Full regression on the exact pushed pre-release/release main SHA.
     # Full regression runs only for explicitly marked pre-release/release commits, not ordinary pushes.
-    if: "${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54') || startsWith(github.event.head_commit.message, 'pre-release: R60') || startsWith(github.event.head_commit.message, 'release: R60') || startsWith(github.event.head_commit.message, 'pre-release: R63') || startsWith(github.event.head_commit.message, 'release: R63') || startsWith(github.event.head_commit.message, 'pre-release: R68') || startsWith(github.event.head_commit.message, 'release: R68')) }}"
+    if: "${{ github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'pre-release: R54') || startsWith(github.event.head_commit.message, 'release: R54') || startsWith(github.event.head_commit.message, 'pre-release: R60') || startsWith(github.event.head_commit.message, 'release: R60') || startsWith(github.event.head_commit.message, 'pre-release: R63') || startsWith(github.event.head_commit.message, 'release: R63') || startsWith(github.event.head_commit.message, 'pre-release: R68') || startsWith(github.event.head_commit.message, 'release: R68') || startsWith(github.event.head_commit.message, 'release: R73')) }}"
     needs: verify
     uses: ./.github/workflows/artifact-regression-full.yml
     permissions:

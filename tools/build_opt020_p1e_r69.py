@@ -29,8 +29,9 @@ TITLE += bytes(len(TITLE) % 2)
 
 
 def build():
-    protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
+    from build_m18_r68_cblock import build as build_r68
+    protected, _ = build_r68()  # Historical SHA-pinned R68, not moving LAST_GOOD.
+    assert sha256(protected).hexdigest() == R68_SHA, "Historical R68 builder changed"
     old_tokens, old = unwrap_native_parts_v2(protected)
     old_table, installed, _title = unpack_ap20(protected)
     assert old_tokens == old_table
@@ -64,7 +65,7 @@ def build():
     assert len([t for t in report["tokens"] if t["name"].startswith("aga ")]) == 64
     assert any(p["index"] == IMAGE_REGION_INDEX and p["parameters"] == 8
                and p["getp"] for p in report["parameter_checks"])
-    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == R68_SHA
+    assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     return binary, {
         "version": "R69 0.13.14 OPT020/P1e Gate A candidate only",
         "size": len(binary),

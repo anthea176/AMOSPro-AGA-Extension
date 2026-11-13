@@ -21,7 +21,7 @@ from native_relative_links import assert_native_links,relink_native_parts,LINKS,
 
 ROOT=Path(__file__).resolve().parents[1]
 ACTIVE_SHA="fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
-GOOD_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
+GOOD_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 R73_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 DRAW=60
 CAPTURE=66

@@ -167,9 +167,10 @@ def cpu_tests():
 
 
 def ap20_v2_in_memory_probe():
-    raw=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    from build_m18_r68_cblock import build as build_r68
+    raw=build_r68()[0]  # Fixed historical R68; LAST_GOOD now follows promoted R73.
     current=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert sha256(raw).hexdigest()==R68_SHA, "protected R68 LAST_GOOD changed"
+    assert sha256(raw).hexdigest()==R68_SHA, "historical R68 builder changed"
     if current != raw:
         from build_opt020_p1e_r69 import build as build_r69
         from build_opt020_p2_r70 import build as build_r70
@@ -206,7 +207,7 @@ def ap20_v2_in_memory_probe():
     assert new[-1].startswith(DISPATCH_V2)
     assert adapter in new[-1]
     assert len(new[-1])<=65534
-    assert sha256((ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest()==R68_SHA
+    assert sha256((ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
     return len(adapter),len(wrapped),len(new[-1]),len(parts)
 
 

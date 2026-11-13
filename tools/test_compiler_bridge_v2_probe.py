@@ -42,7 +42,7 @@ R69_SHA256 = R69_SHA  # Historical OPT020/P1e R69.
 R70_SHA256 = R70_SHA  # Historical R70, failed WinUAE; cannot be active.
 R71_SHA256 = R71_SHA  # R71 corrected relative links, WinUAE interpreted PASS.
 R72_SHA256 = R72_SHA  # R72 P2 D3 reset, WinUAE Gate B PASS.
-R73_SHA256 = R73_SHA  # Fast Icon capture/draw CPU020, interpreted Gate B pending.
+R73_SHA256 = R73_SHA  # Fast Icon capture/draw CPU020, Gates A/B/C PASS, promoted.
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -131,7 +131,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             from build_opt020_p3_r73 import build as build_r73
             from native_relative_links import assert_native_links
             candidate, meta = build_r73()
-            assert current_bytes == candidate and current_bytes != protected_bytes, "R73 deterministic source mismatch"
+            assert current_bytes == candidate == protected_bytes, "Promoted R73 deterministic source/LAST_GOOD mismatch"
             assert meta["size"] == 51608 and meta["commands"] == 64 and meta["ap20_entries"] == 71
             assert meta["changed_native"] == [60,66]
             assert_native_links(unwrap_native_parts_v2(current_bytes)[1])

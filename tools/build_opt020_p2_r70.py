@@ -30,9 +30,9 @@ if len(TITLE) % 2:
 
 
 def build():
-    good_path = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    protected = good_path.read_bytes()
-    assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
+    from build_m18_r68_cblock import build as build_r68
+    protected, _ = build_r68()  # Immutable historical source, never the moving LAST_GOOD.
+    assert sha256(protected).hexdigest() == R68_SHA, "Historical R68 builder changed"
     r69, prev_meta = build_r69()
     assert sha256(r69).hexdigest() == R69_SHA and prev_meta["size"] == 51240
     old_tokens, old_parts = unwrap_native_parts_v2(r69)
@@ -64,7 +64,7 @@ def build():
                for p in report["parameter_checks"])
     assert any(p["index"] == REGION_INDEX and p["parameters"] == 8 and p["getp"]
                for p in report["parameter_checks"])
-    assert good_path.read_bytes() == protected, "R68 LAST_GOOD changed in build"
+    assert build_r68()[0] == protected, "Historical R68 source changed in build"
     return final, {
         "version": "R70 v0.13.15 OPT020/P1e+P2 Gate A candidate only",
         "size": len(final),

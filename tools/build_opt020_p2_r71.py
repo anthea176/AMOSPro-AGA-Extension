@@ -30,9 +30,9 @@ TITLE += bytes(len(TITLE) & 1)
 
 
 def build() -> tuple[bytes, dict]:
-    protected_path = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    protected = protected_path.read_bytes()
-    assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
+    from build_m18_r68_cblock import build as build_r68
+    protected, _ = build_r68()
+    assert sha256(protected).hexdigest() == R68_SHA, "Historical R68 builder changed"
     defective, old_meta = build_r70()
     assert sha256(defective).hexdigest() == R70_SHA
     tokens, old_parts = unwrap_native_parts_v2(defective)
@@ -69,7 +69,7 @@ def build() -> tuple[bytes, dict]:
     assert title == TITLE and tt == tokens and len(entries) == 71
     assert len(entries[-1]) == old_meta["compiler_v2_bytes"]
     assert not inspect(parse(candidate))["issues"]
-    assert protected_path.read_bytes() == protected, "R68 changed during R71 build"
+    assert build_r68()[0] == protected, "Historical R68 builder changed during R71 build"
     return candidate, {
         "version": "R71 v0.13.16 OPT020/P2 relocation repair Gate A only",
         "size": len(candidate), "sha256": R71_SHA,

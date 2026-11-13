@@ -14,11 +14,11 @@ from compiler_relocation import GETP
 from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
+from build_m18_r68_cblock import build as build_r68
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
 CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
-GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BANK = ROOT / "tests/current/M16_AGAPIC_SAMPLE_BANK10.abk"
 R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
 R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
@@ -35,9 +35,8 @@ def main() -> None:
     assert not scan(SOURCE), "AMOS blocks are unbalanced or invalid"
     src = raw.decode("ascii")
 
-    # Both runs must use the same source. Running it under LAST_GOOD is
-    # specifically a R60 Image Region comparison, not a generic R68 feature.
-    assert sha256(GOOD.read_bytes()).hexdigest() == R68_SHA
+    # Historical benchmark baseline comes from pinned R68 builder, not moving LAST_GOOD.
+    assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
     assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA)
@@ -67,7 +66,7 @@ def main() -> None:
     else:
         assert candidate == active
     assert metadata["native_region_index"] == IMAGE_REGION_INDEX
-    old_tokens, old_parts = unwrap_native_parts_v2(GOOD.read_bytes())
+    old_tokens, old_parts = unwrap_native_parts_v2(build_r68()[0])
     new_tokens, new_parts = unwrap_native_parts_v2(candidate)
     old_region, _ = emit_image_region()
     new_region, _ = emit_image_region(opt020=True)

@@ -121,7 +121,7 @@ def late_failure(native: bytes, payload: bytes, *, expect_d3: int, mode=0) -> No
 def main() -> None:
     active = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
     protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(protected).hexdigest() == R68_SHA
+    assert sha256(protected).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
     r71, _ = build_r71()
     assert sha256(r71).hexdigest() == R71_SHA
     r72, info = build_r72()

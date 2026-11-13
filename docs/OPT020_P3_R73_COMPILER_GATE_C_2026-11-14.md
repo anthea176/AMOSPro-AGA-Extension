@@ -73,8 +73,10 @@ pas de comparaison globale pixel à pixel ni de benchmark demandé.
 | D — matériel Amiga physique | **NON TESTÉE** |
 
 **Chantier OPT020 P1e/P2/P3 validé sur les Gates A/B/C.**
-R73 reste une **candidate non promue**. Ne pas écrire dans
-`LAST_GOOD`, `tests/passed/`, les archives ou un autre dépôt sans accord
-explicite de l'auteur. Pas de R74 ni nouvelle compilation pour la seule
-mise à jour documentaire. Après décision sur la promotion/fermeture du
-chantier : `c2p.library`, puis AGAPIC v2.
+**Post-scriptum 14/11/2026 : R73 a été PROMUE `LAST_GOOD` sur accord
+explicite de l'auteur**, après le test décrit dans ce rapport.
+[Rapport de promotion](OPT020_R73_LAST_GOOD_PROMOTION_2026-11-14.md).
+Au moment du test compilé elle était encore candidate non promue ;
+son binaire n'a pas été modifié par la promotion. Gates A/B/C PASS,
+Gate D physique non testée. Ni archive ni `tests/passed/` n'ont été modifiés.
+Suite prévue : `c2p.library`, puis AGAPIC v2.
