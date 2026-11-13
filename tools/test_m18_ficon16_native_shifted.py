@@ -61,15 +61,18 @@ def main():
                           for pos,(wanted,got) in enumerate(zip(exp,gotplane))
                           if wanted!=got][:12]
                     frames=[]
+                    watch={CODE+labels[name]:name
+                           for name in ('mask0_clipped','mask1_clipped','plane')}
                     def on_code(uc,address,size,user_data):
-                        if address!=CODE+labels['plane'] or len(frames)>1:
+                        if address not in watch or len(frames)>6:
                             return
                         base=uc.reg_read(UC_M68K_REG_A2)
                         keys=['baseword','lastword','lastmask','shift',
                               'backshift','offset0','offset1','mask0','mask1']
                         vals={k:hex(int.from_bytes(uc.mem_read(base+F[k],4),'big'))
                               for k in keys}
-                        vals.update(D6=hex(uc.reg_read(UC_M68K_REG_D6)),
+                        vals.update(point=watch[address],
+                                    D6=hex(uc.reg_read(UC_M68K_REG_D6)),
                                     D7=hex(uc.reg_read(UC_M68K_REG_D7)))
                         frames.append(vals)
                     execute(code,icon,before,x=x,y=y,mode=mode,debug_hook=on_code)
