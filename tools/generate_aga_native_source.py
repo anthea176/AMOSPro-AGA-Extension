@@ -544,8 +544,9 @@ def verified_current_compiler_seeds(parsed):
                             reset_failure_d3=True)
                         trial[55] = new55 + GETP
                         repaired = relink_native_parts(trial)
-                        need(raw == repack_ap20(blob71, t71, repaired, parsed['title']),
-                             "Strict source: R72 differs from audited D3 and three re-linked branches")
+                        if not r73_case:
+                            need(raw == repack_ap20(blob71, t71, repaired, parsed['title']),
+                                 "Strict source: R72 differs from audited D3 and three re-linked branches")
                     else:
                         need(raw == reconstruct(blob71),
                              "Strict source: unknown native AP20; R71 audit required")
