@@ -58,6 +58,6 @@ Une capture de l'écran visible/Workbench, des icônes autres que 16×16 ou une 
 2. **Gate B WinUAE en AMOS interprété** : dessiner un motif AGA 256 couleurs dans le **back buffer**, capturer le carré, changer le fond et redessiner avec `Aga F Icon` en opaque/masqué, vérifier X/Y à 1 pixel, `Save / Erase / Load` ABK, résultat et rendu visuel, retour mémoire identique après nettoyage.
 3. **Gate C Compiler** : un seul passage manuel final pour **l'ensemble de M18**, pas de test Compiler prématuré ; **Gate D** séparée sur Amiga physique.
 
-**Prérequis** : conserver la R65 (Gates A/B interprétée PASS) comme base actuelle ; protéger R63 `LAST_GOOD`. Contrat public et signature à valider avant code natif. Ne pas attribuer le numéro de révision R67 avant clôture du périmètre R66.
+**Prérequis** : R66 est désormais candidate Create+Stage, Gate A native PASS et Gate B WinUAE à faire ; la capture d'icône reste un chantier ultérieur, aucun token AP20 ajouté ici. R65 Gates A/B passées et R63 `LAST_GOOD` protégée. Ne pas attribuer R67 sans clôture du périmètre R66.
 
 Références : [rapport de validation R65](M18_R65_FICON8_PUT_WINUAE_GATE_B_2026-11-13.md) · [capture AGAPIC M16](M16_AGAPIC_CAPTURE_DESIGN.md) · [format FICON8](M18_FICON16_SOURCE_P1.md) · [règles](../EXTENSION_SOURCE_RULES.md).

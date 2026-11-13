@@ -1,6 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18 — Suite enregistrée après R65 : cache dynamique et capture d'icône
+## M18/R66 — Chip Cache Create + Stage Gate A PASS, Gate B WinUAE À FAIRE (13/11/2026)
+
+**R66 v0.13.11**, [bibliothèque candidate unique](../dist/AMOSPro_AGA.Lib) **41 804 octets**, SHA256 `e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca`, **60 commandes / 67 AP20**. Deux commandes autorisées et implémentées : `Aga F Chip Bank Create(CacheBank,Count)` alloue un cache DATA AMOS `FICHIP8 ` en **Chip RAM réelle** ; `Aga F Chip Stage(SourceBank,CacheBank,IconID)` convertit un slot `FICON8` depuis Fast/Chip, marqueur `ready=0` puis `ready=1` après copie. **Gate A CPU 68000 PASS, 122 cas, et régression complète PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43453950765)). **Gate B WinUAE interprétée non exécutée** : utiliser [l'unique ASC actif R66](../tests/current/M18_R66_FICHIP_DYNAMIC_01.asc) par `Project → Merge ASCII`, programme vierge. **Banques 11/12/13 obligatoirement libres**, test dans une configuration jetable. Il dessine trois icônes pour comparer CPU et Blitter, vérifie `Chip Free`, `ready` et le re-staging. Écran attendu : cadre blanc, diagonales rouges/vertes ; **X=30 CPU masqué, X=90 Blitter masqué (intérieur bleu), X=150 Blitter opaque (intérieur noir)** ; X=210 doit rester bleu (slot non prêt). `RESULT 1` et `CLOSE RETURNED` attendus ; captures graphique et texte nécessaires avant validation.
+
+**R65 Gates A/B WinUAE interprétée PASS** conservées ([ASC archivé](../tests/passed/M18_R65_FICON8_PUT_01.asc)). **R63 `LAST_GOOD` intacte** (38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`). **Aucune promotion automatique**, Gate C Compiler manuelle unique à la fin M18, D physique non testée. [Contrat R66](M18_DYNAMIC_CHIP_CACHE_DESIGN.md). La [capture directe d'icône](M18_FICON8_CAPTURE_DESIGN.md) sera le chantier suivant, pas implémentée.
+
+## M18 — Plan d'études initial après R65 (historique, R66 candidate désormais active)
 
 **Demande de l'auteur du 13/11/2026 :** étudier le cache Chip dynamique et **ne pas oublier la commande de capture directe**. [Contrat cache `FICHIP8`](M18_DYNAMIC_CHIP_CACHE_DESIGN.md) : `Aga F Chip Bank Create(CacheBank,Count)` et `Aga F Chip Stage(SourceBank,CacheBank,IconID)` proposés pour une création réelle en Chip, conversion depuis la source FICON8 et marqueurs de validité. [Capture `FICON8` depuis le back buffer AGA](M18_FICON8_CAPTURE_DESIGN.md) : `Aga F Icon Capture(Bank,IconID,X,Y)` proposée, 16×16×256 indices, masque index zéro. **Aucune nouvelle commande compilée ou testée à ce stade ; signatures à approuver avant code.**
 
