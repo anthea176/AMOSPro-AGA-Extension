@@ -3,9 +3,9 @@
 **Ouverture le 12 novembre 2026 — uniquement sur main.**
 **Statut du jalon P0 : modèle hôte expérimental.** Le développement natif R60 a ensuite reçu sa **Gate A CPU PASS** ; [rapport R60](M18_R60_IMAGE_REGION.md). Le P0 Python seul ne constitue pas une Gate native.
 
-**Référence inchangée : R59 v0.13.4 LAST_GOOD**, 32 984 octets,
-SHA256 00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d.
-R59 reste la référence `LAST_GOOD` protégée. R60 est maintenant la seule candidate dans `dist/AMOSPro_AGA.Lib` ; son seul ASC actif est `tests/current/M18_R60_IMAGE_REGION_01.asc`. `main` exclusivement.
+**Référence actuelle : R60 v0.13.5 LAST_GOOD PROMUE**, 35 056 octets,
+SHA256 00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8.
+Gates A/B/C et régression complète R60 PASS ; ASC R60 archivé, aucun ASC actif. R59 reste un checkpoint historique via Git et son builder. `main` uniquement.
 
 ## 1. Première tranche : atlas dans une banque AGAPIC v1 inchangée
 
@@ -115,6 +115,8 @@ pas de nouvelle commande AP20 ni de benchmark CBlock exécuté.**
 
 ## 3. Équivalent fonctionnel F 16 Icon
 
+**Suite du 13/11/2026 :** [audit et modèle indexé M18](M18_F16_ICON_AUDIT.md). AMOS standard `Paste Icon` utilise la banque d'icônes 2 ; des retours d'utilisateurs Turbo mentionnent `F Paste Icon` comme accélération. Le nom exact `F 16 Icon` et sa convention ne sont toujours **pas** confirmés. Le modèle `m18_icon_atlas_model.py` sélectionne des icônes par ID dans AGAPIC v1, sans ajouter de commande ni de format binaire.
+
 **Audit original non terminé.** La roadmap mentionne F 16 Icon,
 mais le dépôt et les références actuellement disponibles ne prouvent
 pas sa **syntaxe précise**, l'extension propriétaire, le format de
@@ -159,4 +161,4 @@ Pas de nombre de FPS promis sans mesure WinUAE contrôlée ou matériel.
 5. **Promotion** : après Gates A/B/C, régression complète sur
    HEAD exact et accord exprès de l'auteur.
 
-**Pendant l'étude, la R59 LAST_GOOD et les tests passés restent intacts.**
+**R60 LAST_GOOD et tous les tests passés restent intacts pendant l'étude.**

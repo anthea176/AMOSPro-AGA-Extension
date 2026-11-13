@@ -23,7 +23,7 @@
 | **1 — M18/R60 (TERMINÉ)** | `Aga Image Region`, atlas AGAPIC | A/B/C + régression PASS, `LAST_GOOD` R60 promue. |
 | **APRÈS M18 — optimisation native 68020+** | Cible minimale 68020/68EC020 | Reportée après `F 16 Icon` et CBlock M18, décision de l'auteur du 13/11/2026. |
 | **APRÈS 68020+ — intégration `c2p.library`** | C2P optimisé Chunky Fast → bitplanes AGA | Non engagée, après la fin M18 puis optimisation 68020+. |
-| **M18 — EN COURS** | Équivalent `F 16 Icon`, CBlock AGA pixel-exact, chemins CPU/Blitter | **À terminer AVANT tout autre chantier**, demande explicite de l'auteur le 13/11/2026. Audit origine et prototypes à valider avant nouvelle API. |
+| **M18 — EN COURS** | Équivalent fonctionnel `F 16 Icon`, CBlock AGA pixel-exact, chemins CPU/Blitter | **Audit initial documenté** : AMOS standard `Paste Icon`, Turbo `F Paste Icon` (identité exacte de `F 16 Icon` non démontrée). **Prototype host P0 d'icônes numérotées AGAPIC v1 avec tests CI ajouté** ([audit](M18_F16_ICON_AUDIT.md)), **aucune API ou Lib nouvelle**. CBlock au pixel près ensuite. À terminer AVANT 68020+ / C2P, sur demande du 13/11/2026. |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
 | **M20** | Scrolling AGA, caméra, surfaces plus grandes que l'écran | **Planifié, non engagé** ; dépendances avec tilemaps à examiner |
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |
