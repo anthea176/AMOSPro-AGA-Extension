@@ -169,7 +169,12 @@ def cpu_tests():
 def ap20_v2_in_memory_probe():
     raw=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     current=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert raw==current and sha256(raw).hexdigest()==R68_SHA
+    assert sha256(raw).hexdigest()==R68_SHA, "protected R68 LAST_GOOD changed"
+    if current != raw:
+        from build_opt020_p1e_r69 import build as build_r69
+        candidate, meta = build_r69()
+        assert current == candidate and meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298", (
+            "Current must be the reproducible R69 candidate, not an unknown Lib")
     tokens, parts=unwrap_native_parts_v2(raw)
     original_tokens, segments,title=unpack_ap20(raw)
     assert tokens==original_tokens and len(parts)==len(segments)-1==70
