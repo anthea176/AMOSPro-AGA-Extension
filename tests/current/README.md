@@ -6,6 +6,8 @@
 
 **Un seul ASC actif :** [`M18_R63_CHIP_BLIT_01.asc`](M18_R63_CHIP_BLIT_01.asc) et deux ABK : [FICON8 source banque 10](M18_FICON8_SAMPLE_BANK10.abk), [FICHIP8 Chip pré-stagée banque 11](M18_FICHIP8_SAMPLE_BANK11.abk), **1 188 octets**.
 
+**Diagnostic ajouté le 13/11/2026 après le deuxième échec WinUAE R63 :** la capture affichait `FICHIP 11 FLAGS 0`, toutes les valeurs BLIT/BCLP à 0, `RESULT 0`, `CHIP 1 796 472 / 1 796 472`. La nouvelle version du **même** ASC mesure `LOAD11 CHIP DELTA` et `LOAD11 FAST DELTA` **strictement autour du `Load` de la banque 11**, et affiche son `BANK 11 START`. Cela vise à déterminer si le cache est réellement en Chip. **Ne pas bypasser `TypeOfMem(MEMF_CHIP)`** ; même avec des flags natifs à 0, le Blitter ne doit pas lire de la Fast RAM. Le `RESULT 0` reste attendu tant que la cause n'est pas corrigée. Aucun nouvel exécutable Compiler demandé.
+
 **Test interprété :** installer R63 dans AMOS, redémarrer, mettre les deux ABK dans le dossier de travail, importer l'ASC dans un programme vide avec Project → Merge ASCII. **Load écrase les banques 10 et 11**, donc session WinUAE jetable. Exécuter en **interprété seulement** pour cette étape. Le bandeau n'affirme plus de compilation. Le test lit sans modifier le mot natif `Deek(Start(11)-12)` et affiche **`FICHIP 11 FLAGS`** : noter cette valeur pour confirmer ou écarter l'hypothèse des flags normalisés.
 
 **Attendu :** `RESULT 1`, `CLOSE -1`, `NOS 0`, `SWAP 1`, Chip Free avant/après identique. `ICON`, `BLIT`, `SHIFT`, `CLIP`, `OUT` doivent tous renvoyer 1 et `BAD` / `BCBAD` 0. Vérifier les icônes CPU et Blitter à l'écran ainsi que le clipping. Le code utilise un cache **préparé hors AMOS**, sans mesure du staging Fast→Chip.

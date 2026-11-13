@@ -103,6 +103,16 @@ La capture fournie par l'auteur en **AMOS interprété** affiche `OPEN/DB/SW0/SA
 
 Le wrapper [R62](../tools/m18_ficon_chip_ap20_emit.py) exigeait `Flags=3` dans la **structure native** de la banque à `Start(11)-12`. Or le projet avait déjà constaté `Flags=0` après rechargement d'une banque AMOS DATA sous WinUAE (voir [`m16_image_draw_r45_emit.py`](../tools/m16_image_draw_r45_emit.py), correctif R46). C'est une **cause probable**, à confirmer par la Gate B d'une version corrigée et, si besoin, la lecture `Deek(Start(11)-12)`. Il faut conserver la vérification physique `TypeOfMem(MEMF_CHIP)` pour ne pas masquer un vrai défaut d'allocation.
 
+## Échec interprété R63 et diagnostic mémoire ajouté (13/11/2026)
+
+La capture R63 confirme que le correctif de la structure native de banque ne suffit pas : `FICHIP 11 FLAGS 0`, **`BLIT 0 0 0 0`, `BCLP 0 0 0 0`, `RESULT 0`** ; source CPU et clipping OK, `CLOSE -1`, Chip Free 1 796 472 avant/après. La Gate A native 260 cas reste PASS, mais **la Gate B réelle de R63 est ÉCHEC**.
+
+La documentation AMOS place les flags à `Start(Bank)-12` ; valeur **0 = Work/Fast**, 3 = Data/Chip. Le code natif R63 accepte déjà ces flags **mais exige une source physiquement DMA-accessible par `TypeOfMem(MEMF_CHIP)`** ; aucune preuve disponible que `Load` a effectivement placé le cache en Chip RAM. Le test hôte précédent simule une banque 11 Chip indépendamment de la valeur des flags : il ne reproduit donc pas une éventuelle allocation réelle en Fast.
+
+**Prochain contrôle unique :** le [même ASC actif R63](../tests/current/M18_R63_CHIP_BLIT_01.asc) affiche désormais `BANK 11 START`, `LOAD11 CHIP DELTA` et `LOAD11 FAST DELTA`, mesurés immédiatement avant/après `Load "M18_FICHIP8_SAMPLE_BANK11.abk",11`. Si la consommation Fast augmente alors que la Chip ne diminue pas, la piste d'une banque chargée en Fast sera corroborée. Si la Chip diminue et que les appels restent à zéro, il faudra tracer les validations restantes sans désactiver la protection DMA.
+
+Ce diagnostic ne constitue pas une modification native, ne prouve pas `TypeOfMem` et n'exige **aucune nouvelle compilation**. R63 .Lib inchangée ; R60 LAST_GOOD intacte.
+
 ## Politique de validation M18
 
 **L'auteur ne souhaite pas recompiler sous AMOS à chaque fonction ou correctif.** Développement : tests natifs automatisés + **tests manuels WinUAE en interprété**. **Une seule Gate C manuelle avec un nouvel exécutable AMOS Compiler sera faite à la fin du chantier M18**, sur la candidate finalisée. Ne jamais déclarer Gate C PASS sur la seule base des simulations Compiler V2 en CI.
