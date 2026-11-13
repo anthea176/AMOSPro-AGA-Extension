@@ -1,10 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18 — Étude CBlock AGA au pixel près (13/11/2026 ; CONTRAT PROPOSÉ)
+## M18 — CBlock AGA : contrat RECTIFIÉ pour la vitesse (13/11/2026)
 
-**Audit d'origine effectué** : l'AMOS Professional historique fournit `Get Cblock`/`Put Cblock`/`Del Cblock` avec compaction RLE d'octets de bitplanes et alignement horizontal sur 8 pixels ; contrôle croisé avec le manuel et les sources `+Lib.s` / `+W.s`. **Nouveau [contrat CBlock AGA proposé](M18_CBLOCK_DESIGN.md)** : capture du back buffer privé, **X et largeur au pixel près**, stockage de données planaires normalisées dans une banque DATA `AGACBLK ` (Fast privilégiée), codec RLE léger avec fallback RAW, restauration CPU opaque avec clipping exact, Save/Load ABK. **API proposée, non implémentée** : `Aga C Block Capture(Bank,X,Y,Width,Height)`, `Aga C Block Draw(Bank,X,Y)` et `Aga C Block Restore(Bank)`. Restent à approuver signatures, format, profondeurs et sémantique hors écran.
+**Décision explicite de l'auteur : viser la rapidité**, **banque temporaire en Chip RAM**, **alignement horizontal sur 8 PIXELS** si avantageux (il s'agit bien de **pixels**, pas d'octets). [Contrat CBlock corrigé](M18_CBLOCK_DESIGN.md) : **RAW planar sans compression**, copies Chip→Chip via Blitter quand plus rapides, CPU possible pour petits rectangles, pas de sauvegarde ABK ni décompression en boucle. Banque DATA `AGACBLK ` en **Chip vérifiée**, capturée une première fois puis **réutilisée sans allocation** si mêmes dimensions/profondeur, libérée par `Erase`. X/Width et X destination multiples de 8 proposés, sans arrondi silencieux ; stockage interne à mots de 16 bits et masque du dernier mot ; comparer 8 et 16 pixels au benchmark. API `Aga C Block Capture/Draw/Restore` toujours **proposée, non implémentée** : aucun token ni code livré.
 
-**Ne pas lancer de code, builder, révision R68 ou ASC WinUAE sur la seule base de cette étude**. R67 v0.13.12 est **toujours l'unique candidate**, Gates A/B PASS et non promue ; R63 `LAST_GOOD` protégée. `tests/current/` ne contient aucun ASC actif ; **Compiler C manuel une seule fois en fin M18**, D Amiga physique non testée ; **`main` uniquement**, sans branche ni PR.
+**État maintenu : R67 v0.13.12 seule candidate**, Gates A/B PASS, non promue. **R63 `LAST_GOOD` protégée**, aucun ASC actif. Règle GitHub `main` exclusivement, sans branche ni PR. **Gate C Compiler manuelle unique à la fin de M18**, Gate D physique non testée. Étape suivante : valider les signatures, puis modèles de copie CPU/Blitter et Gate A ; ne pas engager d'optimisation 68020+ ou de `c2p.library` maintenant.
 
 ## M18/R67 — Gates A/B PASS, test WinUAE archivé (13/11/2026)
 

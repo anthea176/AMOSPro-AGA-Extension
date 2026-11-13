@@ -40,9 +40,11 @@
 
 **Ordre prioritaire révisé le 13/11/2026 par l'auteur : (1) R60 promue → (2) terminer M18 (`F 16 Icon` et CBlock) → (3) optimisation 68020+ → (4) `c2p.library`.** Les chantiers CPU et C2P ne sont pas engagés. Les autres numéros de jalons M18–M22 ne valent pas autorisation de coder. Ne pas démarrer un nouveau chantier sans demande explicite. **Uniquement la branche `main`** ; pas de création/changement de branche sans instruction.
 
-### M18 — CBlock AGA pixel-exact : contrat à valider (13/11/2026)
+### M18 — CBlock AGA : **vitesse prioritaire / banque temporaire Chip** (contrat corrigé 13/11/2026)
 
-**Après R67 Gates A/B PASS**, [étude technique CBlock AGA](M18_CBLOCK_DESIGN.md) ajoutée : référence `Get/Put/Del Cblock` historique vérifiée sur le manuel et les sources AMOS (RLE par octet de bitplane, X/largeur alignés sur 8). **Proposition non encore implémentée** : capture au **pixel près** du back buffer AGA privé en banque DATA `AGACBLK ` (Fast privilégiée), format planaire à en-tête versionné, codec RLE rapide ou RAW quand plus avantageux, dessin CPU opaque avec clipping exact, restitution à position d'origine, Save/Load ABK. Trois signatures proposées : `Aga C Block Capture`, `Aga C Block Draw`, `Aga C Block Restore`. **Validation explicite du contrat requise avant code ou Gate A**. R67 reste l'unique candidate, R63 `LAST_GOOD` inchangée ; aucun ASC actif, Compiler manuel seulement à la fin de M18, 68020+/`c2p.library` après M18.
+**Décision auteur :** [contrat CBlock corrigé](M18_CBLOCK_DESIGN.md). Le projet CBlock n'est **pas** un autre format d'image compressé : l'objectif est de **capturer/restaurer très rapidement un morceau du back buffer AGA privé**, dans une **unique banque DATA temporaire physiquement en Chip**, **réutilisable sans réallocation**. Format **RAW planar non compressé**, copie **Blitter Chip→Chip** quand plus performante, éventuel CPU pour les très petits blocs. **Alignement envisagé : 8 PIXELS horizontaux** (pas 8 octets), avec étude des groupes 16 pixels pour les transferts en mots DMA ; aucun arrondi implicite. Pas de Fast RAM, RLE, transcodage CPU systématique ou Save/Load ABK dans le chemin v1. **Le gain réel 8 vs 16 et CPU vs Blitter doit être mesuré.**
+
+**API Capture/Draw/Restore à approuver**, aucune commande CBlock native, nouveau binaire ou ASC en place ; [R67 Gates A/B PASS](M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md), non promue, **R63 LAST_GOOD protégée**. Gate C Compiler manuelle une fois en fin M18 ; 68020+ et `c2p.library` ensuite, pas maintenant.
 
 ### M18 — création de banques Fast Icon depuis AMOS : R64 implémentée, Gate A PASS
 
