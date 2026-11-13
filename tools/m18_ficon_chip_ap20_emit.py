@@ -124,7 +124,7 @@ def emit_ficon_chip_ap20():
     c.move(I(8),D(5))
     L("check_plane")
     c.alu("or",M(6),7,"w")
-    c.raw("4dec0020")               # LEA 32(A6),A6
+    c.raw("4dee0020")               # LEA 32(A6),A6 (source register A6, not A4)
     c.quick(1,D(5),sub=True);B(6,"check_plane")
     c.alu("cmp",D(4),7,"w");B(6,"reject")
     c.quick(2,A(1))
