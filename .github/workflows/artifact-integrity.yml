@@ -162,6 +162,10 @@ jobs:
         run: python -B tools/test_m18_ficon_chip_cache.py
       - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
         run: python -B tools/test_m18_ficon16_chip_blit.py
+      - name: M18/R66 FICHIP8 dynamic Chip bank Create and Stage native Gate A (no compiler)
+        run: |
+          python -B tools/test_m18_r66_fichip_dynamic_gate_a.py
+          python -B tools/build_m18_r66_fichip_dynamic.py --emit-base64
       - name: M18/R65 FICON8 Bank Put host model and native 68000/AP20 Gate A (no compiler)
         run: |
           python -B tools/test_m18_ficon_bank_put_model.py
