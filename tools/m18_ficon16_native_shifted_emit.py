@@ -39,6 +39,14 @@ def emit_ficon16_shifted_cpu(*, opt020=False):
     c.raw('48e7efee')                  # Save D0/D1,D4..D7,A0..A2/A4..A6.
     c.raw('4fefffa0')                  # LEA -96(SP),SP
     c.move(A(7),A(2))
+    if opt020:
+        # Standalone core must also refuse CPU000 before BFINS.
+        # Preserve incoming A0 icon source and A1 bitplane array.
+        c.raw("28780004")          # MOVEA.L (4).W,A4: ExecBase
+        c.move(A(4),D(6));c.tst(D(6));B(7,'invalid')
+        c.move(M(4,0x128),D(6),"w")
+        c.word(0x0806);c.word(1)   # BTST #AFF_68020,D6
+        B(7,'invalid')
     for key,reg in [('x',0),('y',1),('stride',2),('width',4),
                     ('height',5),('mode',3)]:
         c.move(D(reg),M(2,F[key]))

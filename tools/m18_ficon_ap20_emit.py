@@ -53,6 +53,13 @@ def emit_ficon_ap20(*, opt020=False):
     for field in ("y","x","icon","bank"):
         c.move(POST(3),D(7));st(D(7),field)
     c.move(I(0),D(3))                # default failure
+    if opt020:
+        # Public F Icon must not perform bank/Safe work on a CPU000.
+        c.raw("20780004")          # MOVEA.L (4).W,A0: ExecBase
+        c.move(A(0),D(0));c.tst(D(0));B(7,"reject")
+        c.move(M(0,0x128),D(0),"w")
+        c.word(0x0800);c.word(1)   # BTST #AFF_68020,D0
+        B(7,"reject")
 
     # Reject malformed AP20 arguments even when the bank is absent.
     ld("mode",D(0))

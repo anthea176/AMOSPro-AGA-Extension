@@ -69,7 +69,8 @@ def planar(pixels_,width=WIDTH,height=HEIGHT,stride=STRIDE):
 
 
 class Harness:
-    def __init__(self,code,cpu_type,kind,*,front=0,pending=0,safe_ready=True):
+    def __init__(self,code,cpu_type,kind,*,front=0,pending=0,safe_ready=True,
+                 attnflags=2):
         self.m=Machine(cpu_type,1024)
         self.mem,self.cpu=self.m.mem,self.m.cpu
         self.kind=kind
@@ -81,7 +82,7 @@ class Harness:
         self.mem.w32(4,CODE)
         self.cpu.execute(self.cpu.pulse_reset())
         self.mem.w32(4,EXEC)
-        self.mem.w16(EXEC+0x128,2)
+        self.mem.w16(EXEC+0x128,attnflags)
         self.end=self.m.create_execute_end("opt020-p3-done")
         self.trap(STOP,lambda _op,_pc:self.end)
         self.trap(BANK_SERVICE,self.bank_lookup)
@@ -221,12 +222,14 @@ class Harness:
         self.m.cleanup()
 
 
-def capture_one(binary,*,cpu_type,front,x,y,pending=0,expected=True):
+def capture_one(binary,*,cpu_type,front,x,y,pending=0,expected=True,
+                attnflags=2):
     # Patch only the authorised 6-byte AMOS Bnk.GetAdr relocatable marker.
     assert binary.count(GETADR_MARKER)==1
     code=binary.replace(GETADR_MARKER,b"\x4e\xb9"+pack(">I",BANK_SERVICE))
     assert len(code)==len(binary)
-    m=Harness(code,cpu_type,"Capture",front=front,pending=pending)
+    m=Harness(code,cpu_type,"Capture",front=front,pending=pending,
+              attnflags=attnflags)
     try:
         result=m.run(x=x,y=y,entry="capture")
         assert result==int(expected),("capture D3",cpu_type,front,x,y,result)
@@ -246,19 +249,24 @@ def capture_one(binary,*,cpu_type,front,x,y,pending=0,expected=True):
         else:
             assert after==m.bankraw,"invalid capture touched the bank"
             assert m.calls["waitblit"]==0
+            if not (attnflags&2):
+                assert m.calls["bank"]==m.calls["getmsg"]==0
         return 1
     finally:m.close()
 
 
-def draw_one(core,*,cpu_type,x,y,mode):
-    m=Harness(core,cpu_type,"Draw",front=0)
+def draw_one(core,*,cpu_type,x,y,mode,expected_ok=True,attnflags=2):
+    m=Harness(core,cpu_type,"Draw",front=0,attnflags=attnflags)
     try:
         baseline=[bytearray(p) for p in m.back_before]
         expected=[bytearray(p) for p in baseline]
         bank=parse_bank(m.bankraw)
-        draw_cpu(bank,2,x,y,mode,expected,WIDTH,HEIGHT,STRIDE,alignment="pixel")
+        if expected_ok:
+            draw_cpu(bank,2,x,y,mode,expected,WIDTH,HEIGHT,STRIDE,
+                     alignment="pixel")
         result=m.run(x=x,y=y,mode=mode,entry="draw")
-        assert result==1,("draw result",cpu_type,x,y,mode,result)
+        assert result==int(expected_ok),(
+            "draw result",cpu_type,x,y,mode,result)
         got=m.read_planes(m.backptrs)
         assert got==tuple(bytes(p) for p in expected),(
             "draw pixel mismatch",cpu_type,x,y,mode,
@@ -272,11 +280,11 @@ def draw_one(core,*,cpu_type,x,y,mode):
 
 
 def wrapper_one(wrapper,*,cpu_type,front,x,y,mode=0,bank=12,icon=2,
-                pending=0,safe_ready=True,expected_ok=True):
+                pending=0,safe_ready=True,expected_ok=True,attnflags=2):
     assert wrapper.count(GETADR_MARKER)==1
     code=wrapper.replace(GETADR_MARKER,b"\x4e\xb9"+pack(">I",BANK_SERVICE))
     m=Harness(code,cpu_type,"Draw AP20",front=front,
-              pending=pending,safe_ready=safe_ready)
+              pending=pending,safe_ready=safe_ready,attnflags=attnflags)
     try:
         baseline=[bytearray(p) for p in m.back_before]
         target=[bytearray(p) for p in baseline]
@@ -296,6 +304,8 @@ def wrapper_one(wrapper,*,cpu_type,front,x,y,mode=0,bank=12,icon=2,
             assert m.calls["getmsg"]==int(bool(pending&1) and visible)
         else:
             assert m.calls["getmsg"]<=int(bool(pending&1))
+            if not (attnflags&2):
+                assert m.calls["bank"]==m.calls["getmsg"]==0
         m.checks()
         return 1
     finally:m.close()
@@ -355,6 +365,16 @@ def main():
                                 x=x,y=y,mode=mode,bank=bank,icon=icon,
                                 pending=1,safe_ready=safe_ready,
                                 expected_ok=False)
+    # 68000/68010-class CPU or missing Exec AFF_68020: no BFxxx may run.
+    # All three call surfaces must reject *before* bank/Safe/memory writes.
+    for cpu_type,flags in ((CPUType.M68000,0),(CPUType.M68020,0)):
+        tested+=capture_one(new_capture,cpu_type=cpu_type,front=0,
+                            x=7,y=3,expected=False,attnflags=flags)
+        tested+=draw_one(new_core,cpu_type=cpu_type,x=7,y=3,mode=1,
+                         expected_ok=False,attnflags=flags)
+        tested+=wrapper_one(wrapper,cpu_type=cpu_type,front=0,
+                            x=7,y=3,mode=1,pending=1,expected_ok=False,
+                            attnflags=flags)
     print("OPT020 P3 NATIVE CPU GATE A PASS",tested,
           "capture+draw real 68EC020/68020 cases, 8 planes, ABI, guards")
     print("Only source emitters tested; P3 AP20/WinUAE candidate NOT validated.")

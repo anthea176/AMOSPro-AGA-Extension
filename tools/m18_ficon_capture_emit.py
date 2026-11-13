@@ -54,6 +54,14 @@ def emit_ficon_capture(*, opt020=False):
     for f in ("x","icon","bank"):
         c.move(POST(3),D(7));put(D(7),f)
     c.move(I(0),D(3))     # default result 0
+    if opt020:
+        # CPU000/010 must reject before GetAdr, Safe or BFEXTU.
+        # Same tested 68000-safe ExecBase.AttnFlags guard as P1e/P2.
+        c.raw("20780004")          # MOVEA.L (4).W,A0
+        c.move(A(0),D(0));c.tst(D(0));B(7,"fail")
+        c.move(M(0,0x128),D(0),"w")
+        c.word(0x0800);c.word(1)   # BTST #AFF_68020,D0
+        B(7,"fail")
 
     for k,mi,ma in (("bank",MIN_BANK,MAX_BANK),
                     ("icon",1,MAX_COUNT)):
