@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R62 0.13.7"):
+    if active.startswith("R63 0.13.8"):
+        from build_m18_r63_chip_blit import build as build_r63
+        candidate,meta=build_r63()
+        assert candidate==current, "R63 candidate differs from exact deterministic source"
+        print("CURRENT R63 CHIP BLIT GATE A BUILDER PASS (WinUAE B pending, C deferred)",meta)
+    elif active.startswith("R62 0.13.7"):
         from build_m18_r62_chip_blit import build as build_r62
         candidate,meta=build_r62()
         assert candidate==current, "R62 does not match pinned source builder"

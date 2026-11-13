@@ -6,7 +6,7 @@ Le cache accélère l'affichage répété d'icônes **16×16 pixels / 8 bitplane
 
 - **R61 :** `Aga F Icon(Bank,IconID,X,Y,Mode)`, chemin CPU direct depuis `FICON8 ` vers le back buffer AGA, validé WinUAE en interprété et compilé. La banque source peut être en Fast ou en Chip.
 - **R62 :** `Aga F Blit(CacheBank,IconID,X,Y,Mode)`, chemin Blitter depuis un cache `FICHIP8 ` pré-stagé en Chip. Gate A CPU/OS simulé PASS ; **essai WinUAE interprété du 13/11/2026 : RESULT 0**, tous les BLIT=0. Pas de Gate B validée, Gate C différée.
-- **R63 :** correctif de compatibilité des flags natifs des banques AMOS rechargées (valeur 0 déjà constatée pour AGAPIC), à qualifier séparément. L'absence de plantage n'est pas une preuve de rendu ou de vitesse.
+- **R63 v0.13.8 :** [candidate de travail active](../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, correction des flags natifs DATA rechargés 0/1/3 avec contrôle `TypeOfMem(MEMF_CHIP)`. [Gate A native 260 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351). **Gate B WinUAE interprétée à faire ; Gate C manuelle en fin de M18.** Le test courant lit `Deek(Start(11)-12)` pour confirmer la cause. Aucun test de performance ou de staging AMOS réel pour ce backend.
 - **Pas encore implémentés :** création/re-staging **dynamique** d'un cache depuis AMOS, cache à la demande, éviction automatique, benchmark CPU/Blitter avec coût de staging réel.
 
 ## Pipeline et responsabilité mémoire

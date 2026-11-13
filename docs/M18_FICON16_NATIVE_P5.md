@@ -1,6 +1,6 @@
 # M18/P5 — Cache Chip et Blitter masqué (R62 / correctif R63)
 
-**État 13/11/2026 :** R62 v0.13.7, Gate A CPU/ABI PASS mais **Gate B WinUAE interprétée ÉCHEC** (`RESULT 0`). Le correctif **R63 v0.13.8 passe la Gate A native** pour les banques DATA AMOS rechargées ; il est pour l'instant construit en mémoire, **pas encore validé sous WinUAE**. R61 A/B/C PASS est archivée, R60 `LAST_GOOD` est protégée.
+**État 13/11/2026 :** R63 v0.13.8 est la [candidate active unique](../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, [Gate A CPU 260 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351). **Gate B WinUAE interprétée en attente ; Gate C manuelle reportée à la fin de M18 ; D physique non faite.** R62 v0.13.7 avait Gate A PASS mais **Gate B interprétée ÉCHEC (BLIT=0, RESULT=0)**. R61 A/B/C PASS archivée ; R60 LAST_GOOD protégée. [Contrat complet du cache](M18_FAST_ICON_CACHE.md).
 
 **Document technique de référence : [fonctionnement, cycle de vie, mémoire et limites du cache](M18_FAST_ICON_CACHE.md).**
 

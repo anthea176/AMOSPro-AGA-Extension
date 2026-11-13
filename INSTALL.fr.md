@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate R62 v0.13.7, Gate A CPU PASS, Gates B/C WinUAE en attente :** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) (38 732 octets, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`). R60 [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste figée. Utiliser [le seul ASC R62](tests/current/M18_R62_CHIP_BLIT_01.asc) avec les [banques source 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [cache Chip 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk) pré-stagé. **Load écrase les deux banques**. Tester en interprété puis créer un NOUVEL exécutable compilé R62, sans réutiliser celui de R61.
+**Candidate R63 v0.13.8 (Gate A PASS, Gate B WinUAE en attente, C Compiler manuelle à la fin de M18) :** [seule AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. **R60 LAST_GOOD** reste [distincte et protégée](dist/AMOSPro_AGA_LAST_GOOD.Lib). Charger l'[ASC R63 actif](tests/current/M18_R63_CHIP_BLIT_01.asc), [FICON8 banque 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) et [FICHIP8 banque 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). **Load écrase les deux banques.** Tests de développement en interprété ; un seul nouvel exécutable compilé à la clôture de M18.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)

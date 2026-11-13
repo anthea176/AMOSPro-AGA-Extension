@@ -1,13 +1,13 @@
-# Test actif M18/R62 — Chip Blitter masque
+# Test actif M18/R63 — cache Chip et Blitter masqué
 
-**R62 v0.13.7 candidate Gate A CPU PASS** (160 cas AP20 interpreteur/Compiler V2 simules). **Gates B et C WinUAE non encore effectuees.** Gate D sur Amiga physique non testee. R60 reste `LAST_GOOD`, R61 A/B/C PASS conserve dans [tests/passed](../passed/M18_R61_FICON_01.asc).
+**R63 v0.13.8 candidate non promue : Gate A CPU PASS (260 cas), Gate B WinUAE interprétée à faire, Gate C Compiler manuelle seulement à la fin du chantier M18.** R62 Gate A était PASS mais son essai interprété a affiché `RESULT 0` (tous les BLIT 0) ; R63 corrige la vérification du champ natif de banque AMOS après `Load`.
 
-Bibliotheque unique : [dist/AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **38 732 octets**, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`.
+**Seule bibliothèque de travail :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. R60 `LAST_GOOD` inchangée ; R61 A/B/C PASS [archivée](../passed/M18_R61_FICON_01.asc).
 
-Test AMOS actif unique : [M18_R62_CHIP_BLIT_01.asc](M18_R62_CHIP_BLIT_01.asc). Necessite [M18_FICON8_SAMPLE_BANK10.abk](M18_FICON8_SAMPLE_BANK10.abk) et [M18_FICHIP8_SAMPLE_BANK11.abk](M18_FICHIP8_SAMPLE_BANK11.abk) (**1 188 octets**, cache Chip prepare). **Load ecrase les banques 10 et 11** : utiliser une session WinUAE jetable.
+**Un seul ASC actif :** [`M18_R63_CHIP_BLIT_01.asc`](M18_R63_CHIP_BLIT_01.asc) et deux ABK : [FICON8 source banque 10](M18_FICON8_SAMPLE_BANK10.abk), [FICHIP8 Chip pré-stagée banque 11](M18_FICHIP8_SAMPLE_BANK11.abk), **1 188 octets**.
 
-Procedure : installer R62 dans le slot AMOS habituel, redemarrer AMOS, placer les deux ABK dans le repertoire courant, importer l'ASC dans un programme vide (Project -> Merge ASCII), executer en interprete. Ensuite compiler un **nouvel executable avec R62**, sans reutiliser l'executable compile R61.
+**Test interprété :** installer R63 dans AMOS, redémarrer, mettre les deux ABK dans le dossier de travail, importer l'ASC dans un programme vide avec Project → Merge ASCII. **Load écrase les banques 10 et 11**, donc session WinUAE jetable. Exécuter en **interprété seulement** pour cette étape. Le bandeau n'affirme plus de compilation. Le test lit sans modifier le mot natif `Deek(Start(11)-12)` et affiche **`FICHIP 11 FLAGS`** : noter cette valeur pour confirmer ou écarter l'hypothèse des flags normalisés.
 
-Attendu : `RESULT 1`, `CLOSE -1`, `NOS 0`, `SWAP 1`, Chip Free identique avant et apres. ICON/BLIT/SHIFT/CLIP/OUT = 1, BAD et BCBAD = 0. Verifier visuellement les icones CPU sur la premiere ligne et Blitter en seconde ligne, y compris transparence et clipping.
+**Attendu :** `RESULT 1`, `CLOSE -1`, `NOS 0`, `SWAP 1`, Chip Free avant/après identique. `ICON`, `BLIT`, `SHIFT`, `CLIP`, `OUT` doivent tous renvoyer 1 et `BAD` / `BCBAD` 0. Vérifier les icônes CPU et Blitter à l'écran ainsi que le clipping. Le code utilise un cache **préparé hors AMOS**, sans mesure du staging Fast→Chip.
 
-Le cache est **pre-stage hors AMOS**, sans staging Fast->Chip pendant le test. `TypeOfMem(MEMF_CHIP)` est controle par la routine, les drapeaux ABK seuls ne garantissant pas l'emplacement physique. Les temps Blitter et couts de staging ne sont pas encore mesures.
+[Contrat complet du cache](../../docs/M18_FAST_ICON_CACHE.md) · [diagnostic R62 / technique P5](../../docs/M18_FICON16_NATIVE_P5.md). **Ne pas demander de compilé AMOS avant la fin de M18.**

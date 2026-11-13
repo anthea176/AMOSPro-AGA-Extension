@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**R62 v0.13.7 working candidate, Gate A CPU PASS, WinUAE B/C pending:** [AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) (38,732 bytes, SHA256 `9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6`). R60 [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) stays frozen. Use [one R62 ASC](tests/current/M18_R62_CHIP_BLIT_01.asc) with [source bank 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) and [pre-staged Chip cache bank 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). **Load replaces both banks**. Run interpreted, then create a NEW R62-compiled executable; do not reuse R61's executable.
+**R63 v0.13.8 working candidate (Gate A PASS, WinUAE B pending, manual C deferred to end of M18):** [only AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 38,736 bytes, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`. **R60 LAST_GOOD** stays [separate](dist/AMOSPro_AGA_LAST_GOOD.Lib). Load [R63 active ASC](tests/current/M18_R63_CHIP_BLIT_01.asc) with [FICON8 bank 10](tests/current/M18_FICON8_SAMPLE_BANK10.abk) and [pre-staged FICHIP8 bank 11](tests/current/M18_FICHIP8_SAMPLE_BANK11.abk). **Loads overwrite banks 10 and 11**. Run interpreted during development; one freshly compiled run only when M18 is finalized.
 
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)

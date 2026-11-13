@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R62_SHA:
+        if sha(raw) == R63_SHA:
+            from build_m18_r63_chip_blit import build as pinned_build
+            release = "R63"
+        elif sha(raw) == R62_SHA:
             from build_m18_r62_chip_blit import build as pinned_build
             release = "R62"
         elif sha(raw) == R61_SHA:
@@ -450,10 +453,14 @@ def verified_current_compiler_seeds(parsed):
     raw = parsed['raw']
     sections = parsed['section']
     r62_case = False
+    r63_case = False
     if len(sections) == 62:
         from build_m18_r62_chip_blit import build as build_r62
+        from build_m18_r63_chip_blit import build as build_r63
         blob62,_=build_r62()
+        blob63,_=build_r63()
         r62_case=(raw==reconstruct(blob62))
+        r63_case=(raw==reconstruct(blob63))
     r61_case = False
     if len(sections) == 61:
         from build_m18_r61_ficon import build as build_r61
@@ -470,6 +477,25 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r63_case:
+        from build_m18_r63_chip_blit import build as build_r63
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION_MARKER
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON_MARKER
+        from m18_ficon_chip_ap20_emit import emit_ficon_chip_ap20,GETADR_MARKER as CHIP_MARKER
+        exact,_=build_r63()
+        need(raw==reconstruct(exact),"Strict source: R63 differs from pinned source builder")
+        region63,_=emit_image_region()
+        ficon63,flabels63=emit_ficon_ap20()
+        chip63,clabels63=emit_ficon_chip_ap20(allow_reloaded_flags_zero=True)
+        need(sections[59]['core']==region63 and sections[59]['getp'],
+             "Strict source: R63 inherited R60 body changed")
+        need(sections[60]['core']==ficon63 and sections[60]['getp'],
+             "Strict source: R63 inherited R61 body changed")
+        need(sections[61]['core']==chip63,
+             "Strict source: R63 new F Blit body differs from emitter")
+        need(region63.count(REGION_MARKER)==1 and ficon63.count(FICON_MARKER)==1
+             and chip63.count(CHIP_MARKER)==1,
+             "Strict source: R63 AMOS linker markers differ")
     if r62_case:
         from build_m18_r62_chip_blit import build as build_r62
         from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION_MARKER
@@ -528,9 +554,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and not r61_case and not r62_case and len(sections) != 59:
+    elif not r60_case and not r61_case and not r62_case and not r63_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -585,6 +611,10 @@ def verified_current_compiler_seeds(parsed):
         seeds[59] = {region62.index(REGION_MARKER)+6}
         seeds[60] = {ficon62.index(FICON_MARKER)+6, flabels62["core"]}
         seeds[61] = {chip62.index(CHIP_MARKER)+6, clabels62["core"]}
+    if r63_case:
+        seeds[59] = {region63.index(REGION_MARKER)+6}
+        seeds[60] = {ficon63.index(FICON_MARKER)+6, flabels63["core"]}
+        seeds[61] = {chip63.index(CHIP_MARKER)+6, clabels63["core"]}
     return seeds
 
 
