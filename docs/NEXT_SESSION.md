@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R63 — fonctions Blitter OK en interprété, faux RESULT 0 corrigé (13/11/2026)
+
+**Essai interprété R63 du 13/11/2026, cache forcé en Chip :** `BLIT 1/1/1/1 S1`, `BCLP 1/1/1/1 OUT 1`, `BCBAD 0/0/0`, `ICON 1/1/1/1`, `CLOSE -1`, `FLAGS OLD 0 NEW 3`, `BANK11 CHIP DELTA 1192`, `FAST DELTA 0`. **`RESULT 0` est un faux négatif du programme de test**, et non un retour d'échec Blitter : `_CF0` est relevé avec la banque 11 encore allouée (**1 795 248 octets libres**), `_CF1` après `Erase 11` (**1 796 440 octets**), différence exactement **1 192 octets**. L'ASC actif compare désormais `_CF_BASE` (avant chargement des banques 10 et 11) à `_CF1` (après leur effacement), et affiche séparément `_CF0` (`CHIP CACHE ACTIVE`). **R63 .Lib inchangée, Gate B finale à confirmer avec l'ASC corrigé et un contrôle visuel, Compiler manuel reporté à la fin de M18.** [ASC actif unique](../tests/current/M18_R63_CHIP_BLIT_01.asc) · [Documentation cache](M18_FAST_ICON_CACHE.md). R60 `LAST_GOOD` conservée, R63 0.13.8 candidate inchangée. Un seul Compiler manuel en fin de M18.
+
 ## M18/R63 — banque 11 explicitement placée en Chip après Load (13/11/2026)
 
 **Erreur dans le test corrigée :** l'ABK `FICHIP8` était chargée sans déplacement explicite en Chip RAM ; les captures R62/R63 `BLIT 0 / RESULT 0` ne vérifiaient donc pas la vraie condition DMA. Le [même ASC R63 actif](../tests/current/M18_R63_CHIP_BLIT_01.asc) exécute maintenant `Bank Permanent 11` puis **`Bank To Chip 11`** (AMCAF) immédiatement après `Load`. Les flags avant/après, l'adresse et les deltas Chip/Fast restent visibles. La banque peut changer d'adresse : toujours relire `Start(11)`. **R63 .Lib inchangée, R60 LAST_GOOD protégée.** Refaire le test **en interprété uniquement** ; un seul essai compilé à la fin de M18. [Contrat du cache et exemple corrigé](M18_FAST_ICON_CACHE.md).

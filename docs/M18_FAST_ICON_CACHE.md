@@ -115,6 +115,12 @@ La documentation AMOS place les flags à `Start(Bank)-12` ; valeur **0 = Work/Fa
 
 Ce diagnostic ne constitue pas une modification native, ne prouve pas `TypeOfMem` et n'exige **aucune nouvelle compilation**. R63 .Lib inchangée ; R60 LAST_GOOD intacte.
 
+## Troisième essai interprété R63 : BLIT OK, erreur du harnais Chip Free
+
+**Essai interprété R63 du 13/11/2026, cache forcé en Chip :** `BLIT 1/1/1/1 S1`, `BCLP 1/1/1/1 OUT 1`, `BCBAD 0/0/0`, `ICON 1/1/1/1`, `CLOSE -1`, `FLAGS OLD 0 NEW 3`, `BANK11 CHIP DELTA 1192`, `FAST DELTA 0`. **`RESULT 0` est un faux négatif du programme de test**, et non un retour d'échec Blitter : `_CF0` est relevé avec la banque 11 encore allouée (**1 795 248 octets libres**), `_CF1` après `Erase 11` (**1 796 440 octets**), différence exactement **1 192 octets**. L'ASC actif compare désormais `_CF_BASE` (avant chargement des banques 10 et 11) à `_CF1` (après leur effacement), et affiche séparément `_CF0` (`CHIP CACHE ACTIVE`). **R63 .Lib inchangée, Gate B finale à confirmer avec l'ASC corrigé et un contrôle visuel, Compiler manuel reporté à la fin de M18.**
+
+Les captures démontrent les retours des commandes mais pas l'exactitude pixel par pixel du rendu graphique. Aucune régression native ni modification de la bibliothèque n'est requise pour ce faux échec ; le test corrigé reste à exécuter.
+
 ## Politique de validation M18
 
 **L'auteur ne souhaite pas recompiler sous AMOS à chaque fonction ou correctif.** Développement : tests natifs automatisés + **tests manuels WinUAE en interprété**. **Une seule Gate C manuelle avec un nouvel exécutable AMOS Compiler sera faite à la fin du chantier M18**, sur la candidate finalisée. Ne jamais déclarer Gate C PASS sur la seule base des simulations Compiler V2 en CI.
