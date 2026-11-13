@@ -197,7 +197,9 @@ def main():
                         dict(chip=False),
                         dict(mutation=lambda m:m.uc.mem_write(BANK-8,b"AGAPIC  ")),
                         dict(mutation=lambda m:m.put(BANK-20,len(CACHE)+17)),
-                        dict(mutation=lambda m:m.uc.mem_write(BANK+12,b"\x00")),
+                        dict(mutation=lambda m:m.uc.mem_write(
+                            BANK+12+3*288,
+                            bytes([m.uc.mem_read(BANK+12+3*288,1)[0]^0x80]))),
                         dict(pending=1,safe_ready=False)):
             tests+=case(binary,layout=layout,expect_ok=False,**options)
         tests+=case(binary,layout=layout,pending=3,safe_ready=True)
