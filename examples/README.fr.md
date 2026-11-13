@@ -1,4 +1,13 @@
-# AMOSPro AGA — 11 exemples simples
+# AMOSPro AGA — exemples et démonstrations
+
+## Nouveau — Fast Icon Lab R67 : CPU, Blitter, capture et cache Chip
+
+**[Fast Icon Lab — démo interactive](fast_icons_r67/README.fr.md)** · [Source AMOS ASCII](fast_icons_r67/FAST_ICON_LAB.asc) · [English](fast_icons_r67/README.md)
+
+Une interface 320×256×256 couleurs générée **entièrement par AMOS** : cinq icônes 16×16 en quatre colonnes (**CPU transparent/opaque, Blitter transparent/opaque**), re-staging d'un cristal après modification et **capture directe depuis le back buffer à X=31**. Les pixels sont produits par `Poke` ; **aucun IFF, ABK, police ou fichier externe**. Sortie par touche/clic, nettoyage des banques.
+
+**Requiert la bibliothèque candidate R67 v0.13.12** (Gates A/B de la fonction de capture validées, **Gate C Compiler encore en attente**). **Ce nouvel exemple public n'a pas encore reçu son propre essai WinUAE** : ne pas confondre avec les régressions R67 archivées. **Banques 11/12/13 libres** obligatoires ; `Reserve As Data 13,256` écrase la banque 13 si elle existait. Programme à importer par **Project → Merge ASCII** et à lancer **en interprété uniquement**.
+
 
 ## R54 v0.12.9 — exemple complémentaire validé
 
@@ -6,12 +15,13 @@
 
 [English](README.md) | **Français** · [Installation](../INSTALL.fr.md)
 
-**Version actuelle : R54 v0.12.9 `LAST_GOOD`**, 53 commandes, Gates A/B/C PASS sur le scénario testé sous WinUAE ; Gate D physique NON TESTÉE. L'[exemple compilé R46 C1](compiler_r46_all_in_one/) reste une démonstration historique figée, utile pour la compatibilité.
+**État de la bibliothèque pour les exemples :** R67 v0.13.12 est l'unique **candidate** (Gates A/B PASS sur son scénario) ; R63 est la dernière **`LAST_GOOD` protégée**. Le programme R54 ci-dessous reste un exemple historique validé avec sa version. Aucune Gate C Compiler R67 n'est revendiquée. L'[exemple compilé R46 C1](compiler_r46_all_in_one/) reste une démonstration historique figée, utile pour la compatibilité.
 
 Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non les anciens tests de régression. La plupart utilisent la [`AMOSPro_AGA.Lib` courante](../dist/AMOSPro_AGA.Lib) en **AMOS Professional interprété** ; l'exemple tout-en-un compilé archivé utilisait la **R46 C1 historique**.
 
 | Fichier | Démonstration | Utilisation |
 |---|---|---|
+| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **Nouveau showcase M18/R67** : banques `FICON8`/`FICHIP8`, pixels chunky, `Bank Put`, re-staging, capture écran X non aligné et rendu CPU/Blitter dans quatre modes | **Sans ressource externe.** Installer R67, libérer 11/12/13, importer ASCII. Touche/clic pour quitter ; attendre `ERROR 0` et `RESULT 1`. **Exemple inédit, non encore validé en WinUAE.** |
 | [`screen.asc`](screen.asc) | Ouvrir/fermer un écran 320×256×256 couleurs | Affiche un motif environ 3 secondes, sans image |
 | [`picture.asc`](picture.asc) | Lire une image IFF, la charger, faire le Swap | Choisir [`demo.iff`](demo.iff), puis appuyer sur une touche |
 | [`blitter.asc`](blitter.asc) | `Aga Blit Fill`, `Clear` et `Copy` | Choisir `demo.iff`, regarder les formes, appuyer sur une touche |

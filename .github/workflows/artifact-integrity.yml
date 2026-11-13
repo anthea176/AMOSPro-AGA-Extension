@@ -138,6 +138,7 @@ jobs:
         run: |
           python -B tools/test_readme_api_coverage.py
           python -B tools/test_examples.py
+          python -B tools/test_fast_icons_showcase.py
           python -B tools/test_current_amos_blocks.py
           python -B tools/check_no_blocking_waits.py
       - name: M16 AGAPIC image and capture host contract
