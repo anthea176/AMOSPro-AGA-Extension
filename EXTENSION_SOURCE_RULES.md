@@ -1,5 +1,11 @@
 # EXTENSION_SOURCE_RULES.md
 
+## GARDE-FOU — Compatibilité des profondeurs dans les ASC intégrés (R73, 14/11/2026)
+
+Un appel `Aga Image Draw` ou `Aga Image Region` doit utiliser **le même nombre de bitplanes dans l'image AGAPIC et le bitmap AGA** : ces deux routines refusent explicitement le mélange (`tools/m16_image_draw_r45_emit.py`, `tools/m18_image_region_emit.py`). Le fichier AGAPIC4 de test (`M16_AGAPIC_SAMPLE_BANK10.abk`) est en **4 plans / 16 couleurs**, alors que `Aga F Icon` et `Aga F Icon Capture` FICON8 nécessitent **8 plans / 256 couleurs**. Le premier ASC R73 avait fait passer tout le scénario en 256 couleurs : tous les succès P1e/P2 sont devenus des rejets `0` sans erreur CPU ; P3 restait PASS, et le résultat final était `0`.
+
+Pour une Gate B combinée, **conserver un seul ASC actif mais ouvrir successivement deux écrans différents** : d'abord 16 couleurs pour AGAPIC/P1e/P2, le fermer proprement, puis 256 couleurs pour FICON8/P3. Contrôler le résultat des deux ouvertures, doubles buffers, Clear/Fill/Swap, les refus hors écran et `Chip Free` début/milieu/fin. Interdire statiquement un scénario AGAPIC4 dans un écran 8 plans ; ne jamais modifier le moteur pour masquer un défaut de banc de test. Les captures WinUAE restent la seule preuve de Gate B réelle. Pas de nouveau binaire ni de compilations ou benchmarks pour une correction de test.
+
 ## REGLE PERMANENTE - branchements relatifs du monolithe AP20 (incident R70, 13/11/2026)
 
 **Un `wrap_native_ap20_v2()` valide ne repatche pas les branches internes aux 70 corps natifs concatenes.** Toute insertion ou variation de longueur d'une entree impose de recontroler les references inter-entrees et leurs points d'entree reels, avant toute candidate active.

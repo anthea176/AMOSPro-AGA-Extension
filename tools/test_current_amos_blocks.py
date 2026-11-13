@@ -118,7 +118,8 @@ def main():
         source = files[0].read_bytes().decode("latin-1")
         needed = (
             'Load "M18_FICON8_SAMPLE_BANK10.abk",11',
-            'Aga Screen Open(320,256,256,$00021000)',
+            '_OPEN=Aga Screen Open(320,256,16,$00021000)',
+            '_OPEN8=Aga Screen Open(320,256,256,$00021000)',
             '_FOPA=Aga F Icon(11,1,31,104,0)',
             '_FCAP=Aga F Icon Capture(11,4,31,104)',
             "For _I=0 To 287",
@@ -134,16 +135,32 @@ def main():
             "_FNOS=Aga F Icon(11,2,25,25,0)",
             "_FCAPNOS=Aga F Icon Capture(11,4,25,25)",
             "Erase 11", "Erase 10",
-            "or _CF0<>_CF1",
+            "_CF0<>_CFMID or _CFMID<>_CF1",
+            "_CLOSED8<>-1",
             'Print "FICON CAP/EQ288 ";_FCAP;" ";_FEQ',
         )
         assert all(x in source for x in needed), (
             "R73 ASC misses a Fast Icon Capture or Draw safety case"
         )
         assert "or _FCAP<>1 or _FEQ<>1" in source
-        assert source.index("Aga Blit Clear(") < source.index("Aga Blit Fill(") < source.index("Aga Image Draw(") < source.index("Aga F Icon(") < source.index("Aga F Icon Capture(")
+        # Regression guard for the 2026-11-13 failed integrated Gate B:
+        # AGAPIC bank 10 has 4 planes, whereas Fast Icons use 8 planes.
+        # The 68020 P1e/P2 code correctly rejects a depth mismatch.
+        open4 = source.index("_OPEN=Aga Screen Open(320,256,16,$00021000)")
+        draw4 = source.index("_P2OPA=Aga Image Draw(")
+        region4 = source.index("_D0=Aga Image Region(")
+        close4 = source.index("_CLOSED=Aga Mouse X")
+        open8 = source.index("_OPEN8=Aga Screen Open(320,256,256,$00021000)")
+        draw8 = source.index("_FOPA=Aga F Icon(")
+        capture8 = source.index("_FCAP=Aga F Icon Capture(")
+        close8 = source.index("_CLOSED8=Aga Mouse X")
+        assert open4 < draw4 < region4 < close4 < open8 < draw8 < capture8 < close8, (
+            "R73 P1e/P2 AGAPIC4 and P3 FICON8 must run on separate 4/8-plane screens"
+        )
+        assert source.index("Aga Blit Clear(") < source.index("Aga Blit Fill(") < draw4
+        assert source.count("_OPEN8=Aga Screen Open(")==1
         assert source.count('Print "CLOSE RETURNED"')==1
-        print("PASS: R73 single ASC has P2 regressions and P3 FICON8 opaque/masked/capture/288-byte compare/bounds (STATIC only)")
+        print("PASS: R73 single ASC exercises AGAPIC4 on 16 colors, then FICON8 on 256 colors, with capture/288-byte compare/bounds (STATIC only)")
     # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
     if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
         source = files[0].read_text("ascii")
