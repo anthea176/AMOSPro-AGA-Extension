@@ -67,7 +67,8 @@ class CBlockMachine(Machine):
         self.type_calls=[];self.type_results=[];self.freed=0
         self.new_total=0
         self.uc.mem_write(NEW+0x200,b"\xf9"*16)
-        self.put(DB+20,1)
+        self.put(DB+12,0x5c000)  # Safe-message port for inactive screen buffer
+        self.put(DB+20,1)  # pending Safe acquisition
         self.uc.mem_write(EXEC-534,b"\x4e\x75")
         self.uc.mem_write(EXEC-372,b"\x4e\x75")
         self.uc.mem_write(GFX-198,b"\x4e\x75")
@@ -158,6 +159,7 @@ class CBlockMachine(Machine):
             self.type_results.append((hex(p),bool(chip)))
             self._return(3 if chip else 0)
         elif address==EXEC-372:
+            assert self.a(0)==0x5c000,("Safe port missing",hex(self.a(0)))
             self.getmsg+=1
             self._return(0x99999 if self.safeready else 0)
         elif address==GFX-228:
@@ -303,7 +305,8 @@ def main():
             checks+=m.invoke("capture",expected=0)
             assert m.reserved==(1 if extra.get("nonchip") else 0)
         m=CBlockMachine(blob,layout,safe=False)
-        m.put(DB+20,0)
+        # Keep pending Safe=1: GetMsg must fail and clean up the new bank.
+        m.put(DB+20,1)
         checks+=m.invoke("capture",expected=0)
         assert m.freed==1
         m=CBlockMachine(blob,layout,fail_at=NEW+40)
