@@ -43,6 +43,8 @@
 - **Remplissage / mise à jour des icônes** : définir comment transférer des pixels depuis un atlas AGAPIC, une capture ou une source fournie, comment choisir l'ID (base 1), l'index transparent 0 et comment invalider le cache lorsque la source change. La seule initialisation d'une banque vide ne fournit encore aucune icône exploitable.
 - **Cache `FICHIP8 ` distinct** : spécifier ensuite sa création en Chip et le staging sélectif Fast→Chip (conversion masque + bitplanes, validité 0→1 uniquement après copie complète). Ne pas confondre cette préparation avec `Bank To Chip` qui ne fait que déplacer une banque existante ; préserver le contrôle réel `TypeOfMem(MEMF_CHIP)` et les deux buffers AGA.
 
+**Étude détaillée de la première commande :** [`M18_FICON8_BANK_CREATE_DESIGN.md`](M18_FICON8_BANK_CREATE_DESIGN.md) — proposition **`_OK=Aga F Icon Bank Create(Bank,Count)`**, allocation automatique, état initial canonique (masque `$FFFF` pour les couleurs zéro). **Pas encore approuvée** ; ni implémentation ni binaire R64. Les fonctions de remplissage et cache dynamique seront validées séparément.
+
 **Statut : intention de conception uniquement** ; aucun nouveau token AP20, code 68000, builder, test ASC ou binaire n'est autorisé par cette note. Le nom, la syntaxe, les limites et le périmètre de la première commande devront recevoir un accord séparé.
 
 ## 3. Études en attente — aucun développement autorisé
