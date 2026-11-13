@@ -8,4 +8,4 @@
 
 Le test dessine quatre frames sources 32×20, un rectangle source décalé, clipping quatre côtés, hors écran, refus source/numéro/mode invalide, vérification de la commande R59 `Aga Bank Image Draw`, double buffer, Swap et fermeture. **Attendu :** `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, aucun Guru. Interrompre manuellement la boucle finale `Do / Wait Vbl / Loop` : `Program interrupted` est normal.
 
-**Gate A native CPU PASS 86 cas ; B/C WinUAE en attente ; D Amiga physique non testée.** Aucune promotion sans B/C, régression complète et accord de l'auteur. [Rapport R60](../../docs/M18_R60_IMAGE_REGION.md).
+**Gate A native CPU/CI PASS 86 cas ; B interprétée et C nouvel exécutable Compiler V2 WinUAE PASS** sur ce même ASC (captures auteur du 13/11/2026). Chip Free interprété `1 831 960` constant, compilé `1 864 456` constant. Arrêt dans la boucle `Wait Vbl` ligne 143 normal. **Gate D physique non testée.** ASC conservé comme test actif unique tant que R60 n'est pas promue ; régression complète sur HEAD exact et accord explicite requis. [Rapport](../../docs/M18_R60_IMAGE_REGION.md).
