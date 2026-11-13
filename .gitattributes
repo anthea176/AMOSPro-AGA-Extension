@@ -1,0 +1,3 @@
+# Keep the SHA-pinned AMOS ABI provenance fixture canonical on Windows.
+# The Python reader additionally accepts an existing uniform CRLF checkout.
+/tests/fixtures/amos_main_declarations.json text eol=lf

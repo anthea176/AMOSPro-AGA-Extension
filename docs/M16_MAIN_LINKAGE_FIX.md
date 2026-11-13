@@ -196,3 +196,12 @@ La CI rencontrait ensuite des chaînes françaises mal encodées dans `tools/tes
 ## Confirmation WinUAE R53 — 12/11/2026
 
 L'utilisateur a fourni l'ecran du test `M16_R53_IMAGE_CAPTURE_01.asc` **en interprete : RESULT 1, CLOSE RETURNED** et a ensuite confirme son **fonctionnement dans un nouvel executable AMOS Compiler**. Les captures opaques/masquees, collision refusee, parametres invalides, sauvegarde/rechargement ABK et dessin ont passe ce scenario, sans perte nette de Chip RAM. Le fichier `M16_R53_CAPTURE11.abk` a aussi ete controle structurellement (AGAPIC v1, 64x40, profondeur 4, RLE valide). **R53 Gates A/B/C PASS sur le scenario teste, Gate D NON TESTEE.** L'original ASCII est archive dans `tests/passed/M16_R53_IMAGE_CAPTURE_01.asc`. La candidate R54 qui ajoute les raccourcis par numero de banque est distincte et ne reprend pas automatiquement la validation B/C.
+
+
+## Export natif depuis Windows : fins de ligne (13/11/2026)
+
+Le fichier `tests/fixtures/amos_main_declarations.json` est issu des déclarations officielles AMOS (`+ILib.s` avant `+Lib.s`, `Lib_Pos 500`). Son SHA256 **LF** reste fixé à `9c5864b7de5bdd9959b0d939a813fb5ea6891ef138c556f5285e900d5094ce90`. Sous Windows avec `core.autocrlf`, le checkout peut convertir les **3 132 LF** en CRLF : SHA256 brut `de7691d1bf86974bcd8b2354fc14dd37ece2a7939f7d0f942e3e5c9067bcfb24`. Cette simple conversion déclenchait avant le correctif `AMOS declaration provenance changed` et bloquait `EXPORT_REAL_SOURCE.bat` pour la candidate R69.
+
+Le résolveur `tools/amos_main_abi.py` normalise désormais **uniquement un CRLF homogène vers LF** avant de calculer le SHA256 **original non modifié**. Un changement de directive, de numéro de ligne ou de symbole, un mélange LF/CRLF, un CR isolé ou un BOM reste rejeté. `.gitattributes` impose aussi LF au checkout du seul JSON concerné. Régression dédiée : `python -B tools/test_amos_main_fixture_newlines.py`, dans la CI d'intégrité. Ce test ne modifie ni fixture, ni archive, ni bibliothèque.
+
+Après synchronisation de `main` sous Windows : `py -3 tools\\test_amos_main_fixture_newlines.py`, puis `EXPORT_REAL_SOURCE.bat`. Le BAT lit toujours `dist\\AMOSPro_AGA.Lib` sans la modifier et reconstruit uniquement `src\\generated\\`. Si la provenance échoue encore, **ne pas changer le SHA attendu** : vérifier `git diff -- tests/fixtures/amos_main_declarations.json` et les versions de fichiers.
