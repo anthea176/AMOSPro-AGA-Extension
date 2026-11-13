@@ -5,7 +5,7 @@ CPU emulator Gate A ONLY; no AP20, WinUAE, Fast→Chip staging or Blitter.
 from random import Random
 from struct import pack
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
-from unicorn import Uc,UC_ARCH_M68K,UC_MODE_BIG_ENDIAN
+from unicorn import Uc,UC_ARCH_M68K,UC_MODE_BIG_ENDIAN,UC_HOOK_CODE
 from unicorn.m68k_const import (
     UC_CPU_M68K_M68000,UC_M68K_REG_PC,UC_M68K_REG_SR,
     UC_M68K_REG_A0,UC_M68K_REG_A1,UC_M68K_REG_A2,UC_M68K_REG_A3,
@@ -40,7 +40,7 @@ def as_planar(pixels):
 
 def execute(core,icon,planes,*,x=16,y=1,mode=0,width=WIDTH,
             height=HEIGHT,stride=STRIDE,source=ICON,ptrs=POINTERS,
-            bad_plane=-1):
+            bad_plane=-1,debug_hook=None):
     assert len(icon)==288 and len(planes)==8
     uc=Uc(UC_ARCH_M68K,UC_MODE_BIG_ENDIAN)
     uc.ctl_set_cpu_model(UC_CPU_M68K_M68000)
@@ -69,6 +69,8 @@ def execute(core,icon,planes,*,x=16,y=1,mode=0,width=WIDTH,
         uc.reg_write(reg,value)
     uc.reg_write(UC_M68K_REG_SR,0x2000)
     uc.reg_write(UC_M68K_REG_A7,STACK)
+    if debug_hook is not None:
+        uc.hook_add(UC_HOOK_CODE,debug_hook)
     uc.emu_start(CODE,STOP,count=100000)
     assert uc.reg_read(UC_M68K_REG_PC)==STOP,'native did not return'
     assert uc.reg_read(UC_M68K_REG_A7)==STACK+4,'unbalanced stack'

@@ -5,13 +5,15 @@ Gate A CPU only. No AP20, Blitter DMA, physical Fast/Chip allocation,
 WinUAE, performance measurement or change to R60 LAST_GOOD.
 """
 from random import Random
+from unicorn.m68k_const import UC_M68K_REG_A2,UC_M68K_REG_D6,UC_M68K_REG_D7
+from m18_ficon16_native_shifted_emit import F
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
 from m18_ficon16_model import build_bank,parse_bank,draw_cpu
 from m18_ficon16_native_shifted_emit import emit_ficon16_shifted_cpu
 from m18_ficon16_native_aligned_emit import emit_ficon16_aligned_cpu
 from test_m18_ficon16_native_aligned import (
     execute,as_planar,WIDTH,HEIGHT,STRIDE,
-    ICON,POINTERS,
+    ICON,POINTERS,CODE,
 )
 
 def main():
@@ -58,8 +60,22 @@ def main():
                           for plane,(exp,gotplane) in enumerate(zip(expected,actual))
                           for pos,(wanted,got) in enumerate(zip(exp,gotplane))
                           if wanted!=got][:12]
+                    frames=[]
+                    def on_code(uc,address,size,user_data):
+                        if address!=CODE+labels['plane'] or len(frames)>1:
+                            return
+                        base=uc.reg_read(UC_M68K_REG_A2)
+                        keys=['baseword','lastword','lastmask','shift',
+                              'backshift','offset0','offset1','mask0','mask1']
+                        vals={k:hex(int.from_bytes(uc.mem_read(base+F[k],4),'big'))
+                              for k in keys}
+                        vals.update(D6=hex(uc.reg_read(UC_M68K_REG_D6)),
+                                    D7=hex(uc.reg_read(UC_M68K_REG_D7)))
+                        frames.append(vals)
+                    execute(code,icon,before,x=x,y=y,mode=mode,debug_hook=on_code)
                     raise AssertionError((icon_id,x,y,mode,'pixel mismatch',
-                                          'plane,row,byte,expected,actual',diff))
+                                          'plane,row,byte,expected,actual',diff,
+                                          'first native frame',frames))
                 cases+=1
     # The new general renderer must exactly match the already-qualified
     # aligned native 68000 fast path, including the edge and transparency.
