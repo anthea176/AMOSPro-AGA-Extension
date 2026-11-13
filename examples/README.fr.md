@@ -6,7 +6,7 @@
 
 Une interface 320×256×256 couleurs générée **entièrement par AMOS** : cinq icônes 16×16 en quatre colonnes (**CPU transparent/opaque, Blitter transparent/opaque**), re-staging d'un cristal après modification et **capture directe depuis le back buffer à X=31**. Les pixels sont produits par `Poke` ; **aucun IFF, ABK, police ou fichier externe**. Sortie par touche/clic, nettoyage des banques.
 
-**Requiert la bibliothèque candidate R67 v0.13.12** (Gates A/B de la fonction de capture validées, **Gate C Compiler encore en attente**). **Ce nouvel exemple public n'a pas encore reçu son propre essai WinUAE** : ne pas confondre avec les régressions R67 archivées. **Banques 11/12/13 libres** obligatoires ; `Reserve As Data 13,256` écrase la banque 13 si elle existait. Programme à importer par **Project → Merge ASCII** et à lancer **en interprété uniquement**.
+**Requiert la bibliothèque candidate R67 v0.13.12** (Gates A/B de la fonction de capture validées, **Gate C Compiler encore en attente**). **Ce nouvel exemple public a été confirmé fonctionnel par l'auteur sous WinUAE en interprété le 13/11/2026, sans capture ni valeurs console fournies** : ne pas confondre avec les régressions R67 archivées. **Banques 11/12/13 libres** obligatoires ; `Reserve As Data 13,256` écrase la banque 13 si elle existait. Programme à importer par **Project → Merge ASCII** et à lancer **en interprété uniquement**.
 
 
 ## R54 v0.12.9 — exemple complémentaire validé
@@ -21,7 +21,7 @@ Ces programmes sont des **démonstrations destinées aux utilisateurs**, et non 
 
 | Fichier | Démonstration | Utilisation |
 |---|---|---|
-| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **Nouveau showcase M18/R67** : banques `FICON8`/`FICHIP8`, pixels chunky, `Bank Put`, re-staging, capture écran X non aligné et rendu CPU/Blitter dans quatre modes | **Sans ressource externe.** Installer R67, libérer 11/12/13, importer ASCII. Touche/clic pour quitter ; attendre `ERROR 0` et `RESULT 1`. **Exemple inédit, non encore validé en WinUAE.** |
+| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **Nouveau showcase M18/R67** : banques `FICON8`/`FICHIP8`, pixels chunky, `Bank Put`, re-staging, capture écran X non aligné et rendu CPU/Blitter dans quatre modes | **Sans ressource externe.** Installer R67, libérer 11/12/13, importer ASCII. Touche/clic pour quitter ; attendre `ERROR 0` et `RESULT 1`. **Fonctionnement confirmé par l'auteur sous WinUAE en interprété (sans capture).** |
 | [`screen.asc`](screen.asc) | Ouvrir/fermer un écran 320×256×256 couleurs | Affiche un motif environ 3 secondes, sans image |
 | [`picture.asc`](picture.asc) | Lire une image IFF, la charger, faire le Swap | Choisir [`demo.iff`](demo.iff), puis appuyer sur une touche |
 | [`blitter.asc`](blitter.asc) | `Aga Blit Fill`, `Clear` et `Copy` | Choisir `demo.iff`, regarder les formes, appuyer sur une touche |

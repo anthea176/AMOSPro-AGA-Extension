@@ -4,7 +4,7 @@
 
 A **self-contained interactive demonstration** of the full `Aga F` workflow: generate 8-bit indexed pixels, create AMOS banks, fill `FICON8` slots, convert them into a Chip RAM `FICHIP8` cache, explicitly re-stage a modified icon, capture an icon from the screen and render through both CPU and Blitter.
 
-**Source:** [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc). **Requires the R67 v0.13.12 working library or later with the same commands.** R67 itself passed native Gate A and interpreted WinUAE Gate B on its archived regression; **this new public showcase has NOT been independently tested in WinUAE**. Do not use the AMOS Compiler before the final M18 validation.
+**Source:** [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc). **Requires the R67 v0.13.12 working library or later with the same commands.** R67 itself passed native Gate A and interpreted WinUAE Gate B on its archived regression; **the author confirmed this public showcase works in interpreted AMOS under WinUAE on 13 November 2026** (feedback: “c'est tous bon”; **no graphics screenshot or console readout was provided**). Do not use the AMOS Compiler before the final M18 validation.
 
 ## What to expect on screen
 
@@ -56,7 +56,7 @@ The demo checks that the captured icon's **288 bytes** exactly match the GEM sou
 ## Results and limits
 
 - Expect BANK PUT 4 / 4, INITIAL CHIP STAGES 4 / 4, GEM REPUT / RESTAGE 1 1, CAPTURE X31 / EQ288 / STAGE 1 1 1.
-- `ERROR 0` and `RESULT 1` mean the code's own checks passed in that execution. **Do not call the new showcase Gate B or C PASS** before a separate user run.
+- `ERROR 0` and `RESULT 1` mean the code's own checks passed in that execution. **The author confirmed the showcase works in interpreted WinUAE**, without screenshot or numerical log. This is **not** an AMOS Compiler Gate C validation, which is deferred to the end of M18.
 - No CPU-vs-Blitter benchmark is attempted. Frame rate depends on CPU/Chip RAM and WinUAE settings.
 - No ABK Save/Load is performed in this zero-file demo; see the [R67 validation record](../../docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md) for the separate populated-bank persistence test.
 - Example source and generated patterns are original, under [MIT](../../LICENSE). No external artwork to redistribute.

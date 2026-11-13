@@ -6,7 +6,7 @@
 
 A fully self-contained **320×256×256-colour AMOS graphics lab**: five 16×16 icons in four drawing modes (**CPU masked/opaque, Blitter masked/opaque**), a recoloured gem explicitly re-staged into Chip RAM, and an icon **captured directly from the AGA back buffer at unaligned X=31**. The icons are generated with `Poke`; **no IFF, ABK, font bank or file I/O**. Press any key/click to exit; banks are released.
 
-**Requires the R67 v0.13.12 working candidate.** R67's own native/interpreted function tests passed, but **this new public showcase has not yet been run independently under WinUAE**, and the final M18 AMOS Compiler test remains pending. **Banks 11/12/13 must be free**: `Reserve As Data 13,256` may overwrite an existing bank 13. Import into a new AMOS program through **Project → Merge ASCII** and run **interpreted only**.
+**Requires the R67 v0.13.12 working candidate.** R67's own native/interpreted function tests passed, but **the author confirmed this new public showcase works under interpreted WinUAE on 13 November 2026, without a screenshot or console log**, and the final M18 AMOS Compiler test remains pending. **Banks 11/12/13 must be free**: `Reserve As Data 13,256` may overwrite an existing bank 13. Import into a new AMOS program through **Project → Merge ASCII** and run **interpreted only**.
 
 
 ## R54 v0.12.9 — additional validated example
@@ -23,7 +23,7 @@ These are **user-facing examples**, not historical regression tests. Most run in
 
 | File | Demonstrates | What to do |
 |---|---|---|
-| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **New M18/R67 interactive showcase:** `FICON8`/`FICHIP8` banks, chunky pixels, `Bank Put`, restaging, unaligned screen capture and CPU/Blitter masked/opaque drawing | **No external asset.** Install R67, free banks 11/12/13, merge ASCII. Click/keypress to exit; expect `ERROR 0`, `RESULT 1`. **New example, WinUAE runtime validation pending.** |
+| [`fast_icons_r67/FAST_ICON_LAB.asc`](fast_icons_r67/FAST_ICON_LAB.asc) | **New M18/R67 interactive showcase:** `FICON8`/`FICHIP8` banks, chunky pixels, `Bank Put`, restaging, unaligned screen capture and CPU/Blitter masked/opaque drawing | **No external asset.** Install R67, free banks 11/12/13, merge ASCII. Click/keypress to exit; expect `ERROR 0`, `RESULT 1`. **User-confirmed working in interpreted WinUAE (no screenshot provided).** |
 | [`screen.asc`](screen.asc) | Open/close a 320×256×256-colour screen | Runs a pattern for about 3 seconds; no image required |
 | [`picture.asc`](picture.asc) | Read IFF metadata, load image, swap buffers | Select the included [`demo.iff`](demo.iff), then press a key |
 | [`blitter.asc`](blitter.asc) | `Aga Blit Fill`, `Clear`, `Copy` | Select `demo.iff`, look at the shapes, then press a key |

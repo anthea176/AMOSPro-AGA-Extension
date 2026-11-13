@@ -4,7 +4,7 @@
 
 Une **démo interactive autonome** pour comprendre et observer toute la chaîne des commandes `Aga F` : génération de pixels 8 bits, création de banques AMOS, remplissage de slots `FICON8`, conversion en cache Chip `FICHIP8`, re-staging, capture d'écran et affichage CPU ou Blitter.
 
-**Fichier :** [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc). **Bibliothèque requise : R67 v0.13.12 ou une version ultérieure conservant ces commandes.** R67 a passé les Gates A/B en AMOS interprété sur son test de régression ; **cette démo publique est nouvelle et n'a pas encore été essayée séparément dans WinUAE**. La validation Compiler de M18 est réservée à la fin du chantier.
+**Fichier :** [FAST_ICON_LAB.asc](FAST_ICON_LAB.asc). **Bibliothèque requise : R67 v0.13.12 ou une version ultérieure conservant ces commandes.** R67 a passé les Gates A/B en AMOS interprété sur son test de régression ; **cette démo publique a été confirmée fonctionnelle par l'auteur sous WinUAE en AMOS interprété le 13/11/2026** (message « c'est tous bon » ; **aucune capture d'écran ni relevé de console joint**). La validation Compiler de M18 est réservée à la fin du chantier.
 
 ## Ce que l'écran montre
 
@@ -56,6 +56,6 @@ Le code vérifie en outre que la capture contient exactement **288 octets** iden
 ## Résultat et limites
 
 - BANK PUT 4 / 4 et INITIAL CHIP STAGES 4 / 4 attendus ; GEM REPUT / RESTAGE 1 1 ; CAPTURE X31 / EQ288 / STAGE 1 1 1.
-- `ERROR 0` et `RESULT 1` signifient que les fonctions contrôlées ont réussi lors de l'exécution de cette démo. **Ils ne valent pas une Gate B/C automatique** tant que l'auteur n'a pas effectué l'essai.
+- `ERROR 0` et `RESULT 1` signifient que les fonctions contrôlées ont réussi lors de l'exécution de cette démo. **L'auteur confirme le bon fonctionnement de la démo en interprété sous WinUAE**, sans capture ni relevé chiffré. Cette confirmation ne constitue **pas une Gate C Compiler**, toujours réservée à la fin de M18.
 - Les formes sont générées par code : **aucun art externe et aucune licence graphique distincte**. Sources sous [MIT](../../LICENSE).
 - Aucun benchmark de vitesse CPU/Blitter n'est réalisé ici. La fluidité varie selon le CPU, la Chip RAM et les réglages WinUAE. La démo n'effectue pas de sauvegarde ABK : voir [la validation R67](../../docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md) pour le test Save/Erase/Load d'une banque remplie.

@@ -91,11 +91,11 @@ def main()->None:
         require(name.casefold() in valid,f"API missing in active library: {name}")
         require(name in source,f"Demo does not exercise {name}")
     for p,index,disclaimer in (
-        ("README.fr.md","fast_icons_r67/","n'a pas encore été essayée séparément"),
-        ("README.md","fast_icons_r67/","NOT been independently tested"),
+        ("README.fr.md","fast_icons_r67/","confirmée fonctionnelle par l'auteur"),
+        ("README.md","fast_icons_r67/","author confirmed this public showcase works"),
     ):
         body=(PACKAGE/p).read_text("utf-8")
-        require(disclaimer in body,f"Missing runtime-test disclaimer in {p}")
+        require(disclaimer in body,f"Missing accurate runtime validation status in {p}")
         require("FAST_ICON_LAB.asc" in body and "FICHIP8" in body and "FICON8" in body,
                 f"Incomplete source/bank documentation in {p}")
         intro=(ROOT/"examples"/p).read_text("utf-8")
@@ -103,7 +103,7 @@ def main()->None:
                 f"Public examples index must link demo: {p}")
     print("M18/R67 FAST ICON LAB STATIC PASS: ASCII AMOS balanced,",
           "six Fast Icon commands, CPU/Blitter modes, 288 byte capture,",
-          "safe cleanup and EN/FR docs; WinUAE interpreted run still required.")
+          "safe cleanup and EN/FR docs; author-confirmed interpreted WinUAE, no Compiler Gate C.")
 
 if __name__=="__main__":
     main()
