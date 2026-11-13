@@ -24,6 +24,7 @@ from test_opt020_p1e_region import LiveRegionCPU
 
 ROOT = Path(__file__).resolve().parents[1]
 R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 R68_SHA = "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 
 
@@ -52,18 +53,26 @@ def v2_check(native):
     protected_path = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
     active = path.read_bytes()
     protected = protected_path.read_bytes()
-    assert sha256(active).hexdigest() == R69_SHA, "R69 working candidate changed"
+    actual_sha = sha256(active).hexdigest()
+    assert actual_sha in (R69_SHA, R70_SHA), "Unrecognized active P1e/P2 candidate"
     assert sha256(protected).hexdigest() == R68_SHA, "R68 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
     assert emit_image_draw(accept_loaded_flags_zero=True)[0] == old
     assert not any(n.startswith("p1e_") for n in labels)
-    tokens, parts = unwrap_native_parts_v2(active)
+    if actual_sha == R70_SHA:
+        from build_opt020_p2_r70 import build as build_r70
+        assert active == build_r70()[0], "Installed R70 differs from deterministic source"
+        from build_opt020_p1e_r69 import build as build_r69
+        baseline = build_r69()[0]  # Historical Image Draw core for isolated P2
+    else:
+        baseline = active
+    tokens, parts = unwrap_native_parts_v2(baseline)
     assert len(parts) == 70 and parts[ENTRY_INDEX] == old + GETP
     trial = list(parts)
     trial[ENTRY_INDEX] = native + GETP
     # Do not change the public API, even when building the probe in memory.
-    _, _, title = unpack_ap20(active)
-    repacked = repack_ap20(active, tokens, trial, title)
+    _, _, title = unpack_ap20(baseline)
+    repacked = repack_ap20(baseline, tokens, trial, title)
     compiler = wrap_native_ap20_v2(repacked, title)
     assert unwrap_native_parts_v2(compiler) == (tokens, trial)
     tt, entry, t = unpack_ap20(compiler)

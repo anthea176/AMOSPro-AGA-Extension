@@ -21,6 +21,7 @@ CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 GOOD = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
 BANK = ROOT / "tests/current/M16_AGAPIC_SAMPLE_BANK10.abk"
 R69_SHA = "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 
 
 def main() -> None:
@@ -35,11 +36,18 @@ def main() -> None:
     # specifically a R60 Image Region comparison, not a generic R68 feature.
     assert sha256(GOOD.read_bytes()).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
-    assert sha256(active).hexdigest() == R69_SHA
+    active_sha = sha256(active).hexdigest()
+    assert active_sha in (R69_SHA, R70_SHA)
     candidate, metadata = build()
-    assert candidate == active and metadata["native_region_index"] == IMAGE_REGION_INDEX
+    assert sha256(candidate).hexdigest() == R69_SHA
+    if active_sha == R70_SHA:
+        from build_opt020_p2_r70 import build as build_r70
+        assert active == build_r70()[0], "Current R70 changed"
+    else:
+        assert candidate == active
+    assert metadata["native_region_index"] == IMAGE_REGION_INDEX
     old_tokens, old_parts = unwrap_native_parts_v2(GOOD.read_bytes())
-    new_tokens, new_parts = unwrap_native_parts_v2(active)
+    new_tokens, new_parts = unwrap_native_parts_v2(candidate)
     old_region, _ = emit_image_region()
     new_region, _ = emit_image_region(opt020=True)
     assert old_tokens == new_tokens and len(old_parts) == len(new_parts) == 70
@@ -75,10 +83,11 @@ def main() -> None:
     # The benchmark is NOT placed into tests/current, preserving the
     # single ACTIVE WinUAE Gate B ASC and all tests/passed archives.
     active_asc = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active_asc) == 1 and active_asc[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc"
+    assert len(active_asc) == 1 and active_asc[0].name in (
+        "OPT020_P1E_R69_INTERPRETED_01.asc", "OPT020_P2_R70_INTERPRETED_01.asc")
     print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
     print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
-    print("only native entry 59 differs in pinned R69, one active ASC unchanged.")
+    print("only native entry 59 differs in pinned R69 baseline; R70 preserves it.")
     print("STATIC ONLY: no AMOS execution, WinUAE timings, or AMOS Compiler.")
 
 

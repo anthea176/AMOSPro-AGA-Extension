@@ -1,8 +1,8 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
 R68 v0.13.13 remains the protected promoted LAST_GOOD (A/B/C PASS).
-R69 OPT020/P1e is a separate, SHA-pinned Gate A-only WORKING candidate.
-B/C WinUAE and speed are not yet validated.
+R69 OPT020/P1e passed CPU/WinUAE and interpreted/compiled benchmarks.
+R70 OPT020/P2 is the SHA-pinned working candidate; WinUAE B/C pending.
 R63 remains preserved in Git history; physical Gate D has not been tested.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
@@ -27,7 +27,8 @@ R65_SHA="6a1f3228b695331a37cd2b352679a07888fe6b94dd53e6c7f15c8f76151b17f2"  # R6
 R66_SHA="e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca"  # R66 FICHIP8 Create+Stage Gates A/B interpreted+visual PASS
 R67_SHA="ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5"  # R67 FICON8 Capture Gates A/B PASS
 R68_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # R68 Chip CBlock Gates A/B/C PASS, promoted LAST_GOOD
-R69_SHA="9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"  # OPT020/P1e 020 Gate A CPU PASS only, candidate B/C pending
+R69_SHA="9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"  # OPT020/P1e proven WinUAE interpreted and benchmark compiled (historical)
+R70_SHA="fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"  # OPT020/P2 reproducible Image Draw CPU020 candidate, Gates B/C pending
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -54,20 +55,28 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA):
+    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"
     else:
         assert is_compiler_wrapped(cur), "Active library must be Compiler-safe"
     report=inspect(parse(cur))
     assert not report["issues"],report["issues"]
+    if current_sha==R70_SHA:
+        from build_opt020_p2_r70 import build as build_r70
+        candidate,meta=build_r70()
+        assert cur == candidate and cur != good, "R70 candidate must be exact builder and not LAST_GOOD"
+        assert len(cur) == 51460 and meta["sha256"] == R70_SHA
+        assert meta["ap20_entries"] == 71 and meta["commands"] == 64
+        assert meta["changed_native_entry"] == 55 and meta["retained_region_native_entry"] == 59
+        return cur,good,"R70 0.13.15 OPT020/P1e+P2 CPU Gate A PASS; WinUAE interpreted Gate B pending; Compiler C pending"
     if current_sha==R69_SHA:
         from build_opt020_p1e_r69 import build as build_r69
         candidate,meta=build_r69()
         assert cur == candidate and cur != good, "R69 active differs from exact builder"
         assert sha256(good).hexdigest() == R68_SHA, "R68 LAST_GOOD protection lost"
         assert len(cur) == 51240 and meta["ap20_entries"] == 71 and meta["commands"] == 64
-        return cur,good,"R69 0.13.14 OPT020/P1e Gate A candidate; WinUAE B/C pending, JIT OFF benchmark pending"
+        return cur,good,"R69 0.13.14 OPT020/P1e tested candidate; Gate B and interpreted/compiled Region benchmarks PASS"
     if current_sha==R68_SHA:
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()

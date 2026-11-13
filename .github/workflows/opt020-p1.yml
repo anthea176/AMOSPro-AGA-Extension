@@ -64,10 +64,6 @@ jobs:
         run: python -B tools/build_opt020_p1e_r69.py
       - name: P2 in-memory R70 V2 builder, only Image Draw changed
         run: python -B tools/build_opt020_p2_r70.py
-      # One-time binary transport in logs for publishing the SHA-pinned
-      # in-memory builder result to the SINGLE dist/ working path. No CI artifact.
-      - name: P2 R70 exact binary encoded transport (temporary)
-        run: python -B tools/build_opt020_p2_r70.py --emit-base64
       - name: Guard pinned R69/R70 working candidate, R68 LAST_GOOD, archives and unique ASC
         run: |
           python -B tools/verify_fast.py

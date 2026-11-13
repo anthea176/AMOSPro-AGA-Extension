@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R69_SHA:
+        if sha(raw) == R70_SHA:
+            from build_opt020_p2_r70 import build as pinned_build
+            release = "R70"
+        elif sha(raw) == R69_SHA:
             from build_opt020_p1e_r69 import build as pinned_build
             release = "R69"
         elif sha(raw) == R68_SHA:
@@ -486,8 +489,32 @@ def verified_current_compiler_seeds(parsed):
             from build_opt020_p1e_r69 import build as build_r69
             from m18_image_region_emit import emit_image_region, GETADR_MARKER as R69_GETADR
             blob69,_ = build_r69()
-            need(raw == reconstruct(blob69),
-                 "Strict source: unknown 70-unit native AP20; R69 source audit required")
+            if raw != reconstruct(blob69):
+                # R70 retains the exact R69 Region and only replaces the
+                # audited Image Draw at AP20 native entry 55.
+                from build_opt020_p2_r70 import build as build_r70
+                from m16_image_draw_r45_emit import emit_image_draw
+                blob70,_ = build_r70()
+                need(raw == reconstruct(blob70),
+                     "Strict source: unknown 70-unit native AP20; R70 source audit required")
+                original69 = parse_lib(reconstruct(blob69))
+                old_seeds = verified_current_compiler_seeds(original69)
+                need(bool(old_seeds), "Strict source: inherited R69 seeds not verified")
+                inherited = original69['section']
+                for i in range(70):
+                    if i == 55:
+                        continue
+                    need(sections[i]['core'] == inherited[i]['core']
+                         and sections[i]['getp'] == inherited[i]['getp'],
+                         f"Strict source: R70 changes unrelated native entry {i}")
+                native55, labels55 = emit_image_draw(accept_loaded_flags_zero=True, opt020=True)
+                need(sections[55]['core'] == native55 and sections[55]['getp'],
+                     "Strict source: R70 native Image Draw differs from exact P2 emitter")
+                need({'decode_rows','paint_group','p1e_full_16','p1e_fragment','safe'} <= set(labels55),
+                     "Strict source: R70 Image Draw source provenance incomplete")
+                seeds = dict(old_seeds)
+                seeds[55] = {0}  # no cross-unit Rjsr inside P2 Image Draw
+                return seeds
             old68=parse_lib(reconstruct(blob68))
             original_seeds=verified_current_compiler_seeds(old68)
             need(bool(original_seeds), "Strict source: inherited R68 seeds not verified")

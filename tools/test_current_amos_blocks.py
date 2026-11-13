@@ -83,6 +83,33 @@ def main():
         )
         assert all(x in source for x in needed), "P1e interpreted Gate B scenario incomplete"
         print("PASS: P1e active ASC covers opaque/masked, aligned/clip, reject, close (STATIC only)")
+    # OPT020/P2 R70 single active integrated WinUAE interpreted Gate B test.
+    if files and files[0].name == "OPT020_P2_R70_INTERPRETED_01.asc":
+        source = files[0].read_bytes().decode("latin-1")
+        required = (
+            "Aga Image Draw(_BASE,_LEN,18,20,0)",
+            "Aga Image Draw(_BASE,_LEN,108,20,1)",
+            "Aga Image Draw(_BASE,_LEN,197,22,1)",
+            "Aga Image Draw(_BASE,_LEN,-15,196,1)",
+            "Aga Image Draw(_BASE,_LEN,291,182,0)",
+            "Aga Image Draw(_BASE,_LEN,256,-17,1)",
+            "Aga Image Draw(_BASE,_LEN,105,241,1)",
+            "Aga Image Draw(_BASE,_LEN,320,256,0)",
+            "Aga Image Draw(0,_LEN,20,20,1)",
+            "Aga Image Draw(_BASE,20,20,20,0)",
+            "Aga Image Draw(_BASE,_LEN,20,20,2)",
+            "Aga Image Draw(_BASE,_LEN,32768,20,0)",
+            "_P2NOS=Aga Image Draw(_BASE,_LEN,25,25,0)",
+            "Aga Image Region(10,0,0,32,20,20,65,0)",
+            "Aga Image Region(10,32,0,32,20,88,65,1)",
+            "_OLD=Aga Bank Image Draw(10,116,169,0)",
+            "Aga Screen Close", "Erase 10",
+            'Print "RESULT ";_RESULT',
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(x in source for x in required), "P2 active test misses R69 or P2 cases"
+        assert source.count('Print "CLOSE RETURNED"') == 1
+        print("PASS: R70 active ASC tests P2 Draw, R69 Region and legacy Bank Draw (STATIC only)")
     # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
     if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
         source = files[0].read_text("ascii")

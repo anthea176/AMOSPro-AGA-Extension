@@ -29,7 +29,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R69 0.13.14** — 64 commands / 71 AP20 entries, same public signatures as R68. Working candidate: CPU Gate A PASS, WinUAE interpreted Gate B PASS (documented test); Compiler Gate C pending.
+**Current library API R70 0.13.15** — 64 commands / 71 AP20 entries, same public signatures as R68/R69. Working candidate: CPU Gate A PASS (248 native P2 scenarios + P1e regressions); WinUAE interpreted Gate B and actual Compiler Gate C **PENDING** for R70. [Current R70 test](tests/current/README.md). R69 historical Region interpreted/compiled benchmarks are [recorded separately](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md); no P2 speedup has been measured.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

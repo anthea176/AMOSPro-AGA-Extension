@@ -311,9 +311,12 @@ def v2_structure(native):
     assert sha256(old).hexdigest() == R68_SHA, "protected R68 LAST_GOOD changed"
     if current != old:
         from build_opt020_p1e_r69 import build as build_r69
-        candidate, meta = build_r69()
-        assert current == candidate, "current must be EXACT P1e R69 candidate"
-        assert meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+        from build_opt020_p2_r70 import build as build_r70
+        r69, r69meta = build_r69()
+        r70, r70meta = build_r70()
+        assert current in (r69, r70), "current must be EXACT pinned OPT020 R69 or R70"
+        assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
+        assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
     tokens, parts = unwrap_native_parts_v2(old)
     _, installed, title = unpack_ap20(old)
     assert len(parts) == 70 and len(installed) == 71

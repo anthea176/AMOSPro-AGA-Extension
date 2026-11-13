@@ -1,21 +1,20 @@
-# OPT020/P1e R69 — test actif unique, Gate B WinUAE interprétée
+# OPT020/P2 R70 v0.13.15 — unique active WinUAE Gate B program
 
-**Programme actif unique :** [`OPT020_P1E_R69_INTERPRETED_01.asc`](OPT020_P1E_R69_INTERPRETED_01.asc). L'ancien ASC R68 est conservé à l'identique dans [`tests/passed/`](../passed/M18_R68_COMPILER_FINAL_01.asc) ; il n'est plus actif.
+**Active library:** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), R70 (51,460 bytes). SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad`. **R70 is a working candidate only**, not the promoted reference; R68 [`LAST_GOOD`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) remains SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`.
 
-**Statut :** Gate A CPU Musashi PASS (321 cas P1e + régressions P1–P1d) ; **Gate B WinUAE interprétée PASS** sur deux captures utilisateur (graphique et console : `RESULT 1`, `CLOSE RETURNED`, Chip Free stable). [Rapport Gate B](../../docs/OPT020_P1E_R69_WINUAE_GATE_B_2026-11-13.md). **Gate C AMOS Compiler réelle non exécutée : conserver l'unique essai final.** Candidate R69 NON PROMUE.
+**Only active ASC:** [`OPT020_P2_R70_INTERPRETED_01.asc`](OPT020_P2_R70_INTERPRETED_01.asc). Supersedes the P1e R69 ASC in `tests/current/` (the old revision stays accessible in Git history). This is **Gate B interpreted-only**. No new executable may be compiled for this check.
 
-## Prérequis
+## Run under WinUAE
 
-- WinUAE avec chipset **AGA**, CPU **68020 ou 68030**, **JIT OFF** pour les vérifications. Relever CPU/fréquence/RAM de la configuration.
-- Installer exactement [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) (candidate R69) dans le slot de l'extension déjà configuré sous `APSystem`, puis **redémarrer AMOS**. La bibliothèque **R68 LAST_GOOD** reste séparée, inchangée dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib).
-- Banque 10 libre, session WinUAE jetable : le programme charge et remplace la banque 10. Copier [`M16_AGAPIC_SAMPLE_BANK10.abk`](M16_AGAPIC_SAMPLE_BANK10.abk) dans le répertoire courant d'AMOS.
-- Dans AMOS Pro : nouveau programme vide puis **Project → Merge ASCII** sur le fichier ASC actif.
-- **Exécuter en interprété, ne pas lancer AMOS Compiler.**
+1. WinUAE: AGA, **68020 or 68030, JIT OFF**, record CPU/RAM. Install the active R70 library in the existing AGA extension slot in `APSystem`, restart AMOS completely.
+2. In a disposable test environment, place [`M16_AGAPIC_SAMPLE_BANK10.abk`](M16_AGAPIC_SAMPLE_BANK10.abk) alongside the ASC; `Load` replaces bank 10. Open a **blank** AMOS program then **Project → Merge ASCII** the one current ASC.
+3. Run using **AMOS interpreted mode only**. Do not launch AMOS Compiler. Photograph the AGA graphics and the final console. The program shows the screen for 125 VBL before closing.
 
-## Vérifications Gate B
+## Expected results (not a claimed WinUAE PASS)
 
-L'essai couvre les 4 sous-images, source maskée/opaque, groupes de 16 pixels, fragment non aligné, recadrage, clipping sur quatre bords, deux cas additionnels à droite/en bas, image complètement hors écran, banques/rectangles/modes invalides, commande Image Draw historique, fermeture et refus post-fermeture.
+- `P2 O/M/SHIFT 1 1 1`; `P2 CLIP L/R/T/B 1 1 1 1`; `P2 OUT/BAD P/L/M/X/NOS 1 0 0 0 0 0`.
+- P1e regression: `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, invalid bank/coords/size/mode all `0`.
+- `LEGACY 1`, `CLOSE -1`, `NOS 0`, `RESULT 1`, `CLOSE RETURNED`.
+- `CHIP BEFORE/END` must show **the same value** within the session; no freeze, Guru or obvious stray drawing.
 
-Valeurs attendues et observées sur la capture console du 13/11/2026 : `FRAMES 1 1 1 1 SHIFT 1`, `CLIP 1 1 1 1 OUT 1`, `EDGE/PART/MASK OPAQUE 1 1 1`, `BAD BANK/X/Y/W/M 0 0 0 0 0`, `LEGACY 1`, `RESULT 1`, `CLOSE RETURNED`, sans Guru, et rendu visuel correct des masques et pixels en bord. Leurs valeurs ont bien été **observées sous WinUAE** ; le contrôle visuel est cohérent, sans vérification automatique pixel par pixel.
-
-Gate B validée sans changement du binaire. Suite : figer la candidate, puis **une seule Gate C Compiler** sur la candidate définitivement arrêtée. Mesures de vitesse séparées sous **WinUAE JIT OFF**, configuration CPU notée ; ne pas déduire un gain de Musashi ni du compteur FPS.
+The native CPU Gate A covers 248 real P2 scenarios (Musashi M68EC020/M68020), malformed RLE, pixel-accurate compare, canaries, front/back, DATA flags, Safe and 68000 refusal. [Technical details](../../docs/OPT020_P2_IMAGE_DRAW_68020_2026-11-13.md). **This does not establish R70's WinUAE Gate B/C or a speedup for Image Draw.** Those require the actual captures and later benchmark.

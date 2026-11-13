@@ -29,7 +29,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R69 0.13.14** — 64 commandes / 71 entrées AP20, mêmes signatures publiques que R68. Candidate de travail : Gate A CPU PASS, Gate B WinUAE interprétée PASS (essai documenté) ; Gate C Compiler en attente.
+**API de la bibliothèque courante R70 0.13.15** — 64 commandes / 71 entrées AP20, signatures publiques inchangées R68/R69. Candidate de travail : Gate A CPU PASS (248 scénarios P2 natifs + régressions P1e) ; Gate B WinUAE interprétée et Gate C AMOS Compiler réelle **EN ATTENTE** pour R70. [Test actif unique](tests/current/README.md). Les benchmarks compilés R69 sont [archivés séparément](benchmarks/RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md) ; aucun gain P2 mesuré.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
