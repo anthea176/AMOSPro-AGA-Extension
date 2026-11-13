@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P1c — décodeur RLE et clipping natifs 020 soumis à la CI (13/11/2026)
+
+[Contrat P1c](OPT020_P1C_NATIVE_RLE_CLIP_2026-11-13.md) : l'encodage 68EC020/68020 nouveau traite **les paquets RLE littéraux/répétés en table de pointeurs bornée** et **les intersections X/Y du sous-rectangle** ; le noyau natif multiplan P1b traite les groupes 16 pixels complets. Orchestration/contrôle global AGAPIC/fallback partiel encore en Python. **CI P1c non encore qualifiée** ; ne pas revendiquer une bibliothèque native AGAPIC complète, AP20, WinUAE ni gain matériel. `main` uniquement, bibliothèques R68/`LAST_GOOD` et ASC actif inchangés.
+
 ## OPT020/P1b — noyau 8 plans et orchestration RLE/clipping PASS CPU (13/11/2026)
 
 **Prototype natif 68EC020/68020 soumis à la CI**, [contrat détaillé](OPT020_P1B_AGAPIC_RLE_MASK_2026-11-13.md) : boucle de plans utilisant `BFEXTU/BFINS`, masque indépendant, lecture des paquets AGAPIC v1 RLE (littéraux/répétés), source recadrée et clipping sans dépassement de lignes par fallback scalaire. Le **noyau de copie** s'exécute en émulateur CPU ; **orchestration RLE/clip encore en Python**, aucune intégration AP20 ni nouveau binaire. **P1b PASS sur Musashi 68EC020/68020** : 320 contrôles directs + 432 rendus complets, 5 352 appels natifs, 25 816 pixels en fallback, 8 refus non destructifs, 0 erreur ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43490985555)). Noyau **36 octets** SHA256 `74ef53d4f0e5d53fee8603553daea0cf2de834271b63475fa62c37bcca218138`. **Aucune Gate AMOS B/C ni gain de vitesse matériel validé.** P1 simple reste PASS. R68/`LAST_GOOD` protégées.
