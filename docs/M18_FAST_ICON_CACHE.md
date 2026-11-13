@@ -61,7 +61,7 @@ Le format permet théoriquement 4 à 4 096 icônes, **pas** la garantie qu'une t
 
 ## Cycle de vie : actuel et futur
 
-1. **Charger** la source `FICON8` (par exemple banque 10) et un cache `FICHIP8` préparé (par exemple banque 11). **Actuellement**, la préparation se fait sur PC avant le `Load`, à l'aide de [`tools/m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) : `--prepared --write M18_FICHIP8_SAMPLE_BANK11.abk`.
+1. **Charger** la source `FICON8` (banque 10) et un cache `FICHIP8` préparé (banque 11), puis **forcer le cache en Chip : `Bank Permanent 11` et `Bank To Chip 11` avec AMCAF, après le `Load`**. La préparation des pixels se fait toujours sur PC avec [`tools/m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) : `--prepared --write M18_FICHIP8_SAMPLE_BANK11.abk`. Le déplacement en Chip n'est pas le staging des icônes.
 2. **Valider** le nom, la longueur, la profondeur 8, l'ID, la canonicité masque/plans et le marqueur prêt. La valeur des flags natifs après `Load` peut différer de la préférence mémoire inscrite dans l'ABK.
 3. **Vérifier la Chip réelle**, par `TypeOfMem(MEMF_CHIP)` sur la zone utilisée par le DMA ; ne jamais se fier au seul drapeau `AmBk`. Une banque en Fast ne doit pas être transmise au Blitter.
 4. **Dessiner** autant de fois que nécessaire : `Mode=0` opaque (la couleur 0 est copiée) ou `Mode=1` transparente (les pixels d'index 0 laissent le fond intact). X/Y libre au pixel, clipping 4 bords ; `Safe` non bloquant sur le back buffer inactif ; aucun Swap/VBL implicite.
@@ -76,6 +76,8 @@ Le format permet théoriquement 4 à 4 096 icônes, **pas** la garantie qu'une t
 ```amos
 Load "M18_FICON8_SAMPLE_BANK10.abk",10
 Load "M18_FICHIP8_SAMPLE_BANK11.abk",11
+Bank Permanent 11 : Rem AMCAF - conserver banque de donnees
+Bank To Chip 11 : Rem AMCAF - deplacement reel en Chip RAM
 
 _OK=Aga F Blit(11,2,100,60,0) : Rem opaque
 _OK=Aga F Blit(11,3,120,80,1) : Rem couleur 0 transparente
@@ -103,13 +105,13 @@ La capture fournie par l'auteur en **AMOS interprété** affiche `OPEN/DB/SW0/SA
 
 Le wrapper [R62](../tools/m18_ficon_chip_ap20_emit.py) exigeait `Flags=3` dans la **structure native** de la banque à `Start(11)-12`. Or le projet avait déjà constaté `Flags=0` après rechargement d'une banque AMOS DATA sous WinUAE (voir [`m16_image_draw_r45_emit.py`](../tools/m16_image_draw_r45_emit.py), correctif R46). C'est une **cause probable**, à confirmer par la Gate B d'une version corrigée et, si besoin, la lecture `Deek(Start(11)-12)`. Il faut conserver la vérification physique `TypeOfMem(MEMF_CHIP)` pour ne pas masquer un vrai défaut d'allocation.
 
-## Échec interprété R63 et diagnostic mémoire ajouté (13/11/2026)
+## Échecs interprétés R62/R63 et correction du placement de banque (13/11/2026)
 
 La capture R63 confirme que le correctif de la structure native de banque ne suffit pas : `FICHIP 11 FLAGS 0`, **`BLIT 0 0 0 0`, `BCLP 0 0 0 0`, `RESULT 0`** ; source CPU et clipping OK, `CLOSE -1`, Chip Free 1 796 472 avant/après. La Gate A native 260 cas reste PASS, mais **la Gate B réelle de R63 est ÉCHEC**.
 
 La documentation AMOS place les flags à `Start(Bank)-12` ; valeur **0 = Work/Fast**, 3 = Data/Chip. Le code natif R63 accepte déjà ces flags **mais exige une source physiquement DMA-accessible par `TypeOfMem(MEMF_CHIP)`** ; aucune preuve disponible que `Load` a effectivement placé le cache en Chip RAM. Le test hôte précédent simule une banque 11 Chip indépendamment de la valeur des flags : il ne reproduit donc pas une éventuelle allocation réelle en Fast.
 
-**Prochain contrôle unique :** le [même ASC actif R63](../tests/current/M18_R63_CHIP_BLIT_01.asc) affiche désormais `BANK 11 START`, `LOAD11 CHIP DELTA` et `LOAD11 FAST DELTA`, mesurés immédiatement avant/après `Load "M18_FICHIP8_SAMPLE_BANK11.abk",11`. Si la consommation Fast augmente alors que la Chip ne diminue pas, la piste d'une banque chargée en Fast sera corroborée. Si la Chip diminue et que les appels restent à zéro, il faudra tracer les validations restantes sans désactiver la protection DMA.
+**Correction du protocole :** la banque pré-stagée n'était **pas forcée en Chip** après `Load`. La forme ABK seule ne garantit pas son placement effectif. Le [même ASC actif R63](../tests/current/M18_R63_CHIP_BLIT_01.asc) utilise maintenant **`Bank Permanent 11` puis `Bank To Chip 11`** (AMCAF 1.40), après `Load "M18_FICHIP8_SAMPLE_BANK11.abk",11`. Ces commandes convertissent le type en banque permanente et déplacent son allocation en Chip ; **`Start(11)` peut changer**. Il affiche les flags natifs **avant/après**, `BANK 11 START` et les deltas de mémoire **Load + déplacement**, désormais nommés `BANK11 CHIP DELTA` et `BANK11 FAST DELTA`. Ne pas reproduire les essais R62/R63 sans forcer la Chip. Si BLIT reste à 0 après cela, examiner les contrôles natifs au lieu de désactiver la protection DMA. La Gate B de l'essai corrigé reste à faire en interprété.
 
 Ce diagnostic ne constitue pas une modification native, ne prouve pas `TypeOfMem` et n'exige **aucune nouvelle compilation**. R63 .Lib inchangée ; R60 LAST_GOOD intacte.
 

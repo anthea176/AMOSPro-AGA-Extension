@@ -10,7 +10,7 @@ La banque source `FICON8 ` conserve les icônes 16×16×8 plans ; le CPU peut la
 
 Chaque slot cache est composé d'un masque de visibilité **32 octets** et de **8 plans contigus × 32 octets**. Les bits de couleur zéro deviennent invisibles si `Mode=1`; le mode 0 copie toutes les couleurs. Le bit de validité (stocké après tous les slots) doit être à 0 pendant la préparation et à 1 seulement après une copie complète.
 
-**Actuellement, le staging se fait sur PC**, avec [`m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) et l'option `--prepared`. Le [noyau natif P2 expérimental](../tools/m18_ficon16_native_stage_emit.py) ne constitue pas une commande AMOS de staging à chaud ; allocation, éviction et re-préparation dynamique ne sont **pas intégrées**. La source peut être modifiée sans mettre le cache à jour : il faut alors recréer/recharger le cache.
+**Actuellement, le staging se fait sur PC**, avec [`m18_ficon_chip_cache.py`](../tools/m18_ficon_chip_cache.py) et l'option `--prepared`. **Le test AMOS doit ensuite imposer l'allocation en Chip après `Load` : `Bank Permanent 11` suivi de `Bank To Chip 11` (AMCAF).** Le fichier ABK ne suffit pas à garantir la résidence Chip. L'adresse obtenue par `Start(11)` peut être différente après le transfert. Le [noyau natif P2 expérimental](../tools/m18_ficon16_native_stage_emit.py) ne constitue pas une commande AMOS de staging à chaud ; allocation, éviction et re-préparation dynamique ne sont **pas intégrées**. La source peut être modifiée sans mettre le cache à jour : il faut alors recréer/recharger le cache.
 
 ## API et sécurité native
 

@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R63 — banque 11 explicitement placée en Chip après Load (13/11/2026)
+
+**Erreur dans le test corrigée :** l'ABK `FICHIP8` était chargée sans déplacement explicite en Chip RAM ; les captures R62/R63 `BLIT 0 / RESULT 0` ne vérifiaient donc pas la vraie condition DMA. Le [même ASC R63 actif](../tests/current/M18_R63_CHIP_BLIT_01.asc) exécute maintenant `Bank Permanent 11` puis **`Bank To Chip 11`** (AMCAF) immédiatement après `Load`. Les flags avant/après, l'adresse et les deltas Chip/Fast restent visibles. La banque peut changer d'adresse : toujours relire `Start(11)`. **R63 .Lib inchangée, R60 LAST_GOOD protégée.** Refaire le test **en interprété uniquement** ; un seul essai compilé à la fin de M18. [Contrat du cache et exemple corrigé](M18_FAST_ICON_CACHE.md).
+
 ## M18/R63 — second essai interprété ÉCHEC, diagnostic placement Chip/Fast (13/11/2026)
 
 Capture utilisateur R63 : **`FICHIP 11 FLAGS 0`, `BLIT 0/0/0/0`, `BCLP 0/0/0/0 OUT 0`, `RESULT 0`** ; icônes CPU et autres commandes OK, Chip Free 1 796 472 avant/après, `CLOSE -1`. Flags natifs 0 = Work/Fast d'après la documentation AMOS, mais placement physique non encore vérifié. Le [test actif R63](../tests/current/M18_R63_CHIP_BLIT_01.asc) **inchangé de nom** mesure maintenant les variations Chip Free/Fast Free autour de `Load ... 11` et affiche `BANK 11 START`. Une seule nouvelle exécution **interprétée** permettra de savoir si la banque Chip de destination est réellement en Chip. **Ne pas contourner `TypeOfMem(MEMF_CHIP)`**, ne pas demander de Compiler avant la fin M18. [Contrat et diagnostic](M18_FAST_ICON_CACHE.md). R63 .Lib non modifiée, R60 LAST_GOOD protégée, Gate A native PASS mais **Gate B réelle R63 FAIL**.
