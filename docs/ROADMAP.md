@@ -23,7 +23,7 @@
 | **1 — M18/R60 (TERMINÉ)** | `Aga Image Region`, atlas AGAPIC | A/B/C + régression PASS, `LAST_GOOD` R60 promue. |
 | **APRÈS M18 — optimisation native 68020+** | Cible minimale 68020/68EC020 | Reportée après `F 16 Icon` et CBlock M18, décision de l'auteur du 13/11/2026. |
 | **APRÈS 68020+ — intégration `c2p.library`** | C2P optimisé Chunky Fast → bitplanes AGA | Non engagée, après la fin M18 puis optimisation 68020+. |
-| **M18 — EN COURS** | Équivalent fonctionnel `F 16 Icon`, CBlock AGA pixel-exact, chemins CPU/Blitter | **Audit initial documenté** : AMOS standard `Paste Icon`, Turbo `F Paste Icon` (identité exacte de `F 16 Icon` non démontrée). **Prototype host P0 d'icônes numérotées AGAPIC v1 avec tests CI ajouté** ([audit](M18_F16_ICON_AUDIT.md)), **aucune API ou Lib nouvelle**. CBlock au pixel près ensuite. À terminer AVANT 68020+ / C2P, sur demande du 13/11/2026. |
+| **M18 — EN COURS** | Étude sourcée Fast Icons Unity 16×16, équivalent `F 16 Icon`, CBlock pixel-exact | [Source 68000 et audit P1](M18_FICON16_SOURCE_P1.md) : format banque 288 octets/icône AGA, mode masque couleur 0, alignement historique X/Y 16, **distinct de notre futur mode AGA au pixel près**. Nouveaux modèles et tests Python CPU / mots Blitter, **pas de mesure matérielle ni commande R61**. Étape suivante : passer les tests P1, définir la conversion / API et mesurer les deux chemins, puis CBlock, avant 68020+ et C2P. |
 | **M19** | Objets/sprites AGA, étude de la passerelle AMAL | **Planifié, non engagé** ; prototype AMAL distinct, aucun dessin depuis une interruption |
 | **M20** | Scrolling AGA, caméra, surfaces plus grandes que l'écran | **Planifié, non engagé** ; dépendances avec tilemaps à examiner |
 | **M21** | Dual Playfield AGA | **Planifié, non engagé** |

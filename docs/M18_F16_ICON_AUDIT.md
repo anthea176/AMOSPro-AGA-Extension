@@ -1,5 +1,7 @@
 # M18 — audit F 16 Icon / F Paste Icon et atlas indexé P0
 
+**Complément primaire du 13/11/2026 :** [audit source Unity SpecialFX et format Fast Icon 16×16](M18_FICON16_SOURCE_P1.md). **Le nom réellement présent dans l'assembleur Unity est `Paste F Icon`, distinct de `F Paste Icon` cité pour Turbo.** La banque porte des slots fixes 16×16 AGA 8 plans, 288 octets, et le code Unity aligne historiquement les DEUX coordonnées X/Y sur 16. Le P1 hôte modélise ces données et compare deux algorithmes CPU/mots Blitter, mais n'introduit pas de binaire R61. **Cette découverte complète l'audit exploratoire P0 ci-dessous ; le nom littéral `F 16 Icon` reste sans preuve comme instruction.**
+
 **13 novembre 2026 — main uniquement.** Statut : audit et prototype hôte. Aucun nouveau token AP20 ni bibliothèque R61. **Référence : R60 v0.13.5 LAST_GOOD**, 35 056 octets, SHA256 00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8. Gates A/B/C et régression complète R60 PASS. Gate D physique non testée.
 
 ## 1. Ce qui est réellement documenté

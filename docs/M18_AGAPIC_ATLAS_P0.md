@@ -115,6 +115,8 @@ pas de nouvelle commande AP20 ni de benchmark CBlock exécuté.**
 
 ## 3. Équivalent fonctionnel F 16 Icon
 
+**Complément source primaire** : [AMOS Unity Fast Icons 16×16](M18_FICON16_SOURCE_P1.md), code original avec masque couleur zéro et X/Y rabattus à 16 pixels. Le futur AGA restera au pixel près. Les simulations CPU et mots Blitter P1 ne sont pas des mesures de performance matérielle.
+
 **Suite du 13/11/2026 :** [audit et modèle indexé M18](M18_F16_ICON_AUDIT.md). AMOS standard `Paste Icon` utilise la banque d'icônes 2 ; des retours d'utilisateurs Turbo mentionnent `F Paste Icon` comme accélération. Le nom exact `F 16 Icon` et sa convention ne sont toujours **pas** confirmés. Le modèle `m18_icon_atlas_model.py` sélectionne des icônes par ID dans AGAPIC v1, sans ajouter de commande ni de format binaire.
 
 **Audit original non terminé.** La roadmap mentionne F 16 Icon,
