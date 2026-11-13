@@ -115,6 +115,7 @@ def case(binary,*,layout="interpreted",index=4,x=1,y=1,mode=1,
     m=CacheMachine(binary,front=front,pending=pending,safe_ready=safe_ready,
                    cache=cache,chip=chip)
     if mutation:mutation(m)
+    cache_before=bytes(m.uc.mem_read(BANK,len(cache)))
     _,parts,_=unpack_ap20(binary)
     assert len(parts)==63
     if layout=="interpreted":
@@ -152,7 +153,7 @@ def case(binary,*,layout="interpreted",index=4,x=1,y=1,mode=1,
     assert all(bytes(m.uc.mem_read(p,m.plane_size))==v
                for p,v in zip(m.frontplanes,m.front_before)),"modified front"
     assert m.alloc_count==m.free_count==m.reserve_count==m.erase_count==0
-    assert bytes(m.uc.mem_read(BANK,len(cache)))==cache,"cache source changed"
+    assert bytes(m.uc.mem_read(BANK,len(cache)))==cache_before,"cache source changed during call"
     if expect_ok:
         wanted=[bytearray(p) for p in before]
         draw_cpu(SOURCE,index,x,y,mode,wanted,WIDTH,HEIGHT,m.stride)
