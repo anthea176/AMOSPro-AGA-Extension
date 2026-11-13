@@ -1,6 +1,6 @@
 # M18 — Proposition R64 : créer une banque Fast Icon depuis AMOS
 
-**Contrat approuvé par l'auteur le 13/11/2026. R64 implémentée : Gate A 68000 PASS, 42 tests ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)). Gate B WinUAE NON TESTÉE ; Compiler C manuel en fin M18, D physique non testé.**
+**Contrat approuvé par l'auteur le 13/11/2026. R64 implémentée : Gate A 68000 PASS, 42 tests ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)). Gate B WinUAE interprétée PASS avec contrôle visuel (captures auteur du 13/11/2026) ; Compiler C manuel en fin M18, D physique non testé.**
 
 - Dépôt : `anthea176/AMOSPro-AGA-Extension`, branche `main` exclusivement.
 - Référence installable protégée : R63 v0.13.8, `LAST_GOOD`, 38 736 octets, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`.
@@ -84,17 +84,17 @@ Cette commande **n'importe aucune image**, ne capture aucun pixel, ne manipule p
 2. Création/rafraîchissement d'un cache `FICHIP8` réellement en Chip avec marqueur de validité `0 → copie complète → 1` et contrôle `MEMF_CHIP`.
 3. Benchmarks CPU vs Blitter incluant réellement le coût du staging.
 
-## 6. Protocole : Gate A PASS, Gate B à exécuter
+## 6. Résultats : Gates A et B PASS (C Compiler en fin M18)
 
 **Gate A CPU/CI PASS, 42 cas natifs M68000** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232)) : cas limites (4/4096 slots), allocations et collisions simulées, requêtes invalides, contrôle des masques/plans vides, format et taille, intégrité des banques existantes, nettoyage, ABI et dispositions interpréteur/Compiler V2 simulées. Le builder R64 est déterministe et la nouvelle routine occupe 312 octets. Les simulations ne prouvent pas la Gate B/C WinUAE.
 
-**Gate B AMOS interprété/WinUAE :** un seul ASC actif, création de la banque 10, refus de doublon sans destruction, test de slots vides opaque/transparent, `Save/Erase/Load` ABK, contrôle de `Start`/taille/nom après rechargement, absence de fuite Fast/Chip et conservation de l'écran/palette. Ne pas déduire de ces retours l'exactitude du rendu sans vérification graphique.
+**Gate B AMOS interprété/WinUAE PASS (13/11/2026) :** [rapport de validation](M18_R64_FICON8_WINUAE_GATE_B_2026-11-13.md) et deux captures de l'auteur. Banque **12** : `CREATE 1 1`, `DUP 0`, `RELOAD DUP 0`, `SIZE/COUNT 1164 4`, `LOAD 1164 4` après `Save/Erase/Load`, masques `65535`, plans `0`, paramètres invalides `0/0/0`. `Chip Free 1 796 464` et `Fast Free 13 811 632` identiques avant/après `Erase`. **Contrôle visuel confirmé** : fond bleu inchangé en transparent à X=30, carré noir opaque à X=90. **`RESULT 1`**, **`CLOSE RETURNED`** ; pas de comparaison automatique pixel par pixel, Gate C non réalisée.
 
 **Gate C :** un **unique** essai manuel Compiler sous WinUAE à la fin de M18, avec l'ensemble des fonctions finalisées ; Gate D physique seulement si possible.
 
 ## 7. Décision approuvée et implémentation R64
 
-**Signature et paramètres approuvés explicitement.** Candidate R64 v0.13.9 : 39 100 octets, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, 57 commandes / 64 AP20, routine nouvelle de 312 octets. [42 tests natifs Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232). **Ne pas promouvoir sans validation WinUAE B et décision distincte de l'auteur.**
+**Signature et paramètres approuvés explicitement.** Candidate R64 v0.13.9 : 39 100 octets, SHA256 `4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c`, 57 commandes / 64 AP20, routine nouvelle de 312 octets. [42 tests natifs Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43440810232). **Gate B interprétée PASS ; aucune promotion R64 sans décision explicite distincte de l'auteur.** Gate C Compiler manuelle à la fin M18, Gate D non effectuée.
 
 Références :
 - [Format et modèles FICON8](../tools/m18_ficon16_model.py)
