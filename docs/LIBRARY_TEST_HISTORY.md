@@ -2,9 +2,11 @@
 
 This page preserves the **earlier build, validation and archive notes removed from the public README**. Each paragraph describes a past checkpoint; old references to R44 as `LAST_GOOD` belong to that period only.
 
-**Current working candidate: R63 v0.13.8** — [single .Lib](../dist/AMOSPro_AGA.Lib), **38,736 bytes**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, 56 commands / 63 AP20. **Native Gate A CPU 260 cases PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351)). **WinUAE interpreted B pending, one manual Compiler C at END of M18**, physical D not tested; NOT PROMOTED. [Single active ASC](../tests/current/M18_R63_CHIP_BLIT_01.asc), [cache contract](M18_FAST_ICON_CACHE.md). R62 had CPU Gate A PASS but user WinUAE interpreted **RESULT 0** (all Blitter calls 0). R61 A/B/C PASS historical; R60 protected LAST_GOOD unchanged.
+**Current working candidate: R63 v0.13.8**, [active Lib](../dist/AMOSPro_AGA.Lib), 38,736 bytes. Native Gate A PASS. Latest interpreted WinUAE capture **BLIT/BCLP all 1, invalid cases all 0**, bank 11 flags 0→3 and Chip allocation 1,192 bytes. **RESULT 0 is a test-harness false negative**: baseline 1,795,248 with cache alive was compared to 1,796,440 after bank erasure. [Active ASC corrected](../tests/current/M18_R63_CHIP_BLIT_01.asc) to compare memory before both Loads with after both Erases; **await corrected-result and graphics confirmation before final Gate B claim**. Manual Compiler C at end M18 only, D not tested, R60 LAST_GOOD unchanged.
 
 ## Historical checkpoints, newest first
+
+**13 Nov 2026 — third interpreted R63 Chip Blitter run:** all opaque/masked/clip/offscreen calls return 1, invalids 0, cache moved in Chip (flags 0→3). `RESULT 0` caused by incorrect Chip Free baseline 1,795,248 vs 1,796,440 with/without cache; **test ASC fixed without native binary change**, next WinUAE execution/visual verification pending.
 
 **R63 v0.13.8 — native DATA-bank flags compatibility, Gate A CPU PASS (13 Nov 2026), NOT PROMOTED:** 38,736 bytes, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, 56 commands / 63 AP20. [260 native M68000 CPU cases PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351), including reloaded bank flags 0/1/3 and mandatory physical Chip check. [Only R63 interpreted test](../tests/current/M18_R63_CHIP_BLIT_01.asc) prints `Deek(Start(11)-12)`. WinUAE B pending, **manual C once at END of M18**, D untested; R60 LAST_GOOD protected.
 

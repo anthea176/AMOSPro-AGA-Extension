@@ -26,6 +26,10 @@ Capture du 13/11/2026 : `OPEN/DB/SW0/SAFE=1`, `ICON=1/1/1/1`, `SHIFT=1`, **`BLIT
 
 La R62 exigeait `Flags=3` sur l'en-tête DATA natif. Un problème équivalent avait déjà été diagnostiqué et corrigé pour AGAPIC : après `Load`, WinUAE a été observé avec **`Flags=0`** (voir [`m16_image_draw_r45_emit.py`](../tools/m16_image_draw_r45_emit.py)). Le correctif R63 autorise les classes DATA `0/1/3` **uniquement quand la zone est réellement en Chip**, et refuse toujours les autres types. **Cette cause reste à confirmer par un essai WinUAE interprété** ; ne pas enregistrer Gate B PASS avant un `RESULT 1`.
 
+## Dernière capture R63 — Blitter répond, harnais mémoire corrigé
+
+Capture interprétée R63 avec `Bank To Chip 11` : **BLIT 1/1/1/1, BCLP 1/1/1/1, BCBAD 0/0/0**, flags natifs **0→3**, `BANK11 CHIP DELTA 1192`, Fast delta 0. L'écran donne **RESULT 0 uniquement parce que le test compare `_CF0` (cache alloué : 1 795 248 libres) à `_CF1` (cache effacé : 1 796 440 libres)**. La différence de 1 192 octets est attendue. [ASC corrigé](../tests/current/M18_R63_CHIP_BLIT_01.asc) : baseline `Chip Free` enregistrée avant les deux `Load` et comparée après les deux `Erase`. **Aucune modification R63 .Lib ; Gate B complète en attente du nouveau RESULT 1 et confirmation graphique.**
+
 ## Validation et planning
 
 - [Cache hôte](../tools/test_m18_ficon_chip_cache.py) : validation structure/validité, 4 slots et équivalence CPU.
