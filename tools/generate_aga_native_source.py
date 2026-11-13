@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R63_SHA:
+        if sha(raw) == R64_SHA:
+            from build_m18_r64_ficon_bank_create import build as pinned_build
+            release = "R64"
+        elif sha(raw) == R63_SHA:
             from build_m18_r63_chip_blit import build as pinned_build
             release = "R63"
         elif sha(raw) == R62_SHA:
@@ -454,6 +457,11 @@ def verified_current_compiler_seeds(parsed):
     sections = parsed['section']
     r62_case = False
     r63_case = False
+    r64_case = False
+    if len(sections) == 63:
+        from build_m18_r64_ficon_bank_create import build as build_r64
+        x64,_=build_r64()
+        r64_case=(raw==reconstruct(x64))
     if len(sections) == 62:
         from build_m18_r62_chip_blit import build as build_r62
         from build_m18_r63_chip_blit import build as build_r63
@@ -477,6 +485,32 @@ def verified_current_compiler_seeds(parsed):
         r59_blob, _ = build_r59()
         r59_case = (raw == reconstruct(r59_blob))
     region_getadr_pos = None
+    if r64_case:
+        from build_m18_r64_ficon_bank_create import build as build_r64
+        from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION64
+        from m18_ficon_ap20_emit import emit_ficon_ap20,GETADR_MARKER as FICON64
+        from m18_ficon_chip_ap20_emit import emit_ficon_chip_ap20,GETADR_MARKER as CHIP64
+        from m18_ficon_bank_create_emit import (
+            emit_ficon_bank_create,GETADR_MARKER as GET64,
+            RESERVE_MARKER as RES64,CHANGE_MARKER as CHG64,EFF_MARKER as EFF64)
+        original64,_=build_r64()
+        need(raw==reconstruct(original64),"Strict source: R64 differs from pinned builder")
+        region64,_=emit_image_region()
+        ficon64,labels64f=emit_ficon_ap20()
+        chip64,labels64c=emit_ficon_chip_ap20(allow_reloaded_flags_zero=True)
+        create64,labels64n=emit_ficon_bank_create()
+        need(sections[59]['core']==region64 and sections[59]['getp'],
+             "Strict source: R64 inherited region changed")
+        need(sections[60]['core']==ficon64 and sections[60]['getp'],
+             "Strict source: R64 inherited F Icon changed")
+        need(sections[61]['core']==chip64 and sections[61]['getp'],
+             "Strict source: R64 inherited F Blit changed")
+        need(sections[62]['core']==create64,
+             "Strict source: R64 new native body changed")
+        need(region64.count(REGION64)==ficon64.count(FICON64)==chip64.count(CHIP64)==1
+             and create64.count(GET64)==2 and
+             all(create64.count(k)==1 for k in (RES64,CHG64,EFF64)),
+             "Strict source: R64 AMOS linker markers changed")
     if r63_case:
         from build_m18_r63_chip_blit import build as build_r63
         from m18_image_region_emit import emit_image_region,GETADR_MARKER as REGION_MARKER
@@ -554,9 +588,9 @@ def verified_current_compiler_seeds(parsed):
              'Strict source: R58 data padding changed')
         need(sections[60]['core'] == FAR_PROBE,
              'Strict source: R58 far diagnostic marker changed')
-    elif not r60_case and not r61_case and not r62_case and not r63_case and len(sections) != 59:
+    elif not r60_case and not r61_case and not r62_case and not r63_case and not r64_case and len(sections) != 59:
         return {}
-    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case):
+    if raw not in (current_native, good_native, protected_native) and not (r58_case or r59_case or r60_case or r61_case or r62_case or r63_case or r64_case):
         return {}
     for i in (0, 17, 18):
         need(sections[i]['core'] == original[i]['core'],
@@ -615,6 +649,18 @@ def verified_current_compiler_seeds(parsed):
         seeds[59] = {region63.index(REGION_MARKER)+6}
         seeds[60] = {ficon63.index(FICON_MARKER)+6, flabels63["core"]}
         seeds[61] = {chip63.index(CHIP_MARKER)+6, clabels63["core"]}
+    if r64_case:
+        seeds[59]={region64.index(REGION64)+6}
+        seeds[60]={ficon64.index(FICON64)+6,labels64f["core"]}
+        seeds[61]={chip64.index(CHIP64)+6,labels64c["core"]}
+        seeds[62]={0}
+        for marker in (GET64,RES64,CHG64,EFF64):
+            pos=0
+            while True:
+                pos=create64.find(marker,pos,labels64n["bank_name"])
+                if pos<0:break
+                seeds[62].add(pos+len(marker))
+                pos+=len(marker)
     return seeds
 
 

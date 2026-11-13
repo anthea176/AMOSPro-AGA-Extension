@@ -49,7 +49,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R63 0.13.8"):
+    if active.startswith("R64 0.13.9"):
+        from build_m18_r64_ficon_bank_create import build as build_r64
+        candidate,meta=build_r64()
+        assert candidate==current,"R64 current differs from deterministic source"
+        print("CURRENT R64 FICON8 BANK CREATE GATE A PASS; WinUAE B pending",meta)
+    elif active.startswith("R63 0.13.8"):
         from build_m18_r63_chip_blit import build as build_r63
         candidate,meta=build_r63()
         assert candidate==current, "R63 candidate differs from exact deterministic source"

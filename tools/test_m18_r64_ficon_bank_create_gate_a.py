@@ -54,7 +54,7 @@ class BankMachine(Machine):
         self.uc.mem_write(EXISTING,SENTINEL)
         self.uc.hook_add(UC_HOOK_CODE,self.bank_call,
                          begin=MAIN_BASE,end=MAIN_BASE+0x5000)
-        for address in self.targets:self.uc.mem_write(address,b"\\x4e\\x75")
+        for address in self.targets:self.uc.mem_write(address,bytes.fromhex("4e75"))
         tokens,parts=unwrap_native_parts_v2(binary)
         assert len(parts)==ENTRY_INDEX+1
         if layout=="interpreted":

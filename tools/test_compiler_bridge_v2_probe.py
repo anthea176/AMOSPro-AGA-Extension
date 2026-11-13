@@ -31,6 +31,7 @@ LAST_GOOD_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e30
 R61_SHA256 = 'ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f'
 R62_SHA256 = '9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6'
 R63_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'
+R64_SHA256 = '4859e67d784ad48d20b6fcce2ef39276a7005d9e834a4e76ee42e4a6d0b0de0c'
 TITLE = b'AP20 bridge V2 probe\0'
 TITLE += bytes(len(TITLE) & 1)
 TOKENS = b'\0' * 6  # Valid minimal terminated AP20 token table.
@@ -109,13 +110,17 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256), "Current must be pinned R60/R61/R62/R63"
+        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256), "Current must be pinned R60/R61/R62/R63"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
         assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        if active_hash == R63_SHA256:
+        if active_hash == R64_SHA256:
+            from build_m18_r64_ficon_bank_create import build as build_r64
+            assert current_bytes == build_r64()[0] and current_bytes != protected_bytes, (
+                "R64 candidate must differ from R63 LAST_GOOD")
+        elif active_hash == R63_SHA256:
             from build_m18_r63_chip_blit import build as build_r63
             assert current_bytes == build_r63()[0] and current_bytes == protected_bytes, "Promoted R63 candidate/LAST_GOOD mismatch"
         elif active_hash == R62_SHA256:
