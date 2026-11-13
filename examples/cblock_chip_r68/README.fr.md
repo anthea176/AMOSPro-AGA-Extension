@@ -22,7 +22,7 @@ Exemple **AMOS interprété, autonome et sans ressource externe** pour sauvegard
 2. Installer `dist/AMOSPro_AGA.Lib` sous `APSystem/AMOSPro_AGA.Lib` dans **le même slot** d'extension ; redémarrer AMOS.
 3. Dans AMOS : **New → Project → Merge ASCII** sur `CBLOCK_CHIP_LAB.asc`, puis **Run en interprété seulement**. La Gate C Compiler manuelle est réservée à la **fin de M18**.
 4. Écran AGA 320×256×256 : un **carré blanc à centre noir** dans la partie haute, puis trois copies identiques sur fond bleu : **CPU8 X8**, **Blitter X96**, **CPU16 X176** (Y144). Affichage ~180 VBL PAL, puis fermeture.
-5. Console attendue : `DRAW CPU8/BLIT/CPU16 1 1 1`, `RECAP/SAME 1 1`, `BANK LEN 552`, Chip Free identique avant/après, `ERROR 0`, `RESULT 1`, `CLOSE RETURNED`. Il s'agit de **valeurs attendues, pas d'un résultat utilisateur déjà observé** pour ce nouvel exemple.
+5. Console attendue : `DRAW CPU8/BLIT/CPU16 1 1 1`, `RECAP/SAME 1 1`, `BANK LEN 1064`, Chip Free identique avant/après, `ERROR 0`, `RESULT 1`, `CLOSE RETURNED`. Il s'agit de **valeurs attendues, pas d'un résultat utilisateur déjà observé** pour ce nouvel exemple.
 
 ## Cycle principal
 

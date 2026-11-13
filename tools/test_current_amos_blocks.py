@@ -69,6 +69,26 @@ def main():
         print(f"PASS: {path.name} has matched IF/END IF and FOR/NEXT; no single-line THEN")
     if not files:
         print("PASS: no active AMOS test (zero is valid after archiving)")
+    # Final M18 Compiler Gate C coverage: static only, never executes Compiler.
+    if files and files[0].name == "M18_R68_COMPILER_FINAL_01.asc":
+        source = files[0].read_text("ascii")
+        required = (
+            "Aga F Icon Bank Create(", "Aga F Icon Bank Put(",
+            "Aga F Chip Bank Create(", "Aga F Chip Stage(",
+            "Aga F Icon Capture(", "Aga F Blit(",
+            "Aga C Block Capture(", "Aga C Block Draw(",
+            "Aga C Block Restore(",
+            "Aga C Block Draw(14,8,200,0)",
+            "Aga C Block Draw(14,96,200,2)",
+            "Aga C Block Draw(14,176,200,1)",
+            "Aga C Block Restore(14,1)",
+            "Erase 14", 'Print "RESULT ";_RESULT',
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(x in source for x in required), "Final M18 test misses R64-R68 calls"
+        assert "_CBLEN<>1064" in source, "Final CBlock 32x32x8 bank length mismatch"
+        print("PASS: single R68 Compiler Gate C ASC covers R64-R68 (static only)")
+
 
 
 if __name__ == "__main__":

@@ -227,6 +227,17 @@ def main() -> None:
     require(cbtext.count("Aga C Block Capture(")>=2
             and "_CAPMODE=2" in cbtext and "_RESTMODE=1" in cbtext,
             "CBlock mode must remain explicit; no auto dispatcher")
+    # 40-byte AGACBLK header, 8 bitplanes, word-aligned planar rows.
+    capture = re.search(r"Aga C Block Capture\(11,\d+,\d+,(\d+),(\d+),_CAPMODE\)", cbtext)
+    require(capture is not None, "R68 demo capture geometry not found")
+    cbw, cbh = int(capture.group(1)), int(capture.group(2))
+    expected_cblock_length = 40 + 8 * (2 * ((cbw + 15) // 16)) * cbh
+    require(f"_LEN<>{expected_cblock_length}" in cbtext,
+            "R68 CBlock demo bank length does not match 8-plane layout")
+    for name in ("README.md", "README.fr.md"):
+        require(f"BANK LEN {expected_cblock_length}" in (cbdir / name).read_text("utf-8"),
+                f"R68 demo bank length disagrees with {name}")
+
     current = inspect(parse((ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()))
     current_names = {tok["name"].casefold() for tok in current["tokens"]}
     require(not current["issues"] and all(cmd in current_names for cmd in (

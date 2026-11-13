@@ -53,7 +53,7 @@ def main() -> None:
         from build_m18_r68_cblock import build as build_r68
         candidate,meta=build_r68()
         assert candidate==current and meta["sha256"]=="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
-        print("CURRENT R68 Chip CBlock native Gate A 48 PASS; WinUAE B pending",meta)
+        print("CURRENT R68 Chip CBlock native Gate A 48 PASS; WinUAE interpreted Gate B PASS; Compiler Gate C pending",meta)
     elif active.startswith("R67 0.13.12"):
         from build_m18_r67_ficon_capture import build as build_r67
         candidate,meta=build_r67()

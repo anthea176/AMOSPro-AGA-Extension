@@ -22,7 +22,7 @@ The `Method` parameter is mandatory for **every call**, including `Restore`. The
 2. Install the current `dist/AMOSPro_AGA.Lib` as `AMOSPro_AGA.Lib` in `APSystem` with the **same extension slot**; restart AMOS.
 3. In AMOS, open a **new empty program → Project → Merge ASCII** → `CBLOCK_CHIP_LAB.asc`. Run **interpreted only**. The actual AMOS Compiler Gate C is reserved for the **end of M18**.
 4. The 320×256×256-colour AGA screen shows one **white square with a black centre** near the top, then three identical copies on a dark blue background: **CPU8 at X8**, **Blitter at X96**, **CPU16 at X176** (Y144). It remains visible for ~180 PAL VBL; then closes.
-5. On the AMOS console, expect `DRAW CPU8/BLIT/CPU16 1 1 1`, `RECAP/SAME 1 1`, `BANK LEN 552`, equal Chip Free before/after, `ERROR 0`, `RESULT 1` and `CLOSE RETURNED`. Those values are **expected**, not claimed observed for this new example.
+5. On the AMOS console, expect `DRAW CPU8/BLIT/CPU16 1 1 1`, `RECAP/SAME 1 1`, `BANK LEN 1064`, equal Chip Free before/after, `ERROR 0`, `RESULT 1` and `CLOSE RETURNED`. Those values are **expected**, not claimed observed for this new example.
 
 ## Key operations
 

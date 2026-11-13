@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R68 - Gate C intégrée préparée, non exécutée (13/11/2026)
+
+**Test actif unique :** [`tests/current/M18_R68_COMPILER_FINAL_01.asc`](../tests/current/M18_R68_COMPILER_FINAL_01.asc), fondé sur le scénario interprété R67 archivé, étendu pour couvrir CBlock R68. Les API Fast Icon R64-R67 et les méthodes CBlock 0/1/2 explicitement choisies, les refus et la fermeture sont réunis dans **un seul ASC**. Banques 11/12/13/14 libres et `RAM:` inscriptible requises ; voir [instructions](../tests/current/README.md).
+
+**Aucun test du nouvel ASC en AMOS/WinUAE ni du Compiler réel** : préparation statique seulement. Avant le **seul passage Compiler final**, vérifier le scénario en AMOS interprété et créer un **nouvel exécutable** avec la candidate R68 finalisée. R68 Gates A/B déjà confirmées sur les programmes antérieurs ; **C/D toujours non testées**, R63 `LAST_GOOD` protégée.
+
+**Correction de la démo publique :** longueur CBlock 32×32×8 = **1064** et non **552** octets (552 correspond à 32×16×8). ASC, notices FR/EN et régression statique alignés ; affichage du builder R68 corrigé pour refléter Gate B PASS. Aucun binaire ou archive modifié.
+
 ## M18 — décision API CBlock figée et exemple public R68 ajouté (13/11/2026)
 
 **Décision explicite de l'auteur : CHOIX AU PROGRAMMEUR, AUCUN AUTO**. `Method=0` CPU8 (alignement X/largeur sur 8 pixels), `Method=1` CPU16 (16 pixels), `Method=2` Blitter (8 pixels), obligatoire sur **Capture/Draw/Restore** ; l'extension ne choisit ni selon le CPU, ni selon la taille. [Contrat final](M18_CBLOCK_DESIGN.md), appuyé par [PERF-02 WinUAE sans JIT 68020/68030 PASS](M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md).

@@ -1,14 +1,11 @@
-# M18 — tests AMOS actifs
+# M18/R68 - one active AMOS test: final Compiler Gate C preparation
 
-**Aucun ASC actif** dans `tests/current/` après les deux essais **PERF-02 WinUAE JIT OFF PASS** du 13 novembre 2026.
+**Active file:** [M18_R68_COMPILER_FINAL_01.asc](M18_R68_COMPILER_FINAL_01.asc). This is the **only** ASC in `tests/current/`. It is **prepared statically only**; it has NOT been run in AMOS interpreted, AMOS Compiler or WinUAE. No new Gate B or C is claimed for this combined program.
 
-[**Rapport benchmark PERF-02**](../../docs/M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md) · [**ASC PERF-02 archivé, inchangé**](../passed/M18_R68_CBLOCK_PERF_02.asc).
+**Candidate:** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **R68 v0.13.13**, 51,064 bytes; SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. R63 `LAST_GOOD` is unchanged.
 
-- **68020 à 14 MHz / 128 Mo Fast Z3 / JIT OFF / AMOS interprété** : 6 tailles, 17 chemins validés, `RUNS/ERR/MIS/MEM 17 0 0 0`, `CHIP START/END 1845800 1845800`, `RESULT 1`.
-- **68030 à 28 MHz / 128 Mo Fast Z3 / JIT OFF / AMOS interprété** : mêmes 17 chemins validés, `RUNS/ERR/MIS/MEM 17 0 0 0`, `CHIP START/END 1845768 1845768`, `RESULT 1`.
-- **CBlock R68 v0.13.13 reste l'unique bibliothèque candidate** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Le binaire n'a pas été modifié.
-- **R63 `LAST_GOOD` protégée**, aucune promotion. **Gate C Compiler AMOS réelle uniquement à la fin M18**, Gate D physique non testée.
+Use disposable WinUAE with AMOS banks **11, 12, 13, 14 free**, and writable `RAM:`. This program overwrites `RAM:M18_R68_FINAL_FICON8.ABK`. Install the exact R68 library at `APSystem/AMOSPro_AGA.Lib` in its existing extension slot, then **restart AMOS**. Import through **New -> Project -> Merge ASCII** in a blank program. First verify **interpreted** mode. At the end of M18, compile **one new executable from this ASC** and run it under WinUAE for the real Compiler Gate C. An old executable is not a valid test.
 
-L'ASC Gate B R68 initial reste [archivé et immuable](../passed/M18_R68_CBLOCK_CHIP_01.asc).
+One program covers M18 R64-R67 Fast Icon creation, Bank Put, Chip creation and staging, direct capture and masked/opaque blitting, plus R68 CBlock Capture/Draw/Restore with **Method=0 CPU8, =1 CPU16, =2 Blitter** (no auto). It checks 288 icon bytes, bad calls, CBlock **32x32x8=1064 bytes**, recapture without allocation, black index 0 restored opaquely, clean screen closing, and expected post-close refusal. Expect **`RESULT 1`** and **`CLOSE RETURNED`**, then a console hold loop. These results have **not** been observed for the combined test.
 
-**Suite :** analyser les seuils de choix CPU16/Blitter et la répétabilité si une sélection automatique est envisagée. Ne créer un nouvel ASC unique que pour un essai nouveau, ne jamais modifier `tests/passed/`.
+Existing individual Gate B evidence remains [R67](../../docs/M18_R67_FICON8_CAPTURE_WINUAE_GATE_B_2026-11-13.md), [R68](../../docs/M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), and [PERF-02](../../docs/M18_R68_CBLOCK_PERF_02_WINUAE_2026-11-13.md). Do not edit any `tests/passed/` or `LAST_GOOD`.
