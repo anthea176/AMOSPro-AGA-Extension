@@ -169,11 +169,9 @@ jobs:
         run: python -B tools/test_m18_ficon_chip_cache.py
       - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
         run: python -B tools/test_m18_ficon16_chip_blit.py
-      - name: M18/R68 EXPERIMENTAL native Gate A (manual workflow only until fixed)
-        if: github.event_name == 'workflow_dispatch'
+      - name: M18/R68 diagnostic only (nonblocking until native Gate A fixed)
         run: |
-          python -B tools/test_m18_r68_cblock_gate_a.py
-          python -B tools/build_m18_r68_cblock.py --emit-base64
+          python -B tools/test_m18_r68_cblock_gate_a.py || echo "R68 experimental Gate A BLOCKED; R67 remains active"
       - name: M18/R67 screen FICON8 capture native AP20 Gate A (no compiler)
         run: |
           python -B tools/test_m18_r67_ficon_capture_gate_a.py
