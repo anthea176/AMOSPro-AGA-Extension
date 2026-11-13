@@ -133,7 +133,8 @@ class CBlockMachine(Machine):
             self.new_total=need
             self.reserved+=1
             self.banks[bank]=NEW
-            self.uc.mem_write(NEW,bytes(need))
+            # Force uninitialized Chip RAM; first creation must explicitly clear padding.
+            self.uc.mem_write(NEW,bytes([0xa7])*need)
             self.uc.mem_write(NEW-24,pack(">IIIHH8s",0,need+16,bank,flags,0,NAME))
             self.uc.mem_write(NEW+need,GUARD)
             self._return(NEW,ptr=NEW)
@@ -260,9 +261,27 @@ def main():
             checks+=m.invoke("capture",x=16,w=w,method=method)
             assert m.reserved==1
             before=[bytes(m.uc.mem_read(p,m.plane_size)) for p in m.planes]
+            src_bm=Surface(m.stride*8,HEIGHT,DEPTH,m.stride,
+                           [bytearray(p) for p in before])
+            bpr=((w+15)//16)*2
+            plane_bytes=bpr*16
+            raw=bytes(m.uc.mem_read(NEW+40,DEPTH*plane_bytes))
+            block=Surface(bpr*8,16,DEPTH,bpr,
+                    [bytearray(raw[i*plane_bytes:(i+1)*plane_bytes])
+                     for i in range(DEPTH)])
+            expected_draw=src_bm.clone()
+            copy_pixel_oracle(block,expected_draw,0,0,32,22,w,16)
             checks+=m.invoke("draw",x=32,y=22,method=method)
+            assert [bytes(m.uc.mem_read(p,m.plane_size))
+                    for p in m.planes]==list(expected_draw.signature()),(
+                    "R68 native draw pixels differ",layout,method,w)
             assert m.freed==0
+            expected_restore=expected_draw.clone()
+            copy_pixel_oracle(block,expected_restore,0,0,16,4,w,16)
             checks+=m.invoke("restore",method=method)
+            assert [bytes(m.uc.mem_read(p,m.plane_size))
+                    for p in m.planes]==list(expected_restore.signature()),(
+                    "R68 native restore pixels differ",layout,method,w)
             assert m.reserved==1
             assert bytes(m.uc.mem_read(NEW+m.new_total,len(GUARD)))==GUARD
         for invalid in (

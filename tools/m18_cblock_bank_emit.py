@@ -208,6 +208,13 @@ def emit_cblock_bank_action(action):
         get("y",D(0));c.move(D(0),POST(0))
         for key in ("w","h","rowstride","plane_bytes"):
             get(key,D(0));c.move(D(0),POST(0))
+        # RAM allocated by AMOS is not guaranteed to start at zero.
+        # Clear ALL planar padding once on creation; never clear on reuse.
+        get("total",D(6));c.imm("sub",HEADER,D(6));c.shift(6,1)
+        c.move(I(0),D(0))
+        L("clear_new_pixels")
+        c.move(D(0),POST(0),"w")
+        c.quick(1,D(6),sub=True);B(6,"clear_new_pixels")
         B(0,"bank_ready")
         L("existing_bank")
         verify_bank()
