@@ -130,13 +130,36 @@ def draw_model(cache_blob:bytes,index:int,x:int,y:int,mode:int,
                 else:plane[dest]&=(~destbit & 255)
     return 1
 
+def staged_sample_abk(bank:int=11)->bytes:
+    """AMOS-ready persistent Chip bank with the SAME four icons as R61."""
+    from m18_ficon16_abk import binary as r61_sample,parse_abk as parse_source
+    _,_,source=parse_source(r61_sample())
+    data=empty_payload(source.count)
+    for index in range(1,source.count+1):
+        data=stage(data,source.raw,index)
+    abk=ABK_HEAD.pack(b"AmBk",bank,3,len(data)+8,NAME)+data
+    assert parse_abk(abk)[1].count==source.count
+    return abk
+
 if __name__=="__main__":
     from pathlib import Path
-    import argparse
+    from hashlib import sha256
+    import base64,argparse
     parser=argparse.ArgumentParser()
+    parser.add_argument("--prepared",action="store_true",
+                        help="ready-to-draw FICHIP8 bank with R61 sample icons")
     parser.add_argument("--write")
+    parser.add_argument("--emit-base64",action="store_true")
     args=parser.parse_args()
-    abk=make_abk()
+    abk=staged_sample_abk() if args.prepared else make_abk()
     assert parse_abk(abk)[1].count==4
     if args.write:Path(args.write).write_bytes(abk)
-    print("M18/P5 CHIP CACHE ABK",len(abk),"bytes (empty, 4 slots)")
+    print("M18/P5 CHIP CACHE ABK",len(abk),
+          "prepared" if args.prepared else "empty",
+          "SHA256",sha256(abk).hexdigest())
+    if args.emit_base64:
+        encoded=base64.b64encode(abk).decode("ascii")
+        print("M18_R62_CHIP_ABK_BASE64_BEGIN")
+        for at in range(0,len(encoded),120):
+            print("M18_R62_CHIP_ABK_BASE64",encoded[at:at+120])
+        print("M18_R62_CHIP_ABK_BASE64_END")

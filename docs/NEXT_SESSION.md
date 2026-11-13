@@ -2,7 +2,7 @@
 
 ## M18/P5 — cache Chip et noyau DMA masqué expérimentaux (13/11/2026)
 
-[Contrat P5](M18_FICON16_NATIVE_P5.md) · [cache AMOS FICHIP8](../tools/m18_ficon_chip_cache.py) · [noyau Blitter 68000](../tools/m18_ficon16_chip_blit_emit.py) · [tests](../tools/test_m18_ficon16_chip_blit.py). Préparation d'une banque cache Chip indépendante des ScreenBuffers (slots de 288 octets, bit de validité) et d'un rendu Blitter opaque/masqué avec WaitBlit et rejet des sources non `MEMF_CHIP`. **Gate A en attente** ; pas d'API installée, pas d'ASC supplémentaire, pas de promotion. **R61 candidate et R60 LAST_GOOD inchangées**. Après Gate A, connecter AP20 Bank + Safe et chronométrer préparation/staging séparément de la réutilisation DMA.
+[Contrat P5](M18_FICON16_NATIVE_P5.md) · [cache AMOS FICHIP8](../tools/m18_ficon_chip_cache.py) · [future commande AP20 F Blit](../tools/m18_ficon_chip_ap20_emit.py) · [builder R62 en mémoire](../tools/build_m18_r62_chip_blit.py) · [noyau Blitter 68000](../tools/m18_ficon16_chip_blit_emit.py) · [tests](../tools/test_m18_ficon16_chip_blit.py). Préparation d'une banque cache Chip indépendante des ScreenBuffers (slots de 288 octets, bit de validité) et d'un rendu Blitter opaque/masqué avec WaitBlit et rejet des sources non `MEMF_CHIP`. **Gate A CPU/ABI R62 en mémoire PASS [run 43426219348](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43426219348)** ; pas d'API installée, pas d'ASC supplémentaire, pas de promotion. **R61 candidate et R60 LAST_GOOD inchangées**. Après Gate A, connecter AP20 Bank + Safe et chronométrer préparation/staging séparément de la réutilisation DMA.
 
 ## M18/R61 — Fast Icon 16×16×8, Gates A/B/C PASS, R61 NON PROMUE (13/11/2026)
 

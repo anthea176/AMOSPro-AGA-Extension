@@ -50,6 +50,16 @@ def build():
                     ap20_entries=len(stub),compiled_bytes=len(stub[-1]))
 
 if __name__=="__main__":
-    _,info=build()
-    assert build()[1]==info
+    import argparse,base64
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--emit-base64",action="store_true")
+    args=parser.parse_args()
+    binary,info=build()
+    assert build()[0]==binary
     print("M18 R62 CHIP BLIT UNINSTALLED IN-MEMORY BUILDER",info)
+    if args.emit_base64:
+        encoded=base64.b64encode(binary).decode("ascii")
+        print("M18_R62_LIB_BASE64_BEGIN")
+        for at in range(0,len(encoded),120):
+            print("M18_R62_LIB_BASE64",encoded[at:at+120])
+        print("M18_R62_LIB_BASE64_END")

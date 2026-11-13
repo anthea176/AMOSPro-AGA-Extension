@@ -1,6 +1,6 @@
 # M18/P5 — Cache Chip persistant et Blitter masqué, Gate A expérimentale
 
-**État : code en phase Gate A uniquement, non installé dans R61.** R61 v0.13.6 validée B/C reste candidate active ; R60 `LAST_GOOD` reste figée. **Aucune nouvelle commande AP20 ni ASC actif.**
+**État : Gate A CPU/ABI et modèle de cache PASS sur [CI 43426219348](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43426219348).** R62 AP20 additionnelle validée en mémoire, pas encore installée. La R61 candidate A/B/C reste inchangée. R61 v0.13.6 validée B/C reste candidate active ; R60 `LAST_GOOD` reste figée. **Aucune nouvelle commande AP20 ni ASC actif.**
 
 ## Cache Chip géré par AMOS
 
@@ -22,3 +22,9 @@ L'API AmigaOS donne les LVO `InitRastPort=-198`, `BltBitMapRastPort=-606`, `BltM
 - [Test noyau M68000](../tools/test_m18_ficon16_chip_blit.py) : instructions natives exécutées sous Unicorn, interception stricte des appels Exec/graphics, vérification des registres LVO, des huit plans contre l'oracle pixel, de WaitBlit et du refus de source Fast. **Pas de DMA physique émulée** : la copie est simulée côté test.
 
 **Gates B/C WinUAE, Gate D matériel et benchmarks 8 plans non réalisés pour P5.** Il faudra un nouveau candidat unique après Gate A native, puis un seul ASC actif ; les fichiers R61 et `LAST_GOOD` ne sont pas modifiés par cette phase.
+
+## Prototype AP20 R62
+
+Le [wrapper natif](../tools/m18_ficon_chip_ap20_emit.py) expose **la future commande `Aga F Blit(CacheBank,IconID,X,Y,Mode)`**, ajoute l'accès live `Bnk.GetAdr`, vérifie l'en-tête `FICHIP8 `, le marqueur de disponibilité et la canonicité des huit plans, puis les pointeurs du back buffer et Safe avant le DMA. Le [builder in-memory R62](../tools/build_m18_r62_chip_blit.py) ajoute un seul token à R61 ; la Gate A couvre les dispositions AP20 interprétée et Compiler V2 simulées, mais **pas WinUAE**.
+
+La [banque prête à charger](../tools/m18_ficon_chip_cache.py) se génère par `python -B tools/m18_ficon_chip_cache.py --prepared --write M18_FICHIP8_SAMPLE_BANK11.abk` ; elle reprend exactement les quatre icônes de la banque Fast R61, puis les prépare en Chip au format 32 octets masque + huit plans contigus. Ce staging est **hors du chrono Blitter** et n'est **pas une nouvelle commande AMOS de staging dynamique** ; aucun gain CPU/Blitter effectif n'est encore revendiqué.

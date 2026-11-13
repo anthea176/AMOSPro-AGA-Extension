@@ -49,6 +49,15 @@ def main():
     assert after!=cache and parse_cache(after).slot(2)==parse_cache(cache).slot(2)
     fail(lambda:draw_model(empty_payload(4),1,0,0,0,[],WIDTH,HEIGHT,STRIDE))
     fail(lambda:draw_model(after,1,0,0,2,as_planar(bytes(WIDTH*HEIGHT)),WIDTH,HEIGHT,STRIDE))
+    from m18_ficon_chip_cache import staged_sample_abk
+    from m18_ficon16_abk import binary as fast_sample,parse_abk as parse_fast
+    bankno,prepared=parse_abk(staged_sample_abk())
+    assert bankno==11 and len(staged_sample_abk())==1188
+    _,_,r61source=parse_fast(fast_sample())
+    equivalent=empty_payload(4)
+    for i in range(1,5):
+        equivalent=stage(equivalent,r61source.raw,i)
+    assert prepared.data==equivalent
     print("M18/P5 CHIP CACHE HOST PASS:",cases,
           "pixel-equivalence cases; 4 independent persistent slots; guards/invalids")
 if __name__=="__main__":
