@@ -272,9 +272,12 @@ def emit_image_region(*, opt020=False):
     c.tst(D(0)); B(7,"reject")  # impossible unless bank is modified in flight
     L("success")
     c.move(I(1),D(3))
+    if opt020:
+        B(0,"leave")             # avoid falling through the explicit reject
     L("reject")
     if opt020:
-        c.word(0x7600)           # explicitly clear result after late reject
+        c.word(0x7600)           # clear result after late reject, not success
+        L("leave")
     c.raw("4fef00c0")           # LEA +192(SP),SP
     c.raw("4cdf77f7")           # restore all except result D3,D2 and cursor A3
     c.raw("74004e75")           # D2=0 ; RTS
