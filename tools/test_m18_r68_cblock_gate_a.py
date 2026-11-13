@@ -189,8 +189,9 @@ class CBlockMachine(Machine):
         for i,arg in enumerate(reversed(values[:-1])):self.put(ARGS+4*i,arg)
         self.uc.reg_write(DR[3],method&0xffffffff)
         saved={r:self.uc.reg_read(r) for r in DR+AR[:7]}
-        self.uc.reg_write(AR[7],STACK);self.put(STACK,STOP)
+        # Supervisor SR must be set BEFORE A7: Unicorn swaps USP/SSP.
         self.uc.reg_write(UC_M68K_REG_SR,0x2000)
+        self.uc.reg_write(AR[7],STACK);self.put(STACK,STOP)
         try:self.uc.emu_start(self.entry,STOP,count=6000000)
         except Exception as exc:
             raise AssertionError(("R68 native crash",str(exc),
