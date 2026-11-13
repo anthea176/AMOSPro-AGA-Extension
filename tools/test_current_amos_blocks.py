@@ -134,10 +134,10 @@ def main():
             "_FNOS=Aga F Icon(11,2,25,25,0)",
             "_FCAPNOS=Aga F Icon Capture(11,4,25,25)",
             "Erase 11", "Erase 10",
-            "If _CF0<>_CF1", "If _FCAP<>1", # replaced by full condition below?
+            "or _CF0<>_CF1",
             'Print "FICON CAP/EQ288 ";_FCAP;" ";_FEQ',
         )
-        assert all(x in source for x in needed if x != "If _FCAP<>1"), (
+        assert all(x in source for x in needed), (
             "R73 ASC misses a Fast Icon Capture or Draw safety case"
         )
         assert "or _FCAP<>1 or _FEQ<>1" in source
