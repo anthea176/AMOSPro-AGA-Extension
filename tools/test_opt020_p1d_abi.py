@@ -173,12 +173,18 @@ def ap20_v2_in_memory_probe():
     if current != raw:
         from build_opt020_p1e_r69 import build as build_r69
         from build_opt020_p2_r70 import build as build_r70
+        from build_opt020_p2_r71 import build as build_r71, R71_SHA
+        from native_relative_links import assert_native_links
         candidate69, meta69 = build_r69()
         candidate70, meta70 = build_r70()
-        assert current in (candidate69, candidate70), (
-            "Current must be reproducible R69 or R70, not an unknown Lib")
+        candidate71, meta71 = build_r71()
+        assert current in (candidate69, candidate70, candidate71), (
+            "Current must be reproducible R69/R70/R71, not an unknown Lib")
         assert meta69["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert meta70["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
+        assert meta71["sha256"] == R71_SHA
+        if current == candidate71:
+            assert_native_links(unwrap_native_parts_v2(current)[1])
     tokens, parts=unwrap_native_parts_v2(raw)
     original_tokens, segments,title=unpack_ap20(raw)
     assert tokens==original_tokens and len(parts)==len(segments)-1==70
