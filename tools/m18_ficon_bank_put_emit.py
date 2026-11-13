@@ -62,7 +62,7 @@ def emit_ficon_bank_put():
         get(field,D(0));c.imm("cmp",5,D(0));B(5,"fail")
         c.imm("cmp",65535,D(0));B(2,"fail")
     get("dest_bank",D(0));get("source_bank",D(1))
-    c.alu("cmp",D(1),0);B(6,"fail")  # self-alias disallowed
+    c.alu("cmp",D(1),0);B(7,"fail")  # BEQ: reject only same-bank source/dest
     get("icon",D(0));c.tst(D(0));B(15,"fail")
     c.imm("cmp",COUNT_MAX,D(0));B(14,"fail")
     get("offset",D(0));c.tst(D(0));B(11,"fail")
