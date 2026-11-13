@@ -129,7 +129,7 @@ class Services(Machine):
                     self.uc.mem_write(ptr+total,GUARD)
                 self._ret(ptr)
         elif name=="Bnk.Change":
-            ptr=self.banks.get(11)
+            ptr=next((pointer for pointer in self.banks.values() if pointer==NEW),None)
             assert ptr==NEW
             raw=bytes(self.uc.mem_read(NEW,self.last_total))
             assert parse_cache(raw).count==(self.last_total-12)//289
