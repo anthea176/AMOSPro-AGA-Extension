@@ -1,6 +1,6 @@
 # M18 — R60 cache Chip benchmark v2
 
-**Statut : ASC préparé, WinUAE non encore testé.** [Télécharger le programme ASCII](m18_r60_cache_cost_v2.asc). Ce programme utilise la bibliothèque **R60 v0.13.5 LAST_GOOD** inchangée. Il n'implémente pas de nouveau Fast Icon.
+**Statut : quatre captures WinUAE AMOS Compiler reçues le 13/11/2026, essais terminés sans erreur visible.** **[Résultats bruts et analyse](RESULTATS_M18_R60_CACHE_COST_V2_2026-11-13.md)**. [Télécharger le programme ASCII](m18_r60_cache_cost_v2.asc). Ce programme utilise la bibliothèque **R60 v0.13.5 LAST_GOOD** inchangée. Il n'implémente pas de nouveau Fast Icon.
 
 ## Exécution WinUAE
 
@@ -24,9 +24,10 @@ Afficher et relever les **8 trios de ticks** ainsi que `ERR`, `CLOSE`, `CHIP`. C
 ## Interprétation et limites
 
 - `OFF` n'isole pas le RLE seul : il inclut aussi les vérifications de banque, d'écran et de structure. Les différences `OFF / 1PIX / CPU16` donnent des indications sur le coût de la deuxième passe et de l'écriture CPU, sans profiler chaque instruction.
+- **Avertissement MASK16 :** le rectangle source (0..15,0..15) contient **un seul pixel conservé par le masque**, à (15,15), sur 256. Le gain MASK16 vs CPU16 est donc lié à une **transparence de 99,61 %**, pas à un avantage général du masquage. Voir le [rapport](RESULTATS_M18_R60_CACHE_COST_V2_2026-11-13.md).
 - `CACHE1/4/16` chronomètre **la préparation par décodage AGAPIC R60**, pas le staging d'un Fast Icon planaire 8 plans pré-décodé. **Aucun seuil de rentabilité général des Fast Icons natifs ne peut encore être déduit.**
 - `Aga Blit Copy` est une **copie opaque**. `MASK16` est une mesure CPU seulement ; le moteur Blitter masqué reste à créer. La source est dans **le back buffer** : sans Swap pendant les séries, la persistance d'un cache dans les deux buffers n'est **pas** démontrée.
-- Le benchmark ne vérifie que le **dernier résultat d'appel de chaque série** et la valeur Chip Free avant/après, pas tous les retours ni le rendu pixel par pixel. `ERR 0`, `CLOSE -1`, mémoire Chip identique et fin normale restent **à vérifier réellement sous WinUAE**.
+- Le benchmark ne vérifie que le **dernier résultat d'appel de chaque série** et la valeur Chip Free avant/après, pas tous les retours ni le rendu pixel par pixel. `ERR 0`, `CLOSE -1`, mémoire Chip identique et fin normale sont **observés sur les quatre captures compilées**. Aucun contrôle exhaustif des pixels, aucune Gate D matérielle.
 - La comparaison décisive devra tester le vrai moteur **Fast 8 plans → CPU Chip** contre **Fast → staging Chip → Blitter**, masquage et alignements compris, avec coûts complets. **Aucune nouvelle commande R61 ni promotion n'est autorisée par ce bench.**
 
 **Dépôt :** benchmark exploratoire dans `benchmarks/`, distinct d'un ASC de validation d'une nouvelle bibliothèque dans `tests/current/`. Ancien [benchmark R60](m18_r60_cpu_vs_blit_16x16.asc), R60 `LAST_GOOD` et archives intactes.
