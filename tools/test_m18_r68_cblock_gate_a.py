@@ -251,6 +251,11 @@ def main():
     for gen,entry in zip(gens,(67,68,69)):
         native,labels=gen()
         assert parts[entry].startswith(native)
+        # A PC-relative LEA and JSR (A4) must enter the complete core
+        # including its MOVEM prologue; do not jump into loop internals.
+        wrapper=native[:labels["bank_name"]]
+        assert bytes.fromhex("49fa") in wrapper
+        assert bytes.fromhex("4e94") in wrapper
         dis=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_000)
         chunks=(native[:labels["bank_name"]],
                 native[labels["copy_core"]:])
