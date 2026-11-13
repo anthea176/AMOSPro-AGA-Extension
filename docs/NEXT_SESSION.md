@@ -1,10 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## OPT020/P2 — Guru `$80000004` confirmé, R70 retirée de l'actif (13/11/2026)
+## État actuel R71 — Gate B interprétée PASS (13 novembre 2026)
 
-**ALERTE CRITIQUE, GATE B R70 FAIL :** l'auteur a reproduit le blocage de l'écran AGA rose puis Workbench a affiché **`AMOS / Software Failure / erreur n°80000004` = exception CPU instruction illégale**. Il ne s'agit pas d'une simple attente VBL/Safe. Les marqueurs de palette ne localisent pas de façon fiable le PC. **Cause racine encore inconnue**, demander le PC réel avec le débogueur WinUAE avant toute nouvelle modification du noyau. [Rapport d'incident et procédure de capture PC](OPT020_P2_R70_GURU_80000004_2026-11-13.md).
+R71 v0.13.16 P2 a été exécutée dans AMOS interprété sous WinUAE avec deux captures auteur : écran AGA conforme au scénario et console `RESULT 1`, `CLOSE RETURNED`, `CHIP BEFORE/END 1661542 1661542`. **Gate A/CI PASS, Gate B PASS sur le scénario, Gate C et D NON TESTÉES.** [Preuve R71](OPT020_P2_R71_WINUAE_GATE_B_2026-11-13.md). Il ne s'agit pas d'une égalité pixel par pixel automatique.
 
-**REPLI :** unique `dist/AMOSPro_AGA.Lib` replacée à **R69 v0.13.14**, **51 240 octets / SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`** ; unique ASC actif de nouveau `tests/current/OPT020_P1E_R69_INTERPRETED_01.asc` (Gate B P1e WinUAE réussie). **R68 `LAST_GOOD` intacte** : SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Pas de branche, pas d'archive, pas de compilation AMOS. Sources P2, tests Musashi 256 PASS et builder R70 déterministe conservés sur `main` ; R70 ne doit PAS être réinstallée sans correction et nouvelle Gate A/CI.
+**Unique binaire :** `dist/AMOSPro_AGA.Lib`, R71, 51 460 octets, SHA256 `1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0`. **Unique ASC actif :** `tests/current/OPT020_P2_R71_INTERPRETED_01.asc`. **R68 LAST_GOOD intangible** (`ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`). R70 défaillante (Guru `80000004`) préservée dans Git ; cause de déplacement de trois sauts démontrée et corrigée R71. Aucun nouveau débogage de l'exception R70 nécessaire.
+
+**Prochain correctif approuvé par l'auteur :** isoler et corriger `D3` sur rejet tardif de PASS 1 en cas de banque RLE modifiée entre les deux passes. Ajouter test CPU ciblé avec mutation du flux après PASS 0. Ne pas modifier le binaire R71 historique dans Git, `LAST_GOOD`, les archives ou `tests/passed/`. Travail exclusivement sur `main`, une seule candidate active ; WinUAE réel indispensable pour Gate B de la prochaine candidate. **AMOS Compiler uniquement au jalon final.**
+
+### Anciennes notes (historique, non autoritaires pour la candidate actuelle)
 
 ### Historique R70 échouée (sections antérieures non autoritatives sur l'actif)
 

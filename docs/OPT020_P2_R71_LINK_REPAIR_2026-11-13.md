@@ -19,7 +19,7 @@ La candidate R71 conserve **51 460 octets**, 64 commandes, 71 entrees AP20. Seul
 - R68 `LAST_GOOD` : 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Protegee.
 - R69 de reference : 51 240 octets, SHA256 `9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298`. Gate B PASS (historique).
 - R70 **echec** : SHA256 `fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad`. Conservee dans Git, non active.
-- R71 candidate **non validee** : SHA256 `1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0`. Gate B et C en attente.
+- R71 candidate **Gate B interprétée PASS, non promue** : SHA256 `1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0`. Gate B PASS sur le scénario documenté ; Gate C et D en attente.
 
 ## Garde-fous permanents
 
@@ -33,4 +33,4 @@ La candidate R71 conserve **51 460 octets**, 64 commandes, 71 entrees AP20. Seul
 
 L'audit a aussi signale un retour `D3` incorrect apres echec tardif de la seconde passe P2. **Ce defaut secondaire n'est pas corrige dans R71** afin de conserver une correction de branchements minimale et octet-limitee ; il doit etre traite et teste dans un jalon distinct. Les tests ne couvrent pas tous les appels inter-entrees de la bibliotheque et ne constituent pas un parcours exhaustif du flot dans AMOS.
 
-**Validation reelle requise :** installer l'unique `dist/AMOSPro_AGA.Lib` R71, relancer AMOS sous WinUAE AGA/68020 14 MHz/JIT OFF/PAL, executer uniquement `tests/current/OPT020_P2_R71_INTERPRETED_01.asc`, relever `RESULT 1`, `CLOSE RETURNED`, les visuels, l'absence de Guru et l'equivalence pixels R69. Ne pas lancer AMOS Compiler tant que la Gate B n'est pas confirmee. Aucune promotion `LAST_GOOD` avant autorisation distincte.
+**Validation reelle requise :** installer l'unique `dist/AMOSPro_AGA.Lib` R71, relancer AMOS sous WinUAE AGA/68020 14 MHz/JIT OFF/PAL, executer uniquement `tests/current/OPT020_P2_R71_INTERPRETED_01.asc`, relever `RESULT 1`, `CLOSE RETURNED`, les visuels, l'absence de Guru et l'equivalence pixels R69. Ne pas lancer AMOS Compiler avant le jalon final prévu, malgré la Gate B désormais confirmée. Aucune promotion `LAST_GOOD` avant autorisation distincte.

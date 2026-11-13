@@ -8,7 +8,7 @@
 - Pour les liens connus, appeler `native_relative_links.assert_native_links()` sur les corps **extraits du binaire final**, et recalculer explicitement `Fill -> helper`, `Bank Image Draw -> Image Draw` et `Bank Font Select -> Font Bank Select`.
 - Rejeter par defaut un opcode inattendu, un prologue cible inattendu, une cible au milieu d'une instruction ou un deplacement signe hors 16 bits. Ne jamais supposer que l'egalite octet pour octet des autres entrees preserve leurs destinations.
 - Les verifications negatives doivent injecter des corruptions des trois deplacements et prouver qu'elles sont refusees. Une simulation CPU du seul corps 55 ne couvre pas la sequence `Clear -> Fill -> Draw`.
-- R70 (Guru `80000004`) reste interdite en binaire actif. Ne pas modifier R68 `LAST_GOOD`, les archives, `tests/passed/` ou le constructeur historique R70 pour masquer l'incident. R71 est une candidate non validee tant que Gate B WinUAE interpretee n'est pas PASS.
+- R70 (Guru `80000004`) reste interdite en binaire actif. Ne pas modifier R68 `LAST_GOOD`, les archives, `tests/passed/` ou le constructeur historique R70 pour masquer l'incident. R71 a reçu une Gate B interprétée PASS documentée le 13/11/2026 ; Gate C/D et promotion restent distinctes.
 
 Rapport : [OPT020/P2 R71 link repair](docs/OPT020_P2_R71_LINK_REPAIR_2026-11-13.md).
 
