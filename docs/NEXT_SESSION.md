@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020 — chantier natif 68020+ ouvert, phase P0 (13/11/2026)
+
+**Périmètre confirmé : minimum CPU 68020/68EC020, sans exigence de compatibilité 68000.** La [phase P0](OPT020_P0_CONTRAT_BASELINE_2026-11-13.md) audite les routines CPU, les sources 68000 existantes et le banc nécessaire à une vraie Gate A 020. **Premier candidat de travail : `Aga Image Region`** (RLE + rendu CPU), avant de retoucher CBlock dont le Blitter gagne déjà souvent sur 020/030 sans JIT. La version R68 de référence reste byte-exactement `LAST_GOOD` : 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Méthodes CBlock 0/1/2 **explicites, aucun AUTO**. **Aucune Gate OPT020 exécutée**, pas de nouveau binaire, pas d'ASC, pas de Compiler, pas de c2p, travail uniquement sur `main`.
+
 ## M18 — R68 v0.13.13 PROMUE LAST_GOOD (13/11/2026)
 
 **Accord explicite de l'auteur et Gates A/B/C PASS** : R68 (CBlock Chip RAW, méthodes obligatoires 0 CPU8 / 1 CPU16 / 2 Blitter, sans AUTO) est maintenant la référence `LAST_GOOD`. `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont **identiques octet pour octet**, 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, 64 commandes / 71 AP20.
