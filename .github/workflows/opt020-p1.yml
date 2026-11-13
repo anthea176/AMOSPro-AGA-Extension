@@ -23,6 +23,7 @@ on:
       - "tools/build_opt020_p1e_r69.py"
       - "tools/m16_image_draw_r45_emit.py"
       - "tools/test_opt020_p2_image_draw.py"
+      - "tools/build_opt020_p2_r70.py"
       - "tools/m18_image_region_emit.py"
       - "tools/test_opt020_p1d_fragments.py"
       - "tools/test_opt020_p1d_abi.py"
@@ -61,6 +62,8 @@ jobs:
         run: python -B tools/test_opt020_p2_image_draw.py
       - name: Verify deterministic R69 AP20 V2 Gate A candidate in memory only
         run: python -B tools/build_opt020_p1e_r69.py
+      - name: P2 in-memory R70 V2 builder, only Image Draw changed
+        run: python -B tools/build_opt020_p2_r70.py
       - name: Guard R69 working candidate, R68 LAST_GOOD, archives and unique ASC
         run: |
           python -B tools/verify_fast.py
