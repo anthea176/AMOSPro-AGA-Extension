@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M18/R68 — CBlock Chip : Gates A/B PASS, benchmark à affiner (13/11/2026)
+## M18 / R68 — PERF-02 NO-JIT prêt pour essai interprété (13/11/2026)
+
+**NOUVEAU TEST ACTIF UNIQUE :** [`tests/current/M18_R68_CBLOCK_PERF_02.asc`](../tests/current/M18_R68_CBLOCK_PERF_02.asc), 6 tailles (**16×16, 24×16, 32×16, 64×48, 128×96, 320×64**), deux passes par méthode, **17 combinaisons méthode/taille** ; deux chronos séparés `Capture`/`Draw`. Alignement 8 pixels pour CPU8/Blitter ; **CPU16 sur 24×16 volontairement sauté `-1`**. Pour chaque combinaison, recapture planaires destination et comparaison byte-for-byte hors temps, contrôles `Chip Free` et banque réemployée. Attendu : **`RUNS/ERR/MIS/MEM 17 0 0 0`, `RESULT 1`, `CLOSE RETURNED`**. [Instructions, comptages et résultats attendus](../tests/current/README.md).
+
+**À lancer sous WinUAE en AMOS interprété uniquement**, avec **68020 14 MHz JIT OFF** puis **68030 JIT OFF** (fréquences et mémoires notées), banques **11 et 13 libres**. Importer l'ASC via **New → Project → Merge ASCII**. **Pas de Compiler AMOS** avant la Gate C manuelle unique en fin de M18.
+
+**Binaire inchangé R68 v0.13.13** : `dist/AMOSPro_AGA.Lib`, **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, **Gates A/B PASS** et non promue. **R63 `LAST_GOOD` inchangée**, aucun autre ASC actif, aucun changement de branche (toujours `main`). [Gate B R68 archivée](M18_R68_CBLOCK_WINUAE_GATE_B_2026-11-13.md), [ASC validé historique immuable](../tests/passed/M18_R68_CBLOCK_CHIP_01.asc).
+
+## Historique — R68 Gates A/B PASS, première mesure 300 appels (13/11/2026)
 
 **R68 v0.13.13 demeure la candidate unique NON PROMUE `dist/AMOSPro_AGA.Lib`**, **51 064 octets**, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`, **64 commandes / 71 AP20**. Nouvelles commandes `Aga C Block Capture(Bank,X,Y,Width,Height,Method)`, `Draw(Bank,X,Y,Method)`, `Restore(Bank,Method)`. Modes 0=CPU8, 1=CPU16, 2=Blitter, RAW Chip temporaire, alignement 8/16 pixels, restitution opaque index 0 compris, aucune compression, recapture sans réallocation.
 
