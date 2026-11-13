@@ -1,6 +1,6 @@
 # M18/P5 — Cache Chip et Blitter masqué (R62 / correctif R63)
 
-**État 13/11/2026 :** R63 v0.13.8 est la [candidate active unique](../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, [Gate A CPU 260 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351). **Gate B WinUAE interprétée ÉCHEC sur le deuxième essai R63 (`RESULT 0`, `FICHIP FLAGS 0`); diagnostic de placement mémoire ajouté au même ASC. Gate C manuelle reportée à la fin de M18 ; D physique non faite.** R62 v0.13.7 avait Gate A PASS mais **Gate B interprétée ÉCHEC (BLIT=0, RESULT=0)**. R61 A/B/C PASS archivée ; R60 LAST_GOOD protégée. [Contrat complet du cache](M18_FAST_ICON_CACHE.md).
+**État 13/11/2026 :** R63 v0.13.8 [candidate active unique](../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, Gate A CPU 260 cas PASS, **Gate B WinUAE interprétée PASS sur l'ASC corrigé (`RESULT 1`)** avec `Bank To Chip 11`, `BLIT/BCLP=1`, Chip Free 1 796 440 avant/après. [Rapport R63](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Capture texte uniquement : conformité graphique non certifiée**, Gate C compilée reportée à la fin de M18, D physique non faite. R62 reste un échec historique ; R61 A/B/C historiques ; R60 LAST_GOOD protégée.
 
 **Document technique de référence : [fonctionnement, cycle de vie, mémoire et limites du cache](M18_FAST_ICON_CACHE.md).**
 
@@ -29,6 +29,10 @@ La R62 exigeait `Flags=3` sur l'en-tête DATA natif. Un problème équivalent av
 ## Dernière capture R63 — Blitter répond, harnais mémoire corrigé
 
 Capture interprétée R63 avec `Bank To Chip 11` : **BLIT 1/1/1/1, BCLP 1/1/1/1, BCBAD 0/0/0**, flags natifs **0→3**, `BANK11 CHIP DELTA 1192`, Fast delta 0. L'écran donne **RESULT 0 uniquement parce que le test compare `_CF0` (cache alloué : 1 795 248 libres) à `_CF1` (cache effacé : 1 796 440 libres)**. La différence de 1 192 octets est attendue. [ASC corrigé](../tests/current/M18_R63_CHIP_BLIT_01.asc) : baseline `Chip Free` enregistrée avant les deux `Load` et comparée après les deux `Erase`. **Aucune modification R63 .Lib ; Gate B complète en attente du nouveau RESULT 1 et confirmation graphique.**
+
+## Validation R63 interprétée sur l'ASC corrigé
+
+**Quatrième essai R63 interprété WinUAE : `RESULT 1`, retours `ICON/BLIT/BCLP/CLIP/OUT = 1`, rejets `0`, `CLOSE -1`, mémoire Chip `1 796 440` octets avant/après.** Cache forcé en Chip par AMCAF : flags 0→3, 1 192 octets consommés pendant son utilisation (`CHIP CACHE ACTIVE 1 795 248`), libérés après `Erase`. **Gate B du protocole d'essai interprété PASS** ; cette capture ne montre pas le rendu graphique (contrôle visuel/pixel en attente). **R63 .Lib inchangée, aucune promotion ; Gate C Compiler manuelle seulement à la fin de M18.** [Rapport complet](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md).
 
 ## Validation et planning
 

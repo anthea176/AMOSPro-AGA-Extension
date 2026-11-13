@@ -2,9 +2,11 @@
 
 This page preserves the **earlier build, validation and archive notes removed from the public README**. Each paragraph describes a past checkpoint; old references to R44 as `LAST_GOOD` belong to that period only.
 
-**Current working candidate: R63 v0.13.8**, [active Lib](../dist/AMOSPro_AGA.Lib), 38,736 bytes. Native Gate A PASS. Latest interpreted WinUAE capture **BLIT/BCLP all 1, invalid cases all 0**, bank 11 flags 0→3 and Chip allocation 1,192 bytes. **RESULT 0 is a test-harness false negative**: baseline 1,795,248 with cache alive was compared to 1,796,440 after bank erasure. [Active ASC corrected](../tests/current/M18_R63_CHIP_BLIT_01.asc) to compare memory before both Loads with after both Erases; **await corrected-result and graphics confirmation before final Gate B claim**. Manual Compiler C at end M18 only, D not tested, R60 LAST_GOOD unchanged.
+**Current working candidate: R63 v0.13.8** — [unique active Lib](../dist/AMOSPro_AGA.Lib) 38,736 bytes, native Gate A PASS, **interpreted WinUAE Gate B PASS on the corrected test ASC (`RESULT 1`)**. Chip Free 1,796,440 before/after, all Blitter/clip returns 1, invalid calls 0, 1,192-byte Chip cache released. [Gate B report](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Visual output is not visible in the results screenshot**, so pixel appearance remains unchecked; manual Compiler C reserved for end of M18, physical D untested. R60 LAST_GOOD unchanged; R63 not promoted.
 
 ## Historical checkpoints, newest first
+
+**Fourth R63 interpreted WinUAE test: `RESULT 1`; `ICON/BLIT/BCLP/CLIP/OUT` return 1; invalid calls return 0; `CLOSE -1`; Chip Free `1,796,440` bytes before/after.** AMCAF moves bank 11 to Chip: flags 0→3, 1,192 bytes in use (`CHIP CACHE ACTIVE 1,795,248`), reclaimed on Erase. **Gate B interpreted test-program PASS**; visual pixel correctness is not evidenced by this text-results screenshot. **R63 library unchanged, no promotion; one manual Compiler Gate C at end of M18.** [Report](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md).
 
 **13 Nov 2026 — third interpreted R63 Chip Blitter run:** all opaque/masked/clip/offscreen calls return 1, invalids 0, cache moved in Chip (flags 0→3). `RESULT 0` caused by incorrect Chip Free baseline 1,795,248 vs 1,796,440 with/without cache; **test ASC fixed without native binary change**, next WinUAE execution/visual verification pending.
 

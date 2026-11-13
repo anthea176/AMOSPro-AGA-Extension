@@ -6,7 +6,7 @@ Le cache accélère l'affichage répété d'icônes **16×16 pixels / 8 bitplane
 
 - **R61 :** `Aga F Icon(Bank,IconID,X,Y,Mode)`, chemin CPU direct depuis `FICON8 ` vers le back buffer AGA, validé WinUAE en interprété et compilé. La banque source peut être en Fast ou en Chip.
 - **R62 :** `Aga F Blit(CacheBank,IconID,X,Y,Mode)`, chemin Blitter depuis un cache `FICHIP8 ` pré-stagé en Chip. Gate A CPU/OS simulé PASS ; **essai WinUAE interprété du 13/11/2026 : RESULT 0**, tous les BLIT=0. Pas de Gate B validée, Gate C différée.
-- **R63 v0.13.8 :** [candidate de travail active](../dist/AMOSPro_AGA.Lib), **38 736 octets**, SHA256 `fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba`, correction des flags natifs DATA rechargés 0/1/3 avec contrôle `TypeOfMem(MEMF_CHIP)`. [Gate A native 260 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43429500351). **Gate B WinUAE interprétée à faire ; Gate C manuelle en fin de M18.** Le test courant lit `Deek(Start(11)-12)` pour confirmer la cause. Aucun test de performance ou de staging AMOS réel pour ce backend.
+- **R63 v0.13.8 :** [candidate active](../dist/AMOSPro_AGA.Lib) 38 736 octets ; Gate A CPU 260 cas PASS, **Gate B WinUAE interprétée PASS sur l'ASC (`RESULT 1`)** après déplacement réel en Chip par AMCAF (flags 0→3, 1 192 octets de cache, Chip Free identique avant/après). [Rapport B](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Rendu visuel non attesté par la capture texte ; Gate C Compiler en fin de chantier M18**. Aucun benchmark réel du staging Fast→Chip intégré.
 - **Pas encore implémentés :** création/re-staging **dynamique** d'un cache depuis AMOS, cache à la demande, éviction automatique, benchmark CPU/Blitter avec coût de staging réel.
 
 ## Pipeline et responsabilité mémoire
@@ -120,6 +120,10 @@ Ce diagnostic ne constitue pas une modification native, ne prouve pas `TypeOfMem
 **Essai interprété R63 du 13/11/2026, cache forcé en Chip :** `BLIT 1/1/1/1 S1`, `BCLP 1/1/1/1 OUT 1`, `BCBAD 0/0/0`, `ICON 1/1/1/1`, `CLOSE -1`, `FLAGS OLD 0 NEW 3`, `BANK11 CHIP DELTA 1192`, `FAST DELTA 0`. **`RESULT 0` est un faux négatif du programme de test**, et non un retour d'échec Blitter : `_CF0` est relevé avec la banque 11 encore allouée (**1 795 248 octets libres**), `_CF1` après `Erase 11` (**1 796 440 octets**), différence exactement **1 192 octets**. L'ASC actif compare désormais `_CF_BASE` (avant chargement des banques 10 et 11) à `_CF1` (après leur effacement), et affiche séparément `_CF0` (`CHIP CACHE ACTIVE`). **R63 .Lib inchangée, Gate B finale à confirmer avec l'ASC corrigé et un contrôle visuel, Compiler manuel reporté à la fin de M18.**
 
 Les captures démontrent les retours des commandes mais pas l'exactitude pixel par pixel du rendu graphique. Aucune régression native ni modification de la bibliothèque n'est requise pour ce faux échec ; le test corrigé reste à exécuter.
+
+## Quatrième essai R63 : Gate B interprétée PASS avec harnais corrigé
+
+**Quatrième essai R63 interprété WinUAE : `RESULT 1`, retours `ICON/BLIT/BCLP/CLIP/OUT = 1`, rejets `0`, `CLOSE -1`, mémoire Chip `1 796 440` octets avant/après.** Cache forcé en Chip par AMCAF : flags 0→3, 1 192 octets consommés pendant son utilisation (`CHIP CACHE ACTIVE 1 795 248`), libérés après `Erase`. **Gate B du protocole d'essai interprété PASS** ; cette capture ne montre pas le rendu graphique (contrôle visuel/pixel en attente). **R63 .Lib inchangée, aucune promotion ; Gate C Compiler manuelle seulement à la fin de M18.** [Données complètes et limites de validation](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). Les essais précédents restent consignés ci-dessus à titre historique ; ils ne décrivent plus l'état courant.
 
 ## Politique de validation M18
 

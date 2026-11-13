@@ -2,9 +2,11 @@
 
 Cette page conserve les **anciens comptes rendus de builds, validations et archives déplacés du README public**. Chaque paragraphe décrit une étape passée : les mentions de R44 comme `LAST_GOOD` correspondent à cette époque et non à l'état actuel.
 
-**Candidate de travail actuelle : R63 v0.13.8**, [Lib active inchangée](../dist/AMOSPro_AGA.Lib), 38 736 octets. Gate A native PASS. Dernière capture WinUAE interprétée : **BLIT/BCLP tous à 1, rejets invalides tous à 0**, banque 11 flags 0→3 et consommation Chip 1 192 octets. **RESULT 0 est un faux négatif du harnais** : comparaison 1 795 248 libres avec cache vivant et 1 796 440 après Erase. [ASC actif corrigé](../tests/current/M18_R63_CHIP_BLIT_01.asc) avec baseline avant les Load et mesure finale après Erase ; **Gate B finale en attente de RESULT 1 et confirmation du visuel**. Compiler manuel C à la fin M18 uniquement, Gate D non faite, R60 LAST_GOOD intacte.
+**Candidate de travail actuelle : R63 v0.13.8** — [unique .Lib active](../dist/AMOSPro_AGA.Lib) 38 736 octets, Gate A native PASS, **Gate B interprétée WinUAE PASS sur le test ASC corrigé (`RESULT 1`)**. Chip Free 1 796 440 avant/après, Blitter/clip à 1, invalides à 0, cache Chip de 1 192 octets libéré. [Rapport Gate B](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md). **Rendu graphique non visible sur la capture de résultats**, contrôle visuel encore nécessaire ; Gate C Compiler à la fin de M18, D physique non faite, non promue. R60 LAST_GOOD conservée.
 
 ## Chronologie des validations (de la plus récente à la plus ancienne)
+
+**Quatrième essai R63 interprété WinUAE : `RESULT 1`, retours `ICON/BLIT/BCLP/CLIP/OUT = 1`, rejets `0`, `CLOSE -1`, mémoire Chip `1 796 440` octets avant/après.** Cache forcé en Chip par AMCAF : flags 0→3, 1 192 octets consommés pendant son utilisation (`CHIP CACHE ACTIVE 1 795 248`), libérés après `Erase`. **Gate B du protocole d'essai interprété PASS** ; cette capture ne montre pas le rendu graphique (contrôle visuel/pixel en attente). **R63 .Lib inchangée, aucune promotion ; Gate C Compiler manuelle seulement à la fin de M18.** [Rapport](M18_R63_CHIP_BLIT_WINUAE_GATE_B_2026-11-13.md).
 
 **13/11/2026 — troisième essai R63 interprété :** BLIT/BCLP opaques, transparents, clippés et hors écran tous à 1, invalides 0, cache forcé en Chip (flags 0→3). `RESULT 0` venait du contrôle Chip Free incorrect (1 795 248 avec cache contre 1 796 440 après libération) ; **ASC corrigé sans changer le binaire natif**, nouvel essai et confirmation visuelle en attente.
 
