@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## OPT020/P1 — premier sous-noyau 020 soumis aux tests natifs (13/11/2026)
+
+**Prototype autonome 16 pixels opaques AGAPIC :** témoin CPU 68000 `BTST/BSET/BCLR`, variante **68020 réelle** `BFEXTU/BFINS`, décalage destination X modulo 8, sans modifier les 16 pixels voisins. [Contrat P1](OPT020_P1_BITFIELD_PROTOTYPE_2026-11-13.md), [code](../tools/opt020_p1_bitfield_emit.py), [test Musashi 68000/68EC020/68020](../tools/test_opt020_p1_bitfield_native.py), [CI P1](../.github/workflows/opt020-p1.yml). **En attente d'exécution CPU indépendante** ; ne pas annoncer PASS ni gain de vitesse à ce stade. Pas de RLE complet, masque/clipping ou AP20. R68/`LAST_GOOD` inchangées, aucune Lib candidate ou nouvel ASC.
+
 ## OPT020 — chantier natif 68020+ ouvert, phase P0 (13/11/2026)
 
 **Périmètre confirmé : minimum CPU 68020/68EC020, sans exigence de compatibilité 68000.** La [phase P0](OPT020_P0_CONTRAT_BASELINE_2026-11-13.md) audite les routines CPU, les sources 68000 existantes et le banc nécessaire à une vraie Gate A 020. **Premier candidat de travail : `Aga Image Region`** (RLE + rendu CPU), avant de retoucher CBlock dont le Blitter gagne déjà souvent sur 020/030 sans JIT. La version R68 de référence reste byte-exactement `LAST_GOOD` : 51 064 octets, SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`. Méthodes CBlock 0/1/2 **explicites, aucun AUTO**. **Aucune Gate OPT020 exécutée**, pas de nouveau binaire, pas d'ASC, pas de Compiler, pas de c2p, travail uniquement sur `main`.

@@ -54,3 +54,5 @@ Les mesures R60 AGAPIC et R68 CBlock ne portent **pas** sur le même algorithme 
 - Aucun nouveau binaire, aucune modification API, aucun Compiler ou WinUAE exécuté par l'assistant dans cette phase.
 
 **Étape d'implémentation suivante :** concevoir et valider le **banc d'exécution réelle 68020** et le premier noyau autonome de référence/variante `Aga Image Region` avant toute nouvelle bibliothèque.
+
+**P1 ouvert (13/11/2026) :** [sous-noyau opaque 16 pixels AGAPIC et validation native 68020](OPT020_P1_BITFIELD_PROTOTYPE_2026-11-13.md). La qualification CPU indépendante est en attente au commit initial, aucune version R69 ni test WinUAE revendiqués.
