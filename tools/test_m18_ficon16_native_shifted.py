@@ -52,7 +52,14 @@ def main():
                 draw_cpu(bank,icon_id,x,y,mode,expected,WIDTH,HEIGHT,STRIDE)
                 status,actual=execute(code,icon,before,x=x,y=y,mode=mode)
                 assert status==1,(icon_id,x,y,mode,'return')
-                assert actual==expected,(icon_id,x,y,mode,'pixels')
+                if actual!=expected:
+                    diff=[(plane,pos//STRIDE,pos%STRIDE,
+                           f'{wanted:02x}',f'{got:02x}')
+                          for plane,(exp,gotplane) in enumerate(zip(expected,actual))
+                          for pos,(wanted,got) in enumerate(zip(exp,gotplane))
+                          if wanted!=got][:12]
+                    raise AssertionError((icon_id,x,y,mode,'pixel mismatch',
+                                          'plane,row,byte,expected,actual',diff))
                 cases+=1
     # The new general renderer must exactly match the already-qualified
     # aligned native 68000 fast path, including the edge and transparency.
