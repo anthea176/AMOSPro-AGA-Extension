@@ -1,5 +1,17 @@
 # EXTENSION_SOURCE_RULES.md
 
+## REGLE PERMANENTE - branchements relatifs du monolithe AP20 (incident R70, 13/11/2026)
+
+**Un `wrap_native_ap20_v2()` valide ne repatche pas les branches internes aux 70 corps natifs concatenes.** Toute insertion ou variation de longueur d'une entree impose de recontroler les references inter-entrees et leurs points d'entree reels, avant toute candidate active.
+
+- Un `BRA.W`/`BSR.W` 68000/68020 est relatif au mot d'extension a `instruction+2`, pas a `instruction+4`. Les tests doivent partir des octets du binaire final et ne pas recopier la formule du generateur.
+- Pour les liens connus, appeler `native_relative_links.assert_native_links()` sur les corps **extraits du binaire final**, et recalculer explicitement `Fill -> helper`, `Bank Image Draw -> Image Draw` et `Bank Font Select -> Font Bank Select`.
+- Rejeter par defaut un opcode inattendu, un prologue cible inattendu, une cible au milieu d'une instruction ou un deplacement signe hors 16 bits. Ne jamais supposer que l'egalite octet pour octet des autres entrees preserve leurs destinations.
+- Les verifications negatives doivent injecter des corruptions des trois deplacements et prouver qu'elles sont refusees. Une simulation CPU du seul corps 55 ne couvre pas la sequence `Clear -> Fill -> Draw`.
+- R70 (Guru `80000004`) reste interdite en binaire actif. Ne pas modifier R68 `LAST_GOOD`, les archives, `tests/passed/` ou le constructeur historique R70 pour masquer l'incident. R71 est une candidate non validee tant que Gate B WinUAE interpretee n'est pas PASS.
+
+Rapport : [OPT020/P2 R71 link repair](docs/OPT020_P2_R71_LINK_REPAIR_2026-11-13.md).
+
 ## RÈGLE DE VALIDATION M18 — Compiler une seule fois à la fin du chantier (13/11/2026)
 
 **Instruction explicite de l'auteur : ne pas lui demander un nouvel essai AMOS Compiler à chaque fonction ou correctif.** Durant le développement M18, les tests manuels se font **en AMOS interprété** ; les tests CPU natifs, ABI et disposition Compiler V2 simulée continuent en CI. Un **seul passage de validation manuelle Compiler sous WinUAE est prévu à la fin du chantier M18**, sur un exécutable nouvellement compilé depuis la candidate finalisée et l'ASC actif unique. Ce choix ne transforme pas une Gate A simulée en Gate C réelle, ne promeut aucune bibliothèque, et n'autorise pas à annoncer une Gate C PASS tant que l'auteur ne l'a pas effectuée.

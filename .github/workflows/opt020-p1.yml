@@ -24,6 +24,10 @@ on:
       - "tools/m16_image_draw_r45_emit.py"
       - "tools/test_opt020_p2_image_draw.py"
       - "tools/build_opt020_p2_r70.py"
+      - "tools/build_opt020_p2_r71.py"
+      - "tools/native_relative_links.py"
+      - "tools/test_opt020_p2_r71_links.py"
+      - "dist/AMOSPro_AGA.Lib"
       - "tools/m18_image_region_emit.py"
       - "tools/test_opt020_p1d_fragments.py"
       - "tools/test_opt020_p1d_abi.py"
@@ -62,9 +66,13 @@ jobs:
         run: python -B tools/test_opt020_p2_image_draw.py
       - name: Verify deterministic R69 AP20 V2 Gate A candidate in memory only
         run: python -B tools/build_opt020_p1e_r69.py
-      - name: P2 in-memory R70 V2 builder, only Image Draw changed
+      - name: Preserve historical failed R70 builder (in memory only)
         run: python -B tools/build_opt020_p2_r70.py
-      - name: Guard pinned R69/R70 working candidate, R68 LAST_GOOD, archives and unique ASC
+      - name: R71 relative-branch guard, fault injections and exact deterministic V2 builder
+        run: |
+          python -B tools/test_opt020_p2_r71_links.py
+          python -B tools/build_opt020_p2_r71.py
+      - name: Guard R71 active candidate, frozen R70 failure, R68 LAST_GOOD and unique ASC
         run: |
           python -B tools/verify_fast.py
           python -B tools/test_current_amos_blocks.py

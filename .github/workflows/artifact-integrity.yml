@@ -22,6 +22,7 @@ on:
       - "dist/**/*.Lib"
       - "tools/build_*.py"
       - "tools/compiler_relocation.py"
+      - "tools/native_relative_links.py"
       - "tools/test_*.py"
       - "tools/m17_blit_group_r55_emit.py"
       - "tools/m17_r56_rastport_emit.py"
@@ -162,6 +163,8 @@ jobs:
         run: python -B tools/test_m18_benchmark_static.py
       - name: OPT020/P1e R60 vs R69 benchmark static and native baseline identity
         run: python -B tools/test_opt020_p1e_benchmark_static.py
+      - name: OPT020/P2 R71 three relative links and fault-injection guard
+        run: python -B tools/test_opt020_p2_r71_links.py
       - name: Install current native Gate A dependencies
         run: python -m pip install capstone==5.0.9 unicorn==2.1.4
       - name: M18 CBlock host model and standalone M68000 CPU8 CPU16 Blitter tests

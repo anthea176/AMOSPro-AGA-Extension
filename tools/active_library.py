@@ -2,7 +2,8 @@
 
 R68 v0.13.13 remains the protected promoted LAST_GOOD (A/B/C PASS).
 R69 OPT020/P1e passed CPU/WinUAE and interpreted/compiled benchmarks.
-R70 OPT020/P2 remains SHA-pinned in source only after WinUAE Gate B FAILED with Guru $80000004; R69 remains the active candidate.
+R70 OPT020/P2 failed WinUAE Gate B ($80000004) and remains a frozen regression.
+R71 OPT020/P2 repairs the relative links; Gate B remains untested.
 R63 remains preserved in Git history; physical Gate D has not been tested.
 R65 and R64 historical candidates passed Gates A/B interpreted and visual.
 Historical R60 remains reconstructible and preserved in Git history.
@@ -28,7 +29,8 @@ R66_SHA="e57840e0c4f1379840e1254f1fb9ab800ce1ad712556efbd872047ea8822c7ca"  # R6
 R67_SHA="ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5"  # R67 FICON8 Capture Gates A/B PASS
 R68_SHA="ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"  # R68 Chip CBlock Gates A/B/C PASS, promoted LAST_GOOD
 R69_SHA="9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"  # OPT020/P1e proven WinUAE interpreted and benchmark compiled (historical)
-R70_SHA="fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"  # OPT020/P2 reproducible Image Draw CPU020 candidate, Gates B/C pending
+R70_SHA="fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"  # FAILED WinUAE, never active
+R71_SHA="1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"  # corrected P2 links; Gate B pending
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -55,7 +57,7 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA):
+    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"
     else:
@@ -66,6 +68,16 @@ def verify_active(root: Path):
         # Fail closed: exact SHA/structural CI cannot override a fatal WinUAE
         # illegal instruction. Keep the P2 builder in memory until fixed.
         raise AssertionError("R70 FAILED WinUAE Gate B (Guru $80000004); restore the pinned R69 working library")
+    if current_sha==R71_SHA:
+        from build_opt020_p2_r71 import build as build_r71
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        candidate, meta = build_r71()
+        assert cur == candidate and cur != good, "R71 differs from deterministic builder"
+        assert len(cur) == 51460 and meta["ap20_entries"] == 71 and meta["commands"] == 64
+        assert_native_links(unwrap_native_parts_v2(cur)[1])
+        assert sha256(good).hexdigest() == R68_SHA
+        return cur, good, "R71 0.13.16 OPT020/P2 repaired links; Gate A/CI candidate, WinUAE B and Compiler C NOT TESTED"
     if current_sha==R69_SHA:
         from build_opt020_p1e_r69 import build as build_r69
         candidate,meta=build_r69()

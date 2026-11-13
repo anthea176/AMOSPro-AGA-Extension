@@ -50,7 +50,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R70 0.13.15"):
+    if active.startswith("R71 0.13.16"):
+        from build_opt020_p2_r71 import R71_SHA, build as build_r71
+        candidate, meta = build_r71()
+        assert candidate == current and meta["sha256"] == R71_SHA
+        print("CURRENT R71 OPT020/P2 link repair Gate A; WinUAE B and Compiler C pending", meta)
+    elif active.startswith("R70 0.13.15"):
         from build_opt020_p2_r70 import build as build_r70
         candidate, meta = build_r70()
         assert candidate == current and meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
