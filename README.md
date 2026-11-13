@@ -107,6 +107,8 @@ These commands remain available for diagnostics or direct bank-pointer access. P
 
 **AGAPIC source safety:** do not modify a source bank while drawing. If RLE data changes between validation and rendering, some pixels can already have been written even when the function returns 0.
 
+### Command examples
+
 **Example — hide and restore the private AGA cursor** (after opening the private screen):
 
 ```amos
