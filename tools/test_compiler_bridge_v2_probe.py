@@ -13,6 +13,8 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack, unpack_from
 
+from active_library import LAST_GOOD_SHA  # Single SHA-pinned active LAST_GOOD policy.
+
 from compiler_bridge_v2_probe import (
     DISPATCH_V2, MAX_UNIT_BYTES, is_v2_wrapped,
     unwrap_native_parts_v2, wrap_native_ap20_v2,
@@ -27,7 +29,7 @@ R57_SHA256 = 'aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0' 
 R58_SHA256 = 'c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b'
 R59_SHA256 = '00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d'
 R60_SHA256 = '00b884ec34e6c30ab6a8f194dc3882aa8ac7e5e53697604089d04f2f8c7ad0c8'
-LAST_GOOD_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'  # Promoted R63 LAST_GOOD; historical R60 is rebuilt independently
+LAST_GOOD_SHA256 = LAST_GOOD_SHA  # Active promoted identity; historical R63_SHA256 stays immutable below.
 R61_SHA256 = 'ff26a7819744a8e42a64628d5e66504710835c2af812650e89cc681fb3c9050f'
 R62_SHA256 = '9fede9f8899ff8ec3c4d978a354e30d16b7e40006c854ac96f547098d786d6f6'
 R63_SHA256 = 'fd3b30e6d9d7801570a5e1d46a165c95623dd02d1ff0c4fdb4127f855e3087ba'
@@ -123,8 +125,8 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         if active_hash == R68_SHA256:
             from build_m18_r68_cblock import build as build_r68
             candidate,meta=build_r68()
-            assert current_bytes==candidate and current_bytes!=protected_bytes, (
-                "R68 must equal deterministic Chip CBlock builder and preserve R63")
+            assert current_bytes==candidate==protected_bytes, (
+                "Promoted R68 must match both deterministic CBlock builder and LAST_GOOD")
             assert meta["bytes"]==51064 and meta["commands"]==64 and meta["ap20_entries"]==71, (
                 "R68 V2 bridge size/commands/entry count differs")
         elif active_hash == R67_SHA256:
