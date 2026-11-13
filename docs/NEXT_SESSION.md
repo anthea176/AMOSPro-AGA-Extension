@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M18/R68 — Wrapper Chip CBlock EN GATE A, non publié (13/11/2026)
+
+**Code source natif en cours de qualification**, [émetteur](../tools/m18_cblock_bank_emit.py), [builder in-memory](../tools/build_m18_r68_cblock.py), [test M68000 Gate A](../tools/test_m18_r68_cblock_gate_a.py). Trois commandes expérimentales avec **Method explicite** pour mesurer précisément les modes **0 CPU8, 1 CPU16, 2 Blitter** : `Aga C Block Capture(Bank,X,Y,Width,Height,Method)`, `Aga C Block Draw(Bank,X,Y,Method)`, `Aga C Block Restore(Bank,Method)`. Banque `AGACBLK ` temporaire RAW dans Chip physique, réutilisation sans réallocation à taille/profondeur identiques, `TypeOfMem` début/fin de chaque plan, Safe et WaitBlit, source/destination back buffer privé AGA.
+
+**AUCUNE candidate R68 publiée tant que Gate A n'est pas vérifiée.** `dist/AMOSPro_AGA.Lib` reste R67 v0.13.12 Gates A/B PASS, R63 `LAST_GOOD` protégée. Aucun nouvel ASC actif ; CI Gate A utilise Unicorn + simulacres services AmigaOS, pas WinUAE ni AMOS Compiler. Une fois Gate A PASS, publier **un seul** nouveau binaire actif et **un seul** ASC interprété sous WinUAE. Uniquement `main`, pas de PR ni d'autre branche. Gate C Compiler manuelle réservée à la fin M18.
+
 ## M18/P0 — Prototype de comparaison CBlock Chip (13/11/2026)
 
 [Compte rendu et protocole](M18_CBLOCK_CPU_BLITTER_PROTOTYPE.md) : copie bas niveau **CPU8 (MOVE.B)**, **CPU16 (MOVE.W)** et **Blitter graphics.library**, capture/restauration sur deux BitMaps Chip, 8 ou 16 **pixels** d'alignement. **1 250 équivalences pixel PASS sur le modèle hôte local**, 23 refus. Émetteur du noyau 68000 : **872 octets localement** ; test natif Unicorn et appels OS simulés ajouté à la CI (vérifier son verdict sur le commit final). **Aucune mesure WinUAE ni vainqueur de vitesse établi.** Ce noyau n'est pas une commande AP20 utilisable par AMOS.

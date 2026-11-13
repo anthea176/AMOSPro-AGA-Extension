@@ -169,6 +169,10 @@ jobs:
         run: python -B tools/test_m18_ficon_chip_cache.py
       - name: M18/P5 real 68000 masked Chip blitter OS ABI Gate A
         run: python -B tools/test_m18_ficon16_chip_blit.py
+      - name: M18/R68 CBlock Chip temporary bank native API Gate A (no AMOS Compiler)
+        run: |
+          python -B tools/test_m18_r68_cblock_gate_a.py
+          python -B tools/build_m18_r68_cblock.py --emit-base64
       - name: M18/R67 screen FICON8 capture native AP20 Gate A (no compiler)
         run: |
           python -B tools/test_m18_r67_ficon_capture_gate_a.py
