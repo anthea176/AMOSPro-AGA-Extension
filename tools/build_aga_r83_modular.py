@@ -41,7 +41,7 @@ from build_c2p_r76_rpg_fix import state_offset, SITES
 CURRENT = ROOT / "dist" / "AMOSPro_AGA.Lib"
 LAST_GOOD = ROOT / "dist" / "AMOSPro_AGA_LAST_GOOD.Lib"
 TITLE = (b"AMOSPro AGA R83 v0.13.28 - 3 NATIVE UNITS\0"
-         b"$VER: AMOSPro AGA 0.13.28 (R83) MC68020+ 3 modules\0")
+         b"$VER: AMOSPro_AGA 0.13.28 (R83) MC68020+ 3 modules\0")
 TITLE += bytes(len(TITLE) & 1)
 EXPECTED_UNITS = (5558, 2508, 52974)
 EXPECTED_NATIVE_TOTAL = 61040
