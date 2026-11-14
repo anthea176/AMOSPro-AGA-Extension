@@ -525,9 +525,28 @@ def verified_current_compiler_seeds(parsed):
              "Strict source R74: entry 69 changed beyond GetP")
         old_close=old_parsed['section'][8]['core']
         hooks, hook_labels=emit_cleanup_hooks()
-        need(sections[8]['core'][len(old_close):]==hooks
-             and sections[8]['getp'],
-             "Strict source R74: cleanup hook source changed")
+        actual_hooks=sections[8]['core'][len(old_close):]
+        need(len(actual_hooks)==len(hooks) and sections[8]['getp'],
+             "Strict source R74: cleanup hook size or GetP changed")
+        # Only two BRA.W displacement WORDS are relinked by the R74
+        # builder; all other emitted hook bytes must match byte-for-byte.
+        word_sites={
+            hook_labels['jmp_normal']+2,
+            hook_labels['jmp_normal']+3,
+            hook_labels['jmp_program_exit']+2,
+            hook_labels['jmp_program_exit']+3,
+        }
+        need(all(actual_hooks[k]==hooks[k]
+                 for k in range(len(hooks)) if k not in word_sites),
+             "Strict source R74: cleanup hook bytes changed beyond audited PC16 links")
+        from c2p_r74_relink import expect_word_branch
+        for src,off,dst,to,opcode in (
+            (0,0x40,8,len(old_close)+hook_labels['program_exit_hook'],0x6000),
+            (8,0x08,8,len(old_close)+hook_labels['screen_hook'],0x6000),
+            (8,len(old_close)+hook_labels['jmp_normal'],8,0x126,0x6000),
+            (8,len(old_close)+hook_labels['jmp_program_exit'],0,0x1c8,0x6000),
+        ):
+            expect_word_branch(native_parts,src,off,dst,to,opcode)
         open_code,open_labels=emit_open()
         need(sections[70]['core']==open_code and not sections[70]['getp']
              and open_code.count(C2P_R74_BANK_MARKER)==1,
