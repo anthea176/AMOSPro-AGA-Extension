@@ -158,6 +158,44 @@ def main():
             "R77 focus regression: Aga Key waiting must be bracketed by AMOS back/front")
         assert source.rstrip().endswith("End"), "R77 test must end normally"
         print("PASS: R77 C2P Close active ASC covers dual close, reopen, 5 depths and RAM log (STATIC ONLY)")
+    if files and files[0].name == "C2P_R78_BLIT_01.asc":
+        source=files[0].read_text("ascii")
+        required=(
+            "Reserve As Data 12,81920", "Reserve As Data 13,1024",
+            "For _DEPTH=4 To 8", "Aga Screen Open(320,256,_COL,$00021000)",
+            "_C2P=Aga C2P Open(12)", "_B0=Aga C2P Blit(13,32,0,0,32,32,140,80)",
+            "_BLEFT=Aga C2P Blit", "_BRIGHT=Aga C2P Blit",
+            "_BTOP=Aga C2P Blit", "_BBOTTOM=Aga C2P Blit",
+            "_BAD1=Aga C2P Blit(12,320", "_BAD2=Aga C2P Blit(13,32",
+            "_BAD3=Aga C2P Blit(14,32",
+            "_BL_DEAD=Aga C2P Blit", "_BL_AGAIN=Aga C2P Blit",
+            "_CV0=Aga C2P Convert","_SW0=Aga Swap",
+            "_CV1=Aga C2P Convert","_SW1=Aga Swap",
+            "_CL1=Aga C2P Close","_CL2=Aga C2P Close",
+            "_REOPEN=Aga C2P Open(12)","_CV2=Aga C2P Convert",
+            "_SW2=Aga Swap","_CL3=Aga C2P Close",
+            "If _COL=256","_K=Aga Key","Until _K=69",
+            "Amos To Back","Aga Screen Close","Amos To Front",
+            "Erase 13","Erase 12","Trap Open Out","Trap Close",
+            "RUN_MODE","PRG_STATE","CPU_ATTNFLAGS","RESULT",
+            "BLIT_COPY_OK","BLIT_PIXEL_OK","BLIT_REJECT_OK","BLIT_REOPEN_OK",
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(s in source for s in required),(
+            "R78 ASC missing chunky blit, negative, Close, keyboard or RAM logging cases")
+        assert source.count("Aga C2P Blit")>=13, "R78 needs at least 13 blit calls"
+        assert source.index("_B0=Aga C2P Blit") < source.index("_CV0=Aga C2P Convert"), (
+            "Chunky compositing must precede explicit Convert")
+        assert source.index("_CL1=Aga C2P Close") < source.index("_BL_DEAD=Aga C2P Blit") < source.index("_REOPEN=Aga C2P Open(12)") < source.index("_BL_AGAIN=Aga C2P Blit"),(
+            "R78 Close/reopen lifecycle changed")
+        lines=[t.strip() for t in source.splitlines()]
+        assert lines.count("Amos To Back")==1, "Missing single AGA focus switch"
+        assert source.index("Amos To Back")<source.index("Until _K=69")<source.index("Aga Screen Close")<source.index("Amos To Front"),(
+            "R78 AGA keyboard focus regression")
+        assert "Next _DEPTH\nErase 13\nErase 12\nFINALIZE:" in source, (
+            "R78 normal exit must erase sprite bank 13 and chunky bank 12")
+        assert source.rstrip().endswith("End"),"R78 must return to AMOS"
+        print("PASS: R78 active ASC covers 5 depths, opaque and clipped blits, rejections, Close/reopen, RAM log (STATIC ONLY)")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")

@@ -1,6 +1,6 @@
 # C2P-4 / R78 - contrat approuve : Aga C2P Blit
 
-**Decision auteur, 14/11/2026 :** Blit accepte comme suite de R77 Close. La Gate B fonctionnelle R77 Close a ete confirmee sous WinUAE par le journal auteur du 14/11/2026 ; le prerequis est donc rempli. Le developpement de R78 reste a engager, sans nouvelle API implicite. Aucun zoom ni nouvelle API implicite.
+**Decision auteur, 14/11/2026 :** Blit accepte comme suite de R77 Close. La Gate B fonctionnelle R77 Close est confirmee ; R78 est maintenant implémentée en candidate native Gate A PASS, sans nouvelle API implicite. Aucun zoom ni nouvelle API implicite.
 
 ## Signature
 
@@ -38,4 +38,8 @@ Le zoom nearest-neighbour peut reutiliser cette base mais son contrat reste dist
 
 [Contrat R77](C2P_R77_CLOSE_CONTRACT_2026-11-14.md)
 
-**Statut 14/11/2026 :** R77 Gates A native et B fonctionnelle PASS, R78 **non implemente**. L'ASC R77 a ete corrige pour assurer `Amos To Back` avant Echap et eviter les interruptions Ctrl+C dues au focus ; ceci ne modifie pas la library, ni la qualification de la fonction Close. [Rapport R77](C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md).
+**Statut 14/11/2026 :** R77 Gates A native et B fonctionnelle PASS ; **R78 implémentée en candidate v0.13.23, Gate A CPU native PASS (46 scenarios)**, Gate B WinUAE NON TESTÉE. L'ASC R77 a ete corrige pour assurer `Amos To Back` avant Echap et eviter les interruptions Ctrl+C dues au focus ; ceci ne modifie pas la library, ni la qualification de la fonction Close. [Rapport R77](C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md).
+
+## Réalisation R78 et tests CPU (14/11/2026)
+
+Nouvelle entrée native append-only, 1358 octets, `Aga C2P Blit` fonction entière 8 paramètres. **68 commandes publiques / 75 AP20** ; taille binaire **55 772 octets**, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c`. Contrôles CPU M68000/M68020, source et destination DATA/WORK revalidées à chaque appel, overflow, clipping quatre bords, recouvrement physique interdit, index 0 opaque. **Gate A PASS (46 scenarios)** sur la bibliothèque reconstruite ; **Gate B WinUAE en attente**, puis Gate C Compiler finale. [Rapport](C2P_R78_BLIT_NATIVE_GATE_A_2026-11-14.md).

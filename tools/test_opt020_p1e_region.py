@@ -320,6 +320,7 @@ def v2_structure(native):
         from build_c2p_r75_convert import build as build_r75
         from build_c2p_r76_rpg_fix import build as build_r76
         from build_c2p_r77_close import build as build_r77
+        from build_c2p_r78_blit import build as build_r78
         from c2p_r74_relink import check_cross_r74
         from native_relative_links import assert_native_links
         r69, r69meta = build_r69()
@@ -331,8 +332,9 @@ def v2_structure(native):
         r75, r75meta = build_r75()
         r76, r76meta = build_r76()
         r77, r77meta = build_r77()
-        assert current in (r69, r70, r71, r72, r73, r74, r75, r76, r77), (
-            "current must be an EXACT SHA-pinned R69..R77 deterministic build")
+        r78, r78meta = build_r78()
+        assert current in (r69, r70, r71, r72, r73, r74, r75, r76, r77, r78), (
+            "current must be an EXACT SHA-pinned R69..R78 deterministic build")
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
@@ -343,12 +345,14 @@ def v2_structure(native):
         assert r76meta["sha256"]=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897" and r76meta["leas_patched"]==7
         assert r77meta["sha256"]=="81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
         assert r77meta["commands"]==67 and r77meta["ap20_entries"]==74
-        if current==r77:
+        assert r78meta["sha256"]=="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"
+        assert r78meta["commands"]==68 and r78meta["ap20_entries"]==75
+        if current in (r77,r78):
             # Historical 68020 Region implementation must remain bit-identical.
             r69_parts=unwrap_native_parts_v2(r69)[1]
             r77_parts=unwrap_native_parts_v2(r77)[1]
             assert r77_parts[59]==r69_parts[59], "R77 altered historical Region bytes"
-        if current in (r71, r72, r73, r74, r75, r76, r77):
+        if current in (r71, r72, r73, r74, r75, r76, r77, r78):
             parts_current=unwrap_native_parts_v2(current)[1]
             assert_native_links(parts_current[:70])
             if current in (r74, r75, r76, r77):

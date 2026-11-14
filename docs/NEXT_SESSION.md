@@ -1,6 +1,18 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R77 WinUAE — Gate B fonctionnelle PASS, correctif focus ASC (14/11/2026)
+## R78 v0.13.23 — Blit candidate, Gate A native PASS ; Gate B WinUAE EN ATTENTE (14/11/2026)
+
+**Candidat actif :** `dist/AMOSPro_AGA.Lib` R78 v0.13.23, **55 772 octets**, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c`, **68 commandes / 75 AP20**. `_OK=Aga C2P Blit(SrcBank,SrcPitch,SrcX,SrcY,W,H,DstX,DstY)` copie les indices chunky 8 bits entre banques DATA distinctes avec clipping et sans conversion / Swap implicites.
+
+**Gate A : PASS** — 46 scenarios CPU natifs (68000 rejete, 68020 accepte), pixels opaques exacts, clipping quatre cotes, banques sources et destination revalidees, recouvrements physiques refuses, limites et multiplications 32 bits verifiees, canaries/registres preservés. CI [run 43599864385](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43599864385) SUCCESS. Binaire append-only depuis R77 SHA `81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11`, bloc clavier/souris et sept LEA `$2F26` inchanges. [Rapport](C2P_R78_BLIT_NATIVE_GATE_A_2026-11-14.md).
+
+**Gate B R78 : NON TESTEE**. Un seul ASC actif : `tests/current/C2P_R78_BLIT_01.asc`, avec banques 12/13, 5 profondeurs, sprites 32x32, 4 clips, refus sans ecriture, pixels `Peek`, Close/reouverture, `Amos To Back` avant Echap, log `RAM:C2P_R78_<MODE>.TXT`, terminaison `End`. Ne pas compiler avant la Gate C finale du chantier C2P ; Gate D physique non testee.
+
+**Base validee :** R77 Close Gate A et B fonctionnelle PASS (journal auteur 5/5 ; ecart Fast +81944 octets libres explicable par un Ctrl+C anterieur en raison du focus ; l'ASC R77 avait ete corrige pour `Amos To Back`). R76 Convert Gates A/B PASS. **R73 v0.13.18 `LAST_GOOD` protegee** SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Aucune promotion R78 sans autorisation expresse.
+
+[Contrat R78](C2P_R78_BLIT_CONTRACT_2026-11-14.md) · [Rapport Gate A](C2P_R78_BLIT_NATIVE_GATE_A_2026-11-14.md) · [Protocole RAM](AMOS_RAM_TEST_LOGGING.md).
+
+## Historique R77 — Gate B fonctionnelle PASS, correctif focus ASC (14/11/2026)
 
 **Journal utilisateur `C2P_R77_RUNTIME.TXT` :** R77 v0.13.22, `PRG_STATE 1` / `RUN_MODE RUNTIME`, CPU Exec 68030, `RESULT 1`, `PASS_DEPTH 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`. Les appels de fermeture explicite, double fermeture et reouverture fonctionnent sur les cinq profondeurs. **Gate B fonctionnelle PASS** ; Gate C Compiler et D physique NON TESTEES.
 

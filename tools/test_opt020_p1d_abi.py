@@ -181,6 +181,7 @@ def ap20_v2_in_memory_probe():
         from build_c2p_r75_convert import build as build_r75
         from build_c2p_r76_rpg_fix import build as build_r76, state_offset
         from build_c2p_r77_close import build as build_r77
+        from build_c2p_r78_blit import build as build_r78
         from c2p_r74_relink import check_cross_r74
         from native_relative_links import assert_native_links
         candidate69, meta69 = build_r69()
@@ -192,9 +193,10 @@ def ap20_v2_in_memory_probe():
         candidate75, meta75 = build_r75()
         candidate76, meta76 = build_r76()
         candidate77, meta77 = build_r77()
+        candidate78, meta78 = build_r78()
         assert current in (candidate69, candidate70, candidate71, candidate72, candidate73,
-                           candidate74, candidate75, candidate76, candidate77), (
-            "Current must match one deterministic SHA-pinned R69..R77 builder, not an unknown Lib")
+                           candidate74, candidate75, candidate76, candidate77, candidate78), (
+            "Current must match one deterministic SHA-pinned R69..R78 builder, not an unknown Lib")
         assert meta69["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert meta70["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert meta71["sha256"] == R71_SHA
@@ -205,7 +207,9 @@ def ap20_v2_in_memory_probe():
         assert meta76["sha256"]=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897" and meta76["leas_patched"]==7
         assert meta77["sha256"]=="81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
         assert meta77["commands"]==67 and meta77["ap20_entries"]==74
-        if current in (candidate71, candidate72, candidate73, candidate74, candidate75, candidate76, candidate77):
+        assert meta78["sha256"]=="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"
+        assert meta78["commands"]==68 and meta78["ap20_entries"]==75
+        if current in (candidate71, candidate72, candidate73, candidate74, candidate75, candidate76, candidate77, candidate78):
             checked_parts=unwrap_native_parts_v2(current)[1]
             assert_native_links(checked_parts[:70])
             if current in (candidate74, candidate75, candidate76, candidate77):
