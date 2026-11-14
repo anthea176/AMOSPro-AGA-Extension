@@ -85,6 +85,7 @@ Les validations détaillées, les Rxx intermédiaires, les échecs historiques, 
 4. **Contrat avant code :** entrée/sortie, mémoire Fast/Chip, plage des paramètres, `Safe`, écran/buffers, traitement d'erreur, ressources et nettoyage, gestion de la fermeture, scénario de test. Les fonctions C2P futures exigent chacune une validation de contrat.
 5. **Affichage :** écran Intuition AGA privé, dessin uniquement sur back buffer autorisé, `Safe` avant écriture/DMA, `WaitBlit` si nécessaire ; **aucun Swap ni changement de palette implicite** sauf contrat explicite.
 6. **Traçabilité :** état courant dans [NEXT_SESSION](NEXT_SESSION.md), spécifications dans les rapports dédiés, chronologie dans [LIBRARY_TEST_HISTORY](LIBRARY_TEST_HISTORY.md). Pas de benchmark, nouvelle compilation, tag, release ou publication par simple mise à jour de cette roadmap.
+7. **Architecture CPU cible : 68020 minimum.** Décision applicable **dès maintenant** à tous les futurs développements (68020/68EC020, 68030, 68040, 68060). **Aucun support 68000/68010 exigé** pour du code nouveau ; conserver les tests et binaires historiques, sans les réécrire. Les contrôles de rejet sur anciens CPU restent pertinents pour éviter un Guru, mais leur prise en charge fonctionnelle est abandonnée. Voir la [règle prioritaire](../EXTENSION_SOURCE_RULES.md). Aucun build modifié par cette décision.
 
 
 ## 7. Dernier jalon potentiel — Chargement / sauvegarde PNG
