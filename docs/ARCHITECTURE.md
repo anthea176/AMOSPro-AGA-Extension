@@ -1,5 +1,15 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## État de travail — R84 v0.13.29 AGAPIC v1/v2, candidate native (14/11/2026)
+
+**R84 active sur `main` :** `dist/AMOSPro_AGA.Lib`, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, **76 commandes, 85 entrées AP20** ; 3 unités natives C2P **5 558**, IFF **2 508**, AGA/AGAPIC **56 580** octets. Nouveau code natif : Info **1 088** et capture v1/v2 **2 510** octets, sans padding ; dispatcher 68020 et toutes les signatures héritées de R83 validés. **Marge AGA 8 954 octets** jusqu'à 65 534. Plus grand écart du chargeur BSR.W : **9 000 octets**.
+
+**Gate A CPU/CI R84 PASS** : [CI dédiée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43644680232) : 44 tests Info et 47 tests de capture sous émulation MC68020, v1/v2, profondeurs 1/4/8, opaque/masqué, RGB24, ModeID, flux RLE, allocations et conservation des banques existantes. **Gates B Runtime WinUAE et C Compiler NON TESTÉES** sur le binaire R84 ; `tests/current/AGAPIC_R84_V1_V2_01.asc` est le seul test AMOS actif. La **R83 `LAST_GOOD` SHA256 01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb est protégée, inchangée et A/B/C PASS**. Pas de promotion R84, pas de tag ni publication.
+
+[Contrat R84](AGAPIC_R84_V1_V2_CONTRACT_2026-11-14.md) · [Gate A](AGAPIC_R84_GATE_A_2026-11-14.md) · [Roadmap](ROADMAP.md).
+
+---
+
 ## État actuel — M17/R59 compacte `LAST_GOOD` PROMUE, Gates A/B/C PASS (12/11/2026)
 
 **Bibliothèque officielle et `LAST_GOOD` identiques :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), R59 0.13.4, 32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. **53 commandes, 60 entrées AP20, 59 routines natives R57 strictement identiques**. Le dispatcher V2 de 34 octets traite des offsets non signés avec `MOVEQ #0,D0` et `ADDA.L`. Monolithe **30 782 octets** (34 dispatcher + 30 748 natifs). Les stubs AP20 et le code natif de R57 sont identiques ; seule l'enveloppe de 32 à 34 octets et le titre changent. `Aga Probe` utilise son chemin d'origine, **sans routine témoin à 40 Ko**.

@@ -486,15 +486,15 @@ def verified_current_compiler_seeds(parsed):
     authenticates the current and LAST_GOOD Compiler wrappers. No altered,
     independently rebuilt, or future unknown binary receives these seeds.
     """
-    from active_library import verify_active, R82_SHA, R83_SHA
+    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA
     from compiler_relocation import native_from_promoted, repack_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
-    if sha(current) == R83_SHA:
+    if sha(current) in (R83_SHA,R84_SHA):
         # This exporter only disassembles historical single-unit sources.
-        # verify_active() has checked the current and promoted R83 bytes.
+        # verify_active() has checked the active R83/R84 and promoted R83.
         # Rebuild the R82 source independently: LAST_GOOD now holds R83.
-        need(sha(last_good) == R83_SHA and current == last_good,
+        need(sha(last_good) == R83_SHA and sha(current) in (R83_SHA,R84_SHA),
              'Strict source: promoted R83 active/LAST_GOOD identity lost')
         from build_agapic_v2_r82_full_preview import build as build_r82
         ancestor, _ = build_r82()

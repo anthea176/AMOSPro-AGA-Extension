@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Pinned current/LAST_GOOD/R46 compiler-safe native export regression, read-only."""
 from __future__ import annotations
+from hashlib import sha256
 
 import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -25,6 +26,19 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==R84_SHA:
+            # Three-module R84 is not a single-unit strict ASM export.
+            # Deterministically reconstruct all units and verify provenance.
+            from build_aga_r84_agapic import build as build_r84
+            from compiler_relocation import unpack_ap20
+            candidate,meta=build_r84()
+            assert wrapped==candidate and meta["sha256"]==R84_SHA
+            _, native_units, title=unpack_ap20(wrapped)
+            assert len(native_units)==85 and tuple(map(len,native_units[82:]))==meta["units"]
+            assert b"R84 v0.13.29" in title
+            assert sha256(original[1]).hexdigest()==R83_SHA
+            print("STRICT R84 THREE-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==R83_SHA:
             # The legacy strict ASM exporter expects ONE Compiler V2 unit.
             # Fail closed rather than pretending R83's three units are a

@@ -69,6 +69,36 @@ def main():
         print(f"PASS: {path.name} has matched IF/END IF and FOR/NEXT; no single-line THEN")
     if not files:
         print("PASS: no active AMOS test (zero is valid after archiving)")
+    if files and files[0].name == "AGAPIC_R84_V1_V2_01.asc":
+        src=files[0].read_text("ascii")
+        required=(
+            "For _PASS=1 To 2", "_COLORS=16", "_COLORS=256",
+            "Aga Bank Image Info(11,1)", "Aga Bank Image Info(12,5)",
+            "Aga Bank Image Capture(11,40,40,64,40,-1,1)",
+            "Aga Bank Image Capture(12,40,40,64,40,-1,2)",
+            "Aga Bank Image Capture(13,40,40,64,40,0,1)",
+            "Aga Bank Image Capture(14,40,40,64,40,0,2)",
+            "Aga Image Capture(15,40,40,64,40,-1)",
+            "Aga Bank Image Info(11,4)", "Aga Bank Image Info(11,5)",
+            "Aga Bank Image Info(12,4)", "Aga Bank Image Info(12,5)",
+            "Aga Bank Palette Apply(12,0)",
+            "Save \"RAM:R84_V1_4.abk\",11",
+            "Save \"RAM:R84_V2_8.abk\",12",
+            "Aga Bank Image Draw(11,", "Aga Bank Image Draw(12,",
+            "Aga Image Region(11,", "Aga Image Region(12,",
+            "Aga Swap", "Aga Screen Close", "Erase 11", "Erase 12",
+            "RAM:AGAPIC_R84_RUNTIME.TXT", "RAM:AGAPIC_R84_COMPILED.TXT",
+            "RLE_EQUAL_OK", "MASK_EQUAL_OK", "PASS_4", "PASS_8",
+            "CHIP_DELTA", "FAST_DELTA", "CLOSE_RETURNED"
+        )
+        assert all(item in src for item in required), "R84 WinUAE ASC missing mandatory AGAPIC v1/v2 case"
+        assert src.count("_C11=Aga Bank Image Capture(")==1
+        assert src.count("_C15=Aga Image Capture(")==1
+        assert src.index("For _PASS=1 To 2")<src.index("Next _PASS")
+        assert src.index("Save \"RAM:R84_V1_4.abk\"")<src.index("Load \"RAM:R84_V1_4.abk\"")
+        assert src.rstrip().endswith("End")
+        print("PASS: R84 single ASC validates v1/v2 4/8-plane capture/Info, RLE, Save/Load and cleanup (STATIC)")
+
     if files and files[0].name == "C2P_P2_R73_BITMAP_01.asc":
         source = files[0].read_text("ascii")
         required = (

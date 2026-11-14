@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -47,16 +47,23 @@ def negative_cases(parts):
 
 def main():
     image=BINARY.read_bytes()
-    if sha256(image).hexdigest()==R83_SHA:
-        # Check actual R83 unit bytes independently from its builder.
+    if sha256(image).hexdigest() in (R83_SHA,R84_SHA):
+        # Check inherited native input-state code independently from source.
         from build_agapic_v2_r82_full_preview import build as build_r82
         frozen, _ = build_r82()
         assert sha256(frozen).hexdigest()==R82_SHA
-        assert Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()==image, "R83 promoted LAST_GOOD changed"
+        last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+        assert sha256(last_good).hexdigest()==R83_SHA
         _, original=unwrap_native_parts_v2(frozen)
         _, units, _=unpack_ap20(image)
-        assert len(units)==83
-        core=units[82][len(DISPATCH_V2):]
+        idx=82 if sha256(image).hexdigest()==R83_SHA else 84
+        assert len(units)==(83 if idx==82 else 85)
+        if idx==84:
+            _, r83parts, _=unpack_ap20(last_good)
+            assert units[84].startswith(r83parts[82]), "R84 changed inherited R83 AGA code"
+        else:
+            assert image==last_good
+        core=units[idx][len(DISPATCH_V2):]
         frozen_aga=b"".join(original[:70])
         assert core[:len(frozen_aga)]==frozen_aga, "R83 active AGA/State code changed"
         parts=original

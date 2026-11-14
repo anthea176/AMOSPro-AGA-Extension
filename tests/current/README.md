@@ -1,31 +1,14 @@
-# Test AMOS actif — R83 v0.13.28 modulaire (main)
+# Test AMOS actif — R84 AGAPIC v1/v2 (main)
 
-**Un seul test actif :** [`C2P_R83_MODULAR_01.asc`](C2P_R83_MODULAR_01.asc).
-**Un seul binaire actif :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib).
-La **R83 est promue `LAST_GOOD`** ; les deux binaires de `dist/` sont identiques (64 188 octets).
-La R82 historique reste reconstructible depuis son builder et l'historique Git.
-Le test R83 validé est aussi archivé dans [`tests/passed/`](../passed/C2P_R83_MODULAR_01.asc).
+**Unique ASC actif :** [AGAPIC_R84_V1_V2_01.asc](AGAPIC_R84_V1_V2_01.asc). **Unique bibliothèque de travail :** [R84 candidate](../../dist/AMOSPro_AGA.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes. **R83 LAST_GOOD protégée :** [AMOSPro_AGA_LAST_GOOD.Lib](../../dist/AMOSPro_AGA_LAST_GOOD.Lib), 64 188 octets, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`. Le test R83 précédemment validé est archivé dans [tests/passed](../passed/C2P_R83_MODULAR_01.asc).
 
-## Exécution sous WinUAE AGA, CPU 68020+
+## WinUAE — Gate B Runtime puis Gate C Compiler
 
-1. Sauvegarder la bibliothèque AMOS installée, puis installer
-   `dist/AMOSPro_AGA.Lib` en `APSystem/AMOSPro_AGA.Lib` dans le
-   slot habituel n°14.
-2. Avoir `LIBS:c2p.library` v1.9 et un IFF indexé
-   **320×256, 4 à 8 bitplanes** ; témoin :
-   `iff-TEST/AGA_DEMO_320x256_256c.iff`.
-3. Ouvrir un programme AMOS vide puis **Project → Merge ASCII** avec
-   l'ASC actif. Sélectionner l'IFF dans `Fsel$`.
-   Les banques DATA 12 et 13 sont effacées au démarrage du test.
-4. Vérifier l'affichage de l'IFF, du C2P, Blit et Zoom, puis
-   appuyer sur **Échap** pour nettoyer et écrire le journal RAM.
-5. Journaux : `RAM:C2P_R83_RUNTIME.TXT` et
-   `RAM:C2P_R83_COMPILED.TXT`. Attendus :
-   `RESULT 1`, `ERR 0`, `CHUNKY_OK 1`,
-   `PIXEL_CHECK_COUNT 14`, `CLOSE_RETURNED`.
+1. Sauvegarder la bibliothèque AMOS actuelle et l’Interpreter Config. Installer **uniquement** `dist/AMOSPro_AGA.Lib` (R84 candidate) dans `APSystem/AMOSPro_AGA.Lib` (même slot AMOS habituel n°14, s'il est libre). La version `LAST_GOOD` n’est **pas** la R84.
+2. Démarrer WinUAE AGA CPU 68020+ (68030 recommandé), AMOS Professional. Utiliser un programme vide puis **Project → Merge ASCII** avec le seul ASC actif. Laisser les banques **11..15 libres** ; le test refuse de les écraser.
+3. Le banc ouvre successivement un écran AGA **320×256×16** puis **320×256×256**. Pour chaque profondeur : capture native v1/v2 opaque et masquée, héritage de l'ancienne API v1, Info champs 1..5, contrôle octet par octet des flux RLE, palette RGB24/ModeID, refus invalides, Save/Erase/Load ABK, Draw/Region/Swap, fermeture et RAM.
+4. Journaux : `RAM:AGAPIC_R84_RUNTIME.TXT` puis compiler un **nouvel exécutable** AMOS et relever `RAM:AGAPIC_R84_COMPILED.TXT`. Attendus : `RESULT 1`, `VERDICT PASS`, `PASS_4 1`, `PASS_8 1`, `ERR 0`, `CLOSE_COUNT 2`, `CHIP_DELTA 0`, `FAST_DELTA 0`. Transmettre les deux fichiers et signaler toute anomalie visuelle.
 
-**État : Gates A CPU/CI, B Runtime WinUAE et C AMOS Compiler PASS (MC68030).**
-Autorisation explicite de promotion le 14/11/2026 ; R83 `LAST_GOOD` protégée.
-L'ASC R83 demeure le seul actif jusqu'au prochain test approuvé.
-Le précédent banc AGAPIC R82, déjà validé, est désormais conservé dans
-[`tests/passed/AGAPIC_R82_V2_BANK_PALETTE_01.asc`](../passed/AGAPIC_R82_V2_BANK_PALETTE_01.asc).
+**Statut : Gate A native CPU/CI PASS** (44 tests Info et 47 captures sur vrai cœur 68020 émulé). **Gates B WinUAE Runtime / C AMOS Compiler R84 encore à confirmer.** `PRG_STATE 0` strict et Amiga physique Gate D non testés. Ne pas promouvoir R84 ni déplacer l'ASC dans `tests/passed` avant validation de l'auteur.
+
+[Contrat](../../docs/AGAPIC_R84_V1_V2_CONTRACT_2026-11-14.md) · [Rapport Gate A](../../docs/AGAPIC_R84_GATE_A_2026-11-14.md).

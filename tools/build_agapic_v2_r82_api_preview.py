@@ -13,7 +13,7 @@ from pathlib import Path
 
 from audit_ap20 import inspect,parse,token
 from build_c2p_r81_opt020 import build as build_r81
-from active_library import R82_SHA, R83_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA
 from build_c2p_r76_rpg_fix import SITES,state_offset
 from compiler_bridge_v2_probe import unwrap_native_parts_v2,wrap_native_ap20_v2
 from compiler_relocation import GETP,repack_ap20,unpack_ap20
@@ -41,7 +41,7 @@ APIS=(
 def build():
     baseline,_=build_r81()
     assert sha256(baseline).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized R81/R82/R83 LAST_GOOD'
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized historical LAST_GOOD'
     tok,old=unwrap_native_parts_v2(baseline)
     assert len(old)==76 and not old[-1].endswith(GETP)
     assert state_offset(old)==12070
@@ -100,9 +100,9 @@ def build():
     budget=inspect_library(image)
     assert budget['margin']>2048,'Insufficient 16-bit capacity for further R82 work'
     active_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
-    if active_sha==R83_SHA:
+    if active_sha in (R83_SHA,R84_SHA):
         assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA), 'R83 requires known LAST_GOOD'
-    assert active_sha in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized active R81/R82/R83'
+    assert active_sha in (R81_SHA,R82_SHA,R83_SHA,R84_SHA), 'unrecognized active historical/R84'
     return image,dict(
         kind='R82 experimental FOUR-API in-memory structural preview',
         size=len(image),sha256=sha256(image).hexdigest(),

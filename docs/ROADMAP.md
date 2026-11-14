@@ -7,11 +7,11 @@
 
 | Sujet | État |
 |---|---|
-| **Bibliothèque active** | **R83 v0.13.28 PROMUE `LAST_GOOD`** : les deux fichiers `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont identiques (64 188 octets, **74 commandes / 83 entrées AP20**). R82 historique, reconstructible depuis son builder. |
-| **Validation R83** | **PASS** Gates A CPU/CI, B WinUAE Runtime, C AMOS Compiler 68030 sur IFF/C2P/Blit/Zoom (14/14 pixels, RAM 0/0). **Non testés** : `PRG_STATE 0` strict et Amiga physique. R82 A/B/C historiques PASS sur AGAPIC v1/v2. |
-| **Capacité Compiler V2** | **R83 : trois unités** : C2P 5 558, IFF 2 508, AGA/AGAPIC 52 974 octets, chacune sous 65 534 octets ; vérifier aussi la portée `BSR.W` du chargeur. **Marge AGA actuelle : 12 560 octets**, à contrôler avant AGAPIC. |
-| **Test AMOS actif** | `tests/current/C2P_R83_MODULAR_01.asc` — IFF→chunky natif positif, conversion C2P, Blit, Zoom, fermeture ; unique ASC. |
-| **Priorités avant M19** | **1. R83 modulaire** : terminée et promue, Gates A/B/C PASS sur `main`. **2. AGAPIC v1/v2 complet** : métadonnées par banque et capture native v1/v2 au choix, sans régression v1. |
+| **Bibliothèque active** | **R84 v0.13.29 CANDIDATE active** : `dist/AMOSPro_AGA.Lib`, **67 904 octets, 76 commandes / 85 entrées AP20**, Gate A native PASS. **R83 v0.13.28 demeure `LAST_GOOD`** protégée et inchangée dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 64 188 octets, 74 commandes / 83 entrées AP20. |
+| **Validation R84 / R83** | **R84 : Gate A native CPU/CI PASS** (Info 44 + capture 47 cas sur émulateur MC68020), **Gates B Runtime WinUAE et C Compiler EN ATTENTE**. R83 `LAST_GOOD` : Gates A/B/C PASS. Mode strict `PRG_STATE 0` et Gate D physique non testés. |
+| **Capacité Compiler V2** | **R84 : trois unités** : C2P 5 558, IFF 2 508, AGA/AGAPIC **56 580 octets**, toutes sous 65 534 octets, et `BSR.W` vérifié (écart maximal 9 000). **Marge AGA R84 : 8 954 octets.** |
+| **Test AMOS actif** | `tests/current/AGAPIC_R84_V1_V2_01.asc` — Info, captures native v1/v2 4/8 plans, opaque/masquée, comparaison RLE, sauvegarde ABK, dessin et fermeture ; unique ASC. |
+| **Priorités avant M19** | **1. R83 modulaire** : terminée et promue, Gates A/B/C PASS sur `main`. **2. AGAPIC v1/v2 complet** : R84 candidate Gate A PASS ; tests WinUAE Runtime et Compiler à réaliser avant promotion. |
 
 Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -27,7 +27,7 @@ La présence d'une fonction dans R82 ne signifie **pas** que les 74 commandes on
 
 ## 3. Chantiers prioritaires avant M19 — ordre retenu le 14/11/2026
 
-Ces **deux chantiers passent avant M19**. La preuve de faisabilité du premier a réussi sur P5 ; sa transformation en bibliothèque de production reste à finaliser. Le second est à spécifier puis développer. La fusion de l'outillage et des preuves dans `main` n'est **pas** une promotion du binaire P5.
+Ces **deux chantiers passent avant M19**. La preuve de faisabilité du premier a réussi sur P5 ; sa transformation en bibliothèque de production reste à finaliser. Le second est implémenté dans la candidate R84 et attend les Gates B/C WinUAE. La fusion de l'outillage et des preuves dans `main` n'est **pas** une promotion du binaire P5.
 
 ### Chantier 1 — R83 modulaire : trois unités AP20
 
@@ -44,6 +44,8 @@ Références : [constructeur R83](../tools/build_aga_r83_modular.py) · [test ac
 
 
 ### Chantier 2 — AGAPIC v1/v2 : compléter les fonctions natives AMOS
+
+**Implémentation R84 v0.13.29 sur `main` : Gate A native/CI PASS, Gates B/C WinUAE NON TESTÉES.** La candidate active R84 propose les deux fonctions suivantes : `_VALEUR=Aga Bank Image Info(Bank,Champ)` (champs 1..5 ; v1 sans palette/ModeID = 0, erreur = -1), et `_OK=Aga Bank Image Capture(Bank,X,Y,Width,Height,TransparentIndex,Version)` (Version=1 ou 2). L’ancienne `Aga Image Capture` reste inchangée (v1). Captures opaque/masquées en 4/8 plans, RGB24 complet/ModeID et nettoyage ont passé les tests CPU. Les décisions AGAPIC v1/v2 ci-dessous demeurent le contrat à respecter ; la Gate B vérifiera les vrais ABK Save/Load, Draw/Region, palette, régression et mémoire sur WinUAE. **La R83 `LAST_GOOD` n’est pas modifiée.** [Contrat R84](AGAPIC_R84_V1_V2_CONTRACT_2026-11-14.md) · [Gate A](AGAPIC_R84_GATE_A_2026-11-14.md).
 
 **Constat R82 :** lecture, dessin v1/v2 et application explicite de la palette v2 fonctionnels sur le périmètre testé ; `Aga Image Capture` ne crée **que du v1**. L'API de métadonnées demandée n'existe pas dans R82. La capture native devra permettre de créer **au choix une banque AGAPIC v1 ou v2**, sauvegardable et rechargeable par AMOS, sans convertisseur PC obligatoire. **La création v1 reste une fonction à part entière**, et non une compatibilité limitée à la lecture.
 

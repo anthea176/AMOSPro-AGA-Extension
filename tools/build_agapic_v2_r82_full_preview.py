@@ -13,7 +13,7 @@ from pathlib import Path
 from audit_ap20 import inspect,parse
 from build_agapic_v2_r82_api_preview import build as build_api_preview, APIS
 from build_c2p_r81_opt020 import build as build_r81
-from active_library import R82_SHA, R83_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA
 from build_c2p_r76_rpg_fix import SITES,state_offset
 from compiler_bridge_v2_probe import unwrap_native_parts_v2,wrap_native_ap20_v2
 from compiler_relocation import GETP,repack_ap20,unpack_ap20
@@ -45,11 +45,11 @@ def native_starts(parts):
 def build():
     parent,_=build_r81()
     assert sha256(parent).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized R81/R82/R83 LAST_GOOD'
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized historical LAST_GOOD'
     current_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
-    if current_sha==R83_SHA:
+    if current_sha in (R83_SHA,R84_SHA):
         assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA), 'R83 requires known LAST_GOOD'
-    assert current_sha in (R81_SHA,R82_SHA,R83_SHA),'unrecognized active R81/R82/R83 binary'
+    assert current_sha in (R81_SHA,R82_SHA,R83_SHA,R84_SHA),'unrecognized active historical/R84 binary'
     proto,proto_meta=build_api_preview()
     tokens,parts=unwrap_native_parts_v2(proto)
     _t,orig=unwrap_native_parts_v2(parent)

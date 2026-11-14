@@ -49,6 +49,7 @@ R80_SHA="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"  # IF
 R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # C2P MC68020 optimized Blit/Zoom/IFF, Gates A/B/C PASS (8 planes / 68030)
 R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # R82 historical former LAST_GOOD; Gates A/B Runtime/C PASS; physical D untested
 R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular PROMOTED LAST_GOOD; R82 historical pinned
+R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 AGAPIC native v1/v2 Gate A PASS, active candidate; WinUAE B/C pending
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -76,6 +77,21 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == R84_SHA:
+        from compiler_relocation import unpack_ap20
+        from build_aga_r84_agapic import build as build_r84
+        expected, meta=build_r84()
+        assert cur==expected and meta["sha256"]==R84_SHA, "R84 binary differs from pinned native builder"
+        assert len(cur)==67904 and meta["bytes"]==67904
+        assert meta["commands"]==76 and meta["ap20_entries"]==85
+        assert sha256(good).hexdigest()==R83_SHA and len(good)==64188, "R83 LAST_GOOD not protected"
+        tok, seg, title=unpack_ap20(cur)
+        assert len(seg)==85 and tuple(map(len,seg[82:]))==meta["units"]
+        assert b"R84 v0.13.29" in title and b"TEST ONLY" not in title
+        report=inspect(parse(cur))
+        assert not report["issues"],report["issues"]
+        assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76, "R84 API changed"
+        return cur,good,"R84 v0.13.29 AGAPIC v1/v2 CANDIDATE: Gate A native CPU/CI PASS; WinUAE Runtime B and AMOS Compiler C PENDING; R83 LAST_GOOD protected"
     if current_sha == R83_SHA:
         from compiler_relocation import unpack_ap20
         tok, seg, title = unpack_ap20(cur)

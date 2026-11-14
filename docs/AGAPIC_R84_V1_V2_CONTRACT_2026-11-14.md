@@ -1,7 +1,7 @@
 # R84 — chantier AGAPIC v1/v2 : contrat de travail
 
 **14 novembre 2026 — main uniquement. R83 LAST_GOOD protege.**
-Ce document precise les deux APIs du chantier 2 de docs/ROADMAP.md. R84 est pour l'instant une **construction native en memoire**, sans mise en place ni promotion du binaire.
+Ce document précise les deux APIs du chantier 2 de docs/ROADMAP.md. R84 est une **candidate native dans le seul binaire actif `dist/AMOSPro_AGA.Lib`**, validée en Gate A CPU/CI ; WinUAE Runtime/Compiler B/C restent à tester. `LAST_GOOD` R83 n’a pas changé.
 
 ## 2A — _VALEUR=Aga Bank Image Info(Bank,Champ)
 
@@ -26,7 +26,7 @@ Controle natif : enveloppe AMOS, signature AGAPIC, version, flags, codec, dimens
 
 R83 : 74 commandes, 80 entrees publiques et 3 groupes natifs AP20. R84 : 76 commandes, 82 entrees publiques et les memes trois groupes. Ancien code et anciennes signatures inchanges ; ajout dans l'unite AGA et reindexation controlée des stubs, sans quatrieme unite. Controler **65 534 octets maximum par unite** et le BSR.W du chargeur.
 
-- Gate A en cours : builder deterministe, API et GetP, liens 68020, vrai code CPU, palettes/capture v1-v2, erreurs, bank rollback, memoire ; les seuls tests structure/dispatch ne suffisent pas pour la declarer valide.
+- Gate A **PASS** : builder deterministe, API et GetP, liens 68020, code CPU executé (Info 44 cas, capture 47 cas), palette/ModeID, erreur et mémoire. Ces tests natifs ne prouvent pas le comportement sous AMOS/WinUAE.
 - Gate B ensuite : WinUAE Runtime, un seul ASC actif ; meme image capturee v1/v2 en 4/8 plans opaque et masque, Save/Load ABK et dessin, palette/ModeID, rejets et RAM.
 - Gate C ensuite : compilation AMOS du meme banc. Gate D Amiga physique non presumee.
 - LAST_GOOD R83 inchangee, pas de tag, GitHub Release, Aminet ou branche experimentee sans nouvelle autorisation.

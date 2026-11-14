@@ -50,7 +50,14 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R83 v0.13.28"):
+    if active.startswith("R84 v0.13.29"):
+        from build_aga_r84_agapic import build as build_r84
+        candidate,meta=build_r84()
+        assert candidate==current and meta["sha256"]=="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+        assert meta["bytes"]==67904 and meta["commands"]==76 and meta["ap20_entries"]==85
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
+        print("CURRENT R84 NATIVE AGAPIC V1/V2 CANDIDATE: CPU/CI Gate A PASS; WinUAE B/C pending",meta)
+    elif active.startswith("R83 v0.13.28"):
         from build_aga_r83_modular import build as build_r83
         candidate,meta=build_r83()
         assert candidate==current and meta["sha256"]=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"

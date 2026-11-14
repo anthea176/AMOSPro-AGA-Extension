@@ -1,5 +1,17 @@
 # EXTENSION_SOURCE_RULES.md
 
+## ÉTAT ACTUEL — R84 candidate Gate A validée, R83 LAST_GOOD protégée
+
+**Branche `main` uniquement.** Un seul binaire de travail : `dist/AMOSPro_AGA.Lib` R84 v0.13.29 (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes / 85 AP20). Un seul ASC actif : `tests/current/AGAPIC_R84_V1_V2_01.asc` ; test R83 déjà archivé.
+
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste **R83 v0.13.28 octet pour octet**, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, 64 188 octets. Aucune mutation de cette `LAST_GOOD`, aucune branche expérimentale, aucun tag, release ni publication.
+
+R84 ajoute `Aga Bank Image Info` et `Aga Bank Image Capture(...,Version)`, tout en conservant les 74 commandes R83. **Gate A native CPU/CI PASS** : 44 cas Info, 47 captures sur MC68020 émulé, structure AP20/ABI/dispatch. **Gates B WinUAE Runtime et C AMOS Compiler NON TESTÉES** ; R84 est une candidate, pas une version promue. Les décisions AGAPIC v1/v2 restent celles de `docs/ROADMAP.md`. Aucune promotion sans nouvelle autorisation explicite de l’auteur.
+
+[Rapport Gate A](docs/AGAPIC_R84_GATE_A_2026-11-14.md) · [Test R84](tests/current/AGAPIC_R84_V1_V2_01.asc).
+
+---
+
 ## ÉTAT AUTORITAIRE — R83 v0.13.28 PROMUE LAST_GOOD (14/11/2026)
 
 **Autorisation explicite : « promotion ok ! »** après lecture des journaux WinUAE R83 Runtime et Compiled. Sur **main**, `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont un **même blob Git de 64 188 octets**, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`. 74 commandes / 83 entrées AP20 ; unités C2P 5 558, IFF 2 508 et AGA/AGAPIC 52 974 octets, sans padding.

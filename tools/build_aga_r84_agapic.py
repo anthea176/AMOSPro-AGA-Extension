@@ -20,7 +20,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"/"experiments"))
-from active_library import R83_SHA
+from active_library import R83_SHA, R84_SHA
 from build_aga_r83_modular import build as build_r83
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -106,10 +106,16 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("R84 must have exactly 80 live native stubs")
     if parts[82]!=old[80] or parts[83]!=old[81] or not parts[84].startswith(old[82]):
         raise AssertionError("R83 native C2P/IFF/AGA bytes not preserved")
-    if ACTIVE.read_bytes()!=frozen:
-        raise AssertionError("R84 is source-only pending native validation; active must remain R83")
+    active=ACTIVE.read_bytes()
+    active_sha=sha256(active).hexdigest()
+    if active_sha not in (R83_SHA,R84_SHA):
+        raise AssertionError("Unexpected active library while rebuilding R84")
+    if active_sha==R84_SHA and active!=candidate:
+        raise AssertionError("Installed R84 candidate differs from deterministic builder")
+    if sha256(candidate).hexdigest()!=R84_SHA:
+        raise AssertionError("R84 candidate source drifted since native Gate A")
     return candidate,dict(
-        version="R84 v0.13.29",status="IN MEMORY ONLY: native Gate A pending",
+        version="R84 v0.13.29",status="Native Gate A CPU/CI PASS; WinUAE Runtime B/Compiler C PENDING",
         commands=76,ap20_entries=len(parts),sha256=sha256(candidate).hexdigest(),
         bytes=len(candidate),units=tuple(len(p) for p in parts[82:]),
         source_r83_sha256=R83_SHA,
@@ -125,7 +131,10 @@ class R84Layout(unittest.TestCase):
         cls.image,cls.meta=build()
     def test_exact_r83_last_good(self):
         self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R83_SHA)
-        self.assertEqual(ACTIVE.read_bytes(),PREVIOUS.read_bytes())
+        active=ACTIVE.read_bytes()
+        assert sha256(active).hexdigest() in (R83_SHA,R84_SHA)
+        if sha256(active).hexdigest()==R84_SHA:
+            self.assertEqual(active,self.image)
     def test_new_api_and_layout(self):
         self.assertEqual(self.meta["commands"],76)
         self.assertEqual(self.meta["ap20_entries"],85)
@@ -152,7 +161,7 @@ def main():
         if not result.wasSuccessful():
             raise SystemExit("R84 structural/dispatch Gate A FAIL")
     image,meta=build()
-    print("R84 AGAPIC NATIVE CANDIDATE IN MEMORY ONLY",
+    print("R84 AGAPIC NATIVE CANDIDATE",
           {k:v for k,v in meta.items() if not k.startswith("labels_")})
     if args.emit_base64:
         import base64
@@ -161,7 +170,7 @@ def main():
         for at in range(0,len(encoded),120):
             print("R84_MAIN_LIB_B64",encoded[at:at+120])
         print("R84_MAIN_LIB_B64_END")
-    print("No dist/ write, no WinUAE B/C claim, R83 LAST_GOOD protected")
+    print("Builder does not write dist/; WinUAE B/C pending, R83 LAST_GOOD protected")
 
 if __name__=="__main__":
     main()
