@@ -18,7 +18,7 @@ Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGA
 ## 2. Fonctionnalités disponibles
 
 - **Écran AGA privé** : ouverture, double buffering, dessin sur back buffer, Swap, palette et fermeture.
-- **AGAPIC v1/v2** : images planaires compressées RLE en banque AMOS, masque facultatif, dessin complet et de régions. **v2** intègre une palette RGB24 et un DisplayModeID vérifié.
+- **AGAPIC v1/v2** : images planaires compressées RLE en banque AMOS, masque facultatif, dessin complet et de régions. **v2** intègre une palette RGB24 et un DisplayModeID vérifié. **`Aga Image Capture` crée actuellement du v1 uniquement** ; le chargement et le dessin du v2 sont fonctionnels.
 - **Palettes AGAPAL / AGAPIC v2** : commandes `Aga Bank Palette Init`, `Capture`, `Apply`, `Fade` par **numéro de banque**. La palette de l'image n'est **pas** appliquée automatiquement par le dessin.
 - **C2P** : contexte, conversion chunky vers écran AGA, Blit, Zoom et chargement IFF vers chunky ; dépendance externe `LIBS:c2p.library`.
 - **Fast Icons / CBlock** : fonctions existantes de capture, cache, transfert et dessin.
@@ -43,7 +43,6 @@ Pouvoir interroger une **banque AGAPIC v1 ou v2** sans décoder ni dessiner l'im
 
 | Sujet | Périmètre à étudier |
 |---|---|
-| **Outil PC PNG indexé → AGAPIC v2** | Convertir des PNG en banques ABK avec indices, palette, ModeID et masque. Distinct du chargement PNG natif dans AMOS. |
 | **M19 — Sprites / objets AGA et AMAL** | Interface, animation, synchronisation avec l'écran privé ; pas de dessin depuis une interruption. |
 | **M20 — Tilemaps et scrolling** | Tuiles, carte, caméra, transparence, stratégie Fast/Chip et dirty rectangles. |
 | **M21 — Dual Playfield** | Faisabilité et contrat AGA. |
