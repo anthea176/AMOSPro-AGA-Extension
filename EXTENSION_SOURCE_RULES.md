@@ -1,5 +1,11 @@
 # EXTENSION_SOURCE_RULES.md
 
+## Test de travail courant M19 P2.0 (15/11/2026)
+
+**Ce bloc actualise uniquement la reference du test actif** : `tests/current/M19_P2_OBJECTS_01.asc` est le seul ASC actif ; `tests/passed/M19_P1_AGAPIC_BOBS_01.asc` est le P1 WinUAE Runtime PASS archive **octet pour octet**. P2.0 est un prototype **AMOS BASIC uniquement**, a tester, et ne change pas la bibliotheque R84 v0.13.29 `LAST_GOOD` ni l'API AP20. Les listes de tests R84 ci-dessous restent des archives de leur etat au moment de la promotion, pas une instruction de remettre R84 comme ASC actif. **`main` uniquement, aucune nouvelle branche.** [Contrat P2](docs/M19_P2_OBJECT_MANAGER_CONTRACT.md) · [Reprise](docs/NEXT_SESSION.md).
+
+---
+
 ## ÉTAT AUTORITAIRE — R84 v0.13.29 PROMUE `LAST_GOOD` (14/11/2026)
 
 **Autorisation explicite de l'auteur : « on peux promote ! »**, confirmée par la demande de ne pas refaire les tests. **Branche `main` uniquement.** `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont **strictement identiques**, 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; 76 commandes, 85 entrées AP20 et trois unités natives sans remplissage. **R83 SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`**, 64 188 octets, reste reproductible par son builder historique et l'historique Git ; aucun octet d'archive antérieure n'est modifié.

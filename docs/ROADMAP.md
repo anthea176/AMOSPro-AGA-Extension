@@ -30,11 +30,11 @@
 
 ## 3. Backlog — pistes non engagées
 
-Les chantiers R83 et R84 sont clos. **M19 est engagé sur décision de l'auteur : P0 et P1 validés sous WinUAE Runtime ; P2 a un contrat d'architecture proposé et reste à approuver avant toute API**, sans nouvelle commande native ni modification de R84 LAST_GOOD. [Plan de référence M19](M19_SPRITES_BOBS_AMAL_PLAN.md).
+Les chantiers R83 et R84 sont clos. **M19 est engagé : P0/P1 PASS sur WinUAE Runtime ; P2.0 est un prototype BASIC autorisé, source preparee et Gate B en attente. Le contrat d'API native reste non approuve**, sans nouvelle commande native ni modification de R84 LAST_GOOD. [Plan de référence M19](M19_SPRITES_BOBS_AMAL_PLAN.md).
 
 | Sujet | Objectif à étudier |
 |---|---|
-| **M19 — Sprites AGA, Bobs et AMAL** | **P0 Runtime/WinUAE PASS** (211 frames, 2 Bobs, zéro erreur de dessin/Swap) ; clignotement d'alternance d'image corrigé visuellement. **P1 Gate B WinUAE Runtime PASS** : 240 frames, six images AGAPIC v1/v2, 46 frames avec chevauchement, trois inversions d'ordre, pixel témoin validé, clipping 240/240, zéro échec dessin/Swap, delta mémoire Chip/Fast nul. [Rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). **P2 : [contrat du gestionnaire d'objets proposé](M19_P2_OBJECT_MANAGER_CONTRACT.md), à valider avant toute nouvelle API.** [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
+| **M19 — Sprites AGA, Bobs et AMAL** | **P0 Runtime/WinUAE PASS** (211 frames, 2 Bobs, zéro erreur de dessin/Swap) ; clignotement d'alternance d'image corrigé visuellement. **P1 Gate B WinUAE Runtime PASS** : 240 frames, six images AGAPIC v1/v2, 46 frames avec chevauchement, trois inversions d'ordre, pixel témoin validé, clipping 240/240, zéro échec dessin/Swap, delta mémoire Chip/Fast nul. [Rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). **P2.0 : [prototype de gestionnaire BASIC](../tests/current/M19_P2_OBJECTS_01.asc) avec creation, suppression, visibilite, Z, frames et AMAL ; test Runtime WinUAE a faire.** [Contrat P2](M19_P2_OBJECT_MANAGER_CONTRACT.md) ; toute nouvelle API native reste a valider. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
 | **M20 — Tilemaps et scrolling** | Tilesets, cartes, caméra, transparence, gestion des ressources Fast/Chip et dirty rectangles adaptés au double buffering. |
 | **M21 — Dual Playfield AGA** | Étudier les deux playfields, leurs palettes, priorités et défilements indépendants, en cohérence avec l'écran privé et les buffers. |
 | **M22 — Copper avancé** | Définir les usages et limites d'accès aux registres au-delà des commandes RGB4 existantes. |

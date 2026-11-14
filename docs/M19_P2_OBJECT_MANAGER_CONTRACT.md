@@ -1,7 +1,7 @@
 # M19 P2 — Contrat proposé du gestionnaire d'objets AGA (avant toute API)
 
-> **15/11/2026 — DOCUMENT DE CONCEPTION / PROPOSITION À VALIDER.**
-> Démarrage de l'étude P2 autorisé par l'auteur, **pas** de signature de commande, de token AP20, de format de banque ou d'implémentation native approuvés.
+> **15/11/2026 — Contrat de conception de reference pour le prototype P2.0 BASIC ; API native NON VALIDEE.**
+> L'auteur a autorise le **prototype P2.0 en AMOS BASIC** (« ok go ») sur la base de ce contrat. **Aucune signature AP20, aucun format de banque public, aucune implementation native n'est approuvee.** [ASC P2.0](../tests/current/M19_P2_OBJECTS_01.asc) : source preparee, Gate B WinUAE en attente.
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence : R84 v0.13.29 `LAST_GOOD` inchangée (76 commandes / 85 entrées AP20, MC68020+).
 
 ## 1. Base factuelle et limites
@@ -105,7 +105,7 @@ cadence application (éventuellement Aga Wait Vbl)
 | Buffer / swap | Rendu seulement sur Safe, fond entier à chaque frame, Swap explicite, aucun frame incomplet présenté |
 | Retour / mémoire | 240 frames cibles, `RESULT`, `ERR`, journal RAM, Chip/Fast avant/après, fermeture nette |
 
-**Ordre de validation proposé :** d'abord prototype P2.0 AMOS BASIC + préflight statique (un seul ASC actif, archiver P1 sans le modifier au moment du remplacement) ; puis Gate B WinUAE ; **ensuite** mesurer le coût CPU/Chip et décider si une API native vaut le budget. Les tests Compiler Gate C et Amiga physique Gate D restent des portes distinctes.
+**Ordre de validation retenu pour P2.0 :** prototype AMOS BASIC + preflight statique (un seul ASC actif, P1 archivé octet pour octet), puis Gate B WinUAE ; **ensuite** mesurer le cout CPU/Chip et decider si une API native vaut le budget. Les tests Compiler Gate C et Amiga physique Gate D restent des portes distinctes.
 
 ## 8. Points soumis à validation avant implémentation
 
@@ -115,7 +115,7 @@ cadence application (éventuellement Aga Wait Vbl)
 4. Distinguer **mouvement AMAL, choix de frame, rendu et Swap** ; aucune action de dessin dans une interruption.
 5. Attendre un banc Runtime et des benchmarks avant de décider **la surface d'API AP20** (une ou plusieurs instructions), les limites d'objets, les codes de retour, l'ABI, la mémoire et le budget Compiler.
 
-**Statut final : proposition documentée, pas encore un contrat d'API définitif.** Ne pas modifier `dist/`, `tests/current/`, `tests/passed/` ni l'ABI pour ce seul document.
+**Statut P2.0 : prototype BASIC autorise, sans API native validee.** Le test P2.0 remplace P1 dans `tests/current/` en archivant l'ancien banc exact ; le document seul n'autorise aucune modification de `dist/`, de l'ABI ou d'une archive historiseee.
 
 ### Références projet
 
@@ -123,4 +123,4 @@ cadence application (éventuellement Aga Wait Vbl)
 - [Rapport P1 Runtime 68030](M19_P1_WINUAE_RUNTIME_2026-11-15.md)
 - [Architecture privée R84](ARCHITECTURE.md) et [protection Safe du Blitter](M12_SAFE_BLITTER_R27.md)
 - [API publique R84](../README.fr.md), [règles permanentes](../EXTENSION_SOURCE_RULES.md)
-- [Test P1 courant](../tests/current/M19_P1_AGAPIC_BOBS_01.asc)
+- [Test P2.0 actif](../tests/current/M19_P2_OBJECTS_01.asc) · [Test P1 validé archivé](../tests/passed/M19_P1_AGAPIC_BOBS_01.asc)

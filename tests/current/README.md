@@ -1,31 +1,38 @@
-# Test M19 P1 : Bobs AGAPIC, masques et AMAL manuel
+# M19 P2.0 — gestionnaire d'objets BASIC, ecran AGA prive
 
-**Unique ASC actif :** [M19_P1_AGAPIC_BOBS_01.asc](M19_P1_AGAPIC_BOBS_01.asc). **P0 archivé** sans changement dans [tests/passed/M19_P0_AMAL_BOBS_01.asc](../passed/M19_P0_AMAL_BOBS_01.asc). Le PASS Runtime P0 concerne la première variante alternant les images ; la correction d'image fixe a été confirmée visuellement, sans second journal.
+**Unique ASC actif :** [M19_P2_OBJECTS_01.asc](M19_P2_OBJECTS_01.asc). L'ancien P1 **Runtime WinUAE PASS** est archive **sans modification** dans [tests/passed/M19_P1_AGAPIC_BOBS_01.asc](../passed/M19_P1_AGAPIC_BOBS_01.asc), et le [rapport P1](../../docs/M19_P1_WINUAE_RUNTIME_2026-11-15.md) demeure valable.
 
-**Binaire : R84 v0.13.29 LAST_GOOD inchangé** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle API ni nouvelle dépendance.
+**Binaire de reference :** R84 v0.13.29 **LAST_GOOD inchange** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle commande native ni dependance `c2p.library`. CPU 68020 minimum.
 
-**État P1 : Gate B WinUAE Runtime PASS sur 68030.** Journal : 240 frames, 6 captures AGAPIC, pixel de priorité 1, 46 chevauchements, 0 échec dessin/Swap, delta mémoire Chip/Fast 0, fermeture 1. [Rapport](../../docs/M19_P1_WINUAE_RUNTIME_2026-11-15.md). **Compiler M19, interprété strict et Amiga physique non testés.**
+**Etat : prototype AMOS BASIC pret, controles structurels effectues et scenario logique simule sur 240 frames ; Gate B P2.0 AMOS/WinUAE NON ENCORE TESTEE, Gate C Compiler / Gate D physique NON TESTEES.** Le resultat P1 ne vaut pas validation de P2.0.
 
-## Tester sur AMOS / WinUAE
+## Premier essai sous AMOS / WinUAE
 
-1. Vérifier que les **banques 11 à 19 sont libres**. Importer [M19_P1_AGAPIC_BOBS_01.asc](M19_P1_AGAPIC_BOBS_01.asc) via **Project → Merge ASCII**. Exécuter avec la R84 installée et un CPU **68020 minimum**.
-2. Le programme ouvre un écran privé **320×256 en 256 couleurs** et crée six images AGAPIC de **24×24** (v1/v2, index 0 transparent ou opaque). Il teste la superposition par deux captures **1×1** d'un pixel avec ordre de dessin inversé.
-3. La démonstration montre **deux Bobs animés** par AMAL manuel (mouvement horizontal/vertical), avec changements d'image toutes les **16/24 frames** et inversion de l'ordre de dessin toutes les 60 frames. On doit voir une image opaque derrière, un objet fixe devant et **quatre images partiellement coupées aux bords**.
-4. Laisser le programme terminer ses **240 frames logiques** : **Échap** quitte aussi, mais avant 180 frames la preuve reste incomplète (`ERR 29`). Le fond doit rester propre **sans traînées ni clignotement rapide**.
-5. Après le retour à AMOS, transmettre le journal **`RAM:M19_P1_AGAPIC_BOBS_RUNTIME.TXT`** et signaler tout affichage anormal, plantage ou erreur de ligne.
+1. Verifier que les **banques 11 a 23 sont libres** avant execution. Charger R84 et importer [l'ASC P2.0](M19_P2_OBJECTS_01.asc) avec **Project -> Merge ASCII** dans un projet AMOS vide. Executer d'abord sous AMOS Runtime/WinUAE (AGA, 68020+). La premiere instruction `Set Buffer 20` ajuste l'espace des variables pour ce grand prototype.
+2. Ecran AGA prive **320x256, 256 couleurs / 8 plans**, double buffering. Le programme cree six images AGAPIC **24x24** v1/v2 et quatre images FICON8 **16x16**. Aucun asset externe n'est requis.
+3. La scene commence avec **quatre objets** : deux AGAPIC controles par **AMAL manuel** (mouvements horizontal et vertical), un FICON8 anime depuis BASIC, et un AGAPIC opaque. Le gestionnaire trie les visibles par **Z, puis ID** pour stabiliser les egalites.
+4. Pendant les **240 frames logiques** : quatre placements partiellement hors ecran (gauche, droite, haut, bas), un placement entierement hors ecran (culling), changement d'images a rythme lent, masquage puis reapparition, changement de Z, suppression de l'**ID 4** a la frame 121 et creation de l'**ID 5** a la frame 122. L'ancien ID 4 est refuse ; une frame 3 invalide et une source banque 23 absente sont egalement refusees.
+5. Laisser le programme terminer. Echap interrompt volontairement et peut donner `ERR 47` si moins de 180 frames. Observer **l'absence de trainees, de freeze et de scintillement rapide** ; apres fermeture l'affichage doit revenir a AMOS.
 
-## Résultats attendus
+## Journal RAM et criteres P2.0
 
-| Test | Valeur pour PASS |
+**Fichier attendu :** `RAM:M19_P2_OBJECTS_RUNTIME.TXT` (ou suffixe `_INTERPRETED` / `_COMPILED` suivant `Prg State`). Transmettre le **journal complet** et, si possible, une capture WinUAE.
+
+| Domaine | Condition attendue |
 |---|---|
-| Capture / métadonnées | `CAP_OK 6`, `META_OK 6` |
-| Pixel témoin (ordre de dessin) | `PROBE_OK 1`, `PIXEL_DIFF 1` |
-| Mouvement | `FRAME_OK >= 180`, `MOVE_X0 > 0`, `MOVE_Y1 > 0` |
-| Animation | `FRAME_SWITCH0 >= 4`, `FRAME_SWITCH1 >= 4` |
-| Composition | `ORDER_FLIPS >= 2`, `OVERLAP_FRAMES > 0` |
-| Clipping | `CLIP_OK = FRAME_OK` |
-| Rendu et fermeture | `DRAW_FAIL 0`, `SWAP_FAIL 0`, `CLOSE_RETURNED 1`, `RESULT 1`, `ERR 0` |
+| Statut | `RESULT 1`, `VERDICT PASS`, `ERR 0`, `RUN_MODE RUNTIME` |
+| Sources | `CAP_OK 6`, `ICON_OK 4`, `PROBE_OK 1`, `PIXEL_DIFF 1` |
+| Creation / vie | `CREATE_COUNT 5`, `NEXT_ID 5`, `DELETE_COUNT 1`, `STALE_ID_REJECT 1` |
+| Rejets propres | `BAD_FRAME_REJECT 1`, `BAD_BANK_REJECT 1` |
+| Visibilite / ordre | `HIDE_OK 1`, `SHOW_OK 1`, `Z_CHANGE 2`, `STABLE_TIE 1` |
+| Clipping / culling | `CLIP_OK 4`, `CULLED >= 2`, `FOUR_VISIBLE_FRAMES >= 120` |
+| Animation | `FRAME_OK >= 180`, deplacements X/Y non nuls, changements d'image AMAL/BASIC |
+| Stabilite | `DRAW_FAIL 0`, `SWAP_FAIL 0`, `CLOSE_RETURNED 1`, `RAM:` cree |
 
-Le contrôle RLE confirme que **le pixel observé diffère** quand l'ordre est inversé ; il ne valide pas tous les pixels du frame. Les deltas Chip/Fast sont mesurés **avant** l'écriture du fichier RAM:. Cette itération P1 ne teste que **8 plans/256 couleurs**. AMOS Compiler sera évalué à la fin du chantier.
+**Securite :** `Synchro Off` puis `Synchro` dans BASIC, aucun dessin en interruption, fond entier reconstruit sur back buffer `Safe` avant tous les objets, `Aga Swap` explicite. Arret AMAL **avant** liberation de la banque 11. Les banques d'images sont possedees par **le test**, non par les objets : supprimer un objet n'efface pas une banque partagee.
 
-[Plan](../../docs/M19_SPRITES_BOBS_AMAL_PLAN.md) · [Roadmap](../../docs/ROADMAP.md) · [Résultats P0](../../docs/M19_P0_RUNTIME_DIAGNOSTIC_2026-11-14.md)
+**Mesures memoire :** `CHIP_DELTA` et `FAST_DELTA` sont calcules apres `Dim` et `Set Buffer` mais **avant** les banques. Cela suit les ressources graphiques creees/liberees pendant le test ; ce n'est pas une mesure complete de la consommation du gestionnaire BASIC. Ne pas exiger 0 dans tous les modes sans qualification.
+
+**Limites :** ce test ne qualifie pas la suppression d'un objet lie a AMAL (refusee par le prototype), ni les sprites materiels P3, ni les autres profondeurs. La comparaison de priorite se fait sur un **pixel temoin**, sans preuve pixel par pixel du cadre entier.
+
+[Contrat P2](../../docs/M19_P2_OBJECT_MANAGER_CONTRACT.md) · [Plan M19](../../docs/M19_SPRITES_BOBS_AMAL_PLAN.md) · [Roadmap](../../docs/ROADMAP.md) · [Regles source](../../EXTENSION_SOURCE_RULES.md).
