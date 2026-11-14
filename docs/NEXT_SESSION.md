@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Nouveau chantier C2P / R74 — bitmap intermédiaire (14/11/2026)
+
+Le P2 GDB est **abandonné** après essai utilisateur : aucune autre action PowerShell/GDB ou configuration de port WinUAE. Architecture choisie : c2p.library TYPE_BITMAP alloue un bitmap CHIP intermédiaire 320×256×8, puis BltBitMap le copie vers le **back** Intuition après contrôle Safe et WaitBlit ; Aga Swap reste séparé. 16 tests modèle Python hôte PASS (bitmap planaire, entrelacé, protection front/back), sans prétendre à un Gate A CPU/WinUAE. **Aucun nouveau token/binaire C2P à ce stade.** Détailler et valider individuellement le contrat de Aga C2P Open(Bank) avant de coder la première nouvelle fonction. [Plan R74](C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). R73 v0.13.18 reste LAST_GOOD inchangée.
+
 ## Reprise — R73 v0.13.18 PROMUE LAST_GOOD, OPT020 terminé (14/11/2026)
 
 - **Seule bibliothèque active et LAST_GOOD :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, R73, **51 608 octets**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`, 64 commandes / 71 AP20. **ASC R73 validé historique :** [`OPT020_P3_R73_INTERPRETED_01.asc`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cf30d8d48c73c64bb369810cde9ac2c0a350195d/tests/current/OPT020_P3_R73_INTERPRETED_01.asc). **ASC courant P2 :** `tests/current/C2P_P2_R73_BITMAP_01.asc`. Banques de test AGAPIC 10 et FICON8 11. **Gate B intégrée R73 : PASS** sur l'ASC corrigé à deux phases (16 puis 256 couleurs), captures auteur : `RESULT 1`, `CLOSE RETURNED`, `FICON CAP/EQ288 1 1`, Chip Free `1660920/1660920/1660920`. Premier essai `RESULT 0` conservé comme incident d'ASC. Gate C **PASS sur la capture auteur du programme compilé** (`RESULT 1`, `CLOSE RETURNED`, Chip Free `1726752/1726752/1726752`) ; aucun benchmark.

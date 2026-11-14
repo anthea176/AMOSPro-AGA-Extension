@@ -2,6 +2,10 @@
 
 > **Feuille de route active, mise à jour le 14 novembre 2026.** Ce fichier suit les **décisions et travaux à venir**, pas les journaux de chaque révision. Les ~90 000 caractères de l'ancienne roadmap ont été conservés dans l'[archive historique intégrale](history/ROADMAP_ARCHIVE_2026-11-12.md), avec les liens relatifs ajustés. Les anciens états de cette archive ne sont pas les états courants.
 
+## C2P / R74 — architecture sans GDB acceptée (14 novembre 2026)
+
+**Décision :** abandonner le relevé GDB des bitplanes Intuition. Le C2P crée son propre bitmap CHIP via c2p.library, puis copie les huit plans avec graphics.library/BltBitMap vers le back buffer AGA Safe, suivi de WaitBlit. Un seul contexte et une seule allocation bitmap. **16 tests modèle hôte PASS**, pas encore de code natif/AP20 ni de test WinUAE. Voir [contrat R74](C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). Le contrat exact de chaque nouvelle fonction est à valider individuellement selon EXTENSION_SOURCE_RULES.md. **Aucune manipulation PowerShell/GDB demandée à l'auteur ; R73 LAST_GOOD intacte.**
+
 ## OPT020 — R73 v0.13.18 promue LAST_GOOD, Gates A/B/C PASS (14 novembre 2026)
 
 **Active et promue LAST_GOOD avec accord de l'auteur :** R73 v0.13.18 `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **51 608 octets**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`; 64 commandes et 71 entrées AP20. **ASC actuel C2P/P2** : `tests/current/C2P_P2_R73_BITMAP_01.asc` (test R73 validé dans l'historique Git, commit `cf30d8d`). P3 Fast Icons 8 plans : capture `BFEXTU` et dessin `BFINS` opaque/masqué avec X non aligné, clipping et garde CPU000. Seules les **entrées 60 et 66** changent par rapport à R72. [Rapport P3](OPT020_P3_FAST_ICONS_68020_2026-11-13.md).

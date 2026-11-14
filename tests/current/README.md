@@ -1,3 +1,11 @@
+# État des tests C2P / R74 — pas de GDB (14/11/2026)
+
+**La procédure de diagnostic P2/GDB est abandonnée. Ne pas lancer l'ancien ASC C2P_P2_R73_BITMAP_01.asc pour le nouveau chantier.** Son fichier reste temporairement l'unique ASC de tests/current par continuité du contrôle statique ; il sera **remplacé**, pas doublonné, dès qu'une candidate native R74 sera disponible. Il ne prouve aucune compatibilité C2P.
+
+Architecture R74 : [bitmap intermédiaire sans GDB](../../docs/C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). Modèle hôte 16 tests PASS. **Pas de nouvelle commande ni nouveau binaire C2P**, aucune action manuelle demandée jusqu'au futur ASC WinUAE interprété. Les Gates A/B/C de R73 restent validées, la R73 LAST_GOOD est protégée.
+
+## Historique P2 — test obsolète (ne pas exécuter)
+
 # Test actif C2P/P2 — disposition mémoire sous WinUAE (14/11/2026)
 
 La bibliothèque R73 v0.13.18 promue `LAST_GOOD` est **inchangée** dans `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Les Gates A/B/C de R73 restent PASS (Gate D non testée). Le test de clôture R73 est consultable dans l'[historique Git au commit cf30d8d](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cf30d8d48c73c64bb369810cde9ac2c0a350195d/tests/current/OPT020_P3_R73_INTERPRETED_01.asc).
