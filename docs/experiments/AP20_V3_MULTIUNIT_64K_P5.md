@@ -98,3 +98,41 @@ La **seule bibliothèque active** est `dist/AMOSPro_AGA.Lib`, **76 188 octets**,
 
 Dans AMOS Extension n°14, le titre P5 attendu contient `THREE GENUINE NATIVE UNITS` ; `TRUE SPLIT C2P/AGA` correspond à l'ancienne P4.
 La CI reconstruit la P5 et compare octet par octet la sortie à `dist/AMOSPro_AGA.Lib`.
+
+## P5 — Validation graphique sur la bonne bibliothèque : Gates B et C PASS (14 novembre 2026)
+
+**Bibliothèque vérifiée visuellement dans le sélecteur AMOS, extension n° 14 :**
+`AP20 V3 P5 R82 THREE GENUINE NATIVE UNITS - TEST ONLY`.
+Binaire de référence : `dist/AMOSPro_AGA.Lib`, 76 188 octets,
+SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`.
+Les fichiers de sortie AMOS conservent leurs en-têtes historiques R79 et R82,
+ce qui correspond au code source des tests ; la capture d'installation
+identifie la P5. Les journaux seuls ne portent pas de SHA de la bibliothèque.
+
+| Banc graphique sur P5 | Runtime | Compilé |
+| --- | --- | --- |
+| R82 AGAPIC v1/v2 (palettes, AGAPAL, fade, init/capture, draw, region, swap, invalid) | **PASS** | **PASS** |
+| C2P IFF Showcase (Open, Convert, Blit, Zoom, Close, ReOpen, invalid, Escape) | **PASS** | **PASS** |
+| C2P golden indices | **14/14** | **14/14** |
+| `RESULT`, `ERR` | `1`, `0` | `1`, `0` |
+| Chip / Fast net | 0 / 0 | 0 / 0 |
+
+### Preuves originales archivées, octet pour octet (CRLF)
+
+- [AGAPIC Runtime](evidence/AP20_V3_R82_3UNITS_P5_AGAPIC_RUNTIME_2026-11-14.TXT) : SHA256 `eab14335eb58420594dc1145d572275f6130144fef71077ada9efcf3e5bbd306`, 474 octets.
+- [AGAPIC compilé](evidence/AP20_V3_R82_3UNITS_P5_AGAPIC_COMPILED_2026-11-14.TXT) : SHA256 `187c40c0c9d2d65fc897ae7fc424655578d4fdba661f8bf91d1460da9000b7b4`, 475 octets.
+- [C2P Runtime](evidence/AP20_V3_R82_3UNITS_P5_C2P_RUNTIME_2026-11-14.TXT) : SHA256 `52f925a6f39be02bf55580ae9878448c50479c5a4d7564b4eb417571213f5b8c`, 542 octets.
+- [C2P compilé](evidence/AP20_V3_R82_3UNITS_P5_C2P_COMPILED_2026-11-14.TXT) : SHA256 `ebe9632ed81c8cb805ffc21209de2463286a1bbbf19572fa210f7e6fda81bcdf`, 555 octets.
+
+**Résultat :** la R82 vraie, divisée en trois unités AP20 contenant
+73 040 octets natifs (avec padding), est **fonctionnelle sous WinUAE
+en Runtime et en compilé** sur les bancs AGAPIC et C2P précités.
+Il n'est **pas nécessaire de refaire le smoke test P5**.
+
+**Limite précise :** le showcase charge un IFF et son compagnon `.chk`,
+mais ne démontre pas le décodage positif par la commande native
+`Aga Iff To Chunky` (entrée 75 du module 81). Le smoke ne testait que
+son refus d'entrée invalide. Ne pas revendiquer ce test positif,
+ni le mode `PRG_STATE 0`, ni le matériel physique.
+
+Pas de fusion/promotion : `main` et la R82 `LAST_GOOD` sont inchangés.

@@ -45,9 +45,7 @@ en plus de la vérification du dispatch.
 
 ## Limites
 
-Seules les Gates A (CPU/CI) sont actuellement PASS.
-Les résultats WinUAE Runtime / Compiler P4 **ne valident pas
-automatiquement P5**. Aucune fusion, promotion, ou publication.
+La Gate A CPU/CI et les **Gates B/C fonctionnelles AGAPIC + C2P sur P5 sont PASS**. Le décodage positif `Aga Iff To Chunky` du module 81 reste distinct et non testé ; Amiga physique / `PRG_STATE 0` non testés. Aucune fusion ni promotion.
 
 ## Résultats P5 reçus
 
@@ -65,3 +63,12 @@ automatiquement P5**. Aucune fusion, promotion, ou publication.
 `dist/AMOSPro_AGA.Lib` = bibliothèque P5 active (76 188 octets, SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`).
 La R82 `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste immuable.
 Dans AMOS Extension n°14, le titre attendu contient `THREE GENUINE NATIVE UNITS` ; si tu vois `TRUE SPLIT C2P/AGA`, la P4 est encore installée.
+
+## Validation graphique P5 (14/11/2026)
+
+**Deux bancs graphiques passent en Runtime ET en compilé avec la véritable bibliothèque P5 à trois unités.**
+
+- [AGAPIC Runtime](../../docs/experiments/evidence/AP20_V3_R82_3UNITS_P5_AGAPIC_RUNTIME_2026-11-14.TXT) et [compilé](../../docs/experiments/evidence/AP20_V3_R82_3UNITS_P5_AGAPIC_COMPILED_2026-11-14.TXT) : RESULT 1, ERR 0, toutes fonctions du banc OK.
+- [C2P Runtime](../../docs/experiments/evidence/AP20_V3_R82_3UNITS_P5_C2P_RUNTIME_2026-11-14.TXT) et [compilé](../../docs/experiments/evidence/AP20_V3_R82_3UNITS_P5_C2P_COMPILED_2026-11-14.TXT) : RESULT 1, ERR 0, 14/14 pixels, Blit/Zoom/Close/ReOpen OK.
+
+Le smoke P5 ne doit plus être redemandé. Les conclusions antérieures « seules Gate A » sont historiques et remplacées par ce bilan. La R82 LAST_GOOD reste inchangée.
