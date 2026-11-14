@@ -87,7 +87,7 @@ def run_case(code, payload, depth, *, mode=0, screen_mode=MODE_ID,
 
 
 def main():
-    code, labels = emit_image_draw_v2(diagnostic=True)
+    code, labels = emit_image_draw_v2()
     assert code == emit_image_draw_v2(diagnostic=True)[0], 'nondeterministic v2 emitter'
     assert len(code) % 2 == 0 and 1500 <= len(code) < 4500
     assert code.startswith(bytes.fromhex('48e7efee'))

@@ -43,7 +43,7 @@ assert max(F.values()) == 124 and F020["regionh"] + 4 <= 148
 
 
 def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
-                       reset_failure_d3=True, diagnostic=False):
+                       reset_failure_d3=True):
     if not opt020 or not reset_failure_d3:
         raise ValueError("R82 requires 68020 P2 painter and D3 rejection guard")
     if reset_failure_d3 and not opt020:
@@ -175,14 +175,12 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.move(M(0,28),D(0))
     c.alu("cmp",D(4),0); B(6,"reject")  # exact payload bytes
 
-    if diagnostic: c.move(I(1),D(6))
     c.move(M(2,V2_VERSION_LOCAL),D(0))
     c.imm("cmp",2,D(0)); B(6,"header_v1")
     c.imm("cmp",64,D(4)); B(5,"reject")
     c.move(M(0,32),D(0))
     c.tst(D(0)); B(7,"reject")
-    c.imm("cmp",-1,D(0)); B(6,"reject")
-    if diagnostic: c.move(I(2),D(6))
+    c.imm("cmp",-1,D(0)); B(7,"reject")  # BEQ INVALID_ID only
     c.move(I(1),D(1))
     ld("depth",D(2))
     L("v2_count_shift")
@@ -195,7 +193,6 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.imm("cmp",1,D(0)); B(6,"reject")
     c.move(M(0,40),D(0))
     c.imm("cmp",64,D(0)); B(6,"reject")
-    if diagnostic: c.move(I(3),D(6))
     c.move(D(1),D(2))
     c.alu("add",D(1),2)
     c.alu("add",D(1),2)       # D2 = 3*PaletteCount, <=768
@@ -203,17 +200,14 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.alu("cmp",D(2),0); B(6,"reject")
     c.move(M(0,48),D(0))
     c.imm("cmp",64,D(0)); B(6,"reject")
-    if diagnostic: c.move(I(4),D(6))
     for offset in (52,56,60):
         c.tst(M(0,offset)); B(6,"reject")
-    if diagnostic: c.move(I(5),D(6))
     c.move(D(2),D(0))
     c.imm("add",67,D(0))
     c.imm("and",0xfffffffc,D(0))  # align4(64+palette bytes)
     c.alu("cmp",M(0,20),0); B(6,"reject")
     c.alu("cmp",D(4),0); B(2,"reject")
     c.move(D(0),M(2,V2_TABLE_LOCAL))
-    if diagnostic: c.move(I(6),D(6))
     c.move(D(2),D(1))
     c.imm("add",64,D(1))     # RGB24 end (before zero padding)
     c.move(D(0),D(3))
@@ -225,7 +219,6 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.tst(POST(1),"b"); B(6,"reject")
     c.quick(1,D(3),sub=True); B(6,"v2_pad_loop")
     L("v2_pad_ok")
-    if diagnostic: c.move(I(7),D(6))
     c.move(M(2,V2_TABLE_LOCAL),D(0))
     ld("height",D(1))
     c.quick(1,D(1))
@@ -247,7 +240,6 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.move(M(0,24),D(1))
     c.alu("cmp",D(1),0); B(6,"reject")
     c.alu("cmp",D(4),0); B(2,"reject")
-    if diagnostic: c.move(I(8),D(6))
     L("header_ok")
     ld("width",D(0)); c.imm("add",15,D(0))
     c.shift(0,4,left=False)
@@ -372,8 +364,7 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
         B(0,"p2_exit")
     L("reject")
     if reset_failure_d3:
-        if diagnostic: c.move(D(6),D(3))
-        else: c.word(0x7600)  # MOVEQ #0,D3 normal rejection
+        c.word(0x7600)  # MOVEQ #0,D3: all rejection paths return false
         L("p2_exit")
     c.raw("4fef00c0")           # LEA +192(SP),SP
     c.raw("4cdf77f7")           # restore all except result D3,D2 and cursor A3
