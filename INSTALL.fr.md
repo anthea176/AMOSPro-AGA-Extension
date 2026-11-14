@@ -17,7 +17,21 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 **Mise à jour :** pour remplacer une ancienne version de `AMOSPro_AGA.Lib`, conserver le même numéro de slot et redémarrer AMOS. Sauvegarder au préalable l'ancien fichier et la configuration.
 
-## 2. Lancer les exemples
+## 2. Prérequis et dépendance C2P
+
+**Prérequis R82 :** Amiga à chipset **AGA** (A1200/A4000 ou WinUAE configuré en AGA), processeur **Motorola 68020/68EC020 minimum** (pas de 68000 seul), AMOS Professional installé et suffisamment de **Chip RAM** pour l'écran AGA privé et ses buffers.
+
+**Bibliothèque supplémentaire pour le C2P :** [**c2p.library v1.9 d'Alimede Informatica sur Aminet**](https://aminet.net/package/dev/misc/c2plib) ([sources officielles](https://github.com/alimede/c2p.library)). C'est une bibliothèque partagée AmigaOS, **pas** une extension AMOS et elle n'est **pas** intégrée à `AMOSPro_AGA.Lib`.
+
+1. Télécharger **`c2plib.lha`** sur Aminet, puis décompresser l'archive avec un outil compatible LhA.
+2. Repérer le fichier **`c2p.library`** (normalement dans le répertoire **`libs/`** du paquet). Copier **ce fichier** dans **`LIBS:c2p.library`** sur l'Amiga (habituellement **`SYS:Libs/c2p.library`**). Sous WinUAE, le fichier doit être sur un volume **visible depuis AmigaOS**, pas seulement dans Windows.
+3. Conserver **`AMOSPro_AGA.Lib` dans `APSystem`** et **`c2p.library` dans `LIBS:`**. **Ne pas enregistrer** `c2p.library` dans *Set Loaded Extensions*. Relancer AMOS si la dépendance était auparavant absente.
+
+**Périmètre :** les cinq commandes `Aga C2P` (`Open`, `Convert`, `Close`, `Blit`, `Zoom`) utilisent un contexte dépendant de cette bibliothèque. Les autres fonctions de l'extension, **dont `Aga Iff To Chunky` employée seule**, fonctionnent sans elle. En son absence, `Aga C2P Open` retourne **0**, sans empêcher le chargement de l'extension AGA.
+
+**Conditions C2P :** écran AGA privé **320×256** en **16/32/64/128/256 couleurs indexées (4–8 plans)**, **`Aga Double Buffer`** actif et banque chunky AMOS **DATA/WORK existante** (n° **5..65535**, au moins **81 920 octets**). La banque peut être remplie depuis un ILBM compatible par `Aga Iff To Chunky(File$,Bank)`. Ordre : **Open → Blit/Zoom facultatif → Convert → `Aga Swap` explicite → Close**. Palette à charger séparément ; pas de Swap ou de modification automatique des couleurs.
+
+## 3. Lancer les exemples
 
 1. Copier les exemples `.asc` choisis ainsi que `demo.iff` depuis [`examples/`](examples/) dans un répertoire accessible depuis l'Amiga ou WinUAE (disque dur Amiga, dossier Windows monté, image disque).
 2. Dans l'éditeur AMOS, créer un **programme vide** (**New**), puis **Project → Merge ASCII** (raccourci **Amiga + Maj + M**). Importer `examples/screen.asc`.
@@ -27,7 +41,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 **Attention :** `Merge ASCII` **ajoute** le source dans le programme actuel. Repartir d'un programme vide pour chaque exemple, sinon les codes vont se mélanger. Après import, on peut enregistrer le source dans le format AMOS natif `.AMOS`.
 
-## 3. Dépannage
+## 4. Dépannage
 
 | Problème | Vérification |
 |---|---|
@@ -35,11 +49,14 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 | `demo.iff` introuvable | Le chemin doit être visible **depuis AmigaOS**. Parcourir les volumes accessibles au sélecteur, pas le chemin Windows directement. |
 | Ouverture de l'écran impossible | Vérifier le chipset **AGA** et la disponibilité du mode PAL 320×256 en 256 couleurs. |
 | Un `.asc` ne se charge pas | Utiliser **Project → Merge ASCII**, pas `Load` qui attend un programme AMOS tokenisé. |
+| `Aga C2P Open(Bank)` retourne 0 | Vérifier `LIBS:c2p.library`, CPU 68020+, écran AGA privé 320×256 à 4–8 plans, `Aga Double Buffer` réussi et banque chunky DATA/WORK d'au moins 81 920 octets. Un deuxième Open renvoie aussi 0. |
+| `Aga C2P Convert` échoue ou aucune image n'apparaît | Vérifier qu'Open a réussi, que la banque existe toujours et que le back buffer est `Safe`. Après Convert, appeler explicitement `Aga Swap` et charger la palette si nécessaire. |
+| `Aga Iff To Chunky` refuse l'image | Seuls les ILBM indexés 320×256, 4–8 plans, RAW/ByteRun1, sans HAM/EHB, masque ni dual playfield sont acceptés. |
 | Erreur dans un exemple | Consulter le résultat. Le [tout-en-un compilé R46 C1](examples/compiler_all_in_one/) est validé sous WinUAE ; les autres exemples disposent de tests distincts. |
 
 ## Statut et droits
 
-**Statut :** R68 v0.13.13 est la seule **candidate active** (Gates A native et B WinUAE interprétée PASS) ; **R63 v0.13.8 reste LAST_GOOD promue et protégée séparément**. L'[archive Compiler-safe R46 C1](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) demeure figée. R68 n'a pas passé de Gate C Compiler réelle ni Gate D Amiga physique.
+**Statut :** **R82 v0.13.27 est promue `LAST_GOOD`** (74 commandes / 81 entrées AP20). **Gates A native/CI, B WinUAE Runtime et C Compiler AMOS PASS** sur le banc AGAPIC v1/v2 320×256×8 indexé, CPU 68030. L'interprétation pure `PRG_STATE 0` et la Gate D sur Amiga physique **n'ont pas été testées**. [Rapport de promotion R82](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md). L'ancienne R81 reste accessible [dans l'historique Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib). La promotion n'est pas une publication automatique sur Aminet.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 
