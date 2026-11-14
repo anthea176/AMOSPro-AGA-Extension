@@ -36,6 +36,7 @@ on:
       - "tools/test_m18_icon_atlas_model.py"
       - "tools/m18_ficon16_model.py"
       - "tools/m18_ficon16_native_aligned_emit.py"
+      - "tools/c2p_r77_close_emit.py"
       - "tools/m18_ficon16_native_shifted_emit.py"
       - "tools/m18_ficon_ap20_emit.py"
       - "tools/m18_ficon_bank_put_emit.py"
@@ -184,6 +185,13 @@ jobs:
         run: python -B tools/test_current_input_state_offsets.py
       - name: Current AMOS ASC RAM log contract
         run: python -B tools/test_current_ram_log.py
+      - name: R77 C2P Close native CPU Gate A (in memory only)
+        run: |
+          python -B tools/build_c2p_r77_close.py
+          python -B tools/test_c2p_r77_close_gate_a.py
+      - name: R77 emit candidate bytes after native tests
+        if: "${{ contains(github.event.head_commit.message, '[r77-emit]') }}"
+        run: python -B tools/build_c2p_r77_close.py --emit-base64
       - name: R75 C2P Convert (in-memory) 68k Gate A
         run: |
           python -B tools/build_c2p_r75_convert.py
