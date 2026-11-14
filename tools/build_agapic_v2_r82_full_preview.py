@@ -26,8 +26,8 @@ from m16_agapic_v2_palette_emit import emit_bank_palette_apply,emit_bank_palette
 
 ROOT=Path(__file__).resolve().parents[1]
 R81_SHA='9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4'
-TITLE=(b'AMOSPro AGA AGAPIC v2 Palette and Region R82 in-memory only\0'
-       b'$VER: AMOSPro_AGA 0.13.27 design preview\0')
+TITLE=(b'AMOSPro AGA AGAPIC v2 Palette and Region R82 0.13.27 candidate\0'
+       b'$VER: AMOSPro_AGA 0.13.27\0')
 TITLE+=bytes(len(TITLE)&1)
 
 
@@ -118,6 +118,18 @@ def build():
 
 
 if __name__=='__main__':
+    import argparse
+    import base64
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--emit-base64',action='store_true',
+                   help='Emit AP20 bytes to an explicitly gated CI log; never write a .Lib')
+    args=p.parse_args()
     a,m=build()
     assert a==build()[0], 'in-memory builder nondeterminism'
     print('R82 FULL AGAPIC V2 API+REGION STRUCTURAL PASS:',m,flush=True)
+    if args.emit_base64:
+        print('R82_AP20_B64_BEGIN',flush=True)
+        encoded=base64.b64encode(a).decode('ascii')
+        for at in range(0,len(encoded),120):
+            print('R82_AP20_B64 '+encoded[at:at+120],flush=True)
+        print('R82_AP20_B64_END',flush=True)
