@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## C2P-2 — contrat Convert proposé, validation requise (14/11/2026)
+
+[**Contrat proposé pour `Aga C2P Convert`**](C2P_R75_CONVERT_CONTRACT_2026-11-14.md) : fonction sans argument, revalidation du numéro/adresse de banque à chaque frame, accès au véritable back Intuition via **`ScreenBuffer+0`** (la note GDB abandonnée indiquant +4 était erronée), Safe non bloquant, `Chunky2Planar`, puis `BltBitMap` sur 4..8 plans avec `WaitBlit`. Aucun Swap implicite et aucun changement de palette. **Aucune commande Convert codée ni Gate A/B/C Convert revendiquée** ; accord individuel requis avant développement. R74 Open reste candidate Gate A/B PASS ; R73 `LAST_GOOD` intacte ; ASC actif R74 inchangé.
+
 ## Nouveau chantier C2P / R74 — bitmap intermédiaire (14/11/2026)
 
 **R74 v0.13.19 candidate native installable (PAS LAST_GOOD) :** `dist/AMOSPro_AGA.Lib` 52 612 octets, SHA256 `887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23`, 65 commandes, 72 AP20. **Aga C2P Open(Bank)** seul nouveau token, détecte automatiquement 4..8 plans sur un écran 320×256, réserve bitmap intermédiaire Chip via c2p.library v1.9 et nettoie au Screen Close et sortie AMOS. **Gate A native CPU hôte PASS ; Gate B interprétée WinUAE PASS (capture auteur du 14/11/2026 : cinq profondeurs 4..8 plans, OPEN/DB/C2P 1, DUP/POST 0, `RESULT 1`, `CLOSE RETURNED`, Chip Free `1801952/1801952`) ; Gate C Compiler et Gate D physique NON TESTÉES.** [Rapport Gate B](C2P_R74_WINUAE_GATE_B_2026-11-14.md). Unique ASC : `tests/current/C2P_R74_OPEN_01.asc` ; bibliothèque externe dans `LIBS:`. **Ne pas lancer le test P2 GDB : abandonné.** Après WinUAE, discuter séparément les contrats Convert et Close ; ne pas coder sans accord. [Guide R74](C2P_R74_OPEN_2026-11-14.md). R73 LAST_GOOD 51 608 octets reste intacte.
