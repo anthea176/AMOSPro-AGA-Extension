@@ -9,11 +9,11 @@ requiring SHA256 \`b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2
 Build entirely **in memory**; no \`dist/\` write or new release/version.
 
 - Keep the R82 60,972-byte native unit **byte-for-byte unchanged**.
-- Rebase the old 80 AP20 RBSR stubs' target indices from group 80 to 81,
+- Rebase the old 80 AP20 RBSR stubs' target indices from group 80 to 82,
   leaving every original offset, marker, native instruction and public
   token unchanged.
 - Add experimental token \`aga v3 size probe\` returning integer D3=77,
-  at public entry 80, and an independent native MC68020 unit at entry 82.
+  at public entry 80, and an independent native MC68020 unit at entry 81.
 - Native unit sizes: **60,972 + 12,034 = 73,006 bytes** (greater than 64 KiB).
   Each individual unit remains under the 65,534-byte per-unit Compiler limit.
 - Both native dispatchers are the existing *exact* 34-byte V2 bridge.
@@ -23,7 +23,7 @@ Build entirely **in memory**; no \`dist/\` write or new release/version.
   to survive the transformation; use the repository's independent AP20
   token audit and format parser.
 
-The CPU test simulates a far-link JSR to the new unit on Unicorn
+The corrected CPU test executes the actual interpreter-style BSR.W to the new unit on Unicorn
 **MC68020** and validates D3, A7, return PC, preserved registers and
 read-only native code. It **does not execute the original R82 monolith**:
 old native behavior is protected by byte identity, not re-qualified by
@@ -42,3 +42,17 @@ exact real-Compiler relocation output has not been verified.
 Next milestone: a disposable, independently installable test artefact,
 and a WinUAE 68020+ interpreted/compiled test, without replacing the
 R82 LAST_GOOD reference. Only then consider production multiunit work.
+
+## P2-FIX01 after the AMOS365 80000004 report
+
+The previous binary had a 60,978-byte interpreter RBSR->BSR.W relocation
+(entry 80 to group 82). AMOS365 +B.s / GRouB explicitly executes ILLEGAL
+outside ±32,766 bytes, before any test source is executed. This was missing
+from previous CPU tests which simulated an absolute JSR.
+
+FIX01 places the **12,034-byte native probe unit at group 81, immediately
+after the public stubs**, then the byte-identical R82 monolith at group 82.
+Existing R82 RBSR targets are rebased 80->82; the test stub targets 81.
+The new Gate A models all AMOS365 RBSR relocations, intentionally rejects
+the previous crashing layout, and executes the patched BSR.W on MC68020.
+This does not claim an actual WinUAE boot result.

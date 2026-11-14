@@ -29,8 +29,8 @@ CURRENT = ROOT / "dist/AMOSPro_AGA.Lib"
 R82_NATIVE_STUBS = 80
 OLD_GROUP = 80
 NEW_PROBE_INDEX = 80
-NEW_R82_GROUP = 81
-NEW_PROBE_GROUP = 82
+NEW_R82_GROUP = 82
+NEW_PROBE_GROUP = 81
 PUBLIC_TOKEN = ("aga v3 size probe", 1, NEW_PROBE_INDEX, "0")
 PAD_NATIVE_BYTES = 12000
 CODE_PROBE = bytes.fromhex("764d49c34e75")  # MOVEQ #77,D3; EXTB.L D3; RTS
@@ -38,6 +38,41 @@ NEW_NATIVE = CODE_PROBE + bytes.fromhex("4e71") * ((PAD_NATIVE_BYTES - len(CODE_
 NEW_UNIT = DISPATCH_V2 + NEW_NATIVE
 TITLE = b"R82 AP20 V3 TWO-UNIT PROBE - NEVER INSTALL AS LAST_GOOD\0"
 TITLE += bytes(len(TITLE) & 1)
+
+
+
+def validate_interpreter_rbsr(segments: list[bytes]) -> dict[int, int]:
+    """Model AMOS365 +B.s Library_Reloc/GRouB, including its ILLEGAL trap.
+
+    The interpreter patches an RBSR marker into BSR.W; displacement is
+    target entry START minus address (stub START + 2), strictly -32766..32766.
+    This is independent from the CPU-only absolute-JSR test and MUST pass
+    for every RBSR, especially the new entry 80.
+    """
+    starts = []
+    offset = 0
+    for item in segments:
+        if len(item) & 1:
+            raise ValueError("Unaligned AP20 entry")
+        starts.append(offset)
+        offset += len(item)
+    result = {}
+    for i, part in enumerate(segments):
+        if not part.startswith(RBSR):
+            continue
+        if len(part) not in (8, 12) or part[6:8] != bytes.fromhex("4e75"):
+            raise ValueError("Unrecognized RBSR marker")
+        target = unpack_from(">H", part, 2)[0]
+        if target >= len(segments) or not segments[target].startswith(DISPATCH_V2):
+            raise ValueError("Bad RBSR dispatcher target at entry %d" % i)
+        displacement = starts[target] - (starts[i] + 2)
+        if not -32766 < displacement < 32766 or displacement & 1:
+            raise ValueError("AMOS365 GRouB ILLEGAL: BSR.W out of range at %d: %d" %
+                             (i, displacement))
+        result[i] = displacement
+    if NEW_PROBE_INDEX not in result or 0 not in result:
+        raise ValueError("Missing mandatory native entry relocations")
+    return result
 
 
 def r82_bytes() -> bytes:
@@ -79,7 +114,8 @@ def build_in_memory(promoted: bytes) -> tuple[bytes, dict]:
 
     new_stub = RBSR + pack(">HH", NEW_PROBE_GROUP, 0) + bytes.fromhex("4e75")
     ntokens = tokens[:-6] + token(*PUBLIC_TOKEN) + bytes(6)
-    segments = rebased + [new_stub, old_unit, NEW_UNIT]
+    segments = rebased + [new_stub, NEW_UNIT, old_unit]
+    relocations = validate_interpreter_rbsr(segments)
     image = repack_ap20(promoted, ntokens, segments, TITLE)
     parsed_tokens, built, name = unpack_ap20(image)
     if (parsed_tokens != ntokens or built != segments or name != TITLE
@@ -112,6 +148,8 @@ def build_in_memory(promoted: bytes) -> tuple[bytes, dict]:
         "ap20_entries": len(built),
         "probe_entry": NEW_PROBE_INDEX,
         "probe_native_group": NEW_PROBE_GROUP,
+        "max_interpreter_bsr_displacement": max(abs(d) for d in relocations.values()),
+        "interpreter_rbsr_count": len(relocations),
         "cpu": "MC68020+",
         "winuae_gate_b": "NOT TESTED",
         "compiler_gate_c": "NOT TESTED",
@@ -119,6 +157,7 @@ def build_in_memory(promoted: bytes) -> tuple[bytes, dict]:
 
 
 def call_probe_on_mc68020(candidate: bytes) -> None:
+    """Execute the REAL interpreter-style BSR.W after GRouB-style patching."""
     from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_CODE
     from unicorn.m68k_const import (
         UC_CPU_M68K_M68020, UC_M68K_REG_PC, UC_M68K_REG_SR,
@@ -128,16 +167,22 @@ def call_probe_on_mc68020(candidate: bytes) -> None:
     _, parts, _ = unpack_ap20(candidate)
     stub = parts[NEW_PROBE_INDEX]
     if stub != RBSR + pack(">HH", NEW_PROBE_GROUP, 0) + bytes.fromhex("4e75"):
-        raise ValueError("Wrong P2 public stub")
-    old_base, new_base, call_addr, stop, sp = 0x100000, 0x220000, 0x70000, 0x20000, 0x500000
-    # The compiler-link model patches the RBSR into a relocated absolute JSR.
-    linked = bytes.fromhex("4eb9") + pack(">I", new_base) + pack(">H", 0) + bytes.fromhex("4e75")
+        raise ValueError("Wrong public probe stub")
+    relocations = validate_interpreter_rbsr(parts)
+    starts = []
+    pos = 0
+    for item in parts:
+        starts.append(pos)
+        pos += len(item)
+    base, stop, sp = 0x100000, 0x20000, 0x500000
+    original = b"".join(parts)
     machine = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
     machine.ctl_set_cpu_model(UC_CPU_M68K_M68020)
     machine.mem_map(0, 0x600000)
-    machine.mem_write(old_base, parts[NEW_R82_GROUP])
-    machine.mem_write(new_base, parts[NEW_PROBE_GROUP])
-    machine.mem_write(call_addr, linked)
+    machine.mem_write(base, original)
+    # Match AMOS365: replace RBSR with actual BSR.W + 16-bit displacement.
+    for i, delta in relocations.items():
+        machine.mem_write(base + starts[i], pack(">Hh", 0x6100, delta))
     machine.mem_write(stop, bytes.fromhex("4e71"))
     machine.mem_write(sp, pack(">I", stop))
     regs = {UC_M68K_REG_A0: 0x1b0000, UC_M68K_REG_A5: 0x1c0000,
@@ -147,20 +192,23 @@ def call_probe_on_mc68020(candidate: bytes) -> None:
     machine.reg_write(UC_M68K_REG_D3, 0)
     machine.reg_write(UC_M68K_REG_SR, 0x2000)
     machine.reg_write(UC_M68K_REG_A7, sp)
-    expected = new_base + len(DISPATCH_V2)
+    expected = base + starts[NEW_PROBE_GROUP] + len(DISPATCH_V2)
     visits = []
     def hook(_machine, pc, _size, _user):
         if pc == expected:
             visits.append(pc)
     machine.hook_add(UC_HOOK_CODE, hook)
-    machine.emu_start(call_addr, stop, count=300)
-    assert visits == [expected], "Did not execute new MC68020 native unit"
+    machine.emu_start(base + starts[NEW_PROBE_INDEX], stop, count=300)
+    assert visits == [expected], "Real BSR.W did not reach MC68020 native unit"
     assert machine.reg_read(UC_M68K_REG_PC) == stop
     assert machine.reg_read(UC_M68K_REG_A7) == sp + 4
     assert machine.reg_read(UC_M68K_REG_D3) == 77
     assert all(machine.reg_read(reg) == value for reg, value in regs.items())
-    assert machine.mem_read(old_base, len(parts[NEW_R82_GROUP])) == parts[NEW_R82_GROUP]
-    assert machine.mem_read(new_base, len(parts[NEW_PROBE_GROUP])) == parts[NEW_PROBE_GROUP]
+    # Native code was not modified, unlike the RBSR stubs patched by AMOS.
+    for group in (NEW_R82_GROUP, NEW_PROBE_GROUP):
+        assert machine.mem_read(base + starts[group], len(parts[group])) == parts[group]
+
+
 
 
 class PromotedR82TwoUnitP2(unittest.TestCase):
@@ -183,6 +231,28 @@ class PromotedR82TwoUnitP2(unittest.TestCase):
 
     def test_new_public_probe_dispatches_on_mc68020(self):
         call_probe_on_mc68020(self.candidate)
+
+    def test_interpreter_bsr_all_entries_in_range(self):
+        _, parts, _ = unpack_ap20(self.candidate)
+        relocs = validate_interpreter_rbsr(parts)
+        self.assertGreater(len(relocs), 60)
+        self.assertEqual(relocs[NEW_PROBE_INDEX], 6)
+        self.assertLess(self.meta["max_interpreter_bsr_displacement"], 32766)
+        self.assertEqual(self.meta["interpreter_rbsr_count"], len(relocs))
+
+    def test_interpreter_rejects_old_crashing_layout(self):
+        _, parts, _ = unpack_ap20(self.candidate)
+        wrong = [bytes(part) for part in parts]
+        for i in range(R82_NATIVE_STUBS):
+            s = wrong[i]
+            if s.startswith(RBSR):
+                wrong[i] = s[:2] + pack(">H", OLD_GROUP+1) + s[4:]
+        s = wrong[NEW_PROBE_INDEX]
+        wrong[NEW_PROBE_INDEX] = s[:2] + pack(">H", OLD_GROUP+2) + s[4:]
+        wrong[NEW_R82_GROUP], wrong[NEW_PROBE_GROUP] = (
+            wrong[NEW_PROBE_GROUP], wrong[NEW_R82_GROUP])
+        with self.assertRaisesRegex(ValueError, "BSR.W out of range"):
+            validate_interpreter_rbsr(wrong)
 
     def test_deterministic_no_overwrite(self):
         candidate, info = build_in_memory(self.source)

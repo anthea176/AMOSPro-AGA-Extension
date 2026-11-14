@@ -6,7 +6,7 @@ branch-only GitHub Actions workflow and expires according to artifact retention.
 
 ## Files inside the artifact
 
-- \`AMOSPro_AGA_V3_TEST_ONLY.Lib\`: R82's original 60,972-byte native unit
+- \`AMOSPro_AGA_V3_FIXED.Lib\`: R82's original 60,972-byte native unit
   kept byte-for-byte, existing public API preserved, plus a second independent
   12,034-byte native unit containing \`aga v3 size probe\`.
 - \`AP20_V3_R82_MULTIUNIT_01.asc\`: independent AMOS test (no image banks).
@@ -48,3 +48,13 @@ to a clearly labeled test filename **outside** \`dist/\` and \`tests/current/\`.
 
 The test exists only on \`experiment/ap20-v3-multiunit-64k\`, with no merge
 or promotion to main without explicit authorization.
+
+## FIX01 critical boot regression
+
+The earlier `AMOSPro_AGA_V3_TEST_ONLY.Lib` must **NOT** be installed:
+it triggered AMOS365 Software Failure 80000004 at interpreter startup.
+It placed the extra native unit after R82's 60,972-byte group and caused
+an out-of-range 60,978-byte BSR.W relocation. The FIX01 builder instead
+places the probe native group before the historical R82 monolith and
+checks **every** RBSR displacement against the AMOS365 interpreter source.
+Passing host tests is not WinUAE boot proof. Use an isolated WinUAE copy.

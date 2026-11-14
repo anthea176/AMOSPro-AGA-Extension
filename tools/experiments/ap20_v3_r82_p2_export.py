@@ -10,7 +10,9 @@ import argparse
 from hashlib import sha256
 from pathlib import Path
 
-from ap20_v3_r82_p2 import build_in_memory, r82_bytes, ROOT
+from ap20_v3_r82_p2 import (build_in_memory, r82_bytes, ROOT,
+                               NEW_PROBE_GROUP, NEW_R82_GROUP,
+                               validate_interpreter_rbsr)
 from audit_ap20 import inspect, parse
 from compiler_relocation import unpack_ap20
 
@@ -23,15 +25,16 @@ def main() -> None:
     protected = [(ROOT / "dist").resolve(), (ROOT / "tests/current").resolve()]
     if any(dest == root or root in dest.parents for root in protected):
         raise SystemExit("Refusing to write a protected project path")
-    if dest.name != "AMOSPro_AGA_V3_TEST_ONLY.Lib":
+    if dest.name != "AMOSPro_AGA_V3_FIXED.Lib":
         raise SystemExit("Output must clearly identify the experimental .Lib")
     source = r82_bytes()
     image, meta = build_in_memory(source)
     _, parts, _ = unpack_ap20(image)
+    validate_interpreter_rbsr(parts)
     report = inspect(parse(image))
     if (report["issues"] or len(parts) != 83
             or meta["sum_native_units_bytes"] != 73006
-            or len(parts[81]) != 60972 or len(parts[82]) != 12034):
+            or len(parts[NEW_PROBE_GROUP]) != 12034 or len(parts[NEW_R82_GROUP]) != 60972):
         raise SystemExit("Experimental AP20 integrity failure")
     if len(image) <= 65536:
         raise SystemExit("Unexpectedly not testing the >64 KiB boundary")

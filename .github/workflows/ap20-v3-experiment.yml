@@ -42,7 +42,7 @@ jobs:
         run: python -B tools/experiments/ap20_v3_r82_p2.py
       - name: P3 prepare disposable test library and AMOS source
         run: |
-          python -B tools/experiments/ap20_v3_r82_p2_export.py --output ap20-v3-artifact/AMOSPro_AGA_V3_TEST_ONLY.Lib
+          python -B tools/experiments/ap20_v3_r82_p2_export.py --output ap20-v3-artifact/AMOSPro_AGA_V3_FIXED.Lib
           cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-artifact/
           cp docs/experiments/AP20_V3_MULTIUNIT_64K_P3.md ap20-v3-artifact/P3_INSTRUCTIONS.md
           python - <<'PY'
@@ -57,7 +57,7 @@ jobs:
       - name: Upload disposable test package (not a release)
         uses: actions/upload-artifact@v4
         with:
-          name: AP20_V3_R82_TEST_ONLY
+          name: AP20_V3_R82_FIXED_TEST_ONLY
           path: ap20-v3-artifact/
           retention-days: 7
           if-no-files-found: error
