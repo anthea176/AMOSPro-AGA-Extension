@@ -8,12 +8,12 @@
 
 | Élément | Situation établie | Référence |
 |---|---|---|
-| **Dernière version promue : R81 v0.13.26** | **`LAST_GOOD`**, 59 972 octets, 70 commandes / 77 entrées AP20, C2P Blit/Zoom/IFF→Chunky optimisés MC68020. Gates **A CPU, B Runtime et C Compiler PASS** sur le périmètre documenté, **D Amiga physique non testée**. R73 reste historique. | [Promotion R81](C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md) |
-| **Bibliothèque de travail : R82 v0.13.27 candidate** | `dist/AMOSPro_AGA.Lib` **64 112 octets**, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commandes / 81 entrées**, marge AP20 4 562 octets. **Gate A native/ABI PASS** ; WinUAE B, Compiler C et matériel D **NON TESTÉES**. La R81 LAST_GOOD reste distincte et protégée. | [Rapport Gate A R82](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md) |
-| **C2P R81 — jalon qualifié** | Gates A/B/C **PASS** (périmètre détaillé dans les rapports), constructeur SHA-pinned, API inchangée ; **R81 promue `LAST_GOOD` sur autorisation explicite**. AGAPIC v2 est maintenant un chantier R82 distinct, Gate A native PASS et candidate installée, Gate B non exécutée. | [Rapport Gate C](C2P_R81_COMPILER_GATE_C_2026-11-14.md) |
+| **Dernière version promue : R82 v0.13.27** | **`LAST_GOOD`**, 64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, 74 commandes / 81 entrées AP20, marge 16 bits **4 562 octets**. Gates **A native, B WinUAE Runtime et C Compiler PASS** sur le banc AGAPIC v1/v2 CPU 68030, delta Chip/Fast 0/0 ; **D physique et PRG_STATE 0 non testés**. R81 devient historique. | [Promotion R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) |
+| **Bibliothèque active : R82 v0.13.27 promue** | `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` **octet pour octet** ; 64 112 octets, 74 commandes / 81 AP20. Gate A/Runtime B/Compiler C PASS sur le banc documenté. Pas d'essai Amiga physique, pas de publication Aminet. | [Journaux B/C](AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) |
+| **C2P R81 — jalon historique qualifié** | Gates A/B/C **PASS** (périmètre détaillé dans les rapports), constructeur SHA-pinned, API inchangée ; **R81 promue `LAST_GOOD` sur autorisation explicite**. AGAPIC v2 est maintenant un chantier R82 distinct, Gates A native, B Runtime et C Compiler PASS, R82 promue LAST_GOOD avec accord explicite. | [Rapport Gate C](C2P_R81_COMPILER_GATE_C_2026-11-14.md) |
 | **Suite de l'ordre retenu** | Finir et qualifier C2P, puis **AGAPIC v2**. Les autres études sont un backlog, sans développement implicite. | Sections suivantes |
 
-**Identité actuelle :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R81 v0.13.26 promue** (59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`) ; `dist/AMOSPro_AGA.Lib` = **R82 v0.13.27 candidate** (64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`). R73 v0.13.18 (51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`) demeure dans [l'historique Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/e7a11afc284840e61de52d83c2d0de7b368b696e/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Identité actuelle :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` = `dist/AMOSPro_AGA.Lib` = **R82 v0.13.27 promue** (64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`). **R81 v0.13.26** (59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`) reste reconstructible et accessible dans l'historique Git. R73 v0.13.18 (51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`) demeure dans [l'historique Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/e7a11afc284840e61de52d83c2d0de7b368b696e/dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **BLOCAGE R74/R75 :** régression confirmée sur les entrées clavier/souris RPG après insertion de 138 octets sans recalage de sept accès LEA. [Correctif natif R76](C2P_R76_RPG_REGRESSION_2026-11-14.md). Les deux programmes M0 RPG fonctionnent desormais sous WinUAE avec R76 (retour auteur). Gate B C2P Convert R76 desormais PASS (5/5 profondeurs et journal RAM). Gates C/D restantes ; aucune promotion automatique.
 
@@ -42,7 +42,7 @@ Chaîne retenue : **banque DATA/WORK chunky → `c2p.library` → bitmap interm�
 
 ## 3. Après C2P — AGAPIC v2 et API Bank palettes
 
-**Statut : R82 P1 Gate A native + monolithe AP20 intégré PASS ; banque installable et Gate B/C non réalisées.**
+**Statut : R82 v0.13.27 PROMUE LAST_GOOD ; Gates A native / B Runtime / C Compiler PASS sur le périmètre documenté ; interprétation pure et matériel non testés.**
 R81 0.13.26 reste `LAST_GOOD`. [Contrat détaillé P0](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) et [AGAPIC v1 historique](M16_AGAPIC_FORMAT_DESIGN.md).
 
 - **AGAPIC v2** : même RLE planaire et masque que v1, ModeID U32 **obligatoire, égalité stricte** avec le mode réellement affiché ; palette RGB24 **obligatoire et complète (2^Depth)**. Dessin sans application automatique de palette, sans Swap.

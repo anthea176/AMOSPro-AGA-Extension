@@ -1,32 +1,39 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## AGAPIC v2 — R82 candidate native disponible, WinUAE Gate B suivante (14/11/2026)
+## R82 AGAPIC v2 — PROMUE `LAST_GOOD`, Gates A / Runtime B / Compiler C PASS (14/11/2026)
 
-**Bibliothèque active R82 v0.13.27** : `dist/AMOSPro_AGA.Lib`, **64 112 octets**,
-SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, 74 commandes / 81 entrées AP20, monolithe
-60 972 octets, marge Compiler V2 **4 562 octets**. Uniquement sur `main`.
-**GATE A CPU/ABI PASS**, y compris 69 scénarios Image Draw, 52 Init/Capture,
-63 Apply/Fade, 70 Region, 19 appels aux offsets finaux de la bibliothèque.
+**Autorisation explicite de l'auteur** : « tu peux promouvoir! ».
+R82 v0.13.27 est la **nouvelle référence `LAST_GOOD`** sur **`main`**.
+`dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`
+réutilisent le **même blob Git R82** : 64 112 octets,
+SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commandes / 81 entrées AP20**,
+monolithe 60 972 octets, plafond 16 bits 65 534, marge **4 562 octets**.
+Le constructeur déterministe `tools/build_agapic_v2_r82_full_preview.py`
+reproduit exactement les octets. Aucun code machine n'a été changé
+pendant la promotion.
 
-**R81 v0.13.26 reste `LAST_GOOD` protégée** dans
-`dist/AMOSPro_AGA_LAST_GOOD.Lib`, 59 972 octets, SHA256
-`9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`.
-Elle n'est pas modifiée ni promue automatiquement.
+**Gates A/B/C PASS, sur le banc AGAPIC v1/v2 testé :**
+Gate A MC68020/CI (dessin, régions, palettes, ABI et liens), Gate B
+WinUAE **Runtime `PRG_STATE 1`** CPU 68030, Gate C **AMOS Compiler
+`PRG_STATE -1`** CPU 68030. Les deux journaux utilisateur portent
+`RESULT 1`, `VERDICT PASS`, `ERR 0`, tous indicateurs à 1,
+`CLOSE_RETURNED 1` et deltas Chip/Fast **0/0**. La capture WinUAE
+confirme visuellement les images et régions en 256 couleurs.
+**Attention : `PRG_STATE 0` (interprétation pure) non documenté,
+Gate D Amiga AGA physique NON TESTÉE** ; aucune performance chiffrée.
 
-**SEUL test AMOS actif :** `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc`,
-avec les deux banques `R82_AGAPIC_V2_BANK10.abk` (palette complète + ModeID)
-et `R82_AGAPIC_V1_BANK12.abk` (compatibilité). Le programme teste la
-palette AGAPAL v1 et AGAPIC v2, quatre nouveaux tokens Bank, dessin / Region,
-fondus et erreurs, journal `RAM:AGAPIC_R82_INTERPRETED.TXT`, nettoyage,
-et retour `End`. Le fichier `tests/current/README.md` donne les étapes.
+**R81 v0.13.26, ancienne LAST_GOOD, reste historique et reconstructible** :
+59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, source déterministe
+`tools/build_c2p_r81_opt020.py`. L'ancien pointeur Git est disponible
+sur [l'historique avant R82](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+Aucune archive historique figée n'est modifiée.
 
-**À effectuer sur WinUAE :** installer **la candidate R82** dans le slot
-AMOS existant, charger les deux banques de test à côté du seul ASC, lancer
-**en interprété d'abord**, récupérer journal RAM et observation graphique.
-N'annoncer Gate B que si `RESULT 1`, `ERR 0` et l'affichage sont confirmés.
-Réserver **Gate C Compiler à la fin du chantier, après Gate B**.
-Gate D Amiga physique indépendante. Aucune publication ni promotion R82
-sans accord de l'auteur. [Gate A](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).
+**Seul test AMOS actif** : `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc`
+et ses banques `R82_AGAPIC_V2_BANK10.abk` / `R82_AGAPIC_V1_BANK12.abk`.
+Pas de branche, tag, PR, GitHub Release ou publication Aminet.
+[Rapport de promotion](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) ·
+[Rapport WinUAE Runtime/Compiler](AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) ·
+[Rapport Gate A](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).
 
 ---
 

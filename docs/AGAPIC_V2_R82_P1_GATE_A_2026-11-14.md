@@ -1,6 +1,6 @@
 # AGAPIC v2 / R82 — Gate A native complète PASS (14/11/2026)
 
-**Statut : R82 v0.13.27 candidate unique dans `dist/AMOSPro_AGA.Lib` (64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`).** Gate A CPU/ABI intégrée PASS, WinUAE B / Compiler C / matériel D NON TESTÉES. La R81 v0.13.26 (59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`) demeure l'unique `LAST_GOOD` promue, strictement protégée dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Travail sur `main` uniquement.
+**Statut actualisé : R82 v0.13.27 PROMUE `LAST_GOOD` sur `main`, octets identiques entre la bibliothèque active et la référence protégée (64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`).** Gate A CPU/ABI PASS ; depuis réception des journaux utilisateur, Gate B WinUAE Runtime et Gate C AMOS Compiler PASS sur le banc AGAPIC v1/v2 CPU 68030. Mode strictement interprété et Gate D physique non testés. Ancienne LAST_GOOD R81 v0.13.26 (59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`) historique et reconstructible. [Promotion R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
 ## Périmètre validé — MC68020 et hôte uniquement
 
@@ -44,7 +44,7 @@ Le `BSR.L` MC68020 résout l'éloignement des routines AGAPAL historiques mais
 **ne supprime pas** le plafond de 65 534 octets. Le builder `build_agapic_v2_r82_full_preview.py`
 et `aga_compiler_capacity.py` le contrôlent avant toute publication.
 
-## Banc AMOS / WinUAE activé (non exécuté)
+## Banc AMOS / WinUAE exécuté en Runtime et compilé
 
 - `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` : seul ASC actif, copie strictement identique au fichier de conception `tests/design/`; test 320×256, 256 couleurs,
   ModeID PAL LowRes `$00021000`, palettes AGAPAL et AGAPIC v2, fondu,
@@ -58,15 +58,20 @@ et `aga_compiler_capacity.py` le contrôlent avant toute publication.
   `tools/test_agapic_v2_r82_amos_design_static.py` vérifient la génération des
   banques et la syntaxe structurale AMOS. Cela **ne constitue pas** un test AMOS.
 
-## Garde-fous et prochaine validation
+## Validations ultérieures et statut `LAST_GOOD`
 
-1. **R81 demeure `LAST_GOOD` protégée** ; seule la R82 candidate occupe maintenant `dist/AMOSPro_AGA.Lib` et son seul ASC actif est sous `tests/current/`. Les preuves antérieures restent historiques, non écrasées.
-2. Le SHA256 de la R82 active est verrouillé ; les contrôles d'identité doivent exiger le constructeur déterministe R82 et la référence R81 inchangée.
-3. Gate B : lancer le test sous **AMOS interprété / WinUAE**, lire le journal
-   `RAM:AGAPIC_R82_INTERPRETED.TXT`, vérifier palette et rendu visuel.
-4. Gate C : **compiler une seule fois en fin de chantier**, après Gate B et
-   les regressions du moteur ; conserver le journal compilé.
-5. Gate D : Amiga AGA physique, séparé. Ne pas promouvoir R82 avant
-   l'accord explicite de l'auteur et les preuves de validation.
+- **WinUAE Runtime CPU 68030 : PASS** (`PRG_STATE 1`, `RESULT 1`,
+  `ERR 0`, deltas nets Chip/Fast 0/0, fermeture propre).
+- **AMOS Compiler CPU 68030 : PASS** (`PRG_STATE -1`, mêmes indicateurs
+  et rendu multicolore vérifié visuellement par l'auteur).
+- **Interprétation pure `PRG_STATE 0` : NON DOCUMENTÉE.**
+- **Amiga AGA physique Gate D : NON TESTÉE.**
+- **Promotion R82 explicitement autorisée et effectuée** en réutilisant
+  sans reconstruction le blob de `dist/AMOSPro_AGA.Lib` pour
+  `dist/AMOSPro_AGA_LAST_GOOD.Lib`. La version R81 historique reste
+  vérifiable par son constructeur SHA épinglé.
 
-**Aucune Gate B, C ou D R82 n'est revendiquée à ce stade.**
+[Rapport WinUAE détaillé et journaux](AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) ·
+[Rapport de promotion](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
+
+**Aucune amélioration de vitesse ni qualification physique revendiquée.**

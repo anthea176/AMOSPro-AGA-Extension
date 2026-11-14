@@ -1,6 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R81 v0.13.26 is the promoted LAST_GOOD (Gates A/B/C PASS on documented scenarios; D untested).
+R82 v0.13.27 is the promoted LAST_GOOD (Gates A/B Runtime/C Compiler PASS on documented 68030 AGAPIC scenarios; physical D not tested).
+R81 v0.13.26 is the SHA-pinned predecessor, separately reproducible from its frozen builder.
 R73 v0.13.18 remains reconstructible through its immutable builder and Git history.
 R68 v0.13.13 remains SHA-pinned in its deterministic builder and Git history.
 R69 OPT020/P1e passed CPU/WinUAE and interpreted/compiled benchmarks.
@@ -18,7 +19,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # Promoted R81 v0.13.26 OPT020, Gates A/B/C PASS; D untested
+LAST_GOOD_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # Promoted R82 v0.13.27, Gates A CPU/B Runtime/C Compiler PASS; physical D not tested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -45,7 +46,7 @@ R78_SHA="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"  # C2
 R79_SHA="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
 R80_SHA="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"  # IFF->chunky, A PASS; R80 Runtime 8-plane B PASS
 R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # C2P MC68020 optimized Blit/Zoom/IFF, Gates A/B/C PASS (8 planes / 68030)
-R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # AGAPIC v2 candidate; native Gate A PASS, WinUAE B/C/D pending
+R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # AGAPIC v2 promoted LAST_GOOD; Gates A/B Runtime/C PASS; physical D untested
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -90,8 +91,8 @@ def verify_active(root: Path):
         from native_relative_links import assert_native_links
         from c2p_r74_relink import check_cross_r74
         candidate,meta=build_r82()
-        assert cur==candidate and cur!=good,"R82 must match deterministic builder and preserve R81 LAST_GOOD"
-        assert sha256(good).hexdigest()==R81_SHA
+        assert cur==candidate==good,"Promoted R82 must equal active, LAST_GOOD and deterministic builder"
+        assert sha256(good).hexdigest()==R82_SHA
         assert len(cur)==64112 and meta["commands"]==74 and meta["ap20_entries"]==81
         assert meta["monolith_bytes"]==60972 and meta["compiler_margin"]==4562
         _,parts=unwrap_native_parts_v2(cur)
@@ -100,7 +101,7 @@ def verify_active(root: Path):
                    for i,pos,op in SITES),"R82 keyboard/mouse LEA drift"
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
         assert len([t for t in report["tokens"] if t["name"].startswith("aga ")])==74
-        return cur,good,"R82 0.13.27 AGAPIC v2 active candidate; native Gate A PASS; WinUAE B/C/D NOT TESTED; R81 LAST_GOOD protected"
+        return cur,good,"R82 0.13.27 AGAPIC v2 PROMOTED LAST_GOOD; native A PASS; WinUAE Runtime B PASS; Compiler C PASS; physical D NOT TESTED; pure PRG_STATE 0 not evidenced"
     if current_sha==R81_SHA:
         from build_c2p_r81_opt020 import build as build_r81
         from build_c2p_r76_rpg_fix import SITES, state_offset
@@ -109,14 +110,14 @@ def verify_active(root: Path):
         from c2p_r74_relink import check_cross_r74
         candidate,meta=build_r81()
         _,parts=unwrap_native_parts_v2(cur)
-        assert cur==candidate==good,"Promoted R81 must equal deterministic MC68020 builder and LAST_GOOD"
+        assert cur==candidate,"Historical R81 must equal deterministic MC68020 builder"
         assert len(cur)==59972 and meta["commands"]==70 and meta["ap20_entries"]==77
         assert len(parts)==76 and state_offset(parts)==12070
         assert all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
                    for i,pos,op in SITES),"R81 7 LEA input-state regression"
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
         assert sha256(good).hexdigest()==LAST_GOOD_SHA
-        return cur,good,"R81 0.13.26 C2P OPT020 PROMOTED LAST_GOOD; native A PASS; Runtime B PASS; Compiler C PASS; physical D NOT TESTED"
+        return cur,good,"R81 0.13.26 historical former LAST_GOOD; native A PASS; Runtime B PASS; Compiler C PASS; physical D NOT TESTED"
     if current_sha==R80_SHA:
         from build_c2p_r80_iff_chunky import build as build_r80
         from build_c2p_r76_rpg_fix import SITES, state_offset

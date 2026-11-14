@@ -41,7 +41,7 @@ APIS=(
 def build():
     baseline,_=build_r81()
     assert sha256(baseline).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()==R81_SHA
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA), 'unrecognized R81/R82 LAST_GOOD'
     tok,old=unwrap_native_parts_v2(baseline)
     assert len(old)==76 and not old[-1].endswith(GETP)
     assert state_offset(old)==12070

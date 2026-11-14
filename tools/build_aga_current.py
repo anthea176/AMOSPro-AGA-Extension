@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify promoted R81 V2, historical R73 builder and frozen R46 C1.
+"""Verify promoted R82 V2, historical R81/R73 builders and frozen R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -53,15 +53,15 @@ def main() -> None:
     if active.startswith("R82 0.13.27"):
         from build_agapic_v2_r82_full_preview import build as build_r82
         candidate,meta=build_r82()
-        assert candidate==current and meta["sha256"]=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
+        assert candidate==current==LAST_GOOD.read_bytes() and meta["sha256"]=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
         assert meta["size"]==64112 and meta["commands"]==74
         assert meta["ap20_entries"]==81 and meta["compiler_margin"]==4562
-        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
-        print("CURRENT R82 AGAPIC V2 CANDIDATE: native Gate A PASS; WinUAE B/Compiler C NOT TESTED",meta)
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
+        print("CURRENT R82 PROMOTED LAST_GOOD: native A PASS; Runtime B PASS; Compiler C PASS; physical D NOT TESTED",meta)
     elif active.startswith("R81 0.13.26"):
         from build_c2p_r81_opt020 import build as build_r81
         candidate,meta=build_r81()
-        assert candidate==current==LAST_GOOD.read_bytes(), "Promoted R81 must equal exact active builder"
+        assert candidate==current, "Historical R81 must equal exact SHA-pinned builder"
         assert meta["sha256"]=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4" and meta["size"]==59972
         assert meta["commands"]==70 and meta["ap20_entries"]==77
         from build_opt020_p3_r73 import build as build_r73

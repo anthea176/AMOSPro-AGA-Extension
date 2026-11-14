@@ -1,16 +1,15 @@
-# R82 AGAPIC v2 — WinUAE interpreted Gate B (NOT YET EXECUTED)
+# R82 AGAPIC v2 — Gates A / WinUAE Runtime B / Compiler C PASS (14/11/2026)
 
-**Only active AMOS test:** [AGAPIC_R82_V2_BANK_PALETTE_01.asc](AGAPIC_R82_V2_BANK_PALETTE_01.asc). **Current R82 v0.13.27 candidate**: `dist/AMOSPro_AGA.Lib`, 64,112 bytes, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`; 74 commands / 81 AP20 entries; native Gate A PASS. WinUAE B / Compiler C / real Amiga D NOT TESTED.
+**Only active AMOS test:** [AGAPIC_R82_V2_BANK_PALETTE_01.asc](AGAPIC_R82_V2_BANK_PALETTE_01.asc). **Promoted R82 v0.13.27 `LAST_GOOD`**: `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **64,112 bytes**, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commands / 81 AP20 entries**, 4,562-byte Compiler V2 headroom. Gates **A native / WinUAE Runtime B / AMOS Compiler C PASS** on the documented CPU 68030 AGAPIC test. Pure interpreted `PRG_STATE 0` and physical D **NOT TESTED**.
 
-**R81 v0.13.26 remains the protected `LAST_GOOD`** in `dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, fully separate from the working R82 candidate. Existing historical R81 tests remain in Git history; do not run R82 with an old extension loaded.
+**Historical R81 v0.13.26:** SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, 59,972 bytes, previously promoted `LAST_GOOD`, now available [through Git history](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib) and the unchanged deterministic `tools/build_c2p_r81_opt020.py` builder.
 
-## WinUAE interpreted procedure
+## WinUAE test and evidence
 
-1. In WinUAE AGA with CPU 68020+ install the **R82 candidate** into the existing AMOS Professional extension slot (historically slot 14 if available). Restart AMOS and check the loaded extension.
-2. Copy `R82_AGAPIC_V2_BANK10.abk` and `R82_AGAPIC_V1_BANK12.abk` beside the ASC. They overwrite AMOS DATA banks 10 and 12; the test also reserves bank 11. **Use a disposable AMOS session.**
-3. Open an empty AMOS program; **Project → Merge ASCII** the sole active ASC. Run **interpreted first**. It opens a 320×256×256-colour PAL LowRes double-buffered screen, applies AGAPIC v2 / AGAPAL palettes, tests Init/Capture/Apply/Fade, draws v1/v2 images and regions and validates rejection paths.
-4. The image remains visible for a bounded 100 VBL before normal cleanup. The program restores the AMOS screen, erases banks 10/11/12 and returns with `End`.
-5. Copy **`RAM:AGAPIC_R82_INTERPRETED.TXT`** outside RAM: before reset. Expected, **not yet observed**: `RESULT 1`, `VERDICT PASS`, `INVALID_OK 1`, `DRAW_V1_OK 1`, `DRAW_V2_OK 1`, `REGION_V1_OK 1`, `REGION_V2_OK 1`, `ERR 0`, `CLOSE_RETURNED 1`.
-6. Report any Guru, graphical discrepancy, missing logs or failure with the displayed error code. **Do not compile before Gate B is accepted**; Gate C is a separate final step.
+1. Install R82 into the existing AMOS Professional extension slot in a WinUAE AGA setup with CPU 68020 or newer; restart AMOS.
+2. Copy `R82_AGAPIC_V2_BANK10.abk` and `R82_AGAPIC_V1_BANK12.abk` beside the ASC. The test loads DATA banks 10 and 12 and reserves bank 11; use a disposable AMOS session.
+3. In a fresh AMOS program, use **Project → Merge ASCII** with the sole active ASC. Its indexed 320×256×256-colour PAL LowRes screen tests AGAPIC v2 and AGAPAL palettes, Init/Capture/Apply/Fade, image draw, masked regions, invalid inputs and Swap.
+4. The author has **already tested Runtime and compiled modes** under WinUAE 68030. Both logs report `RESULT 1`, `VERDICT PASS`, all feature flags 1, `ERR 0`, `CLOSE_RETURNED 1`, and zero net Chip/Fast RAM differences. A screenshot confirms the displayed multicolour image atlas and cropped regions.
+5. The captured source logs are [Runtime](../../docs/evidence/AGAPIC_R82_RUNTIME_2026-11-14.TXT) and [Compiled](../../docs/evidence/AGAPIC_R82_COMPILED_2026-11-14.TXT). **No `PRG_STATE 0` report or physical Amiga test** has been received. Do not interpret these as universal tests of all CPU/mode combinations.
 
-[Gate A report](../../docs/AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).
+[Promotion report](../../docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) · [WinUAE report](../../docs/AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) · [Native Gate A report](../../docs/AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).

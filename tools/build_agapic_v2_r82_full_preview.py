@@ -3,7 +3,7 @@
 
 No output file. No API installation. Native Image Draw, Image Region and
 Bank Palette handlers require independent CPU Gate A and WinUAE Gate B.
-The R81 LAST_GOOD and its source builders are read-only and SHA pinned.
+The R81 source builder remains frozen and SHA pinned; R82 may be the active promoted LAST_GOOD.
 """
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def native_starts(parts):
 def build():
     parent,_=build_r81()
     assert sha256(parent).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()==R81_SHA
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA), 'unrecognized R81/R82 LAST_GOOD'
     current_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
     assert current_sha in (R81_SHA,R82_SHA),'unrecognized active R81/R82 binary'
     proto,proto_meta=build_api_preview()

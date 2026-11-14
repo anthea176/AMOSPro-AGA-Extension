@@ -100,7 +100,7 @@ def main():
     assert code.count(bytes.fromhex('4eaefce8')) == 1, 'GetVPModeID missing/wrong LVO'
     assert 'v2_screen_mode_ok' in labels and 'header_v1' in labels
     assert labels['paint_group'] < len(code)
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() == R81_SHA
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() == R82_SHA
     assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA)
     count = 0
     for depth in (4, 8):

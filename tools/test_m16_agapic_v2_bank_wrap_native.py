@@ -132,7 +132,7 @@ def once(emit, label, bank, arg, *, compiled=False, cpu_type=CPUType.M68020):
 
 def main():
     expected=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(expected).hexdigest()==R81_SHA
+    assert sha256(expected).hexdigest()==R82_SHA
     assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA)
     count=0
     for compiled in (False,True):
@@ -146,7 +146,7 @@ def main():
             count += once(emitter,name,10,args[0],compiled=compiled,cpu_type=CPUType.M68000)
     print('R82 simple bank wrappers real MC68020 Gate A PASS:',
           count,'native executions, BSR.L beyond 32KiB, ABI, bank failures, CPU000 refusal')
-    print('R81 LAST_GOOD pinned; active R81/R82 accepted, no WinUAE Gate B claimed.')
+    print('R82 LAST_GOOD SHA pinned; historical R81 builder preserved; standalone CPU Gate A only.')
 
 
 if __name__=='__main__':

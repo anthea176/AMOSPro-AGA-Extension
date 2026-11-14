@@ -1,22 +1,35 @@
 # EXTENSION_SOURCE_RULES.md
 
-## ÉTAT AUTORITAIRE — R81 v0.13.26 PROMUE `LAST_GOOD` (14/11/2026)
+## ÉTAT AUTORITAIRE — R82 v0.13.27 PROMUE `LAST_GOOD` (14/11/2026)
 
-**Promotion explicitement autorisée :** R81 OPT020 est la référence promue **protégée** `dist/AMOSPro_AGA_LAST_GOOD.Lib` ; elle reste **strictement identique** au constructeur déterministe `tools/build_c2p_r81_opt020.py` : **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, 70 commandes / 77 entrées AP20. Le binaire de travail `dist/AMOSPro_AGA.Lib` peut être une **candidate ultérieure non promue**, qui ne doit jamais altérer cette référence R81.
+**Autorisation explicite de l'auteur :** « tu peux promouvoir! »,
+après réception des journaux WinUAE Runtime et AMOS Compiler de R82.
+**`dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` ont le même
+blob Git** (64 112 octets), SHA256
+`b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, 74 commandes / 81 entrées AP20, monolithe 60 972 octets,
+marge de capacité 16 bits **4 562 octets**. Les octets R82 n'ont pas été
+modifiés pour cette promotion ; la référence est vérifiée par
+`tools/build_agapic_v2_r82_full_preview.py`.
 
-**Gates A native, B WinUAE Runtime et C AMOS Compiler : PASS** sur les scénarios documentés, dont IFF indexé 320×256×8 et CPU 68030, 14/14 pixels de référence, deltas Chip/Fast 0. Gate D matériel physique non testée ; aucun gain de vitesse quantifié. [Rapport de promotion](docs/C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md).
+**Gates A CPU/CI, B WinUAE Runtime et C AMOS Compiler : PASS** sur le banc
+AGAPIC v1/v2 documenté (CPU 68030, 320×256×8, palettes, fondu, régions,
+`ERR 0`, `CLOSE_RETURNED 1`, deltas Chip/Fast 0/0).
+**AMOS strictement interprété (`PRG_STATE 0`) et Gate D physique NON TESTÉS.**
+Ni performance chiffrée ni publication Aminet revendiquées.
+[Rapport de promotion](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) ·
+[Journaux WinUAE](docs/AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md).
 
-**R73 v0.13.18 reste la dernière référence historique antérieure**, reconstruite par `tools/build_opt020_p3_r73.py` et récupérable dans Git. Les sections datées ci-dessous qui présentent R73 comme `LAST_GOOD` décrivent **l'état historique de leur rédaction** ; elles ne remplacent pas ce statut R81 plus récent. Pas de branche supplémentaire, tag, release GitHub ou publication Aminet par cette promotion. Préserver les constructeurs historiques, le seul ASC actif et la protection du pointeur `LAST_GOOD`.
+**R81 v0.13.26, ancienne `LAST_GOOD`, demeure historique** : 59 972
+octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, source
+`tools/build_c2p_r81_opt020.py`, blob Git
+`8fc00057b78b2c406af5d0c25c72aaf26102b869`.
+[Ancien pointeur R81 en historique Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+Les constructeurs historiques R68/R73 et les archives figées sont conservés.
+Un seul ASC actif R82. **`main` uniquement** ; pas de branche, PR,
+tag ou publication par cette promotion.
 
-## CANDIDATE R82 v0.13.27 — ÉTAT NON PROMU (14/11/2026)
-
-`dist/AMOSPro_AGA.Lib` : **R82 candidate 64 112 octets**, SHA256
-`b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`,
-74 commandes / 81 entrées AP20, marge du monolithe Compiler V2 : **4 562 octets**.
-**Gate A native MC68020 PASS**, **Gate B WinUAE / Gate C Compiler / Gate D matériel NON TESTÉES**.
-Un seul test actif : `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` et ses banques.
-Aucune promotion de R82, aucun tag, aucune branche nouvelle. La R81 ci-dessus
-reste `LAST_GOOD`, intacte. Voir `docs/AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md`.
+Les anciens états R81/R73 consignés plus loin dans ce document sont
+**historiques** et ne remplacent pas l'état R82 promu ci-dessus.
 
 ---
 
