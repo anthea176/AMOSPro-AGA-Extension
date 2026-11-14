@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R77 v0.13.22 — C2P Close candidate, Gate A native PASS, Gate B WinUAE en attente (14/11/2026)
+## R77 WinUAE — Gate B fonctionnelle PASS, correctif focus ASC (14/11/2026)
+
+**Journal utilisateur `C2P_R77_RUNTIME.TXT` :** R77 v0.13.22, `PRG_STATE 1` / `RUN_MODE RUNTIME`, CPU Exec 68030, `RESULT 1`, `PASS_DEPTH 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`. Les appels de fermeture explicite, double fermeture et reouverture fonctionnent sur les cinq profondeurs. **Gate B fonctionnelle PASS** ; Gate C Compiler et D physique NON TESTEES.
+
+**Memoire :** Chip Free `1661960 -> 1661960`, delta nul. Fast Free `135548368 -> 135630312`, soit **+81 944 octets libres en sortie**, pas une fuite observee. L'auteur a explique avoir utilise **Ctrl+C sur un essai precedent**, car le test n'avait pas `Amos To Back` devant la boucle `Aga Key` et Echap ne fonctionnait pas. La banque chunky de 81920 octets pouvait rester allouee ; l'ecart de 24 octets supplementaires n'est pas attribue avec certitude.
+
+**Correction :** le seul ASC `tests/current/C2P_R77_CLOSE_01.asc` execute maintenant `Amos To Back` avant d'attendre Echap, et `Amos To Front` seulement apres `Aga Screen Close`. Preflight statique et `EXTENSION_SOURCE_RULES.md` mis a jour. **Ce nouveau focus n'a pas encore ete teste sous WinUAE** ; la preuve Gate B existante demeure valide. Aucun changement de binaire. [Rapport](C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md).
+
+**Suite :** contrat **R78 `Aga C2P Blit` approuve**, developpement autorise apres la Gate B fonctionnelle R77. Seconde execution propre R77 facultative pour verifier delta Fast nul et nouveau focus. Conserver `dist/AMOSPro_AGA_LAST_GOOD.Lib` **R73** SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407` ; R77 reste candidate active, pas de promotion.
+
+## Historique R77 avant confirmation Gate B — Gate A native PASS (14/11/2026)
 
 **Candidate active** : `dist/AMOSPro_AGA.Lib` R77 v0.13.22, **54 360 octets**, SHA256 `81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11`, **67 commandes / 74 AP20**. La R77 ajoute `_OK=Aga C2P Close` (retour 1 si contexte libéré, 0 si absent ; aucun changement de l'écran, de la palette ou de la banque chunky). La fermeture explicite conserve les hooks de nettoyage automatiques R74/R76 et ne modifie aucune des sept références clavier/souris `$2F26`.
 

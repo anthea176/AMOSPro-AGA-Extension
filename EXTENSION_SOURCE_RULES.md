@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## REGLE PERMANENTE — focus des tests AGA / AMOS (14/11/2026)
+
+Le test C2P R76/R77 a produit un faux blocage : `Amos To Front` apres la fermeture d'un ecran AMOS laissait l'affichage AMOS devant la mire AGA suivante. `Aga Key` ne recevait alors pas Echap, et Ctrl+C interrompait le programme en sautant `Erase 12`. **Ce n'est pas un gel de la library C2P.**
+
+- Pour tout ASC de test avec ecran Intuition AGA et `Aga Key`, mettre **`Amos To Back` avant la boucle clavier** (et, de preference, avant la phase de visualisation), puis **`Amos To Front` seulement apres `Aga Screen Close`**. Contrôler l'ordre dans le preflight.
+- Ne pas attribuer un ecart de Fast RAM positif apres execution a une fuite : un ancien `Ctrl+C` peut avoir laisse une banque DATA non effacee, liberee au lancement suivant. Rapporter les deltas exacts sans inventer leur origine.
+- Valider `End`, le fichier `RAM:` et l'absence de Guru. Ne pas confondre « Echap ne parvient pas a l'ecran AGA » avec « code natif gele ». Manuel AMOS Professional : https://amospromanual.dev/11-04-multitasking.html.
+
+---
+
 ## REGLES PERMANENTES R76 - non-regression AP20 et journal RAM des tests (14/11/2026)
 
 **Retour auteur R76 :** les deux scripts RPG M0 fonctionnent de nouveau sous WinUAE (« ca marche nickel »). Cette observation valide la Gate B RPG sur R76, mais PAS la Gate B de C2P Convert, ni la Gate C Compiler, ni la Gate D physique. R73 LAST_GOOD doit rester intacte jusqu'a une promotion explicitement autorisee.

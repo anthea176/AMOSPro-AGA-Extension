@@ -1,6 +1,6 @@
 # C2P-4 / R78 - contrat approuve : Aga C2P Blit
 
-**Decision auteur, 14/11/2026 :** Blit accepte comme suite de R77 Close. R78 ne sera implementee qu'apres qualification de R77 sur WinUAE. Aucun zoom ni nouvelle API implicite.
+**Decision auteur, 14/11/2026 :** Blit accepte comme suite de R77 Close. La Gate B fonctionnelle R77 Close a ete confirmee sous WinUAE par le journal auteur du 14/11/2026 ; le prerequis est donc rempli. Le developpement de R78 reste a engager, sans nouvelle API implicite. Aucun zoom ni nouvelle API implicite.
 
 ## Signature
 
@@ -37,3 +37,5 @@ _OK=Aga C2P Close
 Le zoom nearest-neighbour peut reutiliser cette base mais son contrat reste distinct, non implémente.
 
 [Contrat R77](C2P_R77_CLOSE_CONTRACT_2026-11-14.md)
+
+**Statut 14/11/2026 :** R77 Gates A native et B fonctionnelle PASS, R78 **non implemente**. L'ASC R77 a ete corrige pour assurer `Amos To Back` avant Echap et eviter les interruptions Ctrl+C dues au focus ; ceci ne modifie pas la library, ni la qualification de la fonction Close. [Rapport R77](C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md).

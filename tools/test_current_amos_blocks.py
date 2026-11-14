@@ -142,7 +142,7 @@ def main():
             "_SW2=Aga Swap", "_CL3=Aga C2P Close",
             "_POST=Aga C2P Convert", "_POSTCL=Aga C2P Close",
             "If _COL=256", "_K=Aga Key", "Until _K=69",
-            "Aga Screen Close", "Amos To Front", "Erase 12",
+            "Amos To Back", "Aga Screen Close", "Amos To Front", "Erase 12",
             "C2P_CLOSE_OK", "EMPTY_CLOSE_OK", "REOPEN_OK",
             "Trap Open Out", "Trap Close", "RUN_MODE", "CPU_ATTNFLAGS",
             'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"',
@@ -151,6 +151,11 @@ def main():
             "R77 C2P Close ASC missing lifecycle, logging or 5-depth tests")
         assert source.index("_CL1=Aga C2P Close")<source.index("_DEAD=Aga C2P Convert")<source.index("_CL2=Aga C2P Close")<source.index("_REOPEN=Aga C2P Open(12)")<source.index("_CL3=Aga C2P Close"), (
             "R77 Close lifecycle order changed")
+        focus_lines=[line.strip() for line in source.splitlines()]
+        assert focus_lines.count("Amos To Back")==1, (
+            "AGA test must move AMOS behind AGA before waiting for ESC")
+        assert source.index("Amos To Back")<source.index("Until _K=69")<source.index("Aga Screen Close")<source.index("Amos To Front"), (
+            "R77 focus regression: Aga Key waiting must be bracketed by AMOS back/front")
         assert source.rstrip().endswith("End"), "R77 test must end normally"
         print("PASS: R77 C2P Close active ASC covers dual close, reopen, 5 depths and RAM log (STATIC ONLY)")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
