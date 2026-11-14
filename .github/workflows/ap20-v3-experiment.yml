@@ -1,0 +1,40 @@
+name: AP20 V3 isolated multiunit experiment
+
+on:
+  push:
+    branches:
+      - experiment/ap20-v3-multiunit-64k
+    paths:
+      - "tools/experiments/**"
+      - "docs/experiments/**"
+      - ".github/workflows/ap20-v3-experiment.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  cpu020-two-units:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify promoted R82 is unchanged
+        run: |
+          python - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          expected="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
+          a=Path("dist/AMOSPro_AGA.Lib").read_bytes()
+          b=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+          assert a==b and sha256(a).hexdigest()==expected
+          print("R82 protected; libraries identical", len(a), expected)
+          PY
+      - name: Install isolated MC68020 CPU test dependencies
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: P0 structural gate - independent AP20 groups
+        run: python -B tools/experiments/ap20_v3_multiunit_probe.py
+      - name: P1 real MC68020 dispatcher and ABI gate
+        run: python -B tools/experiments/ap20_v3_multiunit_cpu020.py
