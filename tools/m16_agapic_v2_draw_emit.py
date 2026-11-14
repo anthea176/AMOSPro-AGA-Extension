@@ -131,7 +131,7 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     uword(4)
     c.imm("cmp",0x4943,D(0)); B(6,"reject")
     uword(6)
-    c.imm("cmp",1,D(0)); B(6,"version_v1")
+    c.imm("cmp",1,D(0)); B(7,"version_v1")
     c.imm("cmp",2,D(0)); B(6,"reject")
     c.move(I(2),M(2,V2_VERSION_LOCAL))
     B(0,"version_ok")
