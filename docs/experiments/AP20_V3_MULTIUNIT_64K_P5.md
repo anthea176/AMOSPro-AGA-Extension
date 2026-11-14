@@ -56,3 +56,37 @@ cette portée pour dépasser cette contrainte durablement.
 
 P4 (2 modules) reste disponible comme référence historique validée.
 Aucune promotion en R83 ou remplacement de \`LAST_GOOD\` par cette P5.
+
+## P5 -- preuves WinUAE du vrai decoupage en trois modules (14/11/2026)
+
+**Gate A CPU/CI : PASS** (CI run 43640114763, huit tests positifs,
+simulation MC68020 des trois dispatchers, 78 relocalisations RBSR
+contrôlées et quatre BSR.L de palette vérifiés).
+
+**Gate B Runtime : smoke PASS (capture utilisateur).**
+Le test `P5_R82_3UNITS_SMOKE.asc` montre à l'écran
+`AGA -1`, `C2P OPEN 0`, `CLOSE 0`, `IFF REJECT 0`,
+`RESULT 1`, `ERR 0` et erreurs d'ouverture/fermeture du log nulles.
+La capture ne fournit pas de mesure mémoire détaillée ni de journal
+Runtime archivé ; ne pas extrapoler.
+
+**Gate C Compiler : smoke PASS (journal utilisateur archivé).**
+[Journal P5 compilé](evidence/AP20_V3_R82_3UNITS_P5_COMPILED_2026-11-14.TXT) :
+`RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`,
+`VERDICT PASS`, `R82_DETECT -1`,
+`C2P_OPEN_REJECT 0`, `C2P_CLOSE_REJECT 0`,
+`IFF_REJECT 0`, `ERR 0`. Chip Free `1765976 -> 1765976`
+et Fast Free `137868480 -> 137868480` : deltas nuls.
+Le fichier original utilisateur fait 260 octets CRLF, SHA256
+`bfccacf184a51a2f161c9f6432061a4a9fcbf29274bfa3e11881146882bdda00`.
+
+**Conclusion prouvée :** chargement et dispatch fonctionnels sous
+WinUAE en Runtime et en compilé pour trois véritables unités natives
+R82, d'une taille native cumulée de 73 040 octets, sans modification
+d'AMOS Compiler.
+
+**Périmètre restant :** tests fonctionnels positifs des images/palettes
+AGAPIC, C2P et décodage `Aga Iff To Chunky` avec cette P5 ; les
+résultats complets de la P4 ne valent pas validation P5. Aucune
+qualification sur Amiga physique ni mode purement interprété.
+Aucune fusion / promotion R83 / modification de `main` ou `LAST_GOOD`.

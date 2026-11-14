@@ -48,3 +48,14 @@ en plus de la vérification du dispatch.
 Seules les Gates A (CPU/CI) sont actuellement PASS.
 Les résultats WinUAE Runtime / Compiler P4 **ne valident pas
 automatiquement P5**. Aucune fusion, promotion, ou publication.
+
+## Résultats P5 reçus
+
+- Runtime : smoke **PASS** sur capture utilisateur
+  (`AGA -1`, `C2P OPEN 0`, `CLOSE 0`, `IFF REJECT 0`,
+  `RESULT 1`, `ERR 0`, erreurs log 0).
+- Compiler : smoke **PASS** dans le [journal P5 compilé](../../docs/experiments/evidence/AP20_V3_R82_3UNITS_P5_COMPILED_2026-11-14.TXT)
+  (`PRG_STATE -1`, `RESULT 1`, `ERR 0`, Chip/Fast 0/0).
+- Cette validation prouve le chargement des trois unités R82 et
+  leurs dispatchers sous AMOS365. Les essais graphiques positifs sur P5
+  restent distincts et non revendiqués.
