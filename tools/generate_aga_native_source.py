@@ -540,9 +540,11 @@ def verified_current_compiler_seeds(parsed):
         marker=bytes.fromhex("fe11f700031d")  # source-backed AMOS Bnk.GetAdr
         seeds={i:set(v) for i,v in inherited.items()}
         for i in (20,55,57,58,59,76,77,78,79):
-            # Rebuilt bodies have their OWN verified entrypoint. No stale
-            # extra seeds from old offsets may classify a changed routine.
-            seeds[i]={0}
+            # R82 only relinks branch displacements in entries 20/58:
+            # their previously audited internal helpers at offsets 4/110
+            # retain byte identity. Keep certified R81 CFG seeds there.
+            # Rebuilt/new bodies receive their own entrypoint only.
+            seeds[i]=set(inherited.get(i,{0})) if i in (20,58) else {0}
             core=sections[i]["core"]
             n=core.count(marker)
             need(n==(0 if i in (20,55) else 1),
@@ -552,6 +554,13 @@ def verified_current_compiler_seeds(parsed):
                 need(resume%2==0 and resume<len(core),
                      "Strict source R82: invalid native continuation after Rjsr")
                 seeds[i].add(resume)
+        # Two exact, source-audited final BRA.W instructions are reached
+        # only via deliberately separate exit paths in the new palette
+        # emitters. They are executable 68020 code, never arbitrary data.
+        for idx,at in ((78,1272),(79,1532)):
+            need(sections[idx]["core"][at:at+4]==bytes.fromhex("60000008"),
+                 f"Strict source R82: audited palette branch at {idx}:{at} changed")
+            seeds[idx].add(at)
         return seeds
     if len(sections)==76 and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]:
         # R81: strict byte identity to its CPU-tested three-entry OPT020
