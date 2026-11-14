@@ -386,6 +386,10 @@ jobs:
         run: |
           python -B tools/test_m16_agapic_v2.py
           python -B tools/test_aga_compiler_capacity.py
+      - name: R82 AMOS WinUAE design source and bank fixtures (static only)
+        run: |
+          python -B tools/m16_agapic_v2_winuae_fixture.py
+          python -B tools/test_agapic_v2_r82_amos_design_static.py
       - name: Standalone v2 native image decoder MC68020/ABI Gate A
         run: python -B tools/test_m16_agapic_v2_native.py
       - name: In-memory R82 image-only AP20 linking and 16-bit budget
