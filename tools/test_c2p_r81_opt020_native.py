@@ -174,14 +174,30 @@ def main():
     )
     for index, (code, labels) in zip((73, 74, 75), emitters):
         assert parts[index] == code + (GETP if index != 75 else b"")
-        # Disassemble the full native entry, including appended 68020 code.
-        ins = list(Cs(
-            CS_ARCH_M68K, CS_MODE_BIG_ENDIAN | CS_MODE_M68K_020
-        ).disasm(code, 0))
-        assert sum(i.size for i in ins) == len(code), (
-            "Malformed 020 native instruction", index,
-            [(x.address, x.mnemonic, x.op_str) for x in ins[-5:]]
-        )
+        # R80 contains an existing DOS string and a new 64-byte LUT: these
+        # are DATA, not 68020 instructions. Decode only executable stretches.
+        if index == 75:
+            old_len = len(emit_iff_to_chunky()[0])
+            guard_start = labels["chunky_decode_cpu_guard_opt020"]
+            lut_start = guard_start - 64
+            assert code[lut_start:guard_start] == __import__(
+                "c2p_opt020_variants"
+            )._nibble_lut()
+            assert old_len < lut_start < guard_start < len(code)
+            slices = (
+                (old_len, code[old_len:lut_start]),
+                (guard_start, code[guard_start:]),
+            )
+        else:
+            slices = ((0, code),)
+        for offset, section in slices:
+            ins = list(Cs(
+                CS_ARCH_M68K, CS_MODE_BIG_ENDIAN | CS_MODE_M68K_020
+            ).disasm(section, offset))
+            assert sum(i.size for i in ins) == len(section), (
+                "Malformed executable 020 native code", index, offset,
+                [(x.address, x.mnemonic, x.op_str) for x in ins[-5:]]
+            )
     b = test_blit()
     z = test_zoom()
     i = test_iff_expansion()
