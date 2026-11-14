@@ -98,10 +98,11 @@ def main():
             raw=bytearray(blob)
             raw[corrupt]^=1
             run_case(bytes(raw),1,-1);count+=1
-    for off,size in ((32,4),(36,2),(38,2),(40,4),(44,4),
-                     (48,4),(52,4),(56,4),(60,4)):
+    for off,size,value in ((32,4,0),(36,2,0),(38,2,0),
+                           (40,4,0),(44,4,0),(48,4,0),
+                           (52,4,1),(56,4,1),(60,4,1)):
         bad=bytearray(v2)
-        bad[off:off+size]=bytes(size)
+        bad[off:off+size]=value.to_bytes(size,'big')
         run_case(bytes(bad),1,-1)
         count+=1
     # Valid signed AMOS bit pattern for U32 mode must round-trip exactly.
