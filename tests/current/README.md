@@ -1,17 +1,18 @@
-# R76 C2P Convert - test actif avec journal RAM (14/11/2026)
+# R76 C2P Convert — test actif ; Gate B WinUAE PASS (14/11/2026)
 
-**Gate B RPG R76 : PASS sur retour utilisateur.** Les deux scripts M0 RPG fonctionnent sous WinUAE apres la correction R76. **Gate B C2P Convert : NON TESTEE**. Le code de log RAM/identification CPU ajoute au test actif reste lui-meme a valider sous AMOS.
+**Candidat :** [R76 v0.13.21](../../dist/AMOSPro_AGA.Lib), 54 144 octets, 66 commandes, 73 AP20. **Gate B RPG PASS** (programmes M0), **Gate B C2P Convert PASS** sur captures + fichier RAM utilisateur. **Gate C Compiler non testee**, Gate D Amiga physique non testee ; R73 LAST_GOOD demeure protegee.
 
-**Un seul ASC actif** : [C2P_R76_CONVERT_01.asc](C2P_R76_CONVERT_01.asc). Le binaire [R76 0.13.21](../../dist/AMOSPro_AGA.Lib), 54 144 octets, est la candidate en cours. R73 LAST_GOOD reste intacte.
+**Un seul ASC actif :** [C2P_R76_CONVERT_01.asc](C2P_R76_CONVERT_01.asc). Le test a produit `RAM:C2P_R76_RUNTIME.TXT` sur la session WinUAE rapportee, et termine normalement avec `End`. La valeur réelle `PRG_STATE 1` signifie **RUNTIME**, pas Compiler. Le CPU signale par Exec etait **68030**.
 
-## Test WinUAE interprete
+## Resultat confirme
 
-1. Installer la R76 dans le slot AGA existant et conserver LIBS:c2p.library v1.9 ; redemarrer AMOS. CPU 68020+ et AGA requis, banque DATA 12 libre.
-2. Importer l'ASC dans un programme vide avec Merge ASCII, puis executer en interprete **uniquement** (Gate C Compiler reservee a la fin du chantier C2P).
-3. Les cinq profondeurs 16/32/64/128/256 couleurs doivent afficher deux conversions et deux swaps avec une bande sur la deuxieme frame. Les retours attendus par profondeur restent O/DB/C 1 1 1 et CONV/SW 1 1 1 2 1 1 POST 0.
-4. Sur le dernier ecran, appuyer sur Echap apres la capture de la mire (attente interactive conservee). L'ecran se ferme ; l'ASC enregistre le fichier RAM:C2P_R76_INTERPRETED.TXT, affiche un resume et revient a AMOS par End **sans Do/Wait Vbl/Loop final**.
-5. Examiner le fichier : TEST, VERSION, RUN_MODE, PRG_STATE, CPU, CPU_ATTNFLAGS, RESULT, VERDICT, PASS_DEPTH, FAIL_DEPTH, CLOSE_COUNT, CHIP/Fast Free. Verifier aussi LOG OPEN ERR 0 et CLOSE ERR 0 en console. Faire une capture de la mire et conserver une copie du journal sur un disque, RAM: etant volatile et le fichier ecrase au prochain essai du meme mode.
+- Ecran AGA 320x256, profondeurs 16/32/64/128/256 couleurs, deux conversions + swaps explicites, bande sur la deuxieme frame.
+- `RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `FAIL_DEPTH 0`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`.
+- Chip Free : 1 799 064 avant/apres, delta 0. Fast Free : 138 134 008 -> 138 215 952 (+81 944 octets libres ; ecart a documenter, pas une fuite).
+- **Attention au focus :** sur le dernier ecran 256 couleurs, l'ASC attend `Aga Key=69` (Echap). Si AMOS est au premier plan, Echap ne sort pas du test AGA. Dans la session validee, l'auteur a utilise **Amiga+A** pour retrouver le focus du rendu AGA, puis Echap ; Ctrl+C auparavant avait seulement interrompu le programme AMOS, sans Guru.
 
-**Attention** : le log ne garantit pas une trace en cas de Guru ou de blocage avant l'epilogue. Un test ne passe pas parce que le fichier existe : ses resultats et la mire doivent etre controles. Le test C2P modifie n'a encore aucune Gate B WinUAE validee.
+## En cas de nouvel essai
 
-[Protocole des logs RAM](../../docs/AMOS_RAM_TEST_LOGGING.md) - [Rapport R76 RPG](../../docs/C2P_R76_RPG_REGRESSION_2026-11-14.md).
+Garder `LIBS:c2p.library` v1.9 et la banque DATA 12 libre, utiliser R76 dans le slot AGA habituel et importer le seul ASC courant par Merge ASCII. Ne pas relancer une Gate C Compiler sans decision explicite. Le rapport RAM porte le nom `RAM:C2P_R76_<MODE>.TXT` avec le mode annonce par `Prg State`. Copier le journal hors de RAM: avant reboot ou nouvel essai du meme mode (fichier volatile, ecrase par `Open Out`).
+
+[Rapport C2P R76 Gate B](../../docs/C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md) · [Protocole RAM](../../docs/AMOS_RAM_TEST_LOGGING.md) · [Rapport RPG R76](../../docs/C2P_R76_RPG_REGRESSION_2026-11-14.md).

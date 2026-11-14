@@ -1,14 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R76 - RPG WinUAE Gate B PASS sur retour auteur (14/11/2026)
+## R76 — Gates B RPG et C2P Convert WinUAE PASS (14/11/2026)
 
-**Validation utilisateur : « ca marche nickel »** apres les essais demandes des deux programmes M0_R73_INPUT_DIAG_01.asc et M0_R73_MENU_01.asc avec R76. Aucun Guru 80000006 n'est signale sur cet essai. C'est une **Gate B RPG confirmee sur retour utilisateur**, sans capture ou log joint ; elle ne valide **pas** C2P Convert, Compiler (Gate C) ou Amiga physique (Gate D).
+**Candidate actuelle :** `dist/AMOSPro_AGA.Lib` **R76 v0.13.21**, 54 144 octets, SHA256 `9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897`, 66 commandes / 73 AP20. **R73 LAST_GOOD protegee** : `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Aucune promotion autorisee a ce stade.
 
-**Candidat actif :** dist/AMOSPro_AGA.Lib R76 v0.13.21, 54 144 octets, SHA256 9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897 ; 66 commandes / 73 AP20. **LAST_GOOD protegee :** dist/AMOSPro_AGA_LAST_GOOD.Lib R73, 51 608 octets, SHA256 c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407. Pas de promotion sans autorisation explicite.
+**Gate B RPG R76 PASS** sur retour auteur : les deux scripts `M0_R73_INPUT_DIAG_01.asc` et `M0_R73_MENU_01.asc` fonctionnent de nouveau, sans Guru signale. Cause R74/R75 corrigee en R76 : sept LEA clavier/souris `$2E9C -> $2F26` apres insertion de 138 octets. Gate A 24 cas CPU PASS ; audit independant du binaire courant en CI avec huit mutations negatives. [Rapport](C2P_R76_RPG_REGRESSION_2026-11-14.md).
 
-**Cause corrigee :** R74 avait insere 138 octets en laissant sept LEA sur l'ancien offset clavier/souris. R76 corrige 0x2E9C -> 0x2F26 ; Gate A 24 cas natifs PASS. Controle independant tools/test_current_input_state_offsets.py sur le binaire actif, plus 8 injections negatives, desormais requis en CI. La CI precedente de R76 avait reussi sur d54577b (run 43592103012).
+**Gate B C2P Convert R76 PASS sur WinUAE**, desormais documentee par captures et journal utilisateur `C2P_R76_RUNTIME.TXT` : cinq profondeurs 16/32/64/128/256 couleurs PASS, `RESULT 1`, `ERR 0`, `PASS_DEPTH 5`, `FAIL_DEPTH 0`, `CLOSE_COUNT 5`, `CPU 68030` declare par Exec, Chip Free `1799064 -> 1799064`. Fast Free `138134008 -> 138215952` (**+81 944 octets libres**, origine exacte non prouvee). `PRG_STATE 1` = mode **RUNTIME**, et **pas** la preuve d'un executable Compiler. Sur la mire finale, AMOS etait au premier plan ; l'auteur a utilise **Amiga+A** pour retrouver le focus de l'ecran AGA, puis termine par Echap. L'interruption Ctrl+C precedente a seulement confirme qu'AMOS repondait ; ce n'etait pas une reussite de sortie normale.
 
-**Prochain essai :** Gate B **C2P Convert** en interprete avec l'unique ASC tests/current/C2P_R76_CONVERT_01.asc. Il enregistre desormais un journal RAM: avec Prg State, CPU rapporte par Exec, resultat et bilan memoire ; termine par End sans boucle terminale de resultats. **Cet ASC modifie n'est pas encore teste sous AMOS/WinUAE.** Gate C Compiler reservee a la fin du chantier C2P. Referentiels : EXTENSION_SOURCE_RULES.md et docs/AMOS_RAM_TEST_LOGGING.md.
+**Le journal RAM est operationnel sur cet essai** : fichier produit et retour a AMOS, sans boucle infinie terminale. [Rapport Gate B C2P](C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md). **Gate C Compiler et Gate D physique NON TESTEES**. `Aga C2P Close` n'a pas de contrat approuve. Un seul ASC reste actif : `tests/current/C2P_R76_CONVERT_01.asc`. Prochaine decision C2P a discuter separément, sans programmation ou compilation implicite.
 
 ## C2P-2 — R75 v0.13.20, Convert Gate A PASS, Gate B à tester (14/11/2026)
 
