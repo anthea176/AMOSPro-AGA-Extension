@@ -11,7 +11,7 @@
 | **Validation R82** | **PASS** : Gate A native, WinUAE Runtime et AMOS Compiler sur le banc AGAPIC v1/v2 en CPU 68030. **Non vérifiés** : mode strictement interprété `PRG_STATE 0` et Amiga physique. |
 | **Capacité Compiler V2** | Monolithe de **60 972 / 65 534 octets**, **4 562 octets disponibles**. Chaque nouvelle commande doit être mesurée avant intégration. |
 | **Test AMOS actif** | `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` (unique ASC actif). |
-| **Priorités avant M19** | **1. AP20 V3 multi-unités** : lever la limite de 64 Ko dans la branche expérimentale existante, sans validation WinUAE/Compiler complète à ce jour. **2. AGAPIC v2 complet** : lecture de métadonnées par banque et capture native avec pixels, palette RGB24 et DisplayModeID. |
+| **Priorités avant M19** | **1. AP20 V3 multi-unités** : lever la limite de 64 Ko dans la branche expérimentale existante, sans validation WinUAE/Compiler complète à ce jour. **2. AGAPIC v1/v2 complet** : lecture de métadonnées par banque et capture native permettant de choisir le format v1 ou v2 (pixels RLE dans les deux cas ; palette RGB24 et DisplayModeID en v2). |
 
 Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -39,9 +39,9 @@ Ces **deux chantiers passent avant M19**. Le premier est expérimental et déjà
 
 Références expérimentales : [conception et limites P4](../docs/experiments/AP20_V3_MULTIUNIT_64K_P4.md) (sur la branche expérimentale) · [protocole WinUAE P4](../experimental/AP20_V3_R82/P4_WINUAE_TEST.md) (même branche). **Aucun merge vers `main` ni promotion automatique.**
 
-### Chantier 2 — AGAPIC v2 : compléter les fonctions natives AMOS
+### Chantier 2 — AGAPIC v1/v2 : compléter les fonctions natives AMOS
 
-**Constat R82 :** lecture, dessin v1/v2 et application explicite de la palette v2 fonctionnels sur le périmètre testé ; `Aga Image Capture` ne crée **que du v1**. L'API de métadonnées demandée n'existe pas dans R82. La nouvelle capture doit produire **une vraie banque AGAPIC v2 sauvegardable et rechargeable par AMOS**, sans convertisseur PC obligatoire.
+**Constat R82 :** lecture, dessin v1/v2 et application explicite de la palette v2 fonctionnels sur le périmètre testé ; `Aga Image Capture` ne crée **que du v1**. L'API de métadonnées demandée n'existe pas dans R82. La capture native devra permettre de créer **au choix une banque AGAPIC v1 ou v2**, sauvegardable et rechargeable par AMOS, sans convertisseur PC obligatoire. **La création v1 reste une fonction à part entière**, et non une compatibilité limitée à la lecture.
 
 **2A — Lecture des informations d'une banque image**
 
@@ -57,17 +57,19 @@ Signature demandée : `_VALEUR=Aga Bank Image Info(Bank,Champ)`, avec `Bank` = *
 
 Le lecteur doit reconnaître **v1 et v2**, ne pas dessiner, ne pas décoder les pixels et ne modifier ni la banque ni la palette écran. Pour **v1**, largeur/hauteur/profondeur sont disponibles mais **palette et ModeID sont absents du format** : valeurs de retour à formaliser, sans en inventer. À fixer dans le contrat avant codage : cas banque absente/invalide, mauvais champ, version/offsets corrompus, distinction d'erreur et valeurs valides (en particulier ModeID U32).
 
-**2B — Capture complète AGAPIC v2 dans AMOS**
+**2B — Capture native AGAPIC v1 ET v2 dans AMOS**
 
-- Définir la nouvelle signature AMOS (ou l'évolution explicite de `Aga Image Capture`) **avant implémentation** ; ne pas modifier silencieusement la signature ou le comportement v1 existant.
-- Capturer un rectangle valide depuis le **back buffer AGA privé `Safe`** : pixels planaires RLE, masque indépendant éventuel et dimensions/profondeur, selon le format v2 documenté.
-- Capturer la **palette RGB24 complète de `2^Depth` couleurs** à partir du `ColorMap` AGA et le **DisplayModeID réellement utilisé** par l'écran privé. Enregistrer `PaletteCount`, `PixelFormat=1`, offsets, alignements et longueur totale conformes au format v2.
-- Créer une banque DATA AMOS **AGAPIC v2** cohérente, de longueur calculée et vérifiée, réutilisable via `Aga Bank Image Draw` / `Aga Image Region` et `Aga Bank Palette Apply(Bank,0)`, puis sauvegardable/rechargeable avec les mécanismes AMOS. Aucun Swap, VBL ou changement de palette écran implicite.
+- **Choix explicite du format à créer : v1 ou v2.** Prévoir un paramètre `Version` (valeurs 1 ou 2) ou une interface équivalente dans la **nouvelle API de capture**, à valider lors du contrat technique. Ne pas imposer v2 à toutes les nouvelles captures.
+- **Compatibilité de la commande existante :** `Aga Image Capture(Bank,X,Y,Width,Height,TransparentIndex)` continue de créer du **v1 à l'identique**, sans changement de syntaxe ou de comportement. La future interface doit aussi pouvoir demander explicitement une création **v1**.
+- **Commun aux deux versions :** capturer un rectangle valide depuis le **back buffer AGA privé `Safe`** : pixels planaires RLE, masque indépendant éventuel, dimensions et profondeur, en respectant l'encodage de chaque version.
+- **Sortie v1 :** conserver strictement l'en-tête, les offsets et le flux RLE v1, **sans** palette intégrée ni DisplayModeID, afin de produire des banques lisibles par les anciennes versions de l'extension.
+- **Sortie v2 :** capturer en plus la **palette RGB24 complète de `2^Depth` couleurs** à partir du `ColorMap` AGA et le **DisplayModeID réellement utilisé** par l'écran privé. Enregistrer `PaletteCount`, `PixelFormat=1`, offsets, alignements et longueur totale conformes au format v2.
+- **Dans les deux cas :** créer une banque DATA AMOS AGAPIC cohérente, de longueur calculée et vérifiée, réutilisable via `Aga Bank Image Draw` / `Aga Image Region`, puis sauvegardable/rechargeable avec les mécanismes AMOS. `Aga Bank Palette Apply(Bank,0)` reste réservé à la v2. Aucun Swap, VBL ou changement de palette écran implicite.
 - Gérer les refus sans laisser de banque partiellement créée ou de données existantes détruites ; contrôler géométrie, bornes, taille, allocation, RAM, masques et nettoyage.
 
 **Compatibilité impérative :** `Aga Image Capture` v1, AGAPIC v1, AGAPAL v1 et les commandes de dessin/palette R82 doivent continuer à fonctionner. Le ModeID strict et la palette v2 restent indépendants du dessin ; les palettes ne sont pas appliquées automatiquement.
 
-**Validation avant acceptation :** contrôles du format/ABK v1/v2 (dont corruption et aller-retour Save/Load), captures opaques et masquées, 4/8 plans au minimum, pixels et palette comparés, ModeID exact/refus d'incompatibilité, banques invalides, limites mémoire, fermeture et régressions R82 ; Gates A native, B WinUAE Runtime et C Compiler séparées. Gate D matériel et `PRG_STATE 0` non présumés. **R82 `LAST_GOOD` reste inchangée** jusqu'à une promotion explicitement autorisée.
+**Validation avant acceptation :** contrôles du format/ABK v1/v2 (dont corruption et aller-retour Save/Load), **capture native de la même image en v1 puis en v2**, compatibilité des banques v1 avec les anciens lecteurs, captures opaques et masquées, 4/8 plans au minimum, pixels comparés dans les deux versions, palette v2 comparée, ModeID v2 exact/refus d'incompatibilité, banques invalides, limites mémoire, fermeture et régressions R82 ; Gates A native, B WinUAE Runtime et C Compiler séparées. Gate D matériel et `PRG_STATE 0` non présumés. **R82 `LAST_GOOD` reste inchangée** jusqu'à une promotion explicitement autorisée.
 
 Référence de format : [contrat AGAPIC v2](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) ; ce document est historique sur le plan du statut des tests, mais ses dispositions binaires v1/v2 sont la base à préserver.
 
