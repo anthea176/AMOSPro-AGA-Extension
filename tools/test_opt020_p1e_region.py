@@ -322,6 +322,8 @@ def v2_structure(native):
         from build_c2p_r77_close import build as build_r77
         from build_c2p_r78_blit import build as build_r78
         from build_c2p_r79_zoom import build as build_r79
+        from build_c2p_r80_iff_chunky import build as build_r80
+        from build_c2p_r81_opt020 import build as build_r81
         from c2p_r74_relink import check_cross_r74
         from native_relative_links import assert_native_links
         r69, r69meta = build_r69()
@@ -335,8 +337,10 @@ def v2_structure(native):
         r77, r77meta = build_r77()
         r78, r78meta = build_r78()
         r79, r79meta = build_r79()
-        assert current in (r69, r70, r71, r72, r73, r74, r75, r76, r77, r78, r79), (
-            "current must be an EXACT SHA-pinned R69..R79 deterministic build")
+        r80, r80meta = build_r80()
+        r81, r81meta = build_r81()
+        assert current in (r69, r70, r71, r72, r73, r74, r75, r76, r77, r78, r79, r80, r81), (
+            "current must be an EXACT SHA-pinned R69..R81 deterministic build")
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
@@ -351,12 +355,18 @@ def v2_structure(native):
         assert r78meta["commands"]==68 and r78meta["ap20_entries"]==75
         assert r79meta["sha256"]=="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
         assert r79meta["commands"]==69 and r79meta["ap20_entries"]==76
-        if current in (r77,r78,r79):
+        assert r80meta["sha256"]=="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"
+        assert r80meta["commands"]==70 and r80meta["ap20_entries"]==77
+        assert r81meta["sha256"]=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
+        assert r81meta["commands"]==70 and r81meta["ap20_entries"]==77
+        if current in (r77,r78,r79,r80,r81):
             # Historical 68020 Region implementation must remain bit-identical.
             r69_parts=unwrap_native_parts_v2(r69)[1]
             r77_parts=unwrap_native_parts_v2(r77)[1]
             assert r77_parts[59]==r69_parts[59], "R77 altered historical Region bytes"
-        if current in (r71, r72, r73, r74, r75, r76, r77, r78, r79):
+            assert unwrap_native_parts_v2(current)[1][59]==r69_parts[59], (
+                "Current R81 descendant altered historical optimized Region bytes")
+        if current in (r71, r72, r73, r74, r75, r76, r77, r78, r79, r80, r81):
             parts_current=unwrap_native_parts_v2(current)[1]
             assert_native_links(parts_current[:70])
             if current in (r74, r75, r76, r77):
