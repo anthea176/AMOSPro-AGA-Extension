@@ -558,6 +558,12 @@ def verified_current_compiler_seeds(parsed):
         # subroutines remain source-authenticated by R73 ancestry.
         # Explicit hook roots survive cross-entry BRA.W rewrites.
         seeds={i:set(v) for i,v in inherited.items()}
+        # The original AMOS-exit tail at entry0+$1C8 was reachable
+        # directly in R73. R74 reaches it by a cross-entry BRA.W from
+        # the appended hook in entry8, which the generic CFG engine
+        # deliberately does not follow (only cross-entry CALL targets).
+        # The BRA destination was checked above against exact R74 code.
+        seeds.setdefault(0,set()).add(0x1C8)
         seeds.setdefault(8,set()).update({
             len(old_close)+hook_labels['screen_hook'],
             len(old_close)+hook_labels['program_exit_hook'],
