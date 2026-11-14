@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""R81 OPT020 active AMOS source on R80 compatibility fixture. STATIC ONLY."""
+"""R81 OPT020 historical AMOS source on R80 compatibility fixture. STATIC ONLY.
+
+Frozen under tests/historical/ since R82 owns the sole active ASC slot.
+"""
 from pathlib import Path
 from test_current_ram_log import verify
 from test_current_amos_blocks import scan
 
-PATH=Path("tests/current/C2P_R80_IFF_CHUNKY_01.asc")
+PATH=Path("tests/historical/C2P_R80_IFF_CHUNKY_01.asc")
 
 def main():
     src=PATH.read_bytes().decode("latin-1")
