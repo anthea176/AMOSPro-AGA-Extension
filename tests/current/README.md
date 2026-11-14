@@ -7,8 +7,8 @@
 1. Importer le programme dans AMOS Professional par **Merge ASCII** et exécuter **en interprété**.
 2. Le programme teste Open, Double Buffer, le refus de double Open et le nettoyage Screen Close sur les écrans **16, 32, 64, 128 et 256 couleurs**.
 3. Lire les lignes `COL ... OPEN 1 DB 1 C2P 1 DUP 0 POST 0`, puis **`RESULT 1`** et **`CLOSE RETURNED`**. La quantité de Chip RAM avant/après est affichée pour information.
-4. Transmettre une capture de la sortie. Aucune image générée : **Convert n'est pas encore implémenté**.
+4. **Gate B effectuée par l'auteur le 14/11/2026 : PASS**, capture `RESULT 1`, `CLOSE RETURNED`, Chip Free `1801952/1801952` sur les cinq profondeurs ; voir [rapport Gate B](../../docs/C2P_R74_WINUAE_GATE_B_2026-11-14.md). Aucun rendu C2P : **Convert n'est pas encore implémenté**.
 
-**Statut vérifié :** Gate A CPU hôte R74 PASS, structure AP20 et protections R73 PASS ; Gate B WinUAE R74 NON TESTÉE, Gate C Compiler R74 NON TESTÉE, Gate D NON TESTÉE. R73 v0.13.18 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte.
+**Statut vérifié :** Gate A CPU hôte R74 PASS, structure AP20 et protections R73 PASS ; Gate B WinUAE interprétée R74 PASS pour Open, Gate C Compiler R74 NON TESTÉE, Gate D NON TESTÉE. R73 v0.13.18 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte.
 
 [Contrat technique R74](../../docs/C2P_R74_OPEN_2026-11-14.md).

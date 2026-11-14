@@ -1,6 +1,6 @@
 # C2P R74 — bitmap intermédiaire (14/11/2026)
 
-**Statut actualisé : Aga C2P Open est intégrée dans la candidate R74 v0.13.19, 4..8 bitplanes, Gate A native CPU hôte PASS. Convert et Close non intégrées ; Gates B/C/D R74 non testées.** Le diagnostic GDB P2 est abandonné. Aucun essai PowerShell/WinUAE spécial n'est demandé.
+**Statut actualisé : Aga C2P Open est intégrée dans la candidate R74 v0.13.19, 4..8 bitplanes, Gate A native CPU hôte PASS. Convert et Close non intégrées ; Gate B interprétée WinUAE R74 PASS pour Open ([capture et rapport](C2P_R74_WINUAE_GATE_B_2026-11-14.md)) ; Gates C/D R74 non testées.** Le diagnostic GDB P2 est abandonné. Aucun essai PowerShell/WinUAE spécial n'est demandé.
 
 ## Chaîne de conversion prévue
 
@@ -19,7 +19,7 @@
 - CPU **68020 minimum**, écran 8 bitplanes (256 couleurs), 320×256 uniquement au premier jalon, double buffering actif. Vérifier ces conditions *avant* les appels C2P.
 - La bibliothèque externe doit exister dans **LIBS:c2p.library** ; elle ne rentre pas dans le monolithe AP20.
 - Un bitmap en mode **TYPE_BITMAP** appartient au contexte : **DestroyContext** le libère. Ne pas appeler **DestroyBitMap** séparément ; celui-ci sert aux bitmaps custom.
-- La R73 actuelle (**51 608 octets**, SHA256 **c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407**) est inchangée.
+- La R73 protégée en `LAST_GOOD` (**51 608 octets**, SHA256 **c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407**) est inchangée.
 
 ## Première fonction à contractualiser individuellement
 
