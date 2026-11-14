@@ -25,6 +25,7 @@ R70_SHA = "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
 R71_SHA = "1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"
 R72_SHA = "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
 R73_SHA = "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+R74_SHA = "887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"
 
 
 def main() -> None:
@@ -39,10 +40,21 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha == R73_SHA:
+    if active_sha == R74_SHA:
+        from build_c2p_r74_open import build as build_r74
+        from c2p_r74_relink import check_cross_r74
+        from native_relative_links import assert_native_links
+        assert active == build_r74()[0], "Current R74 differs from exact C2P builder"
+        native_parts = unwrap_native_parts_v2(active)[1]
+        assert len(native_parts) == 71
+        assert_native_links(native_parts[:70])
+        check_cross_r74(native_parts)
+        assert native_parts[IMAGE_REGION_INDEX] == unwrap_native_parts_v2(candidate)[1][IMAGE_REGION_INDEX], (
+            "R74 modified the historical P1e optimized Region implementation")
+    elif active_sha == R73_SHA:
         from build_opt020_p3_r73 import build as build_r73
         from native_relative_links import assert_native_links
         assert active==build_r73()[0],"Current R73 not reproducible"
