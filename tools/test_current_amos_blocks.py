@@ -115,6 +115,7 @@ def main():
             "_SW0=Aga Swap",
             "_CV1=Aga C2P Convert",
             "_SW1=Aga Swap",
+            "If _COL=256", "_K=Aga Key", "Until _K=69",
             "Aga Screen Close",
             "_POST=Aga C2P Convert",
             "Erase 12", 'Print "RESULT ";_RESULT',
