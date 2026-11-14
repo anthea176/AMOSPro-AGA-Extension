@@ -38,24 +38,18 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
 | `Aga Screen Open` | `_OK=Aga Screen Open(largeur,hauteur,nbCouleurs,modeID)` | Pixel dimensions; `nbCouleurs` is a **colour count**, not a bitplane count (indexed modes: 2, 4, 8, 16, 32, 64, 128 or 256). Pass an AmigaOS ModeID, e.g. `$00021000` for PAL LowRes. Returns 1 on success, 0 on failure. |
 | `Aga Screen Close` | `Aga Screen Close` | No arguments. Closes the AGA screen and releases the associated resources. |
-| `Aga Screen Pattern` | `Aga Screen Pattern` | No arguments. Draws the built-in diagnostic pattern. |
 | `Aga Double Buffer` | `_DB=Aga Double Buffer` | No arguments. Enables double buffering. Returns 1 on success or 0 on failure. |
 | `Aga Swap` | `_SW=Aga Swap` | No arguments. Presents the prepared back buffer. Returns 1 on success or 0 on failure. |
-| `Aga Back Fill` | `Aga Back Fill couleur` | **One argument:** palette colour index used to fill the **entire** back buffer; e.g. 255 on an 8-bitplane indexed screen. |
 | `Aga Pic Info` | `_V=Aga Pic Info(fichier$,champ)` | ILBM file path and field index 0..7 (see reference table below). Returns the selected value, or -1 on error. |
 | `Aga Iff Load` | `_OK=Aga Iff Load(fichier$)` | IFF/ILBM file path. Loads pixels and palette onto a compatible AGA screen/buffer. Returns 1 or 0. |
 | `Aga Palette Load` | `_OK=Aga Palette Load(_FILE$)` | Read **standard IFF FORM ILBM** palette `CMAP` only, including palette-only PPaint/DPaint files without `BODY`/`BMHD`. Never copy pixels. Return 1 success or 0 invalid IFF/screen. |
 | `Aga Palette Set` | `_OK=Aga Palette Set(_PEN,_R,_G,_B)` | Set one indexed palette entry of the private AGA Intuition screen using 8-bit R/G/B components (`0..255`), through `LoadRGB32`. Returns 1 or 0. No VBL wait. HAM/EHB/dual playfield modes are not supported. |
 | `Aga Palette Get` | `_RGB=Aga Palette Get(_PEN)` | Read active `ColorMap` via `GetRGB32`. Packed RGB24 `$00RRGGBB`, or -1 when invalid; black = 0. No change to bitmap. |
 | `Aga Palette Save` | `_OK=Aga Palette Save(_FILE$)` | Save the current indexed AGA screen `ColorMap` to an IFF `FORM ILBM` containing `BMHD`+`CMAP`, no `BODY`. Filename: AMOS string (1–255 bytes), ordinary AmigaDOS path. **Overwrites an existing file** (`MODE_NEWFILE`). Returns integer **1** on complete write/close, **0** for invalid screen/file/allocation/write. Reads 1–256 colors, RGB24, no bitmap changes; no HAM/EHB/dual playfield. A write error after overwrite may destroy the old file. |
-| `Aga Palette Bank Init` | `_OK=Aga Palette Bank Init(Start(_B),_N)` | Initializes an existing exactly-sized native AMOS DATA bank at `Start(_B)` with `_N=1..256` empty RGB24 palette slots (`16+776×_N` bytes). Sets the native bank name `AGAPAL  `; reinitialization clears existing slots. Returns 1/0. Pass only a live reserved DATA bank pointer; arbitrary or stale addresses are unsafe. Does not change the screen. |
-| `Aga Palette Bank Capture` | `_OK=Aga Palette Bank Capture(Start(_B),_INDEX)` | Captures the active private AGA indexed `ColorMap` (1..256 colours) into one 0-based AGAPAL slot of an initialized DATA bank at `Start(_B)`. Overwrites that slot only, preserving other slots and the screen. Returns 1/0; no implicit VBL or fade. |
 | `Aga Bank Palette Init` | `_OK=Aga Bank Palette Init(_B,_N)` | Initialize a precisely-sized existing AMOS DATA bank by **bank number** (5..65535) as AGAPAL v1, with `_N` = 1..256 palette slots, length `16+776×N` bytes. Returns 1/0 without changing screen colours. |
 | `Aga Bank Palette Capture` | `_OK=Aga Bank Palette Capture(_B,_INDEX)` | Capture current private indexed AGA palette into an AGAPAL v1 slot by live DATA **bank number** and 0-based slot index. AGAPIC is not a capture destination. Returns 1/0; other slots and screen remain unchanged. |
 | `Aga Bank Palette Apply` | `_OK=Aga Bank Palette Apply(_B,_INDEX)` | Immediately apply a nonempty AGAPAL v1 slot **or full embedded AGAPIC v2 RGB24 palette at index 0**. V2 requires an exact matching screen DisplayModeID and sufficient colour capacity; AGAPIC v1 embeds no palette. Returns 1/0, no implicit VBL or pixel writes. |
 | `Aga Bank Palette Fade` | `_OK=Aga Bank Palette Fade(_B,_INDEX,_VBL)` | Blocking fade towards AGAPAL v1 or AGAPIC v2 RGB24 (index 0), `_VBL` = 1..255, one WaitTOF/RGB32 update per step and exact target final frame. V2 checks screen ModeID; no bank or pixel changes. Returns 1/0. |
-| `Aga Palette Bank Apply` | `_OK=Aga Palette Bank Apply(Start(_B),_INDEX)` | Apply one **nonempty (1–256 colors)** AGAPAL RGB24 slot `_INDEX` (0-based) to the private active AGA Intuition screen `ColorMap` through `LoadRGB32` (RGB32 fractions, immediate, **no VBL**). Requires live DATA bank pointer `Start(_B)`, valid AGAPAL v1 descriptor/index and indexed screen with logical/ColorMap capacity at least the slot's color count; **never pass the bank number or stale pointer**. Return integer **1** success, **0** rejection before screen changes. Only pens `0..count-1` are updated; higher pens are preserved, no clipping, bank/bitmaps unchanged. Empty palettes, incompatible/closed screens and failed temporary allocation rejected. Temporary public memory freed. No fade or cycling. |
-| `Aga Fade To Bank` | `_OK=Aga Fade To Bank(Start(_B),_INDEX,_VBL)` | Blocking RGB24 fade from the active private AGA indexed palette to a nonempty AGAPAL slot in a live DATA bank (`Start(_B)`). `_VBL` is 1..255; waits for one `WaitTOF` and applies colours on each step, with an exact final palette. Updates only the palette slot's pens, leaves bank and pixels unchanged. Returns 1/0; slow CPUs may take longer than the nominal VBL duration. |
 | `Aga Fade To Black` | `_OK=Aga Fade To Black(_VBL)` | Blocking fade to exact black of every logical indexed pen of the private AGA screen, without a bank. `_VBL` is 1..255; one `WaitTOF` per step and exact final RGB32 black. Invalid screen/duration returns 0 without changing the palette; otherwise 1. Pixels remain unchanged. |
 | `Aga Fade To White` | `_OK=Aga Fade To White(_VBL)` | Blocking fade to exact white of every logical indexed pen of the private AGA screen, without a bank. `_VBL` is 1..255; one `WaitTOF` per step and exact final RGB32 white. Invalid screen/duration returns 0 without changing the palette; otherwise 1. Pixels remain unchanged. |
 | `Aga Palette Cycle` | `_OK=Aga Palette Cycle(First,Last,Direction)` | **One rotation per call** of the inclusive pen range `0<=First<Last<256`, bounded by the private indexed AGA screen and its ColorMap. `Direction=1`: last RGB32 triplet moves to First and the others shift to higher indices; `Direction=-1` reverses it. Each success reads the exact **full 32-bit RGB32** triplets once via `GetRGB32`, rotates them in private scratch, and writes exactly that range with **one `LoadRGB32`**; **no implicit WaitTOF**, no bank or pixel writes, no colour degradation. Temporary Exec public scratch `8+12*N` bytes, max 3,080, freed. Returns **1** on success, **0 without palette changes** on invalid range/direction/screen/ColorMap or allocation failure. Caller controls cadence with `Aga Wait Vbl`. |
@@ -119,12 +113,18 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ### Diagnostic and low-level commands
 
-These commands remain available for diagnostics or direct bank-pointer access. Prefer bank-number variants for normal use.
+These commands remain available for diagnostic purposes or compatibility with older code. **Prefer the bank-number palette/font/image variants** from the main table. `Aga Back Fill` is legacy and does not provide the `Safe` check used by `Aga Blit Fill`.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Probe` | `Aga Probe` | Legacy no-argument diagnostic instruction; not a gameplay API. |
 | `Aga Demo` | `_D=Aga Demo` | Legacy no-argument diagnostic function; no stable gameplay return-value contract. |
+| `Aga Screen Pattern` | `Aga Screen Pattern` | No arguments. Draws the built-in diagnostic pattern. |
+| `Aga Back Fill` | `Aga Back Fill couleur` | **One argument:** palette colour index used to fill the **entire** back buffer; e.g. 255 on an 8-bitplane indexed screen. |
+| `Aga Palette Bank Init` | `_OK=Aga Palette Bank Init(Start(_B),_N)` | Initializes an existing exactly-sized native AMOS DATA bank at `Start(_B)` with `_N=1..256` empty RGB24 palette slots (`16+776×_N` bytes). Sets the native bank name `AGAPAL  `; reinitialization clears existing slots. Returns 1/0. Pass only a live reserved DATA bank pointer; arbitrary or stale addresses are unsafe. Does not change the screen. |
+| `Aga Palette Bank Capture` | `_OK=Aga Palette Bank Capture(Start(_B),_INDEX)` | Captures the active private AGA indexed `ColorMap` (1..256 colours) into one 0-based AGAPAL slot of an initialized DATA bank at `Start(_B)`. Overwrites that slot only, preserving other slots and the screen. Returns 1/0; no implicit VBL or fade. |
+| `Aga Palette Bank Apply` | `_OK=Aga Palette Bank Apply(Start(_B),_INDEX)` | Apply one **nonempty (1–256 colors)** AGAPAL RGB24 slot `_INDEX` (0-based) to the private active AGA Intuition screen `ColorMap` through `LoadRGB32` (RGB32 fractions, immediate, **no VBL**). Requires live DATA bank pointer `Start(_B)`, valid AGAPAL v1 descriptor/index and indexed screen with logical/ColorMap capacity at least the slot's color count; **never pass the bank number or stale pointer**. Return integer **1** success, **0** rejection before screen changes. Only pens `0..count-1` are updated; higher pens are preserved, no clipping, bank/bitmaps unchanged. Empty palettes, incompatible/closed screens and failed temporary allocation rejected. Temporary public memory freed. No fade or cycling. |
+| `Aga Fade To Bank` | `_OK=Aga Fade To Bank(Start(_B),_INDEX,_VBL)` | Blocking RGB24 fade from the active private AGA indexed palette to a nonempty AGAPAL slot in a live DATA bank (`Start(_B)`). `_VBL` is 1..255; waits for one `WaitTOF` and applies colours on each step, with an exact final palette. Updates only the palette slot's pens, leaves bank and pixels unchanged. Returns 1/0; slow CPUs may take longer than the nominal VBL duration. |
 | **`Aga Image Draw`** | `_OK=Aga Image Draw(Start(_B),Length(_B),_X,_Y,_MODE)` | Low-level pointer form: draws an AGAPIC v1/RLE image from `Start(_B),Length(_B)` of a live DATA bank (Fast or Chip) into the inactive AGA Chip back buffer using the CPU. **Requires 68020 or later.** Supports 1–8 bitplanes, opaque/masked mode, unaligned X, four-edge clipping, RLE validation and nonblocking `Safe`. Returns 1 for a valid call (even wholly offscreen), otherwise 0. Prefer `Aga Bank Image Draw` when using a bank number. |
 | **`Aga Font Bank Select`** | `_OK=Aga Font Bank Select(_START,_LENGTH)` | Low-level form: selects a fixed-width or proportional AMCAF BankFont using `Start(Bank),Length(Bank)` from a live AMOS bank. Keeps a private Chip RAM copy, so the source bank can be erased. Returns 1/0; prefer `Aga Bank Font Select(Bank)` when using a bank number. |
 
@@ -162,22 +162,24 @@ End If
 
 Use [the archived R29 test](tests/passed/M13_R29_PALETTE_SAVE_01.asc) for save → overwrite → reload. The IFF contains colors but no pixels. Personal Paint 256-color palette import was confirmed by the user; Deluxe Paint remains untested; [R29 contract](docs/M13_PALETTE_R29.md).
 
+**Palette examples:** the bank-number functions below are new to the R82 candidate (**native Gate A PASS; WinUAE and Compiler tests pending**). Linked R30–R33 tests verify the older pointer-based forms, not these R82 wrappers.
+
 **Initialize an AMOS palette bank** (requires a live DATA bank):
 
 ```amos
 Reserve As Data 10,6224
-_OK=Aga Palette Bank Init(Start(10),8)
+_OK=Aga Bank Palette Init(10,8)
 If _OK=1
    Save "RAM:MENU_PALETTES.ABK",10
 End If
 ```
 
-The resulting ABK is saved with **AMOS native `Save`**, not with IFF `Aga Palette Save`. The eight RGB24 palette slots start empty; populate them with `Aga Palette Bank Capture`. [R30 Gate B test](tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). No automatic palette changes.
+The resulting ABK is saved with **AMOS native `Save`**, not with IFF `Aga Palette Save`. The eight RGB24 palette slots start empty; populate them with `Aga Bank Palette Capture`. [R30 Gate B test](tests/passed/M13_R30_AGAPAL_BANK_INIT_01.asc). No automatic palette changes.
 
-**Capture the current indexed screen palette into AGAPAL slot 0** (after `Aga Screen Open` and R30 bank initialization):
+**Capture the current indexed screen palette into AGAPAL slot 0** (after `Aga Screen Open` and bank initialization):
 
 ```amos
-_CAPTURE=Aga Palette Bank Capture(Start(10),0)
+_CAPTURE=Aga Bank Palette Capture(10,0)
 If _CAPTURE=1
    Save "RAM:MENU_PALETTES.ABK",10
 End If
@@ -188,7 +190,7 @@ This creates a native AMOS ABK with the RGB24 palette from the screen, not an IF
 **Apply the captured AGAPAL palette (slot 0) to the current screen** (after screen open, bank initialization and capture):
 
 ```amos
-_OK=Aga Palette Bank Apply(Start(10),0)
+_OK=Aga Bank Palette Apply(10,0)
 If _OK=1
    Print "Palette applied"
 End If
@@ -199,13 +201,13 @@ The command is immediate and never waits for a VBL. Use `Aga Wait Vbl` explicitl
 **Blocking fade to a captured AGAPAL palette** (after an indexed screen and a valid bank have been set up):
 
 ```amos
-_FADE=Aga Fade To Bank(Start(10),0,25)
+_FADE=Aga Bank Palette Fade(10,0,25)
 If _FADE=1
    Print "Fade complete"
 End If
 ```
 
-This call waits for 25 VBLs and applies a new palette on each step. `_VBL=0` is rejected; use `Aga Palette Bank Apply` for an instant change. At 256 colors and slower 68000 configurations, each step is not guaranteed to fit within one refresh. [R33 Gate A contract](docs/M13_AGAPAL_FADE_R33.md) · [Archived R33 WinUAE test](tests/passed/M13_R33_AGAPAL_FADE_01.asc). For a visible fade, use the [150-VBL three-band demo](examples/fade_to_bank.asc) (bank 12 overwritten; visible fade confirmed under WinUAE).
+This call waits for 25 VBLs and applies a new palette on each step. `_VBL=0` is rejected; use `Aga Bank Palette Apply` for an instant change. On slower systems, each step may exceed one video refresh period. [R33 Gate A contract](docs/M13_AGAPAL_FADE_R33.md) · [Archived R33 WinUAE test](tests/passed/M13_R33_AGAPAL_FADE_01.asc). For a visible fade, use the [150-VBL three-band demo](examples/fade_to_bank.asc) (bank 12 overwritten; visible fade confirmed under WinUAE).
 
 **Copper RGB4** has been available since R18, **Mouse X/Y** since R19, **Mouse Buttons** since R20 (with RMBTRAP in R21), and **Mouse Pressed/Released** since R22. **R23 uses IDCMP events to capture button transitions and protect RAWKEY input**. The quick-click, keyboard FIFO and Ctrl+C WinUAE scenarios passed; focus-switch and stress scenarios remain untested. Sprites, a `Aga Set Colour` command, and comprehensive input-stress validation are outside the current scope.
 
