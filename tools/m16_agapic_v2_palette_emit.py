@@ -194,7 +194,7 @@ def _emit(is_fade: bool, native_start: int, legacy_target: int):
     fl('length',D(1)); c.alu('cmp',D(1),5); b(6,'fail')
     # Palette bytes are inside payload: 64 + 3*N <= TableOffset.
     fl('start',D(0)); c.imm('add',64,D(0))
-    c.move(D(0),A(2))
+    fs(D(0),'rgb')   # keep A2 as frame pointer until all screen checks
     # Screen validation: source depth and real ModeID are mandatory.
     c.move(M(5,STATE_PTR),A(4)); fail_if_zero(A(4))
     c.move(M(4,0),A(1)); fail_if_zero(A(1))
@@ -218,6 +218,7 @@ def _emit(is_fade: bool, native_start: int, legacy_target: int):
     c.call_os(LVO_GETVPMODEID)
     c.imm('cmp',-1,D(0)); b(7,'fail')
     fl('v2_mode',D(1)); c.alu('cmp',D(1),0); b(6,'fail')
+    fl('rgb',A(2))  # switch A2 to read-only RGB24 after validation
     # A2 holds embedded RGB24 throughout painting; never write to it.
     if is_fade:
         _fade_rgb32(c)
