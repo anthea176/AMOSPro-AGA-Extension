@@ -28,7 +28,7 @@ STATE = 0x34000
 DB = 0x34200
 SB0, SB1 = 0x34400, 0x34500
 BANKPTR = 0xc0000
-ARGS = 0xd0000
+ARGS = 0xf0000
 STACK = 0xe0000
 CONTEXT = 0x120000
 BMP = 0x121000
@@ -46,7 +46,7 @@ class Harness:
     def __init__(self, *,depth=8, cpu=CPUType.M68020, flags=2,
                  width=320, height=256, bank=12, banklength=CHUNKY,
                  bankflags=1, no_db=False, no_screen=False, fail=None):
-        self.m = Machine(cpu,1024)
+        self.m = Machine(cpu,4096)
         self.mem,self.cpu = self.m.mem,self.m.cpu
         self.mem.w32(0,STACK);self.mem.w32(4,CODE)
         self.cpu.execute(self.cpu.pulse_reset())
