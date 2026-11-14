@@ -35,6 +35,8 @@ R76_SHA = "9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"
 R77_SHA = "81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
 R78_SHA = "9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"
 R79_SHA = "ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
+R80_SHA = "24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"
+R81_SHA = "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
 R68_SHA = "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 
 
@@ -65,7 +67,7 @@ def v2_check(native):
     active = path.read_bytes()
     protected = protected_path.read_bytes()
     actual_sha = sha256(active).hexdigest()
-    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA), (
+    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA), (
         "Unrecognized active P1e/P2 or C2P extension candidate")
     assert sha256(protected).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407", "Promoted R73 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
@@ -76,7 +78,7 @@ def v2_check(native):
         assert active == build_r70()[0], "Installed R70 differs from deterministic source"
         from build_opt020_p1e_r69 import build as build_r69
         baseline = build_r69()[0]  # Historical Image Draw core for isolated P2
-    elif actual_sha in (R73_SHA,R74_SHA,R75_SHA,R76_SHA,R77_SHA,R78_SHA,R79_SHA):
+    elif actual_sha in (R73_SHA,R74_SHA,R75_SHA,R76_SHA,R77_SHA,R78_SHA,R79_SHA,R80_SHA,R81_SHA):
         from build_opt020_p3_r73 import build as build_r73
         from build_c2p_r74_open import build as build_r74
         from build_c2p_r75_convert import build as build_r75
@@ -84,6 +86,8 @@ def v2_check(native):
         from build_c2p_r77_close import build as build_r77
         from build_c2p_r78_blit import build as build_r78
         from build_c2p_r79_zoom import build as build_r79
+        from build_c2p_r80_iff_chunky import build as build_r80
+        from build_c2p_r81_opt020 import build as build_r81
         from build_opt020_p1e_r69 import build as build_r69
         from native_relative_links import assert_native_links
         from c2p_r74_relink import check_cross_r74
@@ -99,12 +103,16 @@ def v2_check(native):
             expected=build_r77()[0]
         elif actual_sha==R78_SHA:
             expected=build_r78()[0]
-        else:
+        elif actual_sha==R79_SHA:
             expected=build_r79()[0]
-        assert active==expected,"Installed R73..R79 differs from deterministic source"
+        elif actual_sha==R80_SHA:
+            expected=build_r80()[0]
+        else:
+            expected=build_r81()[0]
+        assert active==expected,"Installed R73..R81 differs from deterministic source"
         parts_current=unwrap_native_parts_v2(active)[1]
         assert_native_links(parts_current[:70])
-        if actual_sha in (R74_SHA,R75_SHA,R76_SHA,R77_SHA,R78_SHA,R79_SHA):
+        if actual_sha in (R74_SHA,R75_SHA,R76_SHA,R77_SHA,R78_SHA,R79_SHA,R80_SHA,R81_SHA):
             check_cross_r74(parts_current[:70])
         baseline=build_r69()[0]
     elif actual_sha == R72_SHA:
