@@ -193,7 +193,7 @@ def emit_iff_to_chunky():
 
     # Standard AP20 integer-function ABI: last param Bank arrives in D3,
     # File$ descriptor is popped ONCE from the AMOS A3 argument stack.
-    c.raw("48e7effe")
+    c.raw("48e7efee")  # exclude A3: AMOS parameters consumed by (A3)+
     c.move(POST(3), A(1))
     c.raw("4fefff20")          # LEA -224(SP),SP
     c.move(A(7), A(2))
@@ -262,7 +262,7 @@ def emit_iff_to_chunky():
     c.move(I(0), D(3))
     L("done")
     B(1, "cleanup")
-    c.raw("4fef00e04cdf7ff774004e75")
+    c.raw("4fef00e04cdf77f774004e75")  # do not restore A3
 
     read_file(c)
     inspect_file(c)

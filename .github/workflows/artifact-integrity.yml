@@ -210,6 +210,7 @@ jobs:
         run: |
           python -B tools/build_c2p_r80_iff_chunky.py
           python -B tools/test_c2p_r80_iff_chunky_gate_a.py
+          python -B tools/build_c2p_r80_iff_chunky.py --emit-base64
       - name: R79 C2P Zoom native CPU and pixel-exact Gate A (in memory)
         run: |
           python -B tools/build_c2p_r79_zoom.py
