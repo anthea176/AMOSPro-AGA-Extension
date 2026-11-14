@@ -9,7 +9,7 @@ from machine68k import CPUType,Register
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
 from build_c2p_r77_close import build
 from c2p_r77_close_emit import emit_close
-from test_c2p_r75_convert_gate_a import ConvertHarness
+from test_c2p_r75_convert_gate_a import ConvertHarness, SRC, PLANE
 from test_c2p_r74_open_gate_a import (
     Harness as OpenHarness, SAVED, CODE, STOP, STACK, STATE, DB,
     CONTEXT, C2P_LIB, AMOS, ARGS,
@@ -20,6 +20,20 @@ from native_relative_links import assert_native_links
 from c2p_r74_relink import check_cross_r74
 
 CLOSE_CODE=CODE+0x6000
+
+# The original R75 visual mock writes SRC at 0x150000. At 7/8 planes its
+# mock pixel writes overlap the separate native Open test body at 0x160000!
+# This R77 test checks lifecycle, not pixels (R75's Gate A covers pixels).
+# Keep the SDK convert result but do not have its MOCK write over native code.
+# This prevents a false reopening failure without relaxing any Close checks.
+assert SRC+6*PLANE<=CODE<SRC+7*PLANE
+
+class LifecycleHarness(ConvertHarness):
+    def sdk_convert(self,op,pc):
+        self.calls.append("convert")
+        assert self.cpu.r_reg(Register.A0)==CONTEXT
+        assert self.cpu.r_reg(Register.A6)==C2P_LIB
+        self.ret(33 if self.fail_convert else 0)
 
 def install(h):
     code,labels=emit_close()
@@ -45,7 +59,7 @@ def run_close(h):
     return h.cpu.r_reg(Register.D3)
 
 def test_normal(depth):
-    h=ConvertHarness(depth=depth)
+    h=LifecycleHarness(depth=depth)
     try:
         install(h)
         assert run_close(h)==0
