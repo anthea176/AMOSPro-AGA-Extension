@@ -537,7 +537,26 @@ def verified_current_compiler_seeds(parsed):
         need(sections[73]["core"]==code and not sections[73]["getp"],
              "Strict source R78: new Blit entry changed")
         seeds={i:set(v) for i,v in inherited.items()}
-        seeds[73]={0}
+        from c2p_r78_blit_emit import BANK as BLIT_GETADR_MARKER
+        # AMOS Rjsr/Bnk.GetAdr pseudo-operations are not Motorola opcodes.
+        # Independently prove the exact two marker occurrences from the
+        # SHA-pinned R78 emitter and re-enter native flow AFTER each marker.
+        # Without these seeds, strict disassembly falsely reports the entire
+        # following executable block and its BSR-reachable mul32 helper as data.
+        need(code.count(BLIT_GETADR_MARKER)==2,
+             "Strict source R78: expected exactly two bank linker markers")
+        start=0
+        resumes=[]
+        while True:
+            at=code.find(BLIT_GETADR_MARKER,start)
+            if at<0:break
+            resume=at+len(BLIT_GETADR_MARKER)
+            need(resume<len(code) and resume%2==0,
+                 "Strict source R78: malformed GetAdr return boundary")
+            resumes.append(resume)
+            start=resume
+        need(len(resumes)==2,"Strict source R78: changed GetAdr marker sites")
+        seeds[73]={0,*resumes}
         return seeds
     if len(sections)==73 and b"AMOSPro AGA C2P Close R77 0.13.22 candidate" in parsed["title"]:
         # R77 APPENDS one pure-68000 Close native entry without modifying the
