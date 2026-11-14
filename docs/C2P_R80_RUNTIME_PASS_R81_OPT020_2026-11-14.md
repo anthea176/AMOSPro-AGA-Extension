@@ -24,4 +24,4 @@ La R81 conserve les **70 commandes et 77 entrées AP20** de R80 ; les entrées n
 
 **Véritable Gate A CPU MC68020 PASS** : [CI 43615716395](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43615716395), 22 cas Blit, 14 Zoom, 15 lignes IFF reconstruites bit à bit, rejet 68000 avant les opcodes exclusifs, intégrité AP20/ABI, et CI complète réussie. Générateur R81 déterministe : `59 972 octets`, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`.
 
-**Aucun chronométrage revendiqué** ; gains architecturaux implémentés, performances non quantifiées. Aucun nouveau test AMOS Compiler ; la future Gate B Runtime R81 devra être distinguée de la Gate A.
+**Aucun chronométrage revendiqué** ; gains architecturaux implémentés, performances non quantifiées. Aucun nouveau test AMOS Compiler ; la Gate B Runtime R81 est ensuite passée indépendamment sur l'IFF 320×256×8, CPU 68030 : [rapport Gate B R81](C2P_R81_RUNTIME_GATE_B_2026-11-14.md). Aucun benchmark de vitesse ni nouvel essai Compiler n'est revendiqué.

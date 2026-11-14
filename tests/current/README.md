@@ -1,6 +1,6 @@
 # R81 OPT020 — IFF, Blit et Zoom sous WinUAE
 
-**Candidate de développement R81 v0.13.26** : optimisation CPU 68020 de `Aga C2P Blit`, `Aga C2P Zoom` et `Aga Iff To Chunky`. **Gate A native 68020 PASS (22 Blit / 14 Zoom / 15 lignes IFF), Gate B WinUAE Runtime R81 NON TESTÉE**. Aucun essai AMOS Compiler demandé. R73 `LAST_GOOD` inchangée. La Gate B Runtime R80 (sur l'image 8 plans) était PASS.
+**Candidate de développement R81 v0.13.26** : optimisation CPU 68020 de `Aga C2P Blit`, `Aga C2P Zoom` et `Aga Iff To Chunky`. **Gate A native 68020 PASS (22 Blit / 14 Zoom / 15 lignes IFF), Gate B WinUAE Runtime R81 PASS (68030, IFF 320×256×8, 14/14 pixels, Chip/Fast delta 0)**. Aucun essai AMOS Compiler demandé. R73 `LAST_GOOD` inchangée. La Gate B Runtime R80 (sur l'image 8 plans) était PASS.
 
 **Un seul ASC actif :** [C2P_R80_IFF_CHUNKY_01.asc](C2P_R80_IFF_CHUNKY_01.asc) — même scénario natif IFF/Blit/Zoom 320×256 que R80, **désormais identifié R81 dans le journal**. Ce nom de fichier est conservé pour éviter un second ASC et les régressions de références ; l'exemple indépendant R79 est sous `examples/c2p_iff_showcase/`.
 
@@ -12,4 +12,4 @@
 4. Observer IFF original → chunky/C2P → montage 3 Blit + 7 Zoom, puis **Échap**. Le programme vérifie 14 correspondances avec la banque source intacte, Close/ReOpen et nettoyage. Pour l'IFF de référence `iff-TEST/AGA_DEMO_320x256_256c.iff`, 14 valeurs numériques historiques restent contrôlées. **Cette image n'est plus obligatoire.**
 5. Récupérer le rapport **`RAM:C2P_R81_RUNTIME.TXT`** (`PRG_STATE 1`) ; en interprété strict : `RAM:C2P_R81_INTERPRETED.TXT` ; en compilé : `RAM:C2P_R81_COMPILED.TXT` (**ce dernier n'est pas demandé**). Copier le rapport avant reset.
 
-**Attendu (Gate B R81 pas encore réalisée) :** `RESULT 1`, `VERDICT PASS`, `LOAD12_OK 1`, `LOAD13_OK 1`, `CHUNKY_OK 1`, `IFF_OK 1`, `PALETTE_OK 1`, `C2P_BASE_OK 1`, `BLIT_OK 1`, `ZOOM_OK 1`, `PIXEL_CHECK_COUNT 14`, `REOPEN_OK 1`, `ERR 0`, `CLOSE RETURNED`. Le journal indique `IMAGE_DEPTH`, `SCREEN_COLORS`, `GOLDEN_REFERENCE` et `GOLDEN_PIXEL_COUNT` (0 pour une image ordinaire). Aucune Gate C AMOS Compiler n'est prévue sur demande de l'auteur.
+**Attendu et obtenu sur l'IFF de référence le 14/11/2026 (Gate B Runtime R81 PASS)** : `RESULT 1`, `VERDICT PASS`, `LOAD12_OK 1`, `LOAD13_OK 1`, `CHUNKY_OK 1`, `IFF_OK 1`, `PALETTE_OK 1`, `C2P_BASE_OK 1`, `BLIT_OK 1`, `ZOOM_OK 1`, `PIXEL_CHECK_COUNT 14`, `REOPEN_OK 1`, `ERR 0`, `CLOSE RETURNED`. Le journal indique `IMAGE_DEPTH`, `SCREEN_COLORS`, `GOLDEN_REFERENCE` et `GOLDEN_PIXEL_COUNT` (0 pour une image ordinaire). Aucune Gate C AMOS Compiler n'est prévue sur demande de l'auteur. [Compte rendu complet](../../docs/C2P_R81_RUNTIME_GATE_B_2026-11-14.md).
