@@ -506,6 +506,87 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==76 and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]:
+        # R81: strict byte identity to its CPU-tested three-entry OPT020
+        # builder. Inherited CFG seeds come from deterministic R80 only.
+        from active_library import R80_SHA, R81_SHA
+        from build_c2p_r80_iff_chunky import build as build_r80
+        from build_c2p_r81_opt020 import build as build_r81
+        from c2p_r78_blit_emit import emit_blit, BANK as BLIT_GETADR
+        from c2p_r79_zoom_emit import emit_zoom, BANK as ZOOM_GETADR
+        from c2p_r80_iff_chunky_emit import emit_iff_to_chunky, BANK as IFF_GETADR
+        from c2p_opt020_variants import (
+            emit_blit_opt020, emit_zoom_opt020, emit_iff_chunky_opt020,
+        )
+        from build_c2p_r76_rpg_fix import state_offset, SITES
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate, meta = build_r81()
+        need(sha(candidate)==R81_SHA and raw==reconstruct(candidate),
+             "Strict source R81: SHA-pinned candidate differs")
+        _, parts = unwrap_native_parts_v2(candidate)
+        need(len(parts)==76 and state_offset(parts)==12070,
+             "Strict source R81: keyboard data shifted")
+        need(all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+                 for i,pos,op in SITES), "Strict source R81: 7 LEA drift")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        old, _ = build_r80()
+        need(sha(old)==R80_SHA, "Strict source R81: R80 ancestor drift")
+        oldparsed = parse_lib(reconstruct(old))
+        need(len(oldparsed["section"])==76,
+             "Strict source R81: R80 section count changed")
+        inherited = verified_current_compiler_seeds(oldparsed)
+        need(all(k in inherited for k in (0,73,74,75)),
+             "Strict source R81: R80 native CFG source not authenticated")
+        _, oldparts = unwrap_native_parts_v2(old)
+        need(parts[:73]==oldparts[:73],
+             "Strict source R81: unrelated native entries changed")
+        codes = (emit_blit_opt020(),emit_zoom_opt020(),emit_iff_chunky_opt020())
+        for index, (body, labels), marker, n in zip(
+                (73,74,75), codes,
+                (BLIT_GETADR,ZOOM_GETADR,IFF_GETADR),(2,2,1)):
+            need(sections[index]["core"]==body
+                 and sections[index]["getp"]==(index!=75),
+                 f"Strict source R81: optimized native entry {index} drift")
+            need(body.count(marker)==n,
+                 f"Strict source R81: changed GetAdr count in {index}")
+        for i in range(73):
+            need(sections[i]["core"]==oldparsed["section"][i]["core"]
+                 and sections[i]["getp"]==oldparsed["section"][i]["getp"],
+                 f"Strict source R81: earlier entry {i} changed")
+        seeds={i:set(v) for i,v in inherited.items()}
+        for index, (body, labels), marker in zip(
+                (73,74,75),codes,
+                (BLIT_GETADR,ZOOM_GETADR,IFF_GETADR)):
+            at=0
+            while True:
+                at=body.find(marker,at)
+                if at<0:break
+                resume=at+len(marker)
+                need(resume%2==0 and resume<len(body),
+                     "Strict source R81: invalid GetAdr resume")
+                seeds[index].add(resume)
+                at=resume
+        # The original loops remain inert after a four-byte BRA.W hook;
+        # decode their exact preserved instruction tails independently.
+        blit_old, blit_labels=emit_blit()
+        zoom_old, zoom_labels=emit_zoom()
+        iff_old, iff_labels=emit_iff_to_chunky()
+        need(codes[0][0][blit_labels["copy_row"]+4:len(blit_old)]
+             ==blit_old[blit_labels["copy_row"]+4:],
+             "Strict source R81: original Blit code unexpectedly changed")
+        need(codes[1][0][zoom_labels["pixel"]+4:len(zoom_old)]
+             ==zoom_old[zoom_labels["pixel"]+4:],
+             "Strict source R81: original Zoom code unexpectedly changed")
+        need(codes[2][0][iff_labels["byte_start"]+6:len(iff_old)]
+             ==iff_old[iff_labels["byte_start"]+6:],
+             "Strict source R81: original IFF code unexpectedly changed")
+        seeds[73].update((blit_labels["copy_row"]+4,len(blit_old)))
+        seeds[74].update((zoom_labels["pixel"]+4,len(zoom_old)))
+        seeds[75].update((iff_labels["byte_start"]+6,len(iff_old),
+                          codes[2][1]["chunky_decode_cpu_guard_opt020"]))
+        return seeds
     if len(sections)==76 and b"AMOSPro AGA IFF Chunky R80 0.13.25 candidate" in parsed["title"]:
         # R80: one new audited IFF/ILBM -> chunky native body appended after
         # exact SHA-pinned R79, including one AMOS GetAdr pseudo-op site.
@@ -1471,7 +1552,11 @@ def analyze_entries(parsed):
     # Discover cross-entry seeds exclusively from decoded CALL targets.
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
     inherited=verified_r44_inherited_seeds(parsed)
-    for index, extra in verified_current_compiler_seeds(parsed).items():
+    current_verified=verified_current_compiler_seeds(parsed)
+    certified_r81_020=(len(sections)==76
+        and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]
+        and all(x in current_verified for x in (73,74,75)))
+    for index, extra in current_verified.items():
         inherited.setdefault(index,set()).update(extra)
     for verifier in (verified_r45_inherited_seeds, verified_r46_inherited_seeds):
         for index,extra in verifier(parsed).items():
@@ -1524,7 +1609,8 @@ def analyze_entries(parsed):
         for s in sections:
             core=s['core']; off=s['file_offset']
             blocks[s['id']]=flow_decode(
-                core,off,tuple(off+x for x in sorted(seeds[s['id']]))
+                core,off,tuple(off+x for x in sorted(seeds[s['id']])),
+                allow_scaled_index=certified_r81_020 and s['id']==75
             ) if core else {}
         changed=False
         for decoded in blocks.values():
@@ -1552,7 +1638,7 @@ def analyze_entries(parsed):
         covered=bytearray(len(core))
         for p,op in decoded.items():
             covered[p-off:p-off+op.size]=bytes([1])*op.size
-        decoder=Decoder(core,off)
+        decoder=Decoder(core,off,allow_scaled_index=certified_r81_020 and s['id']==75)
         cursor=0
         while cursor<len(core):
             if covered[cursor]:
@@ -1705,7 +1791,29 @@ def unclassified_gaps(parsed):
     This ensures future releases refuse silent code regressions.
     """
     block,_,_,_=analyze_entries(parsed)
-    trusted_r54_r57 = bool(verified_current_compiler_seeds(parsed))
+    verified_seeds=verified_current_compiler_seeds(parsed)
+    trusted_r54_r57 = bool(verified_seeds)
+    r81_exact=(len(parsed['section'])==76
+        and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]
+        and all(x in verified_seeds for x in (73,74,75)))
+    trusted_iff_data=()
+    if r81_exact:
+        from c2p_r80_iff_chunky_emit import emit_iff_to_chunky
+        from c2p_opt020_variants import emit_iff_chunky_opt020, _nibble_lut
+        original, old_labels=emit_iff_to_chunky()
+        optimized, labels=emit_iff_chunky_opt020()
+        need(parsed['section'][75]['core']==optimized,
+             "Strict source R81: IFF native source differs")
+        lut_start=labels['chunky_decode_cpu_guard_opt020']-64
+        orphan_start=old_labels['byte_start']+4
+        need(optimized[lut_start:lut_start+64]==_nibble_lut()
+             and optimized[orphan_start:orphan_start+2]
+             ==original[orphan_start:orphan_start+2],
+             "Strict source R81: known inline LUT/orphan opcode drift")
+        # Only these exact, unreachable data bytes may be unclassified;
+        # every OTHER code gap remains a strict audit error.
+        trusted_iff_data=((lut_start,lut_start+64),
+                          (orphan_start,orphan_start+2))
     problems=[]
     for sec in parsed['section']:
         core=sec['core'];loc=sec['file_offset'];instructions=block[sec['id']]
@@ -1718,6 +1826,12 @@ def unclassified_gaps(parsed):
             else:seq.append(j)
         if seq:gaps.append((seq[0],bytes(core[x] for x in seq)))
         for pos,b in gaps:
+            if r81_exact and sec['id']==75:
+                data=bytearray(b)
+                for start,stop in sorted(trusted_iff_data,reverse=True):
+                    if pos<=start and stop<=pos+len(b):
+                        del data[start-pos:stop-pos]
+                b=bytes(data)
             # Remove exact AMOS Rjsr pseudo-ops; they are machine-level
             # AMOS link markers but not executable Motorola opcodes.
             b=b.replace(bytes.fromhex('FE11F700008C'),b'')

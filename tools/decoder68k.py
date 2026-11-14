@@ -24,8 +24,9 @@ CC=['t','f','hi','ls','cc','cs','ne','eq','vc','vs','pl','mi','ge','lt','gt','le
 class DecodeError(Exception):pass
 
 class Decoder:
-    def __init__(self,data:bytes,base:int=0):
+    def __init__(self,data:bytes,base:int=0,allow_scaled_index:bool=False):
         self.data,self.base=data,base
+        self.allow_scaled_index=allow_scaled_index
         self.end=base+len(data)
     def u16(self,p):
         i=p-self.base
@@ -48,7 +49,10 @@ class Decoder:
             indsz='l' if ext&0x800 else 'w'; disp=ext&255
             if disp>=128:disp-=256
             if ext&0x100:return None,p,()
-            return f'{disp}(a{reg},{idx}.{indsz})',p+2,()
+            scale=1<<((ext>>9)&3)
+            if scale!=1 and not self.allow_scaled_index:return None,p,()
+            suffix=f'*{scale}' if scale!=1 else ''
+            return f'{disp}(a{reg},{idx}.{indsz}{suffix})',p+2,()
         if mode==7:
             if reg==0:return f'${self.u16(p):04X}.w',p+2,()
             if reg==1:return f'${self.u32(p):08X}.l',p+4,()
@@ -60,7 +64,10 @@ class Decoder:
                 idx=('a' if ext&0x8000 else 'd')+str((ext>>12)&7)
                 indsz='l' if ext&0x800 else 'w';disp=ext&255
                 if disp>=128:disp-=256
-                return f'{disp}(pc,{idx}.{indsz})',p+2,()
+                scale=1<<((ext>>9)&3)
+                if scale!=1 and not self.allow_scaled_index:return None,p,()
+                suffix=f'*{scale}' if scale!=1 else ''
+                return f'{disp}(pc,{idx}.{indsz}{suffix})',p+2,()
             if reg==4 and allow_imm:
                 if size=='l':return f'#${self.u32(p):08X}',p+4,()
                 v=self.u16(p)
@@ -258,9 +265,10 @@ class Decoder:
         return None
 
 
-def flow_decode(data:bytes,base:int=0,extra_seeds:tuple[int,...]=()):
-    """Conservative recursive traversal from the AP20 entry start."""
-    decoder=Decoder(data,base)
+def flow_decode(data:bytes,base:int=0,extra_seeds:tuple[int,...]=(),
+                allow_scaled_index:bool=False):
+    """Conservative recursive traversal from source-verified AP20 entrypoints."""
+    decoder=Decoder(data,base,allow_scaled_index=allow_scaled_index)
     end=base+len(data)
     instructions={}
     stack=[base,*extra_seeds]
