@@ -49,8 +49,10 @@ def main():
     image=BINARY.read_bytes()
     if sha256(image).hexdigest()==R83_SHA:
         # Check actual R83 unit bytes independently from its builder.
-        frozen=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+        from build_agapic_v2_r82_full_preview import build as build_r82
+        frozen, _ = build_r82()
         assert sha256(frozen).hexdigest()==R82_SHA
+        assert Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()==image, "R83 promoted LAST_GOOD changed"
         _, original=unwrap_native_parts_v2(frozen)
         _, units, _=unpack_ap20(image)
         assert len(units)==83

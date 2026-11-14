@@ -41,7 +41,7 @@ APIS=(
 def build():
     baseline,_=build_r81()
     assert sha256(baseline).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA), 'unrecognized R81/R82 LAST_GOOD'
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized R81/R82/R83 LAST_GOOD'
     tok,old=unwrap_native_parts_v2(baseline)
     assert len(old)==76 and not old[-1].endswith(GETP)
     assert state_offset(old)==12070
@@ -101,7 +101,7 @@ def build():
     assert budget['margin']>2048,'Insufficient 16-bit capacity for further R82 work'
     active_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
     if active_sha==R83_SHA:
-        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()==R82_SHA, 'R83 must inherit frozen R82'
+        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA), 'R83 requires known LAST_GOOD'
     assert active_sha in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized active R81/R82/R83'
     return image,dict(
         kind='R82 experimental FOUR-API in-memory structural preview',

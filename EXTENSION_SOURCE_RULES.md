@@ -1,6 +1,18 @@
 # EXTENSION_SOURCE_RULES.md
 
-## ÉTAT DE TRAVAIL — R83 v0.13.28 CANDIDATE MODULAIRE (14/11/2026)
+## ÉTAT AUTORITAIRE — R83 v0.13.28 PROMUE LAST_GOOD (14/11/2026)
+
+**Autorisation explicite : « promotion ok ! »** après lecture des journaux WinUAE R83 Runtime et Compiled. Sur **main**, `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont un **même blob Git de 64 188 octets**, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`. 74 commandes / 83 entrées AP20 ; unités C2P 5 558, IFF 2 508 et AGA/AGAPIC 52 974 octets, sans padding.
+
+**Gates A native/CPU/CI, B WinUAE Runtime et C AMOS Compiler : PASS** sur IFF ILBM 320×256×8 CPU68030, 14/14 pixels, IFF/Palette/Chunky/C2P/Blit/Zoom, ERR 0, deltas Chip/Fast 0/0, retour correct après Echap. **PRG_STATE 0 strict et Gate D Amiga physique NON TESTÉS.**
+
+La R82 précédente, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36` (64 112 octets), demeure reconstructible par `tools/build_agapic_v2_r82_full_preview.py` et consultable dans l'historique Git ; aucune archive historique n'est modifiée. Un seul ASC actif `tests/current/C2P_R83_MODULAR_01.asc` et copie figée `tests/passed/C2P_R83_MODULAR_01.asc`. Aucune branche, tag ou publication.
+
+[Promotion R83](docs/R83_LAST_GOOD_PROMOTION_2026-11-14.md) · [Journaux R83](docs/C2P_R83_WINUAE_RUNTIME_COMPILER_2026-11-14.md).
+
+---
+
+## HISTORIQUE — R83 v0.13.28 AVANT PROMOTION (14/11/2026)
 
 **Circuit unique sur `main` :** `dist/AMOSPro_AGA.Lib` est la
 candidate **R83**, à trois unités natives AP20 (C2P, IFF, AGA/AGAPIC),

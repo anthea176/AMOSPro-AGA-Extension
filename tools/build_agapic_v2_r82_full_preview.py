@@ -45,10 +45,10 @@ def native_starts(parts):
 def build():
     parent,_=build_r81()
     assert sha256(parent).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA), 'unrecognized R81/R82 LAST_GOOD'
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA), 'unrecognized R81/R82/R83 LAST_GOOD'
     current_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
     if current_sha==R83_SHA:
-        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()==R82_SHA, 'R83 requires frozen R82 LAST_GOOD'
+        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA), 'R83 requires known LAST_GOOD'
     assert current_sha in (R81_SHA,R82_SHA,R83_SHA),'unrecognized active R81/R82/R83 binary'
     proto,proto_meta=build_api_preview()
     tokens,parts=unwrap_native_parts_v2(proto)

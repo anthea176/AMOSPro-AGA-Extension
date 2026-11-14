@@ -2,8 +2,8 @@
 """Build R83 v0.13.28, three real AP20 native units, from pinned R82.
 
 This is the one working-library circuit on main:
-  dist/AMOSPro_AGA.Lib           R83 candidate, NEVER silently promoted
-  dist/AMOSPro_AGA_LAST_GOOD.Lib R82 frozen and verified
+  dist/AMOSPro_AGA.Lib           promoted R83 active library
+  dist/AMOSPro_AGA_LAST_GOOD.Lib byte-identical promoted R83
   tests/current/*.asc            exactly one active AMOS test
 
 The builder checks native ABI, all 78 native RBSR stubs, palette links,
@@ -25,13 +25,14 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "experiments"))
 
-from active_library import R82_SHA
+from active_library import R82_SHA, R83_SHA
+from build_agapic_v2_r82_full_preview import build as build_r82
 from audit_ap20 import inspect, parse
 from compiler_relocation import repack_ap20, unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2, unwrap_native_parts_v2
 from ap20_v3_r82_threeunits import build_in_memory as p5_build, cross_module_pc_branches
 from ap20_v3_r82_split import (
-    pinned_r82, starts, interpreter_rbsr_displacements,
+    starts, interpreter_rbsr_displacements,
     assert_reaches_entry_on_mc68020,
 )
 from native_relative_links import assert_native_links
@@ -49,9 +50,11 @@ GROUP_NAMES = ("C2P", "IFF", "AGA")
 
 
 def build() -> tuple[bytes, dict]:
-    frozen = pinned_r82()
-    if frozen != LAST_GOOD.read_bytes() or sha256(frozen).hexdigest() != R82_SHA:
-        raise AssertionError("Pinned R82 LAST_GOOD changed")
+    frozen, frozen_meta = build_r82()
+    if len(frozen) != 64112 or sha256(frozen).hexdigest() != R82_SHA or frozen_meta["sha256"] != R82_SHA:
+        raise AssertionError("SHA-pinned historical R82 builder drift")
+    if sha256(LAST_GOOD.read_bytes()).hexdigest() != R83_SHA:
+        raise AssertionError("R83 promoted LAST_GOOD changed")
     intermediate, p5 = p5_build(frozen, pad_bytes=0)
     tokens, segments, _ = unpack_ap20(intermediate)
     if len(segments) != 83 or tuple(map(len, segments[80:])) != EXPECTED_UNITS:
@@ -87,10 +90,12 @@ def build() -> tuple[bytes, dict]:
     for entry, offset, opcode in SITES:
         if old[entry][offset:offset + 4] != opcode.to_bytes(2, "big") + bytes.fromhex("2f26"):
             raise AssertionError("Legacy keyboard/mouse LEA changed")
+    if sha256(candidate).hexdigest() != R83_SHA:
+        raise AssertionError("Rebuilt R83 does not match frozen promoted SHA256")
     return candidate, {
         "revision": "R83",
         "version": "0.13.28",
-        "status": "MAIN WORKING CANDIDATE: WinUAE R83 B/C PENDING",
+        "status": "PROMOTED LAST_GOOD: Gate A CPU/CI, B WinUAE Runtime and C AMOS Compiler PASS",
         "source_R82_SHA256": R82_SHA,
         "sha256": sha256(candidate).hexdigest(),
         "size": len(candidate),
@@ -124,8 +129,9 @@ class R83ModularGateA(unittest.TestCase):
         again, meta = build()
         self.assertEqual(self.lib, again)
         self.assertEqual(meta, self.meta)
-        self.assertNotEqual(self.lib, LAST_GOOD.read_bytes())
-        self.assertEqual(sha256(LAST_GOOD.read_bytes()).hexdigest(), R82_SHA)
+        self.assertEqual(self.lib, LAST_GOOD.read_bytes())
+        self.assertEqual(sha256(LAST_GOOD.read_bytes()).hexdigest(), R83_SHA)
+        self.assertEqual(sha256(build_r82()[0]).hexdigest(), R82_SHA)
 
     def test_dispatcher_reachability_on_real_mc68020(self):
         for entry in (0, 2, 6, 20, 33, 41, 55, 57, 69, 70, 71,
@@ -134,7 +140,7 @@ class R83ModularGateA(unittest.TestCase):
                 assert_reaches_entry_on_mc68020(self.lib, entry)
 
     def test_exact_p5_zero_padding_native_inheritance(self):
-        frozen = pinned_r82()
+        frozen, _ = build_r82()
         tmp, _ = p5_build(frozen, pad_bytes=0)
         old_tok, old_segments, _ = unpack_ap20(tmp)
         new_tok, new_segments, _ = unpack_ap20(self.lib)
@@ -151,7 +157,7 @@ class R83ModularGateA(unittest.TestCase):
         original = LAST_GOOD.read_bytes()
         tampered = bytearray(original)
         tampered[20] ^= 1
-        self.assertNotEqual(sha256(tampered).hexdigest(), R82_SHA)
+        self.assertNotEqual(sha256(tampered).hexdigest(), R83_SHA)
 
 
 def gate_a():

@@ -55,8 +55,8 @@ def main() -> None:
         candidate,meta=build_r83()
         assert candidate==current and meta["sha256"]=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
         assert meta["size"]==64188 and meta["commands"]==74 and meta["ap20_entries"]==83
-        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
-        print("CURRENT R83 THREE-MODULE CANDIDATE, CPU Gate A PASS; WinUAE B/C R83 pending",meta)
+        assert current==LAST_GOOD.read_bytes() and sha256(LAST_GOOD.read_bytes()).hexdigest()=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
+        print("CURRENT R83 THREE-MODULE PROMOTED LAST_GOOD, native A and WinUAE Runtime B / Compiler C PASS; physical D untested",meta)
     elif active.startswith("R82 0.13.27"):
         from build_agapic_v2_r82_full_preview import build as build_r82
         candidate,meta=build_r82()

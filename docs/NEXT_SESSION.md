@@ -1,5 +1,22 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## ÉTAT COURANT — R83 v0.13.28 PROMUE LAST_GOOD (14/11/2026)
+
+**Autorisation utilisateur : « promotion ok ! »** ; branche unique `main`.
+
+- `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib`, R83, **64 188 octets**, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, 74 commandes, 83 AP20, 3 unités natives sans padding.
+- **Gate A CPU/CI PASS** ; **Gate B Runtime `PRG_STATE 1` PASS** et **Gate C AMOS Compiler `PRG_STATE -1` PASS** sous WinUAE 68030 : IFF 320×256×8, 14/14 pixels, `RESULT 1`, `VERDICT PASS`, `ERR 0`, Chip/Fast 0/0, `CLOSE_RETURNED`.
+- `tests/current/C2P_R83_MODULAR_01.asc` demeure l'unique ASC actif ; copie validée dans `tests/passed/C2P_R83_MODULAR_01.asc`.
+- R82 précédente : 64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, reconstructible depuis `tools/build_agapic_v2_r82_full_preview.py` et historique Git.
+- **Non testés :** `PRG_STATE 0` strict et Amiga physique Gate D. Pas de tag, release ni Aminet.
+- Prochain chantier roadmap : AGAPIC v1/v2 informations et capture native, **non engagé** par la promotion.
+
+[Promotion](R83_LAST_GOOD_PROMOTION_2026-11-14.md) · [Preuves](C2P_R83_WINUAE_RUNTIME_COMPILER_2026-11-14.md).
+
+Les sections R82 et antérieures ci-dessous sont historiques.
+
+---
+
 ## R82 AGAPIC v2 — PROMUE `LAST_GOOD`, Gates A / Runtime B / Compiler C PASS (14/11/2026)
 
 **Autorisation explicite de l'auteur** : « tu peux promouvoir! ».

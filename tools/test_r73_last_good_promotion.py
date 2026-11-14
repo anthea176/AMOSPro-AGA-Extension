@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof of promoted R82 LAST_GOOD and preserved R68/R73/R81 sources.
+"""Read-only proof of promoted R83 LAST_GOOD and preserved R68/R73/R81/R82 sources.
 
 Retains the historical filename for existing CI invocations. R68 and R73
 are immutable deterministic build sources, independent of moving LAST_GOOD.
@@ -24,7 +24,7 @@ def main():
     cur,good,label=verify_active(ROOT)
     baseline,_=build_r68()
     validated,meta=build_r73()
-    assert LAST_GOOD_SHA==R82_SHA
+    assert LAST_GOOD_SHA==R83_SHA
     assert sha256(baseline).hexdigest()==R68_SHA, "Historical R68 source drift"
     assert len(baseline)==51064 and baseline!=cur
     assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
@@ -35,14 +35,15 @@ def main():
     assert historical_r81_meta["ap20_entries"]==77
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
-    assert good==promoted and (cur==good or sha256(cur).hexdigest()==R83_SHA) and good!=historical_r81 and good!=validated, "R82 LAST_GOOD source frozen; active R82 or exact R83 candidate only"
-    assert len(good)==64112 and sha256(good).hexdigest()==R82_SHA
+    assert cur==good and len(good)==64188 and sha256(good).hexdigest()==R83_SHA, "Promoted R83 active and LAST_GOOD differ"
+    assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
+    assert good!=historical_r81 and good!=validated and good!=promoted
     assert promoted_meta["size"]==64112 and promoted_meta["commands"]==74
     assert promoted_meta["ap20_entries"]==81 and promoted_meta["compiler_margin"]==4562
     assert current.read_bytes()==cur and last_good.read_bytes()==good
     assert meta["commands"]==64 and meta["ap20_entries"]==71
-    tokens,parts=unwrap_native_parts_v2(good)
-    t,entries,title=unpack_ap20(good)
+    tokens,parts=unwrap_native_parts_v2(promoted)
+    t,entries,title=unpack_ap20(promoted)
     assert tokens==t and len(parts)==80 and len(entries)==81
     assert_native_links(parts[:70])
     from c2p_r74_relink import check_cross_r74
@@ -147,8 +148,8 @@ def main():
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert good==promoted and (cur==good or sha256(cur).hexdigest()==R83_SHA) and validated!=promoted and historical_r81!=promoted
-    print("R82 LAST_GOOD BYTE-EXACT PROMOTION PASS",R82_SHA,len(good),
+    assert cur==good and sha256(cur).hexdigest()==R83_SHA and validated!=promoted and historical_r81!=promoted
+    print("R83 LAST_GOOD BYTE-EXACT PROMOTION PASS",R83_SHA,len(good),
           "active bytes",len(cur),"R81 frozen parent",R81_SHA,"3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 

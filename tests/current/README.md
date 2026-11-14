@@ -2,8 +2,9 @@
 
 **Un seul test actif :** [`C2P_R83_MODULAR_01.asc`](C2P_R83_MODULAR_01.asc).
 **Un seul binaire actif :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib).
-Il s'agit de la **candidate R83**, non encore promue.
-[**R82 `LAST_GOOD`**](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) reste immuable.
+La **R83 est promue `LAST_GOOD`** ; les deux binaires de `dist/` sont identiques (64 188 octets).
+La R82 historique reste reconstructible depuis son builder et l'historique Git.
+Le test R83 validé est aussi archivé dans [`tests/passed/`](../passed/C2P_R83_MODULAR_01.asc).
 
 ## Exécution sous WinUAE AGA, CPU 68020+
 
@@ -23,8 +24,8 @@ Il s'agit de la **candidate R83**, non encore promue.
    `RESULT 1`, `ERR 0`, `CHUNKY_OK 1`,
    `PIXEL_CHECK_COUNT 14`, `CLOSE_RETURNED`.
 
-**État : Gate A/CI PASS, Gates B Runtime/C Compiler R83 non encore
-confirmées sous WinUAE.** Ne pas modifier `LAST_GOOD` ni déplacer
-l'ASC R83 dans `tests/passed/` avant validation de l'auteur.
+**État : Gates A CPU/CI, B Runtime WinUAE et C AMOS Compiler PASS (MC68030).**
+Autorisation explicite de promotion le 14/11/2026 ; R83 `LAST_GOOD` protégée.
+L'ASC R83 demeure le seul actif jusqu'au prochain test approuvé.
 Le précédent banc AGAPIC R82, déjà validé, est désormais conservé dans
 [`tests/passed/AGAPIC_R82_V2_BANK_PALETTE_01.asc`](../passed/AGAPIC_R82_V2_BANK_PALETTE_01.asc).

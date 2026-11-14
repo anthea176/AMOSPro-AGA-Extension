@@ -7,11 +7,11 @@
 
 | Sujet | État |
 |---|---|
-| **Bibliothèque active** | **R83 v0.13.28 candidate modulaire** : `dist/AMOSPro_AGA.Lib`, 64 188 octets, **74 commandes / 83 entrées AP20**. **`LAST_GOOD` stable : R82 v0.13.27** dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 64 112 octets. |
-| **Validation R82** | **PASS** : Gate A native, WinUAE Runtime et AMOS Compiler sur le banc AGAPIC v1/v2 en CPU 68030. **Non vérifiés** : mode strictement interprété `PRG_STATE 0` et Amiga physique. |
+| **Bibliothèque active** | **R83 v0.13.28 PROMUE `LAST_GOOD`** : les deux fichiers `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont identiques (64 188 octets, **74 commandes / 83 entrées AP20**). R82 historique, reconstructible depuis son builder. |
+| **Validation R83** | **PASS** Gates A CPU/CI, B WinUAE Runtime, C AMOS Compiler 68030 sur IFF/C2P/Blit/Zoom (14/14 pixels, RAM 0/0). **Non testés** : `PRG_STATE 0` strict et Amiga physique. R82 A/B/C historiques PASS sur AGAPIC v1/v2. |
 | **Capacité Compiler V2** | **R83 : trois unités** : C2P 5 558, IFF 2 508, AGA/AGAPIC 52 974 octets, chacune sous 65 534 octets ; vérifier aussi la portée `BSR.W` du chargeur. **Marge AGA actuelle : 12 560 octets**, à contrôler avant AGAPIC. |
 | **Test AMOS actif** | `tests/current/C2P_R83_MODULAR_01.asc` — IFF→chunky natif positif, conversion C2P, Blit, Zoom, fermeture ; unique ASC. |
-| **Priorités avant M19** | **1. R83 modulaire** : candidate sans padding sur `main`, Gate A/CI PASS ; R83 WinUAE à valider avant promotion. **2. AGAPIC v1/v2 complet** : métadonnées par banque et capture native v1/v2 au choix, sans régression v1. |
+| **Priorités avant M19** | **1. R83 modulaire** : terminée et promue, Gates A/B/C PASS sur `main`. **2. AGAPIC v1/v2 complet** : métadonnées par banque et capture native v1/v2 au choix, sans régression v1. |
 
 Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -31,13 +31,13 @@ Ces **deux chantiers passent avant M19**. La preuve de faisabilité du premier a
 
 ### Chantier 1 — R83 modulaire : trois unités AP20
 
-**Sur `main`, candidate R83 v0.13.28 préparée ; `LAST_GOOD` reste R82.**
+**Sur `main`, R83 v0.13.28 PROMUE `LAST_GOOD` avec autorisation explicite du 14/11/2026.**
 
 - **Binaire actif :** `dist/AMOSPro_AGA.Lib` = R83 **64 188 octets**, 74 commandes R82 inchangées, 83 entrées AP20, trois vraies unités natives : C2P 5 558 octets, IFF→chunky 2 508 octets et AGA/AGAPIC/palettes 52 974 octets. **Aucun remplissage de stress-test**, aucun titre `TEST ONLY`.
-- **Source :** `tools/build_aga_r83_modular.py` reconstruit exclusivement depuis la R82 `LAST_GOOD` (SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`) et contrôle le format AP20, les 78 `RBSR`, les quatre liens palettes et la portée du chargeur `BSR.W`. **Gate A CPU/CI MC68020 PASS** ; les nouvelles Gates B/C R83 restent en attente.
+- **Source :** `tools/build_aga_r83_modular.py` reconstruit depuis le builder historique R82 SHA-épinglé (SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`) et contrôle le format AP20, les 78 `RBSR`, les quatre liens palettes et la portée du chargeur `BSR.W`. **Gates A CPU/CI MC68020, B Runtime WinUAE et C AMOS Compiler R83 PASS (68030)**.
 - **Preuve d'architecture historique :** P5 a passé WinUAE Runtime et Compiler avec ses trois unités natives, AGAPIC v1/v2, C2P Blit/Zoom et 14/14 pixels. Elle contenait 12 Ko de NOP de stress-test, désormais supprimés. Ses résultats ne prouvent pas automatiquement le comportement du binaire R83 raccourci.
 - **Test R83 actif :** `tests/current/C2P_R83_MODULAR_01.asc` reprend le banc IFF positif R80/R81 : décodage `Aga Iff To Chunky` sur une entrée ILBM réelle 320×256 (4–8 plans), C2P, Blit, Zoom et fermeture. Les banques 12/13 sont effacées au lancement. Un seul ASC est actif.
-- **Avant promotion de R83 :** exécution Runtime B et compilation AMOS fraîche C sur WinUAE, validation visuelle puis autorisation explicite. **R82 `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste inchangée**, aucun tag ou release automatique.
+- **Promotion R83 réalisée :** Gates B/C confirmées par les journaux utilisateur, accord explicite, binaire actif et `LAST_GOOD` identiques. R82 reste reconstructible dans Git. Aucun tag ni release.
 - **Après R83 :** chantier 2 AGAPIC (métadonnées et capture au choix v1/v2). Le module AGA dispose actuellement de **12 560 octets de marge théorique** ; toute augmentation doit contrôler la taille et les branchements `BSR.W`.
 
 Références : [constructeur R83](../tools/build_aga_r83_modular.py) · [test actif](../tests/current/C2P_R83_MODULAR_01.asc) · [preuves P5 historiques](experiments/AP20_V3_MULTIUNIT_64K_P5.md).
@@ -73,7 +73,7 @@ Le lecteur doit reconnaître **v1 et v2**, ne pas dessiner, ne pas décoder les 
 
 **Compatibilité impérative :** `Aga Image Capture` v1, AGAPIC v1, AGAPAL v1 et les commandes de dessin/palette R82 doivent continuer à fonctionner. Le ModeID strict et la palette v2 restent indépendants du dessin ; les palettes ne sont pas appliquées automatiquement.
 
-**Validation avant acceptation :** contrôles du format/ABK v1/v2 (dont corruption et aller-retour Save/Load), **capture native de la même image en v1 puis en v2**, compatibilité des banques v1 avec les anciens lecteurs, captures opaques et masquées, 4/8 plans au minimum, pixels comparés dans les deux versions, palette v2 comparée, ModeID v2 exact/refus d'incompatibilité, banques invalides, limites mémoire, fermeture et régressions R82 ; Gates A native, B WinUAE Runtime et C Compiler séparées. Gate D matériel et `PRG_STATE 0` non présumés. **R82 `LAST_GOOD` reste inchangée** jusqu'à une promotion explicitement autorisée.
+**Validation avant acceptation :** contrôles du format/ABK v1/v2 (dont corruption et aller-retour Save/Load), **capture native de la même image en v1 puis en v2**, compatibilité des banques v1 avec les anciens lecteurs, captures opaques et masquées, 4/8 plans au minimum, pixels comparés dans les deux versions, palette v2 comparée, ModeID v2 exact/refus d'incompatibilité, banques invalides, limites mémoire, fermeture et régressions R82 ; Gates A native, B WinUAE Runtime et C Compiler séparées. Gate D matériel et `PRG_STATE 0` non présumés. **R83 `LAST_GOOD` reste protégée** ; pas de promotion future sans validation et accord.
 
 Référence de format : [contrat AGAPIC v2](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) ; ce document est historique sur le plan du statut des tests, mais ses dispositions binaires v1/v2 sont la base à préserver.
 
@@ -92,7 +92,7 @@ Référence de format : [contrat AGAPIC v2](M16_AGAPIC_V2_CONTRACT_2026-11-14.md
 
 ## 5. Règles de travail
 
-- **GitHub : branche `main` uniquement.** Un seul binaire actif `dist/AMOSPro_AGA.Lib`, un seul ASC actif `tests/current/*.asc`, et R82 `LAST_GOOD` protégée. Les preuves P5 historiques ne sont pas un second circuit de travail. Aucune nouvelle branche, promotion, tag ni release sans accord explicite.
+- **GitHub : branche `main` uniquement.** Un seul binaire actif `dist/AMOSPro_AGA.Lib`, un seul ASC actif `tests/current/*.asc`, et R83 `LAST_GOOD` protégée. Les preuves P5 historiques ne sont pas un second circuit de travail. Aucune nouvelle branche, promotion, tag ni release sans accord explicite.
 - **`LAST_GOOD` protégée** : pas de modification d'une version promue ; une évolution est une nouvelle candidate distincte, validée avant promotion.
 - **CPU cible : 68020 minimum.** Contrat de chaque nouvelle fonction avant code, avec budget Compiler V2 contrôlé.
 - **Validations séparées** : Gate A native, Gate B WinUAE Runtime/interprétation selon le mode réellement exécuté, Gate C Compiler, Gate D Amiga physique. Ne jamais généraliser un PASS.
