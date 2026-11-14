@@ -82,5 +82,18 @@ Les validations détaillées, les Rxx intermédiaires, les échecs historiques, 
 5. **Affichage :** écran Intuition AGA privé, dessin uniquement sur back buffer autorisé, `Safe` avant écriture/DMA, `WaitBlit` si nécessaire ; **aucun Swap ni changement de palette implicite** sauf contrat explicite.
 6. **Traçabilité :** état courant dans [NEXT_SESSION](NEXT_SESSION.md), spécifications dans les rapports dédiés, chronologie dans [LIBRARY_TEST_HISTORY](LIBRARY_TEST_HISTORY.md). Pas de benchmark, nouvelle compilation, tag, release ou publication par simple mise à jour de cette roadmap.
 
+
+## 7. Dernier jalon potentiel — Chargement / sauvegarde PNG
+
+**Statut : à étudier, en toute fin de roadmap ; aucune priorité ni implémentation approuvée.** Ce chantier ne démarre qu'après les travaux précédents (qualification C2P, puis AGAPIC v2 et priorités intermédiaires décidées), sur demande explicite de l'auteur. Aucun changement aux builds ou APIs actuels.
+
+- **Objectif :** lecture et écriture de PNG **indexés** directement depuis AMOS, sans conversion IFF/ILBM intermédiaire ; conserver exactement les **indices** et la **palette RGB24** (jusqu'à 256 couleurs).
+- **Périmètre initial à étudier :** PNG indexé non entrelacé, profondeurs PNG **4 et 8 bits** ; pas de RGB/RGBA, HAM ni quantification automatique dans le premier prototype. Préciser dimensions, palette, transparence et comportement sur écran incompatible.
+- **Chargement pressenti :** décodage PNG (PLTE/IDAT, filtres + DEFLATE) → chunky en Fast RAM → C2P → back buffer AGA `Safe`. La chaîne C2P R76 reste actuellement limitée à **320×256 / 4–8 plans** et n'est pas complètement qualifiée ; ne pas supposer d'autres dimensions.
+- **Sauvegarde pressentie :** lecture planar→chunky (**P2C à développer ou sélectionner séparément**, non fourni par `c2p.library`) → encodeur PNG indexé, avec palette.
+- **Bibliothèques candidates, non sélectionnées :** `z.library` Amiga 68k + codec PNG indexé dédié (z.library ne fournit que la compression), ou **LodePNG** compilé pour 68k (toolchain, ABI, empreinte et licence à vérifier). `c2p.library` convertit les pixels, mais ne lit ni n'écrit de PNG.
+- **Commandes possibles, non approuvées :** `Aga Png Load(fichier$)` et `Aga Png Save(fichier$)`. Aucun token AP20 ni dépendance à intégrer sans validation préalable.
+- **Tests futurs :** aller-retour PNG avec comparaison bit à bit des indices et palette, cas corrompus, tailles/profondeurs, gestion des erreurs et de la mémoire Fast/Chip, `Safe` et Gates A/B/C/D distinctes.
+
 ---
 *Document de planification. Les versions, binaires et résultats de test évoluent indépendamment ; les vérifier à la clôture de chaque jalon.*
