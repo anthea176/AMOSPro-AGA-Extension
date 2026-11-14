@@ -235,15 +235,16 @@ def main() -> None:
     assert not any(x in loop for x in ("Wait Vbl", "Aga Swap", "Blitter Wait",
                                       "Aga Blit Clear", "Print ", "Timer",
                                       "Aga Screen Close", "Aga Bank Image Draw"))
-    # The benchmark is NOT placed into tests/current, preserving the
-    # single ACTIVE WinUAE Gate B ASC and all tests/passed archives.
-    active_asc = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active_asc) == 1 and active_asc[0].name in (
-        "OPT020_P1E_R69_INTERPRETED_01.asc", "OPT020_P2_R70_INTERPRETED_01.asc",
-        "OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc",
-        "OPT020_P3_R73_INTERPRETED_01.asc",
-        "C2P_P2_R73_BITMAP_01.asc", "C2P_R74_OPEN_01.asc", "C2P_R75_CONVERT_01.asc", "C2P_R76_CONVERT_01.asc", "C2P_R77_CLOSE_01.asc", "C2P_R78_BLIT_01.asc", "C2P_R79_ZOOM_01.asc",
-        "C2P_R80_IFF_CHUNKY_01.asc", "AGAPIC_R82_V2_BANK_PALETTE_01.asc", "C2P_R83_MODULAR_01.asc", "AGAPIC_R84_V1_V2_01.asc")
+    # The benchmark must remain outside tests/current. The *one* active
+    # WinUAE ASC changes as milestones advance (M19 and later): do not
+    # freeze its name to an R69..R84 list. Syntax and RAM logging are
+    # separately checked by test_current_amos_blocks / test_current_ram_log.
+    active_asc = sorted((ROOT / "tests/current").glob("*.asc"))
+    assert len(active_asc) == 1, "Exactly one active WinUAE ASC is required"
+    assert active_asc[0].name != SOURCE.name, (
+        "Historical benchmark must stay under benchmarks/")
+    assert sha256(active_asc[0].read_bytes()).digest() != sha256(raw).digest(), (
+        "Historical benchmark must not replace active WinUAE ASC")
     print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
     print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
     print("only native entry 59 differs in pinned R69 baseline; R70/R71/R72 preserve it.")

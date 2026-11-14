@@ -1,5 +1,18 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P2 — contrat d'objets proposé, pas d'API nouvelle (15/11/2026)
+
+**Nouvelle référence de conception :** [M19_P2_OBJECT_MANAGER_CONTRACT.md](M19_P2_OBJECT_MANAGER_CONTRACT.md). L'auteur a autorisé l'étude P2. Proposition de **prototype d'abord en AMOS BASIC**, réutilisant AGAPIC v1/v2 et FICON8, avec objets logiques (ID, source/frame, X/Y et hotspot, Z stable, visibilité), mouvement BASIC ou AMAL manuel, composition uniquement sur back buffer Safe, zéro rendu en interruption et Swap explicite.
+
+**Statut : PROPOSITION À VALIDER** pour les choix de P2.0 et les règles de propriété/mémoire ; pas de signature AMOS, token AP20, numéro de release ou implémentation native approuvés. Aucun test AMOS P2 actif : **P1 reste l'unique ASC courant**, déjà Gate B WinUAE Runtime PASS. R84 v0.13.29 `LAST_GOOD` et archives intactes.
+
+**CI du commit P1-documentation :** les marqueurs de version EN/FR sont désormais validés dans le contrôle README ; un ancien préflight `tools/test_opt020_p1e_benchmark_static.py` rejette encore `M19_P1_AGAPIC_BOBS_01.asc` parce que sa liste de noms possibles s'arrête à R84. Le garde est limité au **benchmark historique hors tests/current** + **unique ASC actif** dans cette mise à jour. Pas de modification des formules du benchmark ni du binaire. **CI complète à revérifier**.
+
+**Suite :** validation du contrat P2, puis un ASC P2.0 BASIC en remplaçant/archivant proprement le P1 courant ; Gate B Runtime sur le nouveau scénario, avant toute décision d'API native. Aucun sprite matériel : sujet P3.
+
+---
+
+
 ## M19 P1 — Gate B Runtime WinUAE PASS (journal reçu le 15/11/2026)
 
 **Source testée :** `tests/current/M19_P1_AGAPIC_BOBS_01.asc`, R84 v0.13.29 `LAST_GOOD` intacte. Journal auteur `M19_P1_AGAPIC_BOBS_RUNTIME.TXT` et capture WinUAE.

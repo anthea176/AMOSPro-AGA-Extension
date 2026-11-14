@@ -1,7 +1,7 @@
 # M19 — Sprites AGA, Bobs logiciels et AMAL : plan valide
 
 > **Décision auteur : plan approuvé le 14/11/2026 ; démarrage de P0 autorisé.**  
-> **Statut au 15/11/2026 : P0 et P1 ont une preuve PASS WinUAE Runtime. P1 testé sur 8 plans/256 couleurs ; Gates C/D non testées. P2 : contrat à étudier ; aucune nouvelle API native approuvée.**  
+> **Statut au 15/11/2026 : P0 et P1 PASS WinUAE Runtime dans leurs scénarios ; P2 contrat d'architecture [rédigé comme proposition](M19_P2_OBJECT_MANAGER_CONTRACT.md), pas de nouvelle API approuvée. Compiler M19 et Amiga physique non testés.**  
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence de départ : **R84 v0.13.29 promue LAST_GOOD** (76 commandes, 85 entrées AP20, MC68020 minimum). Le binaire `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure protégé.
 
 ## 1. Objectif
@@ -56,7 +56,7 @@ La position précise de la mise à jour des sprites matériels par rapport aux n
 |---|---|---|---|
 | **P0 — AMAL manuel et Bobs témoins** | Deux canaux AMAL mémoire et deux Bobs 16×16 via `Aga F Icon` | Runtime/WinUAE PASS (211 frames, aucun refus de dessin/Swap), correction visuelle du clignotement confirmée ; source P0 archivée | **TESTÉ / ARCHIVÉ** |
 | **P1 — Bobs généraux** | Six images AGAPIC v1/v2 24×24, masquage/opaque, cadence 16/24 frames, ordre, clipping et double buffer en 8 plans | Gate B WinUAE Runtime PASS : 240 frames, 46 overlaps, pixel témoin 1, aucun échec de dessin/Swap ; [rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). Autres profondeurs et Compiler non testés. | **TESTÉ / PASS RUNTIME 8 PLANS** |
-| **P2 — Objets gérés** | Identifier les opérations réellement manquantes : création, placement, image, visibilité, ordre, destruction, mapping AMAL | Contrat de chaque éventuelle API validé par l'auteur avant codage | À étudier |
+| **P2 — Objets gérés** | [Contrat proposé](M19_P2_OBJECT_MANAGER_CONTRACT.md) : gestionnaire BASIC d'abord, objets logiques AGAPIC/FICON8, IDs, frame, position, visibilité, Z stable, AMAL facultatif, cleanup | Revue du contrat par l'auteur, puis P2.0 en AMOS BASIC et Gate B WinUAE ; **aucune API native autorisée** | **CONTRAT RÉDIGÉ / À VALIDER** |
 | **P3 — Sprites matériels** | Audit ViewPort/Intuition, pointeur, canaux disponibles, allocation système, 16 pixels puis déplacement | Gate A ciblée + Gate B WinUAE ; ressources/cleanup ; aucun registre DMA brut imposé | À étudier |
 | **P4 — Extensions** | 32/64 pixels AGA, canaux attachés, cache/Blitter, Bobs optimisés et mélange Sprite/Bob | Benchmarks reproductibles sur MC68020+, étude mémoire et contraintes chipset | À étudier |
 
@@ -80,7 +80,11 @@ Ce prototype peut utiliser les **Fast Icons comme Bobs logiciels témoins** : il
 - **Boucle :** `Synchro Off` / AMAL en mémoire et `Synchro` manuel ; deux déplacements X/Y, sélection des images toutes les 16/24 frames et inversion de priorité tous les 60 ticks. Toutes les opérations graphiques se déroulent depuis BASIC, après préparation du back buffer `Safe`.
 - **Images et masque :** `Aga Bank Image Capture` / `Aga Bank Image Draw` ; fond totalement redessiné à `Aga Blit Fill` puis objet opaque, deux Bobs masqués, objet fixe devant et quatre clips, Swap explicite.
 - **Pixel témoin :** capturer 1×1 après ordre 12→14, puis après 14→12 ; comparer uniquement les données RLE v1. Différence prouvée = composition sensible à l'ordre **sur ce pixel**. L'inspection visuelle est nécessaire pour le reste.
-- **Limite :** P1 préparé mais aucune preuve de Gate B avant l'essai ; ce banc n'éprouve que le mode **256 couleurs / 8 plans**, ni les sprites matériels, ni une API de gestion d'objets.
+- **P1 désormais validé :** Gate B WinUAE Runtime PASS sur 68030 (240 frames, pixel témoin 1, aucun échec Draw/Swap) selon [rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). Le banc n'éprouve que **256 couleurs / 8 plans**, ni les sprites matériels, ni un gestionnaire d'objets.
+
+## 6 ter. P2 — contrat de gestion d'objets proposé
+
+Le document de référence [M19_P2_OBJECT_MANAGER_CONTRACT.md](M19_P2_OBJECT_MANAGER_CONTRACT.md) détaille : modèle logique avec banque source et frame, positions/hotspot, Z stable, visibilité, AMAL facultatif, ownership, fermeture, non-Safe et refus propres. Il **propose une validation P2.0 par prototype BASIC** avant toute API AP20 ; cette proposition n'est **pas encore validée comme spécification d'API**. Les autres phases conservent leurs portes de qualification indépendantes.
 
 ## 7. Conditions de validation et livrables
 
