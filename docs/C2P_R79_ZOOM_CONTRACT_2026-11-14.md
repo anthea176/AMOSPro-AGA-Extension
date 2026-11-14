@@ -1,6 +1,6 @@
 # C2P-5 / R79 — contrat de Aga C2P Zoom (14/11/2026)
 
-**Statut :** choix de réalisation proposé pour la fonction Zoom retenue par l'auteur avant la clôture C2P. La Gate C Compiler reste **après Zoom**, jamais entre R78 et R79. R78 Gates A/B PASS, R73 `LAST_GOOD` protégée.
+**Statut :** Zoom demandé et engagé par l'auteur avant la clôture C2P. Candidate R79 v0.13.24 implémentée en native, Gate A CPU PASS (62 scénarios), Gate B WinUAE NON TESTÉE. La Gate C Compiler reste **après Zoom**, jamais entre R78 et R79. R78 Gates A/B PASS, R73 `LAST_GOOD` protégée.
 
 ## API
 
@@ -51,3 +51,9 @@ Le clipping se fait **en coordonnées destination** sans re-normaliser l'image a
 4. Pas de promotion, tag, release ou Aminet sans décision distincte de l'auteur. R73 `LAST_GOOD` immuable.
 
 [Contrat R78 Blit](C2P_R78_BLIT_CONTRACT_2026-11-14.md) · [Gate B R78](C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md) · [Règles source](../EXTENSION_SOURCE_RULES.md).
+
+## Réalisation candidate et qualification (14/11/2026)
+
+La candidate R79 v0.13.24 est produite en append-only depuis R78 SHA épinglé, **57 344 octets**, SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`, **69 commandes / 76 entrées AP20**, 1 516 octets natifs additionnels. **Gate A native PASS (62 scénarios), CI complète source PASS 66 étapes**, désassemblage 68000, vrai CPU M68020, pixels nearest-neighbour comparés octet par octet, clipping et garde de toutes les banques et des sept LEA clavier/souris. [Rapport R79](C2P_R79_ZOOM_NATIVE_GATE_A_2026-11-14.md).
+
+**Gate B WinUAE R79 reste NON TESTÉE** ; l'ASC actif `C2P_R79_ZOOM_01.asc` conserve Blit+Close de R78 et ajoute quatre compteurs Zoom (copies/pixels/rejets/réouverture) sur cinq profondeurs avec log RAM. Gate C Compiler seulement après Gate B Zoom, Gate D machine physique séparée. R73 LAST_GOOD protégée.

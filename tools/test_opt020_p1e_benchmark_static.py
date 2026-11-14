@@ -30,6 +30,7 @@ R75_SHA = "c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"
 R76_SHA = "9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"
 R77_SHA = "81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
 R78_SHA = "9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"
+R79_SHA = "ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
 
 
 def main() -> None:
@@ -44,10 +45,22 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha == R78_SHA:
+    if active_sha == R79_SHA:
+        from build_c2p_r79_zoom import build as build_r79
+        from build_c2p_r76_rpg_fix import SITES,state_offset
+        from c2p_r74_relink import check_cross_r74
+        from native_relative_links import assert_native_links
+        assert active==build_r79()[0], "R79 Zoom differs from exact deterministic builder"
+        parts=unwrap_native_parts_v2(active)[1]
+        assert len(parts)==75 and state_offset(parts)==12070
+        assert all(parts[i][off+2:off+4]==bytes.fromhex("2f26") for i,off,_ in SITES)
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        assert parts[IMAGE_REGION_INDEX]==unwrap_native_parts_v2(candidate)[1][IMAGE_REGION_INDEX],(
+            "R79 changed historical optimized Image Region code")
+    elif active_sha == R78_SHA:
         from build_c2p_r78_blit import build as build_r78
         from build_c2p_r76_rpg_fix import SITES,state_offset
         from c2p_r74_relink import check_cross_r74
@@ -168,7 +181,7 @@ def main() -> None:
         "OPT020_P1E_R69_INTERPRETED_01.asc", "OPT020_P2_R70_INTERPRETED_01.asc",
         "OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc",
         "OPT020_P3_R73_INTERPRETED_01.asc",
-        "C2P_P2_R73_BITMAP_01.asc", "C2P_R74_OPEN_01.asc", "C2P_R75_CONVERT_01.asc", "C2P_R76_CONVERT_01.asc", "C2P_R77_CLOSE_01.asc", "C2P_R78_BLIT_01.asc")
+        "C2P_P2_R73_BITMAP_01.asc", "C2P_R74_OPEN_01.asc", "C2P_R75_CONVERT_01.asc", "C2P_R76_CONVERT_01.asc", "C2P_R77_CLOSE_01.asc", "C2P_R78_BLIT_01.asc", "C2P_R79_ZOOM_01.asc")
     print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
     print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
     print("only native entry 59 differs in pinned R69 baseline; R70/R71/R72 preserve it.")

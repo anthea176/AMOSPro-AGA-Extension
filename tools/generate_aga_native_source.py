@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R78_SHA:
+        if sha(raw) == R79_SHA:
+            from build_c2p_r79_zoom import build as pinned_build
+            release = "R79"
+        elif sha(raw) == R78_SHA:
             from build_c2p_r78_blit import build as pinned_build
             release = "R78"
         elif sha(raw) == R77_SHA:
@@ -497,6 +500,62 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==75 and b"AMOSPro AGA C2P Zoom R79 0.13.24 candidate" in parsed["title"]:
+        # R79 strictly appends one reviewed 68000 nearest-neighbour Zoom entry
+        # after the exact SHA-pinned R78 candidate; no earlier code may drift.
+        from active_library import R78_SHA,R79_SHA
+        from build_c2p_r78_blit import build as build_r78
+        from build_c2p_r79_zoom import build as build_r79
+        from c2p_r79_zoom_emit import emit_zoom,BANK as ZOOM_GETADR_MARKER
+        from build_c2p_r76_rpg_fix import state_offset
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from compiler_relocation import GETP
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,meta=build_r79()
+        need(sha(candidate)==R79_SHA and raw==reconstruct(candidate),
+             "Strict source R79: SHA-pinned candidate mismatch")
+        _,parts=unwrap_native_parts_v2(candidate)
+        need(len(parts)==75 and state_offset(parts)==12070,
+             "Strict source R79: mouse/key static offset drift")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        old,_=build_r78()
+        need(sha(old)==R78_SHA,"Strict source R79: R78 exact ancestor drift")
+        oldparsed=parse_lib(reconstruct(old))
+        need(len(oldparsed["section"])==74,
+             "Strict source R79: wrong R78 native section count")
+        inherited=verified_current_compiler_seeds(oldparsed)
+        need(0 in inherited and 8 in inherited and 72 in inherited and 73 in inherited,
+             "Strict source R79: R78 source provenance not established")
+        _,oldparts=unwrap_native_parts_v2(old)
+        code,labels=emit_zoom()
+        expected=oldparts[:73]+[oldparts[73]+GETP,code]
+        need(parts==expected,"Strict source R79: non append-only bytes")
+        for i in range(73):
+            need(sections[i]["core"]==oldparsed["section"][i]["core"]
+                 and sections[i]["getp"]==oldparsed["section"][i]["getp"],
+                 f"Strict source R79: inherited entry {i} changed")
+        need(sections[73]["core"]==oldparsed["section"][73]["core"]
+             and sections[73]["getp"],"Strict source R79: Blit body changed")
+        need(sections[74]["core"]==code and not sections[74]["getp"],
+             "Strict source R79: Zoom native body changed")
+        # Bnk.GetAdr is an AMOS source marker, not a native Motorola opcode.
+        # Resume native flow ONLY at two byte-exact marker boundaries.
+        need(code.count(ZOOM_GETADR_MARKER)==2,
+             "Strict source R79: missing or extra GetAdr marker")
+        resumes=[]
+        off=0
+        while True:
+            at=code.find(ZOOM_GETADR_MARKER,off)
+            if at<0:break
+            off=at+len(ZOOM_GETADR_MARKER)
+            need(off%2==0 and off<len(code),
+                 "Strict source R79: misaligned GetAdr return")
+            resumes.append(off)
+        need(len(resumes)==2,"Strict source R79: must resume after two markers")
+        seeds={i:set(v) for i,v in inherited.items()}
+        seeds[74]={0,*resumes}
+        return seeds
     if len(sections)==74 and b"AMOSPro AGA C2P Blit R78 0.13.23 candidate" in parsed["title"]:
         # Only a single reviewed 68000-safe Blit entry can be appended to
         # R77; never silently shift the old native input-state zone.

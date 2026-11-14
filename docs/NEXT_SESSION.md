@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R79 C2P Zoom — chantier rouvert avant Gate C (14/11/2026)
+## R79 v0.13.24 — C2P Zoom candidate native Gate A PASS, Gate B WinUAE à tester (14/11/2026)
+
+**Bibliothèque de travail mise à jour :** `dist/AMOSPro_AGA.Lib` **R79 v0.13.24**, **57 344 octets**, SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`, **69 commandes / 76 AP20**. Nouveau `Aga C2P Zoom(SrcBank,SrcPitch,SrcX,SrcY,SrcW,SrcH,DstX,DstY,DstW,DstH)`, copie chunky 8 bits opaque nearest-neighbour, agrandissement/réduction, clipping sans changer la géométrie, source et destination DATA/WORK revalidées, aucun Convert/Swap implicite.
+
+**Gate A native R79 PASS : 62 scénarios 68k CPU**, cinq profondeurs, identité/×2/réduction/non-entier, source décalée, clipping quatre bords et extrêmes, 37 erreurs de banque/paramètres/overflow rejetées, rejet CPU68000, zéro opaque, canaries et registres préservés. La [CI complète source R79](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43603344313) est **SUCCESS (66 étapes)**. Binaire append-only, entrée native 74 de 1 516 octets, SHA indépendant confirmé. Sept LEA clavier/souris `$2F26` inchangées. [Rapport Gate A](C2P_R79_ZOOM_NATIVE_GATE_A_2026-11-14.md).
+
+**Gate B R79 : NON TESTÉE.** **Un seul ASC actif** `tests/current/C2P_R79_ZOOM_01.asc` ; conserve les tests R78 Blit/R77 Close, ajoute sept Zoom (×2, réduction, non-entier, clips), six refus et vérification directe par `Peek`, cinq profondeurs 16..256 couleurs, `Amos To Back` avant Échap, log `RAM:C2P_R79_<MODE>.TXT`. Retour attendu : `RESULT 1`, `PASS_DEPTH 5`, les quatre compteurs `ZOOM_*_OK 5`, et les compteurs Blit/Close 5, `ERR 0`, `NOS 0`. [Procédure](../tests/current/README.md).
+
+**R78 v0.13.23 Gates A/B PASS** (journal utilisateur 5/5 et Chip/Fast delta 0). **R73 v0.13.18 `LAST_GOOD` inchangée**, 51 608 octets SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. **Gate C Compiler** : une seule compilation après validation de la Gate B R79 ; **NON TESTÉE**. Gate D physique non testée. Aucune promotion ni publication.
+
+## Historique de démarrage R79 — contrat et chantier avant Gate A (14/11/2026)
 
 **Ordre de l'auteur :** après R77 Close puis R78 Blit (**Gates A/B PASS**), implémenter la **deuxième fonction de manipulation d'image : R79 `Aga C2P Zoom`** avant toute Gate C Compiler et toute clôture C2P. L'ancienne roadmap qui plaçait la Gate C juste après Blit était incomplète.
 

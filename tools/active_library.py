@@ -40,7 +40,8 @@ R74_SHA="887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"  # Op
 R75_SHA="c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"  # Open + Convert, RPG input regression (DO NOT INSTALL)
 R76_SHA="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"  # RPG input-state relocation, Gate A 24/24 PASS; WinUAE B pending
 R77_SHA="81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"  # R77 Close native and WinUAE functional Gate B PASS
-R78_SHA="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"  # C2P Blit native pixel-exact Gate A PASS; WinUAE Gate B pending
+R78_SHA="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"  # C2P Blit A/B WinUAE PASS
+R79_SHA="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"  # C2P Zoom 62 CPU native pixel-exact cases PASS; WinUAE B pending
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -67,7 +68,7 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA):
+    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"
     else:
@@ -78,6 +79,22 @@ def verify_active(root: Path):
         # Fail closed: exact SHA/structural CI cannot override a fatal WinUAE
         # illegal instruction. Keep the P2 builder in memory until fixed.
         raise AssertionError("R70 FAILED WinUAE Gate B (Guru $80000004); restore the pinned R69 working library")
+    if current_sha==R79_SHA:
+        from build_c2p_r79_zoom import build as build_r79
+        from build_c2p_r76_rpg_fix import SITES,state_offset
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,meta=build_r79()
+        _,parts=unwrap_native_parts_v2(cur)
+        assert cur==candidate and cur!=good,"R79 must match exact append-only builder"
+        assert len(cur)==57344 and meta["commands"]==69 and meta["ap20_entries"]==76
+        assert len(parts)==75 and state_offset(parts)==12070
+        assert all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+                   for i,pos,op in SITES),"R79 mouse/key LEA regression"
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        assert sha256(good).hexdigest()==LAST_GOOD_SHA
+        return cur,good,"R79 0.13.24 C2P Zoom candidate; native CPU pixel Gate A PASS (62); WinUAE Gate B NOT TESTED; R73 LAST_GOOD protected"
     if current_sha==R78_SHA:
         from build_c2p_r78_blit import build as build_r78
         from build_c2p_r76_rpg_fix import SITES,state_offset

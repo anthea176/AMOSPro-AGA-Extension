@@ -196,6 +196,55 @@ def main():
             "R78 normal exit must erase sprite bank 13 and chunky bank 12")
         assert source.rstrip().endswith("End"),"R78 must return to AMOS"
         print("PASS: R78 active ASC covers 5 depths, opaque and clipped blits, rejections, Close/reopen, RAM log (STATIC ONLY)")
+    if files and files[0].name == "C2P_R79_ZOOM_01.asc":
+        source=files[0].read_text("ascii")
+        required=(
+            "Reserve As Data 12,81920","Reserve As Data 13,1024",
+            "For _DEPTH=4 To 8","Aga Screen Open(320,256,_COL,$00021000)",
+            "_C2P=Aga C2P Open(12)","Aga Double Buffer",
+            "_B0=Aga C2P Blit","_BLEFT=Aga C2P Blit",
+            "_BRIGHT=Aga C2P Blit","_BTOP=Aga C2P Blit",
+            "_BBOTTOM=Aga C2P Blit",
+            "_ZUP=Aga C2P Zoom(13,32,0,0,32,32,96,32,64,64)",
+            "_ZDOWN=Aga C2P Zoom(13,32,0,0,32,32,200,100,16,16)",
+            "_ZNONINT=Aga C2P Zoom(13,32,3,7,13,11,40,190,29,7)",
+            "_ZLEFT=Aga C2P Zoom","_ZTOP=Aga C2P Zoom",
+            "_ZRIGHT=Aga C2P Zoom","_ZBOTTOM=Aga C2P Zoom",
+            "_ZBAD1=Aga C2P Zoom","_ZBAD2=Aga C2P Zoom",
+            "_ZBAD3=Aga C2P Zoom","_ZBAD4=Aga C2P Zoom",
+            "_ZBAD5=Aga C2P Zoom","_ZBAD6=Aga C2P Zoom",
+            "_BL_DEAD=Aga C2P Blit","_Z_DEAD=Aga C2P Zoom",
+            "_REOPEN=Aga C2P Open(12)","_Z_AGAIN=Aga C2P Zoom",
+            "_BL_AGAIN=Aga C2P Blit","_Z_POST=Aga C2P Zoom",
+            "_CV0=Aga C2P Convert","_SW0=Aga Swap",
+            "_CV1=Aga C2P Convert","_SW1=Aga Swap",
+            "_CV2=Aga C2P Convert","_SW2=Aga Swap",
+            "_CL1=Aga C2P Close","_CL2=Aga C2P Close",
+            "_CL3=Aga C2P Close","If _COL=256",
+            "_K=Aga Key","Until _K=69",
+            "Amos To Back","Aga Screen Close","Amos To Front",
+            "Erase 13","Erase 12","Trap Open Out","Trap Close",
+            "RUN_MODE","PRG_STATE","CPU_ATTNFLAGS","RESULT",
+            "BLIT_COPY_OK","BLIT_PIXEL_OK","BLIT_REJECT_OK",
+            "BLIT_REOPEN_OK","ZOOM_COPY_OK","ZOOM_PIXEL_OK",
+            "ZOOM_REJECT_OK","ZOOM_REOPEN_OK",
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(token in source for token in required),(
+            "R79 ASC must cover Zoom, Blit, Close, RAM logging and 5 depths")
+        assert source.count("Aga C2P Zoom(")>=16,"R79 ASC Zoom case count dropped"
+        assert source.index("_B0=Aga C2P Blit")<source.index("_ZUP=Aga C2P Zoom")<source.index("_CV0=Aga C2P Convert"), (
+            "R79 chunky composition must precede C2P Convert and Swap")
+        assert source.index("_CL1=Aga C2P Close")<source.index("_Z_DEAD=Aga C2P Zoom")<source.index("_REOPEN=Aga C2P Open(12)")<source.index("_Z_AGAIN=Aga C2P Zoom"),(
+            "R79 Close/reopen test changed")
+        lines=[line.strip() for line in source.splitlines()]
+        assert lines.count("Amos To Back")==1 and lines.count("Amos To Front")==1
+        assert source.index("Amos To Back")<source.index("Until _K=69")<source.index("Aga Screen Close")<source.index("Amos To Front"),(
+            "R79 focus regression would cause another false freeze")
+        assert "Next _DEPTH\nErase 13\nErase 12\nFINALIZE:" in source,(
+            "R79 banks 12/13 must be released before memory measurements")
+        assert source.rstrip().endswith("End"),"R79 must return to AMOS"
+        print("PASS: R79 active ASC covers Zoom ×2/reduction/noninteger/clipping, R78 Blit/Close, 5 depths and RAM report (STATIC)")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")

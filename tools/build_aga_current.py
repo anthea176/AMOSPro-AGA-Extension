@@ -50,7 +50,14 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R78 0.13.23"):
+    if active.startswith("R79 0.13.24"):
+        from build_c2p_r79_zoom import build as build_r79
+        candidate,meta=build_r79()
+        assert candidate==current and meta["sha256"]=="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
+        assert meta["commands"]==69 and meta["ap20_entries"]==76
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R79 C2P ZOOM; native CPU pixel Gate A PASS (62); WinUAE B/Compiler C NOT TESTED",meta)
+    elif active.startswith("R78 0.13.23"):
         from build_c2p_r78_blit import build as build_r78
         candidate,meta=build_r78()
         assert candidate==current and meta["sha256"]=="9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"

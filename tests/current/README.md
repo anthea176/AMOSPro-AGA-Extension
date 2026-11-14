@@ -1,20 +1,47 @@
-# R78 C2P Blit — Gate B WinUAE PASS ; même ASC pour Gate C Compiler (14/11/2026)
+# R79 C2P Zoom — Gate B WinUAE (NON TESTÉE)
 
-**Candidate actuelle :** [R78 v0.13.23](../../dist/AMOSPro_AGA.Lib), 55 772 octets, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c`, 68 commandes / 75 AP20. **Gate A native CPU PASS — 46 scénarios de pixels, clipping, banque et ABI**. **Gate B R78 PASS** : journal utilisateur `C2P_R78_RUNTIME.TXT`, `RESULT 1`, 5/5 profondeurs et quatre compteurs Blit à 5, **Chip/Fast delta 0**. **Gate C Compiler et Gate D physique non testées.** R77 Close Gates A/B fonctionnelles PASS ; R73 `LAST_GOOD` toujours protégée.
+**Étape en cours :** R79 v0.13.24 `Aga C2P Zoom` (nearest-neighbour), depuis banque DATA/WORK chunky 8 bits, 10 paramètres, source et destination rectangulaires. **Gate A native à qualifier en CI avant d'installer R79. Gate B WinUAE NON TESTÉE ; Gate C AMOS Compiler à la toute fin du chantier C2P.**
 
-**Un seul ASC actif :** [C2P_R78_BLIT_01.asc](C2P_R78_BLIT_01.asc).
+**Seul ASC prévu :** [C2P_R79_ZOOM_01.asc](C2P_R79_ZOOM_01.asc). Il remplace l'ASC R78 **seulement après réussite de Gate A native et publication de la candidate R79**, sans coexistence de deux ASC actifs dans `tests/current/`. R78 Gates A/B PASS ; R73 `LAST_GOOD` protégée.
 
-## Déjà validé en Gate B ; procédure du même test pour Gate C
+## Procédure (après autorisation de la candidate)
 
-1. Installer la bibliothèque candidate R78 à la place de R77 dans le slot AMOS AGA utilisé jusque-là, conserver `LIBS:c2p.library` v1.9 et redémarrer AMOS sous WinUAE (CPU 68020+, chipset AGA).
-2. Vérifier que les banques DATA **12 et 13** sont libres avant l'essai. Importer **C2P_R78_BLIT_01.asc** par **Merge ASCII** dans un nouveau programme. Pour la **Gate C finale**, **compiler une seule fois ce même programme** sous AMOS Compiler et lancer l'**exécutable compilé** ; ne pas confondre avec une simple exécution interprétée. Voir [plan Gate C](../../docs/C2P_R78_COMPILER_GATE_C_PLAN_2026-11-14.md).
-3. Cinq profondeurs 16/32/64/128/256 couleurs. À chaque profondeur, le test crée 5 sprites depuis la banque 13 sur le chunky de banque 12, dont des clips gauche, droit, haut et bas. Il vérifie directement les pixels indexés avec `Peek` et cinq rejets propres (même banque, mauvaises coordonnées/largeur, banque absente, pitch nul, hors écran).
-4. La conversion et le double buffering restent explicites : `Aga C2P Convert` puis `Aga Swap`. Le scénario R77 Close est conservé : Close, second Close, Convert/Blit refusés après Close, réouverture, nouveau Blit/Convert/Swap, second Close.
-5. Le test envoie désormais **`Amos To Back` automatiquement** avant d'attendre Échap sur l'écran 256 couleurs ; ne pas utiliser Ctrl+C pour finir. Après `Aga Screen Close`, il effectue `Amos To Front`, écrit le rapport dans `RAM:` et termine par `End`.
-6. Récupérer **`RAM:C2P_R78_RUNTIME.TXT`** si `Prg State=1`, sinon le fichier nommé selon le mode indiqué. Pour la Gate C, vérifier `RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `BLIT_COPY_OK 5`, `BLIT_PIXEL_OK 5`, `BLIT_REJECT_OK 5`, `BLIT_REOPEN_OK 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`, et les codes d'erreur I/O `LOG OPEN ERR 0` / `CLOSE ERR 0` en console.
+1. Installer la bibliothèque candidate R79 dans le slot AMOS AGA habituel, redémarrer AMOS et conserver `LIBS:c2p.library` v1.9 ; WinUAE AGA, CPU 68020+.
+2. Libérer si nécessaire les banques **12 et 13**. Importer l'ASC R79 avec **Merge ASCII dans un programme vide**. Exécuter sous AMOS sans Compiler.
+3. Le test exécute les 5 profondeurs **16/32/64/128/256**. Après Blit R78, Zoom R79 ajoute des sprites agrandis 32×32→64×64, réduits 32×32→16×16, des échelles non entières (13×11→29×7) et un clipping sur les quatre bords. Il vérifie les indices chunky par `Peek`, dont **0 opaque**, et six rejets sans écriture. Des blocs visuels de tailles différentes sont attendus.
+4. Les tests de cycle R77/R78 restent présents : Convert/Swap explicites ; `Aga C2P Close` puis Convert/Zoom refusés, réouverture C2P, nouveau Zoom/Blit/Convert/Swap, second Close, fermeture écran.
+5. **`Amos To Back` est intégré avant le dernier écran AGA 256 couleurs**. Après observation, appuyer sur **Échap**, ne pas utiliser Ctrl+C. Le test effectue `Amos To Front` après `Aga Screen Close`, efface les deux banques et revient normalement à AMOS par `End`.
+6. Copier le journal volatile de **`RAM:C2P_R79_RUNTIME.TXT`** si `PRG_STATE 1`. Pour un autre mode, nom identique avec `_INTERPRETED.TXT` ou `_COMPILED.TXT`. Le fichier doit être récupéré avant tout reset ou relancement du même mode.
 
-La banque 13 contient un sprite chunky 32x32 de 1024 octets, banque 12 contient l'écran 320x256 de 81920 octets ; elles sont effacées avant le bilan mémoire en cas de fin normale. Le journal `RAM:` est volatile, **le copier sur disque avant relance ou reset**. Un `FAST_DELTA` non nul après un précédent Ctrl+C peut correspondre à une banque restée allouée, et ne démontre pas une fuite mémoire.
+## Critères attendus
 
-[Contrat Blit](../../docs/C2P_R78_BLIT_CONTRACT_2026-11-14.md) · [Gate A R78](../../docs/C2P_R78_BLIT_NATIVE_GATE_A_2026-11-14.md) · [Gate B R77](../../docs/C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md) · [Protocole RAM](../../docs/AMOS_RAM_TEST_LOGGING.md).
+```text
+TEST C2P-R79-ZOOM-01
+VERSION R79 V0.13.24 CANDIDATE
+RESULT  1
+VERDICT PASS
+DEPTH_TESTED  5
+PASS_DEPTH  5
+FAIL_DEPTH  0
+BLIT_COPY_OK  5
+BLIT_PIXEL_OK  5
+BLIT_REJECT_OK  5
+BLIT_REOPEN_OK  5
+ZOOM_COPY_OK  5
+ZOOM_PIXEL_OK  5
+ZOOM_REJECT_OK  5
+ZOOM_REOPEN_OK  5
+C2P_CLOSE_OK  5
+EMPTY_CLOSE_OK  5
+REOPEN_OK  5
+CLOSE_COUNT  5
+ERR  0
+NOS  0
+CHIP_DELTA  0
+FAST_DELTA  0
+CLOSE_RETURNED  5
+```
 
-**Journal Gate B reçu :** [rapport R78](../../docs/C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md), `CHIP_BEFORE 1522984`, `CHIP_AFTER 1522984`, `FAST_BEFORE 133036864`, `FAST_AFTER 133036864` : tous les deltas à 0. **Ne pas modifier le test pour Compiler** : l'ASC ici est celui déjà qualifié en interprété. Conserver une preuve que l'exécutable compilé a réellement été lancé ; `RUN_MODE RUNTIME` seul n'est pas suffisant. Aucune promotion de R73 `LAST_GOOD` n'est autorisée par ce changement de test.
+**Deltas mémoire 0 attendus** après exécution propre ; un écart devra être interprété avec les mesures complètes et l'historique des essais, pas qualifié automatiquement de fuite. Si problème de focus, relever l'écran et les événements avant d'interrompre le test.
+
+[Contrat Zoom R79](../../docs/C2P_R79_ZOOM_CONTRACT_2026-11-14.md) · [Gate B R78](../../docs/C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md) · [Règles AMOS](../../EXTENSION_SOURCE_RULES.md).
