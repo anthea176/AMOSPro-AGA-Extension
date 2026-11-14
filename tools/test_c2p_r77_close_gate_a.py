@@ -63,7 +63,11 @@ def test_normal(depth):
         assert run_close(h)==0
         assert not h.calls,"Second Close did not behave idempotently"
         assert h.run_convert()==0,"Convert after Close should reject"
-        assert h.run()==1,"Reopen on SAME AGA screen failed"
+        reopened=h.run()
+        assert reopened==1,("Reopen on SAME AGA screen failed",depth,
+            "status",reopened,"OS",h.calls[-35:],
+            "DB_C2P",h.mem.r_block(DB+24,20).hex(),
+            "STATE",h.mem.r_block(STATE,40).hex())
         assert h.run_convert()==1,"Convert after reopen failed"
         assert run_close(h)==1
         assert h.calls==["waitblit","destroy","closelib"]
