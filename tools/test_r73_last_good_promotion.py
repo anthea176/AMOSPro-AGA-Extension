@@ -7,7 +7,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -40,7 +40,19 @@ def main():
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==R80_SHA:
+        if digest==R81_SHA:
+            from build_c2p_r81_opt020 import build as build_r81
+            from build_c2p_r76_rpg_fix import state_offset, SITES
+            candidate,actual_meta=build_r81()
+            assert cur==candidate and actual_meta["sha256"]==R81_SHA
+            assert actual_meta["size"]==59972
+            assert actual_meta["commands"]==70 and actual_meta["ap20_entries"]==77
+            _,parts=unwrap_native_parts_v2(cur)
+            assert len(parts)==76 and state_offset(parts)==12070
+            assert all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+                       for i,pos,op in SITES),"R81 input state LEA regression"
+            assert label.startswith("R81 0.13.26")
+        elif digest==R80_SHA:
             from build_c2p_r80_iff_chunky import build as build_r80
             from build_c2p_r76_rpg_fix import state_offset, SITES
             candidate,actual_meta=build_r80()

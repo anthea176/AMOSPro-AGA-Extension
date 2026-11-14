@@ -32,6 +32,7 @@ R77_SHA = "81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
 R78_SHA = "9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c"
 R79_SHA = "ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
 R80_SHA = "24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"
+R81_SHA = "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
 
 
 def main() -> None:
@@ -46,10 +47,22 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha == R80_SHA:
+    if active_sha == R81_SHA:
+        from build_c2p_r81_opt020 import build as build_r81
+        from build_c2p_r76_rpg_fix import SITES,state_offset
+        from c2p_r74_relink import check_cross_r74
+        from native_relative_links import assert_native_links
+        assert active==build_r81()[0],"Current R81 differs from exact OPT020 builder"
+        parts=unwrap_native_parts_v2(active)[1]
+        assert len(parts)==76 and state_offset(parts)==12070
+        assert all(parts[i][off+2:off+4]==bytes.fromhex("2f26") for i,off,_ in SITES)
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        assert parts[IMAGE_REGION_INDEX]==unwrap_native_parts_v2(candidate)[1][IMAGE_REGION_INDEX],(
+            "R81 changed historical optimized Image Region code")
+    elif active_sha == R80_SHA:
         from build_c2p_r80_iff_chunky import build as build_r80
         from build_c2p_r76_rpg_fix import SITES,state_offset
         from c2p_r74_relink import check_cross_r74

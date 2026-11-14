@@ -8,7 +8,7 @@
 
 **R81 v0.13.26 :** constructeur déterministe [`tools/build_c2p_r81_opt020.py`](../tools/build_c2p_r81_opt020.py), produit en mémoire **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commandes / 77 AP20**, seules entrées natives **73, 74, 75** remplacées. [Gate A CPU MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43615716395) : **22 Blit, 14 Zoom, 15 cas de conversion planaire vers indices chunky**, garde CPU68000 et CI historique complète PASS. La Gate B WinUAE R81 **n'est pas réalisée**. **Aucune Gate C Compiler demandée pour R81**. Gate D Amiga physique non testée. R73 LAST_GOOD toujours protégée.
 
-**Statut à cette étape :** génération de l'unique binaire candidat R81 autorisée après Gate A ; ne pas confondre la source de construction R81 avec une bibliothèque déjà installée ni avec une promotion.
+**Statut courant :** `dist/AMOSPro_AGA.Lib` reçoit la **candidate R81 OPT020** après la réussite de Gate A ; **R80 reste sa référence de validation Runtime**, R73 `LAST_GOOD` reste protégée. La Gate B Runtime R81 n'est pas encore réalisée, et aucun essai Compiler n'est demandé.
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Fonction ajoutée :** `_OK=Aga Iff To Chunky(File$,Bank)` charge directement le `FORM ILBM` indexé 320×256, 4 à 8 plans, RAW ou ByteRun1, vers une banque AMOS DATA/WORK existante d'au moins 81 920 octets. Aucun fichier `.chk` ni écran planar préalable n'est nécessaire à la commande. Les fonctions C2P R79, les palettes et les 7 LEA clavier/souris demeurent intactes.
 
-**Candidate active sur main :** `dist/AMOSPro_AGA.Lib` **R80 v0.13.25**, 59 708 octets, SHA256 `24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6`, 70 commandes, 77 AP20. **Gate A native CPU 68000 + CI PASS**, 11 images 81 920 pixels exacts (IFF réel + synthétiques 4..8 plans RAW/ByteRun1), rejets, canaries, ABI, libération. [Run CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43611070380) · [Contrat](C2P_R80_IFF_CHUNKY_CONTRACT_2026-11-14.md).
+**Binaire historique R80 reconstruit/archivé dans Git (ancienne candidate avant R81) :** `dist/AMOSPro_AGA.Lib` **R80 v0.13.25**, 59 708 octets, SHA256 `24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6`, 70 commandes, 77 AP20. **Gate A native CPU 68000 + CI PASS**, 11 images 81 920 pixels exacts (IFF réel + synthétiques 4..8 plans RAW/ByteRun1), rejets, canaries, ABI, libération. [Run CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43611070380) · [Contrat](C2P_R80_IFF_CHUNKY_CONTRACT_2026-11-14.md).
 
 **Seul ASC actif :** [`tests/current/C2P_R80_IFF_CHUNKY_01.asc`](../tests/current/C2P_R80_IFF_CHUNKY_01.asc), inspiré de la démo R79 validée, mais recharge les deux banques en natif directement depuis l'IFF, sans compagnon. Attend 14/14 pixels, 3 Blit, 7 Zoom, Close/ReOpen, rapport `RAM:C2P_R80_RUNTIME.TXT`, mesures Chip/Fast et fermeture Échap. **Gate B R80 WinUAE Runtime PASS sur le vrai IFF 320×256×8 (CPU 68030, `PRG_STATE 1`) :** journal utilisateur `C2P_R80_RUNTIME.TXT` avec `RESULT 1`, `VERDICT PASS`, 14/14 pixels, `GOLDEN_PIXEL_COUNT 14`, tous indicateurs IFF/Chunky/Blit/Zoom/Close/ReOpen à 1, `ERR 0`, Chip/Fast delta **0/0**, `CLOSE RETURNED`. Ce journal ne prouve pas les autres profondeurs en Runtime. **Gate C Compiler R80 non testée et volontairement non demandée par l'auteur** ; ne pas mélanger cette preuve avec celle de R79.
 

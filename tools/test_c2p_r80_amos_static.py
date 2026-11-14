@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R80 active AMOS test static guard. Not WinUAE validation."""
+"""R81 OPT020 active AMOS source on R80 compatibility fixture. STATIC ONLY."""
 from pathlib import Path
 from test_current_ram_log import verify
 from test_current_amos_blocks import scan
@@ -47,10 +47,10 @@ def main():
     for dst,source in expected:
         assert f"If Peek(_PTR+{dst})=Peek(_SRC+{source})" in src
     assert all(s in src for s in ("CHUNKY_OK","CPU_ATTNFLAGS","PRG_STATE",
-        "C2P_R80_RUNTIME.TXT","C2P_R80_INTERPRETED.TXT","C2P_R80_COMPILED.TXT"))
+        "C2P_R81_RUNTIME.TXT","C2P_R81_INTERPRETED.TXT","C2P_R81_COMPILED.TXT"))
     assert src.index("Amos To Back")<src.index("Until _K=69")<src.index("Aga Screen Close")<src.index("Amos To Front")
     assert src.rstrip().endswith("End")
-    print("R80 AMOS IFF DIRECT-CHUNKY ASC STATIC PASS (no external bank file)")
+    print("R81 OPT020 AMOS IFF/BLIT/ZOOM ASC STATIC PASS (no external bank file)")
 
 if __name__=="__main__":
     main()
