@@ -60,3 +60,35 @@ restent des validations distinctes.
 L'objectif est une séparation stable pour accueillir les futurs
 modules M2/M3/M4. Cette P4 **ne démontre pas encore** la possibilité
 de trois unités ou plus sans un contrat inter-modules supplémentaire.
+
+
+## P4 -- WinUAE author logs: smoke Gate B / C PASS (2026-11-14)
+
+The author executed **exactly the P4 true-split smoke program** on the
+experimental `AMOSPro_AGA_V3_R82_SPLIT_TEST.Lib` (not the synthetic P3 probe).
+Two authentic AMOS output logs are retained:
+
+- [Runtime Gate B evidence](evidence/AP20_V3_R82_SPLIT_P4_RUNTIME_2026-11-14.TXT):
+  `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`,
+  `VERDICT PASS`, `R82_DETECT -1`, `ERR 0`.
+- [Compiled Gate C evidence](evidence/AP20_V3_R82_SPLIT_P4_COMPILED_2026-11-14.TXT):
+  `RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`,
+  `VERDICT PASS`, `R82_DETECT -1`, `ERR 0`.
+
+Both logs also report `C2P_OPEN_REJECT 0`, `C2P_CLOSE_REJECT 0`,
+`IFF_REJECT 0`, and exactly **zero net Chip/Fast memory delta**.
+The test calls native handlers in the two real AP20 units and verifies
+expected rejection behavior with **invalid** C2P inputs.
+
+**Scope restriction:** These are **smoke Gate B/C PASS only**, not full R82
+graphic regression qualification. No successful C2P open/convert/zoom,
+AGAPIC image draw/palette operations, actual image decoding, or physical
+Amiga test is demonstrated. Those remain **NOT TESTED on P4**; the tests
+listed in `experimental/AP20_V3_R82/P4_WINUAE_TEST.md` must run before
+any proposed promotion.
+
+SHA256 of original CRLF evidence:
+- Runtime `95667d79166cbd8394b7b0c198949b70b9a7bba3ed6a634762183a2d0f19c470`
+- Compiled `f7c3da8583b0434f84cec2dcc17a348b0bf6c241b05f8f7fde3b425f6734ae2d`
+
+No change to `main`, `dist/`, `tests/current/`, or R82 LAST_GOOD.

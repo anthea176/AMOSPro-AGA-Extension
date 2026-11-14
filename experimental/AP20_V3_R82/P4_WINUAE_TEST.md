@@ -47,3 +47,18 @@ tests et leurs journaux réels n'ont pas été fournis.
 Copier les journaux RAM vers un disque avant réinitialisation.
 En cas de plantage, replacer la R82 d'origine dans le \`APSystem\`
 de test. Aucun tag, fusion vers \`main\` ni nouvelle \`LAST_GOOD\`.
+
+
+## Author results: initial P4 smoke PASS
+
+The author provided real logs from both execution modes on 2026-11-14:
+[Runtime](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_RUNTIME_2026-11-14.TXT) and
+[Compiled](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_COMPILED_2026-11-14.TXT).
+
+Both report `RESULT 1`, `ERR 0`, correct invalid-argument refusal,
+and zero Chip/Fast net delta.
+
+**Do not confuse this with complete functional Gate B/C qualification.**
+Still required on the P4 library: true AGAPIC R82 image/palette test and
+true C2P positive conversion/Blit/Zoom/Close test, first Runtime then
+fresh Compiler output. Preserve the R82 LAST_GOOD unchanged.
