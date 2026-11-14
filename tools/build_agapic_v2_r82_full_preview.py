@@ -13,6 +13,7 @@ from pathlib import Path
 from audit_ap20 import inspect,parse
 from build_agapic_v2_r82_api_preview import build as build_api_preview, APIS
 from build_c2p_r81_opt020 import build as build_r81
+from active_library import R82_SHA
 from build_c2p_r76_rpg_fix import SITES,state_offset
 from compiler_bridge_v2_probe import unwrap_native_parts_v2,wrap_native_ap20_v2
 from compiler_relocation import GETP,repack_ap20,unpack_ap20
@@ -44,8 +45,9 @@ def native_starts(parts):
 def build():
     parent,_=build_r81()
     assert sha256(parent).hexdigest()==R81_SHA
-    for p in ('dist/AMOSPro_AGA.Lib','dist/AMOSPro_AGA_LAST_GOOD.Lib'):
-        assert sha256((ROOT/p).read_bytes()).hexdigest()==R81_SHA, 'R81 changed: '+p
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()==R81_SHA
+    current_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
+    assert current_sha in (R81_SHA,R82_SHA),'unrecognized active R81/R82 binary'
     proto,proto_meta=build_api_preview()
     tokens,parts=unwrap_native_parts_v2(proto)
     _t,orig=unwrap_native_parts_v2(parent)

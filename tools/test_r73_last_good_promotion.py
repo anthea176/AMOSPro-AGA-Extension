@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -30,7 +30,7 @@ def main():
     assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
     from build_c2p_r81_opt020 import build as build_r81
     promoted, promoted_meta=build_r81()
-    assert good==cur==promoted and good!=validated, "Promoted R81 LAST_GOOD must match working binary and builder"
+    assert good==promoted and good!=validated, "Promoted R81 LAST_GOOD must match R81 builder; active candidate may differ"
     assert len(good)==59972 and sha256(good).hexdigest()==R81_SHA
     assert promoted_meta["size"]==59972 and promoted_meta["commands"]==70
     assert promoted_meta["ap20_entries"]==77
@@ -49,11 +49,22 @@ def main():
     report=inspect(parse(good))
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==70
-    assert label.startswith("R81 0.13.26")
+    assert label.startswith(("R81 0.13.26","R82 0.13.27"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==R81_SHA:
+        if digest==R82_SHA:
+            from build_agapic_v2_r82_full_preview import build as build_r82
+            candidate,actual_meta=build_r82()
+            assert cur==candidate and actual_meta["sha256"]==R82_SHA
+            assert actual_meta["size"]==64112
+            assert actual_meta["commands"]==74 and actual_meta["ap20_entries"]==81
+            _,parts=unwrap_native_parts_v2(cur)
+            assert len(parts)==80 and state_offset(parts)==12070
+            assert all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+                       for i,pos,op in SITES),"R82 input-state LEA regression"
+            assert label.startswith("R82 0.13.27")
+        elif digest==R81_SHA:
             from build_c2p_r81_opt020 import build as build_r81
             from build_c2p_r76_rpg_fix import state_offset, SITES
             candidate,actual_meta=build_r81()
@@ -126,8 +137,8 @@ def main():
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
     assert good==promoted and validated!=promoted
-    print("R81 LAST_GOOD PROMOTION BYTE-EXACT PASS",R81_SHA,len(cur),
-          "70 commands / 77 AP20 / 3 native links")
+    print("R81 LAST_GOOD BYTE-EXACT PIN PASS",R81_SHA,len(good),
+          "active bytes",len(cur),"R82 candidate if different; 3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 
 if __name__=="__main__":

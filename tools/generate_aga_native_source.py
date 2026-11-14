@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R81_SHA:
+        if sha(raw) == R82_SHA:
+            from build_agapic_v2_r82_full_preview import build as pinned_build
+            release = "R82"
+        elif sha(raw) == R81_SHA:
             from build_c2p_r81_opt020 import build as pinned_build
             release = "R81"
         elif sha(raw) == R80_SHA:
@@ -506,6 +509,50 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if (len(sections)==80 and
+            b"AMOSPro AGA AGAPIC v2 Palette and Region R82 0.13.27 candidate" in parsed["title"]):
+        # Independently prove R82's complete source from its SHA-pinned
+        # deterministic MC68020 builder before trusting any extra CFG seeds.
+        from active_library import R81_SHA,R82_SHA
+        from build_agapic_v2_r82_full_preview import build as build_r82
+        from build_c2p_r81_opt020 import build as build_r81
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from build_c2p_r76_rpg_fix import state_offset
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,_ = build_r82()
+        need(sha(candidate)==R82_SHA and raw==reconstruct(candidate),
+             "Strict source R82: active bytes/builder/SHA mismatch")
+        old,_ = build_r81()
+        need(sha(old)==R81_SHA,"Strict source R82: R81 ancestor drift")
+        oldnative=parse_lib(reconstruct(old))
+        inherited=verified_current_compiler_seeds(oldnative)
+        need(all(i in inherited for i in (0,73,74,75)),
+             "Strict source R82: R81 inherited CFG provenance missing")
+        _,oldparts=unwrap_native_parts_v2(old)
+        _,parts=unwrap_native_parts_v2(candidate)
+        need(len(parts)==80 and state_offset(parts)==12070,
+             "Strict source R82: input-state layout shifted")
+        changed={i for i in range(76) if oldparts[i]!=parts[i]}
+        need(changed=={20,55,57,58,59,75},
+             f"Strict source R82: unexpected inherited changes {changed}")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        marker=bytes.fromhex("fe11f700031d")  # source-backed AMOS Bnk.GetAdr
+        seeds={i:set(v) for i,v in inherited.items()}
+        for i in (20,55,57,58,59,76,77,78,79):
+            # Rebuilt bodies have their OWN verified entrypoint. No stale
+            # extra seeds from old offsets may classify a changed routine.
+            seeds[i]={0}
+            core=sections[i]["core"]
+            n=core.count(marker)
+            need(n==(0 if i in (20,55) else 1),
+                 f"Strict source R82: bank lookup count changed in entry {i}")
+            if n:
+                resume=core.find(marker)+len(marker)
+                need(resume%2==0 and resume<len(core),
+                     "Strict source R82: invalid native continuation after Rjsr")
+                seeds[i].add(resume)
+        return seeds
     if len(sections)==76 and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]:
         # R81: strict byte identity to its CPU-tested three-entry OPT020
         # builder. Inherited CFG seeds come from deterministic R80 only.
@@ -1553,8 +1600,11 @@ def analyze_entries(parsed):
     seeds={s['id']:set(KNOWN_SEEDS.get(sha(s['core']),())) for s in sections}
     inherited=verified_r44_inherited_seeds(parsed)
     current_verified=verified_current_compiler_seeds(parsed)
-    certified_r81_020=(len(sections)==76
-        and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]
+    certified_r81_020=(
+        ((len(sections)==76
+          and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"])
+         or (len(sections)==80
+             and b"AMOSPro AGA AGAPIC v2 Palette and Region R82 0.13.27 candidate" in parsed["title"]))
         and all(x in current_verified for x in (73,74,75)))
     for index, extra in current_verified.items():
         inherited.setdefault(index,set()).update(extra)
@@ -1793,8 +1843,11 @@ def unclassified_gaps(parsed):
     block,_,_,_=analyze_entries(parsed)
     verified_seeds=verified_current_compiler_seeds(parsed)
     trusted_r54_r57 = bool(verified_seeds)
-    r81_exact=(len(parsed['section'])==76
-        and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"]
+    r81_exact=(
+        ((len(parsed['section'])==76
+          and b"AMOSPro AGA C2P OPT020 R81 0.13.26 candidate" in parsed["title"])
+         or (len(parsed['section'])==80
+             and b"AMOSPro AGA AGAPIC v2 Palette and Region R82 0.13.27 candidate" in parsed["title"]))
         and all(x in verified_seeds for x in (73,74,75)))
     trusted_iff_data=()
     if r81_exact:

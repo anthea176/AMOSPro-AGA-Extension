@@ -13,6 +13,7 @@ from pathlib import Path
 
 from audit_ap20 import inspect,parse,token
 from build_c2p_r81_opt020 import build as build_r81
+from active_library import R82_SHA
 from build_c2p_r76_rpg_fix import SITES,state_offset
 from compiler_bridge_v2_probe import unwrap_native_parts_v2,wrap_native_ap20_v2
 from compiler_relocation import GETP,repack_ap20,unpack_ap20
@@ -98,7 +99,7 @@ def build():
                 and x['getp']])==4
     budget=inspect_library(image)
     assert budget['margin']>2048,'Insufficient 16-bit capacity for further R82 work'
-    assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==baseline
+    assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA), 'unrecognized active R81/R82'
     return image,dict(
         kind='R82 experimental FOUR-API in-memory structural preview',
         size=len(image),sha256=sha256(image).hexdigest(),
