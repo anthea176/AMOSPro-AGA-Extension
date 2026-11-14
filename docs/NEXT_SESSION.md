@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R78 v0.13.23 — Blit candidate, Gate A native PASS ; Gate B WinUAE EN ATTENTE (14/11/2026)
+## C2P R78 — Gates A et B PASS, Gate C Compiler à exécuter (14/11/2026)
+
+**Dernière preuve reçue :** journal utilisateur `C2P_R78_RUNTIME.TXT` (`PRG_STATE 1`, CPU Exec 68030). **`RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `CLOSE_COUNT 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `BLIT_COPY_OK 5`, `BLIT_PIXEL_OK 5`, `BLIT_REJECT_OK 5`, `BLIT_REOPEN_OK 5`, `ERR 0`, `NOS 0`.** Chip Free **1 522 984 → 1 522 984** et Fast Free **133 036 864 → 133 036 864** : **deltas 0/0**. L'auteur a vu des blocs issus des motifs, sans capture ; résultats des pixels enregistrés corrects. **Gate B fonctionnelle R78 PASS**. [Rapport](C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md).
+
+**Binaire inchangé :** R78 v0.13.23, `dist/AMOSPro_AGA.Lib`, **55 772 octets**, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c`, **68 commandes / 75 AP20**. Gate A CPU native **PASS 46 scénarios**. Seul ASC actif inchangé : `tests/current/C2P_R78_BLIT_01.asc`.
+
+**Suite approuvée : C2P-5, une seule Gate C sous AMOS Compiler**, avec **le même ASC R78**, sans autre API, nouveau build natif, branche ou modification d'ASC. [Plan compilateur](C2P_R78_COMPILER_GATE_C_PLAN_2026-11-14.md) : conserver une preuve que l'exécutable compilé a réellement été lancé, le journal `RAM:C2P_R78_<MODE>.TXT`, les compteurs et les deltas mémoire. **Gate C NON TESTÉE** tant que ces résultats ne sont pas fournis ; Gate D physique NON TESTÉE.
+
+**R73 v0.13.18 `LAST_GOOD` protégée**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Pas de promotion automatique. La piste Zoom n'a pas de contrat approuvé ; AGAPIC v2 reste l'étape suivante du plan après clôture C2P et accord de l'auteur.
+
+## Historique R78 avant Gate B — Blit native Gate A PASS (14/11/2026)
 
 **Candidat actif :** `dist/AMOSPro_AGA.Lib` R78 v0.13.23, **55 772 octets**, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c`, **68 commandes / 75 AP20**. `_OK=Aga C2P Blit(SrcBank,SrcPitch,SrcX,SrcY,W,H,DstX,DstY)` copie les indices chunky 8 bits entre banques DATA distinctes avec clipping et sans conversion / Swap implicites.
 

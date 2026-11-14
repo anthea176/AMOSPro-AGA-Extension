@@ -1,6 +1,6 @@
 # R78 C2P Blit — Gate A CPU native PASS (14/11/2026)
 
-**Statut :** Gate A native PASS, Gate B WinUAE NON TESTEE, Gate C Compiler et Gate D physique NON TESTEES. R73 `LAST_GOOD` protegee ; R77 Close Gate B fonctionnelle PASS.
+**Statut du jalon natif :** Gate A native PASS. **Mise à jour : Gate B WinUAE fonctionnelle PASS** sur journal utilisateur du 14/11/2026 ; Gate C Compiler et Gate D physique NON TESTÉES. R73 `LAST_GOOD` protegee ; R77 Close Gate B fonctionnelle PASS.
 
 ## Identite de la candidate
 
@@ -42,3 +42,7 @@ Le SHA256 du flux binaire extrait de cette CI a ete **recaclule independamment**
 Retour attendu : `RESULT 1`, `PASS_DEPTH 5`, `BLIT_COPY_OK 5`, `BLIT_PIXEL_OK 5`, `BLIT_REJECT_OK 5`, `BLIT_REOPEN_OK 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `ERR 0`, `NOS 0`. **Cette Gate B reste NON TESTEE.** Pas de compilation AMOS avant la fin du chantier C2P, ni de promotion sans ordre explicite.
 
 [Contrat approuve](C2P_R78_BLIT_CONTRACT_2026-11-14.md) · [Rapport R77 Close](C2P_R77_CLOSE_WINUAE_GATE_B_2026-11-14.md) · [Regles](../EXTENSION_SOURCE_RULES.md).
+
+## Post-scriptum — preuve WinUAE du 14/11/2026
+
+La Gate B demandée dans le plan ci-dessus est désormais **PASS**, voir [rapport et journal intégral R78](C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md). Résultats : cinq profondeurs validées ; tous les compteurs de Blit, pixels et rejets à 5 ; `ERR 0`, `NOS 0` et Chip/Fast delta 0. Le seul ASC R78 et le binaire n'ont pas changé. Prochaine validation : [Gate C Compiler](C2P_R78_COMPILER_GATE_C_PLAN_2026-11-14.md), **NON TESTÉE**.
