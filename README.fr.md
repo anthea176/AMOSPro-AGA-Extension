@@ -35,7 +35,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la candidate active R84 v0.13.29** — **76 commandes / 85 entrées AP20**, 68020 minimum. Les 74 signatures R83 sont inchangées. Gate A native R84 PASS ; WinUAE Runtime/Compiler B/C en attente. R83 demeure `LAST_GOOD` protégée.
+**API de la bibliothèque courante R84 0.13.29** — **76 commandes / 85 entrées AP20**, 68020 minimum. Les 74 signatures R83 sont inchangées. Gate A native R84 PASS ; WinUAE Runtime/Compiler B/C en attente. R83 demeure `LAST_GOOD` protégée.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|

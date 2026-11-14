@@ -200,10 +200,16 @@ def ap20_v2_in_memory_probe():
         candidate79, meta79 = build_r79()
         candidate80, meta80 = build_r80()
         candidate81, meta81 = build_r81()
-        assert current in (candidate69, candidate70, candidate71, candidate72, candidate73,
-                           candidate74, candidate75, candidate76, candidate77, candidate78, candidate79,
-                           candidate80, candidate81), (
-            "Current must match one deterministic SHA-pinned R69..R81 builder, not an unknown Lib")
+        historical=(candidate69, candidate70, candidate71, candidate72, candidate73,
+                    candidate74, candidate75, candidate76, candidate77, candidate78, candidate79,
+                    candidate80, candidate81)
+        if current not in historical:
+            # Later SHA-pinned R82/R83/R84 are validated by the exact current
+            # builder rather than this preserved R69..R81 historical ABI probe.
+            from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA
+            digest=sha256(current).hexdigest()
+            assert digest in (R82_SHA,R83_SHA,R84_SHA), "Unknown active AP20 library"
+            assert verify_active(ROOT)[0]==current, "Modern active builder SHA differs"
         assert meta69["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert meta70["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert meta71["sha256"] == R71_SHA

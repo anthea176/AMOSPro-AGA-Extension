@@ -35,7 +35,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current candidate R84 v0.13.29 API** — **76 commands / 85 AP20 entries**, CPU68020 minimum. The 74 R83 command signatures are unchanged. R84 native Gate A PASS, WinUAE Runtime/Compiler B/C pending; R83 remains protected `LAST_GOOD`.
+**Current library API R84 0.13.29** — **76 commands / 85 AP20 entries**, CPU68020 minimum. The 74 R83 command signatures are unchanged. R84 native Gate A PASS, WinUAE Runtime/Compiler B/C pending; R83 remains protected `LAST_GOOD`.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
