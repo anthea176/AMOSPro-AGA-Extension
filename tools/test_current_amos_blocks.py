@@ -100,7 +100,7 @@ def main():
         assert "Aga C2P Convert" not in source and "Aga C2P Close" not in source
         assert source.index("Reserve As Data 12") < source.index("For _DEPTH=4 To 8") < source.index("Erase 12")
         print("PASS: C2P R74 active ASC covers 4..8 planes, duplicate Open, cleanup; STATIC ONLY")
-    if files and files[0].name == "C2P_R75_CONVERT_01.asc":
+    if files and files[0].name in ("C2P_R75_CONVERT_01.asc", "C2P_R76_CONVERT_01.asc"):
         source=files[0].read_text("ascii")
         required=(
             "Reserve As Data 12,81920",
@@ -126,7 +126,7 @@ def main():
         assert source.index("_CV0=Aga C2P Convert")<source.index("_SW0=Aga Swap")<source.index("_CV1=Aga C2P Convert")<source.index("_SW1=Aga Swap")
         assert "Aga C2P Close" not in source
         assert "GDB" not in source or "No GDB" in source
-        print("PASS: R75 ASC tests 4..8 planes, 2 converted frames + 2 explicit swaps; STATIC ONLY")
+        print("PASS: C2P R75/R76 ASC tests 4..8 planes, 2 converted frames + 2 explicit swaps; STATIC ONLY")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")

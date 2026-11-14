@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## GARDE-FOU R76 — données statiques clavier/souris et déplacements LEA (14/11/2026)
+
+**Incident confirmé :** la R74 insérait 138 octets au milieu du monolithe AP20 et recalculait ses sauts relatifs, mais pas les **sept déplacements absolus à partir de State** utilisés pour accéder aux 144 octets de données clavier/souris en fin d'entrée 33. `Aga Screen Open` effaçait alors du code exécutable ; les programmes RPG fonctionnaient avec R73 mais subissaient un hang/Guru `80000006` sur R74/R75.
+
+**Règle :** à toute variation de longueur d'une entrée native avant une zone statique, recalculer et auditer **les références de données PC-relatives ET les accès à offsets fixes depuis State**, y compris les LEA, lectures/écritures et boucles `CLR.L`. Ne jamais déduire que la vérification des seuls BRA/BSR suffit. Rejeter un ancien déplacement non corrigé.
+
+**Gate A obligatoire :** calculer l'adresse de chaque zone statique d'après sa position réelle dans le monolithe final, vérifier les opcodes et les sites d'accès, exécuter le vrai chemin de `Aga Screen Open` + les fonctions d'entrée sur CPU68000/020 et vérifier qu'aucun octet de code n'est écrit. Reproduire la corruption sur l'ancien binaire, vérifier son absence sur le correctif. **Gate A n'est pas Gate B WinUAE.** R73 `LAST_GOOD` jamais écrasée ; R74/R75 invalides pour les tests RPG. [Rapport et sept sites R76](docs/C2P_R76_RPG_REGRESSION_2026-11-14.md).
+
+---
+
 ## R73 PROMUE LAST_GOOD — état autoritaire (14/11/2026)
 
 **Autorisation explicite de l'auteur : « promotion ok »** après

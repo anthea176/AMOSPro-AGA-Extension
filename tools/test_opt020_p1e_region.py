@@ -318,6 +318,7 @@ def v2_structure(native):
         from build_opt020_p3_r73 import build as build_r73
         from build_c2p_r74_open import build as build_r74
         from build_c2p_r75_convert import build as build_r75
+        from build_c2p_r76_rpg_fix import build as build_r76
         from c2p_r74_relink import check_cross_r74
         from native_relative_links import assert_native_links
         r69, r69meta = build_r69()
@@ -327,8 +328,9 @@ def v2_structure(native):
         r73, r73meta = build_r73()
         r74, r74meta = build_r74()
         r75, r75meta = build_r75()
-        assert current in (r69, r70, r71, r72, r73, r74, r75), (
-            "current must be an EXACT SHA-pinned R69..R75 deterministic build")
+        r76, r76meta = build_r76()
+        assert current in (r69, r70, r71, r72, r73, r74, r75, r76), (
+            "current must be an EXACT SHA-pinned R69..R76 deterministic build")
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
@@ -336,10 +338,11 @@ def v2_structure(native):
         assert r73meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
         assert r74meta["sha256"] == "887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"
         assert r75meta["sha256"] == "c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"
-        if current in (r71, r72, r73, r74, r75):
+        assert r76meta["sha256"]=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897" and r76meta["leas_patched"]==7
+        if current in (r71, r72, r73, r74, r75, r76):
             parts_current=unwrap_native_parts_v2(current)[1]
             assert_native_links(parts_current[:70])
-            if current in (r74, r75):
+            if current in (r74, r75, r76):
                 check_cross_r74(parts_current[:70])
     tokens, parts = unwrap_native_parts_v2(old)
     _, installed, title = unpack_ap20(old)

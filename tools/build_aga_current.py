@@ -50,7 +50,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R75 0.13.20"):
+    if active.startswith("R76 0.13.21"):
+        from build_c2p_r76_rpg_fix import build as build_r76
+        candidate,meta=build_r76()
+        assert candidate==current and meta["sha256"]=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R76 RPG INPUT-STATE FIX; Gate A 24 PASS; WinUAE B/C NOT TESTED",meta)
+    elif active.startswith("R75 0.13.20"):
         from build_c2p_r75_convert import build as build_r75
         candidate,meta=build_r75()
         assert candidate==current and meta["sha256"]=="c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"

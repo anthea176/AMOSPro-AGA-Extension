@@ -2,6 +2,8 @@
 
 **Statut : R75 Convert native Gate A PASS, R75 v0.13.20 installable candidate active.** `dist/AMOSPro_AGA.Lib` = **54,144 bytes**, SHA256 `c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af`, 66 commands / 73 AP20 entries. R73 v0.13.18 remains the byte-protected `LAST_GOOD`, while R74 Open stays archived in Git (Gate A/B PASS). R75 WinUAE Gate B and Compiler Gate C have **NOT** been executed.
 
+> **Avertissement rétrospectif (14/11/2026) :** la R75 hérite de la corruption du code clavier/souris R74. Sa Gate A Convert reste un résultat du seul test C2P, **pas une validation de l'extension dans les RPG**. [R76 corrige sept déplacements LEA](C2P_R76_RPG_REGRESSION_2026-11-14.md). Ne pas utiliser la bibliothèque R75 pour les entrées utilisateur.
+
 ## Authorized API
 
 `_OK=Aga C2P Convert` is an integer **no-argument function**. It uses the AMOS bank configured by the already validated `Aga C2P Open(Bank)`, revalidates the bank at every call, updates the SDK chunky pointer, performs `C2P_Chunky2Planar` into its own dedicated Chip bitmap, and copies into the actual **inactive** Intuition AGA back bitmap using `graphics.library/BltBitMap` followed by `WaitBlit`. **No automatic `Aga Swap` or palette writes.** Supported: 320x256, **4..8 bitplanes**, 68020+.

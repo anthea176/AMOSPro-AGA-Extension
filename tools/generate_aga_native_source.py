@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R75_SHA:
+        if sha(raw) == R76_SHA:
+            from build_c2p_r76_rpg_fix import build as pinned_build
+            release = "R76"
+        elif sha(raw) == R75_SHA:
             from build_c2p_r75_convert import build as pinned_build
             release = "R75"
         elif sha(raw) == R74_SHA:
@@ -488,6 +491,46 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==72 and sha(raw)=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897":
+        # R76 is the exact R75 monolith with only seven source-audited
+        # LEA.W input-state displacements rebased after R74's 138-byte
+        # cleanup-hook insertion. No code size or branch delta changes.
+        from active_library import R75_SHA,R76_SHA
+        from build_c2p_r75_convert import build as build_r75
+        from build_c2p_r76_rpg_fix import build as build_r76,SITES,state_offset,patch
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,_=build_r76()
+        need(sha(candidate)==R76_SHA and raw==reconstruct(candidate),
+             "Strict source R76: pinned candidate or source mismatch")
+        _,parts=unwrap_native_parts_v2(candidate)
+        need(len(parts)==72 and state_offset(parts)==12070,
+             "Strict source R76: native state-data layout drift")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        old,_=build_r75()
+        need(sha(old)==R75_SHA,"Strict source R76: R75 ancestor SHA drift")
+        oldparsed=parse_lib(reconstruct(old))
+        need(len(oldparsed["section"])==72,
+             "Strict source R76: ancestor part count drift")
+        seeds=verified_current_compiler_seeds(oldparsed)
+        need(0 in seeds and 8 in seeds and 70 in seeds and 71 in seeds,
+             "Strict source R76: inherited R75 roots absent")
+        _,oldparts=unwrap_native_parts_v2(old)
+        expected=list(oldparts)
+        dst,changed=patch(expected)
+        need(dst==12070 and len(changed)==7 and expected==parts,
+             "Strict source R76: altered bytes beyond seven audited WORDs")
+        patched={entry for entry,_ in changed}
+        for i in range(72):
+            sec=sections[i]
+            before=oldparsed["section"][i]
+            need(sec["getp"]==before["getp"],f"Strict R76: GetP changed at {i}")
+            core=parts[i][:-4] if sec["getp"] else parts[i]
+            need(sec["core"]==core, f"Strict R76: native entry {i} mismatch")
+            if i not in patched:
+                need(sec["core"]==before["core"],f"Strict R76: ancestor changed at {i}")
+        return {i:set(v) for i,v in seeds.items()}
     if len(sections)==72:
         # R75 is an APPEND ONLY full-frame C2P conversion routine.
         # Full native ancestry must match byte-pinned R74 and preserve

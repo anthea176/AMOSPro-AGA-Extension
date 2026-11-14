@@ -2,6 +2,8 @@
 
 **Date : 14 novembre 2026.** Validation réelle de la **fonction `Aga C2P Open(Bank)` seule**, à partir de la capture de console transmise par l'auteur dans la discussion. Pas d'essai du programme compilé, pas de conversion chunky-to-planar, pas de benchmark ni de test matériel.
 
+> **Avertissement rétrospectif (14/11/2026) :** cette Gate B Open PASS ne couvrait pas le traitement clavier/souris RPG. R74 est **non sûre** : l'ouverture d'écran avec ancien déplacement $2E9C écrase du code après insertion de 138 octets ; [preuve et réparation R76](C2P_R76_RPG_REGRESSION_2026-11-14.md). La réussite Open limitée ne valide pas la R74 pour les jeux.
+
 ## Identité et périmètre
 
 - Dépôt : `anthea176/AMOSPro-AGA-Extension` ; **branche `main` exclusivement**.

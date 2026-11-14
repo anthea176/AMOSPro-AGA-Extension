@@ -31,6 +31,7 @@ R72_SHA = "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
 R73_SHA = "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
 R74_SHA = "887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"
 R75_SHA = "c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"
+R76_SHA = "9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"
 R68_SHA = "ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed"
 
 
@@ -61,7 +62,7 @@ def v2_check(native):
     active = path.read_bytes()
     protected = protected_path.read_bytes()
     actual_sha = sha256(active).hexdigest()
-    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA), (
+    assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA), (
         "Unrecognized active P1e/P2 or C2P extension candidate")
     assert sha256(protected).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407", "Promoted R73 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
@@ -72,10 +73,11 @@ def v2_check(native):
         assert active == build_r70()[0], "Installed R70 differs from deterministic source"
         from build_opt020_p1e_r69 import build as build_r69
         baseline = build_r69()[0]  # Historical Image Draw core for isolated P2
-    elif actual_sha in (R73_SHA,R74_SHA,R75_SHA):
+    elif actual_sha in (R73_SHA,R74_SHA,R75_SHA,R76_SHA):
         from build_opt020_p3_r73 import build as build_r73
         from build_c2p_r74_open import build as build_r74
         from build_c2p_r75_convert import build as build_r75
+        from build_c2p_r76_rpg_fix import build as build_r76
         from build_opt020_p1e_r69 import build as build_r69
         from native_relative_links import assert_native_links
         from c2p_r74_relink import check_cross_r74
@@ -83,12 +85,14 @@ def v2_check(native):
             expected=build_r73()[0]
         elif actual_sha==R74_SHA:
             expected=build_r74()[0]
-        else:
+        elif actual_sha==R75_SHA:
             expected=build_r75()[0]
-        assert active==expected,"Installed R73/R74/R75 differs from deterministic source"
+        else:
+            expected=build_r76()[0]
+        assert active==expected,"Installed R73..R76 differs from deterministic source"
         parts_current=unwrap_native_parts_v2(active)[1]
         assert_native_links(parts_current[:70])
-        if actual_sha in (R74_SHA,R75_SHA):
+        if actual_sha in (R74_SHA,R75_SHA,R76_SHA):
             check_cross_r74(parts_current[:70])
         baseline=build_r69()[0]
     elif actual_sha == R72_SHA:
