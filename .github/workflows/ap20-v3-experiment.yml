@@ -61,6 +61,20 @@ jobs:
             --emit-base64
           cp docs/experiments/AP20_V3_MULTIUNIT_64K_P4.md ap20-v3-split-artifact/P4_INSTRUCTIONS.md
           cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-split-artifact/REFERENCE_ONLY_P3_PROBE.asc
+      - name: P5 genuine R82 3-unit module and MC68020 proof
+        run: |
+          python -B tools/experiments/ap20_v3_r82_threeunits.py \
+            --output ap20-v3-3units-artifact/AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib \
+            --emit-base64
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P5.md \
+            ap20-v3-3units-artifact/P5_INSTRUCTIONS.md
+      - name: Upload P5 three-real-module disposable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_THREE_UNITS_P5_TEST_ONLY
+          path: ap20-v3-3units-artifact/
+          retention-days: 7
+          if-no-files-found: error
       - name: Upload P4 R82 two-real-modules disposable artifact
         uses: actions/upload-artifact@v4
         with:
