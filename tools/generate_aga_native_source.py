@@ -485,6 +485,69 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==71:
+        # R74 adds one source-audited C2P entry and extends the screen
+        # close entry with two hooks. Without inherited R73 CFG roots the
+        # strict exporter misclassifies original R57 helper code as DATA.
+        # Only the exact pinned SHA + byte-rebuilt R74 gets these roots.
+        from active_library import R73_SHA, R74_SHA
+        from build_c2p_r74_open import build as build_r74
+        from build_opt020_p3_r73 import build as build_r73
+        from c2p_r74_open_emit import (
+            BANK as C2P_R74_BANK_MARKER, emit_open, emit_cleanup_hooks)
+        from c2p_r74_relink import check_cross_r74
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        candidate, _info = build_r74()
+        need(sha(candidate)==R74_SHA and raw==reconstruct(candidate),
+             "Strict source R74: SHA or rebuilt candidate mismatch")
+        _, native_parts = unwrap_native_parts_v2(candidate)
+        need(len(native_parts)==71, "Strict source R74: native part count")
+        assert_native_links(native_parts[:70])
+        check_cross_r74(native_parts)
+        baseline, _meta = build_r73()
+        need(sha(baseline)==R73_SHA, "Strict source R74: inherited R73 SHA")
+        old_parsed=parse_lib(reconstruct(baseline))
+        need(len(old_parsed['section'])==70,
+             "Strict source R74: inherited R73 native part count")
+        inherited=verified_current_compiler_seeds(old_parsed)
+        need(bool(inherited) and 0 in inherited and 58 in inherited,
+             "Strict source R74: R73 CFG provenance not authenticated")
+        for i in range(70):
+            if i in (0,8,10,69):
+                continue
+            need(sections[i]['core']==old_parsed['section'][i]['core']
+                 and sections[i]['getp']==old_parsed['section'][i]['getp'],
+                 f"Strict source R74: unrelated native entry {i} changed")
+        # Entry 69 acquires the standard GetP suffix when Open is appended.
+        need(sections[69]['core']==old_parsed['section'][69]['core']
+             and sections[69]['getp'],
+             "Strict source R74: entry 69 changed beyond GetP")
+        old_close=old_parsed['section'][8]['core']
+        hooks, hook_labels=emit_cleanup_hooks()
+        need(sections[8]['core'][len(old_close):]==hooks
+             and sections[8]['getp'],
+             "Strict source R74: cleanup hook source changed")
+        open_code,open_labels=emit_open()
+        need(sections[70]['core']==open_code and not sections[70]['getp']
+             and open_code.count(C2P_R74_BANK_MARKER)==1,
+             "Strict source R74: new entry or AMOS linker marker changed")
+        marker_pos=open_code.index(C2P_R74_BANK_MARKER)
+        need(open_labels['c2p_library_name']>marker_pos+6,
+             "Strict source R74: data/string boundary uncertain")
+        # The old private helper at entry 0+56 and R57 embedded
+        # subroutines remain source-authenticated by R73 ancestry.
+        # Explicit hook roots survive cross-entry BRA.W rewrites.
+        seeds={i:set(v) for i,v in inherited.items()}
+        seeds.setdefault(8,set()).update({
+            len(old_close)+hook_labels['screen_hook'],
+            len(old_close)+hook_labels['program_exit_hook'],
+            len(old_close)+hook_labels['cleanup_core'],
+        })
+        # AMOS Bnk.GetAdr Rjsr is a six-byte linker marker, NOT CPU
+        # code. Resume decoding exactly after that marker.
+        seeds[70]={0,marker_pos+len(C2P_R74_BANK_MARKER)}
+        return seeds
     if len(sections)==70:
         # The exact R68 builder, not a size/pattern guess, authorizes seeds.
         # Reuse the full historical R67 source audit for inherited routines.
