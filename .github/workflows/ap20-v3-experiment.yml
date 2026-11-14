@@ -54,6 +54,20 @@ jobs:
           assert not list(Path("dist").glob("*V3*"))
           print("P3 AMOS test fixture static guard PASS")
           PY
+      - name: P4 true R82 C2P/Core split MC68020 and interpreter relocation gate
+        run: |
+          python -B tools/experiments/ap20_v3_r82_split.py \
+            --output ap20-v3-split-artifact/AMOSPro_AGA_V3_R82_SPLIT_TEST.Lib \
+            --emit-base64
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P4.md ap20-v3-split-artifact/P4_INSTRUCTIONS.md
+          cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-split-artifact/REFERENCE_ONLY_P3_PROBE.asc
+      - name: Upload P4 R82 two-real-modules disposable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_SPLIT_P4_TEST_ONLY
+          path: ap20-v3-split-artifact/
+          retention-days: 7
+          if-no-files-found: error
       - name: Upload disposable test package (not a release)
         uses: actions/upload-artifact@v4
         with:
