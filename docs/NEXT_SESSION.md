@@ -1,5 +1,28 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## AGAPIC v2 — R82 P1 natif partiel, Gate A ciblée PASS (14/11/2026)
+
+**Chantier actif** : format v2 ModeID et palette RGB24 obligatoires, compatibilité v1
+conservée, quatre commandes Bank palettes approuvées (Init/Capture/Apply/Fade).
+[Contrat](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) ·
+[Rapport Gate A ciblée](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md) ·
+[CI ciblée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43626780469).
+
+**Preuves actuelles** : 168 tests hôte v1/v2, 14 tests de capacité,
+69 scénarios MC68020 du décodeur Image Draw v1/v2 et 52 scénarios des
+wrappers Init/Capture `BSR.L` PASS. Le constructeur image-only **en mémoire**
+produit 57 456 octets de monolithe, **marge 8 078** sous la limite
+Compiler V2 de 65 534 ; aucun `.Lib` publié.
+
+**NON FAIT :** API natives unifiées Apply/Fade et quatre tokens AP20 publics,
+validation v2 de Region, candidate R82 complète, Gate B WinUAE, Gate C Compiler,
+Gate D matériel. Ne pas prendre la réussite CPU partielle pour une R82 livrée.
+`dist/AMOSPro_AGA.Lib` et `LAST_GOOD` restent **R81 v0.13.26** sans
+modification. Une seule branche `main`. Les tests CPU000 rejettent
+avant BFINS ; ne pas exécuter de candidate native incomplète.
+
+---
+
 ## R81 — OPT020 MC68020 PROMUE `LAST_GOOD`, Gates A/B/C PASS (14/11/2026)
 
 **Demande auteur :** passer directement aux optimisations des trois commandes, **sans nouvelle compilation AMOS**. Aucun benchmark de performance imposé. Les tests CPU natifs, les contrôles de pixels et l'intégrité AP20 restent obligatoires.

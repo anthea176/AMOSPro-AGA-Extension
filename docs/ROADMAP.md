@@ -42,13 +42,14 @@ Chaîne retenue : **banque DATA/WORK chunky → `c2p.library` → bitmap interm�
 
 ## 3. Après C2P — AGAPIC v2 et API Bank palettes
 
-**Statut : P0 modèle hôte + contrat approuvés ; code natif NON engagé / aucune R82 candidate.**
+**Statut : P0 modèle hôte PASS ; R82 P1 natif partiel Gate A ciblée PASS ; aucune R82 installable.**
 R81 0.13.26 reste `LAST_GOOD`. [Contrat détaillé P0](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) et [AGAPIC v1 historique](M16_AGAPIC_FORMAT_DESIGN.md).
 
 - **AGAPIC v2** : même RLE planaire et masque que v1, ModeID U32 **obligatoire, égalité stricte** avec le mode réellement affiché ; palette RGB24 **obligatoire et complète (2^Depth)**. Dessin sans application automatique de palette, sans Swap.
 - **AGAPIC v1 inchangé** : dessin et banques v1 toujours utilisables, sans ModeID ni palette. AGAPAL v1 et son format multi-palettes restent inchangés.
 - **Quatre nouvelles API par numéro de banque** : `Aga Bank Palette Init(B,N)`, `Aga Bank Palette Capture(B,I)`, `Aga Bank Palette Apply(B,I)`, `Aga Bank Palette Fade(B,I,VBL)`. Init/Capture = AGAPAL seulement ; Apply/Fade = AGAPAL index I ou AGAPIC v2 index 0 avec ModeID strict ; AGAPIC v1 sans palette refusé. Les anciennes API `Start(B)` sont conservées.
 - **Limite 16 bits mesurée dans le vrai binaire R81** : monolithe 57 034/65 534 octets, **8 500 octets de marge**. Les appels proches de l'origine peuvent nécessiter un branchement long 68020, mais cela ne résout pas la limite globale du pont Compiler V2. Garde-fou indépendant `tools/aga_compiler_capacity.py` ; n'ajouter aucun code natif non qualifié pour masquer un dépassement.
+- **R82/P1 natif partiel PASS** : [rapport Gate A ciblée](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md), 69 scénarios CPU du décodeur v1/v2 et 52 exécutions wrappers Init/Capture BSR.L. Constructeur AP20 image-only **en mémoire** : 57 456 octets, marge 8 078 octets ; **Apply/Fade, quatre tokens publics, Region v2 et candidate installable encore manquants**. R81 dist/LAST_GOOD inchangée.
 - **P0 hôte** : `tools/m16_agapic_v2.py` réutilise le parseur et le RLE v1 ; `tools/test_m16_agapic_v2.py` teste 168 couples v1/v2, palette, ABK, ModeID et corruptions ; aucun nouveau token AP20 ni binaire.
 - **Prochaine étape P1** : architecture native économe, source vérifiée du ModeID effectif, ABI 68020, dispatch v1/v2, interfaces palettes et liens PC relatifs ; puis Gates A CPU/CI, B WinUAE interprété, C Compiler une fois en fin de chantier, D matériel réel à part. Aucun PASS anticipé.
 - **Autres API possibles non approuvées** : capture directe v2, métadonnées d'image, atlas. Ne pas ajouter de cinquième commande presque homonyme pour la palette.
