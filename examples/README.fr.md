@@ -1,8 +1,8 @@
 # AMOSPro AGA — exemples et démonstrations
 
-[English](README.md) · [Installation](../INSTALL.fr.md) · [Bibliothèque R68 promue](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
+[English](README.md) · [Installation](../INSTALL.fr.md) · [Bibliothèque R73 promue](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
-**Bibliothèque installable de référence : R68 v0.13.13, promue `LAST_GOOD`.** Le fichier de travail `dist/AMOSPro_AGA.Lib` peut être une candidate de développement non validée (actuellement R69) ; pour les exemples publics, copier `dist/AMOSPro_AGA_LAST_GOOD.Lib` dans `APSystem` sous le nom `AMOSPro_AGA.Lib`. L'extension a passé les scénarios CPU/CI, WinUAE interprété et Compiler intégré (Gates A/B/C). La Gate D sur Amiga physique reste à effectuer. Le résultat de chaque **exemple individuel** est précisé séparément : une Gate validée pour l'API ne valide pas automatiquement toutes les démonstrations.
+**Référence promue : R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). La bibliothèque de travail `dist/AMOSPro_AGA.Lib` est actuellement la **candidate R79 v0.13.24** (Zoom, Gate A CPU PASS, **validation intégrée de l'exemple IFF encore à faire sous WinUAE**). Les exemples anciens peuvent utiliser R73, mais **l'exemple C2P IFF exige R79 + `LIBS:c2p.library` v1.9** ; ne pas installer R73 pour tester Zoom. Gate D physique non testée. Une Gate passée pour la bibliothèque ne valide pas automatiquement chaque démonstration autonome.
 
 ## Lancer un exemple
 
@@ -32,6 +32,7 @@ Les démonstrations simples sont contrôlées statiquement. Seuls les scénarios
 
 | Exemple | Fonctionnalités | Banques et validation |
 |---|---|---|
+| [**C2P — IFF de référence**](c2p_iff_showcase/README.fr.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc) · [PNG attendu](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | Démo intégrée sur **la vraie image AGA fantasy 320×256×256c** : IFF/Palette → C2P Convert/Swap → 3 Blit et 7 Zoom (agrandissements, réductions, clipping) → Close/ReOpen ; 14 pixels et bilan RAM | **R79 candidate obligatoire** + `LIBS:c2p.library` ; image IFF et compagnon `.chk` dans `iff-TEST/` côte à côte ; **écrase banques 12 et 13** ; oracle statique PASS, **démonstration WinUAE non encore testée** |
 | [**Convertisseur IFF → ABK**](iff_to_abk/README.fr.md) · [ASC](iff_to_abk/IFF_TO_ABK.asc) | Sélection IFF avec `Fsel$`, capture AGAPIC, sauvegarde **ABK + IFF de palette**, effacement, rechargement, message **CHARGEMENT ABK**, reconstruction et `Aga Wait Key` | **Erase 11** au démarrage : écrase la banque 11 existante ; sorties `RAM:IFF_TO_ABK.abk` + `.iff`. Exemple à valider sous WinUAE |
 | [**Visionneuse ABK**](iff_to_abk/README.fr.md) · [ASC](iff_to_abk/ABK_VIEWER.asc) | Sélection de l'ABK, lecture automatique de la palette `.iff` du même dossier, affichage sous écran PAL 320×256 jusqu'à `Aga Wait Key` | **Erase 11** destructif ; banque AGAPIC v1 et palette IFF compagnon obligatoires ; exemple à valider sous WinUAE |
 | [**CBlock Chip Lab**](cblock_chip/README.fr.md) · [ASC](cblock_chip/CBLOCK_CHIP_LAB.asc) | Capture, dessin et restauration d'un fond planaire temporaire en Chip. **`Method` obligatoire :** `0` CPU8, `1` CPU16, `2` Blitter ; **pas d'AUTO** | Banque **11** libre, bibliothèque R68 ou ultérieure compatible ; **démo contrôlée statiquement seulement**. API R68 validée séparément sous WinUAE et Compiler |

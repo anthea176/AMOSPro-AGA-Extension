@@ -1,8 +1,8 @@
 # AMOSPro AGA — examples
 
-[Français](README.fr.md) · [Installation](../INSTALL.md) · [Promoted R68 library](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
+[Français](README.fr.md) · [Installation](../INSTALL.md) · [Promoted R73 library](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
-**Installable reference:** **R68 v0.13.13, promoted `LAST_GOOD`**. The working file `dist/AMOSPro_AGA.Lib` may hold an unvalidated development candidate (currently R69); for published examples, copy `dist/AMOSPro_AGA_LAST_GOOD.Lib` into `APSystem` under the filename `AMOSPro_AGA.Lib`. The extension has passed its native/CI, interpreted WinUAE and integrated Compiler validation scenarios (Gates A/B/C); physical Amiga testing (Gate D) remains outstanding. An example's own runtime status is stated separately below — a passing extension test does not automatically certify every demo.
+**Promoted reference: R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). The current working `dist/AMOSPro_AGA.Lib` is the **R79 v0.13.24 development candidate** (Zoom native CPU Gate A PASS; **this integrated IFF demonstration has not yet been run under WinUAE**). Older examples can use R73, but **the C2P IFF showcase requires R79 and `LIBS:c2p.library` v1.9**. Hardware Gate D is untested. Passing library tests does not automatically validate each standalone demo.
 
 ## Run an example
 
@@ -32,6 +32,7 @@ The basic graphics demos are statically checked. Only the specific user-confirme
 
 | Example | Description | Bank use / validation |
 |---|---|---|
+| [**C2P IFF golden showcase**](c2p_iff_showcase/README.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc) · [expected PNG](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | End-to-end real **320×256×256 colour fantasy AGA IFF**: IFF/Palette → C2P Convert/Swap → 3 Blit + 7 Zoom (enlarge/reduce/clip) → Close/ReOpen; 14 golden indices and RAM report | **Requires R79 candidate** plus `LIBS:c2p.library`; original IFF and `.chk` companion together in `iff-TEST/`; **overwrites banks 12/13**; offline oracle verified, **WinUAE runtime pending** |
 | [**IFF to ABK converter**](iff_to_abk/README.md) · [ASC](iff_to_abk/IFF_TO_ABK.asc) | Select IFF via `Fsel$`, capture AGAPIC, save **ABK + palette-only IFF**, clear, reload, display **CHARGEMENT ABK**, reconstruct and `Aga Wait Key` | **Erase 11** at startup overwrites existing bank 11; output `RAM:IFF_TO_ABK.abk` and matching `.iff`. WinUAE execution pending |
 | [**ABK viewer**](iff_to_abk/README.md) · [ASC](iff_to_abk/ABK_VIEWER.asc) | Select ABK, automatically load matching palette-only `.iff` in its directory; display on PAL 320×256 until `Aga Wait Key` | Destructive **Erase 11**; requires AGAPIC v1 and companion palette; WinUAE execution pending |
 | [**CBlock Chip Lab**](cblock_chip/README.md) · [ASC](cblock_chip/CBLOCK_CHIP_LAB.asc) | Temporary planar Chip background capture, draw and restore. **Method is mandatory:** `0` CPU8, `1` CPU16, `2` Blitter; **no AUTO** | Requires free bank **11** and R68+; **this standalone showcase is only statically checked**. The R68 API passed separate WinUAE/Compiler tests |

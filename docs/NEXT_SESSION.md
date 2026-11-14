@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R79 v0.13.24 — C2P Zoom candidate native Gate A PASS, Gate B WinUAE à tester (14/11/2026)
+## Exemple intégré IFF de référence C2P — à tester WinUAE avant clôture (14/11/2026)
+
+**Demande de l'auteur :** un vrai **programme de démonstration**, pas un PV, utilisant l'image authentique `iff-TEST/AGA_DEMO_320x256_256c.iff` pour valider visuellement et logiquement **IFF/Palette → C2P Open/Convert/Swap → Blit → Zoom → Close/ReOpen**.
+
+**Livrable :** [`examples/c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc`](../examples/c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc) + [guide](../examples/c2p_iff_showcase/README.fr.md), [PNG golden](../examples/c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png), compagnon `iff-TEST/AGA_DEMO_320x256_256c.chk` **81 920 octets** (strictement dérivé de l'IFF), et [test Python offline](../tools/test_c2p_iff_showcase.py). **Le seul ASC `tests/current/C2P_R79_ZOOM_01.asc` reste inchangé** ; démo placée sous `examples/`.
+
+**Validation attendue :** installer la candidate R79 (57 344 octets SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`) avec `LIBS:c2p.library`, sélectionner l'IFF et son `.chk` dans le même dossier, observer les trois étapes, quitter avec **Échap** (bascule `Amos To Back` intégrée), relever **`RAM:C2P_IFF_SHOWCASE.TXT`** et comparer le rendu au PNG attendu. `RESULT 1`, `PIXEL_CHECK_COUNT 14`, tous les indicateurs OK à 1, `ERR 0`, fermeture normale, mesures Chip/Fast. [Critères détaillés](C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md).
+
+**Statut : asset et modèle hors ligne validés, démonstration AMOS/WinUAE NON TESTÉE.** Le journal utilisateur du test **synthétique** R79 existant donne `RESULT 1`, `PASS_DEPTH 5`, deltas Chip/Fast 0 ; ce n'est pas une preuve que l'exemple IFF a tourné. Gate C Compiler et Gate D physique restent non testées ; aucune clôture, promotion de R73 `LAST_GOOD` ou nouvelle branche.
+
+## Historique R79 — candidate native Gate A PASS, avant essais IFF intégrés (14/11/2026)
 
 **Bibliothèque de travail mise à jour :** `dist/AMOSPro_AGA.Lib` **R79 v0.13.24**, **57 344 octets**, SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`, **69 commandes / 76 AP20**. Nouveau `Aga C2P Zoom(SrcBank,SrcPitch,SrcX,SrcY,SrcW,SrcH,DstX,DstY,DstW,DstH)`, copie chunky 8 bits opaque nearest-neighbour, agrandissement/réduction, clipping sans changer la géométrie, source et destination DATA/WORK revalidées, aucun Convert/Swap implicite.
 

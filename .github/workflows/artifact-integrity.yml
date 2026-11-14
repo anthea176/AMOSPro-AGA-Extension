@@ -12,6 +12,8 @@ on:
       - "INSTALL.md"
       - "INSTALL.fr.md"
       - "examples/**"
+      - "iff-TEST/AGA_DEMO_320x256_256c.iff"
+      - "iff-TEST/AGA_DEMO_320x256_256c.chk"
       - "EXTENSION_SOURCE_RULES.md"
       - "docs/GENERIC_CPU_TESTS.json"
       - "docs/GENERIC_R2_CPU_TESTS.json"
@@ -153,6 +155,7 @@ jobs:
         run: |
           python -B tools/test_readme_api_coverage.py
           python -B tools/test_examples.py
+          python -B tools/test_c2p_iff_showcase.py
           python -B tools/test_fast_icons_showcase.py
           python -B tools/test_current_amos_blocks.py
           python -B tools/test_c2p_p2_layout_check.py
