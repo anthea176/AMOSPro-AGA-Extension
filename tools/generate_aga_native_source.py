@@ -503,6 +503,56 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==76 and b"AMOSPro AGA IFF Chunky R80 0.13.25 candidate" in parsed["title"]:
+        # R80: one new audited IFF/ILBM -> chunky native body appended after
+        # exact SHA-pinned R79, including one AMOS GetAdr pseudo-op site.
+        from active_library import R79_SHA,R80_SHA
+        from build_c2p_r79_zoom import build as build_r79
+        from build_c2p_r80_iff_chunky import build as build_r80
+        from c2p_r80_iff_chunky_emit import emit_iff_to_chunky,BANK as IFF_GETADR_MARKER
+        from build_c2p_r76_rpg_fix import state_offset, SITES
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from compiler_relocation import GETP
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,_meta=build_r80()
+        need(sha(candidate)==R80_SHA and raw==reconstruct(candidate),
+             "Strict source R80: SHA-pinned candidate mismatch")
+        _,parts=unwrap_native_parts_v2(candidate)
+        need(len(parts)==76 and state_offset(parts)==12070,
+             "Strict source R80: keyboard static zone drift")
+        need(all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+                 for i,pos,op in SITES),
+             "Strict source R80: seven input-state LEAs changed")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        old,_=build_r79()
+        need(sha(old)==R79_SHA,"Strict source R80: R79 ancestor drift")
+        oldparsed=parse_lib(reconstruct(old))
+        need(len(oldparsed["section"])==75,"Strict source R80: wrong R79 section count")
+        inherited=verified_current_compiler_seeds(oldparsed)
+        need(0 in inherited and 74 in inherited,
+             "Strict source R80: R79 provenance and Zoom entry not audited")
+        _,oldparts=unwrap_native_parts_v2(old)
+        code,labels=emit_iff_to_chunky()
+        expected=oldparts[:74]+[oldparts[74]+GETP,code]
+        need(parts==expected,"Strict source R80: non append-only native bodies")
+        for i in range(74):
+            need(sections[i]["core"]==oldparsed["section"][i]["core"]
+                 and sections[i]["getp"]==oldparsed["section"][i]["getp"],
+                 f"Strict source R80: inherited entry {i} changed")
+        need(sections[74]["core"]==oldparsed["section"][74]["core"]
+             and sections[74]["getp"],"Strict source R80: previous Zoom body changed")
+        need(sections[75]["core"]==code and not sections[75]["getp"],
+             "Strict source R80: IFF decoder native bytes differ")
+        need(code.count(IFF_GETADR_MARKER)==1,
+             "Strict source R80: missing or extra GetAdr pseudo-op")
+        at=code.find(IFF_GETADR_MARKER)
+        resume=at+len(IFF_GETADR_MARKER)
+        need(resume%2==0 and resume<len(code),
+             "Strict source R80: invalid return after GetAdr marker")
+        seeds={i:set(v) for i,v in inherited.items()}
+        seeds[75]={0,resume}
+        return seeds
     if len(sections)==75 and b"AMOSPro AGA C2P Zoom R79 0.13.24 candidate" in parsed["title"]:
         # R79 strictly appends one reviewed 68000 nearest-neighbour Zoom entry
         # after the exact SHA-pinned R78 candidate; no earlier code may drift.
