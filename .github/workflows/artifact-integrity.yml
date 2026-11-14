@@ -400,5 +400,7 @@ jobs:
         run: python -B tools/build_agapic_v2_r82_api_preview.py
       - name: R82 full Image, Region and four Palette Bank APIs AP20/16-bit preview
         run: python -B tools/build_agapic_v2_r82_full_preview.py
+      - name: R82 full AP20 real-offset Palette ABI MC68020 integrated Gate A
+        run: python -B tools/test_agapic_v2_r82_integrated_native.py
       - name: Protected installables are unchanged by tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
