@@ -4,8 +4,8 @@
 
 **Un seul binaire actif sur cette branche expérimentale :**
 
-- [`../../dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) — **P5, 3 unités AP20**, 76 188 octets, SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`.
-- [`../../dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) — **R82 stable**, 64 112 octets, inchangée.
+- [`../../../dist/AMOSPro_AGA.Lib`](../../../dist/AMOSPro_AGA.Lib) — **P5, 3 unités AP20**, 76 188 octets, SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`.
+- [`../../../dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../../dist/AMOSPro_AGA_LAST_GOOD.Lib) — **R82 stable**, 64 112 octets, inchangée.
 
 Les anciens fichiers binaires P3/P4 et la copie P5 de ce répertoire
 ont été retirés de l'arbre de la branche pour éviter toute confusion.

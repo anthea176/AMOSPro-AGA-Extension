@@ -84,7 +84,7 @@ expected rejection behavior with **invalid** C2P inputs.
 graphic regression qualification. No successful C2P open/convert/zoom,
 AGAPIC image draw/palette operations, actual image decoding, or physical
 Amiga test is demonstrated. Those remain **NOT TESTED on P4**; the tests
-listed in `experimental/AP20_V3_R82/P4_WINUAE_TEST.md` must run before
+listed in `tools/experiments/AP20_V3_R82/P4_WINUAE_TEST.md` must run before
 any proposed promotion.
 
 SHA256 of original CRLF evidence:
