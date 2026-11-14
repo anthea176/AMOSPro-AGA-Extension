@@ -89,7 +89,7 @@ def build():
         "ap20_entries": len(entries),
         "native_changed_from_r80": [73, 74, 75],
         "r80_base_sha": R80_SHA,
-        "native_gate_a": "PENDING",
+        "native_gate_a": "PASS run 43615716395 (22 Blit, 14 Zoom, 15 IFF rows, CPU000 refusal)",
         "winuae_gate_b": "NOT TESTED",
         "compiled_gate_c": "NOT REQUESTED",
     }
