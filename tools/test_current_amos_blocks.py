@@ -75,12 +75,13 @@ def main():
             "Aga Detect=0", "_CF0=Chip Free",
             "_OPEN=Aga Screen Open(320,256,256,$00021000)",
             "_DB=Aga Double Buffer", "_SW=Aga Swap",
-            "_K=Aga Wait Key", "Aga Screen Close",
+            "_K=Aga Key", "Until _K=69", "Aga Screen Close",
             "Amos To Front", "_CF1=Chip Free",
             'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"',
         )
         assert all(x in source for x in required), "C2P/P2 ASC misses the layout probe lifecycle"
-        assert source.index("Aga Double Buffer") < source.index("Aga Wait Key") < source.index("Aga Screen Close", source.index("_K=Aga Wait Key"))
+        assert source.index("Aga Double Buffer") < source.index("_K=Aga Key") < source.index("Aga Screen Close", source.index("Until _K=69"))
+        assert "_K=Aga Wait Key" not in source, "Alt+Tab must not terminate P2 diagnostics"
         assert "Aga C2P" not in source, "P2 diagnostics must not call C2P"
         print("PASS: C2P P2 active ASC opens 320x256x8 and holds both buffers, then cleans up (STATIC ONLY)")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
