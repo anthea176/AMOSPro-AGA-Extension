@@ -1,14 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R81 — optimisation C2P MC68020, Gates A/B Runtime PASS (14/11/2026)
+## R81 — optimisation C2P MC68020, Gates A/B Runtime/C Compiler PASS (14/11/2026)
 
 **Demande auteur :** passer directement aux optimisations des trois commandes, **sans nouvelle compilation AMOS**. Aucun benchmark de performance imposé. Les tests CPU natifs, les contrôles de pixels et l'intégrité AP20 restent obligatoires.
 
 **Trois noyaux optimisés :** R78 `Aga C2P Blit` (copies `MOVE.L` par paquets de 4 pixels et résidu), R79 `Aga C2P Zoom` (quotient/reste/largeur DDA conservés dans les registres pendant les boucles), R80 `Aga Iff To Chunky` (LUT de 64 octets, adressage indexé 68020 et `OR.L` par groupes de 4 indices). Les anciens constructeurs R78/R79/R80 et leurs SHA restent figés.
 
-**R81 v0.13.26 :** constructeur déterministe [`tools/build_c2p_r81_opt020.py`](../tools/build_c2p_r81_opt020.py), produit en mémoire **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commandes / 77 AP20**, seules entrées natives **73, 74, 75** remplacées. [Gate A CPU MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43615716395) : **22 Blit, 14 Zoom, 15 cas de conversion planaire vers indices chunky**, garde CPU68000 et CI historique complète PASS. La Gate B WinUAE **Runtime R81 est PASS** sur l'IFF 320×256×8 en 256 couleurs, CPU 68030 (14/14 pixels). [Rapport R81 Runtime](C2P_R81_RUNTIME_GATE_B_2026-11-14.md). **Aucune Gate C Compiler demandée pour R81**. Gate D Amiga physique non testée. R73 LAST_GOOD toujours protégée.
+**R81 v0.13.26 :** constructeur déterministe [`tools/build_c2p_r81_opt020.py`](../tools/build_c2p_r81_opt020.py), produit en mémoire **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commandes / 77 AP20**, seules entrées natives **73, 74, 75** remplacées. [Gate A CPU MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43615716395) : **22 Blit, 14 Zoom, 15 cas de conversion planaire vers indices chunky**, garde CPU68000 et CI historique complète PASS. La Gate B WinUAE **Runtime R81 est PASS** sur l'IFF 320×256×8 en 256 couleurs, CPU 68030 (14/14 pixels). [Rapport R81 Runtime](C2P_R81_RUNTIME_GATE_B_2026-11-14.md). **Gate C Compiler R81 reçue ensuite et PASS** : [rapport compilé](C2P_R81_COMPILER_GATE_C_2026-11-14.md), `RUN_MODE COMPILED`, `PRG_STATE -1`, CPU 68030, 14/14 pixels, `ERR 0`, deltas Chip/Fast 0/0. Gate D Amiga physique non testée. R73 LAST_GOOD toujours protégée.
 
-**Statut courant :** `dist/AMOSPro_AGA.Lib` = **candidate R81 OPT020, Gates A/B Runtime PASS** : IFF dans banques 12/13, palette/Chunky/C2P/Blit/Zoom, 14/14 pixels de référence, refus et Close/ReOpen, `ERR 0`, Chip/Fast delta 0/0, `CLOSE_RETURNED`. Journal `C2P_R81_RUNTIME.TXT` (`PRG_STATE 1`, `RUN_MODE RUNTIME`, CPU 68030). R80 reste la référence historique, R73 `LAST_GOOD` protégée. **Aucun essai Compiler ni promotion autorisé.**
+**Statut courant :** `dist/AMOSPro_AGA.Lib` = **candidate R81 OPT020, Gates A/B Runtime PASS** : IFF dans banques 12/13, palette/Chunky/C2P/Blit/Zoom, 14/14 pixels de référence, refus et Close/ReOpen, `ERR 0`, Chip/Fast delta 0/0, `CLOSE_RETURNED`. Journal `C2P_R81_RUNTIME.TXT` (`PRG_STATE 1`, `RUN_MODE RUNTIME`, CPU 68030). R80 reste la référence historique, R73 `LAST_GOOD` protégée. **Le journal compilé a été fourni par l'auteur après la Gate B et valide la Gate C pour le cas 8 plans. Aucune promotion autorisée.**
 
 ---
 
