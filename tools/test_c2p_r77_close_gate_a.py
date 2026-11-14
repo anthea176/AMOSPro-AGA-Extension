@@ -67,7 +67,13 @@ def test_normal(depth):
         assert reopened==1,("Reopen on SAME AGA screen failed",depth,
             "status",reopened,"OS",h.calls[-35:],
             "DB_C2P",h.mem.r_block(DB+24,20).hex(),
-            "STATE",h.mem.r_block(STATE,40).hex())
+            "STATE",h.mem.r_block(STATE,40).hex(),
+            "DB_HEADER",h.mem.r_block(DB,24).hex(),
+            "CPU_FLAGS",h.mem.r16(0x8000+0x128),
+            "BANK",h.bank,
+            "REG_D3",h.cpu.r_reg(Register.D3),
+            "REG_A5",h.cpu.r_reg(Register.A5),
+            "REG_A3",h.cpu.r_reg(Register.A3))
         assert h.run_convert()==1,"Convert after reopen failed"
         assert run_close(h)==1
         assert h.calls==["waitblit","destroy","closelib"]
