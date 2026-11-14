@@ -56,9 +56,23 @@ def run_case(code, payload, depth, *, mode=0, screen_mode=MODE_ID,
     machine = LiveV2CPU(code, payload, depth, screen_mode, cpu=cpu, **kw)
     before = machine.snapshot()
     try:
-        with patch.object(legacy, 'expected_planes', expected):
-            machine.run(mode=mode, x=x, y=y, sx=0, sy=0, w=w, h=h,
-                        expect_ok=expected_ok)
+        try:
+            with patch.object(legacy, 'expected_planes', expected):
+                machine.run(mode=mode, x=x, y=y, sx=0, sy=0, w=w, h=h,
+                            expect_ok=expected_ok)
+        except AssertionError:
+            print('R82 rejection diagnostics:', {
+                'source_version': int.from_bytes(payload[6:8], 'big'),
+                'flags': int.from_bytes(payload[8:10], 'big'),
+                'source_depth': depth,
+                'mode_calls': machine.mode_calls,
+                'type_calls': machine.type_calls,
+                'getmsg_calls': machine.getmsg_calls,
+                'palette_count': int.from_bytes(payload[36:38], 'big')
+                    if len(payload) >= 38 else None,
+                'payload_length': len(payload)
+            }, flush=True)
+            raise
         assert machine.bank_calls == 0
         if expected_ok:
             assert machine.mode_calls == (1 if source.version == 2 else 0)
