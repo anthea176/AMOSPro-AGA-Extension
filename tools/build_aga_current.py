@@ -50,7 +50,14 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R76 0.13.21"):
+    if active.startswith("R77 0.13.22"):
+        from build_c2p_r77_close import build as build_r77
+        candidate,meta=build_r77()
+        assert candidate==current and meta["sha256"]=="81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11"
+        assert meta["commands"]==67 and meta["ap20_entries"]==74
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R77 C2P CLOSE; native Gate A PASS; WinUAE B/Compiler C NOT TESTED",meta)
+    elif active.startswith("R76 0.13.21"):
         from build_c2p_r76_rpg_fix import build as build_r76
         candidate,meta=build_r76()
         assert candidate==current and meta["sha256"]=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897"

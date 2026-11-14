@@ -37,3 +37,9 @@ Fonction entiere sans parametre. Retourne **1** lorsque le contexte a ete libere
 - Ne pas promouvoir R73 LAST_GOOD sans nouvelle autorisation explicite.
 
 [Gate B R76](C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md) | [Regles](../EXTENSION_SOURCE_RULES.md)
+
+## Implementation native et Gate A (14/11/2026)
+
+La candidate R77 v0.13.22 porte **67 commandes / 74 AP20**, **54 360 octets**, SHA256 `81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11`, base R76 strictement append-only. `tools/build_c2p_r77_close.py` genere les octets de maniere deterministe ; `tools/test_c2p_r77_close_gate_a.py` valide **12 scenarios CPU natifs**. L'ancienne panne R74/R75 est controlee : sept LEA clavier/souris inchanges, cible `$2F26`.
+
+**Gate A PASS** ; **Gate B WinUAE NON TESTEE**, Gate C Compiler et D physique NON TESTEES. La premiere version du banc de test faisait ecrire le bitmap simule dans le corps du code Open a 7 plans ; la simulation a ete isolee sans alterer l'implementation native ni supprimer le test de reouverture. Ne pas deduire une Gate B du seul test CPU.

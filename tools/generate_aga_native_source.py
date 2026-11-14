@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R76_SHA:
+        if sha(raw) == R77_SHA:
+            from build_c2p_r77_close import build as pinned_build
+            release = "R77"
+        elif sha(raw) == R76_SHA:
             from build_c2p_r76_rpg_fix import build as pinned_build
             release = "R76"
         elif sha(raw) == R75_SHA:
@@ -491,6 +494,48 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==73 and b"AMOSPro AGA C2P Close R77 0.13.22 candidate" in parsed["title"]:
+        # R77 APPENDS one pure-68000 Close native entry without modifying the
+        # R76 legacy state block or Screen Close hooks. Source provenance is
+        # independently pinned to exact R76 and the reviewed R77 emitter.
+        from active_library import R76_SHA,R77_SHA
+        from build_c2p_r76_rpg_fix import build as build_r76,state_offset
+        from build_c2p_r77_close import build as build_r77
+        from c2p_r77_close_emit import emit_close
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from compiler_relocation import GETP
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,_meta=build_r77()
+        need(sha(candidate)==R77_SHA and raw==reconstruct(candidate),
+             "Strict source R77: pinned candidate or source mismatch")
+        _,parts=unwrap_native_parts_v2(candidate)
+        need(len(parts)==73 and state_offset(parts)==12070,
+             "Strict source R77: native input-state relocation drift")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
+        old,_=build_r76()
+        need(sha(old)==R76_SHA,"Strict source R77: R76 ancestor SHA drift")
+        oldparsed=parse_lib(reconstruct(old))
+        need(len(oldparsed["section"])==72,
+             "Strict source R77: expected exactly 72 R76 native parts")
+        inherited=verified_current_compiler_seeds(oldparsed)
+        need(0 in inherited and 8 in inherited and 70 in inherited and 71 in inherited,
+             "Strict source R77: R76 source reachability missing")
+        _,oldparts=unwrap_native_parts_v2(old)
+        code,labels=emit_close()
+        expected=oldparts[:71]+[oldparts[71]+GETP,code]
+        need(parts==expected,"Strict source R77: non-append-only native bytes")
+        for i in range(71):
+            need(sections[i]["core"]==oldparsed["section"][i]["core"]
+                 and sections[i]["getp"]==oldparsed["section"][i]["getp"],
+                 f"Strict source R77: inherited entry {i} changed")
+        need(sections[71]["core"]==oldparsed["section"][71]["core"]
+             and sections[71]["getp"],"Strict source R77: Convert body changed")
+        need(sections[72]["core"]==code and not sections[72]["getp"],
+             "Strict source R77: Close native bytes changed")
+        seeds={i:set(v) for i,v in inherited.items()}
+        seeds[72]={0}
+        return seeds
     if len(sections)==72 and b"AMOSPro AGA C2P RPG fix R76 0.13.21 candidate" in parsed["title"]:
         # R76 is the exact R75 monolith with only seven source-audited
         # LEA.W input-state displacements rebased after R74's 138-byte

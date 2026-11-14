@@ -127,6 +127,32 @@ def main():
         assert "Aga C2P Close" not in source
         assert "GDB" not in source or "No GDB" in source
         print("PASS: C2P R75/R76 ASC tests 4..8 planes, 2 converted frames + 2 explicit swaps; STATIC ONLY")
+    if files and files[0].name == "C2P_R77_CLOSE_01.asc":
+        source=files[0].read_text("ascii")
+        required=(
+            "Reserve As Data 12,81920",
+            "For _DEPTH=4 To 8",
+            "_OPEN=Aga Screen Open(320,256,_COL,$00021000)",
+            "_DB=Aga Double Buffer", "_C2P=Aga C2P Open(12)",
+            "_CV0=Aga C2P Convert", "_SW0=Aga Swap",
+            "_CV1=Aga C2P Convert", "_SW1=Aga Swap",
+            "_CL1=Aga C2P Close",
+            "_DEAD=Aga C2P Convert", "_CL2=Aga C2P Close",
+            "_REOPEN=Aga C2P Open(12)", "_CV2=Aga C2P Convert",
+            "_SW2=Aga Swap", "_CL3=Aga C2P Close",
+            "_POST=Aga C2P Convert", "_POSTCL=Aga C2P Close",
+            "If _COL=256", "_K=Aga Key", "Until _K=69",
+            "Aga Screen Close", "Amos To Front", "Erase 12",
+            "C2P_CLOSE_OK", "EMPTY_CLOSE_OK", "REOPEN_OK",
+            "Trap Open Out", "Trap Close", "RUN_MODE", "CPU_ATTNFLAGS",
+            'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"',
+        )
+        assert all(x in source for x in required), (
+            "R77 C2P Close ASC missing lifecycle, logging or 5-depth tests")
+        assert source.index("_CL1=Aga C2P Close")<source.index("_DEAD=Aga C2P Convert")<source.index("_CL2=Aga C2P Close")<source.index("_REOPEN=Aga C2P Open(12)")<source.index("_CL3=Aga C2P Close"), (
+            "R77 Close lifecycle order changed")
+        assert source.rstrip().endswith("End"), "R77 test must end normally"
+        print("PASS: R77 C2P Close active ASC covers dual close, reopen, 5 depths and RAM log (STATIC ONLY)")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")

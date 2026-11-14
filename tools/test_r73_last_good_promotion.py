@@ -7,7 +7,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -40,7 +40,15 @@ def main():
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==R76_SHA:
+        if digest==R77_SHA:
+            from build_c2p_r77_close import build as build_r77
+            from build_c2p_r76_rpg_fix import state_offset
+            candidate,actual_meta=build_r77()
+            assert cur==candidate
+            assert actual_meta["commands"]==67 and actual_meta["ap20_entries"]==74
+            _,parts=unwrap_native_parts_v2(cur)
+            assert len(parts)==73 and state_offset(parts)==12070 and label.startswith("R77 0.13.22")
+        elif digest==R76_SHA:
             from build_c2p_r76_rpg_fix import build as build_r76, state_offset
             candidate,actual_meta=build_r76()
             assert cur==candidate

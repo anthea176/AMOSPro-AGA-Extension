@@ -1,8 +1,20 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## R76 — Gates B RPG et C2P Convert WinUAE PASS (14/11/2026)
+## R77 v0.13.22 — C2P Close candidate, Gate A native PASS, Gate B WinUAE en attente (14/11/2026)
 
-**Candidate actuelle :** `dist/AMOSPro_AGA.Lib` **R76 v0.13.21**, 54 144 octets, SHA256 `9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897`, 66 commandes / 73 AP20. **R73 LAST_GOOD protegee** : `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Aucune promotion autorisee a ce stade.
+**Candidate active** : `dist/AMOSPro_AGA.Lib` R77 v0.13.22, **54 360 octets**, SHA256 `81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11`, **67 commandes / 74 AP20**. La R77 ajoute `_OK=Aga C2P Close` (retour 1 si contexte libéré, 0 si absent ; aucun changement de l'écran, de la palette ou de la banque chunky). La fermeture explicite conserve les hooks de nettoyage automatiques R74/R76 et ne modifie aucune des sept références clavier/souris `$2F26`.
+
+**Gate A CPU R77 : PASS**. Construction déterministe depuis R76 figée SHA, test natif `tools/test_c2p_r77_close_gate_a.py` (12 cas, CPU 68000/020), double Close, Convert après Close, réouverture sur le même écran, vérification des ressources et registres. La première CI avait échoué à cause du *simulateur* : écriture de son bitmap SRC à 7 plans sur l'adresse du code de test Open (SRC `$150000`, Open `$160000`), corrigée en isolant la simulation de pixels du test de cycle de vie. Le vrai code natif de Close n'a pas dû être changé.
+
+**Gate B R77 : NON TESTÉE sous WinUAE.** Un seul ASC actif : `tests/current/C2P_R77_CLOSE_01.asc`, avec cinq profondeurs 16/32/64/128/256, double Close, Convert refusé après Close, Open/Convert/Swap après réouverture, journal `RAM:C2P_R77_<MODE>.TXT` incluant Prg State, CPU et mémoire avant/après. **Pas de Compiler avant la fin du chantier C2P**, ni Gate D physique ; **aucune promotion**.
+
+**Base qualifiée** : R76 v0.13.21 Gates A/B WinUAE PASS (RPG et C2P Convert), deux logs RAM dont second `CHIP_DELTA 0` et `FAST_DELTA 0`. La R73 v0.13.18 reste **LAST_GOOD protégée**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. **Suite prévue après Gate B R77 : R78 Blit**, contrat déjà approuvé avec SrcPitch ; zoom ultérieur uniquement après décision distincte.
+
+[Contrat R77](C2P_R77_CLOSE_CONTRACT_2026-11-14.md) · [Contrat futur R78](C2P_R78_BLIT_CONTRACT_2026-11-14.md) · [R76 Gate B](C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md) · [règles](../EXTENSION_SOURCE_RULES.md).
+
+## Historique R76 — Gates B RPG et C2P Convert WinUAE PASS (14/11/2026)
+
+**Candidate à ce jalon :** `dist/AMOSPro_AGA.Lib` **R76 v0.13.21**, 54 144 octets, SHA256 `9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897`, 66 commandes / 73 AP20. **R73 LAST_GOOD protegee** : `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Aucune promotion autorisee a ce stade.
 
 **Gate B RPG R76 PASS** sur retour auteur : les deux scripts `M0_R73_INPUT_DIAG_01.asc` et `M0_R73_MENU_01.asc` fonctionnent de nouveau, sans Guru signale. Cause R74/R75 corrigee en R76 : sept LEA clavier/souris `$2E9C -> $2F26` apres insertion de 138 octets. Gate A 24 cas CPU PASS ; audit independant du binaire courant en CI avec huit mutations negatives. [Rapport](C2P_R76_RPG_REGRESSION_2026-11-14.md).
 

@@ -1,18 +1,18 @@
-# R76 C2P Convert — test actif ; Gate B WinUAE PASS (14/11/2026)
+# R77 C2P Close — test actif WinUAE Gate B (NON TESTÉ) — 14/11/2026
 
-**Candidat :** [R76 v0.13.21](../../dist/AMOSPro_AGA.Lib), 54 144 octets, 66 commandes, 73 AP20. **Gate B RPG PASS** (programmes M0), **Gate B C2P Convert PASS** sur captures + fichier RAM utilisateur. **Gate C Compiler non testee**, Gate D Amiga physique non testee ; R73 LAST_GOOD demeure protegee.
+**Candidat :** [R77 v0.13.22](../../dist/AMOSPro_AGA.Lib), **54 360 octets**, SHA256 `81940e4950f8c21237fb3a9a033f3df0fee4ffaae0d959231ecb20df0d51af11`, 67 commandes / 74 AP20. **Gate A native PASS (12 cas CPU)** ; **Gate B WinUAE R77 EN ATTENTE**, Gate C Compiler non testée, Gate D physique non testée. R73 LAST_GOOD intacte. R76 Gates A/B avaient PASS (cinq profondeurs et journaux RAM).
 
-**Un seul ASC actif :** [C2P_R76_CONVERT_01.asc](C2P_R76_CONVERT_01.asc). Le test a produit `RAM:C2P_R76_RUNTIME.TXT` sur la session WinUAE rapportee, et termine normalement avec `End`. La valeur réelle `PRG_STATE 1` signifie **RUNTIME**, pas Compiler. Le CPU signale par Exec etait **68030**.
+**Un seul ASC actif :** [C2P_R77_CLOSE_01.asc](C2P_R77_CLOSE_01.asc). Importer via **Merge ASCII dans un programme vide**, après installation R77 dans le slot AGA habituel et redémarrage AMOS. Conserver `LIBS:c2p.library` v1.9, CPU 68020+ AGA et banque DATA 12 libre. **Ne pas compiler** (Gate C réservée à la fin du chantier C2P).
 
-## Resultat confirme
+## Attendus du test
 
-- Ecran AGA 320x256, profondeurs 16/32/64/128/256 couleurs, deux conversions + swaps explicites, bande sur la deuxieme frame.
-- `RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `FAIL_DEPTH 0`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`.
-- Chip Free : 1 799 064 avant/apres, delta 0. Fast Free : 138 134 008 -> 138 215 952 (+81 944 octets libres ; ecart a documenter, pas une fuite).
-- **Attention au focus :** sur le dernier ecran 256 couleurs, l'ASC attend `Aga Key=69` (Echap). Si AMOS est au premier plan, Echap ne sort pas du test AGA. Dans la session validee, l'auteur a utilise **Amiga+A** pour retrouver le focus du rendu AGA, puis Echap ; Ctrl+C auparavant avait seulement interrompu le programme AMOS, sans Guru.
+1. Cinq profondeurs 16/32/64/128/256 couleurs ; deux conversions C2P et swaps explicites avant le cycle de fermeture.
+2. Pour chaque profondeur, `_CL1=Aga C2P Close` doit retourner **1** ; `_DEAD=Aga C2P Convert` **0**, et le second `_CL2=Aga C2P Close` **0**.
+3. Sans fermer l'écran AGA, `_REOPEN=Aga C2P Open(12)` doit retourner **1** ; une troisième conversion et le Swap **1** ; `_CL3=Aga C2P Close` **1**.
+4. `Aga Screen Close` et retour à AMOS sans double libération ; après fermeture, `Aga C2P Convert` et `Aga C2P Close` doivent retourner **0**. Capture de la mire et du bilan.
+5. Sur le dernier écran 256 couleurs, si AMOS est au premier plan, basculer sur le rendu avec **Amiga+A** avant Échap (code `Aga Key=69`). Ctrl+C interrompt prématurément le programme et peut laisser la banque 12.
+6. Après Échap, programme terminé normalement par `End`, journal dans **`RAM:C2P_R77_RUNTIME.TXT`** si `Prg State=1` (autres modes selon Prg State). Vérifier `RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`, mémoire Chip/Fast avant/après et erreurs d'ouverture/fermeture du journal à 0.
 
-## En cas de nouvel essai
+Le journal RAM est **volatile** : le copier hors de RAM avant un reboot ou un second essai du même mode. En cas de Guru, la sortie du journal n'est pas garantie.
 
-Garder `LIBS:c2p.library` v1.9 et la banque DATA 12 libre, utiliser R76 dans le slot AGA habituel et importer le seul ASC courant par Merge ASCII. Ne pas relancer une Gate C Compiler sans decision explicite. Le rapport RAM porte le nom `RAM:C2P_R76_<MODE>.TXT` avec le mode annonce par `Prg State`. Copier le journal hors de RAM: avant reboot ou nouvel essai du meme mode (fichier volatile, ecrase par `Open Out`).
-
-[Rapport C2P R76 Gate B](../../docs/C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md) · [Protocole RAM](../../docs/AMOS_RAM_TEST_LOGGING.md) · [Rapport RPG R76](../../docs/C2P_R76_RPG_REGRESSION_2026-11-14.md).
+[Contrat R77](../../docs/C2P_R77_CLOSE_CONTRACT_2026-11-14.md) · [Protocole RAM](../../docs/AMOS_RAM_TEST_LOGGING.md) · [R76 Gate B](../../docs/C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md).
