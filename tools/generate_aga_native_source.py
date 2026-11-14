@@ -486,10 +486,18 @@ def verified_current_compiler_seeds(parsed):
     authenticates the current and LAST_GOOD Compiler wrappers. No altered,
     independently rebuilt, or future unknown binary receives these seeds.
     """
-    from active_library import verify_active
+    from active_library import verify_active, R82_SHA, R83_SHA
     from compiler_relocation import native_from_promoted, repack_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
+    if sha(current) == R83_SHA:
+        # This exporter supports the historical *single-unit* sources.
+        # verify_active() has already SHA-pinned and rebuilt every R83 unit.
+        # For inherited CFG seeds, use the immutable R82 ancestor rather
+        # than attempting to unwrap three native groups as one monolith.
+        need(sha(last_good) == R82_SHA,
+             'Strict source: frozen R82 provenance lost under R83')
+        current = last_good
     def reconstruct(blob):
         if is_v2_wrapped(blob):
             tok, parts = unwrap_native_parts_v2(blob)
