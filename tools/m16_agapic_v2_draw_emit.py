@@ -279,7 +279,7 @@ def emit_image_draw_v2(*, accept_loaded_flags_zero=True, opt020=True,
     c.move(D(0),A(0))
     c.move(M(4,8),A(6))   # GfxBase
     c.call_os(LVO_GETVPMODEID)
-    c.imm("cmp",-1,D(0)); B(6,"reject")
+    c.imm("cmp",-1,D(0)); B(7,"reject")  # INVALID_ID only
     ld("base",D(1)); c.move(D(1),A(0))
     c.alu("cmp",M(0,32),0); B(6,"reject")
     L("v2_screen_mode_ok")
