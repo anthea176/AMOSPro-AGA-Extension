@@ -50,7 +50,14 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R82 0.13.27"):
+    if active.startswith("R83 v0.13.28"):
+        from build_aga_r83_modular import build as build_r83
+        candidate,meta=build_r83()
+        assert candidate==current and meta["sha256"]=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
+        assert meta["size"]==64188 and meta["commands"]==74 and meta["ap20_entries"]==83
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
+        print("CURRENT R83 THREE-MODULE CANDIDATE, CPU Gate A PASS; WinUAE B/C R83 pending",meta)
+    elif active.startswith("R82 0.13.27"):
         from build_agapic_v2_r82_full_preview import build as build_r82
         candidate,meta=build_r82()
         assert candidate==current==LAST_GOOD.read_bytes() and meta["sha256"]=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
@@ -231,8 +238,8 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R81)")
-    print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
+    print("Current modular R83 source: frozen R82 -> tools/build_aga_r83_modular.py")
+    print("Future changes: extend audited R83 native units, do not replace with old monolith")
 
 
 if __name__ == "__main__":

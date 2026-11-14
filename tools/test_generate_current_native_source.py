@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -25,6 +25,19 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==R83_SHA:
+            # The legacy strict ASM exporter expects ONE Compiler V2 unit.
+            # Fail closed rather than pretending R83's three units are a
+            # monolith. Its deterministic builder separately audits all 3.
+            from build_aga_r83_modular import build as build_r83
+            from compiler_relocation import unpack_ap20
+            candidate, meta=build_r83()
+            assert wrapped==candidate and meta["sha256"]==R83_SHA
+            _, native_units, title=unpack_ap20(wrapped)
+            assert [len(native_units[i]) for i in (80,81,82)]==[5558,2508,52974]
+            assert b"R83 v0.13.28" in title
+            print("STRICT R83 THREE-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         native, ctx = exp.source_binary_from_input(wrapped)
         assert ctx and ctx["verified_extract_and_rewrap"]
         assert ctx["official_entries"] == ctx["native_entries"] + 1
@@ -80,7 +93,7 @@ def main() -> None:
     print("R60 V2 STRICT NATIVE EXPORT PASS (in memory): 61 -> 60 AP20 entries")
 
     # A valid AP20 title mutation must never pass the provenance check.
-    tampered = bytearray(current)
+    tampered = bytearray(last_good)
     at = tampered.find(b"AMOSPro AGA")
     assert at > 0
     tampered[at] ^= 1

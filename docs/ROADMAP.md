@@ -7,11 +7,11 @@
 
 | Sujet | État |
 |---|---|
-| **Référence installable** | **R82 v0.13.27 — `LAST_GOOD`**, identique à `dist/AMOSPro_AGA.Lib` ; 64 112 octets, **74 commandes / 81 entrées AP20**. |
+| **Bibliothèque active** | **R83 v0.13.28 candidate modulaire** : `dist/AMOSPro_AGA.Lib`, 64 188 octets, **74 commandes / 83 entrées AP20**. **`LAST_GOOD` stable : R82 v0.13.27** dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`, 64 112 octets. |
 | **Validation R82** | **PASS** : Gate A native, WinUAE Runtime et AMOS Compiler sur le banc AGAPIC v1/v2 en CPU 68030. **Non vérifiés** : mode strictement interprété `PRG_STATE 0` et Amiga physique. |
-| **Capacité Compiler V2** | Monolithe de **60 972 / 65 534 octets**, **4 562 octets disponibles**. Chaque nouvelle commande doit être mesurée avant intégration. |
-| **Test AMOS actif** | `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` (unique ASC actif). |
-| **Priorités avant M19** | **1. AP20 V3 multi-unités** : démonstration P5 à trois unités natives validée en CPU/CI, Runtime et Compiler sur les bancs AGAPIC/C2P. Finalisation produit distincte (IFF→chunky positif, binaire sans remplissage TEST ONLY). **2. AGAPIC v1/v2 complet** : métadonnées par banque et capture native v1/v2 choisie, sans régression v1. |
+| **Capacité Compiler V2** | **R83 : trois unités** : C2P 5 558, IFF 2 508, AGA/AGAPIC 52 974 octets, chacune sous 65 534 octets ; vérifier aussi la portée `BSR.W` du chargeur. **Marge AGA actuelle : 12 560 octets**, à contrôler avant AGAPIC. |
+| **Test AMOS actif** | `tests/current/C2P_R83_MODULAR_01.asc` — IFF→chunky natif positif, conversion C2P, Blit, Zoom, fermeture ; unique ASC. |
+| **Priorités avant M19** | **1. R83 modulaire** : candidate sans padding sur `main`, Gate A/CI PASS ; R83 WinUAE à valider avant promotion. **2. AGAPIC v1/v2 complet** : métadonnées par banque et capture native v1/v2 au choix, sans régression v1. |
 
 Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -29,18 +29,18 @@ La présence d'une fonction dans R82 ne signifie **pas** que les 74 commandes on
 
 Ces **deux chantiers passent avant M19**. La preuve de faisabilité du premier a réussi sur P5 ; sa transformation en bibliothèque de production reste à finaliser. Le second est à spécifier puis développer. La fusion de l'outillage et des preuves dans `main` n'est **pas** une promotion du binaire P5.
 
-### Chantier 1 — AP20 V3 : dépasser la limite des 64 Ko du Compiler V2
+### Chantier 1 — R83 modulaire : trois unités AP20
 
-**État au 14/11/2026 : preuve technique P5 VALIDÉE**, sans promotion en nouvelle version officielle.
+**Sur `main`, candidate R83 v0.13.28 préparée ; `LAST_GOOD` reste R82.**
 
-- **Base stable** : R82 v0.13.27, 74 commandes, 81 entrées AP20, \`dist/AMOSPro_AGA.Lib\` = \`dist/AMOSPro_AGA_LAST_GOOD.Lib\` sur \`main\`, 64 112 octets. Le monolithe original reste à 60 972/65 534 octets.
-- **P5 réellement testée sur WinUAE** : trois unités natives AP20 contenant le véritable code R82 : C2P (5 558 octets, entrées 70–74), décodeur IFF→chunky (14 508 octets, entrée 75, **dont 12 000 octets de NOP de stress-test**), AGA/AGAPIC/palettes (52 974 octets, entrées 0–69 et 76–79). **Total 73 040 octets d'unités natives**, 83 entrées AP20, **74 commandes publiques R82 inchangées**.
-- **Validation prouvée** : Gate A/CI et émulation MC68020 PASS, branchements du chargeur \`RBSR/BSR.W\` dans leur plage, quatre appels \`BSR.L\` des palettes recalculés ; **Runtime et Compiler WinUAE PASS** sur les bancs AGAPIC v1/v2 et C2P : dessin, régions, palettes, conversion, Blit, Zoom, 14/14 pixels, fermeture, \`ERR 0\`, deltas nets Chip/Fast nuls. L'identification \`THREE GENUINE NATIVE UNITS\` dans AMOS a été confirmée par capture.
-- **Périmètre non prouvé** : la commande native \`Aga Iff To Chunky\` du module IFF n'a été appelée dans la P5 qu'avec une **entrée invalide**. Le showcase C2P charge l'IFF et son \`.chk\` séparément et ne remplace pas un décodage positif de ce module. Pas de test \`PRG_STATE 0\` pur ni d'Amiga physique. L'architecture n'a pas encore de mécanisme général de branchement inter-unités au-delà de la portée \`BSR.W\`.
-- **Avant activation produit** : vérifier l'IFF→chunky natif sur une entrée valide dans la P5, retirer le remplissage de test et le titre \`TEST ONLY\`, contrôler le budget de chaque unité et la compatibilité des CI/release. **Ne pas modifier \`LAST_GOOD\` ni annoncer R83 automatiquement.**
-- **Organisation Git** : preuve, outillage et journaux intégrés à \`main\` ; **P5 active uniquement sur \`experiment/ap20-v3-multiunit-64k\`**, à \`dist/AMOSPro_AGA.Lib\` de cette branche. La R82 reste le binaire officiel de \`main\`.
+- **Binaire actif :** `dist/AMOSPro_AGA.Lib` = R83 **64 188 octets**, 74 commandes R82 inchangées, 83 entrées AP20, trois vraies unités natives : C2P 5 558 octets, IFF→chunky 2 508 octets et AGA/AGAPIC/palettes 52 974 octets. **Aucun remplissage de stress-test**, aucun titre `TEST ONLY`.
+- **Source :** `tools/build_aga_r83_modular.py` reconstruit exclusivement depuis la R82 `LAST_GOOD` (SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`) et contrôle le format AP20, les 78 `RBSR`, les quatre liens palettes et la portée du chargeur `BSR.W`. **Gate A CPU/CI MC68020 PASS** ; les nouvelles Gates B/C R83 restent en attente.
+- **Preuve d'architecture historique :** P5 a passé WinUAE Runtime et Compiler avec ses trois unités natives, AGAPIC v1/v2, C2P Blit/Zoom et 14/14 pixels. Elle contenait 12 Ko de NOP de stress-test, désormais supprimés. Ses résultats ne prouvent pas automatiquement le comportement du binaire R83 raccourci.
+- **Test R83 actif :** `tests/current/C2P_R83_MODULAR_01.asc` reprend le banc IFF positif R80/R81 : décodage `Aga Iff To Chunky` sur une entrée ILBM réelle 320×256 (4–8 plans), C2P, Blit, Zoom et fermeture. Les banques 12/13 sont effacées au lancement. Un seul ASC est actif.
+- **Avant promotion de R83 :** exécution Runtime B et compilation AMOS fraîche C sur WinUAE, validation visuelle puis autorisation explicite. **R82 `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste inchangée**, aucun tag ou release automatique.
+- **Après R83 :** chantier 2 AGAPIC (métadonnées et capture au choix v1/v2). Le module AGA dispose actuellement de **12 560 octets de marge théorique** ; toute augmentation doit contrôler la taille et les branchements `BSR.W`.
 
-Références : [P5, architecture et validations](experiments/AP20_V3_MULTIUNIT_64K_P5.md) · [banc WinUAE P5](../experimental/AP20_V3_R82/P5_WINUAE_TEST.md) · [P4 historique](experiments/AP20_V3_MULTIUNIT_64K_P4.md).
+Références : [constructeur R83](../tools/build_aga_r83_modular.py) · [test actif](../tests/current/C2P_R83_MODULAR_01.asc) · [preuves P5 historiques](experiments/AP20_V3_MULTIUNIT_64K_P5.md).
 
 
 ### Chantier 2 — AGAPIC v1/v2 : compléter les fonctions natives AMOS
@@ -92,7 +92,7 @@ Référence de format : [contrat AGAPIC v2](M16_AGAPIC_V2_CONTRACT_2026-11-14.md
 
 ## 5. Règles de travail
 
-- **Documentation/roadmap sur `main` uniquement.** Les preuves et sources AP20 V3 sont intégrées à `main`, mais le binaire P5 reste actif **uniquement sur sa branche expérimentale** ; aucune nouvelle branche, promotion ni publication sans demande explicite.
+- **GitHub : branche `main` uniquement.** Un seul binaire actif `dist/AMOSPro_AGA.Lib`, un seul ASC actif `tests/current/*.asc`, et R82 `LAST_GOOD` protégée. Les preuves P5 historiques ne sont pas un second circuit de travail. Aucune nouvelle branche, promotion, tag ni release sans accord explicite.
 - **`LAST_GOOD` protégée** : pas de modification d'une version promue ; une évolution est une nouvelle candidate distincte, validée avant promotion.
 - **CPU cible : 68020 minimum.** Contrat de chaque nouvelle fonction avant code, avec budget Compiler V2 contrôlé.
 - **Validations séparées** : Gate A native, Gate B WinUAE Runtime/interprétation selon le mode réellement exécuté, Gate C Compiler, Gate D Amiga physique. Ne jamais généraliser un PASS.

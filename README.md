@@ -19,7 +19,9 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Latest promoted `LAST_GOOD`: R82 v0.13.27 (AGA/MC68020+)** — [active library](dist/AMOSPro_AGA.Lib) = [protected `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), **64,112 bytes**, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commands / 81 AP20 entries**, 60,972-byte Compiler V2 monolith and **4,562-byte headroom**. **Native/CI Gate A, WinUAE Runtime Gate B and AMOS Compiler Gate C PASS** on the documented AGAPIC v1/v2 indexed 320×256×8 / CPU 68030 test, including palette Init/Capture/Apply/Fade, draw/region and cleanup (`ERR 0`, net Chip/Fast deltas 0/0). Pure interpreted `PRG_STATE 0` and physical Amiga Gate D **NOT TESTED**. No timing-speedup claim, tag or Aminet release. [Promotion report](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) · [WinUAE logs](docs/AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) · [current test](tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc).
+**Working R83 v0.13.28 library (AGA/68020+)** — [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **64,188 bytes**, 74 commands / **83 AP20 entries**, three native units (AGA, C2P, IFF), no synthetic padding. **Candidate on `main`: CPU/CI Gate A PASS; R83 WinUAE Runtime/Compiler B/C pending.** [Current AMOS test](tests/current/C2P_R83_MODULAR_01.asc) · [deterministic builder](tools/build_aga_r83_modular.py).
+
+**Latest promoted `LAST_GOOD`: R82 v0.13.27 (AGA/MC68020+)** — [protected `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), **64,112 bytes**, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commands / 81 AP20 entries**, 60,972-byte Compiler V2 monolith and **4,562-byte headroom**. **Native/CI Gate A, WinUAE Runtime Gate B and AMOS Compiler Gate C PASS** on the documented AGAPIC v1/v2 indexed 320×256×8 / CPU 68030 test, including palette Init/Capture/Apply/Fade, draw/region and cleanup (`ERR 0`, net Chip/Fast deltas 0/0). Pure interpreted `PRG_STATE 0` and physical Amiga Gate D **NOT TESTED**. No timing-speedup claim, tag or Aminet release. [Promotion report](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md) · [WinUAE logs](docs/AGAPIC_R82_WINUAE_RUNTIME_COMPILER_2026-11-14.md) · [archived R82 test](tests/passed/AGAPIC_R82_V2_BANK_PALETTE_01.asc).
 
 **Previous `LAST_GOOD`: R81 v0.13.26 (C2P OPT020, 68020+)** — [historical frozen R81 binary](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib), **59,972 bytes**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commands / 77 AP20 entries**, Gates A/B/C PASS on its IFF 320×256×8 / CPU 68030 scenario. Reproducible by `tools/build_c2p_r81_opt020.py`; **the active `LAST_GOOD` pointer is now R82, not R81**. [Historical R81 promotion](docs/C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -31,7 +33,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R82 0.13.27** — **74 commands / 81 AP20 entries**, 68020 minimum. Gates A native, B WinUAE Runtime and C AMOS Compiler PASS on documented tests; physical D and pure interpreted mode untested. R82 is `LAST_GOOD`.
+**Current library API R83 0.13.28** — **74 commands / 83 AP20 entries**, 68020 minimum. R82 command signatures unchanged; Gate A CPU/CI PASS; R83 WinUAE Runtime/Compiler B/C pending. R82 remains `LAST_GOOD`.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

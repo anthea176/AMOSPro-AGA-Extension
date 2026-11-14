@@ -1,5 +1,24 @@
 # EXTENSION_SOURCE_RULES.md
 
+## ÉTAT DE TRAVAIL — R83 v0.13.28 CANDIDATE MODULAIRE (14/11/2026)
+
+**Circuit unique sur `main` :** `dist/AMOSPro_AGA.Lib` est la
+candidate **R83**, à trois unités natives AP20 (C2P, IFF, AGA/AGAPIC),
+74 commandes et 83 entrées, **64 188 octets**, sans padding de test.
+**Gate A native/CPU/CI PASS ; Gates B/C WinUAE R83 EN ATTENTE**.
+Test actif unique : `tests/current/C2P_R83_MODULAR_01.asc`,
+décodage IFF→chunky natif sur IFF valide, C2P, Blit/Zoom et fermeture.
+
+**`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R82 v0.13.27 IMMUTABLE**,
+SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`. Les paragraphes R82 ci-dessous
+conservent l'historique exact de sa promotion, mais ne signifient plus
+que `dist/AMOSPro_AGA.Lib` est identique à `LAST_GOOD`.
+
+**Aucune branche expérimentale, aucun deuxième binaire/test actif,
+aucune promotion R83, tag ni publication sans accord explicite.**
+
+---
+
 ## ÉTAT AUTORITAIRE — R82 v0.13.27 PROMUE `LAST_GOOD` (14/11/2026)
 
 **Autorisation explicite de l'auteur :** « tu peux promouvoir! »,

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Independent fail-closed audit of mouse/key LEA data offsets in active binary."""
 from pathlib import Path
-from compiler_bridge_v2_probe import unwrap_native_parts_v2
-from compiler_relocation import GETP
+from hashlib import sha256
+from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
+from compiler_relocation import GETP, unpack_ap20
+from active_library import R82_SHA, R83_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -44,10 +46,23 @@ def negative_cases(parts):
         raise AssertionError("shifted input state accepted")
 
 def main():
-    _,parts=unwrap_native_parts_v2(BINARY.read_bytes())
+    image=BINARY.read_bytes()
+    if sha256(image).hexdigest()==R83_SHA:
+        # Check actual R83 unit bytes independently from its builder.
+        frozen=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+        assert sha256(frozen).hexdigest()==R82_SHA
+        _, original=unwrap_native_parts_v2(frozen)
+        _, units, _=unpack_ap20(image)
+        assert len(units)==83
+        core=units[82][len(DISPATCH_V2):]
+        frozen_aga=b"".join(original[:70])
+        assert core[:len(frozen_aga)]==frozen_aga, "R83 active AGA/State code changed"
+        parts=original
+    else:
+        _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; R83 core byte-verified if active")
 
 if __name__=="__main__":
     main()

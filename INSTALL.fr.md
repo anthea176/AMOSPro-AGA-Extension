@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**R82 v0.13.27 `LAST_GOOD` promue (68020+) : Gates A native, B WinUAE Runtime et C Compiler PASS** sur le banc AGAPIC 68030, interprétation pure et Gate D Amiga physique **NON TESTÉES**. [Bibliothèque R82 active et validée](dist/AMOSPro_AGA.Lib) = [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib), **64 112 octets**, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, **74 commandes / 81 entrées AP20**. La [R81 historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib) reste reconstructible. `LIBS:c2p.library` reste nécessaire pour C2P. [Rapport de promotion](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
+**Candidate de travail R83 v0.13.28 sur `main` :** [bibliothèque active](dist/AMOSPro_AGA.Lib), **64 188 octets**, 74 commandes / 83 entrées AP20, trois unités AGA/C2P/IFF, Gate A CPU/CI PASS ; **validation R83 WinUAE Runtime/Compiler encore attendue**. **R82 v0.13.27 reste la version stable promue `LAST_GOOD`**, [disponible séparément](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, déjà validée Gates A/B/C. `LIBS:c2p.library` reste nécessaire.
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -10,7 +10,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier la [version R82 promue](dist/AMOSPro_AGA_LAST_GOOD.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l'ancienne bibliothèque. Le [binaire actif R82](dist/AMOSPro_AGA.Lib) est strictement identique. **Conserver le même slot**, puis redémarrer AMOS Professional. Pour revenir à la version R81 historique, utiliser le binaire de son ancien commit Git.
+2. Pour **tester R83**, copier [la candidate active](dist/AMOSPro_AGA.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l'ancienne bibliothèque. Pour installer la **R82 stable**, utiliser plutôt [`LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib). **Conserver le même slot** puis redémarrer AMOS Professional. Les binaires ne sont plus identiques.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.

@@ -47,6 +47,7 @@ R79_SHA="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
 R80_SHA="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"  # IFF->chunky, A PASS; R80 Runtime 8-plane B PASS
 R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # C2P MC68020 optimized Blit/Zoom/IFF, Gates A/B/C PASS (8 planes / 68030)
 R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # AGAPIC v2 promoted LAST_GOOD; Gates A/B Runtime/C PASS; physical D untested
+R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular candidate, active on main; R82 frozen
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -74,18 +75,22 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha == P5_EXPERIMENT_SHA:
-        # The branch working binary is P5; LAST_GOOD is still independently protected.
+    if current_sha == R83_SHA:
         from compiler_relocation import unpack_ap20
-        tokens, segments, title = unpack_ap20(cur)
-        assert len(cur)==76188 and len(segments)==83, "P5 structure changed"
-        assert [len(segments[i]) for i in (80,81,82)]==[5558,14508,52974], "P5 native units changed"
-        assert b"THREE GENUINE NATIVE UNITS" in title, "Wrong P5 title"
+        tok, seg, title = unpack_ap20(cur)
+        assert len(cur)==64188 and len(seg)==83, "R83 layout changed"
+        assert [len(seg[i]) for i in (80,81,82)]==[5558,2508,52974], "R83 native unit sizes changed"
+        assert b"R83 v0.13.28" in title and b"TEST ONLY" not in title, "Wrong R83 title"
         report=inspect(parse(cur))
-        assert not report["issues"], report["issues"]
-        assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==74, "R82 API changed"
-        assert cur!=good and sha256(good).hexdigest()==R82_SHA, "Protected R82 changed"
-        return cur,good,"P5 three real units ACTIVE on experiment branch; WinUAE smoke PASS; full graphics pending; R82 LAST_GOOD frozen"
+        assert not report["issues"],report["issues"]
+        assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==74, "R83 public API changed"
+        from build_aga_r83_modular import build as build_r83
+        expected, meta=build_r83()
+        assert cur==expected and meta["sha256"]==R83_SHA, "R83 binary differs from deterministic builder"
+        assert cur!=good and sha256(good).hexdigest()==R82_SHA, "R82 LAST_GOOD changed"
+        return cur,good,"R83 v0.13.28 THREE MODULE CANDIDATE; Gate A CPU/CI PASS; WinUAE R83 Runtime B/Compiler C PENDING; R82 LAST_GOOD protected"
+    if current_sha == P5_EXPERIMENT_SHA:
+        raise AssertionError("Historical P5 TEST ONLY cannot be installed as main active binary")
     if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"

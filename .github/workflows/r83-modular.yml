@@ -25,4 +25,4 @@ jobs:
       - name: Install MC68020 emulator dependencies
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Rebuild R83 from frozen R82 and prove all three native dispatchers
-        run: python -B tools/build_aga_r83_modular.py --emit-base64
+        run: python -B tools/build_aga_r83_modular.py --check-dist
