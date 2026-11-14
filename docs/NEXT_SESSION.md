@@ -1,41 +1,32 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## AGAPIC v2 — R82 Gate A CPU/CI intégrée PASS (14/11/2026)
+## AGAPIC v2 — R82 candidate native disponible, WinUAE Gate B suivante (14/11/2026)
 
-**R82 en développement sur `main`, pas encore de candidate installable.**
-Le format v2 conserve le RLE planaire v1 et ajoute une palette RGB24 complete
-et un DisplayModeID obligatoires, exacts sur l'écran courant. Les quatre
-fonctions `Aga Bank Palette Init/Capture/Apply/Fade` par numéro de banque sont
-implémentées dans les émetteurs natifs ; Apply/Fade acceptent AGAPAL v1
-ou AGAPIC v2 index 0, jamais AGAPIC v1 sans palette.
+**Bibliothèque active R82 v0.13.27** : `dist/AMOSPro_AGA.Lib`, **64 112 octets**,
+SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`, 74 commandes / 81 entrées AP20, monolithe
+60 972 octets, marge Compiler V2 **4 562 octets**. Uniquement sur `main`.
+**GATE A CPU/ABI PASS**, y compris 69 scénarios Image Draw, 52 Init/Capture,
+63 Apply/Fade, 70 Region, 19 appels aux offsets finaux de la bibliothèque.
 
-**Gate A ciblée PASS** :
-[CI 43628508648](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43628508648)
-et [CI 43628732478](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43628732478).
-168 aller-retours hôte, 14 tests de capacité, 69 scénarios natifs Image Draw,
-52 scénarios Init/Capture, 63 Apply/Fade, 70 Image Region et **19 scénarios
-MC68020 aux offsets définitifs du monolithe AP20**. Builder intégré
-`tools/build_agapic_v2_r82_full_preview.py` **en mémoire uniquement** :
-64 124 octets, 74 commandes / 81 entrées AP20, monolithe 60 972 octets,
-**marge 4 562** sous la limite 65 534, SHA256 du candidat virtuel
-`431968eec32b03ca1f7e99091690e6230b69d6f1a0e5ec6f88ff3cde34689f90`.
-
-**Banc WinUAE NON EXECUTE** : ASC et banques v1/v2 préparés sous
-`tests/design/AGAPIC_R82_V2_BANK_PALETTE_01.asc` et compagnons
-`R82_AGAPIC_V2_BANK10.abk` / `R82_AGAPIC_V1_BANK12.abk`.
-Ils ne sont pas l'ASC actif. Le générateur des banques et un préflight
-statique AMOS sont disponibles ; cela ne remplace pas AMOS/WinUAE.
-[Rapport technique complet](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).
-
-**À faire** : préserver les contrôles actifs R81 lors de la préparation
-d'une seule candidate R82 dans `dist/AMOSPro_AGA.Lib`, activer un unique
-ASC, passer Gate B WinUAE interprété et Gate C Compiler **une seule fois
-en fin de chantier**. Gate D Amiga physique séparée. Aucune promotion
-automatique et aucune nouvelle branche. **R81 v0.13.26 demeure
-`LAST_GOOD`**, `dist/AMOSPro_AGA.Lib` identique à
-`dist/AMOSPro_AGA_LAST_GOOD.Lib`, SHA256
+**R81 v0.13.26 reste `LAST_GOOD` protégée** dans
+`dist/AMOSPro_AGA_LAST_GOOD.Lib`, 59 972 octets, SHA256
 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`.
+Elle n'est pas modifiée ni promue automatiquement.
 
+**SEUL test AMOS actif :** `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc`,
+avec les deux banques `R82_AGAPIC_V2_BANK10.abk` (palette complète + ModeID)
+et `R82_AGAPIC_V1_BANK12.abk` (compatibilité). Le programme teste la
+palette AGAPAL v1 et AGAPIC v2, quatre nouveaux tokens Bank, dessin / Region,
+fondus et erreurs, journal `RAM:AGAPIC_R82_INTERPRETED.TXT`, nettoyage,
+et retour `End`. Le fichier `tests/current/README.md` donne les étapes.
+
+**À effectuer sur WinUAE :** installer **la candidate R82** dans le slot
+AMOS existant, charger les deux banques de test à côté du seul ASC, lancer
+**en interprété d'abord**, récupérer journal RAM et observation graphique.
+N'annoncer Gate B que si `RESULT 1`, `ERR 0` et l'affichage sont confirmés.
+Réserver **Gate C Compiler à la fin du chantier, après Gate B**.
+Gate D Amiga physique indépendante. Aucune publication ni promotion R82
+sans accord de l'auteur. [Gate A](AGAPIC_V2_R82_P1_GATE_A_2026-11-14.md).
 
 ---
 

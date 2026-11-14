@@ -78,9 +78,20 @@ def main():
             assert img.mode_id==MODE_ID and len(img.palette)==768
         else:
             assert img.mode_id is None and img.palette is None
+    # When R82 is activated, prove the sole current ASC and its assets are
+    # byte-identical to the source-reviewed design. Never infer WinUAE PASS.
+    active=ROOT/'tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc'
+    if active.is_file():
+        assert list((ROOT/'tests/current').glob('*.asc'))==[active], 'multiple active ASC files'
+        assert active.read_bytes()==ASC.read_bytes(), 'active R82 ASC differs from audited design'
+        for name,expected in EXPECTED.items():
+            current=(ROOT/'tests/current'/name).read_bytes()
+            assert current==(OUT/name).read_bytes(), ('active ABK changed',name)
+            assert sha256(current).hexdigest()==expected
+        print('R82 CURRENT ASC/ABK PAIRING STATIC PASS: 1 ASC and 2 byte-exact ABK')
     print('R82 AGAPIC v1/v2 AMOS DESIGN STATIC PASS:',len(checks),
           'API/source checks + 2 byte-exact fixture hashes + RAM log')
-    print('The ASC is in tests/design/, NOT an active WinUAE Gate B test.')
+    print('R82 AMOS source verification is STATIC only; WinUAE Gate B NOT EXECUTED.')
 
 
 if __name__=='__main__': main()
