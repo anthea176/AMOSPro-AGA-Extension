@@ -17,7 +17,21 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 **Existing users:** when replacing an older `AMOSPro_AGA.Lib`, keep the same extension slot and restart AMOS. Back up the old file and configuration first.
 
-## 2. Run a first example
+## 2. Requirements and C2P dependency
+
+**Requirements for R82:** an **AGA** Amiga (e.g. A1200/A4000, or WinUAE configured for AGA), **Motorola 68020/68EC020 or later** (not a 68000-only machine), AMOS Professional installed, and sufficient **Chip RAM** for the private AGA screen and buffers.
+
+**Additional library for C2P:** [**c2p.library v1.9 by Alimede Informatica, on Aminet**](https://aminet.net/package/dev/misc/c2plib) ([upstream source](https://github.com/alimede/c2p.library)). This is a standard AmigaOS shared library, **not** an AMOS extension and **not** part of `AMOSPro_AGA.Lib`.
+
+1. Download **`c2plib.lha`** from Aminet and extract it with an LhA-compatible archiver.
+2. Locate the runtime **`c2p.library`** file (normally in the package's **`libs/`** directory). Copy **that file** to **`LIBS:c2p.library`** on the Amiga (usually **`SYS:Libs/c2p.library`**). With WinUAE, the destination must be **AmigaOS-visible**, not just a Windows folder.
+3. Keep **`AMOSPro_AGA.Lib` in `APSystem`** and **`c2p.library` in `LIBS:`**. **Do not register** `c2p.library` under *Set Loaded Extensions*. If it was missing during a previous attempt, relaunch AMOS and try again.
+
+**Scope:** the five `Aga C2P` commands (`Open`, `Convert`, `Close`, `Blit`, `Zoom`) need a C2P context using that shared library. Other extension commands, **including `Aga Iff To Chunky` on its own**, do not need it. If `c2p.library` is absent, `Aga C2P Open` returns **0**; the AMOS AGA extension itself can still load.
+
+**C2P prerequisites:** open a private AGA screen **320×256** with **16/32/64/128/256 indexed colours (4–8 bitplanes)**; enable **`Aga Double Buffer`**; provide a valid existing AMOS **DATA/WORK chunky bank** (bank number **5..65535**, at least **81,920 bytes**). Optionally fill the bank from a compatible ILBM with `Aga Iff To Chunky(File$,Bank)`. Render with **Open → optional Blit/Zoom → Convert → explicit `Aga Swap` → Close**. Palette loading is separate; no implicit palette update or Swap.
+
+## 3. Run a first example
 
 1. Copy selected `.asc` examples and `demo.iff` from [`examples/`](examples/) into a directory accessible to your Amiga or WinUAE (an Amiga hard disk, mapped host directory or mounted disk image). The script files are **plain ASCII text**, not tokenized `.AMOS` programs.
 2. In the AMOS editor, start with an **empty program** (**New**) and select **Project → Merge ASCII** (shortcut **Amiga + Shift + M**). Import `examples/screen.asc`.
@@ -27,7 +41,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 **Important:** `Merge ASCII` **adds** source to the current editor buffer. Start a new/empty program each time; do not repeatedly merge the examples into one program. Once imported, you may save an example in AMOS's native `.AMOS` format.
 
-## 3. Troubleshooting
+## 4. Troubleshooting
 
 | Problem | First checks |
 |---|---|
@@ -35,11 +49,14 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 | Cannot find `demo.iff` | The file selector needs the **Amiga-visible** path. Move `demo.iff` into a mounted drive/drawer and browse to it. |
 | Screen does not open | Confirm that the emulator/Amiga has **AGA**, that PAL 320×256 is available, and that the screen can use 256 colours. |
 | `.asc` is not recognized by Load | Use **Project → Merge ASCII**, not the normal native-AMOS Load command. |
+| `Aga C2P Open(Bank)` returns 0 | Check `LIBS:c2p.library`, CPU 68020+, a private 320×256 AGA screen in 4–8 planes, successful `Aga Double Buffer`, and an existing chunky DATA/WORK bank of at least 81,920 bytes. Opening twice also returns 0. |
+| `Aga C2P Convert` fails or shows no picture | Check that Open succeeded and the bank still exists; the back buffer must be `Safe`. After Convert, explicitly call `Aga Swap` and load the palette if needed. |
+| `Aga Iff To Chunky` rejects a picture | The supported source is indexed 320×256 ILBM, 4–8 planes, RAW or ByteRun1, without HAM/EHB, masking or dual playfield. |
 | Something goes wrong during a demo | Check the output. The [all-in-one compiled R46 C1 test](examples/compiler_all_in_one/) has passed WinUAE; other examples have different test coverage. |
 
 ## Release and licence
 
-**Status:** R68 v0.13.13 is the sole **working test candidate** (native Gate A and WinUAE interpreted B PASS); **R63 v0.13.8 remains the protected and separately promoted LAST_GOOD**. Historical [R46 C1 compiler-safe archive](dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib) remains immutable. R68 has not completed actual AMOS Compiler Gate C or physical Amiga Gate D.
+**Release status:** **R82 v0.13.27 is promoted `LAST_GOOD`** (74 commands / 81 AP20 entries). **Gates A native/CI, B WinUAE Runtime and C AMOS Compiler PASS** on the documented 68030/AGAPIC v1/v2 indexed 320×256×8 test. Pure interpreted `PRG_STATE 0` and physical Amiga Gate D have **not** been tested. [R82 promotion evidence](docs/AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md). Previous R81 remains accessible [in Git history](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/aed079ec05102c992d8440f86522e8b8875df8e7/dist/AMOSPro_AGA_LAST_GOOD.Lib). Promotion does not imply an Aminet upload.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 
