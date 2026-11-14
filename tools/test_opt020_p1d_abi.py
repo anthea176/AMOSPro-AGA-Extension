@@ -248,7 +248,7 @@ def ap20_v2_in_memory_probe():
     assert new[-1].startswith(DISPATCH_V2)
     assert adapter in new[-1]
     assert len(new[-1])<=65534
-    assert sha256((ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest()=="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
+    assert sha256((ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest()=="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
     return len(adapter),len(wrapped),len(new[-1]),len(parts)
 
 

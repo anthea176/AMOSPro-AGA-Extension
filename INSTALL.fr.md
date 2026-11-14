@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate active R84 v0.13.29 :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), 67 904 octets, 76 commandes, 85 entrées AP20, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. Gate A native CPU/CI PASS ; WinUAE Runtime B et AMOS Compiler C **EN ATTENTE**. **R83 `LAST_GOOD` stable protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 64 188 octets, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, Gates A/B/C R83 PASS. Ces **deux binaires sont différents**. Les fonctions C2P nécessitent `LIBS:c2p.library` ; la nouvelle capture AGAPIC n’en dépend pas.
+**R84 v0.13.29 promue `LAST_GOOD` :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) et [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes / 85 entrées AP20. Gate A native et Gate C AMOS Compiler PASS (programme compilé avec une banque) ; Gate B Runtime corrigée non documentée séparément. Ancienne R83 reconstructible depuis son builder et l'historique Git. Les commandes C2P nécessitent `LIBS:c2p.library`, la capture AGAPIC non.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 
@@ -9,7 +9,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Pour **tester R84**, copier [la candidate](dist/AMOSPro_AGA.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l’ancienne bibliothèque. Pour revenir à la dernière version validée, utiliser la [R83 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib). **Les deux binaires sont différents**. Conserver le même slot puis redémarrer AMOS Professional.
+2. Pour **installer R84**, copier [le binaire actif `LAST_GOOD`](dist/AMOSPro_AGA.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l’ancienne bibliothèque. Les deux fichiers de `dist/` sont **identiques (R84)**. Conserver le même slot puis redémarrer AMOS Professional.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.
@@ -18,7 +18,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## 2. Prérequis et dépendance C2P
 
-**Prérequis R83 :** Amiga à chipset **AGA** (A1200/A4000 ou WinUAE configuré en AGA), processeur **Motorola 68020/68EC020 minimum** (pas de 68000 seul), AMOS Professional installé et suffisamment de **Chip RAM** pour l'écran AGA privé et ses buffers.
+**Prérequis R84 :** Amiga à chipset **AGA** (A1200/A4000 ou WinUAE configuré en AGA), processeur **Motorola 68020/68EC020 minimum** (pas de 68000 seul), AMOS Professional installé et suffisamment de **Chip RAM** pour l'écran AGA privé et ses buffers.
 
 **Bibliothèque supplémentaire pour le C2P :** [**c2p.library v1.9 d'Alimede Informatica sur Aminet**](https://aminet.net/package/dev/misc/c2plib) ([sources officielles](https://github.com/alimede/c2p.library)). C'est une bibliothèque partagée AmigaOS, **pas** une extension AMOS et elle n'est **pas** intégrée à `AMOSPro_AGA.Lib`.
 

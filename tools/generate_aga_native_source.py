@@ -492,10 +492,10 @@ def verified_current_compiler_seeds(parsed):
     current, last_good, _ = verify_active(ROOT)
     if sha(current) in (R83_SHA,R84_SHA):
         # This exporter only disassembles historical single-unit sources.
-        # verify_active() has checked the active R83/R84 and promoted R83.
-        # Rebuild the R82 source independently: LAST_GOOD now holds R83.
-        need(sha(last_good) == R83_SHA and sha(current) in (R83_SHA,R84_SHA),
-             'Strict source: promoted R83 active/LAST_GOOD identity lost')
+        # verify_active() has checked both active and promoted R84.
+        # Rebuild the historical R82 source independently of moving LAST_GOOD.
+        need(sha(last_good) == R84_SHA and current == last_good,
+             'Strict source: promoted R84 active/LAST_GOOD identity lost')
         from build_agapic_v2_r82_full_preview import build as build_r82
         ancestor, _ = build_r82()
         need(sha(ancestor) == R82_SHA and len(ancestor) == 64112,

@@ -36,7 +36,7 @@ def main() -> None:
             _, native_units, title=unpack_ap20(wrapped)
             assert len(native_units)==85 and tuple(map(len,native_units[82:]))==meta["units"]
             assert b"R84 v0.13.29" in title
-            assert sha256(original[1]).hexdigest()==R83_SHA
+            assert sha256(original[1]).hexdigest()==R84_SHA and original[0]==original[1]
             print("STRICT R84 THREE-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
             continue
         if exp.sha(wrapped)==R83_SHA:

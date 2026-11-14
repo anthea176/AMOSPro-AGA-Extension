@@ -53,16 +53,19 @@ def main():
         frozen, _ = build_r82()
         assert sha256(frozen).hexdigest()==R82_SHA
         last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-        assert sha256(last_good).hexdigest()==R83_SHA
+        assert sha256(last_good).hexdigest()==R84_SHA
+        from build_aga_r83_modular import build as build_r83
+        historical_r83,_=build_r83()
+        assert sha256(historical_r83).hexdigest()==R83_SHA
         _, original=unwrap_native_parts_v2(frozen)
         _, units, _=unpack_ap20(image)
         idx=82 if sha256(image).hexdigest()==R83_SHA else 84
         assert len(units)==(83 if idx==82 else 85)
         if idx==84:
-            _, r83parts, _=unpack_ap20(last_good)
+            _, r83parts, _=unpack_ap20(historical_r83)
             assert units[84].startswith(r83parts[82]), "R84 changed inherited R83 AGA code"
         else:
-            assert image==last_good
+            assert image==historical_r83
         core=units[idx][len(DISPATCH_V2):]
         frozen_aga=b"".join(original[:70])
         assert core[:len(frozen_aga)]==frozen_aga, "R83 active AGA/State code changed"

@@ -1,15 +1,11 @@
-# Test AMOS actif — R84 AGAPIC v1/v2 (main)
+# Test actif AMOS — R84 AGAPIC v1/v2 promue LAST_GOOD
 
-**Unique ASC actif :** [AGAPIC_R84_V1_V2_01.asc](AGAPIC_R84_V1_V2_01.asc). **Unique bibliothèque de travail :** [R84 candidate](../../dist/AMOSPro_AGA.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes. **R83 LAST_GOOD protégée :** [AMOSPro_AGA_LAST_GOOD.Lib](../../dist/AMOSPro_AGA_LAST_GOOD.Lib), 64 188 octets, SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`. Le test R83 précédemment validé est archivé dans [tests/passed](../passed/C2P_R83_MODULAR_01.asc).
+**Unique ASC actif :** [AGAPIC_R84_V1_V2_01.asc](AGAPIC_R84_V1_V2_01.asc). Copie identique dans [tests/passed](../passed/AGAPIC_R84_V1_V2_01.asc).
 
-## WinUAE — Gate B Runtime puis Gate C Compiler
+**Binaire actif = LAST_GOOD :** R84 v0.13.29, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; 76 commandes / 85 entrées AP20, 3 modules natifs. R83 historique reconstructible via [builder](../../tools/build_aga_r83_modular.py) et [Git avant promotion](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/3c65fed54567d28c845979c23667585bd7cc6808/dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-1. Sauvegarder la bibliothèque AMOS actuelle et l’Interpreter Config. Installer **uniquement** `dist/AMOSPro_AGA.Lib` (R84 candidate) dans `APSystem/AMOSPro_AGA.Lib` (même slot AMOS habituel n°14, s'il est libre). La version `LAST_GOOD` n’est **pas** la R84.
-2. Dans le banc R84, **Length(N)** sert uniquement à tester l’existence d'une banque ; **Start(N)** sert à obtenir l'adresse des banques effectivement créées pour `Leek`/`Peek`. Ne jamais remplacer les quatre affectations `_P11.._P14=Start(N)` par `Length(N)` : cela produirait des lectures mémoire invalides (ERR 17).
-3. Démarrer WinUAE AGA CPU 68020+ (68030 recommandé), AMOS Professional. Utiliser un programme vide puis **Project → Merge ASCII** avec le seul ASC actif. Laisser les banques **11..15 libres** ; le test refuse de les écraser.
-4. Le banc ouvre successivement un écran AGA **320×256×16** puis **320×256×256**. Pour chaque profondeur : capture native v1/v2 opaque et masquée, héritage de l'ancienne API v1, Info champs 1..5, contrôle octet par octet des flux RLE, palette RGB24/ModeID, refus invalides, Save/Erase/Load ABK, Draw/Region/Swap, fermeture et RAM.
-5. Journaux : `RAM:AGAPIC_R84_RUNTIME.TXT` puis compiler un **nouvel exécutable** AMOS et relever `RAM:AGAPIC_R84_COMPILED.TXT`. Attendus : `RESULT 1`, `VERDICT PASS`, `PASS_4 1`, `PASS_8 1`, `ERR 0`, `CLOSE_COUNT 2`, `CHIP_DELTA 0`, `FAST_DELTA 0`. Transmettre les deux fichiers et signaler toute anomalie visuelle.
+**Statut :** Gate A native CPU/CI **PASS** et Gate C AMOS Compiler **PASS** (programme compilé avec une banque ; deux passes 4/8 plans, `ERR 0`, `CLOSE_RETURNED 2`). Le journal compilé mesure Chip **0** et Fast **−11 920 octets**. Le banc conserve 4 ABK dans `RAM:` après les opérations Save/Load : ce delta n'établit pas une fuite native. Gate B Runtime corrigée **non attestée séparément** ; `PRG_STATE 0` strict et matériel réel non testés. Promotion R84 explicitement approuvée par l'auteur avec cette limite de preuve. **Aucune nouvelle exécution WinUAE n'est demandée.**
 
-**Statut : Gate A native CPU/CI PASS** (44 tests Info et 47 captures sur vrai cœur 68020 émulé). **Gates B WinUAE Runtime / C AMOS Compiler R84 encore à confirmer.** `PRG_STATE 0` strict et Amiga physique Gate D non testés. Ne pas promouvoir R84 ni déplacer l'ASC dans `tests/passed` avant validation de l'auteur.
+**Règle AMOS :** `Length(N)` sert aux tests d'existence de banques encore absentes. `Start(N)` sert uniquement à l'adresse d'une banque effectivement réservée (par exemple `_P11=Start(11)` puis `Leek(_P11+24)`). Remplacer ces `Start` par `Length` provoque des lectures invalides.
 
-[Contrat](../../docs/AGAPIC_R84_V1_V2_CONTRACT_2026-11-14.md) · [Rapport Gate A](../../docs/AGAPIC_R84_GATE_A_2026-11-14.md).
+[Rapport de promotion](../../docs/AGAPIC_R84_LAST_GOOD_PROMOTION_2026-11-14.md) · [Gate C compilée](../../docs/AGAPIC_R84_COMPILER_GATE_C_2026-11-14.md) · [Gate A](../../docs/AGAPIC_R84_GATE_A_2026-11-14.md).

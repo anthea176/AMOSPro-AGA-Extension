@@ -1,6 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R83 v0.13.28 is promoted LAST_GOOD (Gates A native/CPU, B WinUAE Runtime and C Compiler PASS on 68030 IFF/C2P scenario; physical D untested).
+R84 v0.13.29 is PROMOTED LAST_GOOD with explicit author approval: native Gate A PASS and WinUAE AMOS Compiler Gate C PASS (with a bank in the compiled program). Separate corrected Runtime Gate B NOT evidenced; physical Gate D untested.
+R83 v0.13.28 is the reproducible historical LAST_GOOD with A/B/C PASS on its own WinUAE test.
 R82 v0.13.27 remains the historical SHA-pinned source built from its own deterministic builder.
 R81 v0.13.26 is the SHA-pinned predecessor, separately reproducible from its frozen builder.
 R73 v0.13.18 remains reconstructible through its immutable builder and Git history.
@@ -20,7 +21,7 @@ from pathlib import Path
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 v0.13.28 promoted LAST_GOOD; Gates A/B/C PASS, physical D not tested
+LAST_GOOD_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 v0.13.29 promoted by explicit author approval; A/C PASS, B not separately revalidated
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -48,8 +49,8 @@ R79_SHA="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
 R80_SHA="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"  # IFF->chunky, A PASS; R80 Runtime 8-plane B PASS
 R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # C2P MC68020 optimized Blit/Zoom/IFF, Gates A/B/C PASS (8 planes / 68030)
 R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # R82 historical former LAST_GOOD; Gates A/B Runtime/C PASS; physical D untested
-R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular PROMOTED LAST_GOOD; R82 historical pinned
-R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 AGAPIC native v1/v2 Gate A PASS, active candidate; WinUAE B/C pending
+R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular former LAST_GOOD; R82 historical pinned
+R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 PROMOTED LAST_GOOD, Gate A CPU/CI and C AMOS Compiler PASS (bank included); corrected B not separately evidenced
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -84,14 +85,14 @@ def verify_active(root: Path):
         assert cur==expected and meta["sha256"]==R84_SHA, "R84 binary differs from pinned native builder"
         assert len(cur)==67904 and meta["bytes"]==67904
         assert meta["commands"]==76 and meta["ap20_entries"]==85
-        assert sha256(good).hexdigest()==R83_SHA and len(good)==64188, "R83 LAST_GOOD not protected"
+        assert cur==good and sha256(good).hexdigest()==R84_SHA and len(good)==67904, "Promoted R84 LAST_GOOD must match active exactly"
         tok, seg, title=unpack_ap20(cur)
         assert len(seg)==85 and tuple(map(len,seg[82:]))==meta["units"]
         assert b"R84 v0.13.29" in title and b"TEST ONLY" not in title
         report=inspect(parse(cur))
         assert not report["issues"],report["issues"]
         assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76, "R84 API changed"
-        return cur,good,"R84 v0.13.29 AGAPIC v1/v2 CANDIDATE: Gate A native CPU/CI PASS; WinUAE Runtime B and AMOS Compiler C PENDING; R83 LAST_GOOD protected"
+        return cur,good,"R84 v0.13.29 AGAPIC v1/v2 PROMOTED LAST_GOOD: native Gate A CPU/CI PASS; WinUAE AMOS Compiler C PASS (with a compiled bank); corrected Runtime B NOT separately evidenced; Gate D physical untested"
     if current_sha == R83_SHA:
         from compiler_relocation import unpack_ap20
         tok, seg, title = unpack_ap20(cur)
@@ -104,8 +105,8 @@ def verify_active(root: Path):
         from build_aga_r83_modular import build as build_r83
         expected, meta=build_r83()
         assert cur==expected and meta["sha256"]==R83_SHA, "R83 binary differs from deterministic builder"
-        assert cur==good and sha256(good).hexdigest()==R83_SHA, "R83 LAST_GOOD must be byte-identical to active"
-        return cur,good,"R83 v0.13.28 THREE MODULES PROMOTED LAST_GOOD; Gates A CPU/CI, B WinUAE Runtime and C AMOS Compiler PASS (68030); physical D and pure PRG_STATE 0 untested"
+        assert sha256(good).hexdigest()==R84_SHA, "R84 LAST_GOOD protected; historical R83 rebuilt independently"
+        return cur,good,"R83 v0.13.28 HISTORICAL former LAST_GOOD; Gates A CPU/CI, B Runtime and C Compiler PASS on its own 68030 test; physical D and strict PRG_STATE 0 untested"
     if current_sha == P5_EXPERIMENT_SHA:
         raise AssertionError("Historical P5 TEST ONLY cannot be installed as main active binary")
     if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA):

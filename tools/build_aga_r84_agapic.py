@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R84 AGAPIC v1/v2 extension candidate: build in memory from immutable R83.
+"""R84 AGAPIC v1/v2 promoted release: rebuild independently from historical R83.
 
 Adds _VALUE=Aga Bank Image Info(Bank,Field) and
 _OK=Aga Bank Image Capture(Bank,X,Y,W,H,TransparentIndex,Version).
@@ -8,7 +8,9 @@ The original Aga Image Capture(...,TransparentIndex) is unchanged.
 Uses the existing three native AP20 groups. Moves group IDs 80..82 to
 82..84 while preserving their original C2P/IFF/AGA bytecode, and appends
 only new native code to the AGA group (no fourth group and no padding).
-Never touches the R83 LAST_GOOD; no dist write is offered by this builder.
+R84 LAST_GOOD is SHA-pinned and byte-identical to the active binary. The
+historical R83 source is rebuilt from its own frozen R82-based builder.
+No dist write is offered by this builder.
 """
 from __future__ import annotations
 import argparse
@@ -41,12 +43,12 @@ PREVIOUS=ROOT/"dist"/"AMOSPro_AGA_LAST_GOOD.Lib"
 ACTIVE=ROOT/"dist"/"AMOSPro_AGA.Lib"
 
 def build()->tuple[bytes,dict]:
-    frozen=PREVIOUS.read_bytes()
-    if len(frozen)!=64188 or sha256(frozen).hexdigest()!=R83_SHA:
-        raise AssertionError("R83 promoted LAST_GOOD was modified")
-    baseline,info=build_r83()
-    if baseline!=frozen or info["sha256"]!=R83_SHA:
-        raise AssertionError("Pinned deterministic R83 ancestor changed")
+    frozen,info=build_r83()
+    if len(frozen)!=64188 or sha256(frozen).hexdigest()!=R83_SHA or info["sha256"]!=R83_SHA:
+        raise AssertionError("Pinned deterministic historical R83 source changed")
+    protected=PREVIOUS.read_bytes()
+    if len(protected)!=67904 or sha256(protected).hexdigest()!=R84_SHA:
+        raise AssertionError("Promoted R84 LAST_GOOD was modified")
     original_tokens, old, _=unpack_ap20(frozen)
     if len(old)!=83 or tuple(len(v) for v in old[80:])!=(5558,2508,52974):
         raise AssertionError("Unexpected R83 three-unit layout")
@@ -108,14 +110,14 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("R83 native C2P/IFF/AGA bytes not preserved")
     active=ACTIVE.read_bytes()
     active_sha=sha256(active).hexdigest()
-    if active_sha not in (R83_SHA,R84_SHA):
-        raise AssertionError("Unexpected active library while rebuilding R84")
-    if active_sha==R84_SHA and active!=candidate:
+    if active_sha!=R84_SHA or active!=protected:
+        raise AssertionError("R84 active and promoted LAST_GOOD must be byte-identical")
+    if active!=candidate:
         raise AssertionError("Installed R84 candidate differs from deterministic builder")
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
     return candidate,dict(
-        version="R84 v0.13.29",status="Native Gate A CPU/CI PASS; WinUAE Runtime B/Compiler C PENDING",
+        version="R84 v0.13.29",status="PROMOTED LAST_GOOD: native A PASS; compiled C PASS with bank; corrected Runtime B not separately evidenced",
         commands=76,ap20_entries=len(parts),sha256=sha256(candidate).hexdigest(),
         bytes=len(candidate),units=tuple(len(p) for p in parts[82:]),
         source_r83_sha256=R83_SHA,
@@ -129,12 +131,11 @@ class R84Layout(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.image,cls.meta=build()
-    def test_exact_r83_last_good(self):
-        self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R83_SHA)
-        active=ACTIVE.read_bytes()
-        assert sha256(active).hexdigest() in (R83_SHA,R84_SHA)
-        if sha256(active).hexdigest()==R84_SHA:
-            self.assertEqual(active,self.image)
+    def test_historical_r83_and_promoted_r84(self):
+        self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
+        self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R84_SHA)
+        self.assertEqual(PREVIOUS.read_bytes(),ACTIVE.read_bytes())
+        self.assertEqual(ACTIVE.read_bytes(),self.image)
     def test_new_api_and_layout(self):
         self.assertEqual(self.meta["commands"],76)
         self.assertEqual(self.meta["ap20_entries"],85)
@@ -170,7 +171,7 @@ def main():
         for at in range(0,len(encoded),120):
             print("R84_MAIN_LIB_B64",encoded[at:at+120])
         print("R84_MAIN_LIB_B64_END")
-    print("Builder does not write dist/; WinUAE B/C pending, R83 LAST_GOOD protected")
+    print("Builder is read-only; R84 promoted, native A / Compiler C PASS, corrected Runtime B not separately evidenced")
 
 if __name__=="__main__":
     main()

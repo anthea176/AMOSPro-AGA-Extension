@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build R83 v0.13.28, three real AP20 native units, from pinned R82.
 
-This is the one working-library circuit on main:
-  dist/AMOSPro_AGA.Lib           promoted R83 active library
-  dist/AMOSPro_AGA_LAST_GOOD.Lib byte-identical promoted R83
+This is a historical deterministic R83 source builder on main:
+  dist/AMOSPro_AGA.Lib           promoted R84 active library
+  dist/AMOSPro_AGA_LAST_GOOD.Lib byte-identical promoted R84
   tests/current/*.asc            exactly one active AMOS test
 
 The builder checks native ABI, all 78 native RBSR stubs, palette links,
@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "experiments"))
 
-from active_library import R82_SHA, R83_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA
 from build_agapic_v2_r82_full_preview import build as build_r82
 from audit_ap20 import inspect, parse
 from compiler_relocation import repack_ap20, unpack_ap20
@@ -53,8 +53,7 @@ def build() -> tuple[bytes, dict]:
     frozen, frozen_meta = build_r82()
     if len(frozen) != 64112 or sha256(frozen).hexdigest() != R82_SHA or frozen_meta["sha256"] != R82_SHA:
         raise AssertionError("SHA-pinned historical R82 builder drift")
-    if sha256(LAST_GOOD.read_bytes()).hexdigest() != R83_SHA:
-        raise AssertionError("R83 promoted LAST_GOOD changed")
+    # R83 must remain reconstructible from pinned R82 after LAST_GOOD moves to R84.
     intermediate, p5 = p5_build(frozen, pad_bytes=0)
     tokens, segments, _ = unpack_ap20(intermediate)
     if len(segments) != 83 or tuple(map(len, segments[80:])) != EXPECTED_UNITS:
@@ -129,8 +128,9 @@ class R83ModularGateA(unittest.TestCase):
         again, meta = build()
         self.assertEqual(self.lib, again)
         self.assertEqual(meta, self.meta)
-        self.assertEqual(self.lib, LAST_GOOD.read_bytes())
-        self.assertEqual(sha256(LAST_GOOD.read_bytes()).hexdigest(), R83_SHA)
+        self.assertEqual(sha256(self.lib).hexdigest(), R83_SHA)
+        self.assertNotEqual(self.lib, LAST_GOOD.read_bytes())
+        self.assertEqual(sha256(LAST_GOOD.read_bytes()).hexdigest(), R84_SHA)
         self.assertEqual(sha256(build_r82()[0]).hexdigest(), R82_SHA)
 
     def test_dispatcher_reachability_on_real_mc68020(self):
@@ -157,7 +157,7 @@ class R83ModularGateA(unittest.TestCase):
         original = LAST_GOOD.read_bytes()
         tampered = bytearray(original)
         tampered[20] ^= 1
-        self.assertNotEqual(sha256(tampered).hexdigest(), R83_SHA)
+        self.assertNotEqual(sha256(tampered).hexdigest(), R84_SHA)
 
 
 def gate_a():

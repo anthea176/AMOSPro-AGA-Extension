@@ -1,6 +1,16 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État de travail — R84 v0.13.29 AGAPIC v1/v2, candidate native (14/11/2026)
+## État autoritaire — R84 v0.13.29 `LAST_GOOD` PROMUE (14/11/2026)
+
+**Binaire actif et `LAST_GOOD` identiques** : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes, 85 entrées AP20, 3 groupes natifs (C2P 5 558, IFF 2 508, AGA/AGAPIC 56 580). Le builder `tools/build_aga_r84_agapic.py` reconstruit R84 depuis un builder R83 historique indépendant du chemin mobile `LAST_GOOD`. La R83 (SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, 64 188 octets) reste reconstructible et visible dans l'historique Git.
+
+**Gates A CPU/CI et C AMOS Compiler PASS** ; compilation WinUAE 68030 avec une banque, 4/8 plans, tous indicateurs fonctionnels à 1, `ERR 0`, Chip 0, Fast −11 920 octets (4 ABK conservés dans RAM:). **Gate B Runtime corrigée non attestée séparément** ; Gate D physique et `PRG_STATE 0` strict non testés. Promotion explicitement autorisée sans imposer un nouveau test. Aucun tag ou publication.
+
+[Promotion](AGAPIC_R84_LAST_GOOD_PROMOTION_2026-11-14.md) · [Compiler](AGAPIC_R84_COMPILER_GATE_C_2026-11-14.md) · [Roadmap](ROADMAP.md).
+
+---
+
+## Historique — R84 v0.13.29 candidate avant promotion (14/11/2026)
 
 **R84 active sur `main` :** `dist/AMOSPro_AGA.Lib`, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, **76 commandes, 85 entrées AP20** ; 3 unités natives C2P **5 558**, IFF **2 508**, AGA/AGAPIC **56 580** octets. Nouveau code natif : Info **1 088** et capture v1/v2 **2 510** octets, sans padding ; dispatcher 68020 et toutes les signatures héritées de R83 validés. **Marge AGA 8 954 octets** jusqu'à 65 534. Plus grand écart du chargeur BSR.W : **9 000 octets**.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof of promoted R83 LAST_GOOD and preserved R68/R73/R81/R82 sources.
+"""Read-only proof of promoted R84 LAST_GOOD and preserved R68/R73/R81/R82/R83 sources.
 
 Retains the historical filename for existing CI invocations. R68 and R73
 are immutable deterministic build sources, independent of moving LAST_GOOD.
@@ -24,7 +24,7 @@ def main():
     cur,good,label=verify_active(ROOT)
     baseline,_=build_r68()
     validated,meta=build_r73()
-    assert LAST_GOOD_SHA==R83_SHA
+    assert LAST_GOOD_SHA==R84_SHA
     assert sha256(baseline).hexdigest()==R68_SHA, "Historical R68 source drift"
     assert len(baseline)==51064 and baseline!=cur
     assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
@@ -35,10 +35,13 @@ def main():
     assert historical_r81_meta["ap20_entries"]==77
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
-    assert len(good)==64188 and sha256(good).hexdigest()==R83_SHA, "Promoted R83 LAST_GOOD changed"
-    assert cur==good or sha256(cur).hexdigest()==R84_SHA, "Only pinned R84 candidate may differ from R83 LAST_GOOD"
+    assert cur==good and len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD must be identical to current"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
+    from build_aga_r83_modular import build as build_r83
+    former_r83,former_meta=build_r83()
+    assert len(former_r83)==64188 and sha256(former_r83).hexdigest()==R83_SHA and former_meta["sha256"]==R83_SHA, "Historical R83 source changed"
+    assert good!=former_r83
     assert promoted_meta["size"]==64112 and promoted_meta["commands"]==74
     assert promoted_meta["ap20_entries"]==81 and promoted_meta["compiler_margin"]==4562
     assert current.read_bytes()==cur and last_good.read_bytes()==good
@@ -55,8 +58,8 @@ def main():
                for i,pos,op in SITES), "R81 keyboard/mouse LEA drift"
     report=inspect(parse(good))
     assert not report["issues"]
-    assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==74
-    assert (label.startswith("R83 v0.13.28") if sha256(cur).hexdigest()==R83_SHA else label.startswith("R84 v0.13.29"))
+    assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76
+    assert label.startswith("R84 v0.13.29 AGAPIC v1/v2 PROMOTED LAST_GOOD")
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
@@ -155,9 +158,9 @@ def main():
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert (cur==good or sha256(cur).hexdigest()==R84_SHA) and sha256(good).hexdigest()==R83_SHA
+    assert cur==good and sha256(good).hexdigest()==R84_SHA
     assert validated!=promoted and historical_r81!=promoted
-    print("R83 LAST_GOOD HISTORICAL PROTECTION PASS",R83_SHA,len(good),
+    print("R84 LAST_GOOD BYTE-EXACT PROMOTION PASS",R84_SHA,len(good),
           "active bytes",len(cur),"R81 frozen parent",R81_SHA,"3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 

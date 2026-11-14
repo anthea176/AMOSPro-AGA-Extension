@@ -1,6 +1,18 @@
 # EXTENSION_SOURCE_RULES.md
 
-## ÉTAT ACTUEL — R84 candidate Gate A validée, R83 LAST_GOOD protégée
+## ÉTAT AUTORITAIRE — R84 v0.13.29 PROMUE `LAST_GOOD` (14/11/2026)
+
+**Autorisation explicite de l'auteur : « on peux promote ! »**, confirmée par la demande de ne pas refaire les tests. **Branche `main` uniquement.** `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` sont **strictement identiques**, 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; 76 commandes, 85 entrées AP20 et trois unités natives sans remplissage. **R83 SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`**, 64 188 octets, reste reproductible par son builder historique et l'historique Git ; aucun octet d'archive antérieure n'est modifié.
+
+**Gate A native/CI PASS** (44 Info + 47 captures MC68020) ; **Gate C AMOS Compiler PASS** sur WinUAE 68030, exécutable compilé **avec une banque** : `RESULT 1`, `VERDICT PASS`, `ERR 0`, 4/8 plans, `CLOSE_RETURNED 2`, Chip delta 0, Fast delta **−11 920 octets**. Quatre ABK restent enregistrés dans `RAM:` et ne sont pas effacés avant cette mesure : pas de conclusion de fuite mémoire. **Gate B Runtime sur l’ASC corrigé non attestée séparément** ; promotion acceptée explicitement avec cette limite de preuve. `PRG_STATE 0` strict et Amiga physique Gate D non testés.
+
+**Un seul ASC actif :** `tests/current/AGAPIC_R84_V1_V2_01.asc`, copie exacte dans `tests/passed/`. Ne pas utiliser `Start(N)` pour vérifier une banque absente ; `Length(N)` pour les contrôles d'existence, `Start(N)` uniquement pour les adresses des banques déjà créées. Aucun nouveau test WinUAE imposé à l’auteur. Aucun tag, release, Aminet ni nouvelle branche.
+
+[Promotion R84](docs/AGAPIC_R84_LAST_GOOD_PROMOTION_2026-11-14.md) · [Preuve Compiler](docs/AGAPIC_R84_COMPILER_GATE_C_2026-11-14.md) · [Roadmap](docs/ROADMAP.md).
+
+---
+
+## HISTORIQUE — R84 candidate Gate A validée, avant promotion
 
 **Branche `main` uniquement.** Un seul binaire de travail : `dist/AMOSPro_AGA.Lib` R84 v0.13.29 (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes / 85 AP20). Un seul ASC actif : `tests/current/AGAPIC_R84_V1_V2_01.asc` ; test R83 déjà archivé.
 
