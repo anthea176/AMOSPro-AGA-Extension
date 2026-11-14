@@ -214,6 +214,13 @@ jobs:
           python -B tools/test_c2p_r80_amos_static.py
       - name: Experimental C2P OPT020 source-only structural regression (no candidate)
         run: python -B tools/test_c2p_opt020_variants.py
+      - name: R81 C2P OPT020 real 68020 native Gate A and 020 ILBM LUT (in-memory)
+        run: |
+          python -B tools/build_c2p_r81_opt020.py
+          python -B tools/test_c2p_r81_opt020_native.py
+      - name: Emit R81 candidate bytes only after native Gate A
+        if: "${{ contains(github.event.head_commit.message, '[r81-emit]') }}"
+        run: python -B tools/build_c2p_r81_opt020.py --emit-base64
       - name: R79 C2P Zoom native CPU and pixel-exact Gate A (in memory)
         run: |
           python -B tools/build_c2p_r79_zoom.py
