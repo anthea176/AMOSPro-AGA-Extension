@@ -1,0 +1,96 @@
+Short:        AGA graphics extension for AMOS Pro
+Author:       HWARF (Jerome)
+Uploader:     amethist rumor786 passinbox com (Jerome)
+Type:         dev/amos
+Version:      0.13.27 (R82, 14 Nov 2026)
+Requires:     AMOS Professional, AGA chipset, 68020+
+Architecture: m68k-amigaos
+Distribution: Aminet
+
+Description:
+  AMOSPro AGA Extension is an unofficial graphics extension for
+  AMOS Professional on AGA-equipped Commodore Amiga computers
+  (including A1200/A4000) and AGA-enabled WinUAE. It extends the
+  original AMOS editor and interpreter, without replacing them.
+
+  R82 / v0.13.27 provides 74 native AMOS commands and functions
+  (81 AP20 entries) for indexed AGA graphics and game development.
+  A Motorola 68020 or better is required for this version.
+
+  Main features:
+    - Indexed AGA screens with 2 to 256 colours
+    - Double buffering and back-buffer graphics
+    - IFF/ILBM image loading; palette import, save and editing
+    - RGB24 palette banks, fades and colour cycling
+    - Safe Blitter copy, fill and clear; Copper raster effects
+    - Plot, lines, rectangles, circles and text rendering
+    - AMCAF font-bank selection
+    - Keyboard, mouse and AGA-window cursor control
+    - Compressed AGAPIC image banks, capture, clipped drawing
+    - Fast Icons (16x16x8), CPU drawing and Chip Blitter cache
+    - Chip RAM CBlock capture, drawing and restoration
+    - Chunky-to-planar (C2P) graphics and direct IFF-to-chunky
+      loading, using AMOS DATA/WORK banks
+
+  New since the previously supplied R57 Aminet readme:
+    - 68020-optimized image and Fast Icon drawing/capture
+    - AGAPIC v2: optional embedded RGB24 palette and AGA
+      display ModeID, while retaining AGAPIC v1 reading
+    - AGAPIC v1/v2 source-rectangle drawing and clipping
+    - Palette operations by AMOS bank number:
+      Aga Bank Palette Init / Capture / Apply / Fade
+    - C2P Open, Convert, Close, Blit and Zoom functions
+      (nearest-neighbour zoom, explicit Convert and Swap)
+    - Aga Iff To Chunky: indexed 320x256 ILBM (4-8 planes),
+      uncompressed or ByteRun1, into an AMOS DATA/WORK bank
+
+  The C2P functions operate on a 320x256 indexed AGA screen
+  with double buffering (16/32/64/128/256 colours). They use
+  an 8-bit chunky AMOS bank of at least 81,920 bytes and an
+  intermediate Chip RAM bitmap. C2P conversion does not change
+  the palette or swap the screen automatically.
+
+  IMPORTANT - external C2P dependency:
+    The five Aga C2P functions require c2p.library v1.9,
+    installed separately in LIBS: (usually SYS:Libs/).
+    It is NOT part of AMOSPro_AGA.Lib. Obtain it from Aminet:
+      https://aminet.net/package/dev/misc/c2plib
+    The Aga Iff To Chunky decoder itself does not require it.
+
+  Validation and publication status:
+    R82 has passed native 68020 CPU, ABI and AP20 Gate A tests.
+    At preparation time, R82's WinUAE interpreted (Gate B)
+    and AMOS Compiler (Gate C) tests were still pending.
+    The previously promoted R81 passed Gates A/B/C on its
+    documented WinUAE scenario. This R82 file is a draft for
+    the NEXT Aminet upload, not proof that R82 is promoted.
+    Physical AGA Amiga testing (Gate D) has not been performed.
+    No hardware speedup or exhaustive API coverage is claimed.
+
+  Installation:
+    1. Back up your AMOS configuration and existing libraries.
+    2. Copy AMOSPro_AGA.Lib into your AMOS APSystem directory.
+    3. In AMOS Professional, open Config / Set Interpreter /
+       Set Loaded Extensions, and register it in a free slot.
+       Existing users must preserve their current extension
+       slot. The project historically used slot 14.
+    4. Save the interpreter configuration and restart AMOS.
+    5. For C2P, also install c2p.library v1.9 in LIBS:.
+    6. Import .asc examples via Project / Merge ASCII; these
+       are text sources, not tokenized .AMOS programs.
+
+  Some demos require IFF images, AGAPIC/AGAPAL banks or fonts.
+  Check INSTALL.md and the examples documentation for details.
+  AGAPIC v2 and the four new bank-palette commands belong to
+  the R82 candidate; use the promoted R81 if you require the
+  previously qualified release while R82 validation continues.
+
+  Source code and technical documentation are under the MIT
+  License. Artwork, logos, scans, IFF images and fonts may have
+  separate licensing terms; see ASSETS_LICENSE.md.
+
+  Source, updates and documentation:
+    https://github.com/anthea176/AMOSPro-AGA-Extension
+
+  Designed and developed by HWARF, with assistance from
+  ChatGPT (OpenAI) for programming, testing and documentation.
