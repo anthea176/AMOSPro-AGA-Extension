@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## C2P R79 — démonstration IFF intégrée WinUAE PASS (14/11/2026)
+
+**Preuves utilisateur :** capture `image(20261114-152334).png` et journal `C2P_IFF_SHOWCASE.TXT` issu de `RAM:C2P_IFF_SHOWCASE.TXT`. Source `DH6:iff-TEST/AGA_DEMO_320x256_256c.iff` et compagnon `.chk`. La capture montre les superpositions Blit/Zoom conformes dans leurs grandes lignes, sans anomalie évidente ; aucune comparaison numérique intégrale pixel à pixel du screenshot agrandi avec le PNG golden n'a été effectuée. La capture et le journal ont été transmis dans la conversation, pas ajoutés en tant que ressources Git.
+
+**Journal réel :** `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `VERDICT PASS`, `IFF_OK/PALETTE_OK/RAW_OK/C2P_BASE_OK/BLIT_OK/ZOOM_OK/PIXEL_CHECK_OK/INVALID_CALLS_OK/REOPEN_OK/ESC_OK = 1`, `PIXEL_CHECK_COUNT 14`, `SCREEN_CLOSE_COUNT 1`, `ERR 0`, `CLOSE_RETURNED`. Chip Free **1 384 608 -> 1 384 608 (delta 0)** ; Fast Free **130 438 400 -> 130 438 400 (delta 0)**.
+
+**Bilan :** candidate **R79 v0.13.24 Gates A/B fonctionnelles PASS** : test synthétique sur les 5 profondeurs et démonstration IFF sur 256 couleurs réussis. Le journal autonome ne consigne pas le CPU/AttnFlags ; `PRG_STATE 1` = RUNTIME, **pas** une preuve d'exécutable Compiler. **Gate C Compiler et Gate D physique restent NON TESTÉES.** Candidate inchangée `dist/AMOSPro_AGA.Lib` SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`. R73 `LAST_GOOD` protégée, aucune promotion.
+
+**Suite :** une seule Gate C AMOS Compiler finale prévue sur R79 et l'unique ASC actif `tests/current/C2P_R79_ZOOM_01.asc`, conformément aux règles. Aucun changement natif ni autre test actif requis par ce retour.
+
+---
+
 ## Exemple intégré IFF de référence C2P — à tester WinUAE avant clôture (14/11/2026)
 
 **Demande de l'auteur :** un vrai **programme de démonstration**, pas un PV, utilisant l'image authentique `iff-TEST/AGA_DEMO_320x256_256c.iff` pour valider visuellement et logiquement **IFF/Palette → C2P Open/Convert/Swap → Blit → Zoom → Close/ReOpen**.

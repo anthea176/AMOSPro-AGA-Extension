@@ -1,10 +1,14 @@
-# R79 C2P Zoom — Gate B WinUAE (NON TESTÉE)
+# R79 C2P Zoom — Gate B WinUAE PASS (synthétique et démo IFF)
 
-**Étape en cours :** R79 v0.13.24 `Aga C2P Zoom` (nearest-neighbour), depuis banque DATA/WORK chunky 8 bits, 10 paramètres, source et destination rectangulaires. **Gate A native à qualifier en CI avant d'installer R79. Gate B WinUAE NON TESTÉE ; Gate C AMOS Compiler à la toute fin du chantier C2P.**
+**Étape en cours :** R79 v0.13.24 `Aga C2P Zoom` (nearest-neighbour), depuis banque DATA/WORK chunky 8 bits, 10 paramètres, source et destination rectangulaires. **Gate A native PASS et Gate B WinUAE fonctionnelle PASS** ; Gate C Compiler reste à faire à la fin du chantier C2P.
 
-**Seul ASC prévu :** [C2P_R79_ZOOM_01.asc](C2P_R79_ZOOM_01.asc). Il remplace l'ASC R78 **seulement après réussite de Gate A native et publication de la candidate R79**, sans coexistence de deux ASC actifs dans `tests/current/`. R78 Gates A/B PASS ; R73 `LAST_GOOD` protégée.
+**Seul ASC actif :** [C2P_R79_ZOOM_01.asc](C2P_R79_ZOOM_01.asc) ; candidate R79 publiée, aucun autre programme de test actif dans `tests/current/`. R78 Gates A/B PASS ; R73 `LAST_GOOD` protégée.
 
-## Procédure (après autorisation de la candidate)
+## Résultat WinUAE communiqué — 14/11/2026
+
+Le test synthétique R79 a été confirmé : `C2P_R79_RUNTIME.TXT`, `RESULT 1`, `PASS_DEPTH 5`, Chip/Fast delta 0. Le programme autonome [C2P_IFF_SHOWCASE.asc](../../examples/c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) a également été lancé : **capture du montage et journal PASS, 14/14 indices, ERR 0, deltas Chip/Fast 0/0**, voir [rapport](../../docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md). `PRG_STATE 1` = RUNTIME, pas Compiler. Gate C/D non testées ; R73 LAST_GOOD protégée.
+
+## Procédure de reproduction
 
 1. Installer la bibliothèque candidate R79 dans le slot AMOS AGA habituel, redémarrer AMOS et conserver `LIBS:c2p.library` v1.9 ; WinUAE AGA, CPU 68020+.
 2. Libérer si nécessaire les banques **12 et 13**. Importer l'ASC R79 avec **Merge ASCII dans un programme vide**. Exécuter sous AMOS sans Compiler.

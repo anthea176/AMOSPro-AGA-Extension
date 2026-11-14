@@ -1,6 +1,6 @@
 # Démonstration de référence C2P — image AGA 320×256 × 256 couleurs
 
-**Statut : programme de référence prêt pour essai sous WinUAE.** Le code est vérifié statiquement, mais son exécution AMOS/WinUAE **n'est pas encore validée**. Ne pas confondre avec le test courant `tests/current/C2P_R79_ZOOM_01.asc` dont la Gate B a été transmise.
+**Statut : démonstration WinUAE PASS (14/11/2026)** : capture utilisateur et journal `C2P_IFF_SHOWCASE.TXT`, 14/14 indices, ERR 0, Chip/Fast delta 0. Exemple autonome distinct de l'ASC courant `tests/current/C2P_R79_ZOOM_01.asc`. Gate C/D non testées.
 
 ## Fichiers utilisés
 
@@ -26,6 +26,10 @@
 5. Observer trois étapes : **(1)** image IFF d'origine + sa palette, **(2)** même image produite par `Aga C2P Convert` et `Aga Swap`, **(3)** montage graphique tiré **de cette vraie image** : trois Blit, sept Zoom, agrandissements/réductions, non-entier et clipping sur les quatre bords.
 6. Le programme vérifie les **14 pixels de référence**, deux appels invalides refusés, `Aga C2P Close`, double Close, refus après Close, réouverture, copie et Zoom après ReOpen, puis Convert/Swap final. **Échap** sur l'image finale déclenche la fermeture normale. `Amos To Back` est exécuté avant l'attente clavier, `Amos To Front` après la fermeture de l'écran.
 7. Récupérer le journal `RAM:C2P_IFF_SHOWCASE.TXT` **avant tout reset**. Vérifier `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, toutes les lignes `*_OK 1`, `ERR 0`, `SCREEN_CLOSE_COUNT 1`, et analyser les valeurs Chip/Fast avant/après.
+
+## Résultat WinUAE réel
+
+La capture montre les superpositions Blit/Zoom sans anomalie manifeste. Le journal indique `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, `INVALID_CALLS_OK 1`, `REOPEN_OK 1`, `ESC_OK 1`, `SCREEN_CLOSE_COUNT 1`, `ERR 0` et `CLOSE RETURNED`. Chip Free **1 384 608 -> 1 384 608**, Fast Free **130 438 400 -> 130 438 400** (deltas nuls). Pas de comparaison pixel par pixel intégrale entre capture agrandie et PNG golden ; les 14 indices chunky de référence sont validés. `PRG_STATE 1` = RUNTIME, **pas** Gate C Compiler. [Rapport](../../docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md).
 
 ## Empreintes figées pour les futurs milestones
 

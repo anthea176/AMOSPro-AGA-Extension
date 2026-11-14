@@ -1,6 +1,6 @@
 # Référence intégrée du milestone C2P — vraie image AGA (14/11/2026)
 
-**Statut : programme AMOS créé et contrôlé hors ligne. Validation visuelle sous WinUAE NON ENCORE EFFECTUÉE pour cet exemple.**
+**Statut : démonstration IFF intégrée WinUAE PASS (capture et journal utilisateur du 14/11/2026). Gate C Compiler et Gate D physique NON TESTÉES.**
 
 L'objectif est un **vrai programme graphique intégré**, pas un simple rapport ni une capture du test synthétique R79 : montrer le fichier `iff-TEST/AGA_DEMO_320x256_256c.iff` intact, le réafficher en chunky via C2P, puis appliquer et vérifier sur **ses vrais pixels** les commandes `Aga C2P Blit` et `Aga C2P Zoom`.
 
@@ -52,11 +52,21 @@ CLOSE RETURNED
 
 Les deltas Chip/Fast avant/après sont à relever **après la libération des banques, avant l'écriture du log**. Zéro est attendu en exécution propre ; si non nul, conserver les valeurs complètes et distinguer les ressources libérées d'un ancien lancement interrompu par Ctrl+C. **Les preuves logiques ne remplacent pas une inspection visuelle.** Une passe de ce seul exemple **ne couvre pas** la matrice 16/32/64/128/256 couleurs du test R79 courant.
 
+## Validation WinUAE observée — 14/11/2026
+
+Capture du montage final `image(20261114-152334).png` et journal `C2P_IFF_SHOWCASE.TXT` récupéré depuis `RAM:C2P_IFF_SHOWCASE.TXT`. IFF source : `DH6:iff-TEST/AGA_DEMO_320x256_256c.iff`, compagnon `.chk`. La capture montre les zones Blit/Zoom aux emplacements cohérents avec le programme, sans défaut évident. **Une comparaison intégrale pixel par pixel de la capture agrandie au PNG de référence n'a pas été réalisée.**
+
+Journal réel : `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `VERDICT PASS`, `IFF_OK 1`, `PALETTE_OK 1`, `RAW_OK 1`, `C2P_BASE_OK 1`, `BLIT_OK 1`, `ZOOM_OK 1`, `PIXEL_CHECK_OK 1`, `PIXEL_CHECK_COUNT 14`, `INVALID_CALLS_OK 1`, `REOPEN_OK 1`, `ESC_OK 1`, `SCREEN_CLOSE_COUNT 1`, `ERR 0`, `CLOSE_RETURNED`.
+
+Mémoire : **Chip Free 1 384 608 -> 1 384 608 (delta 0)** ; **Fast Free 130 438 400 -> 130 438 400 (delta 0)**. Aucune variation observée dans cet essai terminé proprement. Le log autonome ne contient pas de CPU/AttnFlags ; `PRG_STATE 1` signifie **RUNTIME** et ne prouve pas la Gate C Compiler.
+
+**Verdict : Gate B fonctionnelle WinUAE PASS pour cet exemple IFF R79**, en plus du test R79 synthétique 5/5 profondeurs déjà validé. Les deux pièces ont été fournies dans la conversation, non versionnées dans le dépôt.
+
 ## État de la bibliothèque
 
 - Candidate **R79 v0.13.24**, `dist/AMOSPro_AGA.Lib`, SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`, 57 344 octets ; C2P Open/Convert/Close/Blit/Zoom.
-- La batterie native R79 (62 scénarios, CI complète) est PASS. Le journal utilisateur `C2P_R79_RUNTIME.TXT` du test **synthétique** courant indique `RESULT 1`, cinq profondeurs PASS et deltas mémoire Chip/Fast à 0. **L'exemple IFF intégré ci-dessus est distinct et NON TESTÉ sous WinUAE.**
-- **AMOS Compiler Gate C reste différée** jusqu'à acceptation de cet exemple intégré ; Amiga physique Gate D non testé.
+- La batterie native R79 (62 scénarios, CI complète) est PASS. Le journal utilisateur `C2P_R79_RUNTIME.TXT` du test **synthétique** courant indique `RESULT 1`, cinq profondeurs PASS et deltas mémoire Chip/Fast à 0. **L'exemple IFF intégré est distinct et maintenant confirmé sous WinUAE (capture et journal, 14/14 indices, deltas mémoire 0/0).**
+- **AMOS Compiler Gate C reste à effectuer une seule fois à la fin du chantier** ; Amiga physique Gate D non testé.
 - **R73 v0.13.18 `LAST_GOOD` est protégée**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Pas de promotion, de release, de tag ni de modification de branche.
 
-**Décision attendue :** essai de l'ASC IFF autonome par l'auteur sous WinUAE, comparaison de la capture avec l'image golden et retour du log. Le document ne déclare pas le chantier C2P clos avant cette étape.
+**Prochaine étape :** validation réelle de la Gate C Compiler selon la procédure prévue ; aucune clôture complète de C2P ni promotion de `LAST_GOOD` avant cette validation et l'accord de l'auteur.

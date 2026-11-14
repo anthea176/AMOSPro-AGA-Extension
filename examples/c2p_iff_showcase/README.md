@@ -1,6 +1,6 @@
 # C2P reference demo — genuine 320×256, 256-colour AGA IFF
 
-**Status: ready for the first WinUAE runtime test, NOT yet runtime verified.** This is a standalone end-to-end visual example and does **not** replace the single active five-depth test under `tests/current/`.
+**Status: WinUAE runtime PASS (2026-11-14)** — user screenshot and `C2P_IFF_SHOWCASE.TXT` log; 14/14 indices, `ERR 0`, Chip/Fast deltas 0/0. This is a standalone end-to-end visual example and does **not** replace the single active five-depth test under `tests/current/`.
 
 ## Files and setup
 
@@ -23,6 +23,10 @@ Requirements: AMOS AGA R79 v0.13.24 candidate, `LIBS:c2p.library` v1.9, WinUAE A
 A golden reference model verifies **14 individual pixel indices**, including index 0 as an opaque sample; the AMOS program checks the same indices by `Peek` before converting. Two invalid calls must be refused without touching the destination. `Amos To Back` is called before the final ESC wait; after **ESC** the program closes resources and returns to AMOS.
 
 Collect **`RAM:C2P_IFF_SHOWCASE.TXT`** before resetting. Expected: `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, all `*_OK 1`, `ERR 0`, `SCREEN_CLOSE_COUNT 1`, normal `CLOSE RETURNED`. Chip/Fast before/after are logged; analyse any difference instead of automatically claiming a leak.
+
+## Actual WinUAE result
+
+The screenshot shows the expected Blit/Zoom regions without an obvious visual anomaly. The log confirms `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, invalid-call rejection, Close/ReOpen/ESC success, `ERR 0` and normal return. Chip Free **1,384,608 -> 1,384,608**, Fast Free **130,438,400 -> 130,438,400**. No full native-resolution pixel diff against the golden PNG was performed on the enlarged screenshot. `PRG_STATE 1` = RUNTIME, **not** Compiler Gate C. [Report](../../docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md).
 
 ### Stable reference fingerprints
 
