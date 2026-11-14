@@ -77,3 +77,10 @@ showcase twice in succession after a fresh AMOS start (no WinUAE reset
 between runs) and archive both RAM logs; each rerun overwrites
 `RAM:C2P_IFF_SHOWCASE.TXT` unless copied elsewhere beforehand.
 Compiled functional runs of AGAPIC and C2P are also still required.
+
+## P4 compiled functional evidence — PASS
+
+- [AGAPIC compiled log](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_AGAPIC_COMPILED_2026-11-14.TXT): RESULT 1, ERR 0, Chip/Fast net 0.
+- [C2P IFF compiled log](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_C2P_SHOWCASE_COMPILED_2026-11-14.TXT): RESULT 1, ERR 0, 14/14 pixels, Chip/Fast net 0.
+
+The author considers the prior Runtime Fast RAM discrepancy non-blocking because the test does not clear banks 12/13 at entry. No further memory investigation requested. Continue modularization on experiment branch only.

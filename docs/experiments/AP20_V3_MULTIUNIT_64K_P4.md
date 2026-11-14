@@ -135,3 +135,13 @@ result. Do not merge/promote to main or change LAST_GOOD.
 Original uploaded-file SHA256:
 - AGAPIC Runtime `17bbb53bb0cd78a404ce6725a31c816be20df8261c57cab3710438aff2f38b13`
 - C2P Runtime `24ef7575a6d8037bb23a46fb00cfad41c919f67e97bbf21536399a6b286ceb26`
+
+## P4 — Compiled AGAPIC and C2P full functional tests: PASS (2026-11-14)
+
+Author-supplied compiled WinUAE logs on P4 true R82 split:
+- [AGAPIC compiled](evidence/AP20_V3_R82_SPLIT_P4_AGAPIC_COMPILED_2026-11-14.TXT): PRG_STATE -1, CPU 68030, RESULT 1, ERR 0, all palette/draw/region checks PASS, Chip/Fast net 0, normal close.
+- [C2P IFF Showcase compiled](evidence/AP20_V3_R82_SPLIT_P4_C2P_SHOWCASE_COMPILED_2026-11-14.TXT): PRG_STATE -1, RESULT 1, ERR 0, 14/14 pixels, Blit/Zoom/Close/ReOpen PASS, Chip/Fast net 0, normal close.
+
+Author clarification: the C2P showcase does not explicitly Erase banks 12/13 on entry before Reserve As Data, so the earlier Runtime Fast RAM before/after measurement does not establish a library leak. **Non-blocking by explicit author decision. No investigation requested.**
+
+**Gates B (Runtime) and C (Compiled) functional suites PASS for AGAPIC and C2P IFF Showcase.** This does not test the R80 IFF-to-chunky decoder, pure interpreter mode, or physical Amiga; no promotion to main or LAST_GOOD.
