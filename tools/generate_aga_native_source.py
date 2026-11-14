@@ -491,13 +491,17 @@ def verified_current_compiler_seeds(parsed):
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
     if sha(current) == R83_SHA:
-        # This exporter supports the historical *single-unit* sources.
-        # verify_active() has already SHA-pinned and rebuilt every R83 unit.
-        # For inherited CFG seeds, use the immutable R82 ancestor rather
-        # than attempting to unwrap three native groups as one monolith.
-        need(sha(last_good) == R82_SHA,
-             'Strict source: frozen R82 provenance lost under R83')
-        current = last_good
+        # This exporter only disassembles historical single-unit sources.
+        # verify_active() has checked the current and promoted R83 bytes.
+        # Rebuild the R82 source independently: LAST_GOOD now holds R83.
+        need(sha(last_good) == R83_SHA and current == last_good,
+             'Strict source: promoted R83 active/LAST_GOOD identity lost')
+        from build_agapic_v2_r82_full_preview import build as build_r82
+        ancestor, _ = build_r82()
+        need(sha(ancestor) == R82_SHA and len(ancestor) == 64112,
+             'Strict source: frozen historical R82 builder provenance lost')
+        current = ancestor
+        last_good = ancestor
     def reconstruct(blob):
         if is_v2_wrapped(blob):
             tok, parts = unwrap_native_parts_v2(blob)
