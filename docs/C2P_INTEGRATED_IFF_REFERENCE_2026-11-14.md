@@ -6,7 +6,7 @@ L'objectif est un **vrai programme graphique intégré**, pas un simple rapport 
 
 ## Références durables
 
-- [Programme AMOS](../examples/c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc) — distinct de l'unique `tests/current/C2P_R79_ZOOM_01.asc`, conservé inchangé.
+- [Programme AMOS](../examples/c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) — distinct de l'unique `tests/current/C2P_R79_ZOOM_01.asc`, conservé inchangé.
 - [Guide de test français](../examples/c2p_iff_showcase/README.fr.md) — installation WinUAE, sélection IFF, `RAM:C2P_IFF_SHOWCASE.TXT`, critères et sécurité des banques.
 - [IFF source](../iff-TEST/AGA_DEMO_320x256_256c.iff) — SHA256 `1820df9bcd77ae111b55927981482ce90c67da06d74646f6b6d92082f00db2db`, **80 776 octets**.
 - [Compagnon chunky](../iff-TEST/AGA_DEMO_320x256_256c.chk) — SHA256 `3f4df7bc229d36ab5a2711913fa8798d1d11bfe82a6792a98e5be67ad470b694`, **81 920 octets**, identique aux indices décodés depuis le `BODY` de l'IFF.

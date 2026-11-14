@@ -6,7 +6,7 @@
 
 | Fichier | Rôle |
 |---|---|
-| [C2P_IFF_SHOWCASE_R79.asc](C2P_IFF_SHOWCASE_R79.asc) | Programme AMOS à importer par **Merge ASCII**, exemple intégré de C2P Open / Convert / Blit / Zoom / Close / ReOpen |
+| [C2P_IFF_SHOWCASE.asc](C2P_IFF_SHOWCASE.asc) | Programme AMOS à importer par **Merge ASCII**, exemple intégré de C2P Open / Convert / Blit / Zoom / Close / ReOpen |
 | [AGA_DEMO_320x256_256c.iff](../../iff-TEST/AGA_DEMO_320x256_256c.iff) | **Image source authentique**, 320×256, 8 bitplanes, palette RGB de 256 couleurs, ByteRun1, `CAMG=$00021000` |
 | [AGA_DEMO_320x256_256c.chk](../../iff-TEST/AGA_DEMO_320x256_256c.chk) | Banque chunky **81 920 octets** décodée hors ligne depuis le BODY du même IFF |
 | [EXPECTED_C2P_SHOWCASE.png](EXPECTED_C2P_SHOWCASE.png) | **Image finale attendue** (320×256×256 couleurs), créée hors ligne depuis le même IFF et les **mêmes** coordonnées Blit/Zoom ; **référence visuelle**, pas preuve WinUAE |
@@ -21,7 +21,7 @@
 
 1. Installer `dist/AMOSPro_AGA.Lib` **R79 v0.13.24** et conserver `LIBS:c2p.library` **1.9**. WinUAE : chipset AGA, CPU **68020+**, mémoire disponible pour deux banques 80 Kio, bitmap SDK C2P et double buffering.
 2. Mettre les fichiers `.iff` et `.chk` **ensemble** sur un disque/volume AmigaDOS accessible depuis WinUAE. Le contenu original IFF du dépôt est **inchangé**.
-3. Importer [C2P_IFF_SHOWCASE_R79.asc](C2P_IFF_SHOWCASE_R79.asc) par **Merge ASCII**, dans un programme vide. Pour cette validation de référence, **lancer en interprété** (ne pas utiliser AMOS Compiler).
+3. Importer [C2P_IFF_SHOWCASE.asc](C2P_IFF_SHOWCASE.asc) par **Merge ASCII**, dans un programme vide. Pour cette validation de référence, **lancer en interprété** (ne pas utiliser AMOS Compiler).
 4. Dans la sélection de fichier, choisir précisément **AGA_DEMO_320x256_256c.iff**. L'exemple dérive automatiquement le chemin `.chk` et contrôle les premiers indices.
 5. Observer trois étapes : **(1)** image IFF d'origine + sa palette, **(2)** même image produite par `Aga C2P Convert` et `Aga Swap`, **(3)** montage graphique tiré **de cette vraie image** : trois Blit, sept Zoom, agrandissements/réductions, non-entier et clipping sur les quatre bords.
 6. Le programme vérifie les **14 pixels de référence**, deux appels invalides refusés, `Aga C2P Close`, double Close, refus après Close, réouverture, copie et Zoom après ReOpen, puis Convert/Swap final. **Échap** sur l'image finale déclenche la fermeture normale. `Amos To Back` est exécuté avant l'attente clavier, `Amos To Front` après la fermeture de l'écran.

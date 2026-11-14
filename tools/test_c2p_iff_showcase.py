@@ -18,7 +18,7 @@ from struct import unpack
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "iff-TEST/AGA_DEMO_320x256_256c.iff"
 CHUNKY = ROOT / "iff-TEST/AGA_DEMO_320x256_256c.chk"
-AMOS = ROOT / "examples/c2p_iff_showcase/C2P_IFF_SHOWCASE_R79.asc"
+AMOS = ROOT / "examples/c2p_iff_showcase/C2P_IFF_SHOWCASE.asc"
 PNG = ROOT / "examples/c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png"
 PNG_SHA = "919b166c1c815df2fe08bb0d0d8c3fdbb6224bdd8b9c0bcb08e40ae3b8cedadb"
 SOURCE_SHA = "1820df9bcd77ae111b55927981482ce90c67da06d74646f6b6d92082f00db2db"

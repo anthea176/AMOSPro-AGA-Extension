@@ -4,7 +4,7 @@
 
 ## Files and setup
 
-- [C2P_IFF_SHOWCASE_R79.asc](C2P_IFF_SHOWCASE_R79.asc): import into **an empty AMOS program with Merge ASCII** (not binary Load).
+- [C2P_IFF_SHOWCASE.asc](C2P_IFF_SHOWCASE.asc): import into **an empty AMOS program with Merge ASCII** (not binary Load).
 - [AGA_DEMO_320x256_256c.iff](../../iff-TEST/AGA_DEMO_320x256_256c.iff): unmodified, original 320×256 × 8-plane ILBM with 256 RGB colours and ByteRun1 compression.
 - [AGA_DEMO_320x256_256c.chk](../../iff-TEST/AGA_DEMO_320x256_256c.chk): companion **81,920-byte raw indexed chunky** image generated deterministically from the same IFF.
 - [EXPECTED_C2P_SHOWCASE.png](EXPECTED_C2P_SHOWCASE.png): **fixed expected 320×256 indexed PNG**, generated offline using the original IFF palette and precisely the Blit/Zoom rectangles from this example. It is a visual comparison target, NOT proof of WinUAE execution. PNG SHA256 `919b166c1c815df2fe08bb0d0d8c3fdbb6224bdd8b9c0bcb08e40ae3b8cedadb`.
