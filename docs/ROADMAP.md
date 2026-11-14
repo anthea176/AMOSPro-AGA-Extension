@@ -40,16 +40,18 @@ Chaîne retenue : **banque DATA/WORK chunky → `c2p.library` → bitmap interm�
 
 **Limites du premier jalon :** 320×256 uniquement, chunky 8 bits, profondeur indexée de 4 à 8 plans ; pas de HAM8, conversion partielle, changement automatique de palette ou autre résolution annoncé comme implémenté. Toute extension de périmètre doit être décidée séparément.
 
-## 3. Après C2P — AGAPIC v2
+## 3. Après C2P — AGAPIC v2 et API Bank palettes
 
-**Statut : prévu, non engagé.** Démarrer uniquement après qualification de la chaîne C2P correspondante et accord de l'auteur. [Format AGAPIC v1](M16_AGAPIC_FORMAT_DESIGN.md).
+**Statut : P0 modèle hôte + contrat approuvés ; code natif NON engagé / aucune R82 candidate.**
+R81 0.13.26 reste `LAST_GOOD`. [Contrat détaillé P0](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) et [AGAPIC v1 historique](M16_AGAPIC_FORMAT_DESIGN.md).
 
-- **Image autonome en banque AMOS DATA/ABK :** conserver la compression planaire RLE, ajouter des métadonnées versionnées (dimensions, profondeur, **mode vidéo AGA**) et une **palette RGB24 facultative** (jusqu'à 256 couleurs).
-- **Compatibilité descendante :** les banques AGAPIC **v1 restent lisibles sans conversion** ; préserver les signatures existantes lorsque possible, notamment `Aga Bank Image Draw`.
-- **Palette indépendante :** aucune application automatique des couleurs lors du dessin, pour ne pas modifier la palette des autres objets. Prévoir une application explicite si une palette est embarquée.
-- **Avant le code :** figer format binaire, longueurs, offsets, indicateurs, limites, transparence, gestion des données corrompues et stratégie de lecture v1/v2. **Réutiliser** les routines de capture, dessin, palette et banques déjà qualifiées.
-- **Noms à l'étude, non approuvés :** `Aga Image Capture V2`, `Aga Bank Image Info`, `Aga Bank Palette Apply`. Aucun token AP20 nouveau tant que les signatures ne sont pas décidées.
-- **Validation future :** ABK `Save/Load`, modes/profondeurs, palettes, clipping, Fast/Chip, `Safe`, ABI/Compiler et Gates A/B/C ; Gate D physique à documenter séparément.
+- **AGAPIC v2** : même RLE planaire et masque que v1, ModeID U32 **obligatoire, égalité stricte** avec le mode réellement affiché ; palette RGB24 **obligatoire et complète (2^Depth)**. Dessin sans application automatique de palette, sans Swap.
+- **AGAPIC v1 inchangé** : dessin et banques v1 toujours utilisables, sans ModeID ni palette. AGAPAL v1 et son format multi-palettes restent inchangés.
+- **Quatre nouvelles API par numéro de banque** : `Aga Bank Palette Init(B,N)`, `Aga Bank Palette Capture(B,I)`, `Aga Bank Palette Apply(B,I)`, `Aga Bank Palette Fade(B,I,VBL)`. Init/Capture = AGAPAL seulement ; Apply/Fade = AGAPAL index I ou AGAPIC v2 index 0 avec ModeID strict ; AGAPIC v1 sans palette refusé. Les anciennes API `Start(B)` sont conservées.
+- **Limite 16 bits mesurée dans le vrai binaire R81** : monolithe 57 034/65 534 octets, **8 500 octets de marge**. Les appels proches de l'origine peuvent nécessiter un branchement long 68020, mais cela ne résout pas la limite globale du pont Compiler V2. Garde-fou indépendant `tools/aga_compiler_capacity.py` ; n'ajouter aucun code natif non qualifié pour masquer un dépassement.
+- **P0 hôte** : `tools/m16_agapic_v2.py` réutilise le parseur et le RLE v1 ; `tools/test_m16_agapic_v2.py` teste 168 couples v1/v2, palette, ABK, ModeID et corruptions ; aucun nouveau token AP20 ni binaire.
+- **Prochaine étape P1** : architecture native économe, source vérifiée du ModeID effectif, ABI 68020, dispatch v1/v2, interfaces palettes et liens PC relatifs ; puis Gates A CPU/CI, B WinUAE interprété, C Compiler une fois en fin de chantier, D matériel réel à part. Aucun PASS anticipé.
+- **Autres API possibles non approuvées** : capture directe v2, métadonnées d'image, atlas. Ne pas ajouter de cinquième commande presque homonyme pour la palette.
 
 ## 4. Backlog — non engagé, sans priorité supplémentaire décidée
 
