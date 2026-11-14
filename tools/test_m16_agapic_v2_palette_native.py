@@ -49,7 +49,7 @@ class PaletteMachine:
         self.bank_number = bank_number
         self.mode_id = mode_id
         self.wait_count = self.load_count = self.rgb_count = 0
-        self.lookup_calls = self.type_calls = self.alloc_calls = self.free_calls = 0
+        self.lookup_calls = self.type_calls = self.alloc_calls = self.free_calls = self.mode_calls = 0
         self.legacy_calls = 0
         self.owned = {}
         self.screen_palette = [(0x22000000,0x44000000,0x66000000)] * 256
@@ -145,6 +145,7 @@ class PaletteMachine:
         self.ret(0)
 
     def get_mode(self,_op,_pc):
+        self.mode_calls += 1
         assert self.cpu.r_reg(Register.A0)==SCREEN+44
         self.ret(self.mode_id)
 
@@ -205,7 +206,13 @@ class PaletteMachine:
             assert cpu.r_sp()==STACK+4
             assert cpu.r_reg(Register.A3)==PARAMS+(8 if self.fade else 4)
             assert cpu.r_reg(Register.D2)==0
-            assert cpu.r_reg(Register.D3)==int(expect_ok)
+            assert cpu.r_reg(Register.D3)==int(expect_ok), (
+                'R82 palette native reject', {'fade':self.fade,'depth':self.mem.r32(STATE+28),
+                  'index':self.index,'vbl':self.vbl,'bank_name':self.mem.r_block(BANK-8,8),
+                  'lookup':self.lookup_calls,'type':self.type_calls,'mode':self.mode_calls,
+                  'alloc':self.alloc_calls,'free':self.free_calls,
+                  'load':self.load_count,'rgb':self.rgb_count,'wait':self.wait_count,
+                  'D3':cpu.r_reg(Register.D3),'A0':hex(cpu.r_reg(Register.A0))})
             for reg,val in preserved.items():
                 assert cpu.r_reg(reg)==val,('ABI register',reg)
             assert not self.owned, 'scratch memory leaked'
