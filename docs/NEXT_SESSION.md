@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## R80 — IFF direct vers banque chunky, candidate Gate A PASS (14/11/2026)
+
+**Fonction ajoutée :** `_OK=Aga Iff To Chunky(File$,Bank)` charge directement le `FORM ILBM` indexé 320×256, 4 à 8 plans, RAW ou ByteRun1, vers une banque AMOS DATA/WORK existante d'au moins 81 920 octets. Aucun fichier `.chk` ni écran planar préalable n'est nécessaire à la commande. Les fonctions C2P R79, les palettes et les 7 LEA clavier/souris demeurent intactes.
+
+**Candidate active sur main :** `dist/AMOSPro_AGA.Lib` **R80 v0.13.25**, 59 708 octets, SHA256 `24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6`, 70 commandes, 77 AP20. **Gate A native CPU 68000 + CI PASS**, 11 images 81 920 pixels exacts (IFF réel + synthétiques 4..8 plans RAW/ByteRun1), rejets, canaries, ABI, libération. [Run CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43611070380) · [Contrat](C2P_R80_IFF_CHUNKY_CONTRACT_2026-11-14.md).
+
+**Seul ASC actif :** [`tests/current/C2P_R80_IFF_CHUNKY_01.asc`](../tests/current/C2P_R80_IFF_CHUNKY_01.asc), inspiré de la démo R79 validée, mais recharge les deux banques en natif directement depuis l'IFF, sans compagnon. Attend 14/14 pixels, 3 Blit, 7 Zoom, Close/ReOpen, rapport `RAM:C2P_R80_RUNTIME.TXT`, mesures Chip/Fast et fermeture Échap. **Gate B R80 WinUAE non testée et Gate C Compiler R80 non testée** ; ne pas confondre les preuves R79 interprétées/compilées avec cette nouvelle commande.
+
+**R73 `LAST_GOOD` strictement protégée**, 51 608 octets SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. Aucun changement d'autre branche, aucune promotion/tag/release. **Prochain essai** : installer R80, importer le seul ASC, sélectionner l'IFF original, récupérer le journal complet. Ensuite seulement qualifier la Gate C selon le jalon convenu.
+
+---
+
 ## R79 — retour complémentaire compilé et besoin de création chunky (14/11/2026)
 
 **Nouveau journal compilé transmis par l'auteur (C2P_IFF_SHOWCASE2.TXT) :** `RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`, `VERDICT PASS`, tous les indicateurs IFF/Palette/RAW/C2P/Blit/Zoom/pixels/refus/ReOpen/ESC = 1, `PIXEL_CHECK_COUNT 14`, `ERR 0`, `SCREEN_CLOSE_COUNT 1`, `CLOSE RETURNED`. Chip Free **1 352 840 -> 1 352 840** et Fast Free **130 112 656 -> 130 112 656** : deltas **0/0**. **Démonstration IFF compilée PASS**, mais **Gate C finale du C2P global non encore revendiquée** : le protocole final exige le programme unique `tests/current/C2P_R79_ZOOM_01.asc`, cinq profondeurs, dans un nouvel exécutable compilé. R73 LAST_GOOD inchangée.

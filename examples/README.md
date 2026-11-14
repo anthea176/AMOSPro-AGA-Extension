@@ -2,7 +2,7 @@
 
 [Français](README.fr.md) · [Installation](../INSTALL.md) · [Promoted R73 library](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
-**Promoted reference: R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). The current working `dist/AMOSPro_AGA.Lib` is the **R79 v0.13.24 development candidate** (Zoom native CPU Gate A PASS; **integrated IFF demonstration WinUAE PASS (14/14 indices, Chip/Fast delta 0)**). Older examples can use R73, but **the C2P IFF showcase requires R79 and `LIBS:c2p.library` v1.9**. Hardware Gate D is untested. Passing library tests does not automatically validate each standalone demo.
+**Promoted reference: R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). **Current R80 v0.13.25 candidate** adds native indexed IFF-to-chunky loading directly into a DATA bank, CPU Gate A PASS; **R80 WinUAE Gate B and Compiler Gate C pending**. The original R79 IFF example remains compatible with R80 but retains its `.chk` fixture; **the new R80 ASC does not require one**. C2P display uses CPU 68020+ and `LIBS:c2p.library`. Physical Gate D untested.
 
 ## Run an example
 
@@ -32,7 +32,8 @@ The basic graphics demos are statically checked. Only the specific user-confirme
 
 | Example | Description | Bank use / validation |
 |---|---|---|
-| [**C2P IFF golden showcase**](c2p_iff_showcase/README.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) · [expected PNG](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | End-to-end real **320×256×256 colour fantasy AGA IFF**: IFF/Palette → C2P Convert/Swap → 3 Blit + 7 Zoom (enlarge/reduce/clip) → Close/ReOpen; 14 golden indices and RAM report | **Requires R79 candidate** plus `LIBS:c2p.library`; original IFF and `.chk` companion together in `iff-TEST/`; **overwrites banks 12/13**; offline oracle verified, **WinUAE runtime PASS (14/14 indices, ERR 0, Chip/Fast delta 0)** |
+| [**C2P direct IFF to chunky (R80)**](../tests/current/README.md) · [ASC](../tests/current/C2P_R80_IFF_CHUNKY_01.asc) | Loads the genuine ILBM into two AMOS DATA banks, then C2P, three Blit, seven Zoom, 14 golden pixels and RAM log, **without offline chunky file**. | **R80 CPU Gate A PASS; WinUAE Gate B pending.** |
+| [**C2P IFF golden showcase**](c2p_iff_showcase/README.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) · [expected PNG](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | End-to-end real **320×256×256 colour fantasy AGA IFF**: IFF/Palette → C2P Convert/Swap → 3 Blit + 7 Zoom (enlarge/reduce/clip) → Close/ReOpen; 14 golden indices and RAM report | **Requires R79 or later, including R80** plus `LIBS:c2p.library`; original IFF and `.chk` companion together in `iff-TEST/`; **overwrites banks 12/13**; offline oracle verified, **WinUAE runtime PASS (14/14 indices, ERR 0, Chip/Fast delta 0)** |
 | [**IFF to ABK converter**](iff_to_abk/README.md) · [ASC](iff_to_abk/IFF_TO_ABK.asc) | Select IFF via `Fsel$`, capture AGAPIC, save **ABK + palette-only IFF**, clear, reload, display **CHARGEMENT ABK**, reconstruct and `Aga Wait Key` | **Erase 11** at startup overwrites existing bank 11; output `RAM:IFF_TO_ABK.abk` and matching `.iff`. WinUAE execution pending |
 | [**ABK viewer**](iff_to_abk/README.md) · [ASC](iff_to_abk/ABK_VIEWER.asc) | Select ABK, automatically load matching palette-only `.iff` in its directory; display on PAL 320×256 until `Aga Wait Key` | Destructive **Erase 11**; requires AGAPIC v1 and companion palette; WinUAE execution pending |
 | [**CBlock Chip Lab**](cblock_chip/README.md) · [ASC](cblock_chip/CBLOCK_CHIP_LAB.asc) | Temporary planar Chip background capture, draw and restore. **Method is mandatory:** `0` CPU8, `1` CPU16, `2` Blitter; **no AUTO** | Requires free bank **11** and R68+; **this standalone showcase is only statically checked**. The R68 API passed separate WinUAE/Compiler tests |

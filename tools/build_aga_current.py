@@ -50,7 +50,14 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R79 0.13.24"):
+    if active.startswith("R80 0.13.25"):
+        from build_c2p_r80_iff_chunky import build as build_r80
+        candidate,meta=build_r80()
+        assert candidate==current and meta["sha256"]=="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"
+        assert meta["size"]==59708 and meta["commands"]==70 and meta["ap20_entries"]==77
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R80 IFF TO CHUNKY; Gate A CPU PASS (11 frames); WinUAE B/Compiler C PENDING",meta)
+    elif active.startswith("R79 0.13.24"):
         from build_c2p_r79_zoom import build as build_r79
         candidate,meta=build_r79()
         assert candidate==current and meta["sha256"]=="ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab"
