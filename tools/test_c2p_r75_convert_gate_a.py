@@ -185,7 +185,7 @@ def main():
     finally:h.cleanup()
     for kind in ('fail_convert','fail_set_convert','partial_blit','removed_bank',
                  'short_bank','bad_src_chip','bad_back_plane','closed','bad_depth',
-                 'no_context','bad_cpu','bad_front_index'):
+                 'no_context','bad_cpu','bad_front_index','bad_back_bpr','front_alias'):
         h=ConvertHarness()
         try:
             assert h.run()==1
@@ -201,6 +201,8 @@ def main():
             if kind=='no_context':h.mem.w32(DB+28,0)
             if kind=='bad_cpu':h.mem.w16(EXEC+0x128,0)
             if kind=='bad_front_index':h.mem.w32(DB+8,2)
+            if kind=='bad_back_bpr':h.mem.w16(BM1,38)
+            if kind=='front_alias':h.mem.w32(SB0,BM1)
             result=h.run_convert()
             assert result==0,(kind,result,h.calls)
             if kind not in ('partial_blit',):
