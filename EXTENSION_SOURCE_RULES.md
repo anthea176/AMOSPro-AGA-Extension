@@ -1,5 +1,21 @@
 # EXTENSION_SOURCE_RULES.md
 
+
+## REGLE PERMANENTE PRIORITAIRE — CIBLE CPU OFFICIELLE : 68020 MINIMUM (14/11/2026)
+
+**Decision explicite de l'auteur, applicable des maintenant a tous les futurs developpements : l'extension AMOSPro AGA cible exclusivement les Motorola 68020 et superieurs (68020/68EC020, 68030, 68040, 68060). Les 68000 et 68010 ne sont plus des CPU a prendre en charge.**
+
+- **Code nouveau :** les routines, optimisations, nouvelles commandes et dependances peuvent utiliser les instructions du 68020. Ne pas creer ni entretenir de variante ou repli 68000/68010, sauf demande explicite de l'auteur. Preserver l'ABI AMOS/AP20, l'acces aux buffers AGA, les protections `Safe`, ainsi que les Gates A/B/C/D.
+- **Validation :** faire des tests d'execution des nouvelles fonctions sur CPU 68020/68EC020 au minimum ; conserver les tests 68000 historiques sans les effacer ou les requalifier. Le 68000 peut encore servir dans des **tests negatifs** (refus propre d'un CPU non pris en charge) mais n'est plus une cible fonctionnelle. Ne jamais assouplir les tests ABI ou les verifications de liens natifs pour ce changement.
+- **Detection :** avant tout code 68020 execute sur une machine non conforme, la verification du CPU doit utiliser une sequence compatible avec le CPU qui l'execute et refuser proprement l'operation, sans Guru. Pour une future verification globale a l'initialisation, definir un contrat et le tester avant implementation ; **cette consigne documentaire ne pretend pas qu'un garde CPU global existe deja dans les bibliotheques actuelles**.
+- **Historique inchange :** ne pas modifier retroactivement les binaires Rxx, la reference `LAST_GOOD`, les tests `tests/passed/`, les chiffres de validation historiques ou les sources 68000 deja qualifiees uniquement pour appliquer cette decision. Les anciennes consignes 68000 restent lisibles comme historique, mais ne fixent plus la cible des **nouveaux** developpements.
+- **Documentation :** lors de la prochaine candidate fonctionnelle et a toute future release, indiquer clairement **68020 minimum** dans les notices d'installation/README, avec les tests WinUAE et Compiler adequats. Aucun nouveau build, changement d'API ou promotion n'est autorise par cette seule mise a jour.
+
+Cette decision sur la cible CPU **prevaut sur toute consigne historique imposant le support 68000 aux nouvelles fonctions**, sans modifier les autres regles de securite, de branche (`main`), de test ou de promotion.
+
+---
+
+
 ## REGLE PERMANENTE — focus des tests AGA / AMOS (14/11/2026)
 
 Le test C2P R76/R77 a produit un faux blocage : `Amos To Front` apres la fermeture d'un ecran AMOS laissait l'affichage AMOS devant la mire AGA suivante. `Aga Key` ne recevait alors pas Echap, et Ctrl+C interrompait le programme en sautant `Erase 12`. **Ce n'est pas un gel de la library C2P.**
