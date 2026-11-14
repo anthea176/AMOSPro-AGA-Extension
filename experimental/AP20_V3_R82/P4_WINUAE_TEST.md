@@ -1,5 +1,12 @@
 # P4 — Test de la véritable séparation R82 (WinUAE, sans promotion)
 
+> **Archive P4 (deux unités).** La bibliothèque P4 est conservée dans
+> l'historique Git au commit `81f26279d8b006688b5fb6546de24881ade5ed90`.
+> La seule bibliothèque active sur cette branche est maintenant
+> [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) = **P5 / trois unités**.
+> Ne plus utiliser ce protocole P4 pour qualifier la bibliothèque P5.
+
+
 ## Fichiers
 
 - [AMOSPro_AGA_V3_R82_SPLIT_TEST.Lib](AMOSPro_AGA_V3_R82_SPLIT_TEST.Lib)
