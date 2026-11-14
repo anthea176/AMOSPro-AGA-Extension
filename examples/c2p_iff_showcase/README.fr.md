@@ -31,6 +31,12 @@
 
 La capture montre les superpositions Blit/Zoom sans anomalie manifeste. Le journal indique `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, `INVALID_CALLS_OK 1`, `REOPEN_OK 1`, `ESC_OK 1`, `SCREEN_CLOSE_COUNT 1`, `ERR 0` et `CLOSE RETURNED`. Chip Free **1 384 608 -> 1 384 608**, Fast Free **130 438 400 -> 130 438 400** (deltas nuls). Pas de comparaison pixel par pixel intégrale entre capture agrandie et PNG golden ; les 14 indices chunky de référence sont validés. `PRG_STATE 1` = RUNTIME, **pas** Gate C Compiler. [Rapport](../../docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md).
 
+## Validation compilée et limite du fichier chunky
+
+Second essai utilisateur `C2P_IFF_SHOWCASE2.TXT` : **`RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`, `VERDICT PASS`, 14/14 pixels, `ERR 0`, `CLOSE RETURNED`**, deltas Chip/Fast **0/0** (Chip 1 352 840 avant/après ; Fast 130 112 656 avant/après). C'est un **PASS compilé de cet exemple**, pas une preuve de la Gate C globale sur le programme synthétique unique à cinq profondeurs.
+
+Le fichier `.chk` a été préparé hors ligne uniquement pour figer une référence pixel exacte. Le **C2P lui-même** lit une banque AMOS DATA/WORK chunky qui peut aussi être remplie par un programme AMOS à l'exécution. L'extension R79 ne fournit pas encore de commande IFF -> banque chunky ; un chargeur dédié est à étudier, pas encore intégré.
+
 ## Empreintes figées pour les futurs milestones
 
 | Référence | SHA256 |

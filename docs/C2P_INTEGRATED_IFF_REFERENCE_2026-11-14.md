@@ -62,6 +62,12 @@ Mémoire : **Chip Free 1 384 608 -> 1 384 608 (delta 0)** ; **Fast Free 130 438 
 
 **Verdict : Gate B fonctionnelle WinUAE PASS pour cet exemple IFF R79**, en plus du test R79 synthétique 5/5 profondeurs déjà validé. Les deux pièces ont été fournies dans la conversation, non versionnées dans le dépôt.
 
+## Essai compilé de la démonstration (14/11/2026)
+
+Le second journal utilisateur `C2P_IFF_SHOWCASE2.TXT` prouve cette fois l'exécution **COMPILED** (`PRG_STATE -1`), `RESULT 1`, `VERDICT PASS`, 14/14 vérifications de pixels, Blit/Zoom/Close/ReOpen et ESC réussis, `ERR 0`, `CLOSE RETURNED`. Chip Free **1 352 840 -> 1 352 840**, Fast Free **130 112 656 -> 130 112 656** (deltas 0/0). **Le showcase compilé est PASS.** Il est distinct de l'ASC courant à cinq profondeurs ; **la Gate C globale finale n'est pas automatiquement acquise**.
+
+**Limite relevée :** ce showcase importe une banque chunky `.chk` générée sur PC. Ce fichier est un choix de fixture, **pas une condition technique de `Aga C2P Open`**. Une banque DATA/WORK peut être remplie directement par AMOS. Pour importer des images IFF sans compagnon, il manque une fonction native de décodage ILBM vers indices chunky (différente de `Aga Iff Load` qui dessine un bitmap planar). Une telle API reste **à concevoir et à approuver** ; ni la R79 ni la référence R73 n'ont changé.
+
 ## État de la bibliothèque
 
 - Candidate **R79 v0.13.24**, `dist/AMOSPro_AGA.Lib`, SHA256 `ea6a710526f25e8d30669fb33a722d5784eb5ea7cc60df5ad10fd10626a86cab`, 57 344 octets ; C2P Open/Convert/Close/Blit/Zoom.

@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## R79 — retour complémentaire compilé et besoin de création chunky (14/11/2026)
+
+**Nouveau journal compilé transmis par l'auteur (C2P_IFF_SHOWCASE2.TXT) :** `RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`, `VERDICT PASS`, tous les indicateurs IFF/Palette/RAW/C2P/Blit/Zoom/pixels/refus/ReOpen/ESC = 1, `PIXEL_CHECK_COUNT 14`, `ERR 0`, `SCREEN_CLOSE_COUNT 1`, `CLOSE RETURNED`. Chip Free **1 352 840 -> 1 352 840** et Fast Free **130 112 656 -> 130 112 656** : deltas **0/0**. **Démonstration IFF compilée PASS**, mais **Gate C finale du C2P global non encore revendiquée** : le protocole final exige le programme unique `tests/current/C2P_R79_ZOOM_01.asc`, cinq profondeurs, dans un nouvel exécutable compilé. R73 LAST_GOOD inchangée.
+
+**Limite d'usage signalée :** l'exemple dépend encore d'un fichier `.chk` chunky créé hors ligne, ce qui n'est pas une obligation du C2P : `Aga C2P Open` accepte une banque DATA/WORK remplie par le programme AMOS lui-même. Pour une image IFF, `Aga Iff Load` décode actuellement vers un bitmap planar, **pas** une banque chunky. Étudier une **nouvelle commande native IFF -> chunky** (par exemple `Aga Iff To Chunky(Fichier$,Banque)`), exploitant le décodeur ILBM RAW/ByteRun1 existant et produisant `320*256` indices. **Simple piste proposée : API/contrat/implémentation non approuvés, aucun binaire modifié.**
+
+---
+
 ## C2P R79 — démonstration IFF intégrée WinUAE PASS (14/11/2026)
 
 **Preuves utilisateur :** capture `image(20261114-152334).png` et journal `C2P_IFF_SHOWCASE.TXT` issu de `RAM:C2P_IFF_SHOWCASE.TXT`. Source `DH6:iff-TEST/AGA_DEMO_320x256_256c.iff` et compagnon `.chk`. La capture montre les superpositions Blit/Zoom conformes dans leurs grandes lignes, sans anomalie évidente ; aucune comparaison numérique intégrale pixel à pixel du screenshot agrandi avec le PNG golden n'a été effectuée. La capture et le journal ont été transmis dans la conversation, pas ajoutés en tant que ressources Git.

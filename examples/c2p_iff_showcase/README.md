@@ -28,6 +28,12 @@ Collect **`RAM:C2P_IFF_SHOWCASE.TXT`** before resetting. Expected: `RESULT 1`, `
 
 The screenshot shows the expected Blit/Zoom regions without an obvious visual anomaly. The log confirms `RESULT 1`, `VERDICT PASS`, `PIXEL_CHECK_COUNT 14`, invalid-call rejection, Close/ReOpen/ESC success, `ERR 0` and normal return. Chip Free **1,384,608 -> 1,384,608**, Fast Free **130,438,400 -> 130,438,400**. No full native-resolution pixel diff against the golden PNG was performed on the enlarged screenshot. `PRG_STATE 1` = RUNTIME, **not** Compiler Gate C. [Report](../../docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md).
 
+## Compiled example validation and chunky source limitation
+
+The user-provided second log `C2P_IFF_SHOWCASE2.TXT` confirms **`RUN_MODE COMPILED`, `PRG_STATE -1`, `RESULT 1`, `VERDICT PASS`, all 14/14 pixel checks, `ERR 0`, normal close**, and zero Chip/Fast memory changes (Chip **1,352,840 -> 1,352,840**, Fast **130,112,656 -> 130,112,656**). This is a **compiled PASS for this showcase** but not automatically the complete C2P Gate C on the unique five-depth active regression program.
+
+The `.chk` file is an offline golden test fixture, **not** a fundamental C2P requirement. AMOS can fill the DATA/WORK chunky bank directly. The current R79 library does not decode an IFF straight into such a bank; an additional native ILBM-to-chunky loader remains a proposal, not implemented.
+
 ### Stable reference fingerprints
 
 | Asset | SHA256 |
