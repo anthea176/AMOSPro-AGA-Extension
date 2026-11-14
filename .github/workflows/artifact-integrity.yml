@@ -38,6 +38,9 @@ on:
       - "tools/m18_ficon16_native_aligned_emit.py"
       - "tools/c2p_r77_close_emit.py"
       - "tools/c2p_r78_blit_emit.py"
+      - "tools/c2p_r79_zoom_emit.py"
+      - "tools/build_c2p_r79_zoom.py"
+      - "tools/test_c2p_r79_zoom_gate_a.py"
       - "tools/m18_ficon16_native_shifted_emit.py"
       - "tools/m18_ficon_ap20_emit.py"
       - "tools/m18_ficon_bank_put_emit.py"
@@ -200,6 +203,13 @@ jobs:
       - name: Emit R78 candidate bytes only after native Gate A
         if: "${{ contains(github.event.head_commit.message, '[r78-emit]') }}"
         run: python -B tools/build_c2p_r78_blit.py --emit-base64
+      - name: R79 C2P Zoom native CPU and pixel-exact Gate A (in memory)
+        run: |
+          python -B tools/build_c2p_r79_zoom.py
+          python -B tools/test_c2p_r79_zoom_gate_a.py
+      - name: Emit R79 candidate bytes only after native Gate A
+        if: "${{ contains(github.event.head_commit.message, '[r79-emit]') }}"
+        run: python -B tools/build_c2p_r79_zoom.py --emit-base64
       - name: R75 C2P Convert (in-memory) 68k Gate A
         run: |
           python -B tools/build_c2p_r75_convert.py

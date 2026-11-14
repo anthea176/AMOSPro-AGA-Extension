@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## R79 C2P Zoom — chantier rouvert avant Gate C (14/11/2026)
+
+**Ordre de l'auteur :** après R77 Close puis R78 Blit (**Gates A/B PASS**), implémenter la **deuxième fonction de manipulation d'image : R79 `Aga C2P Zoom`** avant toute Gate C Compiler et toute clôture C2P. L'ancienne roadmap qui plaçait la Gate C juste après Blit était incomplète.
+
+**Source en cours sur `main` uniquement :** [contrat R79](C2P_R79_ZOOM_CONTRACT_2026-11-14.md), Zoom nearest-neighbour depuis une banque AMOS DATA/WORK chunky vers la banque chunky liée au C2P, **10 arguments**, rectangle source complet et rectangle destination indépendant, agrandissement/réduction, clipping sans déformation, pixel 0 opaque, aucun Convert/Swap implicite. Émetteur natif 68000-safe en nouvelle entrée AP20 append-only et test CPU de géométrie/bornes en préparation. Ne pas considérer R79 installable ni Gate A PASS avant l'exécution de CI sur le binaire réellement reconstruit.
+
+**État stable :** `dist/AMOSPro_AGA.Lib` **R78 v0.13.23**, 55 772 octets, SHA256 `9f449581b868e0dd1361ed3aa25e27d3c690967a6236ac55ce60ed06b4067e7c` (Gates A/B PASS, mémoire Chip/Fast delta 0) ; un seul ASC actif `tests/current/C2P_R78_BLIT_01.asc`. **R73 `LAST_GOOD` inchangée**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. **Gate C Compiler et Gate D physique NON TESTÉES.**
+
+**Suite :** native R79 → Gate A CPU+CI → un seul ASC R79 avec `Amos To Back` et journal RAM → Gate B WinUAE R79 → **une seule Gate C Compiler globale après Zoom**. Pas de nouveau dépôt/branche, pas de promotion R73, pas de publication.
+
 ## C2P R78 — Gates A et B PASS, Gate C Compiler à exécuter (14/11/2026)
 
 **Dernière preuve reçue :** journal utilisateur `C2P_R78_RUNTIME.TXT` (`PRG_STATE 1`, CPU Exec 68030). **`RESULT 1`, `VERDICT PASS`, `PASS_DEPTH 5`, `CLOSE_COUNT 5`, `C2P_CLOSE_OK 5`, `EMPTY_CLOSE_OK 5`, `REOPEN_OK 5`, `BLIT_COPY_OK 5`, `BLIT_PIXEL_OK 5`, `BLIT_REJECT_OK 5`, `BLIT_REOPEN_OK 5`, `ERR 0`, `NOS 0`.** Chip Free **1 522 984 → 1 522 984** et Fast Free **133 036 864 → 133 036 864** : **deltas 0/0**. L'auteur a vu des blocs issus des motifs, sans capture ; résultats des pixels enregistrés corrects. **Gate B fonctionnelle R78 PASS**. [Rapport](C2P_R78_BLIT_WINUAE_GATE_B_2026-11-14.md).

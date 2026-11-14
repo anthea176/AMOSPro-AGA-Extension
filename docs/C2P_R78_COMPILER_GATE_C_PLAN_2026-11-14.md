@@ -1,3 +1,5 @@
+> **AVIS DE CHANGEMENT DU 14/11/2026 : ce plan R78 de Gate C est HISTORIQUE, non à exécuter maintenant.** L'auteur a confirmé qu'une seconde fonction de manipulation d'image **R79 `Aga C2P Zoom`** doit précéder la clôture C2P. Le contrat est dans [C2P_R79_ZOOM_CONTRACT_2026-11-14.md](C2P_R79_ZOOM_CONTRACT_2026-11-14.md). **La Gate C Compiler unique se fera sur le dernier ASC C2P R79, une fois sa Gate B WinUAE validée**, sans modifier R73 `LAST_GOOD`.
+
 # C2P-5 — Plan de validation AMOS Compiler, candidate R78 (14/11/2026)
 
 **Statut : À EXÉCUTER SOUS WINUAE — Gate C NON TESTÉE.** La Gate B du même ASC est **PASS** avec journal utilisateur et deltas Chip/Fast 0. Ce plan n'est pas une preuve d'exécution.
