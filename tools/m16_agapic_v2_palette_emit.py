@@ -77,7 +77,9 @@ def _emit(is_fade: bool, native_start: int, legacy_target: int):
     c.move(M(0,-4),D(0))
     c.imm('cmp',0x414c2020,D(0)); b(6,'try_image')
     # AGAPAL v1: exactly the old API implementation (full native preflight).
-    fl('start',D(0)); c.move(D(0),M(2,68))
+    # R32 Apply consumes one LONG Start at frame+64; R33 Fade takes
+    # slot at +64 then Start at +68. Do not shift Apply by four bytes.
+    fl('start',D(0)); c.move(D(0),M(2,68 if is_fade else 64))
     if is_fade:
         fl('index',D(0)); c.move(D(0),M(2,64))
     fl('arg',D(3))
