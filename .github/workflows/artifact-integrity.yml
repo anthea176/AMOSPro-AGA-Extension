@@ -394,6 +394,8 @@ jobs:
         run: python -B tools/test_m16_agapic_v2_bank_wrap_native.py
       - name: Native unified AGAPAL/AGAPIC v2 Bank Palette Apply/Fade MC68020 Gate A
         run: python -B tools/test_m16_agapic_v2_palette_native.py
+      - name: Native AGAPIC v1/v2 Image Region MC68020 Gate A (no installable candidate)
+        run: python -B tools/test_m18_image_region_v2_native.py
       - name: R82 four Bank Palette AP20 entries and 16-bit budget, in memory only
         run: python -B tools/build_agapic_v2_r82_api_preview.py
       - name: Protected installables are unchanged by tests
