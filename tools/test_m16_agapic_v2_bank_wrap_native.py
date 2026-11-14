@@ -18,6 +18,7 @@ from m16_agapic_v2_bank_wrap_emit import (
 
 ROOT = Path(__file__).resolve().parents[1]
 R81_SHA = '9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4'
+from active_library import R82_SHA
 CODE = 0x180000
 EXEC = 0x8000
 BANK_LOOKUP_TRAP = 0x2800
@@ -132,7 +133,7 @@ def once(emit, label, bank, arg, *, compiled=False, cpu_type=CPUType.M68020):
 def main():
     expected=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert sha256(expected).hexdigest()==R81_SHA
-    assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==expected
+    assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA)
     count=0
     for compiled in (False,True):
         for emitter,name,args in (
@@ -145,7 +146,7 @@ def main():
             count += once(emitter,name,10,args[0],compiled=compiled,cpu_type=CPUType.M68000)
     print('R82 simple bank wrappers real MC68020 Gate A PASS:',
           count,'native executions, BSR.L beyond 32KiB, ABI, bank failures, CPU000 refusal')
-    print('R81 last good unchanged; AGAPIC v2 Apply/Fade not implemented.')
+    print('R81 LAST_GOOD pinned; active R81/R82 accepted, no WinUAE Gate B claimed.')
 
 
 if __name__=='__main__':

@@ -20,6 +20,7 @@ from m16_agapic_v2_draw_emit import emit_image_draw_v2, LVO_GETVPMODEID
 
 ROOT = Path(__file__).resolve().parents[1]
 R81_SHA = '9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4'
+from active_library import R82_SHA
 MODE_ID = 0x00021000
 GFX = 0x34b00
 SCREEN = 0x34a00
@@ -100,7 +101,7 @@ def main():
     assert 'v2_screen_mode_ok' in labels and 'header_v1' in labels
     assert labels['paint_group'] < len(code)
     assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() == R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() == R81_SHA
+    assert sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA)
     count = 0
     for depth in (4, 8):
         w,h = 17,7
