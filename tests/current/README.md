@@ -1,19 +1,14 @@
-# État des tests C2P / R74 — pas de GDB (14/11/2026)
+# Test actif C2P R74 / Aga C2P Open — 14 novembre 2026
 
-**La procédure de diagnostic P2/GDB est abandonnée. Ne pas lancer l'ancien ASC C2P_P2_R73_BITMAP_01.asc pour le nouveau chantier.** Son fichier reste temporairement l'unique ASC de tests/current par continuité du contrôle statique ; il sera **remplacé**, pas doublonné, dès qu'une candidate native R74 sera disponible. Il ne prouve aucune compatibilité C2P.
+**Unique ASC actif : [C2P_R74_OPEN_01.asc](C2P_R74_OPEN_01.asc).** Le test P2/GDB a été retiré : **aucun PowerShell, aucun port réseau et aucune modification WinUAE**.
 
-Architecture R74 : [bitmap intermédiaire sans GDB](../../docs/C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). Modèle hôte 16 tests PASS. **Pas de nouvelle commande ni nouveau binaire C2P**, aucune action manuelle demandée jusqu'au futur ASC WinUAE interprété. Les Gates A/B/C de R73 restent validées, la R73 LAST_GOOD est protégée.
+**Dépendances :** installer la candidate `dist/AMOSPro_AGA.Lib` (R74 v0.13.19, 52 612 octets) dans le répertoire des extensions AMOS, et placer le fichier `libs/c2p.library` du SDK utilisateur dans **LIBS:** de l'Amiga. CPU 68020+, écran AGA. La banque AMOS **12 doit être libre** : l'ASC la réserve (81 920 octets) et l'efface après le test.
 
-## Historique P2 — test obsolète (ne pas exécuter)
+1. Importer le programme dans AMOS Professional par **Merge ASCII** et exécuter **en interprété**.
+2. Le programme teste Open, Double Buffer, le refus de double Open et le nettoyage Screen Close sur les écrans **16, 32, 64, 128 et 256 couleurs**.
+3. Lire les lignes `COL ... OPEN 1 DB 1 C2P 1 DUP 0 POST 0`, puis **`RESULT 1`** et **`CLOSE RETURNED`**. La quantité de Chip RAM avant/après est affichée pour information.
+4. Transmettre une capture de la sortie. Aucune image générée : **Convert n'est pas encore implémenté**.
 
-# Test actif C2P/P2 — disposition mémoire sous WinUAE (14/11/2026)
+**Statut vérifié :** Gate A CPU hôte R74 PASS, structure AP20 et protections R73 PASS ; Gate B WinUAE R74 NON TESTÉE, Gate C Compiler R74 NON TESTÉE, Gate D NON TESTÉE. R73 v0.13.18 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte.
 
-La bibliothèque R73 v0.13.18 promue `LAST_GOOD` est **inchangée** dans `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Les Gates A/B/C de R73 restent PASS (Gate D non testée). Le test de clôture R73 est consultable dans l'[historique Git au commit cf30d8d](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cf30d8d48c73c64bb369810cde9ac2c0a350195d/tests/current/OPT020_P3_R73_INTERPRETED_01.asc).
-
-**Unique ASC actif :** `C2P_P2_R73_BITMAP_01.asc`. N'utilise aucune banque auxiliaire, aucun nouveau token C2P et aucune conversion.
-
-1. Lancer l'ASC dans AMOS **interprété** sous WinUAE AGA 68020+ : `Aga Screen Open(320,256,256,$00021000)`, `Aga Double Buffer`, `Aga Swap` avec retries bornés, puis une boucle `Aga Key` non bloquante ; **Alt+Tab ne ferme pas l'écran**.
-2. Pendant l'attente clavier, relever `SB0/SB1` en lecture seule via `tools/c2p_p2_winuae_gdb.py` (WinUAE 6.1 beta 18+ avec serveur GDB) et sauvegarder `c2p_p2_observation.json`. [Guide exact](../../docs/C2P_P2_WINUAE_GDB_PROBE_2026-11-14.md).
-3. Une fois le relevé effectué, revenir dans l'écran AGA et appuyer sur **Échap** (RAWKEY `$45`, décimal `69`) pour terminer. Contrôler `RESULT 1`, `CLOSE RETURNED`, mémoire Chip avant/après identique. Ceci est un test de cycle de vie, pas une preuve de conversion.
-
-**Statut actuel :** 18 tests synthétiques hôte PASS ; **Gate B P2 réelle pas encore exécutée**, Gate C/D C2P non testées. `tests/passed/` et les archives restent intacts.
+[Contrat technique R74](../../docs/C2P_R74_OPEN_2026-11-14.md).

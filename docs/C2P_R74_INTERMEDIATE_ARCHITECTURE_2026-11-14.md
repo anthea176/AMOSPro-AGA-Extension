@@ -1,6 +1,6 @@
 # C2P R74 — bitmap intermédiaire (14/11/2026)
 
-**Statut : architecture acceptée, modèle hôte 16/16 PASS. Aucun code natif C2P intégré, aucune nouvelle Lib ou Gate B C2P réalisée.** Le diagnostic GDB P2 est abandonné. Aucun essai PowerShell/WinUAE spécial n'est demandé.
+**Statut actualisé : Aga C2P Open est intégrée dans la candidate R74 v0.13.19, 4..8 bitplanes, Gate A native CPU hôte PASS. Convert et Close non intégrées ; Gates B/C/D R74 non testées.** Le diagnostic GDB P2 est abandonné. Aucun essai PowerShell/WinUAE spécial n'est demandé.
 
 ## Chaîne de conversion prévue
 
@@ -23,11 +23,11 @@
 
 ## Première fonction à contractualiser individuellement
 
-**_OK=Aga C2P Open(Bank)** — une fonction AMOS entière, retour **1 succès / 0 échec**.
+**_OK=Aga C2P Open(Bank)** — fonction AMOS entière effectivement intégrée en R74, retour **1 succès / 0 échec**.
 
 Proposition précise : Bank est un numéro positif de banque AMOS DATA/WORK vivante. L'extension contrôle type, taille >= 81 920, écran et CPU puis OpenLibrary, CreateContext, SetContextParameter(TYPE=BITMAP, WIDTH=320, HEIGHT=256, PLANAR_FORMAT=8, CHUNKY=pointeur), InitializeContext. Aucun pixel ne change. Un second Open alors qu'un contexte est actif renvoie 0 sans l'altérer. Tout échec libère immédiatement les allocations partielles. Aga Screen Close devra libérer le contexte automatiquement, y compris après interruption. Le pointeur de banque devra être revérifié avant Convert.
 
-**La règle du dépôt impose un contrat validé explicitement pour chaque fonction avant de coder cette fonction.** L'accord sur l'architecture ne préjuge pas des commandes suivantes.
+**L'auteur a validé le contrat Open et sa généralisation aux profondeurs 4..8 plans ; l'implémentation native R74 a passé Gate A.** L'accord Open n'autorise pas la programmation anticipée de Convert/Close.
 
 Commandes envisagées ultérieurement, avec contrats et autorisations séparés :
 - **Aga C2P Convert** : revalidation source, conversion + BltBitMap vers le back Safe, WaitBlit, résultat 1/0 ; pas de Swap implicite.

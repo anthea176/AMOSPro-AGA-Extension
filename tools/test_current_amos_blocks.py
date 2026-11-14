@@ -84,6 +84,22 @@ def main():
         assert "_K=Aga Wait Key" not in source, "Alt+Tab must not terminate P2 diagnostics"
         assert "Aga C2P" not in source, "P2 diagnostics must not call C2P"
         print("PASS: C2P P2 active ASC opens 320x256x8 and holds both buffers, then cleans up (STATIC ONLY)")
+    if files and files[0].name == "C2P_R74_OPEN_01.asc":
+        source = files[0].read_text("ascii")
+        required = (
+            "Reserve As Data 12,81920", "_LEN=Length(12)",
+            "_NOS=Aga C2P Open(12)", "_BADBANK=Aga C2P Open(4)",
+            "For _DEPTH=4 To 8", "_COL=16",
+            "_OPEN=Aga Screen Open(320,256,_COL,$00021000)",
+            "_DB=Aga Double Buffer", "_C2P=Aga C2P Open(12)",
+            "_DUP=Aga C2P Open(12)", "Aga Screen Close",
+            "_POST=Aga C2P Open(12)", "_COL=_COL*2",
+            "Erase 12", 'Print "RESULT ";_RESULT', 'Print "CLOSE RETURNED"',
+        )
+        assert all(x in source for x in required), "R74 C2P Open ASC contract incomplete"
+        assert "Aga C2P Convert" not in source and "Aga C2P Close" not in source
+        assert source.index("Reserve As Data 12") < source.index("For _DEPTH=4 To 8") < source.index("Erase 12")
+        print("PASS: C2P R74 active ASC covers 4..8 planes, duplicate Open, cleanup; STATIC ONLY")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")

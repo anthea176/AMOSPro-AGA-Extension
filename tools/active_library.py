@@ -35,7 +35,8 @@ R69_SHA="9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"  # OP
 R70_SHA="fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"  # FAILED WinUAE, never active
 R71_SHA="1f4cdaabcc0e4ec641b1a60aec06e780187d66b7aaef172131fc7a7011ec85b0"  # corrected P2 links; interpreted Gate B PASS
 R72_SHA="fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"  # D3 reset; interpreted Gate B PASS
-R73_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"  # Fast Icons capture/draw 020, CPU/ABI Gate A PASS; WinUAE B pending
+R73_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"  # Fast Icons capture/draw 020, Gates A/B/C PASS
+R74_SHA="887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"  # Open-only C2P candidate; NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.9_BANK_NUMBER_R54_CANDIDATE.Lib": "f5c5c40c94eb48ffd1b13aa8e7ca216248f77a2939793939d3e0001242ac82f0",
@@ -62,7 +63,7 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA):
+    if current_sha in (R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA):
         from compiler_bridge_v2_probe import is_v2_wrapped
         assert is_v2_wrapped(cur), "R58/R59/R60 must use audited V2 Compiler bridge"
     else:
@@ -73,6 +74,19 @@ def verify_active(root: Path):
         # Fail closed: exact SHA/structural CI cannot override a fatal WinUAE
         # illegal instruction. Keep the P2 builder in memory until fixed.
         raise AssertionError("R70 FAILED WinUAE Gate B (Guru $80000004); restore the pinned R69 working library")
+    if current_sha==R74_SHA:
+        from build_c2p_r74_open import build as build_r74
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        from c2p_r74_relink import check_cross_r74
+        candidate,meta=build_r74()
+        tokens,parts=unwrap_native_parts_v2(cur)
+        assert cur==candidate and cur!=good, "R74 must match its builder, not promoted R73"
+        assert len(cur)==52612 and meta["commands"]==65 and meta["ap20_entries"]==72
+        assert len(parts)==71
+        assert_native_links(parts[:70]);check_cross_r74(parts)
+        assert sha256(good).hexdigest()==LAST_GOOD_SHA, "R73 LAST_GOOD changed"
+        return cur,good,"R74 0.13.19 C2P Open 4-8 bitplanes candidate; native Gate A pending; WinUAE B/C NOT TESTED; R73 LAST_GOOD protected"
     if current_sha==R73_SHA:
         from build_opt020_p3_r73 import build as build_r73
         from compiler_bridge_v2_probe import unwrap_native_parts_v2

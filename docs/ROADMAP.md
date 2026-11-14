@@ -2,9 +2,9 @@
 
 > **Feuille de route active, mise à jour le 14 novembre 2026.** Ce fichier suit les **décisions et travaux à venir**, pas les journaux de chaque révision. Les ~90 000 caractères de l'ancienne roadmap ont été conservés dans l'[archive historique intégrale](history/ROADMAP_ARCHIVE_2026-11-12.md), avec les liens relatifs ajustés. Les anciens états de cette archive ne sont pas les états courants.
 
-## C2P / R74 — architecture sans GDB acceptée (14 novembre 2026)
+## C2P / R74 — Aga C2P Open native candidate Gate A PASS (14 novembre 2026)
 
-**Décision :** abandonner le relevé GDB des bitplanes Intuition. Le C2P crée son propre bitmap CHIP via c2p.library, puis copie les huit plans avec graphics.library/BltBitMap vers le back buffer AGA Safe, suivi de WaitBlit. Un seul contexte et une seule allocation bitmap. **16 tests modèle hôte PASS**, pas encore de code natif/AP20 ni de test WinUAE. Voir [contrat R74](C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). Le contrat exact de chaque nouvelle fonction est à valider individuellement selon EXTENSION_SOURCE_RULES.md. **Aucune manipulation PowerShell/GDB demandée à l'auteur ; R73 LAST_GOOD intacte.**
+**R74 v0.13.19 CANDIDATE créée :** `Aga C2P Open(Bank)` validée par l'auteur pour les écrans AGA 320×256 **16 à 256 couleurs** (4..8 plans). Bibliothèque active **52 612 octets**, SHA256 `887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23`, 65 commandes / 72 AP20. Un contexte c2p.library avec bitmap Chip interne, nettoyage automatique Screen Close/AMOS exit. **Gate A native CPU 68000/020 PASS**, Gates B WinUAE / C Compiler / D physique **NON TESTÉES**. [Contrat R74 Open](C2P_R74_OPEN_2026-11-14.md). `Aga C2P Convert` et `Aga C2P Close` restent à concevoir/approuver **individuellement** ; la conversion future utilisera BltBitMap vers le back Safe + WaitBlit. Aucun GDB/PowerShell. **R73 LAST_GOOD inchangée.**
 
 ## OPT020 — R73 v0.13.18 promue LAST_GOOD, Gates A/B/C PASS (14 novembre 2026)
 

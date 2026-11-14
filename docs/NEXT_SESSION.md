@@ -2,7 +2,7 @@
 
 ## Nouveau chantier C2P / R74 — bitmap intermédiaire (14/11/2026)
 
-Le P2 GDB est **abandonné** après essai utilisateur : aucune autre action PowerShell/GDB ou configuration de port WinUAE. Architecture choisie : c2p.library TYPE_BITMAP alloue un bitmap CHIP intermédiaire 320×256×8, puis BltBitMap le copie vers le **back** Intuition après contrôle Safe et WaitBlit ; Aga Swap reste séparé. 16 tests modèle Python hôte PASS (bitmap planaire, entrelacé, protection front/back), sans prétendre à un Gate A CPU/WinUAE. **Aucun nouveau token/binaire C2P à ce stade.** Détailler et valider individuellement le contrat de Aga C2P Open(Bank) avant de coder la première nouvelle fonction. [Plan R74](C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md). R73 v0.13.18 reste LAST_GOOD inchangée.
+**R74 v0.13.19 candidate native installable (PAS LAST_GOOD) :** `dist/AMOSPro_AGA.Lib` 52 612 octets, SHA256 `887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23`, 65 commandes, 72 AP20. **Aga C2P Open(Bank)** seul nouveau token, détecte automatiquement 4..8 plans sur un écran 320×256, réserve bitmap intermédiaire Chip via c2p.library v1.9 et nettoie au Screen Close et sortie AMOS. **Gate A native CPU hôte PASS**, Gate B WinUAE encore à faire. Unique ASC : `tests/current/C2P_R74_OPEN_01.asc` ; bibliothèque externe dans `LIBS:`. **Ne pas lancer le test P2 GDB : abandonné.** Après WinUAE, discuter séparément les contrats Convert et Close ; ne pas coder sans accord. [Guide R74](C2P_R74_OPEN_2026-11-14.md). R73 LAST_GOOD 51 608 octets reste intacte.
 
 ## Reprise — R73 v0.13.18 PROMUE LAST_GOOD, OPT020 terminé (14/11/2026)
 

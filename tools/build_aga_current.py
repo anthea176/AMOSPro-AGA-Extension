@@ -50,7 +50,13 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R73 0.13.18"):
+    if active.startswith("R74 0.13.19"):
+        from build_c2p_r74_open import build as build_r74
+        candidate, meta = build_r74()
+        assert candidate == current and meta["sha256"] == "887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+        print("CURRENT R74 C2P OPEN CANDIDATE; R73 LAST_GOOD intact; WinUAE B/C NOT TESTED", meta)
+    elif active.startswith("R73 0.13.18"):
         from build_opt020_p3_r73 import build as build_r73
         candidate, meta = build_r73()
         assert candidate == current == LAST_GOOD.read_bytes() and meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
