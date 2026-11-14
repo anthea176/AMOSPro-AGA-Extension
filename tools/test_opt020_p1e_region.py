@@ -316,20 +316,31 @@ def v2_structure(native):
         from build_opt020_p2_r71 import build as build_r71, R71_SHA
         from build_opt020_p2_r72 import build as build_r72
         from build_opt020_p3_r73 import build as build_r73
+        from build_c2p_r74_open import build as build_r74
+        from build_c2p_r75_convert import build as build_r75
+        from c2p_r74_relink import check_cross_r74
         from native_relative_links import assert_native_links
         r69, r69meta = build_r69()
         r70, r70meta = build_r70()
         r71, r71meta = build_r71()
         r72, r72meta = build_r72()
         r73, r73meta = build_r73()
-        assert current in (r69, r70, r71, r72, r73), "current must be EXACT pinned OPT020 R69/R70/R71/R72/R73"
+        r74, r74meta = build_r74()
+        r75, r75meta = build_r75()
+        assert current in (r69, r70, r71, r72, r73, r74, r75), (
+            "current must be an EXACT SHA-pinned R69..R75 deterministic build")
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
         assert r72meta["sha256"] == "fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
         assert r73meta["sha256"] == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
-        if current in (r71, r72, r73):
-            assert_native_links(unwrap_native_parts_v2(current)[1])
+        assert r74meta["sha256"] == "887f29c0350f47af9d93d1ebf64fc405c8542e897ff0e7d9d95eda6f814c2a23"
+        assert r75meta["sha256"] == "c5a5a0e45e5b07012247937bf1af0371836f0d119577c102d62a28f4ca1ad3af"
+        if current in (r71, r72, r73, r74, r75):
+            parts_current=unwrap_native_parts_v2(current)[1]
+            assert_native_links(parts_current[:70])
+            if current in (r74, r75):
+                check_cross_r74(parts_current[:70])
     tokens, parts = unwrap_native_parts_v2(old)
     _, installed, title = unpack_ap20(old)
     assert len(parts) == 70 and len(installed) == 71
