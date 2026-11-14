@@ -11,7 +11,7 @@
 | **Validation R82** | **PASS** : Gate A native, WinUAE Runtime et AMOS Compiler sur le banc AGAPIC v1/v2 en CPU 68030. **Non vérifiés** : mode strictement interprété `PRG_STATE 0` et Amiga physique. |
 | **Capacité Compiler V2** | Monolithe de **60 972 / 65 534 octets**, **4 562 octets disponibles**. Chaque nouvelle commande doit être mesurée avant intégration. |
 | **Test AMOS actif** | `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` (unique ASC actif). |
-| **Développement suivant** | **Aucun contrat de nouvelle commande approuvé à ce stade.** Premier besoin à trancher ci-dessous. |
+| **Priorités avant M19** | **1. AP20 V3 multi-unités** : lever la limite de 64 Ko dans la branche expérimentale existante, sans validation WinUAE/Compiler complète à ce jour. **2. AGAPIC v2 complet** : lecture de métadonnées par banque et capture native avec pixels, palette RGB24 et DisplayModeID. |
 
 Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGAPIC_R82_LAST_GOOD_PROMOTION_2026-11-14.md).
 
@@ -25,25 +25,57 @@ Références : [binaire et API actuels](../README.fr.md) · [validation R82](AGA
 
 La présence d'une fonction dans R82 ne signifie **pas** que les 74 commandes ont chacune été testées dans toutes les configurations.
 
-## 3. Prochaine décision — métadonnées d'une image AGAPIC
+## 3. Chantiers prioritaires avant M19 — ordre retenu le 14/11/2026
 
-**Besoin identifié, fonction AMOS non disponible en R82.**
+Ces **deux chantiers passent avant M19**. Le premier est expérimental et déjà engagé ; le second est à spécifier puis développer. Cette décision de priorité n'autorise ni fusion, ni promotion, ni changement de binaire sans validation et accord explicite.
 
-Pouvoir interroger une **banque AGAPIC v1 ou v2** sans décoder ni dessiner l'image :
+### Chantier 1 — AP20 V3 : dépasser la limite des 64 Ko du Compiler V2
 
-| Information demandée | Disponibilité dans le format |
-|---|---|
-| Version, largeur, hauteur, profondeur, masque, codec | v1 et v2 |
-| Nombre d'entrées de palette, format des pixels, DisplayModeID | v2 (absents de v1) |
-| Couleurs RGB24 de la palette intégrée | v2 |
+- **En cours uniquement sur la branche déjà existante** `experiment/ap20-v3-multiunit-64k`. La R82 v0.13.27 promue sur `main` et sa `LAST_GOOD` restent intactes.
+- **Contrainte réelle R82 :** unité native Compiler V2 monolithique de **60 972 / 65 534 octets** ; **4 562 octets** encore disponibles. La limite concerne **chaque unité AP20 native / le pont Compiler**, pas simplement la taille totale du fichier `.Lib`.
+- **État P4 expérimental :** vraie R82 séparée en **deux unités natives**, C2P **20 032 octets** (dont 12 000 octets de remplissage non exécutable pour le test) et AGA/AGAPIC **52 974 octets**, soit **73 006 octets agrégés**. L'API publique R82 reste prévue inchangée. Les essais CPU des stubs/dispatchers ne constituent **pas** une validation des corps de fonctions ni des Gates WinUAE/Compiler.
+- **À qualifier :** démarrage AMOS sans erreur, chargement/dispatch AP20 et déplacements `BSR.W`/RBSR ; Gate B WinUAE Runtime puis Gate C avec **nouvel exécutable Compiler** ; régressions AGA/AGAPIC v1/v2 et C2P (y compris IFF→chunky), clavier/souris, mémoire, nettoyage et fermeture. Essais en installation WinUAE isolée ; interprétation pure `PRG_STATE 0` et Gate D physique à documenter séparément.
+- **Résultat attendu :** architecture multi-unités éprouvée, capable d'accueillir de nouvelles commandes sans contourner artificiellement le plafond 16 bits de **chaque** unité. La P4 ne démontre pas encore l'extension fiable à trois unités ou plus.
 
-**À décider avant de coder :** signature AMOS unique, indices des champs, valeur renvoyée si champ absent ou banque invalide, vérifications des bornes et **coût réel dans les 4 562 octets restants**. Aucun nom de commande ni numéro de champ n'est encore validé. La R82 promue ne doit pas être modifiée.
+Références expérimentales : [conception et limites P4](../docs/experiments/AP20_V3_MULTIUNIT_64K_P4.md) (sur la branche expérimentale) · [protocole WinUAE P4](../experimental/AP20_V3_R82/P4_WINUAE_TEST.md) (même branche). **Aucun merge vers `main` ni promotion automatique.**
+
+### Chantier 2 — AGAPIC v2 : compléter les fonctions natives AMOS
+
+**Constat R82 :** lecture, dessin v1/v2 et application explicite de la palette v2 fonctionnels sur le périmètre testé ; `Aga Image Capture` ne crée **que du v1**. L'API de métadonnées demandée n'existe pas dans R82. La nouvelle capture doit produire **une vraie banque AGAPIC v2 sauvegardable et rechargeable par AMOS**, sans convertisseur PC obligatoire.
+
+**2A — Lecture des informations d'une banque image**
+
+Signature demandée : `_VALEUR=Aga Bank Image Info(Bank,Champ)`, avec `Bank` = **numéro de banque AMOS DATA vivante** (pas `Start(Bank)`).
+
+| Champ | Exemple AMOS | Résultat attendu |
+|---:|---|---|
+| **1** | `_W=Aga Bank Image Info(10,1)` | Largeur en pixels |
+| **2** | `_H=Aga Bank Image Info(10,2)` | Hauteur en pixels |
+| **3** | `_DEPTH=Aga Bank Image Info(10,3)` | Profondeur (1..8 plans) |
+| **4** | `_COLORS=Aga Bank Image Info(10,4)` | Nombre de couleurs de la palette embarquée (v2 : `2^Depth`) |
+| **5** | `_MODEID=Aga Bank Image Info(10,5)` | DisplayModeID enregistré (v2) |
+
+Le lecteur doit reconnaître **v1 et v2**, ne pas dessiner, ne pas décoder les pixels et ne modifier ni la banque ni la palette écran. Pour **v1**, largeur/hauteur/profondeur sont disponibles mais **palette et ModeID sont absents du format** : valeurs de retour à formaliser, sans en inventer. À fixer dans le contrat avant codage : cas banque absente/invalide, mauvais champ, version/offsets corrompus, distinction d'erreur et valeurs valides (en particulier ModeID U32).
+
+**2B — Capture complète AGAPIC v2 dans AMOS**
+
+- Définir la nouvelle signature AMOS (ou l'évolution explicite de `Aga Image Capture`) **avant implémentation** ; ne pas modifier silencieusement la signature ou le comportement v1 existant.
+- Capturer un rectangle valide depuis le **back buffer AGA privé `Safe`** : pixels planaires RLE, masque indépendant éventuel et dimensions/profondeur, selon le format v2 documenté.
+- Capturer la **palette RGB24 complète de `2^Depth` couleurs** à partir du `ColorMap` AGA et le **DisplayModeID réellement utilisé** par l'écran privé. Enregistrer `PaletteCount`, `PixelFormat=1`, offsets, alignements et longueur totale conformes au format v2.
+- Créer une banque DATA AMOS **AGAPIC v2** cohérente, de longueur calculée et vérifiée, réutilisable via `Aga Bank Image Draw` / `Aga Image Region` et `Aga Bank Palette Apply(Bank,0)`, puis sauvegardable/rechargeable avec les mécanismes AMOS. Aucun Swap, VBL ou changement de palette écran implicite.
+- Gérer les refus sans laisser de banque partiellement créée ou de données existantes détruites ; contrôler géométrie, bornes, taille, allocation, RAM, masques et nettoyage.
+
+**Compatibilité impérative :** `Aga Image Capture` v1, AGAPIC v1, AGAPAL v1 et les commandes de dessin/palette R82 doivent continuer à fonctionner. Le ModeID strict et la palette v2 restent indépendants du dessin ; les palettes ne sont pas appliquées automatiquement.
+
+**Validation avant acceptation :** contrôles du format/ABK v1/v2 (dont corruption et aller-retour Save/Load), captures opaques et masquées, 4/8 plans au minimum, pixels et palette comparés, ModeID exact/refus d'incompatibilité, banques invalides, limites mémoire, fermeture et régressions R82 ; Gates A native, B WinUAE Runtime et C Compiler séparées. Gate D matériel et `PRG_STATE 0` non présumés. **R82 `LAST_GOOD` reste inchangée** jusqu'à une promotion explicitement autorisée.
+
+Référence de format : [contrat AGAPIC v2](M16_AGAPIC_V2_CONTRACT_2026-11-14.md) ; ce document est historique sur le plan du statut des tests, mais ses dispositions binaires v1/v2 sont la base à préserver.
 
 ## 4. Backlog — pistes non engagées
 
 | Sujet | Périmètre à étudier |
 |---|---|
-| **M19 — Sprites / objets AGA et AMAL** | Interface, animation, synchronisation avec l'écran privé ; pas de dessin depuis une interruption. |
+| **M19 — Sprites / objets AGA et AMAL** | **Après les deux chantiers de §3** : interface, animation, synchronisation avec l'écran privé ; pas de dessin depuis une interruption. |
 | **M20 — Tilemaps et scrolling** | Tuiles, carte, caméra, transparence, stratégie Fast/Chip et dirty rectangles. |
 | **M21 — Dual Playfield** | Faisabilité et contrat AGA. |
 | **M22 — Copper avancé** | Usages précis et limites d'accès aux registres. |
@@ -54,7 +86,7 @@ Pouvoir interroger une **banque AGAPIC v1 ou v2** sans décoder ni dessiner l'im
 
 ## 5. Règles de travail
 
-- **`main` uniquement** : aucune nouvelle branche ni modification d'une autre branche sans demande explicite.
+- **Documentation/roadmap sur `main` uniquement.** Le chantier AP20 V3 se poursuit sur la **branche expérimentale existante**, sans la modifier dans cette mise à jour ; aucune nouvelle branche, PR, fusion ou modification d'une autre branche sans demande explicite.
 - **`LAST_GOOD` protégée** : pas de modification d'une version promue ; une évolution est une nouvelle candidate distincte, validée avant promotion.
 - **CPU cible : 68020 minimum.** Contrat de chaque nouvelle fonction avant code, avec budget Compiler V2 contrôlé.
 - **Validations séparées** : Gate A native, Gate B WinUAE Runtime/interprétation selon le mode réellement exécuté, Gate C Compiler, Gate D Amiga physique. Ne jamais généraliser un PASS.
