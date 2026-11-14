@@ -1,5 +1,33 @@
 # EXTENSION_SOURCE_RULES.md
 
+## REGLES PERMANENTES R76 - non-regression AP20 et journal RAM des tests (14/11/2026)
+
+**Retour auteur R76 :** les deux scripts RPG M0 fonctionnent de nouveau sous WinUAE (« ca marche nickel »). Cette observation valide la Gate B RPG sur R76, mais PAS la Gate B de C2P Convert, ni la Gate C Compiler, ni la Gate D physique. R73 LAST_GOOD doit rester intacte jusqu'a une promotion explicitement autorisee.
+
+### 1. Audit obligatoire des donnees natives avant chaque candidate
+
+- Lorsqu'une entree du monolithe natif AP20 change de longueur ou que les donnees statiques bougent, recalculer les references State+offset et PC-relatives depuis **les octets de la bibliotheque FINALE** : LEA, lectures/ecritures, CLR.L, branchements et liens inter-entrees. Ne pas se limiter aux BRA/BSR.
+- Executer en CI l'audit **independant du builder** tools/test_current_input_state_offsets.py sur dist/AMOSPro_AGA.Lib. Il localise la zone clavier/souris de 144 octets dans l'entree 33, recalcule le deplacement depuis les longueurs effectives et verifie les 7 LEA (entrees 06/31/32/33). Huit cas negatifs verifient le rejet de 7 operandes corrompus et d'une zone statique deplacee.
+- Tout changement d'opcode, de site, de disposition ou de cible doit **faire echouer la CI jusqu'au nouvel audit**. Ne jamais supprimer ni assouplir le controle pour accepter un build ; adapter manifestes, generateurs et tests CPU reels uniquement avec preuve. Rejouer le vrai Aga Screen Open, les fonctions clavier/souris et les chemins de fermeture sous 68000/68020 en verifiant canaries, pile et absence d'ecritures dans le code natif.
+- Une Gate A/CI reussie ne remplace jamais une Gate B WinUAE sur la candidate reelle.
+
+### 2. Nouveau standard des ASC de test : journal texte RAM:
+
+- Pour tout nouvel ASC, et toute modification fonctionnelle du test actif, **un seul fichier ASC reste actif dans tests/current/**. Ne pas modifier les preuves historiques de tests/passed/.
+- Tout test doit enregistrer un rapport texte dans RAM: a la fin d'une execution qui rejoint normalement son epilogue, qu'elle soit PASS ou FAIL. Utiliser un nom propre au test et au mode, par exemple RAM:TEST_R77_INTERPRETED.TXT ou RAM:TEST_R77_COMPILED.TXT.
+- Distinguer le mode avec Prg State : 0 = INTERPRETED, -1 = COMPILED, 1 = RUNTIME. Journaliser le code numerique PRG_STATE et son interpretation RUN_MODE. Cela n'autorise pas a imposer une compilation avant la Gate C de fin de chantier.
+- Enregistrer le processeur **signale par Exec** : lire prudemment le pointeur ExecBase avec Leek(4), puis, si non nul, le WORD AttnFlags avec Deek(_SYSBASE+296) (offset NDK $128). Interpreter les bits 0/1/2/3/7 en 68010/68020/68030/68040/68060 (priorite au modele le plus eleve) et enregistrer CPU et CPU_ATTNFLAGS brut. Si inconnu, inscrire UNKNOWN. Cette lecture ne prouve pas quel CPU physique est installe. Ne pas exiger AMCAF ni autre extension additionnelle uniquement pour cette information. Valider cette instrumentation sur WinUAE et, au jalon normal, Compiler.
+- Fermer et nettoyer le contexte graphique avant le log quand c'est possible. Mesurer Chip Free et Fast Free **avant** d'ecrire dans RAM: car le RAM disk consomme de la memoire. La trace contient a minima ID test, version candidate, RUN_MODE, PRG_STATE, CPU, CPU_ATTNFLAGS, RESULT, VERDICT, codes d'erreur, mesures, informations de fermeture et chemin du fichier.
+- Utiliser Trap Open Out + Errtrap, Print #, Trap Close + Errtrap. Signaler visiblement l'echec d'ouverture/fermeture : jamais de PASS revendique au titre d'un fichier absent. Tous les chemins d'echec controles doivent rejoindre si possible un epilogue commun de log ; un Guru ou blocage brutal n'en garantit pas l'ecriture.
+- Supprimer **toute boucle infinie finale Do / Wait Vbl / Loop uniquement destinee a retenir un resultat**. Afficher un resume, enregistrer le log et revenir a AMOS avec End. Les attentes VBL bornees de synchronisation et les boucles d'interaction/observation graphique (attente d'Echap) restent autorisees.
+- RAM: est **volatile** et Open Out **ecrase** l'ancien rapport du meme mode. Copier le fichier sur un disque avant reboot ou nouvel essai si l'historique doit etre conserve.
+- La CI controle statiquement le contrat minimum dans le seul ASC actif avec tools/test_current_ram_log.py. Ce controle ne prouve pas la creation reelle du fichier ou la compatibilite AMOS/Compiler : Gates B/C toujours separees.
+
+Reference detaillee et exemple : docs/AMOS_RAM_TEST_LOGGING.md.
+Rapport de correction : docs/C2P_R76_RPG_REGRESSION_2026-11-14.md.
+
+---
+
 ## GARDE-FOU R76 — données statiques clavier/souris et déplacements LEA (14/11/2026)
 
 **Incident confirmé :** la R74 insérait 138 octets au milieu du monolithe AP20 et recalculait ses sauts relatifs, mais pas les **sept déplacements absolus à partir de State** utilisés pour accéder aux 144 octets de données clavier/souris en fin d'entrée 33. `Aga Screen Open` effaçait alors du code exécutable ; les programmes RPG fonctionnaient avec R73 mais subissaient un hang/Guru `80000006` sur R74/R75.

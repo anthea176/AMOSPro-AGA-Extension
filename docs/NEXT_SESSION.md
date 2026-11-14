@@ -1,8 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## URGENT R76 — correctif de corruption des entrées RPG (14/11/2026)
+## R76 - RPG WinUAE Gate B PASS sur retour auteur (14/11/2026)
 
-**`dist/AMOSPro_AGA.Lib` = candidate **R76 v0.13.21**, 54 144 octets, SHA256 **9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897**, 66 commandes / 73 AP20 ; R73 `LAST_GOOD` **51 608 octets strictement intacte**. Régression réelle constatée par l'auteur : ses scripts `M0_R73_INPUT_DIAG_01.asc` et `M0_R73_MENU_01.asc` fonctionnent avec sa bibliothèque LAST_GOOD mais bloquent AMOS/Guru 80000006 avec R74. Cause racine vérifiée : insertion R74 de +138 octets dans le monolithe AP20 sans rebaser **7 LEA** visant les 144 octets de données clavier/souris ; `Aga Screen Open` effaçait des instructions exécutables, même sans appel C2P. R76 corrige **$2E9C → $2F26** aux sept sites, sans changer les tailles ni les fonctions Open/Convert. **Gate A 24 cas CPU 68000/020 PASS** avec reproduction de la corruption R74/R75 et absence de corruption R73/R76. **Gate B réelle RPG WinUAE R76 À FAIRE** : installer R76 sur une configuration de test, relancer EXACTEMENT les deux scripts utilisateur, vérifier aucun hang/Guru puis conserver la capture/feedback. **NE PAS PROMOUVOIR** avant validation utilisateur. [Rapport](C2P_R76_RPG_REGRESSION_2026-11-14.md) · [source builder](../tools/build_c2p_r76_rpg_fix.py). R74/R75 sont des versions historiques défaillantes pour les entrées ; anciennes Gates B Open limitées à leur scénario spécifique.
+**Validation utilisateur : « ca marche nickel »** apres les essais demandes des deux programmes M0_R73_INPUT_DIAG_01.asc et M0_R73_MENU_01.asc avec R76. Aucun Guru 80000006 n'est signale sur cet essai. C'est une **Gate B RPG confirmee sur retour utilisateur**, sans capture ou log joint ; elle ne valide **pas** C2P Convert, Compiler (Gate C) ou Amiga physique (Gate D).
+
+**Candidat actif :** dist/AMOSPro_AGA.Lib R76 v0.13.21, 54 144 octets, SHA256 9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897 ; 66 commandes / 73 AP20. **LAST_GOOD protegee :** dist/AMOSPro_AGA_LAST_GOOD.Lib R73, 51 608 octets, SHA256 c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407. Pas de promotion sans autorisation explicite.
+
+**Cause corrigee :** R74 avait insere 138 octets en laissant sept LEA sur l'ancien offset clavier/souris. R76 corrige 0x2E9C -> 0x2F26 ; Gate A 24 cas natifs PASS. Controle independant tools/test_current_input_state_offsets.py sur le binaire actif, plus 8 injections negatives, desormais requis en CI. La CI precedente de R76 avait reussi sur d54577b (run 43592103012).
+
+**Prochain essai :** Gate B **C2P Convert** en interprete avec l'unique ASC tests/current/C2P_R76_CONVERT_01.asc. Il enregistre desormais un journal RAM: avec Prg State, CPU rapporte par Exec, resultat et bilan memoire ; termine par End sans boucle terminale de resultats. **Cet ASC modifie n'est pas encore teste sous AMOS/WinUAE.** Gate C Compiler reservee a la fin du chantier C2P. Referentiels : EXTENSION_SOURCE_RULES.md et docs/AMOS_RAM_TEST_LOGGING.md.
 
 ## C2P-2 — R75 v0.13.20, Convert Gate A PASS, Gate B à tester (14/11/2026)
 

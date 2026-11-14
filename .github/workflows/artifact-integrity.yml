@@ -180,6 +180,10 @@ jobs:
         run: |
           python -B tools/build_c2p_r76_rpg_fix.py
           python -B tools/test_c2p_r76_rpg_input_native.py
+      - name: Independent current AP20 input-state offset audit
+        run: python -B tools/test_current_input_state_offsets.py
+      - name: Current AMOS ASC RAM log contract
+        run: python -B tools/test_current_ram_log.py
       - name: R75 C2P Convert (in-memory) 68k Gate A
         run: |
           python -B tools/build_c2p_r75_convert.py

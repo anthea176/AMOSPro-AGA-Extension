@@ -1,16 +1,17 @@
-# Test actif R76 : Aga C2P Open + Convert (14 novembre 2026)
+# R76 C2P Convert - test actif avec journal RAM (14/11/2026)
 
-**Priorité : avant ce test de rendu C2P, vérifier sous WinUAE les deux scripts RPG M0 utilisateurs sur la candidate R76 ; rapporter le blocage ou l'absence de Guru. La Gate A R76 reproduit et corrige une corruption clavier/souris introduite par R74.**
+**Gate B RPG R76 : PASS sur retour utilisateur.** Les deux scripts M0 RPG fonctionnent sous WinUAE apres la correction R76. **Gate B C2P Convert : NON TESTEE**. Le code de log RAM/identification CPU ajoute au test actif reste lui-meme a valider sous AMOS.
 
-**Un seul ASC actif : [C2P_R76_CONVERT_01.asc](C2P_R76_CONVERT_01.asc).** Le test R74 Open validé Gate A/B est conservé dans l'historique Git, mais il n'est plus le test courant. Ne pas lancer GDB ni PowerShell.
+**Un seul ASC actif** : [C2P_R76_CONVERT_01.asc](C2P_R76_CONVERT_01.asc). Le binaire [R76 0.13.21](../../dist/AMOSPro_AGA.Lib), 54 144 octets, est la candidate en cours. R73 LAST_GOOD reste intacte.
 
-**Installation :** remplacer seulement la `AMOSPro_AGA.Lib` active dans le slot habituel d'AMOS par la **R76 v0.13.21** ([binaire du dépôt](../../dist/AMOSPro_AGA.Lib), **54 144 octets**). Conserver `LIBS:c2p.library` v1.9 (déjà utilisé pour R74). Redémarrer AMOS Professional. **CPU 68020+ et écran AGA.** L'ASC utilise la banque DATA 12 : vérifier qu'elle est libre avant le test.
+## Test WinUAE interprete
 
-1. Dans AMOS Professional, importer **C2P_R76_CONVERT_01.asc** par **Merge ASCII** dans un programme vide, puis lancer **en interprété uniquement**. **Ne pas compiler** : Gate C unique prévue au jalon final du chantier C2P.
-2. La première boucle initialise les **81 920 octets** de la banque (mire chunky complète). Sur chaque écran **16, 32, 64, 128 et 256 couleurs**, le test effectue une ouverture C2P, une conversion + Swap puis une seconde conversion + Swap avec une bande horizontale d'une autre couleur. La mire est volontairement répétitive et la bande du second écran doit être visible. Il attend une VBL avant toute nouvelle tentative sur buffer non Safe.
-3. **Sur le dernier écran (256 couleurs), l'image reste affichée jusqu'à Échap** (touche brute 69). Tu peux faire **Alt+Tab** pour une capture : cela ne termine pas le programme. Appuyer sur Échap dans WinUAE ferme ensuite l'écran, ce qui permet d'afficher le résultat final. Après chaque fermeture, la console affiche `COL ... O/DB/C 1 1 1` et `CONV/SW 1 1 1 2 1 1 POST 0`. Les deux conversions et les deux Swap doivent avoir réussi. À la fin : `RESULT 1` et `CLOSE RETURNED`, Chip Free avant/après à contrôler.
-4. Envoyer **une capture de la console et une capture du rendu AGA**. La console vérifie les retours ; seule l'observation graphique valide effectivement la conversion sur la vraie bibliothèque.
+1. Installer la R76 dans le slot AGA existant et conserver LIBS:c2p.library v1.9 ; redemarrer AMOS. CPU 68020+ et AGA requis, banque DATA 12 libre.
+2. Importer l'ASC dans un programme vide avec Merge ASCII, puis executer en interprete **uniquement** (Gate C Compiler reservee a la fin du chantier C2P).
+3. Les cinq profondeurs 16/32/64/128/256 couleurs doivent afficher deux conversions et deux swaps avec une bande sur la deuxieme frame. Les retours attendus par profondeur restent O/DB/C 1 1 1 et CONV/SW 1 1 1 2 1 1 POST 0.
+4. Sur le dernier ecran, appuyer sur Echap apres la capture de la mire (attente interactive conservee). L'ecran se ferme ; l'ASC enregistre le fichier RAM:C2P_R76_INTERPRETED.TXT, affiche un resume et revient a AMOS par End **sans Do/Wait Vbl/Loop final**.
+5. Examiner le fichier : TEST, VERSION, RUN_MODE, PRG_STATE, CPU, CPU_ATTNFLAGS, RESULT, VERDICT, PASS_DEPTH, FAIL_DEPTH, CLOSE_COUNT, CHIP/Fast Free. Verifier aussi LOG OPEN ERR 0 et CLOSE ERR 0 en console. Faire une capture de la mire et conserver une copie du journal sur un disque, RAM: etant volatile et le fichier ecrase au prochain essai du meme mode.
 
-**Statut de validation :** Gate A 24 scénarios CPU hôte R76 **PASS** ; Gate B interprétée WinUAE R76 **NON TESTÉE**, Gate C Compiler R76 **NON TESTÉE**, Gate D physique **NON TESTÉE**. R73 v0.13.18 `LAST_GOOD` reste intacte, aucune promotion.
+**Attention** : le log ne garantit pas une trace en cas de Guru ou de blocage avant l'epilogue. Un test ne passe pas parce que le fichier existe : ses resultats et la mire doivent etre controles. Le test C2P modifie n'a encore aucune Gate B WinUAE validee.
 
-[Contrat R75 Convert](../../docs/C2P_R75_CONVERT_CONTRACT_2026-11-14.md) · [rapport CPU R75](../../docs/C2P_R75_NATIVE_GATE_A_2026-11-14.md).
+[Protocole des logs RAM](../../docs/AMOS_RAM_TEST_LOGGING.md) - [Rapport R76 RPG](../../docs/C2P_R76_RPG_REGRESSION_2026-11-14.md).

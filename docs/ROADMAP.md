@@ -9,13 +9,15 @@
 | Élément | Situation établie | Référence |
 |---|---|---|
 | **Dernière version promue : R73 v0.13.18** | **`LAST_GOOD`**, 64 commandes / 71 entrées AP20 ; optimisations 68020 AGAPIC et Fast Icons. Gates **A/B/C PASS** sur les scénarios documentés ; Gate **D Amiga physique non testée**. | [Rapport de promotion](OPT020_R73_LAST_GOOD_PROMOTION_2026-11-14.md) |
-| **Candidate de développement : R76 v0.13.21 (correctif RPG)** | `Aga C2P Open(Bank)` et `Aga C2P Convert` ; **66 commandes / 73 entrées AP20**. **Gate A R76 CPU 24 PASS : corruption des routines clavier/souris reproduite en R74/R75, correction R76 validée sur 68000/020. Gate B RPG WinUAE R76 NON TESTÉE ; Gates C Compiler et D physique non testées.** R73 reste `LAST_GOOD`. | [R75 Gate A](C2P_R75_NATIVE_GATE_A_2026-11-14.md) · [R74 Open Gate B](C2P_R74_WINUAE_GATE_B_2026-11-14.md) |
+| **Candidate de développement : R76 v0.13.21 (correctif RPG)** | `Aga C2P Open(Bank)` et `Aga C2P Convert` ; **66 commandes / 73 entrées AP20**. **Gate A R76 CPU 24 PASS : corruption des routines clavier/souris reproduite en R74/R75, correction R76 validée sur 68000/020. Gate B RPG WinUAE R76 PASS sur retour auteur (14/11/2026) ; Gates C Compiler et D physique non testées.** R73 reste `LAST_GOOD`. | [R75 Gate A](C2P_R75_NATIVE_GATE_A_2026-11-14.md) · [R74 Open Gate B](C2P_R74_WINUAE_GATE_B_2026-11-14.md) |
 | **Chantier actif** | Intégration de `c2p.library` avec bitmap intermédiaire en Chip RAM. **Open+Convert implémentées** ; conversion réelle et affichage à valider sous WinUAE. `Aga C2P Close` non encore approuvée. | [Architecture C2P](C2P_R74_INTERMEDIATE_ARCHITECTURE_2026-11-14.md) |
 | **Suite de l'ordre retenu** | Finir et qualifier C2P, puis **AGAPIC v2**. Les autres études sont un backlog, sans développement implicite. | Sections suivantes |
 
 **Identité des binaires au présent état :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` = **R73**, 51 608 octets, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407` ; `dist/AMOSPro_AGA.Lib` = **candidate R76**, 54 144 octets, SHA256 `9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897`. Les deux fichiers ont des rôles distincts.
 
-**BLOCAGE R74/R75 :** régression confirmée sur les entrées clavier/souris RPG après insertion de 138 octets sans recalage de sept accès LEA. [Correctif natif R76](C2P_R76_RPG_REGRESSION_2026-11-14.md). Priorité absolue : valider R76 sur les deux programmes M0 RPG de l'auteur avant toute nouvelle fonctionnalité C2P ou promotion.
+**BLOCAGE R74/R75 :** régression confirmée sur les entrées clavier/souris RPG après insertion de 138 octets sans recalage de sept accès LEA. [Correctif natif R76](C2P_R76_RPG_REGRESSION_2026-11-14.md). Les deux programmes M0 RPG fonctionnent desormais sous WinUAE avec R76 (retour auteur). Prochaine Gate B : C2P Convert avec journal RAM, sans promotion automatique.
+
+**Règles permanentes depuis R76 :** controle CI des sept LEA clavier/souris sur le binaire natif final (huit cas negatifs) et journal automatique RAM: pour les tests ASC actifs, avec Prg State, CPU signale par Exec, bilan et retour End sans boucle VBL finale. [Regles](../EXTENSION_SOURCE_RULES.md) · [Protocole RAM](AMOS_RAM_TEST_LOGGING.md). **Le nouvel ASC C2P instrumente reste a tester sous WinUAE.**
 
 ## 2. Priorité immédiate — C2P
 

@@ -29,3 +29,11 @@ Les programmes `M0_R73_INPUT_DIAG_01.asc` et `M0_R73_MENU_01.asc` fonctionnent a
 **R74/R75 restent des candidats historiques connus défaillants pour les RPG utilisant les entrées**, malgré la Gate B R74 limitée à `Aga C2P Open`. Ne pas demander de GDB, de PowerShell, ni modifier les scripts d'origine pour masquer la régression.
 
 **Règle permanente ajoutée :** chaque insertion/suppression de bytes dans le monolithe native AP20 impose non seulement le recalcul de tous les liens PC-relatifs, mais aussi **de tous les accès à données statiques par déplacements absolus à partir du pointeur `State`**, avec test de non-écrasement du code sur les vrais opcodes 68k.
+
+## Mise a jour du 14/11/2026 - confirmation utilisateur et prevention permanente
+
+**Gate B RPG WinUAE R76 : PASS sur retour de l'auteur (« ca marche nickel »)**, a la suite de la demande de tester M0_R73_INPUT_DIAG_01.asc puis M0_R73_MENU_01.asc. Le blocage/Guru observe sur R74/R75 n'est plus signale sur la R76. Aucune capture ni fichier RAM n'accompagne cette confirmation. Cela **ne valide pas la Gate B C2P Convert**, ni les Gates C Compiler et D Amiga physique. R76 reste candidate ; **R73 LAST_GOOD intacte**.
+
+La CI dispose d'un nouveau **controle independant du builder**, tools/test_current_input_state_offsets.py, lance directement sur dist/AMOSPro_AGA.Lib. Il calcule l'adresse de la zone clavier/souris depuis la disposition reelle du monolithe AP20, verifie les 7 LEA, et applique 8 mutations negatives (les sept operandes + un decalage de zone). Tout changement de structure exige un nouvel audit, jamais une desactivation du controle.
+
+Les tests ASC actifs doivent maintenant creer un rapport texte RAM: en mode interprete/compile/runtime (Prg State) et journaliser le CPU signale par Exec, puis retourner a AMOS par End. Le nouveau code de log de C2P_R76_CONVERT_01.asc reste a verifier sous WinUAE. Regles : EXTENSION_SOURCE_RULES.md ; reference : docs/AMOS_RAM_TEST_LOGGING.md.
