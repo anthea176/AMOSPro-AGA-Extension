@@ -106,7 +106,8 @@ def main() -> None:
     assert len(active_asc) == 1 and active_asc[0].name in (
         "OPT020_P1E_R69_INTERPRETED_01.asc", "OPT020_P2_R70_INTERPRETED_01.asc",
         "OPT020_P2_R71_INTERPRETED_01.asc", "OPT020_P2_R72_INTERPRETED_01.asc",
-        "OPT020_P3_R73_INTERPRETED_01.asc")
+        "OPT020_P3_R73_INTERPRETED_01.asc",
+        "C2P_P2_R73_BITMAP_01.asc", "C2P_R74_OPEN_01.asc")
     print("OPT020/P1e R60-vs-R69 BENCHMARK STATIC PASS: 10 geometries,")
     print("3 trials x 240 calls, no waits/swaps inside timing, R68==R60 Region,")
     print("only native entry 59 differs in pinned R69 baseline; R70/R71/R72 preserve it.")
