@@ -550,8 +550,17 @@ def verified_current_compiler_seeds(parsed):
         resume=at+len(IFF_GETADR_MARKER)
         need(resume%2==0 and resume<len(code),
              "Strict source R80: invalid return after GetAdr marker")
+        # The shared cleanup emitter also has an unreachable fail_cleanup
+        # arm (MOVE.L #0,D0), emitted for ABI symmetry; it is executable 68k
+        # source, not arbitrary padding. The exact builder label and 6-byte
+        # instruction are verified before giving the strict disassembler a
+        # second entrypoint for this audited, otherwise unreachable path.
+        fail_cleanup=labels.get("fail_cleanup")
+        need(isinstance(fail_cleanup,int) and fail_cleanup%2==0
+             and code[fail_cleanup:fail_cleanup+6]==bytes.fromhex("203c00000000"),
+             "Strict source R80: unverified cleanup failure instruction")
         seeds={i:set(v) for i,v in inherited.items()}
-        seeds[75]={0,resume}
+        seeds[75]={0,resume,fail_cleanup}
         return seeds
     if len(sections)==75 and b"AMOSPro AGA C2P Zoom R79 0.13.24 candidate" in parsed["title"]:
         # R79 strictly appends one reviewed 68000 nearest-neighbour Zoom entry
