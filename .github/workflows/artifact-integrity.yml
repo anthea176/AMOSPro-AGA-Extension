@@ -150,6 +150,8 @@ jobs:
           python -B tools/test_examples.py
           python -B tools/test_fast_icons_showcase.py
           python -B tools/test_current_amos_blocks.py
+          python -B tools/test_c2p_p2_layout_check.py
+          python -B tools/test_c2p_p2_winuae_gdb.py
           python -B tools/check_no_blocking_waits.py
       - name: M16 AGAPIC image and capture host contract
         run: |

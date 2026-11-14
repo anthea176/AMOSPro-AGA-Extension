@@ -38,7 +38,7 @@ def main():
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==64
     asc=list((ROOT/"tests/current").glob("*.asc"))
-    assert len(asc)==1 and asc[0].name=="OPT020_P3_R73_INTERPRETED_01.asc"
+    assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
     assert "PROMOTED LAST_GOOD" in label
     print("R73 LAST_GOOD PROMOTION BYTE-EXACT PASS",R73_SHA,len(cur),
           "64 commands / 71 AP20 / 3 native links")

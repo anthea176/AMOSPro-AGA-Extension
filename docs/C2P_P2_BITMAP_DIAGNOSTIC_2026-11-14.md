@@ -21,9 +21,9 @@ ScreenBuffer+$04   -> BitMap *
 
 ## Mesure attendue sous WinUAE
 
-1. Conserver **la R73 et l'ASC actif inchangés**. L'ASC `tests/current/OPT020_P3_R73_INTERPRETED_01.asc` contient une phase `Aga Screen Open(320,256,256,$00021000)` puis `Aga Double Buffer`.
+1. Conserver **la R73 binaire inchangée**. L'ASC actif `tests/current/C2P_P2_R73_BITMAP_01.asc` ouvre `Aga Screen Open(320,256,256,$00021000)` et `Aga Double Buffer`, puis attend `Aga Wait Key` pour permettre la capture GDB. Voir [procédure](C2P_P2_WINUAE_GDB_PROBE_2026-11-14.md).
 2. Dans le débogueur WinUAE, interrompre l'exécution **à l'intérieur d'une routine AGA après allocation des deux buffers**, relever A5 et suivre la chaîne ci-dessus en lecture seule. A5 n'est pas fiable après retour dans du code AMOS arbitraire.
-3. Relever les deux pointeurs `ScreenBuffer`, deux `BitMap`, les huit pointeurs de plans et les champs de structure. Vérifier `TypeOfMem`/`MEMF_CHIP` au **premier et dernier octet de chaque plan** ; ne jamais inventer ces résultats.
+3. Relever les deux pointeurs `ScreenBuffer`, deux `BitMap`, les huit pointeurs de plans et les champs de structure. Pour la preuve mémoire Chip, soit vérifier réellement `TypeOfMem`/`MEMF_CHIP` sur chaque plan, soit fournir une taille Chip RAM confirmée dans WinUAE **et** la carte physique RAM GDB couvrant cette zone. Ne pas substituer un retour `TypeOfMem` inventé à une plage issue de la configuration.
 4. Reporter les valeurs dans un JSON avec `mode={width:320,height:256,depth:8}` et `buffers=[SB0,SB1]`. Chaque buffer comporte `name`, `screen_buffer`, `bitmap`, `bytes_per_row`, `rows`, `depth`, `flags`, `planes` (8 adresses), `type_of_mem_first` (8 valeurs), `type_of_mem_last` (8 valeurs). Les nombres peuvent être des entiers ou chaînes hexadécimales `0x...`.
 5. Exécuter `python -B tools/c2p_p2_layout_check.py observation.json`. Retour **0** : deux dispositions non entrelacées compatibles *sur les données fournies* ; **1** : refus / preuve incomplète ; **2** : format mal formé. Cela ne vaut **jamais** un PASS de C2P, Safe/Swap ou WinUAE.
 
@@ -40,6 +40,6 @@ Le README de `c2p.library` v1.9 annonce la prise en charge des bitmaps entrelac�
 
 ## Résultat obtenu
 
-**11 tests Python hôte synthétiques PASS** : standard, plan décalé, mémoire Chip absente/inconnue, recouvrement SB0/SB1, interleavé refusé, profondeur, largeur, pointeurs et nombre de plans invalides. **Aucune observation réelle WinUAE P2**, aucune conversion, aucune nouvelle commande AMOS, aucun changement à `dist/`/`tests/current/`/`tests/passed/`.
+**18 tests Python hôte synthétiques PASS** (11 vérificateur + 7 lecteur GDB) : standard, plan décalé, mémoire Chip absente/inconnue, recouvrement SB0/SB1, interleavé refusé, profondeur, largeur, pointeurs et nombre de plans invalides. **Aucune observation réelle WinUAE P2**, aucune conversion, aucune nouvelle commande AMOS, aucun changement à `dist/` ou `tests/passed/` ; l'unique ASC actif est désormais le témoin P2.
 
 **Suite :** collecter le relevé WinUAE ; si les deux bitmaps satisfont aux contraintes, prototype C2P direct avec deux contextes et garde `Safe`. Sinon, évaluer une allocation C2P indépendante, sans changer le moteur AGA classique.

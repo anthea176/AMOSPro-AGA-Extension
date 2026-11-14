@@ -54,6 +54,18 @@ def check_document(doc: dict[str, Any]) -> dict[str, Any]:
     if width % 32 != 0:
         errors.append("width must be a multiple of 32 pixels")
     bitmap_size = bytes_plane_row * height * depth
+    # Optional conservative physical CHIP range established separately from
+    # WinUAE's configured Chip size AND its GDB physical RAM map. This is
+    # NOT a forged Exec TypeOfMem() return value.
+    chip_ranges: list[tuple[int, int]] = []
+    for entry in doc.get("chip_ranges", []):
+        if not isinstance(entry, dict) or not entry.get("basis"):
+            raise ValueError("chip_ranges requires an explicit evidence basis")
+        start = number(entry.get("start"), "chip_ranges.start")
+        end = number(entry.get("end"), "chip_ranges.end")
+        if not start < end:
+            raise ValueError("chip_ranges must be nonempty [start,end) intervals")
+        chip_ranges.append((start, end))
     buffers = doc.get("buffers")
     if not isinstance(buffers, list) or len(buffers) != 2:
         raise ValueError("buffers must be exactly [SB0, SB1]")
@@ -105,9 +117,15 @@ def check_document(doc: dict[str, Any]) -> dict[str, Any]:
         else:
             regions.append((p[0], full_end, label))
         chip_verified = True
-        if not isinstance(memfirst, list) or len(memfirst) != 8 or not isinstance(memlast, list) or len(memlast) != 8:
+        if memfirst is None and memlast is None and chip_ranges:
+            # A complete interval check is stricter than just the first/last
+            # byte, but depends on the reported WinUAE Chip RAM configuration.
+            if not any(start <= p[0] and full_end <= end for start, end in chip_ranges):
+                chip_verified = False
+                e.append("buffer is not entirely inside a verified Chip RAM range")
+        elif not isinstance(memfirst, list) or len(memfirst) != 8 or not isinstance(memlast, list) or len(memlast) != 8:
             chip_verified = False
-            e.append("TypeOfMem results missing (must check first AND last byte of each plane)")
+            e.append("no physical Chip RAM evidence (TypeOfMem or confirmed WinUAE memory map)")
         else:
             for i in range(8):
                 a = number(memfirst[i], f"{label}.type_of_mem_first[{i}]")
@@ -121,6 +139,8 @@ def check_document(doc: dict[str, Any]) -> dict[str, Any]:
             "name": label,
             "layout": "interleaved" if interleaved else "contiguous_planar",
             "memory_chip_verified": chip_verified,
+            "memory_chip_basis": ("WinUAE configured Chip range and RAM map"
+                                  if memfirst is None and chip_ranges else "Exec TypeOfMem"),
             "base": f"0x{p[0]:08X}",
             "bytes_per_row": bpr,
             "rows": rows,
