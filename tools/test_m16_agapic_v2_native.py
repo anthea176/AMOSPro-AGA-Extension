@@ -87,6 +87,10 @@ def run_case(code, payload, depth, *, mode=0, screen_mode=MODE_ID,
 
 
 def main():
+    # Both INVALID_ID checks must use BEQ, not BNE (R82 regression).
+    import inspect
+    source = inspect.getsource(emit_image_draw_v2)
+    assert source.count('c.imm("cmp",-1,D(0)); B(7,"reject")') == 2
     code, labels = emit_image_draw_v2()
     assert code == emit_image_draw_v2()[0], 'nondeterministic v2 emitter'
     assert len(code) % 2 == 0 and 1500 <= len(code) < 4500
