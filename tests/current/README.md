@@ -1,14 +1,14 @@
-# Test actif C2P R74 / Aga C2P Open — 14 novembre 2026
+# Test actif R75 : Aga C2P Open + Convert (14 novembre 2026)
 
-**Unique ASC actif : [C2P_R74_OPEN_01.asc](C2P_R74_OPEN_01.asc).** Le test P2/GDB a été retiré : **aucun PowerShell, aucun port réseau et aucune modification WinUAE**.
+**Un seul ASC actif : [C2P_R75_CONVERT_01.asc](C2P_R75_CONVERT_01.asc).** Le test R74 Open validé Gate A/B est conservé dans l'historique Git, mais il n'est plus le test courant. Ne pas lancer GDB ni PowerShell.
 
-**Dépendances :** installer la candidate `dist/AMOSPro_AGA.Lib` (R74 v0.13.19, 52 612 octets) dans le répertoire des extensions AMOS, et placer le fichier `libs/c2p.library` du SDK utilisateur dans **LIBS:** de l'Amiga. CPU 68020+, écran AGA. La banque AMOS **12 doit être libre** : l'ASC la réserve (81 920 octets) et l'efface après le test.
+**Installation :** remplacer seulement la `AMOSPro_AGA.Lib` active dans le slot habituel d'AMOS par la **R75 v0.13.20** ([binaire du dépôt](../../dist/AMOSPro_AGA.Lib), **54 144 octets**). Conserver `LIBS:c2p.library` v1.9 (déjà utilisé pour R74). Redémarrer AMOS Professional. **CPU 68020+ et écran AGA.** L'ASC utilise la banque DATA 12 : vérifier qu'elle est libre avant le test.
 
-1. Importer le programme dans AMOS Professional par **Merge ASCII** et exécuter **en interprété**.
-2. Le programme teste Open, Double Buffer, le refus de double Open et le nettoyage Screen Close sur les écrans **16, 32, 64, 128 et 256 couleurs**.
-3. Lire les lignes `COL ... OPEN 1 DB 1 C2P 1 DUP 0 POST 0`, puis **`RESULT 1`** et **`CLOSE RETURNED`**. La quantité de Chip RAM avant/après est affichée pour information.
-4. **Gate B effectuée par l'auteur le 14/11/2026 : PASS**, capture `RESULT 1`, `CLOSE RETURNED`, Chip Free `1801952/1801952` sur les cinq profondeurs ; voir [rapport Gate B](../../docs/C2P_R74_WINUAE_GATE_B_2026-11-14.md). Aucun rendu C2P : **Convert n'est pas encore implémenté**.
+1. Dans AMOS Professional, importer **C2P_R75_CONVERT_01.asc** par **Merge ASCII** dans un programme vide, puis lancer **en interprété uniquement**. **Ne pas compiler** : Gate C unique prévue au jalon final du chantier C2P.
+2. La première boucle initialise les **81 920 octets** de la banque (mire chunky complète). Sur chaque écran **16, 32, 64, 128 et 256 couleurs**, le test effectue une ouverture C2P, une conversion + Swap puis une seconde conversion + Swap avec une bande horizontale d'une autre couleur. La mire est volontairement répétitive et la bande du second écran doit être visible. Il attend une VBL avant toute nouvelle tentative sur buffer non Safe.
+3. Après chaque fermeture, la console affiche `COL ... O/DB/C 1 1 1` et `CONV/SW 1 1 1 2 1 1 POST 0`. Les deux conversions et les deux Swap doivent avoir réussi. À la fin : `RESULT 1` et `CLOSE RETURNED`, Chip Free avant/après à contrôler.
+4. Envoyer **une capture de la console et une capture du rendu AGA**. La console vérifie les retours ; seule l'observation graphique valide effectivement la conversion sur la vraie bibliothèque.
 
-**Statut vérifié :** Gate A CPU hôte R74 PASS, structure AP20 et protections R73 PASS ; Gate B WinUAE interprétée R74 PASS pour Open, Gate C Compiler R74 NON TESTÉE, Gate D NON TESTÉE. R73 v0.13.18 reste `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte.
+**Statut de validation :** Gate A 24 scénarios CPU hôte R75 **PASS** ; Gate B interprétée WinUAE R75 **NON TESTÉE**, Gate C Compiler R75 **NON TESTÉE**, Gate D physique **NON TESTÉE**. R73 v0.13.18 `LAST_GOOD` reste intacte, aucune promotion.
 
-[Contrat technique R74](../../docs/C2P_R74_OPEN_2026-11-14.md).
+[Contrat R75 Convert](../../docs/C2P_R75_CONVERT_CONTRACT_2026-11-14.md) · [rapport CPU R75](../../docs/C2P_R75_NATIVE_GATE_A_2026-11-14.md).

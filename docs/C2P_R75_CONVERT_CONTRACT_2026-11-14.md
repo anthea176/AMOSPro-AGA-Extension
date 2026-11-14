@@ -1,6 +1,6 @@
-# C2P-2 — contrat proposé pour `Aga C2P Convert` (14/11/2026)
+# C2P-2 — contrat approuvé et implémenté pour `Aga C2P Convert` (14/11/2026)
 
-> **STATUT : spécification soumise à l'accord de l'auteur ; AUCUN CODE NATIF, aucun nouveau token AP20, aucune candidate R75 ou Gate A/B/C pour Convert.** La R74 v0.13.19 ne fournit que `Aga C2P Open(Bank)`, Gate A CPU et Gate B WinUAE interprétée **PASS** pour Open. La R73 v0.13.18 demeure `LAST_GOOD` protégée. Ce document n'approuve pas `Aga C2P Close`.
+> **STATUT : contrat explicitement approuvé par l'auteur le 14/11/2026.** Implémentation native `Aga C2P Convert` en candidate R75 v0.13.20, 54 144 octets, 66 commandes / 73 AP20 ; **Gate A CPU native 24 scénarios PASS**. La R74 Open dispose déjà de ses Gates A/B interprétées PASS ; **Gate B R75 réelle, Gate C Compiler et Gate D physique NON TESTÉES**. R73 reste `LAST_GOOD` protégée. Ce contrat n'approuve **pas** `Aga C2P Close`.
 
 ## 1. Signature publique proposée
 
@@ -56,4 +56,4 @@ _OK=Aga C2P Convert
 - AmigaOS 3.x : [`struct ScreenBuffer` officielle](https://amigadev.grimore.org/Includes_and_Autodocs_3._guide/node0602.html) et [`graphics.library/BltBitMap`](https://developer.amigaos3.net/autodocs/graphics.library/BltBitMap.html) : masque, minterm, nombre de plans retournés et `WaitBlit`.
 - Extension existante : `tools/c2p_r74_open_emit.py` et `src/generated/AMOSPro_AGA_R57_C1_NATIVE.s` (DBState, sélection du back, états Safe/Disp, ScreenBuffer+0), [Gate B réelle R74](C2P_R74_WINUAE_GATE_B_2026-11-14.md).
 
-**Prochaine décision demandée : validation explicite par l'auteur de ce seul contrat `Aga C2P Convert` avant son implémentation.** Aucun nouveau binaire n'est construit par ce document.
+**Décision : contrat validé le 14/11/2026, code natif implémenté et testé Gate A.** Voir [bilan technique R75](C2P_R75_NATIVE_GATE_A_2026-11-14.md). L'exécution de l'ASC R75 sous WinUAE reste la Gate B à effectuer. `Aga C2P Close` n'est ni approuvée ni développée.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof that R73 LAST_GOOD remains byte-exact when R74 is current.
+"""Read-only proof that R73 LAST_GOOD remains byte-exact when later C2P candidates are current.
 
 R68 remains a pinned historical source independent from the moving LAST_GOOD.
 No AMOS Compiler, WinUAE, benchmarks or binary writes.
@@ -7,7 +7,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -38,15 +38,23 @@ def main():
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==64
     if cur!=good:
-        from build_c2p_r74_open import build as build_r74
         from c2p_r74_relink import check_cross_r74
-        candidate,actual_meta=build_r74()
-        assert cur==candidate and sha256(cur).hexdigest()==R74_SHA
-        assert actual_meta["commands"]==65 and actual_meta["ap20_entries"]==72
-        _,r74parts=unwrap_native_parts_v2(cur)
-        assert len(r74parts)==71
-        assert_native_links(r74parts[:70]);check_cross_r74(r74parts)
-        assert label.startswith("R74 0.13.19")
+        digest=sha256(cur).hexdigest()
+        if digest==R75_SHA:
+            from build_c2p_r75_convert import build as build_r75
+            candidate,actual_meta=build_r75()
+            assert cur==candidate
+            assert actual_meta["commands"]==66 and actual_meta["ap20_entries"]==73
+            _,parts=unwrap_native_parts_v2(cur)
+            assert len(parts)==72 and label.startswith("R75 0.13.20")
+        else:
+            from build_c2p_r74_open import build as build_r74
+            candidate,actual_meta=build_r74()
+            assert cur==candidate and digest==R74_SHA
+            assert actual_meta["commands"]==65 and actual_meta["ap20_entries"]==72
+            _,parts=unwrap_native_parts_v2(cur)
+            assert len(parts)==71 and label.startswith("R74 0.13.19")
+        assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
     assert good==validated

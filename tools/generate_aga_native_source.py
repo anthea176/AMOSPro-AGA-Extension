@@ -134,9 +134,12 @@ def source_binary_from_input(raw):
         # Accept only the exact SHA-pinned, reproducible V2 releases.
         # R58 is the 40K witness; R59 is LAST_GOOD; R60 is the next candidate.
         # Unknown FE31/dispatcher bytes MUST fail closed.
-        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA
+        from active_library import R58_SHA, R59_SHA, R60_SHA, R61_SHA, R62_SHA, R63_SHA, R64_SHA, R65_SHA, R66_SHA, R67_SHA, R68_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA
         from compiler_relocation import repack_ap20
-        if sha(raw) == R74_SHA:
+        if sha(raw) == R75_SHA:
+            from build_c2p_r75_convert import build as pinned_build
+            release = "R75"
+        elif sha(raw) == R74_SHA:
             from build_c2p_r74_open import build as pinned_build
             release = "R74"
         elif sha(raw) == R73_SHA:
@@ -485,6 +488,47 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
+    if len(sections)==72:
+        # R75 is an APPEND ONLY full-frame C2P conversion routine.
+        # Full native ancestry must match byte-pinned R74 and preserve
+        # all inherited R73 source-backed reachability roots.
+        from active_library import R74_SHA,R75_SHA
+        from build_c2p_r74_open import build as build_r74
+        from build_c2p_r75_convert import build as build_r75
+        from c2p_r75_convert_emit import BANK as R75_BANK,emit_convert
+        from c2p_r74_relink import check_cross_r74
+        from compiler_bridge_v2_probe import unwrap_native_parts_v2
+        from native_relative_links import assert_native_links
+        candidate,_meta=build_r75()
+        need(sha(candidate)==R75_SHA and raw==reconstruct(candidate),
+             "Strict source R75: current binary differs from pinned builder")
+        _,native_parts=unwrap_native_parts_v2(candidate)
+        need(len(native_parts)==72,"Strict source R75: native part count")
+        assert_native_links(native_parts[:70]);check_cross_r74(native_parts[:70])
+        old,_oldmeta=build_r74()
+        need(sha(old)==R74_SHA,"Strict source R75: inherited R74 changed")
+        oldparsed=parse_lib(reconstruct(old))
+        need(len(oldparsed['section'])==71,"Strict source R75: old R74 part count")
+        inherited=verified_current_compiler_seeds(oldparsed)
+        need(0 in inherited and 8 in inherited and 70 in inherited,
+             "Strict source R75: inherited R74 CFG roots missing")
+        for i in range(70):
+            need(sections[i]['core']==oldparsed['section'][i]['core']
+                 and sections[i]['getp']==oldparsed['section'][i]['getp'],
+                 f"Strict source R75: legacy native part {i} changed")
+        need(sections[70]['core']==oldparsed['section'][70]['core']
+             and sections[70]['getp'],
+             "Strict source R75: Open changed except its GetP delimiter")
+        code,labels=emit_convert()
+        need(sections[71]['core']==code and not sections[71]['getp']
+             and code.count(R75_BANK)==1,
+             "Strict source R75: Convert bytes/AMOS marker changed")
+        marker_pos=code.index(R75_BANK)
+        need(marker_pos>0 and marker_pos+len(R75_BANK)<len(code),
+             "Strict source R75: marker has no safe instruction resume")
+        seeds={i:set(v) for i,v in inherited.items()}
+        seeds[71]={0,marker_pos+len(R75_BANK)}
+        return seeds
     if len(sections)==71:
         # R74 adds one source-audited C2P entry and extends the screen
         # close entry with two hooks. Without inherited R73 CFG roots the

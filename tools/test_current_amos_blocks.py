@@ -100,6 +100,32 @@ def main():
         assert "Aga C2P Convert" not in source and "Aga C2P Close" not in source
         assert source.index("Reserve As Data 12") < source.index("For _DEPTH=4 To 8") < source.index("Erase 12")
         print("PASS: C2P R74 active ASC covers 4..8 planes, duplicate Open, cleanup; STATIC ONLY")
+    if files and files[0].name == "C2P_R75_CONVERT_01.asc":
+        source=files[0].read_text("ascii")
+        required=(
+            "Reserve As Data 12,81920",
+            "For _I=0 To 81919",
+            "Poke _PTR+_I,_I Mod 256",
+            "For _DEPTH=4 To 8",
+            "_OPEN=Aga Screen Open(320,256,_COL,$00021000)",
+            "_DB=Aga Double Buffer",
+            "_PAL=Aga Palette Set(_I,_R,_G,_B)",
+            "_C2P=Aga C2P Open(12)",
+            "_CV0=Aga C2P Convert",
+            "_SW0=Aga Swap",
+            "_CV1=Aga C2P Convert",
+            "_SW1=Aga Swap",
+            "Aga Screen Close",
+            "_POST=Aga C2P Convert",
+            "Erase 12", 'Print "RESULT ";_RESULT',
+            'Print "CLOSE RETURNED"',
+        )
+        assert all(k in source for k in required),"R75 Convert test incomplete"
+        assert source.count("Aga C2P Convert")>=4
+        assert source.index("_CV0=Aga C2P Convert")<source.index("_SW0=Aga Swap")<source.index("_CV1=Aga C2P Convert")<source.index("_SW1=Aga Swap")
+        assert "Aga C2P Close" not in source
+        assert "GDB" not in source or "No GDB" in source
+        print("PASS: R75 ASC tests 4..8 planes, 2 converted frames + 2 explicit swaps; STATIC ONLY")
     # OPT020/P1e has ONE interpreted-only active ASC, and keeps R68 archived.
     if files and files[0].name == "OPT020_P1E_R69_INTERPRETED_01.asc":
         source = files[0].read_bytes().decode("latin-1")
