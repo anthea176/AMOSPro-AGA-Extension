@@ -1,11 +1,21 @@
-# Test actif AMOS — R84 AGAPIC v1/v2 promue LAST_GOOD
+# Test actif M19 P0 : AMAL manuel + deux Bobs logiciels
 
-**Unique ASC actif :** [AGAPIC_R84_V1_V2_01.asc](AGAPIC_R84_V1_V2_01.asc). Copie identique dans [tests/passed](../passed/AGAPIC_R84_V1_V2_01.asc).
+**Unique ASC actif :** [M19_P0_AMAL_BOBS_01.asc](M19_P0_AMAL_BOBS_01.asc). L'ancien R84 est deja fige sans changement dans [tests/passed/AGAPIC_R84_V1_V2_01.asc](../passed/AGAPIC_R84_V1_V2_01.asc).
 
-**Binaire actif = LAST_GOOD :** R84 v0.13.29, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; 76 commandes / 85 entrées AP20, 3 modules natifs. R83 historique reconstructible via [builder](../../tools/build_aga_r83_modular.py) et [Git avant promotion](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/3c65fed54567d28c845979c23667585bd7cc6808/dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Bibliotheque :** utiliser [R84 v0.13.29 LAST_GOOD](../../dist/AMOSPro_AGA.Lib) (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle API M19, aucun nouveau binaire, `c2p.library` non requise.
 
-**Statut :** Gate A native CPU/CI **PASS** et Gate C AMOS Compiler **PASS** (programme compilé avec une banque ; deux passes 4/8 plans, `ERR 0`, `CLOSE_RETURNED 2`). Le journal compilé mesure Chip **0** et Fast **−11 920 octets**. Le banc conserve 4 ABK dans `RAM:` après les opérations Save/Load : ce delta n'établit pas une fuite native. Gate B Runtime corrigée **non attestée séparément** ; `PRG_STATE 0` strict et matériel réel non testés. Promotion R84 explicitement approuvée par l'auteur avec cette limite de preuve. **Aucune nouvelle exécution WinUAE n'est demandée.**
+**Etat :** source P0 preparee pour essai. La syntaxe est fondee sur le [manuel AMAL](https://amospromanual.dev/07-06-amal.html) ; **ni test reel WinUAE, ni compilation AMOS, ni PASS M19 ne sont attestes**. Le preflight hors AMOS ne prouve pas un comportement runtime.
 
-**Règle AMOS :** `Length(N)` sert aux tests d'existence de banques encore absentes. `Start(N)` sert uniquement à l'adresse d'une banque effectivement réservée (par exemple `_P11=Start(11)` puis `Leek(_P11+24)`). Remplacer ces `Start` par `Length` provoque des lectures invalides.
+## Executer sous AMOS / WinUAE
 
-[Rapport de promotion](../../docs/AGAPIC_R84_LAST_GOOD_PROMOTION_2026-11-14.md) · [Gate C compilée](../../docs/AGAPIC_R84_COMPILER_GATE_C_2026-11-14.md) · [Gate A](../../docs/AGAPIC_R84_GATE_A_2026-11-14.md).
+1. Verifier que les banques **11, 12, 13 sont libres**. Le test les refuse si elles sont occupees ; il n'efface jamais une banque initiale. Installer la R84 validee.
+2. Importer `M19_P0_AMAL_BOBS_01.asc` avec **Project -> Merge ASCII**. Lancer sous AMOS. L'ecran prive AGA est en **320x256x256 couleurs**.
+3. Observer deux motifs 16x16 colores et animes : premier horizontal, second vertical ; chaque Bob change d'image alternativement. Le prototype dure au maximum **240 frames de logique**, Echap permet une sortie anticipee apres la mise au premier plan de la fenetre AGA par `Amos To Back`.
+4. Le programme ferme l'ecran, arrete AMAL avant liberation de ses tampons, restitue AMOS, affiche RESULT/ERR et cree `RAM:M19_P0_AMAL_BOBS_INTERPRETED.TXT`, `_RUNTIME.TXT` ou `_COMPILED.TXT` suivant `Prg State`.
+5. Transmettre le **journal RAM**, la confirmation du mouvement des deux Bobs et l'eventuel message d'erreur avec sa ligne. Ne **pas** compiler pour le premier passage : Gate C sera envisagee en fin de chantier.
+
+**Criteres P0 :** `RESULT 1`, `VERDICT PASS`, `ERR 0`, `FRAME_OK>=25`, `MOVE_X0>0`, `MOVE_Y1>0`, `DRAW_FAIL 0`, `SWAP_FAIL 0`, `CLOSE_RETURNED 1`, un journal cree sans erreur et observation visuelle. Les deltas Chip/Fast sont mesures avant ecriture dans RAM: ; interpreter avec les autres lignes du rapport.
+
+Le premier rendu reconstruit volontairement **tout le fond** avec `Aga Blit Fill` ; les deux Bobs utilisent `Aga F Icon` en mode transparence. `Synchro` est appele une seule fois par frame dans la boucle AMOS, et aucune commande de dessin n'est appelee par interruption. Les retries des commandes graphiques et du Swap sont **bornes**.
+
+[Plan M19](../../docs/M19_SPRITES_BOBS_AMAL_PLAN.md) · [Roadmap](../../docs/ROADMAP.md) · [Regles source](../../EXTENSION_SOURCE_RULES.md).

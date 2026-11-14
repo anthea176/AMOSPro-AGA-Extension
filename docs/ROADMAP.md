@@ -30,11 +30,11 @@
 
 ## 3. Backlog — pistes non engagées
 
-Les chantiers 1 et 2 étant clos, **aucun nouveau chantier n'est engagé par cette roadmap**. M19 est le premier sujet listé, **sans décision de lancement ni date**.
+Les chantiers R83 et R84 sont clos. **M19 est désormais engagé sur décision explicite de l'auteur (14/11/2026), en phase P0 de prototype AMAL manuel + deux Bobs logiciels**, sans nouvelle commande native ni modification de la R84 LAST_GOOD. [Plan de référence M19](M19_SPRITES_BOBS_AMAL_PLAN.md).
 
 | Sujet | Objectif à étudier |
 |---|---|
-| **M19 — Sprites, objets AGA et AMAL** | Intégration à l'écran AGA privé, animation et synchronisation ; **aucun dessin en interruption**. Définir le contrat avant toute API. |
+| **M19 — Sprites AGA, Bobs et AMAL** | **ENGAGÉ P0** : deux Bobs logiciels 16×16 pilotés par AMAL manuel sur l'écran AGA privé. Aucun dessin en interruption ; aucune API encore validée. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
 | **M20 — Tilemaps et scrolling** | Tilesets, cartes, caméra, transparence, gestion des ressources Fast/Chip et dirty rectangles adaptés au double buffering. |
 | **M21 — Dual Playfield AGA** | Étudier les deux playfields, leurs palettes, priorités et défilements indépendants, en cohérence avec l'écran privé et les buffers. |
 | **M22 — Copper avancé** | Définir les usages et limites d'accès aux registres au-delà des commandes RGB4 existantes. |
