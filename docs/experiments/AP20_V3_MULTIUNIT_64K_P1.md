@@ -48,3 +48,14 @@ runs structural tests, MC68020 CPU tests, and confirms that both R82
 \`dist\` binaries exactly match the promoted SHA256 before testing.
 
 No changes to \`main\`, \`dist/\`, \`tests/current/\`, or R82 API.
+
+## First P1 CI iteration
+
+The first branch-only run (43633736583) verified both R82 protected files,
+passed all six P0 structural tests, and executed **four far JSR** targets on
+MC68020 with correct ABI, return and target values. Its four near BSR.W
+calls failed because the *test harness* calculated the branch from PC+4
+rather than the 68k instruction's PC+2 base (already established by the
+repository's earlier V2 bridge tests). This branch iteration fixes that
+formula and adds a dedicated branch-opcode assertion. No native units or
+production files were changed; the full P1 CPU gate must be rerun.

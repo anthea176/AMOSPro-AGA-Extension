@@ -60,7 +60,9 @@ def compiler_link_stub(stub: bytes, stub_address: int, *, absolute: bool) -> tup
     addr = GROUP_BASES[group]
     if absolute:
         return b"\x4e\xb9" + pack(">I", addr) + pack(">H", offset) + RTS, offset
-    displacement = addr - (stub_address + 4)
+    # 68k BSR.W displacement is relative to the opcode's PC+2,
+    # not to the word following its 16-bit extension.
+    displacement = addr - (stub_address + 2)
     if not -32768 <= displacement <= 32767:
         raise ValueError("Near BSR.W cannot reach unit")
     return b"\x61\x00" + pack(">h", displacement) + pack(">H", offset) + RTS, offset
@@ -168,6 +170,14 @@ class TwoNativeUnitCPU020(unittest.TestCase):
         self.assertEqual(sum(i.size for i in insn), 6)
         self.assertTrue(any(i.mnemonic.lower().startswith("extb") for i in insn),
                         [(i.mnemonic, i.op_str) for i in insn])
+
+    def test_near_bsr_pc_base_is_opcode_plus_two(self):
+        _, segments, _ = unpack_ap20(self.wrapped)
+        stub = GROUP_BASES[4] - 0x100
+        link, _ = compiler_link_stub(segments[0], stub, absolute=False)
+        self.assertEqual(link[:4], bytes.fromhex("610000fe"))
+        self.assertEqual(stub + 2 + unpack_from(">h", link, 2)[0],
+                         GROUP_BASES[4])
 
     def test_far_link_must_be_explicit(self):
         _, seg, _ = unpack_ap20(self.wrapped)
