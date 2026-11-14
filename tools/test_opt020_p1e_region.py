@@ -385,7 +385,7 @@ def v2_structure(native):
     report = inspect(parse(wrapped))
     assert not report["issues"], report["issues"]
     assert len(entries[-1]) < 65534
-    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
     return len(wrapped), len(entries[-1])
 
 

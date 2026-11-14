@@ -21,8 +21,9 @@ from native_relative_links import assert_native_links,relink_native_parts,LINKS,
 
 ROOT=Path(__file__).resolve().parents[1]
 ACTIVE_SHA="fdb98db259618fbdc3802843e2d6e836cb64acf2d68dc50bbe1133d46d36e67b"
-GOOD_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+GOOD_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # Moving promoted LAST_GOOD (R81)
 R73_SHA="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407"
+R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
 DRAW=60
 CAPTURE=66
 
@@ -30,14 +31,19 @@ def build():
     active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     last_good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active_sha=sha256(active).hexdigest()
-    assert active_sha in (ACTIVE_SHA,R73_SHA),"Unrecognized P3 active library"
+    assert active_sha in (ACTIVE_SHA,R73_SHA,R81_SHA),"Unrecognized historical P3/modern R81 active library"
     assert sha256(last_good).hexdigest()==GOOD_SHA,"LAST_GOOD modified"
     source,_=build_r72()
     if active_sha==ACTIVE_SHA:
         assert source==active,"R72 builder differs from installed binary"
-    else:
+    elif active_sha==R73_SHA:
         from build_opt020_p3_r73 import build as build_r73
-        assert active==build_r73()[0],"R73 builder differs from active binary"
+        assert active==build_r73()[0],"Historical R73 builder differs from active binary"
+    else:
+        from build_c2p_r81_opt020 import build as build_r81
+        from build_opt020_p3_r73 import build as build_r73
+        assert active==last_good==build_r81()[0],"Promoted R81 mismatch"
+        assert sha256(build_r73()[0]).hexdigest()==R73_SHA,"Historical R73 source changed"
     tokens,original=unwrap_native_parts_v2(source)
     assert len(original)==70 and original[59].endswith(GETP)
     assert original[DRAW]==emit_ficon_ap20()[0]+GETP

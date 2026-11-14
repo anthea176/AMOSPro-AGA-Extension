@@ -34,4 +34,4 @@ Journal transmis par l'auteur : **`C2P_R81_COMPILED.TXT`**.
 - **Limites** : la Gate C attestée vaut pour **ce scénario 8 plans / 256 couleurs sur CPU 68030** ; pas de qualification compilée déduite pour 4–7 plans ni de preuve de gain de vitesse. La Gate C est désormais **réalisée**, contrairement au plan antérieur qui n'en demandait pas une nouvelle.
 - **R81 candidate non promue** : `dist/AMOSPro_AGA.Lib` reste R81 v0.13.26, 59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4` ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure **R73**. Aucune promotion ni modification de binaire autorisée par ce rapport.
 
-**Verdict : R81 OPT020 Gates A, B Runtime et C compilée PASS dans les périmètres documentés.**
+**Verdict : R81 OPT020 Gates A, B Runtime et C compilée PASS dans les périmètres documentés.** L'auteur a ensuite autorisé la [promotion de R81 en `LAST_GOOD`](C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md) ; Gate D physique toujours non testée.

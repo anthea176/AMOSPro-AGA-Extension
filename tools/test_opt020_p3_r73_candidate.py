@@ -24,7 +24,11 @@ def main():
     active_path=ROOT/"dist/AMOSPro_AGA.Lib"
     original_good=protected_path.read_bytes()
     original_active=active_path.read_bytes()
-    assert sha256(original_good).hexdigest()==R73, "Promoted R73 LAST_GOOD mismatch"
+    assert sha256(original_good).hexdigest()=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4", "Promoted R81 LAST_GOOD mismatch"
+    from build_c2p_r81_opt020 import build as build_r81
+    promoted,meta81=build_r81()
+    assert original_good==original_active==promoted, "Promoted R81 byte identity"
+    assert meta81["sha256"]=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4" and meta81["size"]==59972
     previous,_=build_r72()
     assert sha256(previous).hexdigest()==R72
     old_tokens,old_parts=unwrap_native_parts_v2(previous)
@@ -55,14 +59,14 @@ def main():
     assert t1==t0 and len(e1)==len(e0)==71
     assert b"0.13.18" in title1 and b"0.13.17" in title0
     assert len(candidate)<65536,"unexpected binary expansion"
-    # A new R73 candidate may be installed only in a separate later commit.
+    # R73 remains historical; R81 is the promoted active baseline.
     current_sha=sha256(original_active).hexdigest()
-    assert current_sha in (R72,R73),("Unexpected active library",current_sha)
-    assert original_active==(previous if current_sha==R72 else candidate)
+    assert current_sha=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4",("Unexpected active library",current_sha)
+    assert original_active==promoted and candidate!=promoted
     assert active_path.read_bytes()==original_active
     assert protected_path.read_bytes()==original_good
     print("R73 EXACT IN-MEMORY RELEASE CANDIDATE GATE A PASS",meta,flush=True)
-    print("3 negative relative link corruption cases rejected; R72 historical source and R73 LAST_GOOD stable",flush=True)
+    print("3 negative relative link corruption cases rejected; R72/R73 historical sources stable; R81 LAST_GOOD stable",flush=True)
     print("Active Lib unchanged by test; NO AMOS Compiler or WinUAE test",flush=True)
 
 if __name__=="__main__":

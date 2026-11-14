@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the SHA-pinned promoted R73 V2 and frozen historical R46 C1.
+"""Verify promoted R81 V2, historical R73 builder and frozen R46 C1.
 
 Future revisions MUST unwrap the V2 LAST_GOOD via
 compiler_bridge_v2_probe.unwrap_native_parts_v2(), change only audited
@@ -50,7 +50,16 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R80 0.13.25"):
+    if active.startswith("R81 0.13.26"):
+        from build_c2p_r81_opt020 import build as build_r81
+        candidate,meta=build_r81()
+        assert candidate==current==LAST_GOOD.read_bytes(), "Promoted R81 must equal exact active builder"
+        assert meta["sha256"]=="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4" and meta["size"]==59972
+        assert meta["commands"]==70 and meta["ap20_entries"]==77
+        from build_opt020_p3_r73 import build as build_r73
+        assert sha256(build_r73()[0]).hexdigest()=="c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407", "Historical R73 builder drift"
+        print("CURRENT R81 PROMOTED LAST_GOOD: native Gate A / Runtime B / Compiler C PASS; Gate D physical untested",meta)
+    elif active.startswith("R80 0.13.25"):
         from build_c2p_r80_iff_chunky import build as build_r80
         candidate,meta=build_r80()
         assert candidate==current and meta["sha256"]=="24e05f7403c07d23db1ff65c9499a032b413fd7d0d140ce8a55e2fd6778b18c6"
@@ -214,7 +223,7 @@ def main() -> None:
     # verify_active() separately checks the pinned LAST_GOOD release.
     print("HISTORICAL R46 C1 BRIDGE PASS", details)
     print("CURRENT INSTALLABLE LIBRARY PASS:", active)
-    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R73)")
+    print("Next revision source: unwrap_native_parts_v2(LAST_GOOD.read_bytes()) (promoted R81)")
     print("Next revision final: wrap_native_ap20_v2(native_candidate, release_title)")
 
 

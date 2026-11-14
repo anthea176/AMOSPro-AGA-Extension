@@ -69,7 +69,7 @@ def v2_check(native):
     actual_sha = sha256(active).hexdigest()
     assert actual_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA), (
         "Unrecognized active P1e/P2 or C2P extension candidate")
-    assert sha256(protected).hexdigest() == "c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407", "Promoted R73 LAST_GOOD changed"
+    assert sha256(protected).hexdigest() == "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4", "Promoted R81 LAST_GOOD changed"
     old, labels = emit_image_draw(accept_loaded_flags_zero=True)
     assert emit_image_draw(accept_loaded_flags_zero=True)[0] == old
     assert not any(n.startswith("p1e_") for n in labels)

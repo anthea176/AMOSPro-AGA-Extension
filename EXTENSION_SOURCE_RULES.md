@@ -1,5 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
+## ÉTAT AUTORITAIRE — R81 v0.13.26 PROMUE `LAST_GOOD` (14/11/2026)
+
+**Promotion explicitement autorisée :** R81 OPT020 est désormais la référence promue `dist/AMOSPro_AGA_LAST_GOOD.Lib` ; celle-ci doit être **strictement identique** à `dist/AMOSPro_AGA.Lib` et au constructeur déterministe `tools/build_c2p_r81_opt020.py` : **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, 70 commandes / 77 entrées AP20.
+
+**Gates A native, B WinUAE Runtime et C AMOS Compiler : PASS** sur les scénarios documentés, dont IFF indexé 320×256×8 et CPU 68030, 14/14 pixels de référence, deltas Chip/Fast 0. Gate D matériel physique non testée ; aucun gain de vitesse quantifié. [Rapport de promotion](docs/C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md).
+
+**R73 v0.13.18 reste la dernière référence historique antérieure**, reconstruite par `tools/build_opt020_p3_r73.py` et récupérable dans Git. Les sections datées ci-dessous qui présentent R73 comme `LAST_GOOD` décrivent **l'état historique de leur rédaction** ; elles ne remplacent pas ce statut R81 plus récent. Pas de branche supplémentaire, tag, release GitHub ou publication Aminet par cette promotion. Préserver les constructeurs historiques, le seul ASC actif et la protection du pointeur `LAST_GOOD`.
+
+---
+
 
 ## REGLE PERMANENTE PRIORITAIRE — CIBLE CPU OFFICIELLE : 68020 MINIMUM (14/11/2026)
 

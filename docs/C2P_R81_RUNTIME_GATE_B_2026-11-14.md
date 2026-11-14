@@ -36,4 +36,4 @@ Aucune perte **nette** de mémoire entre les deux relevés. Cela ne mesure pas l
 - **Candidate active R81 v0.13.26** : `dist/AMOSPro_AGA.Lib`, **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commandes / 77 entrées AP20**. Ce SHA provient de la construction GitHub, et non du journal utilisateur.
 - **Aucune promotion** : `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste R73 v0.13.18, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`.
 
-**Verdict au moment de ce journal : Gate B Runtime R81 PASS.** L'auteur a transmis ensuite `C2P_R81_COMPILED.TXT` : [Gate C compilée R81 PASS](C2P_R81_COMPILER_GATE_C_2026-11-14.md). Aucune promotion ni mesure de vitesse revendiquée.
+**Verdict au moment de ce journal : Gate B Runtime R81 PASS.** L'auteur a transmis ensuite `C2P_R81_COMPILED.TXT` : [Gate C compilée R81 PASS](C2P_R81_COMPILER_GATE_C_2026-11-14.md). La promotion R81 `LAST_GOOD` a ensuite été autorisée : [rapport](C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md). Aucun benchmark de vitesse revendiqué.

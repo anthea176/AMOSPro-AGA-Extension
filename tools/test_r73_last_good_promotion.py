@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Read-only proof that R73 LAST_GOOD remains byte-exact when later C2P candidates are current.
+"""Read-only proof of promoted R81 LAST_GOOD and preserved R68/R73 sources.
 
-R68 remains a pinned historical source independent from the moving LAST_GOOD.
+Retains the historical filename for existing CI invocations. R68 and R73
+are immutable deterministic build sources, independent of moving LAST_GOOD.
 No AMOS Compiler, WinUAE, benchmarks or binary writes.
 """
 from hashlib import sha256
@@ -23,20 +24,32 @@ def main():
     cur,good,label=verify_active(ROOT)
     baseline,_=build_r68()
     validated,meta=build_r73()
-    assert LAST_GOOD_SHA==R73_SHA
+    assert LAST_GOOD_SHA==R81_SHA
     assert sha256(baseline).hexdigest()==R68_SHA, "Historical R68 source drift"
     assert len(baseline)==51064 and baseline!=cur
-    assert good==validated,"Protected R73 LAST_GOOD differs from deterministic source"
-    assert len(good)==51608 and sha256(good).hexdigest()==R73_SHA
+    assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
+    from build_c2p_r81_opt020 import build as build_r81
+    promoted, promoted_meta=build_r81()
+    assert good==cur==promoted and good!=validated, "Promoted R81 LAST_GOOD must match working binary and builder"
+    assert len(good)==59972 and sha256(good).hexdigest()==R81_SHA
+    assert promoted_meta["size"]==59972 and promoted_meta["commands"]==70
+    assert promoted_meta["ap20_entries"]==77
     assert current.read_bytes()==cur and last_good.read_bytes()==good
     assert meta["commands"]==64 and meta["ap20_entries"]==71
     tokens,parts=unwrap_native_parts_v2(good)
     t,entries,title=unpack_ap20(good)
-    assert tokens==t and len(parts)==70 and len(entries)==71
-    assert_native_links(parts)
+    assert tokens==t and len(parts)==76 and len(entries)==77
+    assert_native_links(parts[:70])
+    from c2p_r74_relink import check_cross_r74
+    from build_c2p_r76_rpg_fix import state_offset, SITES
+    check_cross_r74(parts[:70])
+    assert state_offset(parts)==12070
+    assert all(parts[i][pos:pos+4]==op.to_bytes(2,"big")+bytes.fromhex("2f26")
+               for i,pos,op in SITES), "R81 keyboard/mouse LEA drift"
     report=inspect(parse(good))
     assert not report["issues"]
-    assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==64
+    assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==70
+    assert label.startswith("R81 0.13.26")
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
@@ -112,10 +125,10 @@ def main():
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert good==validated
-    print("R73 LAST_GOOD PROMOTION BYTE-EXACT PASS",R73_SHA,len(cur),
-          "64 commands / 71 AP20 / 3 native links")
-    print("Historical R68 source SHA pinned, one ASC active, no bytes written")
+    assert good==promoted and validated!=promoted
+    print("R81 LAST_GOOD PROMOTION BYTE-EXACT PASS",R81_SHA,len(cur),
+          "70 commands / 77 AP20 / 3 native links")
+    print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 
 if __name__=="__main__":
     main()

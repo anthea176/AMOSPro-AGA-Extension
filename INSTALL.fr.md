@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate R81 v0.13.26 — processeur MC68020 minimum, Gate A native PASS, Gate B Runtime R81 NON TESTÉE, sans essai Compiler AMOS demandé.** [Bibliothèque de travail AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), **59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, 70 commandes / 77 entrées AP20. Installer `LIBS:c2p.library` pour C2P Open/Convert. [R73 LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée : **51 608 octets**, SHA256 `c995ea143a21ea1820c9f0c75455131215a7fc876be81587dc8bf561a7808407`. [Contrôle CPU R81](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43615716395).
+**R81 v0.13.26 promue `LAST_GOOD` — MC68020 minimum, Gates A/B/C PASS** (CPU 68030, IFF 320×256×8, 14/14 pixels ; deltas nets Chip/Fast 0). La [bibliothèque de travail](dist/AMOSPro_AGA.Lib) et [`LAST_GOOD` protégée](dist/AMOSPro_AGA_LAST_GOOD.Lib) sont **strictement identiques : 59 972 octets**, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`, **70 commandes / 77 entrées AP20**. Installer `LIBS:c2p.library` pour C2P Open/Convert. Gate D Amiga physique non testée. [Rapport de promotion](docs/C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md).
 
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
@@ -10,7 +10,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Copier la [candidate R81](dist/AMOSPro_AGA.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l'ancienne version. **Conserver le même slot d'extension**, redémarrer AMOS Professional ; aucun test AMOS Compiler n'est demandé.
+2. Copier la [R81 promue](dist/AMOSPro_AGA.Lib) dans **APSystem** sous `AMOSPro_AGA.Lib`, après sauvegarde de l'ancienne bibliothèque. **Conserver le même slot d'extension**, puis redémarrer AMOS Professional.
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.

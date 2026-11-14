@@ -1,6 +1,6 @@
 # R81 OPT020 — IFF, Blit et Zoom sous WinUAE
 
-**Candidate de développement R81 v0.13.26** : optimisation CPU 68020 de `Aga C2P Blit`, `Aga C2P Zoom` et `Aga Iff To Chunky`. **Gate A native 68020 PASS (22 Blit / 14 Zoom / 15 lignes IFF), Gate B WinUAE Runtime R81 PASS (68030, IFF 320×256×8, 14/14 pixels, Chip/Fast delta 0)**. Gate C AMOS Compiler **PASS** : journal `C2P_R81_COMPILED.TXT`, `RUN_MODE COMPILED`, `PRG_STATE -1`, CPU 68030, 14/14 pixels, deltas Chip/Fast 0. R73 `LAST_GOOD` inchangée. La Gate B Runtime R80 (sur l'image 8 plans) était PASS.
+**R81 v0.13.26 promue `LAST_GOOD`** : Blit/Zoom/IFF→Chunky optimisés MC68020, **70 commandes / 77 entrées AP20**, **Gates A/B/C PASS** (CPU 68030, IFF 320×256×8, 14/14 pixels, deltas Chip/Fast 0). La bibliothèque `dist/AMOSPro_AGA.Lib` est identique à `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Gate D Amiga physique non testée. [Promotion](../../docs/C2P_R81_LAST_GOOD_PROMOTION_2026-11-14.md).
 
 **Un seul ASC actif :** [C2P_R80_IFF_CHUNKY_01.asc](C2P_R80_IFF_CHUNKY_01.asc) — même scénario natif IFF/Blit/Zoom 320×256 que R80, **désormais identifié R81 dans le journal**. Ce nom de fichier est conservé pour éviter un second ASC et les régressions de références ; l'exemple indépendant R79 est sous `examples/c2p_iff_showcase/`.
 

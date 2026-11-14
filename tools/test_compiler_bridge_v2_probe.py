@@ -141,7 +141,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             from native_relative_links import assert_native_links
             from c2p_r74_relink import check_cross_r74
             candidate,meta=build_r81()
-            assert current_bytes==candidate and current_bytes!=protected_bytes
+            assert current_bytes==candidate==protected_bytes, "Promoted R81 must equal LAST_GOOD byte for byte"
             assert meta["size"]==59972 and meta["commands"]==70 and meta["ap20_entries"]==77
             parts=unwrap_native_parts_v2(current_bytes)[1]
             assert len(parts)==76 and state_offset(parts)==12070
