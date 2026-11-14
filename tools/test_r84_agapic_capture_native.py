@@ -144,6 +144,17 @@ def compare(machine,before,*,version,index,x=5,y=5,w=19,h=9):
     assert machine.reserve_count==machine.change_count==1
     assert machine.erase_count==0
 
+def raw_stream(machine,bank=11):
+    """Read the encoded RLE body using the real AGAPIC header offsets."""
+    pointer=machine.banks[bank]
+    length=machine.get(pointer-20)-16
+    data=bytes(machine.uc.mem_read(pointer,length))
+    start=int.from_bytes(data[24:28],'big')
+    end=int.from_bytes(data[28:32],'big')
+    assert 0<start<end==len(data),('invalid AGAPIC stream offsets',start,end,len(data))
+    return data[start:end]
+
+
 def main():
     count=0
     for depth in (1,4,8):
@@ -155,6 +166,20 @@ def main():
                               m.main_calls,m.alloc_count,m.free_count)
                 compare(m,before,version=version,index=index)
                 count+=1
+    # Regression for WinUAE ERR 17: identical source pixels and mask
+    # captured in v1/v2 MUST have byte-identical compressed row streams.
+    # The two formats differ only by their metadata/header offsets.
+    for depth in (1,4,8):
+        for index in (-1,0):
+            v1=CaptureV2Machine(depth=depth)
+            v2=CaptureV2Machine(depth=depth)
+            ok1,_=v1.capture(version=1,index=index,w=64,h=40,x=5,y=4)
+            ok2,_=v2.capture(version=2,index=index,w=64,h=40,x=5,y=4)
+            assert ok1==ok2==1,('cross-format capture failed',depth,index)
+            s1,s2=raw_stream(v1),raw_stream(v2)
+            assert s1==s2,('R84 v1/v2 native RLE mismatch',
+                           depth,index,len(s1),len(s2))
+            count+=1
     for version in (0,3,-1):
         m=CaptureV2Machine()
         ok,_=m.capture(version=version)

@@ -5,9 +5,10 @@
 ## WinUAE — Gate B Runtime puis Gate C Compiler
 
 1. Sauvegarder la bibliothèque AMOS actuelle et l’Interpreter Config. Installer **uniquement** `dist/AMOSPro_AGA.Lib` (R84 candidate) dans `APSystem/AMOSPro_AGA.Lib` (même slot AMOS habituel n°14, s'il est libre). La version `LAST_GOOD` n’est **pas** la R84.
-2. Démarrer WinUAE AGA CPU 68020+ (68030 recommandé), AMOS Professional. Utiliser un programme vide puis **Project → Merge ASCII** avec le seul ASC actif. Laisser les banques **11..15 libres** ; le test refuse de les écraser.
-3. Le banc ouvre successivement un écran AGA **320×256×16** puis **320×256×256**. Pour chaque profondeur : capture native v1/v2 opaque et masquée, héritage de l'ancienne API v1, Info champs 1..5, contrôle octet par octet des flux RLE, palette RGB24/ModeID, refus invalides, Save/Erase/Load ABK, Draw/Region/Swap, fermeture et RAM.
-4. Journaux : `RAM:AGAPIC_R84_RUNTIME.TXT` puis compiler un **nouvel exécutable** AMOS et relever `RAM:AGAPIC_R84_COMPILED.TXT`. Attendus : `RESULT 1`, `VERDICT PASS`, `PASS_4 1`, `PASS_8 1`, `ERR 0`, `CLOSE_COUNT 2`, `CHIP_DELTA 0`, `FAST_DELTA 0`. Transmettre les deux fichiers et signaler toute anomalie visuelle.
+2. Dans le banc R84, **Length(N)** sert uniquement à tester l’existence d'une banque ; **Start(N)** sert à obtenir l'adresse des banques effectivement créées pour `Leek`/`Peek`. Ne jamais remplacer les quatre affectations `_P11.._P14=Start(N)` par `Length(N)` : cela produirait des lectures mémoire invalides (ERR 17).
+3. Démarrer WinUAE AGA CPU 68020+ (68030 recommandé), AMOS Professional. Utiliser un programme vide puis **Project → Merge ASCII** avec le seul ASC actif. Laisser les banques **11..15 libres** ; le test refuse de les écraser.
+4. Le banc ouvre successivement un écran AGA **320×256×16** puis **320×256×256**. Pour chaque profondeur : capture native v1/v2 opaque et masquée, héritage de l'ancienne API v1, Info champs 1..5, contrôle octet par octet des flux RLE, palette RGB24/ModeID, refus invalides, Save/Erase/Load ABK, Draw/Region/Swap, fermeture et RAM.
+5. Journaux : `RAM:AGAPIC_R84_RUNTIME.TXT` puis compiler un **nouvel exécutable** AMOS et relever `RAM:AGAPIC_R84_COMPILED.TXT`. Attendus : `RESULT 1`, `VERDICT PASS`, `PASS_4 1`, `PASS_8 1`, `ERR 0`, `CLOSE_COUNT 2`, `CHIP_DELTA 0`, `FAST_DELTA 0`. Transmettre les deux fichiers et signaler toute anomalie visuelle.
 
 **Statut : Gate A native CPU/CI PASS** (44 tests Info et 47 captures sur vrai cœur 68020 émulé). **Gates B WinUAE Runtime / C AMOS Compiler R84 encore à confirmer.** `PRG_STATE 0` strict et Amiga physique Gate D non testés. Ne pas promouvoir R84 ni déplacer l'ASC dans `tests/passed` avant validation de l'auteur.
 

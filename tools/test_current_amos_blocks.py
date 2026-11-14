@@ -97,6 +97,21 @@ def main():
         assert src.index("For _PASS=1 To 2")<src.index("Next _PASS")
         assert src.index("Save \"RAM:R84_V1_4.abk\"")<src.index("Load \"RAM:R84_V1_4.abk\"")
         assert src.rstrip().endswith("End")
+        # AMOS Start(N) raises "Bank not reserved" for an empty bank.
+        # Length(N) is used for existence tests; Start(N) only for
+        # addresses of banks after Capture has returned 1.
+        for n in (11,12,13,14,15):
+            assert f"Length({n})<>0" in src, f"R84 bank {n} existence test must use Length"
+            assert f"If _C{n}=1 and Length({n})<>0" in src, (
+                f"R84 cleanup must check bank {n} safely before Erase")
+        assert "Length(16)<>0" in src, "R84 must safely check rejected bank 16"
+        for n in (11,12,13,14):
+            assert f"_P{n}=Start({n})" in src, (
+                f"R84 raw bank {n} pointer must use Start, not Length")
+        assert not any(f"If Start({n})" in src for n in (11,12,13,14,15,16)), (
+            "R84 preflight may not dereference unreserved bank with Start")
+        assert not any(f"and Start({n})" in src for n in (11,12,13,14,15)), (
+            "R84 cleanup must not probe unreserved banks with Start")
         print("PASS: R84 single ASC validates v1/v2 4/8-plane capture/Info, RLE, Save/Load and cleanup (STATIC)")
 
     if files and files[0].name == "C2P_P2_R73_BITMAP_01.asc":
