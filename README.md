@@ -31,7 +31,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R78 v0.13.23** — C2P Open, Convert, Close and Blit; **68 commands / 75 AP20 entries**. Blit passed native CPU Gate A (46 cases); WinUAE Gate B / Compiler Gate C pending. R77 Close and R76 Open+Convert passed real WinUAE Gate B. R73 v0.13.18 remains promoted A/B/C `LAST_GOOD` and physical Gate D is untested.
+**Current library API R78 0.13.23** — C2P Open, Convert, Close and Blit; **68 commands / 75 AP20 entries**. Blit passed native CPU Gate A (46 cases); WinUAE Gate B / Compiler Gate C pending. R77 Close and R76 Open+Convert passed real WinUAE Gate B. R73 v0.13.18 remains promoted A/B/C `LAST_GOOD` and physical Gate D is untested.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

@@ -31,7 +31,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R78 v0.13.23** — C2P Open, Convert, Close et Blit, **68 commandes / 75 entrées AP20**. Blit est qualifiée en Gate A native (46 scénarios) mais pas encore sous WinUAE/Compiler. R77 Close, R76 Open+Convert validées en Gate B WinUAE ; R73 v0.13.18 reste `LAST_GOOD` promue A/B/C. Gate D physique non testée.
+**API de la bibliothèque courante R78 0.13.23** — C2P Open, Convert, Close et Blit, **68 commandes / 75 entrées AP20**. Blit est qualifiée en Gate A native (46 scénarios) mais pas encore sous WinUAE/Compiler. R77 Close, R76 Open+Convert validées en Gate B WinUAE ; R73 v0.13.18 reste `LAST_GOOD` promue A/B/C. Gate D physique non testée.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
