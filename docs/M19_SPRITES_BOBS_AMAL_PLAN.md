@@ -1,7 +1,7 @@
 # M19 — Sprites AGA, Bobs logiciels et AMAL : plan valide
 
 > **Décision auteur : plan approuvé le 14/11/2026 ; démarrage de P0 autorisé.**  
-> **Statut : conception validée, expérience P0 à préparer/tester ; aucune nouvelle API native approuvée.**  
+> **Statut : P0 Runtime/WinUAE PASS sur la version initiale, correction de clignotement confirmée visuellement ; P1 prototype source préparé pour essai WinUAE, aucune nouvelle API native approuvée.**  
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence de départ : **R84 v0.13.29 promue LAST_GOOD** (76 commandes, 85 entrées AP20, MC68020 minimum). Le binaire `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure protégé.
 
 ## 1. Objectif
@@ -54,8 +54,8 @@ La position précise de la mise à jour des sprites matériels par rapport aux n
 
 | Phase | Prototype / livrable | Preuve requise | État |
 |---|---|---|---|
-| **P0 — AMAL manuel et Bobs témoins** | Tester `SYNCHRO OFF`, deux canaux `Amal ... To adresse`, tampons X/Y/A et deux objets logiciels 16x16 dessinés par `Aga F Icon` dans le back buffer, sans nouvelle commande native | ASC actif unique, préflight statique, **test visuel AMOS/WinUAE et log RAM:** avant PASS | **EN COURS** |
-| **P1 — Bobs généraux** | Plusieurs images AGAPIC, animation/frame, transparence, profondeur, ordre et fond redessiné, clipping, 2 buffers | Comparaison visuelle et pixels/retours, Safe/Swap, mémoire et fermeture | À faire |
+| **P0 — AMAL manuel et Bobs témoins** | Deux canaux AMAL mémoire et deux Bobs 16×16 via `Aga F Icon` | Runtime/WinUAE PASS (211 frames, aucun refus de dessin/Swap), correction visuelle du clignotement confirmée ; source P0 archivée | **TESTÉ / ARCHIVÉ** |
+| **P1 — Bobs généraux** | Six images AGAPIC v1/v2 24×24, masquage/opaque, cadence 16/24 frames, ordre, clips, redessin complet, double buffer en 8 plans | Pixel témoin (ordre inversé) et contrôles Safe/Swap ; Gate B WinUAE à exécuter ; 4–7 plans non couverts | **EN COURS — SOURCE PRÊTE** |
 | **P2 — Objets gérés** | Identifier les opérations réellement manquantes : création, placement, image, visibilité, ordre, destruction, mapping AMAL | Contrat de chaque éventuelle API validé par l'auteur avant codage | À étudier |
 | **P3 — Sprites matériels** | Audit ViewPort/Intuition, pointeur, canaux disponibles, allocation système, 16 pixels puis déplacement | Gate A ciblée + Gate B WinUAE ; ressources/cleanup ; aucun registre DMA brut imposé | À étudier |
 | **P4 — Extensions** | 32/64 pixels AGA, canaux attachés, cache/Blitter, Bobs optimisés et mélange Sprite/Bob | Benchmarks reproductibles sur MC68020+, étude mémoire et contraintes chipset | À étudier |
@@ -72,6 +72,15 @@ La position précise de la mise à jour des sprites matériels par rapport aux n
 6. **Condition de PASS P0** : les deux objets sont visibles et mobiles, X/Y/A changent conformément à l'AMAL, aucun écran noir ou freeze, aucune écriture sur front/non-Safe, fermetures/banques correctes, rapport existant et conforme. Un préflight statique ne vaut pas Gate B.
 
 Ce prototype peut utiliser les **Fast Icons comme Bobs logiciels témoins** : il ne s'agit ni des commandes `Bob` natives d'AMOS, ni d'un nouveau gestionnaire de Bobs.
+
+## 6 bis. Définition de P1 — premier test logiciel
+
+- **Seul ASC actif :** [M19_P1_AGAPIC_BOBS_01.asc](../tests/current/M19_P1_AGAPIC_BOBS_01.asc) ; P0 déplacé sans modification dans `tests/passed/`.
+- **Banques :** 11 (16 octets pour 2 canaux AMAL), 12..17 (six AGAPIC 24×24, v1/v2, transparence de l'index 0 sauf l'image opaque 17), 18/19 (deux captures 1×1 de comparaison).
+- **Boucle :** `Synchro Off` / AMAL en mémoire et `Synchro` manuel ; deux déplacements X/Y, sélection des images toutes les 16/24 frames et inversion de priorité tous les 60 ticks. Toutes les opérations graphiques se déroulent depuis BASIC, après préparation du back buffer `Safe`.
+- **Images et masque :** `Aga Bank Image Capture` / `Aga Bank Image Draw` ; fond totalement redessiné à `Aga Blit Fill` puis objet opaque, deux Bobs masqués, objet fixe devant et quatre clips, Swap explicite.
+- **Pixel témoin :** capturer 1×1 après ordre 12→14, puis après 14→12 ; comparer uniquement les données RLE v1. Différence prouvée = composition sensible à l'ordre **sur ce pixel**. L'inspection visuelle est nécessaire pour le reste.
+- **Limite :** P1 préparé mais aucune preuve de Gate B avant l'essai ; ce banc n'éprouve que le mode **256 couleurs / 8 plans**, ni les sprites matériels, ni une API de gestion d'objets.
 
 ## 7. Conditions de validation et livrables
 

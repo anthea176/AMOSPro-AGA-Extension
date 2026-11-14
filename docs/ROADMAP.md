@@ -30,11 +30,11 @@
 
 ## 3. Backlog — pistes non engagées
 
-Les chantiers R83 et R84 sont clos. **M19 est désormais engagé sur décision explicite de l'auteur (14/11/2026), en phase P0 de prototype AMAL manuel + deux Bobs logiciels**, sans nouvelle commande native ni modification de la R84 LAST_GOOD. [Plan de référence M19](M19_SPRITES_BOBS_AMAL_PLAN.md).
+Les chantiers R83 et R84 sont clos. **M19 est engagé sur décision de l'auteur (14/11/2026) : P0 testé Runtime, P1 prototype AGAPIC multi-Bobs en cours**, sans nouvelle commande native ni modification de R84 LAST_GOOD. [Plan de référence M19](M19_SPRITES_BOBS_AMAL_PLAN.md).
 
 | Sujet | Objectif à étudier |
 |---|---|
-| **M19 — Sprites AGA, Bobs et AMAL** | **P0 exécuté sous WinUAE Runtime : PASS** (211 frames, deux mouvements, aucune erreur de dessin/Swap) ; clignotement causé par alternance d'image AMAL à chaque frame, supprimé et confirmé visuellement. Nouvelle source P0 à images fixes ; journal de revalidation de cette version non reçu. **P1 à engager**, aucune API encore validée. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
+| **M19 — Sprites AGA, Bobs et AMAL** | **P0 Runtime/WinUAE PASS** (211 frames, 2 Bobs, zéro erreur de dessin/Swap) ; clignotement d'alternance d'image corrigé visuellement. **P1 en cours** : 6 images AGAPIC v1/v2, deux Bobs masqués, un opaque, superposition/ordre contrôlés par pixel témoin, animation cadencée, quatre clips et double buffering. **Gate B P1 en attente.** Aucun changement d'API. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
 | **M20 — Tilemaps et scrolling** | Tilesets, cartes, caméra, transparence, gestion des ressources Fast/Chip et dirty rectangles adaptés au double buffering. |
 | **M21 — Dual Playfield AGA** | Étudier les deux playfields, leurs palettes, priorités et défilements indépendants, en cohérence avec l'écran privé et les buffers. |
 | **M22 — Copper avancé** | Définir les usages et limites d'accès aux registres au-delà des commandes RGB4 existantes. |
