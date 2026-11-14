@@ -173,6 +173,7 @@ def _emit(is_fade: bool, native_start: int, legacy_target: int):
     c.quick(1,D(6),sub=True); b(6,'padding_loop')
     l('padding_done')
     fl('start',A(0))
+    fl('table',D(0))  # relative table offset, not last padding pointer
     u16(14,1)
     c.quick(1,D(1)); c.shift(1,2,left=True)
     c.alu('add',D(1),0)
