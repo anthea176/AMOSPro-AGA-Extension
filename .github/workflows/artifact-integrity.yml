@@ -176,6 +176,10 @@ jobs:
           python -B tools/test_c2p_r74_open_gate_a.py
       - name: RPG M0 R73/R74/R75 legacy close and End lifecycle Gate A
         run: python -B tools/test_c2p_r74_rpg_lifecycle_native.py
+      - name: R76 RPG input state relocation native CPU000/020 Gate A
+        run: |
+          python -B tools/build_c2p_r76_rpg_fix.py
+          python -B tools/test_c2p_r76_rpg_input_native.py
       - name: R75 C2P Convert (in-memory) 68k Gate A
         run: |
           python -B tools/build_c2p_r75_convert.py
