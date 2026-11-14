@@ -7,6 +7,7 @@ on:
       - ".github/workflows/r84-agapic-gate-a.yml"
       - "tools/build_aga_r84_agapic.py"
       - "tools/m16_agapic_info_emit.py"
+      - "tools/test_r84_agapic_info_native.py"
       - "tools/m16_agapic_capture_v2_emit.py"
       - "tools/m16_capture_emit.py"
       - "tools/m16_capture_r47_core_emit.py"
@@ -31,9 +32,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install 68020 emulator
-        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9 machine68k==0.4.0
       - name: R84 in-memory native structural and dispatcher tests
         run: python -B tools/build_aga_r84_agapic.py --gate-a
+      - name: Native AGAPIC metadata CPU68020 v1/v2, real instructions
+        run: python -B tools/test_r84_agapic_info_native.py
       - name: Historical v1/v2 host format regressions
         run: |
           python -B tools/test_m16_agapic_v2.py
