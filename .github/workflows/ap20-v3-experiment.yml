@@ -1,0 +1,109 @@
+name: AP20 V3 isolated multiunit experiment
+
+on:
+  push:
+    branches:
+      - experiment/ap20-v3-multiunit-64k
+    paths:
+      - "tools/experiments/**"
+      - "docs/experiments/**"
+      - "dist/AMOSPro_AGA.Lib"
+      - "tools/active_library.py"
+      - ".github/workflows/ap20-v3-experiment.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  cpu020-three-units:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check ACTIVE P5 in dist while R82 LAST_GOOD remains immutable
+        run: |
+          python - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+          active=Path("dist/AMOSPro_AGA.Lib").read_bytes()
+          assert len(good)==64112 and sha256(good).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36", "LAST_GOOD R82 drift"
+          assert len(active)==76188 and sha256(active).hexdigest()=="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af", "active P5 drift"
+          assert active!=good
+          print("R82 LAST_GOOD frozen and P5 dist ACTIVE verified")
+          PY
+      - name: Validate branch working library selector and protected LAST_GOOD
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          import sys
+          sys.path.insert(0, "tools")
+          from active_library import verify_active
+          active, last_good, label=verify_active(Path("."))
+          assert sha256(active).hexdigest()=="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"
+          assert sha256(last_good).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
+          assert "P5" in label
+          print("ACTIVE P5 selector PASS:", label)
+          PY
+      - name: Install isolated MC68020 CPU test dependencies
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: P0 structural gate - independent AP20 groups
+        run: python -B tools/experiments/ap20_v3_multiunit_probe.py
+      - name: P1 real MC68020 dispatcher and ABI gate
+        run: python -B tools/experiments/ap20_v3_multiunit_cpu020.py
+      - name: P2 R82 exact-inheritance multiunit MC68020 proof
+        run: python -B tools/experiments/ap20_v3_r82_p2.py
+      - name: P3 prepare disposable test library and AMOS source
+        run: |
+          python -B tools/experiments/ap20_v3_r82_p2_export.py --output ap20-v3-artifact/AMOSPro_AGA_V3_FIXED.Lib
+          cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-artifact/
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P3.md ap20-v3-artifact/P3_INSTRUCTIONS.md
+          python - <<'PY'
+          from pathlib import Path
+          b=Path("tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc").read_bytes()
+          assert b"Aga Detect" in b and b"Aga V3 Size Probe" in b
+          assert b"RAM:AP20_V3_COMPILED.TXT" in b
+          assert b.rstrip().endswith(b"End")
+          assert not list(Path("dist").glob("*V3*"))
+          print("P3 AMOS test fixture static guard PASS")
+          PY
+      - name: P4 true R82 C2P/Core split MC68020 and interpreter relocation gate
+        run: |
+          python -B tools/experiments/ap20_v3_r82_split.py \
+            --output ap20-v3-split-artifact/AMOSPro_AGA_V3_R82_SPLIT_TEST.Lib \
+            --emit-base64
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P4.md ap20-v3-split-artifact/P4_INSTRUCTIONS.md
+          cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-split-artifact/REFERENCE_ONLY_P3_PROBE.asc
+      - name: P5 genuine R82 3-unit module and MC68020 proof
+        run: |
+          python -B tools/experiments/ap20_v3_r82_threeunits.py \
+            --output ap20-v3-3units-artifact/AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib \
+            --emit-base64
+          cmp dist/AMOSPro_AGA.Lib ap20-v3-3units-artifact/AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P5.md \
+            ap20-v3-3units-artifact/P5_INSTRUCTIONS.md
+      - name: Upload P5 three-real-module disposable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_THREE_UNITS_P5_TEST_ONLY
+          path: ap20-v3-3units-artifact/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Upload P4 R82 two-real-modules disposable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_SPLIT_P4_TEST_ONLY
+          path: ap20-v3-split-artifact/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Upload disposable test package (not a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_FIXED_TEST_ONLY
+          path: ap20-v3-artifact/
+          retention-days: 7
+          if-no-files-found: error
