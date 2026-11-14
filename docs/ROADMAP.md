@@ -34,7 +34,7 @@ Les chantiers R83 et R84 sont clos. **M19 est désormais engagé sur décision e
 
 | Sujet | Objectif à étudier |
 |---|---|
-| **M19 — Sprites AGA, Bobs et AMAL** | **ENGAGÉ P0** : deux Bobs logiciels 16×16 pilotés par AMAL manuel sur l'écran AGA privé. Aucun dessin en interruption ; aucune API encore validée. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
+| **M19 — Sprites AGA, Bobs et AMAL** | **P0 exécuté sous WinUAE Runtime : PASS** (211 frames, deux mouvements, aucune erreur de dessin/Swap) ; clignotement causé par alternance d'image AMAL à chaque frame, supprimé et confirmé visuellement. Nouvelle source P0 à images fixes ; journal de revalidation de cette version non reçu. **P1 à engager**, aucune API encore validée. [Plan approuvé](M19_SPRITES_BOBS_AMAL_PLAN.md). |
 | **M20 — Tilemaps et scrolling** | Tilesets, cartes, caméra, transparence, gestion des ressources Fast/Chip et dirty rectangles adaptés au double buffering. |
 | **M21 — Dual Playfield AGA** | Étudier les deux playfields, leurs palettes, priorités et défilements indépendants, en cohérence avec l'écran privé et les buffers. |
 | **M22 — Copper avancé** | Définir les usages et limites d'accès aux registres au-delà des commandes RGB4 existantes. |

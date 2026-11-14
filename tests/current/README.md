@@ -4,13 +4,13 @@
 
 **Bibliotheque :** utiliser [R84 v0.13.29 LAST_GOOD](../../dist/AMOSPro_AGA.Lib) (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle API M19, aucun nouveau binaire, `c2p.library` non requise.
 
-**Etat :** source P0 preparee pour essai. La syntaxe est fondee sur le [manuel AMAL](https://amospromanual.dev/07-06-amal.html) ; **ni test reel WinUAE, ni compilation AMOS, ni PASS M19 ne sont attestes**. Le preflight hors AMOS ne prouve pas un comportement runtime.
+**Etat :** P0 execute sous **AMOS/WinUAE Runtime MC68030, R84 LAST_GOOD : PASS** sur le code initial, d'apres le journal remis par l'auteur (`RESULT 1`, `ERR 0`, 211 frames, 210 mouvements pour chaque Bob, aucun echec de dessin/Swap, RAM stable, fermeture 1). Le changement d'image **A a chaque frame** provoquait un clignotement volontaire des couleurs ; l'auteur a confirme visuellement qu'en supprimant ces deux alternances, il disparait. La source courante integre cette correction ; **nouveau journal RAM avec le code corrige encore non fourni**. Ni compilation AMOS Gate C, ni Amiga physique Gate D attestes. [Diagnostic P0](../../docs/M19_P0_RUNTIME_DIAGNOSTIC_2026-11-14.md).
 
 ## Executer sous AMOS / WinUAE
 
 1. Verifier que les banques **11, 12, 13 sont libres**. Le test les refuse si elles sont occupees ; il n'efface jamais une banque initiale. Installer la R84 validee.
 2. Importer `M19_P0_AMAL_BOBS_01.asc` avec **Project -> Merge ASCII**. Lancer sous AMOS. L'ecran prive AGA est en **320x256x256 couleurs**.
-3. Observer deux motifs 16x16 colores et animes : premier horizontal, second vertical ; chaque Bob change d'image alternativement. Le prototype dure au maximum **240 frames de logique**, Echap permet une sortie anticipee apres la mise au premier plan de la fenetre AGA par `Amos To Back`.
+3. Observer deux motifs 16x16 colores et animes : premier horizontal, second vertical ; les images 1 et 3 restent fixes pendant le mouvement (plus d'alternance des couleurs a chaque frame). Le prototype dure au maximum **240 frames de logique**, Echap permet une sortie anticipee apres la mise au premier plan de la fenetre AGA par `Amos To Back`.
 4. Le programme ferme l'ecran, arrete AMAL avant liberation de ses tampons, restitue AMOS, affiche RESULT/ERR et cree `RAM:M19_P0_AMAL_BOBS_INTERPRETED.TXT`, `_RUNTIME.TXT` ou `_COMPILED.TXT` suivant `Prg State`.
 5. Transmettre le **journal RAM**, la confirmation du mouvement des deux Bobs et l'eventuel message d'erreur avec sa ligne. Ne **pas** compiler pour le premier passage : Gate C sera envisagee en fin de chantier.
 
