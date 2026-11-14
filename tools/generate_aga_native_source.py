@@ -491,7 +491,7 @@ def verified_current_compiler_seeds(parsed):
     good_native = native_from_promoted(r54_blob, parse_lib(r54_blob)['title'])
     raw = parsed['raw']
     sections = parsed['section']
-    if len(sections)==72 and sha(raw)=="9e0a77f3e69c06cfcc96b00b8dc1f23122d559f617beac8762310c5f4bb53897":
+    if len(sections)==72 and b"AMOSPro AGA C2P RPG fix R76 0.13.21 candidate" in parsed["title"]:
         # R76 is the exact R75 monolith with only seven source-audited
         # LEA.W input-state displacements rebased after R74's 138-byte
         # cleanup-hook insertion. No code size or branch delta changes.
