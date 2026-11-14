@@ -1,10 +1,6 @@
 # AGAPIC v2 / R82 — Gate A native complète PASS (14/11/2026)
 
-**Statut : préparation R82, PAS de binaire installable R82 sur `main`.**
-La R81 v0.13.26 demeure `LAST_GOOD` : `dist/AMOSPro_AGA.Lib` et
-`dist/AMOSPro_AGA_LAST_GOOD.Lib` identiques (59 972 octets,
-SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`).
-Aucune autre branche GitHub n'a été créée.
+**Statut : R82 v0.13.27 candidate unique dans `dist/AMOSPro_AGA.Lib` (64 112 octets, SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`).** Gate A CPU/ABI intégrée PASS, WinUAE B / Compiler C / matériel D NON TESTÉES. La R81 v0.13.26 (59 972 octets, SHA256 `9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4`) demeure l'unique `LAST_GOOD` promue, strictement protégée dans `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Travail sur `main` uniquement.
 
 ## Périmètre validé — MC68020 et hôte uniquement
 
@@ -30,19 +26,17 @@ Les wrappers `Init/Capture` délèguent aux routines AGAPAL qualifiées ; `Apply
 dispatchent sur le nom/format de banque. Pour AGAPIC v2, seule la palette RGB24
 complète à l'index 0 est prise en compte et un ModeID identique est exigé.
 
-## Budget 16 bits — candidat **en mémoire uniquement**
+## Budget 16 bits — candidate unique R82 installée après validation native
 
-| Mesure | R81 LAST_GOOD | R82 source assemblée en mémoire |
+| Mesure | R81 LAST_GOOD | R82 candidate active |
 |---|---:|---:|
-| Taille `.Lib` | 59 972 octets | **64 124 octets** |
+| Taille `.Lib` | 59 972 octets | **64 112 octets** |
 | Dernière unité AP20 (dispatcher compris) | 57 034 octets | **60 972 octets** |
 | Plafond du pont Compiler V2 | 65 534 octets | **65 534 octets** |
 | Marge disponible | 8 500 octets | **4 562 octets** |
 | Commandes / entrées AP20 | 70 / 77 | **74 / 81** |
 
-SHA256 **de la représentation assemblée uniquement en mémoire** :
-`431968eec32b03ca1f7e99091690e6230b69d6f1a0e5ec6f88ff3cde34689f90`.
-Il ne correspond pas à un fichier `.Lib` déjà publié dans `dist/`.
+SHA256 **de la candidate unique installée** : `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`. La représentation antérieure de conception en mémoire faisait 64 124 octets, SHA256 `431968eec32b03ca1f7e99091690e6230b69d6f1a0e5ec6f88ff3cde34689f90`. Les 12 octets d'écart proviennent du titre/version de candidature ; le monolithe natif reste inchangé. Aucun second binaire de travail n'a été créé.
 Croissance native de `Aga Image Draw` : +422 octets ; `Aga Image Region` : +400 octets ;
 nouveaux wrappers Bank : 122 + 122 + 1 298 + 1 558 octets.
 
@@ -50,9 +44,9 @@ Le `BSR.L` MC68020 résout l'éloignement des routines AGAPAL historiques mais
 **ne supprime pas** le plafond de 65 534 octets. Le builder `build_agapic_v2_r82_full_preview.py`
 et `aga_compiler_capacity.py` le contrôlent avant toute publication.
 
-## Banc AMOS / WinUAE préparé (non exécuté)
+## Banc AMOS / WinUAE activé (non exécuté)
 
-- `tests/design/AGAPIC_R82_V2_BANK_PALETTE_01.asc` : test 320×256, 256 couleurs,
+- `tests/current/AGAPIC_R82_V2_BANK_PALETTE_01.asc` : seul ASC actif, copie strictement identique au fichier de conception `tests/design/`; test 320×256, 256 couleurs,
   ModeID PAL LowRes `$00021000`, palettes AGAPAL et AGAPIC v2, fondu,
   compatibilité AGAPIC v1, rejets, journal RAM: et fermeture.
 - `tests/design/R82_AGAPIC_V2_BANK10.abk` : image 96×64×8 masquée,
@@ -66,11 +60,8 @@ et `aga_compiler_capacity.py` le contrôlent avant toute publication.
 
 ## Garde-fous et prochaine validation
 
-1. **R81 conserve sa protection et son ASC actif unique** ; les nouveaux exemples
-   sont dans `tests/design` et ne prétendent pas être PASS WinUAE.
-2. Avant l'installation d'une **candidate unique R82** dans `dist/AMOSPro_AGA.Lib`,
-   les contrôles de l'identité active doivent être mis à jour sans dégrader les
-   tests historiques ni changer `LAST_GOOD`.
+1. **R81 demeure `LAST_GOOD` protégée** ; seule la R82 candidate occupe maintenant `dist/AMOSPro_AGA.Lib` et son seul ASC actif est sous `tests/current/`. Les preuves antérieures restent historiques, non écrasées.
+2. Le SHA256 de la R82 active est verrouillé ; les contrôles d'identité doivent exiger le constructeur déterministe R82 et la référence R81 inchangée.
 3. Gate B : lancer le test sous **AMOS interprété / WinUAE**, lire le journal
    `RAM:AGAPIC_R82_INTERPRETED.TXT`, vérifier palette et rendu visuel.
 4. Gate C : **compiler une seule fois en fin de chantier**, après Gate B et
@@ -78,4 +69,4 @@ et `aga_compiler_capacity.py` le contrôlent avant toute publication.
 5. Gate D : Amiga AGA physique, séparé. Ne pas promouvoir R82 avant
    l'accord explicite de l'auteur et les preuves de validation.
 
-**Aucune Gate B, C ou D n'est revendiquée à ce stade.**
+**Aucune Gate B, C ou D R82 n'est revendiquée à ce stade.**
