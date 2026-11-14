@@ -388,6 +388,8 @@ jobs:
           python -B tools/test_aga_compiler_capacity.py
       - name: Standalone v2 native image decoder MC68020/ABI Gate A
         run: python -B tools/test_m16_agapic_v2_native.py
+      - name: In-memory R82 image-only AP20 linking and 16-bit budget
+        run: python -B tools/build_agapic_v2_r82_preview.py
       - name: Native Init/Capture Bank-number wrappers and long BSR.L Gate A
         run: python -B tools/test_m16_agapic_v2_bank_wrap_native.py
       - name: Protected installables are unchanged by tests
