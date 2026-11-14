@@ -40,3 +40,24 @@ jobs:
         run: python -B tools/experiments/ap20_v3_multiunit_cpu020.py
       - name: P2 R82 exact-inheritance multiunit MC68020 proof
         run: python -B tools/experiments/ap20_v3_r82_p2.py
+      - name: P3 prepare disposable test library and AMOS source
+        run: |
+          python -B tools/experiments/ap20_v3_r82_p2_export.py --output ap20-v3-artifact/AMOSPro_AGA_V3_TEST_ONLY.Lib
+          cp tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc ap20-v3-artifact/
+          cp docs/experiments/AP20_V3_MULTIUNIT_64K_P3.md ap20-v3-artifact/P3_INSTRUCTIONS.md
+          python - <<'PY'
+          from pathlib import Path
+          b=Path("tools/experiments/AP20_V3_R82_MULTIUNIT_01.asc").read_bytes()
+          assert b"Aga Detect" in b and b"Aga V3 Size Probe" in b
+          assert b"RAM:AP20_V3_COMPILED.TXT" in b
+          assert b.rstrip().endswith(b"End")
+          assert not list(Path("dist").glob("*V3*"))
+          print("P3 AMOS test fixture static guard PASS")
+          PY
+      - name: Upload disposable test package (not a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AP20_V3_R82_TEST_ONLY
+          path: ap20-v3-artifact/
+          retention-days: 7
+          if-no-files-found: error
