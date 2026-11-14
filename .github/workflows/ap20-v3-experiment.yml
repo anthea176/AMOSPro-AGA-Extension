@@ -7,6 +7,8 @@ on:
     paths:
       - "tools/experiments/**"
       - "docs/experiments/**"
+      - "dist/AMOSPro_AGA.Lib"
+      - "tools/active_library.py"
       - ".github/workflows/ap20-v3-experiment.yml"
 
 permissions:
@@ -21,16 +23,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Verify promoted R82 is unchanged
+      - name: Check ACTIVE P5 in dist while R82 LAST_GOOD remains immutable
         run: |
           python - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          expected="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
-          a=Path("dist/AMOSPro_AGA.Lib").read_bytes()
-          b=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-          assert a==b and sha256(a).hexdigest()==expected
-          print("R82 protected; libraries identical", len(a), expected)
+          good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+          active=Path("dist/AMOSPro_AGA.Lib").read_bytes()
+          assert len(good)==64112 and sha256(good).hexdigest()=="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36", "LAST_GOOD R82 drift"
+          assert len(active)==76188 and sha256(active).hexdigest()=="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af", "active P5 drift"
+          assert active!=good
+          print("R82 LAST_GOOD frozen and P5 dist ACTIVE verified")
           PY
       - name: Install isolated MC68020 CPU test dependencies
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
@@ -66,6 +69,7 @@ jobs:
           python -B tools/experiments/ap20_v3_r82_threeunits.py \
             --output ap20-v3-3units-artifact/AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib \
             --emit-base64
+          cmp dist/AMOSPro_AGA.Lib ap20-v3-3units-artifact/AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib
           cp docs/experiments/AP20_V3_MULTIUNIT_64K_P5.md \
             ap20-v3-3units-artifact/P5_INSTRUCTIONS.md
       - name: Upload P5 three-real-module disposable artifact

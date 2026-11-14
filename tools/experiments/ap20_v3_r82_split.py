@@ -48,10 +48,10 @@ TITLE += bytes(len(TITLE) & 1)
 
 
 def pinned_r82() -> bytes:
-    active = CURRENT.read_bytes()
+    """Use frozen R82 LAST_GOOD as build source; active dist may be P5."""
     protected = LAST_GOOD.read_bytes()
-    if active != protected or sha256(protected).hexdigest() != R82_SHA:
-        raise ValueError("R82 current/LAST_GOOD no longer match pinned source")
+    if len(protected) != 64112 or sha256(protected).hexdigest() != R82_SHA:
+        raise ValueError("R82 LAST_GOOD frozen source mismatch")
     return protected
 
 

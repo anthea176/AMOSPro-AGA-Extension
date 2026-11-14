@@ -6,7 +6,7 @@ Branche : `experiment/ap20-v3-multiunit-64k`. Ne remplace pas R82 LAST_GOOD.
 
 1. Dans une **copie WinUAE** AGA / MC68020+, garder `LIBS:c2p.library` 1.9.
 2. Sauvegarder l'ancien `APSystem/AMOSPro_AGA.Lib` **dans cette copie**.
-3. Copier `AMOSPro_AGA_V3_R82_3UNITS_TEST.Lib` comme
+3. Copier **`dist/AMOSPro_AGA.Lib` de la branche expérimentale** vers
    `APSystem/AMOSPro_AGA.Lib`, sans changer le slot 14.
 4. Relancer AMOS365. Ne toucher ni à la configuration AMOS de référence,
    ni au binaire R82 `LAST_GOOD`.
@@ -59,3 +59,9 @@ automatiquement P5**. Aucune fusion, promotion, ou publication.
 - Cette validation prouve le chargement des trois unités R82 et
   leurs dispatchers sous AMOS365. Les essais graphiques positifs sur P5
   restent distincts et non revendiqués.
+
+## Chemin de livraison officiel sur la branche
+
+`dist/AMOSPro_AGA.Lib` = bibliothèque P5 active (76 188 octets, SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`).
+La R82 `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste immuable.
+Dans AMOS Extension n°14, le titre attendu contient `THREE GENUINE NATIVE UNITS` ; si tu vois `TRUE SPLIT C2P/AGA`, la P4 est encore installée.

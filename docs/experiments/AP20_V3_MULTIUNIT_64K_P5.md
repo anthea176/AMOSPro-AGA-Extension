@@ -2,7 +2,7 @@
 
 **Base strictement immuable : R82 \`LAST_GOOD\` v0.13.27.**
 Branche de travail : \`experiment/ap20-v3-multiunit-64k\` uniquement.
-Aucun changement de \`main\`, de \`dist/\` ou du programme ASC courant.
+\`main\` et \`LAST_GOOD\` restent figés. Sur la branche expérimentale, **\`dist/AMOSPro_AGA.Lib\` est désormais la P5 active**. Le programme ASC courant est inchangé.
 
 ## Nouvelle découpe physique
 
@@ -90,3 +90,11 @@ AGAPIC, C2P et décodage `Aga Iff To Chunky` avec cette P5 ; les
 résultats complets de la P4 ne valent pas validation P5. Aucune
 qualification sur Amiga physique ni mode purement interprété.
 Aucune fusion / promotion R83 / modification de `main` ou `LAST_GOOD`.
+
+## Candidat actif sur la branche expérimentale
+
+La **seule bibliothèque active** est `dist/AMOSPro_AGA.Lib`, **76 188 octets**, SHA256 `db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af`.
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` reste la **R82 historique** (64 112 octets), SHA256 `b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36`.
+
+Dans AMOS Extension n°14, le titre P5 attendu contient `THREE GENUINE NATIVE UNITS` ; `TRUE SPLIT C2P/AGA` correspond à l'ancienne P4.
+La CI reconstruit la P5 et compare octet par octet la sortie à `dist/AMOSPro_AGA.Lib`.

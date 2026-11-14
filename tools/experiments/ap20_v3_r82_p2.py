@@ -76,10 +76,10 @@ def validate_interpreter_rbsr(segments: list[bytes]) -> dict[int, int]:
 
 
 def r82_bytes() -> bytes:
+    """Historical P2 source is frozen R82, independently of active P5."""
     promoted = PROMOTED.read_bytes()
-    active = CURRENT.read_bytes()
-    if active != promoted or sha256(promoted).hexdigest() != R82_SHA:
-        raise ValueError("R82 original CURRENT and LAST_GOOD identities differ")
+    if len(promoted) != 64112 or sha256(promoted).hexdigest() != R82_SHA:
+        raise ValueError("R82 original LAST_GOOD source mismatch")
     return promoted
 
 
