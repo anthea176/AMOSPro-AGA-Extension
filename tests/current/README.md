@@ -4,7 +4,7 @@
 
 **Binaire : R84 v0.13.29 LAST_GOOD inchangé** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle API ni nouvelle dépendance.
 
-**État P1 : prototype ASC et préflight structurel préparés. Aucune Gate B WinUAE P1, Gate C Compiler ni Gate D physique attestées.**
+**État P1 : Gate B WinUAE Runtime PASS sur 68030.** Journal : 240 frames, 6 captures AGAPIC, pixel de priorité 1, 46 chevauchements, 0 échec dessin/Swap, delta mémoire Chip/Fast 0, fermeture 1. [Rapport](../../docs/M19_P1_WINUAE_RUNTIME_2026-11-15.md). **Compiler M19, interprété strict et Amiga physique non testés.**
 
 ## Tester sur AMOS / WinUAE
 

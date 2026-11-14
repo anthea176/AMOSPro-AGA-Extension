@@ -1,7 +1,7 @@
 # M19 — Sprites AGA, Bobs logiciels et AMAL : plan valide
 
 > **Décision auteur : plan approuvé le 14/11/2026 ; démarrage de P0 autorisé.**  
-> **Statut : P0 Runtime/WinUAE PASS sur la version initiale, correction de clignotement confirmée visuellement ; P1 prototype source préparé pour essai WinUAE, aucune nouvelle API native approuvée.**  
+> **Statut au 15/11/2026 : P0 et P1 ont une preuve PASS WinUAE Runtime. P1 testé sur 8 plans/256 couleurs ; Gates C/D non testées. P2 : contrat à étudier ; aucune nouvelle API native approuvée.**  
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence de départ : **R84 v0.13.29 promue LAST_GOOD** (76 commandes, 85 entrées AP20, MC68020 minimum). Le binaire `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure protégé.
 
 ## 1. Objectif
@@ -55,7 +55,7 @@ La position précise de la mise à jour des sprites matériels par rapport aux n
 | Phase | Prototype / livrable | Preuve requise | État |
 |---|---|---|---|
 | **P0 — AMAL manuel et Bobs témoins** | Deux canaux AMAL mémoire et deux Bobs 16×16 via `Aga F Icon` | Runtime/WinUAE PASS (211 frames, aucun refus de dessin/Swap), correction visuelle du clignotement confirmée ; source P0 archivée | **TESTÉ / ARCHIVÉ** |
-| **P1 — Bobs généraux** | Six images AGAPIC v1/v2 24×24, masquage/opaque, cadence 16/24 frames, ordre, clips, redessin complet, double buffer en 8 plans | Pixel témoin (ordre inversé) et contrôles Safe/Swap ; Gate B WinUAE à exécuter ; 4–7 plans non couverts | **EN COURS — SOURCE PRÊTE** |
+| **P1 — Bobs généraux** | Six images AGAPIC v1/v2 24×24, masquage/opaque, cadence 16/24 frames, ordre, clipping et double buffer en 8 plans | Gate B WinUAE Runtime PASS : 240 frames, 46 overlaps, pixel témoin 1, aucun échec de dessin/Swap ; [rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). Autres profondeurs et Compiler non testés. | **TESTÉ / PASS RUNTIME 8 PLANS** |
 | **P2 — Objets gérés** | Identifier les opérations réellement manquantes : création, placement, image, visibilité, ordre, destruction, mapping AMAL | Contrat de chaque éventuelle API validé par l'auteur avant codage | À étudier |
 | **P3 — Sprites matériels** | Audit ViewPort/Intuition, pointeur, canaux disponibles, allocation système, 16 pixels puis déplacement | Gate A ciblée + Gate B WinUAE ; ressources/cleanup ; aucun registre DMA brut imposé | À étudier |
 | **P4 — Extensions** | 32/64 pixels AGA, canaux attachés, cache/Blitter, Bobs optimisés et mélange Sprite/Bob | Benchmarks reproductibles sur MC68020+, étude mémoire et contraintes chipset | À étudier |
