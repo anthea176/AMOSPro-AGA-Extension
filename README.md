@@ -31,7 +31,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API R81 0.13.26 — promoted `LAST_GOOD`**: **70 commands / 77 AP20 entries**. Gates A/B/C PASS on the documented test scope, hardware Gate D NOT TESTED. 68020 minimum, including optimized Blit, Zoom and IFF→Chunky.
+**Current library API R81 0.13.26** — promoted `LAST_GOOD`: **70 commands / 77 AP20 entries**. Gates A/B/C PASS on the documented test scope, hardware Gate D NOT TESTED. 68020 minimum, including optimized Blit, Zoom and IFF→Chunky.
 
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|

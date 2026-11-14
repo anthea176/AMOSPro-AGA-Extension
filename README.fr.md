@@ -31,7 +31,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante R81 0.13.26 — `LAST_GOOD` promue** : **70 commandes / 77 entrées AP20**, 68020 minimum. Gates A/B/C PASS sur les cas documentés ; Gate D machine physique non testée.
+**API de la bibliothèque courante R81 0.13.26** — `LAST_GOOD` promue : **70 commandes / 77 entrées AP20**, 68020 minimum. Gates A/B/C PASS sur les cas documentés ; Gate D machine physique non testée.
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
