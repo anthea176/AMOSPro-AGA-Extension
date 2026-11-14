@@ -38,3 +38,5 @@ jobs:
         run: python -B tools/experiments/ap20_v3_multiunit_probe.py
       - name: P1 real MC68020 dispatcher and ABI gate
         run: python -B tools/experiments/ap20_v3_multiunit_cpu020.py
+      - name: P2 R82 exact-inheritance multiunit MC68020 proof
+        run: python -B tools/experiments/ap20_v3_r82_p2.py
