@@ -50,3 +50,23 @@ CLOSE_RETURNED  5
 - Aucun fichier `.Lib` ni ASC historique modifie lors de cette documentation.
 
 [Rapport regression RPG](C2P_R76_RPG_REGRESSION_2026-11-14.md) · [Protocole RAM](AMOS_RAM_TEST_LOGGING.md) · [ASC actif](../tests/current/C2P_R76_CONVERT_01.asc).
+
+## Deuxieme execution propre : stabilite memoire confirmee (14/11/2026)
+
+Fichier utilisateur **C2P_R76_RUNTIMEV2.TXT**, transmis apres une relance sans nouvelle interruption Ctrl+C :
+
+| Mesure | Premier journal RUNTIME | Deuxieme journal RUNTIME |
+|---|---:|---:|
+| RESULT / VERDICT | 1 / PASS | **1 / PASS** |
+| PASS_DEPTH / FAIL_DEPTH | 5 / 0 | **5 / 0** |
+| CLOSE_COUNT | 5 | **5** |
+| ERR / NOS | 0 / 0 | **0 / 0** |
+| CPU / PRG_STATE | 68030 / 1 | **68030 / 1** |
+| CHIP_BEFORE / CHIP_AFTER | 1 799 064 / 1 799 064 | **1 799 064 / 1 799 064** |
+| CHIP_DELTA | 0 | **0** |
+| FAST_BEFORE / FAST_AFTER | 138 134 008 / 138 215 952 | **138 215 128 / 138 215 128** |
+| FAST_DELTA (before-after) | -81 944 | **0** |
+
+**Conclusion limitee au scenario execute :** la seconde execution complete ne perd ni Chip ni Fast RAM, y compris apres cinq fermetures. L'ecart Fast RAM de la premiere execution est **coherent avec une banque de 81 920 octets encore presente a l'entree du test apres l'interruption Ctrl+C precedente**, plus 24 octets de gestion possibles, mais le journal ne prouve pas l'origine exacte de ces 24 octets. Les niveaux absolus de Fast RAM entre sessions peuvent varier ; comparer les deltas **au sein de chaque execution**.
+
+Cette seconde preuve confirme la Gate B R76 C2P Open + Convert et le fonctionnement du rapport RAM. Elle ne valide toujours pas la Gate C Compiler ou la Gate D Amiga physique. Aucune modification de l'extension ni du programme ASC necessaire.

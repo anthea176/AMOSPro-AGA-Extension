@@ -8,7 +8,9 @@
 
 **Gate B C2P Convert R76 PASS sur WinUAE**, desormais documentee par captures et journal utilisateur `C2P_R76_RUNTIME.TXT` : cinq profondeurs 16/32/64/128/256 couleurs PASS, `RESULT 1`, `ERR 0`, `PASS_DEPTH 5`, `FAIL_DEPTH 0`, `CLOSE_COUNT 5`, `CPU 68030` declare par Exec, Chip Free `1799064 -> 1799064`. Fast Free `138134008 -> 138215952` (**+81 944 octets libres**, origine exacte non prouvee). `PRG_STATE 1` = mode **RUNTIME**, et **pas** la preuve d'un executable Compiler. Sur la mire finale, AMOS etait au premier plan ; l'auteur a utilise **Amiga+A** pour retrouver le focus de l'ecran AGA, puis termine par Echap. L'interruption Ctrl+C precedente a seulement confirme qu'AMOS repondait ; ce n'etait pas une reussite de sortie normale.
 
-**Le journal RAM est operationnel sur cet essai** : fichier produit et retour a AMOS, sans boucle infinie terminale. [Rapport Gate B C2P](C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md). **Gate C Compiler et Gate D physique NON TESTEES**. `Aga C2P Close` n'a pas de contrat approuve. Un seul ASC reste actif : `tests/current/C2P_R76_CONVERT_01.asc`. Prochaine decision C2P a discuter separément, sans programmation ou compilation implicite.
+**Second essai WinUAE propre (C2P_R76_RUNTIMEV2.TXT) :** `RESULT 1`, `PASS_DEPTH 5`, `CLOSE_COUNT 5`, `ERR 0`, `NOS 0`, Chip Free `1799064 -> 1799064` (**delta 0**) et Fast Free `138215128 -> 138215128` (**delta 0**). La recuperation de 81 944 octets lors du premier essai est coherente avec une banque qui serait restee apres Ctrl+C, sans preuve de l'origine exacte. **Aucune fuite memoire observee dans la seconde execution complete.**
+
+**Le journal RAM est operationnel sur ces essais** : fichier produit et retour a AMOS, sans boucle infinie terminale. [Rapport Gate B C2P](C2P_R76_CONVERT_WINUAE_GATE_B_2026-11-14.md). **Gate C Compiler et Gate D physique NON TESTEES**. `Aga C2P Close` n'a pas de contrat approuve. Un seul ASC reste actif : `tests/current/C2P_R76_CONVERT_01.asc`. Prochaine decision C2P a discuter separément, sans programmation ou compilation implicite.
 
 ## C2P-2 — R75 v0.13.20, Convert Gate A PASS, Gate B à tester (14/11/2026)
 
