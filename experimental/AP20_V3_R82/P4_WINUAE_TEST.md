@@ -62,3 +62,18 @@ and zero Chip/Fast net delta.
 Still required on the P4 library: true AGAPIC R82 image/palette test and
 true C2P positive conversion/Blit/Zoom/Close test, first Runtime then
 fresh Compiler output. Preserve the R82 LAST_GOOD unchanged.
+
+## Functional Runtime evidence -- status after initial P4 regression tests
+
+- R82 AGAPIC images/palettes: **Runtime functional PASS**, Chip/Fast net 0.
+  [Log](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_AGAPIC_RUNTIME_2026-11-14.TXT)
+- C2P IFF Showcase: **Runtime functional PASS**, 14/14 pixel indices,
+  `ERR 0`, Chip net 0, **Fast Free down 17,024 bytes**.
+  [Log](../../docs/experiments/evidence/AP20_V3_R82_SPLIT_P4_C2P_SHOWCASE_RUNTIME_2026-11-14.TXT)
+
+**C2P Fast RAM requires repeat and comparison.** It is not yet proven
+that these bytes are leaked by the native extension. Re-run the C2P
+showcase twice in succession after a fresh AMOS start (no WinUAE reset
+between runs) and archive both RAM logs; each rerun overwrites
+`RAM:C2P_IFF_SHOWCASE.TXT` unless copied elsewhere beforehand.
+Compiled functional runs of AGAPIC and C2P are also still required.

@@ -92,3 +92,46 @@ SHA256 of original CRLF evidence:
 - Compiled `f7c3da8583b0434f84cec2dcc17a348b0bf6c241b05f8f7fde3b425f6734ae2d`
 
 No change to `main`, `dist/`, `tests/current/`, or R82 LAST_GOOD.
+
+## P4 -- R82/AGAPIC and C2P positive functional Runtime evidence (2026-11-14)
+
+The author supplied two additional WinUAE **Runtime** logs while testing
+P4's real C2P/AGA two-unit experimental library. Neither log records the
+installed .Lib's checksum: association with P4 is based on test context,
+not an in-guest hash verification. Historical test headers still say
+R79 and R82 because the ASCII fixtures were not changed.
+
+- [R82 AGAPIC Runtime evidence](evidence/AP20_V3_R82_SPLIT_P4_AGAPIC_RUNTIME_2026-11-14.TXT):
+  `RUN_MODE RUNTIME`, `PRG_STATE 1`, CPU reported 68030,
+  `RESULT 1`, `ERR 0`,  all AGAPIC v1/v2, AGAPAL, palettes,
+  fades, capture, drawing, regions, invalid input and swap flags equal 1,
+  `CLOSE_RETURNED 1`; Chip and Fast free exactly unchanged.
+  **Positive AGAPIC functional Runtime PASS on the reported P4 setup.**
+- [C2P IFF showcase Runtime evidence](evidence/AP20_V3_R82_SPLIT_P4_C2P_SHOWCASE_RUNTIME_2026-11-14.TXT):
+  `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, 
+  all IFF loading, palette, raw bank, C2P base, Blit, Zoom, invalid calls,
+  re-open and Escape flags equal 1; `PIXEL_CHECK_COUNT 14`, normal close.
+  Chip free unchanged. **Fast free decreased by 17,024 bytes**
+  (138,189,072 -> 138,172,048; `FAST_DELTA 17024`).
+  **C2P functional Runtime PASS, memory-cleanup status UNRESOLVED.**
+
+The C2P reference showcase previously achieved **zero** Fast RAM delta on
+R79 (see `docs/C2P_INTEGRATED_IFF_REFERENCE_2026-11-14.md`).
+This new +17,024-byte consumed-memory delta is a real observation, not
+proof of an extension leak: AMOS/OS lazy resource allocation or other
+persistent state is also possible. Need clean warm-up then two successive
+runs in the same WinUAE instance, preferably compare to R82 LAST_GOOD
+in another isolated setup; if the 17,024-byte loss accumulates, investigate
+C2P Close/Screen Close and system library ownership. The test measures Fast
+Free after `Fsel$` / Pic Info but before C2P and screens, and measures
+again after Screen Close, `Erase 13`, `Erase 12` and `Amos To Front`.
+
+**P4 qualification is NOT complete:** AGAPIC/C2P fresh compiled functional
+runs are pending, and the C2P Fast RAM anomaly must be understood. The
+showcase does not exercise the `Aga Iff To Chunky` R80 decoder. The user
+has not supplied an interpreter-only `PRG_STATE 0` test or physical Amiga
+result. Do not merge/promote to main or change LAST_GOOD.
+
+Original uploaded-file SHA256:
+- AGAPIC Runtime `17bbb53bb0cd78a404ce6725a31c816be20df8261c57cab3710438aff2f38b13`
+- C2P Runtime `24ef7575a6d8037bb23a46fb00cfad41c919f67e97bbf21536399a6b286ceb26`
