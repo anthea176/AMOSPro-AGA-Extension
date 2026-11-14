@@ -31,7 +31,8 @@ class LiveV2CPU(LiveRegionCPU):
     def __init__(self, code, payload, depth, mode_id, *,
                  cpu=CPUType.M68020, **kw):
         super().__init__(cpu, code, payload, base=BASE, depth=depth, front=0,
-                         bank_flag=0, draw_api=True, **kw)
+                         bank_flag=0, draw_api=True,
+                         attnflags=2 if cpu == CPUType.M68020 else 0, **kw)
         self.mode_id = mode_id
         self.mode_calls = 0
         self._trap(GFX + LVO_GETVPMODEID, self.get_vp_mode_id)
