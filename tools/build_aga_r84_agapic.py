@@ -143,6 +143,8 @@ class R84Layout(unittest.TestCase):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gate-a",action="store_true")
+    parser.add_argument("--emit-base64",action="store_true",
+                        help="Print only in-memory R84 candidate bytes after native tests")
     args=parser.parse_args()
     if args.gate_a:
         result=unittest.TextTestRunner(verbosity=2).run(
@@ -152,6 +154,13 @@ def main():
     image,meta=build()
     print("R84 AGAPIC NATIVE CANDIDATE IN MEMORY ONLY",
           {k:v for k,v in meta.items() if not k.startswith("labels_")})
+    if args.emit_base64:
+        import base64
+        encoded=base64.b64encode(image).decode("ascii")
+        print("R84_MAIN_LIB_B64_BEGIN")
+        for at in range(0,len(encoded),120):
+            print("R84_MAIN_LIB_B64",encoded[at:at+120])
+        print("R84_MAIN_LIB_B64_END")
     print("No dist/ write, no WinUAE B/C claim, R83 LAST_GOOD protected")
 
 if __name__=="__main__":

@@ -44,5 +44,7 @@ jobs:
         run: |
           python -B tools/test_m16_agapic_v2.py
           python -B tools/test_m16_agapic_capture_model.py
+      - name: Emit tested R84 candidate bytes in CI log (never write dist)
+        run: python -B tools/build_aga_r84_agapic.py --emit-base64
       - name: No official binary, active ASC or archive mutation
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ archive/
