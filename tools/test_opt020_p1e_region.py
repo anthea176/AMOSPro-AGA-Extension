@@ -339,8 +339,14 @@ def v2_structure(native):
         r79, r79meta = build_r79()
         r80, r80meta = build_r80()
         r81, r81meta = build_r81()
-        assert current in (r69, r70, r71, r72, r73, r74, r75, r76, r77, r78, r79, r80, r81), (
-            "current must be an EXACT SHA-pinned R69..R81 deterministic build")
+        if current not in (r69, r70, r71, r72, r73, r74, r75, r76, r77, r78, r79, r80, r81):
+            # Modern R82/R83/R84 retain their separate SHA-pinned builders.
+            # Never mistake the current modular extension for the historical
+            # single-unit Region implementation tested below.
+            from active_library import R82_SHA,R83_SHA,R84_SHA,verify_active
+            digest=sha256(current).hexdigest()
+            assert digest in (R82_SHA,R83_SHA,R84_SHA), "Unknown current AP20 release"
+            assert verify_active(ROOT)[0]==current, "Current release did not match pinned native builder"
         assert r69meta["sha256"] == "9ff104125839fc14b35fabf6fcb436020f9b30cff9c6490868bf3ab7427d6298"
         assert r70meta["sha256"] == "fa69f514cd71c1490f67bc693d6a3b3afeffd26dbe0605189b57eacfc81ab7ad"
         assert r71meta["sha256"] == R71_SHA
@@ -385,7 +391,7 @@ def v2_structure(native):
     report = inspect(parse(wrapped))
     assert not report["issues"], report["issues"]
     assert len(entries[-1]) < 65534
-    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
+    assert sha256((ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()).hexdigest() == "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
     return len(wrapped), len(entries[-1])
 
 
