@@ -74,21 +74,21 @@ If Leek(P+28)<>TAILLE
    End
 End If
 
-VERSION=Deek(P+6)
+_VERSION=Deek(P+6)
 LARGEUR=Deek(P+12)
 HAUTEUR=Deek(P+14)
 PLANS=Deek(P+16)
 COULEURS=Deek(P+36)
 MODEID=Leek(P+32)
-FORMAT=Deek(P+38)
+_FORMAT=Deek(P+38)
 MASQUE=Deek(P+8) And 1
 CODEC=Deek(P+10)
 
-Print "AGAPIC version ";VERSION
+Print "AGAPIC version ";_VERSION
 Print "Dimensions ";LARGEUR;" x ";HAUTEUR
 Print "Plans ";PLANS;" Couleurs ";COULEURS
 Print "ModeID ";MODEID
-Print "Format ";FORMAT;" Masque ";MASQUE
+Print "Format ";_FORMAT;" Masque ";MASQUE
 Print "Codec ";CODEC;" Octets ";TAILLE
 End
 ```
