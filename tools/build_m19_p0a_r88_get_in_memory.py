@@ -85,7 +85,7 @@ def build():
     if len([x for x in audit['tokens'] if x['name'].startswith(('aga ','get aga '))])!=80:
         raise ValueError('unexpected M19 AGA command count')
     # The existing R88 C2P, IFF and AGA native units remain byte-identical.
-    if (parts[86],parts[87],parts[89])!=(orig_parts[85],new_bobs,orig_parts[88]):
+    if (parts[86],parts[87],parts[88],parts[89])!=(orig_parts[85],orig_parts[86],new_bobs,orig_parts[88]):
         raise ValueError('native unit mutation')
     links=interpreter_rbsr_displacements(parts)
     if PUBLIC not in links or BANK_PUBLIC not in links or max(map(abs,links.values()))>=32766:
