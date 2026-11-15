@@ -17,6 +17,7 @@ sys.path[:0]=[str(ROOT/'tools'),str(ROOT/'tools'/'experiments')]
 from build_m19_bobs_native_r89 import build as build_r89
 from audit_ap20 import parse,inspect,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
+from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 from m19_bobs_mask_native_emit import emit_masks
 from m19_bobs_object_native_emit import emit_objects,MAX_BOBS
@@ -61,7 +62,9 @@ def build():
     maskcode=bytearray(masks)
     objcode=bytearray(objects)
     old_bobs=parts[88]
-    sel=old_report['selected_word_offset']
+    # R89's AP20 Rbsr offsets are after the 32-byte DISPATCH header.
+    # PC-relative LEA and in-unit references use RAW group offsets.
+    sel=old_report['selected_word_offset']+len(DISPATCH_V2)
     start_mask=len(old_bobs)
     start_object=start_mask+len(maskcode)
     for ref in ('mask_bank_reference','no_mask_bank_reference'):
@@ -93,7 +96,7 @@ def build():
             start_object+obj_labels['bob_off'],
             start_object+obj_labels['bob_draw'],
             start_object+obj_labels['bob_draw'])):
-        newstub=RBSR+pack('>HH',GROUP_BOBS,entry)+b'\x4e\x75'
+        newstub=RBSR+pack('>HH',GROUP_BOBS,entry-len(DISPATCH_V2))+b'\x4e\x75'
         # Native AMOS GetP prefixes the NEXT entry, not the current entry.
         if idx in (86,87,88):
             newstub+=GETP
