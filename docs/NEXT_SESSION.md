@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**FEUILLE DE ROUTE M19 P0/P1/P2 (15/11/2026) — DOCUMENTATION UNIQUEMENT :** le [contrat Bobs AGA](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md) contient désormais l'inventaire fonctionnel tiré des chapitres 7.01–7.04 du manuel AMOS. **P0 :** banques/capture/mask/Chip, objets persistants, `Aga Bob Off`, `Aga Bob Update`, `Aga Bob Clear`/`Aga Bob Draw` ; rendu dans le back buffer AGA, **pas de `Aga Swap` implicite**. **P1 :** lecture X/Y/image, hotspot, priorités, Paste, Limit, édition de banque. **P2 :** collisions, HREV/VREV/REV, Set Bob, intégration AMAL, automatisation éventuelle. Les nouveaux noms AGA sont des propositions **non implémentées** ; préflight/token AP20/Compiler avant codage. **R84 LAST_GOOD inchangée, R88 candidate inchangée ; aucune nouvelle Gate validée.**
+
+---
+
 **M19 Bobs AGA — CONTRAT UTILISATEUR MIS À JOUR (15/11/2026), CONCEPTION UNIQUEMENT :**
 - **API cible** (non implémentée) : `Aga Bob Bank N`, `Get AGA Bob I,X1,Y1,X2,Y2` (**sans `To`**, bornes inclusives), `Make AGA Bob Mask I,C`, `No AGA Bob Mask I`, `Aga Bob N,X,Y,I`, `Aga Bob Bank Free N`. `Save`/`Load` AMOS natifs pour les ABK.
 - **Banques multi-images 1..8 bitplanes/256 couleurs** : Bobs planaires **non compressés** et masques séparés ; pas de RLE dans les Bobs animés. **AGAPIC/RLE/Fast existant conservé pour les grandes images**, sans refonte.

@@ -88,14 +88,14 @@ Aga Bob Bank Free 10
 
 - La sélection/création de banque et la préparation Chip sont **hors boucle de rendu**. Pas de recopie complète ou de décompression à chaque frame.
 - `Aga Bob N,X,Y,I` agit sur un objet persistant ; le coût de changement d'image/position ne doit pas dupliquer les données source. Un même sprite peut être utilisé par plusieurs Bobs simultanément.
-- Dessiner dans le **back buffer AGA prévu**, en respectant `Safe` et l'ordre de `Aga Swap` ; le modèle exact d'update/effacement du fond, priorité Z, ordre de rendu et éventuelle intégration AMAL doivent être définis/testés avant de promettre un « Bob AMOS natif complet ».
+- Dessiner dans le **back buffer AGA prévu**, en respectant `Safe` et l'ordre de `Aga Swap` ; la sémantique de `Aga Bob Update` / `Aga Bob Clear` / `Aga Bob Draw`, la restauration du fond et les priorités doivent être testées ; **aucun swap implicite** ; AMAL est réservé à P2.
 - En cas de banque effacée, remplacée ou libérée, les Bobs rattachés ne doivent pas continuer à lire une source désallouée.
 
 ## 7. Vérifications bloquantes avant développement natif / promotion
 
 | Contrôle | Exigence |
 | --- | --- |
-| Syntaxe AMOS/AP20/Compiler | Vérifier les six noms de commande, les arguments, les identifiants et `Get AGA Bob` à cinq paramètres sans `To`. |
+| Syntaxe AMOS/AP20/Compiler | Vérifier les six commandes de base, puis les noms P0 ajoutés (`Aga Bob Off`, `Aga Bob Update`, `Aga Bob Clear`, `Aga Bob Draw`) et leurs arguments ; `Get AGA Bob` conserve cinq paramètres sans `To`. |
 | Banque ABK | Créer plusieurs images, tailles/positions variables, sauvegarder, `Erase`, `Load`, resélectionner ; garantir que toutes les images et masques reviennent identiques. |
 | Mémoire | `Load` en Fast réel, préparation Chip unique, contrôle `MEMF_CHIP`, 0 duplication par Bob, libération et re-préparation ; Chip insuffisante : échec propre. |
 | Pixels | Tests 1×1, 17/31/32/37 pixels, positions X non alignées, quatre bords, 1/4/8 plans, index 0 opaque, masque index non nul, pixels masqués. |
@@ -106,7 +106,67 @@ Aga Bob Bank Free 10
 
 Garder **un seul test ASC actif** dans `tests/current/`. Ne pas retoucher les tests passés. **Aucun résultat Gate A/B/C n'est revendiqué pour ces nouvelles commandes** tant que leurs programmes et binaires exacts n'ont pas été exécutés.
 
-## 8. État actuel du projet et références
+## 8. Feuille de route fonctionnelle P0 / P1 / P2 — comparaison au manuel AMOS
+
+**Périmètre de cette feuille de route : conception, NON implémentation.** Les commandes ci-dessous sous préfixe `Aga` ou `Get AGA` sont des **noms d'API envisagés**, jamais des tokens AMOS validés ni des fonctionnalités R88. La sélection et la préparation Chip de `Aga Bob Bank N`, le format ABK non compressé et la sauvegarde/lecture native restent les décisions de base des sections 1 à 7.
+
+**Sources AMOS consultées** : [7.02 Blitter Objects](https://amospromanual.dev/07-02-blitter-objects.html), [7.03 Updating Objects](https://amospromanual.dev/07-03-updating-objects.html), [7.04 Detecting Collisions](https://amospromanual.dev/07-04-detecting-collisions.html), [7.01 Hot Spot](https://amospromanual.dev/07-01-hardware-sprites.html). Les noms sans « AGA » ci-dessous sont des **commandes natives AMOS** ; les équivalents AGA sont de nouvelles propositions et doivent être audités côté AP20 et Compiler.
+
+### P0 — Bobs réellement utilisables sur écran AGA
+
+Objectif : plusieurs images 256 couleurs dans une banque ABK, masques et Bobs persistants, préparation Chip autonome, animation BASIC pilotée par `Aga Swap` **sans double swap**.
+
+| Fonction native AMOS de référence | Équivalent AGA à développer / comportement visé |
+| --- | --- |
+| `GET BOB`, banque Object, `LOAD`/`SAVE` | **Déjà retenu** : `Aga Bob Bank N`, `Get AGA Bob I,X1,Y1,X2,Y2` (5 paramètres, bornes inclusives), `Save` et `Load` natifs ; banque ABK AGA multi-images, pas Object OCS. |
+| `MAKE MASK` / `NO MASK` | **Déjà retenu** : `Make AGA Bob Mask I,C` (index transparent explicite, masque 1 bit) / `No AGA Bob Mask I` (image opaque). |
+| `BOB` | **Déjà retenu** : `Aga Bob N,X,Y,I` crée ou met à jour l'**état** d'un Bob (banque source mémorisée ; plusieurs objets partagent la même image). |
+| `BOB OFF` | **À ajouter au contrat P0** : `Aga Bob Off N` et, si nécessaire, une forme « tous » ; désactivation de l'objet et de son rendu sans libérer la banque source. Définir si l'objet reste réactivable et l'état des animations futures. |
+| `BOB UPDATE` | **À ajouter au contrat P0** : `Aga Bob Update` pour traiter tous les Bobs actifs **sans faire de `Aga Swap` implicite**. Ne pas copier la sémantique OCS, car `BOB UPDATE` natif bascule lui-même les buffers. |
+| `BOB CLEAR` / `BOB DRAW` | **À ajouter au contrat P0** : `Aga Bob Clear` / `Aga Bob Draw` (noms provisoires) pour restauration du fond et rendu des Bobs sur le **back buffer AGA de l'extension**. Tester le comportement sur deux buffers, fond statique et décor changeant. Pas de double restauration ou de swap caché. |
+
+**Ordre de développement P0 :**
+1. **P0a — Banque** : confirmer les tokens AP20/Compiler ; format multi-images planaire sans RLE, création/capture, indexation, remplacement d'une image, `Save`/`Erase`/`Load` et identification exacte de banque. **Aucune banque AMOS supplémentaire pour la Chip**.
+2. **P0b — Masque + Chip** : index transparent paramétrable, index 0 éventuellement opaque, capture 1/4/8 bitplanes et largeurs non alignées ; `Aga Bob Bank N` prépare en Chip une fois par version de banque. Vérifier `MEMF_CHIP` sur les plages source/masque avant DMA, refus propre en mémoire insuffisante ; libération via `Aga Bob Bank Free N`.
+3. **P0c — Objets** : `Aga Bob` persistant, position/image/banque liées à l'objet, `Aga Bob Off`, plusieurs instances d'une même image sans duplication des données graphiques, ordre stable initial par identifiant Bob.
+4. **P0d — Frame complète** : `Aga Bob Clear` / `Aga Bob Draw` et/ou `Aga Bob Update`, correction du fond, clipping, `Safe`, dessin dans le buffer inactif et **un unique `Aga Swap` explicite côté utilisateur**. Mesurer toute la frame (fond + Bobs + Swap, attente VBL comptée séparément), pas seulement le dessin.
+5. **Validation** : test ASC minimal lisible, préflight, Gate A native, puis WinUAE AMOS interprété (B), puis vrai AMOS Compiler (C) ; aucun statut PASS transmis entre Gates. Tester les banques effacées/rechargées et `Aga Screen Open/Close`/ABI.
+
+**À verrouiller en P0 avant de publier une API :** `Aga Bob Update` et `Aga Bob Draw` pourraient se recouvrir ; décider précisément si `Update` invoque `Clear + Draw`, et si `Clear` restaure effectivement le fond ou si le programme reconstruit intégralement chaque frame. **Aucun `Aga Swap` implicite.** Les noms `Aga Bob Draw` / `Aga Bob Clear` ci-dessus désignent le traitement de tous les objets, **pas** l'ancien exemple provisoire `Aga Bob Draw(Bank,Image,X,Y,Mode)`.
+
+### P1 — Ergonomie et fonctions de jeu
+
+| Fonction AMOS | Adaptation AGA envisagée |
+| --- | --- |
+| `X BOB`, `Y BOB`, `I BOB` | Fonctions de lecture AGA (noms exacts non décidés) : coordonnées et frame du Bob, erreurs propres pour un objet inexistant. |
+| `HOT SPOT` | Point d'ancrage **par image** dans la banque AGA ; effet sur position, clipping, tri par Y et futurs retournements ; conserver dans l'ABK. |
+| `PRIORITY ON/OFF`, `PRIORITY REVERSE ON/OFF` | Ordre de rendu par numéro ou coordonnée Y, normal/inversé ; profondeur Z ou tri spécifique seulement si contrat explicite. Tester Bobs qui se croisent. |
+| `PASTE BOB` | Dessin **immédiat d'une image de la banque sélectionnée**, sans objet persistant, dans le back buffer AGA. Distinct de `Aga Bob` et de l'étape de mise à jour. |
+| `LIMIT BOB` | Zone visible/clipping configurable pour un objet ou l'ensemble ; **précision au pixel AGA**, ne pas importer la limitation OCS d'arrondi X à 16 pixels. |
+| `DEL BOB`, `INS BOB` | Édition des images de la banque : suppression/insertion, indexation et références d'objets cohérentes. Le manuel OCS renumérote les images suivantes ; **choisir et tester explicitement** si AGA réindexe ou conserve des identifiants stables avant ajout de la commande. |
+| `GET BOB PALETTE` | **Pas de commande nouvelle imposée** : la banque AGA emploie la palette active et les commandes de palettes AGA déjà existantes ; contrôler la compatibilité des indices/ModeID. |
+
+La priorité P1 **n'autorise pas** une modification silencieuse du format ABK P0 : prévoir dès P0 champs de hotspot et métadonnées extensibles, réservés/ignorés avant implémentation.
+
+### P2 — Fonctions avancées / compatibilité progressive
+
+| Fonction AMOS | Adaptation AGA envisagée |
+| --- | --- |
+| `BOB COL`, `COL` | Collisions Bob–Bob (d'abord rectangles, puis **masques bit à bit** pour l'exactitude pixel), interrogation des Bobs touchés. N'inventer aucune compatibilité avec les sprites matériels OCS sans moteur dédié. |
+| `HREV`, `VREV`, `REV` | Retournements sans modifier définitivement les images partagées ; gestion de hotspot/masque, test de deux objets affichant la même image dans des sens différents. Éviter l'ancien coût de retournement mutable signalé par le manuel. |
+| `SET BOB` | Modes avancés de restauration de fond, sélection des plans et mode Blitter/masque ; **ne pas recopier directement** les valeurs OCS dans les chemins AGA 8 plans. |
+| `AMAL` | Intégration future aux objets AGA uniquement après vérification des canaux, hooks et ABI AMOS/Compiler ; **aucune compatibilité AMAL revendiquée** à P0/P1. |
+| `BOB UPDATE ON/OFF`, `UPDATE` général | Gestion d'une mise à jour automatique seulement si elle respecte le rendu AGA privé. Ne pas mêler le système Sprite OCS natif et le gestionnaire Bob AGA sans contrat spécifique. |
+
+**Hors périmètre de la première réalisation** : `PUT BOB` (le manuel recommande `PASTE BOB` et précise que `PUT BOB` est adapté au simple buffer), simulation d'`AUTOBACK` OCS, commandes de collisions Sprite/BOB natives et synchronisation implicite des écrans AMOS. Elles ne sont pas des prérequis pour les Bobs AGA.
+
+### Structure interne anticipée dès P0
+
+Un **objet Bob** doit pouvoir retenir au minimum : ID, banque AMOS d'origine, ID image, X/Y, visibilité, état actif, hotspot effectif, ordre Z initial et état du rendu par buffer. Une **banque AGA** retient son répertoire d'images, largeur/hauteur/profondeur, pixels planaires, masque, hotspot/métadonnées futures, validité/génération et allocation Chip privée. Un changement de banque active n'altère pas les Bobs déjà créés.
+
+**Barrières anti-régression :** ne pas réécrire AGAPIC/RLE pour les illustrations fixes, ne pas lier cette API à AMCAF, ne pas produire de nouvelles commandes sans preuve token/AP20, ne pas confondre `BOB UPDATE`/`SCREEN SWAP` OCS avec `Aga Bob Update`/`Aga Swap` AGA, ne pas toucher à R84 `LAST_GOOD`, et ne pas annoncer de Gate B/C sans exécution.
+
+## 9. État actuel du projet et références
 
 - R84 v0.13.29 `dist/AMOSPro_AGA_LAST_GOOD.Lib` : figée ; **aucune promotion automatique**.
 - R88 v0.13.33 : candidate expérimentale, `Aga Cache Blit` limité à 16×16×8 et exigeant de la Chip réelle. **Ce n'est pas le moteur Bob multi-images demandé**. Le diagnostic P2.8 a montré qu'un ABK peut être chargé en Fast malgré des flags demandant Chip.
