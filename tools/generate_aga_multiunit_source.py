@@ -261,7 +261,7 @@ def linked_ap20_asm(binary: bytes, revision: str, public: int,
 
 
 def _assemble(assembler, source: Path, result: Path):
-    cmd = [assembler, "-Fbin", "-m68020", "-quiet", "-I" + str(source.parent), "-o", str(result), str(source)]
+    cmd = [assembler, "-Fbin", "-m68020", "-no-opt", "-quiet", "-I" + str(source.parent), "-o", str(result), str(source)]
     run = subprocess.run(cmd, text=True, capture_output=True, timeout=120)
     require(run.returncode == 0,
             "vasm failed on %s: %s %s" % (source.name, run.stdout, run.stderr))
