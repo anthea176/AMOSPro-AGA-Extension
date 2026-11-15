@@ -1,44 +1,63 @@
-name: M19 P0a - publish MC68020 candidate Lib and example on main
+name: M19 P0a - verify canonical MC68020 Lib (read only)
 
+# Historical filename kept to avoid breaking external references.
+# This workflow MUST NOT publish artifacts, ZIPs, or commit to main.
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/m19-p0a-publish-github.yml'
+      - 'tools/m19_p0a_*.py'
+      - 'tools/build_m19_p0a_r88_*.py'
+      - 'tests/current/M19_P0A_MC68020_BANK_GET.asc'
+      - 'dist/AMOSPro_AGA.Lib'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  publish-gated-candidate:
+  verify-canonical-m19-p0a:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout read-only
+        uses: actions/checkout@v4
         with:
-          persist-credentials: true
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: MC68020 execution dependencies
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
-      - name: Preflight the exact source and CPU policy
+      - name: Validate native CPU policy and the single active AMOS test
         run: |
           python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
           python -B tools/amos_preflight.py --strict-target tests/current/M19_P0A_MC68020_BANK_GET.asc
           python -B tools/test_amos_preflight.py
-      - name: Verify original R88 and protected R84
+      - name: Verify active and preserved binary signatures
         run: |
           python -B - <<'PY'
-          from pathlib import Path
           from hashlib import sha256
-          b = lambda p: sha256(Path(p).read_bytes()).hexdigest()
-          assert b('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib') == '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
-          assert b('dist/AMOSPro_AGA.Lib') == 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'
-          assert b('dist/AMOSPro_AGA_LAST_GOOD.Lib') == '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+          from pathlib import Path
+          expected = {
+              'dist/AMOSPro_AGA.Lib':
+                  (79660, 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'),
+              'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
+                  (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
+              'dist/AMOSPro_AGA_LAST_GOOD.Lib':
+                  (67904, '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'),
+          }
+          for path, (size, digest) in expected.items():
+              data = Path(path).read_bytes()
+              assert len(data) == size and sha256(data).hexdigest() == digest, path
+          asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
+          assert asc == ['M19_P0A_MC68020_BANK_GET.asc'], asc
+          print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
-      - name: Run host, AP20 and native MC68020 Gate A tests
+      - name: Run host, AP20 and MC68020 Gate A checks
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
           python -B tools/test_m19_p0a_capture_transaction.py
@@ -47,52 +66,21 @@ jobs:
           python -B tools/test_m19_p0a_get_bob_emit.py
           python -B tools/test_m19_p0a_r88_bank_gate_a.py
           python -B tools/test_m19_p0a_r88_get_gate_a.py
-      - name: Build and SHA-verify actual MC68020 library for GitHub
+      - name: Rebuild in memory and compare byte-for-byte to canonical dist
         run: |
           python -B - <<'PY'
           from pathlib import Path
           from hashlib import sha256
-          import sys, zipfile
+          import sys
           sys.path.insert(0, 'tools')
           from build_m19_p0a_r88_get_in_memory import build
-          data, metadata = build()
-          digest = sha256(data).hexdigest()
+          data, meta = build()
           expected = 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'
-          assert (len(data), digest) == (79660, expected), (len(data), digest)
-          assert metadata['commands'] == 80 and metadata['entries'] == 90
-          target = Path('dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib')
-          target.parent.mkdir(exist_ok=True, parents=True)
-          target.write_bytes(data)
-          check = Path('dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.sha256')
-          assert check.read_text().split()[0] == digest
-          ex = Path('examples/m19_p0a_68020')
-          bundle = Path('dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip')
-          with zipfile.ZipFile(bundle, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
-              z.writestr('AMOSPro_AGA.Lib', data)
-              for src in (ex/'M19_P0A_MC68020_BANK_GET.asc', ex/'README.fr.md'):
-                  z.write(src, src.name)
-              z.write(check, check.name)
-          with zipfile.ZipFile(bundle) as z:
-              assert sha256(z.read('AMOSPro_AGA.Lib')).hexdigest() == digest
-              assert len(z.namelist()) == 4
-          print('GITHUB CANDIDATE M19 P0a MC68020', target, len(data), digest)
-          print('WINUAE TEST BUNDLE', bundle, bundle.stat().st_size)
-          print('GATE A ONLY; WinUAE B and real Compiler C NOT TESTED')
+          assert (len(data), sha256(data).hexdigest()) == (79660, expected)
+          assert meta['commands'] == 80 and meta['entries'] == 90
+          assert data == Path('dist/AMOSPro_AGA.Lib').read_bytes(), 'active Lib differs from R88-based rebuild'
+          print('PASS: in-memory MC68020 rebuild identical to dist/AMOSPro_AGA.Lib')
+          print('Gate A only: WinUAE Gate B and real Compiler Gate C NOT tested here')
           PY
-      - name: Confirm historical assets remain unchanged
-        run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
-      - name: Commit binary and bundle to main, no branches and no promotion
-        run: |
-          git add -- dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib \
-            dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip
-          git diff --cached --name-only
-          if git diff --cached --quiet; then
-            echo 'Exact candidate already published in main.'
-          else
-            git -c user.name='github-actions[bot]' \
-              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-              commit -m 'build(M19 P0a): publish reproducible MC68020 Lib and WinUAE test bundle'
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
-          fi
+      - name: Fail if validation created any tracked binary or test change
+        run: git diff --exit-code -- dist/ tools/ tests/current/ tests/passed/
