@@ -7,6 +7,8 @@ bank relookup and preserved registers. Not a WinUAE/AMOS Compiler claim.
 """
 from __future__ import annotations
 from struct import unpack_from
+from collections import deque
+from unicorn import UC_HOOK_CODE
 from hashlib import sha256
 from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
 from amos_link_test_support import relocate
@@ -34,6 +36,8 @@ class Engine(NativeBobMachine):
           'off':self.entry+(report['bob_off_offset']-baseline_len),
           'draw':self.entry+(report['bob_draw_offset']-baseline_len),
         }
+        self.mask_pcs=deque(maxlen=25)
+        self.uc.hook_add(UC_HOOK_CODE,lambda uc,addr,size,user:self.mask_pcs.append(addr-self.entries['mask']),begin=self.entries['mask'],end=self.entries['nomask']-1)
         self.saved_background=[bytes(self.uc.mem_read(p,self.stride*H))
                                for p in self.planes]
 
@@ -143,7 +147,8 @@ def main():
             assert m.call('get',(1,3,2,19,8))==1
             assert m.call('get',(2,17,1,47,12))==1
             src_idx=pixel(3,2)&((1<<depth)-1)
-            assert m.invoke('mask',1,src_idx)==1
+            _mk=m.invoke('mask',1,src_idx)
+            assert _mk==1,(layout,depth,'make_mask_status',_mk,'mask_trace',list(m.mask_pcs),'selected',hex(m.uc.mem_read(m.entry+(meta['selected_word_offset']-len(unpack_ap20(R88.read_bytes())[1][86])),2)[0]))
             assert m.source_image(1)[3][0]==0,'transparent index not masked'
             # Make 0 the transparency index separately (not forced globally).
             assert m.invoke('mask',1,0)==1
