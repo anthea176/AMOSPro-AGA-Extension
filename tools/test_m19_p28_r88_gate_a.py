@@ -191,7 +191,14 @@ def one_case(binary,*,layout='interpreted',cache=CACHES[0],front=0,
     assert bytes(m.uc.mem_read(BANK,len(cache)))==src_before,'source cache mutated'
     if expect_ok:
         expected=oracle(before,x,y,mode)
-        assert [bytearray(v) for v in m.snapshot()]==expected,('pixels differ',layout,x,y,mode)
+        actual=[bytearray(v) for v in m.snapshot()]
+        if actual!=expected:
+            first=next((p,j,expected[p][j],actual[p][j])
+                       for p in range(8) for j in range(len(expected[p]))
+                       if expected[p][j]!=actual[p][j])
+            raise AssertionError(('pixels differ',layout,x,y,mode,
+                                  first,'gfx',m.gfx_calls[-8:],
+                                  'cache_magic',bytes(m.uc.mem_read(BANK,12)).hex()))
         visible=-16<x<WIDTH and -16<y<HEIGHT
         assert sum(z[0]=='WaitBlit' for z in m.gfx_calls)==int(visible)
         assert sum(z[0]=='InitRastPort' for z in m.gfx_calls)==int(visible)
