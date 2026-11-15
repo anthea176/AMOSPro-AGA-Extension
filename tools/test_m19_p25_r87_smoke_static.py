@@ -26,7 +26,7 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "Wrong R87 candidate"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(files)==1 and files[0].name=="M19_P26_R87_DRAW_BENCH_01.asc", files
+    assert len(files)==1 and files[0].name=="M19_P27_R87_CACHE_CPU_BLITTER_01.asc", files
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
     assert blob_sha(raw)==SMOKE_GIT, "Smoke changed without requalification"
     assert blob_sha((ROOT/"tests/passed/M19_P23_BOBS_BATCH_01.asc").read_bytes())==R86_PASSED_GIT
@@ -50,7 +50,7 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one P2.6 active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one P2.7 active ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
     print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 

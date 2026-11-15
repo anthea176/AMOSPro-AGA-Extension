@@ -1,3 +1,5 @@
+> **RÉSULTAT REÇU — P2.6 Runtime et Compiled PASS.** Les journaux réels donnent une baisse de durée de **2,42 % Runtime** et **0,43 % Compiled** sur la somme des séries. [Mesures détaillées et ASC archivé](../benchmarks/RESULTATS_M19_P26_R87_DRAW_2026-11-15.md). L'ASC est maintenant dans `tests/passed/`. Le banc actif est **P2.7** ; ne pas confondre ce plan initial avec l'état courant.
+
 # M19 P2.6 — R87 draw-only : performances BASIC contre Aga Bob Batch
 
 Date : 15 novembre 2026. Branche **main uniquement**. Nouvelle campagne **PREPAREE**, **WinUAE Runtime et Compiled NON TESTES** sur cet ASC. Aucun gain revendiqué.
