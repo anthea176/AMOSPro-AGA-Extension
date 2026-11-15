@@ -88,6 +88,31 @@ jobs:
           path: m19_p0a_candidate/AMOSPro_AGA.Lib
           retention-days: 14
           if-no-files-found: error
+      - name: M19 P0b exact in-memory MC68020 candidate for canonical GitHub delivery
+        run: |
+          python -B - <<'PY'
+          import sys
+          from hashlib import sha256
+          from pathlib import Path
+          sys.path.insert(0,'tools')
+          from build_m19_p0b_masks_in_memory import build
+          lib,meta=build()
+          digest=sha256(lib).hexdigest()
+          assert (len(lib),digest,meta['commands'],meta['entries']) == (
+              82376,'f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9',82,92)
+          dest=Path('m19_p0b_stage/AMOSPro_AGA.Lib')
+          dest.parent.mkdir(parents=True,exist_ok=True)
+          dest.write_bytes(lib)
+          assert sha256(dest.read_bytes()).hexdigest()==digest
+          print('M19 P0b source-verified MC68020 Gate A candidate',dest,len(lib),digest)
+          PY
+      - name: M19_P0B_EXACT_MAIN_STAGE artifact (delivery intermediary, not installation)
+        uses: actions/upload-artifact@v4
+        with:
+          name: M19_P0b_MC68020_VALIDATED_LIB_FOR_MAIN
+          path: m19_p0b_stage/AMOSPro_AGA.Lib
+          retention-days: 3
+          if-no-files-found: error
       - name: Ensure no binary, ASC or passed tests changed
         run: |
           git diff --exit-code -- dist/ tests/current/ tests/passed/
