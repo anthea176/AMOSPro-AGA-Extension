@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+> **Consolidation documentaire (15/11/2026) :** les 33 corrections approuvées sont réunies dans [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md). Les 1 903 lignes précédentes sont conservées [en archive non normative](EXTENSION_SOURCE_RULES_HISTORIQUE_2026-11-15.md). Aucun binaire, builder, ASC ni test validé n'a été modifié par cette consolidation ; `LAST_GOOD` R84 reste protégée, aucune promotion automatique. Le checkpoint de travail documenté ci-dessous décrit R88 ; **ne pas supposer que c'est encore le HEAD ou le dernier chantier**, vérifier les commits de `main`, le builder et `dist/AMOSPro_AGA.Lib`. Les étapes de Bob multi-images restent distinctes du cache AGPC R88 et des Sprites matériels AGA. L'historique chronologique ci-après est conservé pour provenance, pas comme suite d'instructions concurrentes.
+
+---
+
 **NOUVEAU CHANTIER DOCUMENTÉ — SPRITES MATÉRIELS AGA (15/11/2026), PAS DE CODE NI DE TEST :** [contrat S0/S1/S2/S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Deux moteurs **séparés** : Bobs logiciels M19 (Blitter, banque multi-images 256 couleurs, priorité P0) versus **Sprites matériels AGA** (8 canaux DMA, largeur 16/32/64 via FMODE, 3 couleurs+transparent, paires attachées 15+transparent, choix de tranches de palette AGA, Chip/Copper/Intuition). **S0 audit** écran privé/ressources/ownership avant API ; **S1** Sprite 16 px ; **S2** attaché/largeurs/coordonnées/palettes ; **S3** multiplexage/AMAL facultatif/collisions. Les « 56 computed Sprites » du manuel AMOS OCS ne sont PAS 56 canaux AGA. Ne pas installer de nouvelle API sans vérification AP20/Compiler et Gates distinctes. R84 LAST_GOOD et R88 inchangées. Note de liaison ajoutée au [plan M19 historique](M19_SPRITES_BOBS_AMAL_PLAN.md) et au [contrat Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md).
 
 ---
