@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+**M19 P2.2 — développement du quatrième groupe natif BOBS engagé** (accord de l'auteur le 15/11/2026), **d'abord comme témoin AP20 isolé** `Aga Bob Probe` et non encore `Aga Bob Batch`. [Architecture et test Gate A](M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md) ; R84 `LAST_GOOD` inchangée, aucune API native de production publiée. La Gate A doit être exécutée, puis les Gates B Runtime et C Compiler sur une bibliothèque expérimentale distincte.
+
+
 > **État au 14 novembre 2026 — branche `main`.** Ce document indique ce qui est livré et les pistes futures. **Les chantiers R83 (modularisation) et R84 (AGAPIC v1/v2) sont clôturés** ; ils ne constituent plus des tâches à réaliser. Pour la chronologie, les incidents et les preuves détaillées, voir l'[historique](LIBRARY_TEST_HISTORY.md) et le [suivi technique](NEXT_SESSION.md).
 >
 > **Statuts :** **livré** = intégré dans une version promue ; **à étudier** = piste non engagée. Une entrée au backlog n'approuve ni API, ni implémentation, ni calendrier.

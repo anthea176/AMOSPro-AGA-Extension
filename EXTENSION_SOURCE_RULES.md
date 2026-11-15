@@ -1,5 +1,12 @@
 # EXTENSION_SOURCE_RULES.md
 
+## M19 P2.2 — bloc BOBS AP20 expérimental, infrastructure native (15/11/2026)
+
+Le chantier de **quatrième unité native AP20 BOBS** est autorisé sur `main`. Sa première version est **témoin seulement**, via `Aga Bob Probe`, **pas** `Aga Bob Batch` : [documentation](docs/M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md). `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 v0.13.29 restent intacts. Le programme `tests/design/M19_P22_4UNIT_PROBE_01.asc` n'est **pas actif** et nécessite un binaire expérimental quatre unités. Le seul `tests/current/*.asc` demeure `M19_P21_ZCACHE_BENCH_01.asc` validé Runtime. La Gate A native/CI et les Gates B/C réelles doivent être tracées **séparément** ; aucun résultat anticipé, aucune API Batch publiée ni nouvelle branche.
+
+---
+
+
 ## Test actif M19 P2.1 — dernier comparatif Z BASE/CACHE (15/11/2026)
 
 **Un seul ASC dans tests/current :** `tests/current/M19_P21_ZCACHE_BENCH_01.asc` (**Gate B WinUAE Runtime 68020 PASS**, dernier journal utilisateur). `RESULT 1`, `ERR 0`, 240 frames, 9 088 dessins, 5 invalidations, 17 reconstructions/1 188 réutilisations, 0 erreur/retry graphique, Chip/Fast delta 0. Gains composition **5,8 % / 15,6 % / 30,4 %** à 4/8/16. [Rapport](benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). Aucun nouveau benchmark requis. Ancien benchmark **4/8/16 PASS MC68020/14 MHz/JIT OFF** archivé dans `tests/passed/M19_P2_BENCH_BOBS_01.asc` avec le **même blob Git** `4345d8728af1d6dba29a5936463219ac49b3b109`. [Nouveau protocole](benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Dernier rapport précédent](benchmarks/RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md).

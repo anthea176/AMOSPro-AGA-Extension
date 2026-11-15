@@ -1,0 +1,49 @@
+name: M19 P2.2 fourth AP20 BOBS native unit probe - Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-p22-fourth-unit-gate-a.yml"
+      - "tools/build_m19_p22_fourth_unit_probe.py"
+      - "tools/test_m19_p22_fourth_unit_probe.py"
+      - "docs/M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md"
+      - "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+      - "dist/AMOSPro_AGA.Lib"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m19-p22-fourth-unit-gate-a-main
+  cancel-in-progress: true
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install MC68020 emulator
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Build a fourth AP20 unit in memory (no release)
+        run: python -B tools/build_m19_p22_fourth_unit_probe.py
+      - name: Four native units Gate A, ABI safety, REAL 68020 dispatch and body
+        run: python -B tools/test_m19_p22_fourth_unit_probe.py
+      - name: Generate disposable, SHA-tested probe binary outside dist
+        run: python -B tools/build_m19_p22_fourth_unit_probe.py --output build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib
+      - name: Confirm frozen R84 and current ASC are unchanged
+        run: |
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
+          git status --short -- dist/ tests/current/ tests/passed/
+      - name: Upload experimental probe for later WinUAE Gate B and Compiler Gate C
+        uses: actions/upload-artifact@v4
+        with:
+          name: M19_P22_4UNIT_PROBE_GATE_A_ONLY
+          path: build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib
+          if-no-files-found: error
+          retention-days: 7
