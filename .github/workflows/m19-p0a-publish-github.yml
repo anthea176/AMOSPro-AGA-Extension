@@ -82,5 +82,11 @@ jobs:
           print('PASS: in-memory MC68020 rebuild identical to dist/AMOSPro_AGA.Lib')
           print('Gate A only: WinUAE Gate B and real Compiler Gate C NOT tested here')
           PY
-      - name: Fail if validation created any tracked binary or test change
-        run: git diff --exit-code -- dist/ tools/ tests/current/ tests/passed/
+      - name: Fail if validation creates files or changes the repository
+        run: |
+          git diff --exit-code -- dist/ tools/ tests/current/ tests/passed/
+          if [ -n "$(git ls-files --others --exclude-standard -- dist/)" ]; then
+            echo 'FAIL: validation generated untracked files under dist/'
+            git ls-files --others --exclude-standard -- dist/
+            exit 1
+          fi
