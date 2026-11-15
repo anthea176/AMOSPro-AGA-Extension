@@ -364,8 +364,14 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
                 "exact AP20 vasm output differs from selected .Lib")
         linked_file = target / ("AMOSPro_AGA_%s_NATIVE.s" % revision)
         linked_output = target / ("AMOSPro_AGA_%s_LINKED_ASSEMBLED.Lib" % revision)
-        require(_assemble(assembler, linked_file, linked_output) == data,
-                "linked multi-unit AP20 ASM differs from selected .Lib")
+        linked_assembled = _assemble(assembler, linked_file, linked_output)
+        if linked_assembled != data:
+            diff = next((i for i, (a, b) in enumerate(zip(data, linked_assembled))
+                         if a != b), min(len(data), len(linked_assembled)))
+            raise ValueError("linked AP20 ASM mismatch offset $%06X" % diff +
+                             " expected=" + data[diff:diff+20].hex() +
+                             " actual=" + linked_assembled[diff:diff+20].hex() +
+                             " sizes=%d/%d" % (len(data), len(linked_assembled)))
         manifest["native_assembler_verified"] = True
     manifest_file = target / ("AMOSPro_AGA_%s_NATIVE.json" % revision)
     manifest_file.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
