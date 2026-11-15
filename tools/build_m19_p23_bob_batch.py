@@ -51,7 +51,7 @@ def build() -> tuple[bytes, dict]:
         raise ValueError("R84 final public entry malformed")
 
     original_report = inspect(parse(original))
-    if original_report["issues"] or len(original_report["tokens"]) != 76:
+    if original_report["issues"] or len([x for x in original_report["tokens"] if x["name"].startswith("aga ")]) != 76:
         raise ValueError("R84 public API signature count changed")
 
     core, labels = emit_bob_batch()
