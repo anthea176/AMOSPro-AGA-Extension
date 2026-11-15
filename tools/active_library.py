@@ -51,7 +51,8 @@ R81_SHA="9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"  # C2
 R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # R82 historical former LAST_GOOD; Gates A/B Runtime/C PASS; physical D untested
 R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular former LAST_GOOD; R82 historical pinned
 R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 PROMOTED LAST_GOOD, Gate A CPU/CI and C AMOS Compiler PASS (bank included); corrected B not separately evidenced
-R85_SHA="4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"  # M19 P2.2 0.13.30 experimental 4-group native BOBS probe, Gate A 68020 PASS; Gates B/C pending; NOT LAST_GOOD
+R85_SHA="4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"  # M19 P2.2 0.13.30 historical four-group probe, Gates A/B Runtime/C Compiled PASS
+R86_SHA="63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"  # M19 P2.3 0.13.31 native BOBS Batch, native Gate A PASS, WinUAE B/C PENDING; NOT LAST_GOOD
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -79,6 +80,20 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == R86_SHA:
+        from compiler_relocation import unpack_ap20
+        from build_m19_p23_bob_batch import build as build_r86
+        image,meta=build_r86()
+        assert cur==image and cur!=good and meta["sha256"]==R86_SHA
+        assert len(cur)==73232 and meta["commands"]==78 and meta["ap20_entries"]==88
+        assert sha256(good).hexdigest()==R84_SHA and len(good)==67904
+        _,segments,title=unpack_ap20(cur)
+        assert len(segments)==88 and tuple(map(len,segments[84:]))==(5558,2508,5226,56580)
+        assert b"R86 v0.13.31" in title
+        audit=inspect(parse(cur))
+        assert not audit["issues"], audit["issues"]
+        assert len([row for row in audit["tokens"] if row["name"].startswith("aga ")])==78
+        return cur,good,"R86 v0.13.31 M19 P2.3 BOBS native Batch: MC68020 Gate A PASS, WinUAE Runtime B / Compiled C NOT TESTED; R84 LAST_GOOD protected"
     if current_sha == R85_SHA:
         from compiler_relocation import unpack_ap20
         from build_m19_p22_fourth_unit_probe import build as build_r85
