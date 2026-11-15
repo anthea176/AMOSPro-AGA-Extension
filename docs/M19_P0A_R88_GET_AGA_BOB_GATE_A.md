@@ -1,6 +1,15 @@
 # M19 P0a — `Get AGA Bob` multi-images, candidat dérivé exclusivement de R88
 
-**État vérifié : GATE A CPU/AP20 PASS sur la candidate exacte ; Gates B/C/D NON TESTÉES.**
+## M19 P0a — MC68020 exclusif : Gate A 74/74 PASS
+
+**Décision utilisateur du 15/11/2026 : aucun nouveau noyau 68000/68010, aucun fallback, aucune double voie CPU000/CPU020.** Implémentation MC68020/68EC020 exclusive de `Aga Bob Bank N` et `Get AGA Bob I,X1,Y1,X2,Y2`, capture par **`BFEXTU` + `BFINS`** (champs de bits de largeur variable 1..16, sans lecture au-delà de X2). Les deux points d'entrée refusent un CPU inférieur avant de manipuler la banque ou la mémoire AGA. Seule la base figée R88 est conservée comme patrimoine ; les parties nouvelles sont 68020 exclusivement.
+
+**GATE A CPU MC68020 PASS**, [exécution GitHub Actions 43754375272](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43754375272), commit exact `27fb718c127ed82cd610a3f5d622274046f82fa7` : **52 scénarios Get + 22 Bank**, deux dispositions CPU020 (interprétée et Compiler V2 simulée) sous Unicorn, **44 tests hôte/statiques PASS**, décodage Capstone M68K_020, préflight de la transaction et préservation des pixels / images / masques. Les anciennes Gates A CPU000 restent un **historique obsolète pour ce chantier** et ne servent pas de preuve 020.
+
+**Candidate uniquement en mémoire :** 79 660 octets ; SHA256 `e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0` ; **80 commandes / 90 entrées AP20**. Aucun écrit dans `dist/`, R88 v0.13.33 et R84 `LAST_GOOD` inchangées, ASC actif intact. **Gate B WinUAE, Gate C vrai Compiler, Gate D physique : NON TESTÉES.** La préparation Chip pour le moteur d'affichage Bob reste à coder ; ne pas prétendre que les Bobs sont déjà affichables sous AMOS. Source de règles : [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md).
+
+
+**État actuel : GATE A CPU MC68020 PASS sur le candidat exact listé ci-dessus ; Gates B/C/D NON TESTÉES. La section Gate A 68000 antérieure ci-dessous est historique et supplantée.**
 
 ## Gate A validée — 15 novembre 2026
 
