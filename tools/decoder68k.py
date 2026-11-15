@@ -205,7 +205,7 @@ class Decoder:
                     if ea:return Insn(end-p,{'sub':'suba','add':'adda','cmp':'cmpa'}[family]+'.'+size,f'{ea},a{reg}',data_refs=ref)
                 if g in (8,12):
                     ea,end,ref=self.ea(smode,sreg,p+2,'w')
-                    if ea:return Insn(end-p,('divu' if g==8 else 'mulu')+('' if opmode==3 else 's')+'.w',f'{ea},d{reg}',data_refs=ref)
+                    if ea:return Insn(end-p,('div' if g==8 else 'mul')+('u' if opmode==3 else 's')+'.w',f'{ea},d{reg}',data_refs=ref)
             if opmode in (0,1,2):
                 size=SZ[opmode]
                 ea,end,ref=self.ea(smode,sreg,p+2,size)
