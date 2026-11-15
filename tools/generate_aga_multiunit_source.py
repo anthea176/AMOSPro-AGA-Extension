@@ -348,8 +348,15 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
             native_file = target / report["file"]
             output_file = target / (native_file.stem + "_ASSEMBLED.bin")
             assembled = _assemble(assembler, native_file, output_file)
-            require(assembled == segments[report["ap20_index"]],
-                    "native ASM mismatch at " + native_file.name)
+            expected_unit = segments[report["ap20_index"]]
+            if assembled != expected_unit:
+                diff = next((i for i, (a, b) in enumerate(zip(expected_unit, assembled))
+                             if a != b), min(len(expected_unit), len(assembled)))
+                raise ValueError("native ASM differs at " + native_file.name +
+                                 " offset $%05X" % diff +
+                                 " expected=" + expected_unit[diff:diff+20].hex() +
+                                 " actual=" + assembled[diff:diff+20].hex() +
+                                 " lengths=%d/%d" % (len(expected_unit), len(assembled)))
             report["native_assembler_verified"] = True
         source_file = target / ("AMOSPro_AGA_%s_AP20_EXACT.s" % revision)
         output_file = target / ("AMOSPro_AGA_%s_AP20_ASSEMBLED.bin" % revision)
