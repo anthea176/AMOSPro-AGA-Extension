@@ -112,8 +112,12 @@ def build() -> tuple[bytes, dict]:
         raise AssertionError("Wrong number of interpreter RBSR links")
     if len(segments[GROUP_BOBS]) != 40:
         raise AssertionError("Unexpected fourth dispatcher+probe length")
-    if ACTIVE.read_bytes() not in (protected, built):
+    active_sha=sha256(ACTIVE.read_bytes()).hexdigest()
+    if ACTIVE.read_bytes() not in (protected, built) and active_sha!="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc":
+        # Historical R85 builder is read-only on newer active candidates.
         raise ValueError("Unknown dist active library, refuse candidate overwrite")
+    if active_sha=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc" and sha256(PROTECTED.read_bytes()).hexdigest()!=R84_SHA:
+        raise ValueError("R84 LAST_GOOD modified")
     return built, {
         "status": "EXPERIMENTAL ONLY; FOURTH BLOCK PROBE, NO BOB RENDER",
         "base": "R84 v0.13.29 LAST_GOOD",
@@ -146,6 +150,8 @@ def main() -> None:
     data, report = build()
     print("M19 P2.2 FOURTH NATIVE UNIT STATIC GATE", report, flush=True)
     if args.write_dist:
+        if sha256(ACTIVE.read_bytes()).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc":
+            raise SystemExit("REFUSED: historical R85 probe must not overwrite active R88")
         if ACTIVE.resolve() == PROTECTED.resolve():
             raise SystemExit("Refusing to overwrite LAST_GOOD")
         original = PROTECTED.read_bytes()

@@ -138,7 +138,9 @@ def verify_script(text: str, model):
 
 def main():
     last_good = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    current_lib = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    current_lib = (ROOT / "dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
+    active_r88 = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    assert len(active_r88)==75040 and sha256(active_r88).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc"
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
