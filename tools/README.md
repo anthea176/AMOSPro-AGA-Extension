@@ -1,6 +1,14 @@
-# Outils Python — R68 v0.13.13 PROMUE `LAST_GOOD`, M18 Gates A/B/C PASS
+# Outils Python — builder actif et historique versionné
 
-**Bibliothèque active : R68 v0.13.13**, `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` (51 064 octets ; SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`). [Compiler Gate C PASS](../docs/M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md), Gates A/B/C PASS, Gate D physique non testée. [ASC archivé](../tests/passed/M18_R68_COMPILER_FINAL_01.asc). Méthodes CBlock 0 CPU8 / 1 CPU16 / 2 Blitter obligatoires ; aucune sélection automatique.
+## Point d'entrée actif (audit du 15/11/2026)
+
+Le builder à examiner pour la bibliothèque installable de travail est `tools/build_aga_current.py`, à confronter à `dist/AMOSPro_AGA.Lib`, à ses SHA et au HEAD réel de `main`. Au checkpoint R88 v0.13.33, le builder source `tools/build_m19_p28_r88_in_memory.py` reconstruit la candidate à partir de l'archive R87 figée ; cela ne rend pas R87 installable à la place de `dist/AMOSPro_AGA.Lib`. Les builders et tests plus anciens restent conservés pour la reproductibilité et peuvent être appelés par la CI ou par des scripts actuels. **Aucun déplacement automatique dans `tools/obsolete/`, aucune suppression ni nouvelle arborescence.**
+
+**Binaire installable unique :** `dist/AMOSPro_AGA.Lib` ; **R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` protégée**, sans promotion automatique. Un fichier sous `dist/experimental/` est une archive existante, **pas** une seconde candidate à installer. Vérifier le HEAD et la liste des outils réellement importés avant de désigner le builder courant : un ancien état R68/R87/R88 peut devenir historique. Les Gates CPU/CI, WinUAE Runtime/interprété et Compiler réel restent distinctes. [Règles permanentes](../EXTENSION_SOURCE_RULES.md) · [état courant](../docs/NEXT_SESSION.md).
+
+## Historique — R68 v0.13.13 PROMUE `LAST_GOOD`, M18 Gates A/B/C PASS
+
+**À la date du checkpoint R68, bibliothèque active : R68 v0.13.13**, `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` (51 064 octets ; SHA256 `ffaa41e3a95bc5b761114dd7f5a3fd4506673c904784816177303446f35eb1ed`). [Compiler Gate C PASS](../docs/M18_R68_INTEGRATED_GATE_C_COMPILER_2026-11-13.md), Gates A/B/C PASS, Gate D physique non testée. [ASC archivé](../tests/passed/M18_R68_COMPILER_FINAL_01.asc). Méthodes CBlock 0 CPU8 / 1 CPU16 / 2 Blitter obligatoires ; aucune sélection automatique.
 
 **Historique R67 v0.13.12 (ancien candidat) :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **43 180 octets**, SHA256 `ce7742ae605daba5359145b69fe6cbc5bfa1869ba81c0c9e3e8a1ae12f4cd1e5`, 61 commandes/68 AP20. `Aga F Icon Capture(Bank,IconID,X,Y)` capture 16×16 indices directement du back buffer AGA, X non aligné, couleur zéro masquée. [Émetteur](m18_ficon_capture_emit.py), [builder](build_m18_r67_ficon_capture.py), [240 cas Gate A natifs](test_m18_r67_ficon_capture_gate_a.py), [CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43456641279). [ASC unique actif R67](../tests/current/M18_R67_FICON8_CAPTURE_01.asc), Gate B interprétée en attente, Compiler C en fin M18. **R63 LAST_GOOD protégée**.
 
