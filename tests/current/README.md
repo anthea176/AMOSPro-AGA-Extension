@@ -4,7 +4,7 @@
 
 **Binaire de reference :** R84 v0.13.29 **LAST_GOOD inchange** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle commande native ni dependance `c2p.library`. CPU 68020 minimum.
 
-**Etat : prototype AMOS BASIC pret, controles structurels effectues et scenario logique simule sur 240 frames ; Gate B P2.0 AMOS/WinUAE NON ENCORE TESTEE, Gate C Compiler / Gate D physique NON TESTEES.** Le resultat P1 ne vaut pas validation de P2.0.
+**Etat : premier chargement AMOS P2.0 refuse (Syntax error sur `SORT_OBJECTS`). Les sous-routines de la version courante sont renommees avec un prefixe `_` ; import/retest WinUAE requis.** Preflight renforce, mais **Gate B P2.0 n'est PAS validee**. Gate C Compiler / Gate D physique non testees. Le resultat P1 ne vaut pas validation de P2.0.
 
 ## Premier essai sous AMOS / WinUAE
 

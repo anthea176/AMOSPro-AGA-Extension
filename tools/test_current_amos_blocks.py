@@ -22,6 +22,28 @@ def strip_comment(line):
     return line
 
 
+
+# AMOS source importer tokenises reserved commands at the start of a
+# GOSUB/label identifier. Example: SORT_OBJECTS becomes Sort _OBJECTS
+# and is a Syntax error even though its IF/FOR blocks are balanced.
+# Conservative reserved prefixes only; historical passed tests untouched.
+RESERVED_LABEL_PREFIXES = frozenset((
+    "SORT", "SET", "MOVE", "COPY", "PRINT", "DATA", "READ", "RETURN",
+    "DIM", "FOR", "NEXT", "END", "GOTO", "GOSUB", "BOB", "SPRITE",
+))
+
+
+def reserved_label_prefix(line):
+    candidate = re.fullmatch(
+        r"(?i)(?:(?:Gosub|Goto)\s+)?([A-Za-z][A-Za-z0-9]*_[A-Za-z0-9_]+):?",
+        line.strip(),
+    )
+    if not candidate:
+        return None
+    stem = candidate.group(1).split("_", 1)[0].upper()
+    return stem if stem in RESERVED_LABEL_PREFIXES else None
+
+
 def scan(path):
     if_blocks, for_blocks = [], []
     errors = []
@@ -29,6 +51,12 @@ def scan(path):
         line = strip_comment(raw).strip()
         if not line:
             continue
+        prefix = reserved_label_prefix(line)
+        if prefix:
+            errors.append(
+                f"{index}: label begins with AMOS command {prefix}; "
+                "use a non-reserved prefix (e.g. _SORT_OBJECTS)"
+            )
         # AMOS Peek$ returns a string and requires a $-typed destination.
         peek_assignment = re.match(r"(?i)^([A-Za-z_][A-Za-z0-9_]*\$?)\s*=\s*Peek\$\s*\(", line)
         if peek_assignment and not peek_assignment.group(1).endswith("$"):
@@ -61,6 +89,13 @@ def scan(path):
 
 
 def main():
+    # Regression: AMOS tokenises GOSUB SORT_OBJECTS as GOSUB SORT _OBJECTS.
+    assert reserved_label_prefix("Gosub SORT_OBJECTS") == "SORT"
+    assert reserved_label_prefix("SORT_OBJECTS:") == "SORT"
+    assert reserved_label_prefix("Gosub MOVE_OBJ") == "MOVE"
+    assert reserved_label_prefix("Gosub _SORT_OBJECTS") is None
+    assert reserved_label_prefix("_SORT_OBJECTS:") is None
+    assert reserved_label_prefix("Gosub CLEANUP") is None
     files = sorted(CURRENT.glob("*.asc"))
     assert len(files) <= 1, "Only one active AMOS test is permitted"
     for path in files:
