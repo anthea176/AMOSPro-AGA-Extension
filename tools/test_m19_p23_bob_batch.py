@@ -11,6 +11,7 @@ from pathlib import Path
 from struct import pack, unpack_from
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools/experiments"))
@@ -86,9 +87,11 @@ class BatchMachine(CaptureMachine):
 
     def __init__(self, candidate, rows, *, kind="ficon", front=0,
                  pending=0, safe_ready=True, mutate=None):
-        super().__init__(binary=candidate, width=SW, height=SH, depth=8,
-                         front=front, pending=pending, safe_ready=safe_ready)
-        self.uc.ctl_set_cpu_model(UC_CPU_M68K_M68020)
+        # Legacy Machine initializes Unicorn as CPU000. Select the 020
+        # before its first memory map; switching models later is rejected.
+        with patch("test_m5_generic.UC_CPU_M68K_M68000", UC_CPU_M68K_M68020):
+            super().__init__(binary=candidate, width=SW, height=SH, depth=8,
+                             front=front, pending=pending, safe_ready=safe_ready)
         self.uc.mem_write(EXEC+0x128,b"\x00\x02")
         self.desc = descriptor(rows)
         self.uc.mem_write(DESC,self.desc)
