@@ -35,11 +35,12 @@ from m16_agapic_v2_draw_emit import emit_image_draw_v2
 from m18_ficon_ap20_emit import emit_ficon_ap20
 from m18_ficon16_model import build_bank
 from m16_agapic import pack_image
+from m16_agapic_v2 import pack_image_v2
 from test_m16_capture import CaptureMachine, NEW_CODE
 from test_m16_image_draw_r45 import (
     BANK, ARGS, TYPEOFMEM, sample_pixels
 )
-from test_m5_generic import DR, AR, AMOS, EXEC, STACK, STOP
+from test_m5_generic import DR, AR, AMOS, EXEC, STACK, STOP, GFX, SCREEN
 
 DESC = 0xE40000
 CODE = 0x1C0000
@@ -51,6 +52,10 @@ FICON_BANK = build_bank(ICONS)
 PIC_PIXELS = bytes([5 if x%3 else 0 for y in range(8) for x in range(9)])
 AGAPIC_BANK = pack_image(9,8,8,PIC_PIXELS,
                          bytes([1 if p else 0 for p in PIC_PIXELS]))
+MODE_ID=0x00021000
+AGAPIC_V2_BANK = pack_image_v2(9,8,8,PIC_PIXELS,
+     bytes((i*7+3)&255 for i in range(768)),MODE_ID,
+     bytes([1 if p else 0 for p in PIC_PIXELS]))
 
 
 def descriptor(records):
@@ -78,6 +83,11 @@ def oracle(base,records,kind):
 
 class BatchMachine(CaptureMachine):
     def os_call(self,uc,address,size,user):
+        if address==GFX-792:  # GetVPModeID: real v2 path
+            assert self.a(0)==SCREEN+44
+            self.mode_calls+=1
+            self._ret(MODE_ID)
+            return
         if address==TYPEOFMEM and DESC-24<=self.a(1)<DESC+len(self.desc):
             self.type_calls+=1
             self.os_calls.append(("TypeOfMem descriptor",self.a(1),1))
@@ -98,7 +108,10 @@ class BatchMachine(CaptureMachine):
         self.uc.mem_write(DESC-24,pack(">IIIHH8s",
                 0,len(self.desc)+16,20,1,0,b"BOB1    "))
         self.banks[20] = DESC
-        self.install_bank(FICON_BANK if kind=="ficon" else AGAPIC_BANK)
+        self.install_bank(FICON_BANK if kind=="ficon" else
+                          AGAPIC_V2_BANK if kind=="agapic_v2" else AGAPIC_BANK)
+        self.mode_calls=0
+        self.uc.mem_write(GFX-792,b"\x4e\x75")
         self.uc.mem_write(BANK-8,b"FICON8  " if kind=="ficon" else b"AGAPIC  ")
         self.uc.mem_write(BANK-12,b"\x00\x01")
         self.kind=kind
@@ -219,6 +232,15 @@ class BatchGateA(unittest.TestCase):
             old=sample_pixels(before,SW,SH,8,m.stride)
             self.assertEqual(sample_pixels(m.snapshot(),SW,SH,8,m.stride),
                              oracle(old,records,"agapic"))
+
+    def test_agapic_v2_pixel_exact_and_modeid(self):
+        records=[(-5,-3,10,0,1,1),(15,10,10,0,1,0)]
+        m=BatchMachine(self.candidate, records, kind="agapic_v2", front=1)
+        ok,before=m.run(2)
+        self.assertEqual(ok,1)
+        self.assertEqual(m.mode_calls,2)
+        expected=oracle(sample_pixels(before,SW,SH,8,m.stride), records, "agapic")
+        self.assertEqual(sample_pixels(m.snapshot(),SW,SH,8,m.stride),expected)
 
     def test_invalid_descriptor_preflight_does_not_mutate_back_or_front(self):
         valid=(2,2,10,2,2,1)

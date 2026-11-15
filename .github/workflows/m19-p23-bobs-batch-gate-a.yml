@@ -32,6 +32,8 @@ jobs:
           python-version: "3.12"
       - name: Install native MC68020 test dependencies
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Single active ASC and RAM logging static preflight
+        run: python -B tools/test_current_ram_log.py
       - name: Build R86 in memory
         run: python -B tools/build_m19_p23_bob_batch.py
       - name: Real 68020 BOBS Gate A - images, ABI, errors and front-buffer integrity
