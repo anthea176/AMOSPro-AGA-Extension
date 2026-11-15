@@ -1,26 +1,28 @@
-# Test actif unique — M19 P2.7 R87 : AGAPIC RLE / FICON8 / Blitter
+# Test actif — M19 P2.8 R88 : cache AGAPIC / Blitter masqué / FPS complets
 
-**RÉSULTATS RÉELS P2.7 REÇUS (15/11/2026)** : [rapport WinUAE](../../benchmarks/RESULTATS_M19_P27_R87_CPU_RLE_FICON_BLITTER_2026-11-15.md) — Gates B Runtime **PASS**, C Compiled **PASS**, 9/9 parités, RLE→FICON8 **−59,31 % Runtime / −62,07 % Compiled** (somme 4/8/16), Blitter opaque déjà stagé **−41,67 % / −45,90 %**. Deux [journaux](../../benchmarks/M19_P27_RUNTIME.TXT) [bruts](../../benchmarks/M19_P27_COMPILED.TXT) archivés. **P2.8 cache planaire avec alpha indépendant + vrai Blitter masqué : NON TESTÉ / NON IMPLÉMENTÉ**.
+**ASC actif unique** : [`M19_P28_R88_CACHE_BLIT_FPS_01.asc`](M19_P28_R88_CACHE_BLIT_FPS_01.asc) (350 lignes, Git blob `a9ee1aaa64d9b588e5b2d6e6134d63ec848e6181`).
 
-**ASC actif de référence (également archivé inchangé dans `tests/passed/`)** : [M19_P27_R87_CACHE_CPU_BLITTER_01.asc](M19_P27_R87_CACHE_CPU_BLITTER_01.asc) (402 lignes, SHA Git `e1062818abdfeb2d7e699d8c1dc9e9696250af65`).
+**Attention :** cet ASC utilise une **API expérimentale R88 v0.13.33 qui n'existe pas dans R87** : `Aga Cache Blit(CacheBank,X,Y,Mode)`. **R88 n'est PAS installée dans `dist/` et n'est pas promue.** Sa construction en mémoire et ses 130 scénarios AP20 sous émulation 68020 ont passé Gate A ; les Gates WinUAE B/C sont **NON TESTÉES**.
 
-**Bibliothèque inchangée** : `dist/AMOSPro_AGA.Lib`, **R87 v0.13.32**, 73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`. Ne pas toucher à `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`).
+## Paquet expérimental
 
-**Objectif : choisir un backend rapide avant d'ajouter du code natif.** Le même motif 16×16 (indices 0/5/6) est produit en AGAPIC v1 et v2 via capture et en FICON8 via `Aga F Icon Bank Put`. Neuf tests comparent la totalité de deux captures identiquement encodées, sur modes opaque/masqué, X décalé, clipping X/Y et copie opaque au Blitter. En cas de divergence : **FAIL et aucun benchmark**.
+Télécharger **l'artifact GitHub Actions** `M19_P28_R88_IN_MEMORY_GATE_A_ONLY_NOT_WINUAE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
 
-Mesures dans un seul programme :
+- `AMOSPro_AGA.Lib` — **R88 expérimentale**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **75 040 octets**.
+- `M19_P28_R88_CACHE_BLIT_FPS_01.asc` — le programme de référence.
+- `AGAPIC_P28_V1_BANK10.abk`, `AGPC_P28_V1_BANK11.abk`, `AGAPIC_P28_V2_BANK12.abk`, `AGPC_P28_V2_BANK13.abk` — les **mêmes pixels 16×16×8** et **masque alpha indépendant** dans les deux formats v1/v2. Le cache AGPC doit être chargé en vraie **Chip RAM** : le wrapper vérifie `TypeOfMem(MEMF_CHIP)`.
 
-- **4/8/16 Bobs masqués** : AGAPIC v1/v2 RLE individuel vs **FICON8 planaire pré-décodé en Fast/Chip** (CPU), **64 répétitions × 2 passes AB/BA**, 12 séries, **3 584 appels par méthode**.
-- **8 Bobs opaques** : FICON8 CPU vs `Aga Blit Copy`, 64 répétitions × 2 passes inversées, 4 séries, 1 024 appels par méthode. Source déjà affichée dans un emplacement non recouvert du **même back buffer**, staging avant la mesure. **Ce n'est PAS un Blitter masqué AGAPIC**, ni un cache Chip persistant. Le coût de staging est exclu : c'est une **borne de comparaison**, pas un FPS réel.
-- Aucune allocation, capture, Fill, Wait VBL ou Swap dans les fenêtres chronométrées. Chaque appel doit renvoyer 1.
+Sauvegarder localement la R87 avant l'essai ; installer temporairement **R88 dans le slot APSystem habituel**, redémarrer AMOS. Placer les quatre ABK dans le **répertoire courant** du programme. Ouvrir un AMOS vide et utiliser **Project → Merge ASCII**. Exécuter d'abord en Runtime, puis compiler exactement le même ASC avec **AMOS Compiler V2**. En cas de message d'erreur AMOS, relever la ligne et le message. En cas de Guru, ne pas déclarer PASS.
 
-**WinUAE :** 68020 / 14 MHz / AGA PAL / JIT OFF, AMOS Professional et Compiler V2 ; installer R87 puis redémarrer AMOS ; ouvrir un programme vierge → **Project → Merge ASCII**, exécuter en Runtime puis compiler **le même ASC**. Fichiers :
+## Validation intégrée à l'ASC
 
-- `RAM:M19_P27_RUNTIME.TXT`
-- `RAM:M19_P27_COMPILED.TXT`
+1. **Huit comparaisons complètes de captures 32×32** : RLE AGAPIC v1/v2 vs Blitter R88 sur le même écran 320×256, couleurs identiques, modes opaques/masqués, X impair et clipping quatre côtés. `PARITY_OK 8`, `PARITY_BAD 0` impératifs avant le benchmark. L'alpha couvre la couleur 0 opaque et une couleur non nulle invisible.
+2. **Dessin seul :** 4/8/16 Bobs, 64 répétitions × 2 passes AB/BA, 12 fenêtres, **3 584 dessins RLE et 3 584 dessins Blitter**. Fill, VBL, Swap et staging exclus.
+3. **Frames complètes :** 4/8/16 Bobs, **24 frames × 2 passes × 2 méthodes**, 12 fenêtres, **288 Swap réussis**. Le chronomètre inclut `Aga Wait Vbl`, `Aga Blit Fill`, les dessins, les retries et `Aga Swap`. Le coût du pré-décodage/Load reste **hors frames** : ce sont des FPS en cache chaud, pas un temps de démarrage. Aucun FPS n'est annoncé avant mesure.
+4. Fermeture AGA, retour AMOS, nettoyage des banques 10..15 uniquement après vérification qu'elles étaient libres, RAM Chip/Fast avant/après.
 
-Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PARITY_OK 9`, `PARITY_BAD 0`, `MASK_RUNS 12`, `RLE_CALLS 3584`, `FICON_CALLS 3584`, `BLIT_RUNS 4`, `BLIT_STAGES 4`, `BLIT_CALLS 1024`, `OPAQUE_ICON_CALLS 1024`, `CLOSE_RETURNED 1`.
+**Journaux :** `RAM:M19_P28_RUNTIME.TXT` et `RAM:M19_P28_COMPILED.TXT`. Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PARITY_OK 8`, `REJECT 2`, `MICRO_RUNS 12`, `RLE_CALLS 3584`, `CACHE_CALLS 3584`, `FRAME_RUNS 12`, `FRAMES_TOTAL 288`, `SWAPS 288`, `CLOSE_RETURNED 1`. Reporter les ticks individuels `DRAW_PASS0/1` et `FRAME_PASS0/1`, la fréquence WinUAE et les retries.
 
-**Statuts vérifiés** : préflight strict AMOS **PASS**, 9 tests natifs MC68020 **PASS**, CI ciblée [SUCCESS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43727962202), **Gate B Runtime PASS, Gate C Compiled PASS**, 9/9 captures comparées identiques, aucune variation nette Chip/Fast. **Gate D physique NON TESTÉE.**
+**État actuel :** préflight AMOS strict **PASS (statique)**, Gate A native R88 **PASS 130 cas** ; **WinUAE Runtime/Compiled R88 NON TESTÉES** ; Amiga physique non testé. Le [P2.7 Runtime+Compiled PASS](../passed/M19_P27_R87_CACHE_CPU_BLITTER_01.asc) reste archivé octet pour octet et n'est plus l'ASC actif.
 
-Le benchmark P2.6 qui a passé Runtime et Compiled est [archivé octet pour octet](../passed/M19_P26_R87_DRAW_BENCH_01.asc), résultats dans [benchmarks](../../benchmarks/RESULTATS_M19_P26_R87_DRAW_2026-11-15.md). [Protocole P2.7 détaillé](../../docs/M19_P27_AGAPIC_CACHE_BACKENDS_2026-11-15.md).
+**Aucune modification de `dist/AMOSPro_AGA.Lib` R87 ni `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84, aucune promotion automatique.**

@@ -49,8 +49,8 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P27_R87_CACHE_CPU_BLITTER_01.asc
-      - name: Verify archived P2.5/P2.6 and unique current P2.7 cache benchmark
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc
+      - name: Verify archived P2.5/P2.6/P2.7 and unique current P2.8 ASC
         run: |
           python -B tools/test_current_ram_log.py
           python -B tools/test_m19_p25_r87_smoke_static.py

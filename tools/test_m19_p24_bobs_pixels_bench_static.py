@@ -147,7 +147,7 @@ def main():
     assert current_lib==candidate and meta["sha256"]==R87_SHA
     assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active) == 1 and active[0].name == "M19_P27_R87_CACHE_CPU_BLITTER_01.asc"
+    assert len(active) == 1 and active[0].name == "M19_P28_R88_CACHE_BLIT_FPS_01.asc"
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
     assert legacy.exists() and git_blob_sha(legacy.read_bytes()) == LEGACY_GIT_SHA
     source = (ROOT / "tests/design" / ASC_NAME).read_bytes().decode("latin-1")

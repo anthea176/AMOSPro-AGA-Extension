@@ -40,3 +40,11 @@ P2.8 poursuit **une etape discriminante** sans gonfler le binaire actif :
 | P2.8 FPS effectifs, DAC/Amiga physique | **NON TESTE** |
 
 Le verdict Gate A doit porter uniquement sur le **modele et coeur deja present**, pas sur un backend AP20 qui n'existe pas encore. Conserver les resultats et sources exacts ; les banques natives R84 et la candidate R87 **ne changent pas**.
+
+## Avancement P2.8 P1 — R88 expérimentale (15/11/2026)
+
+Le prototype AP20 `tools/m19_p28_agpc_ap20_emit.py` et le constructeur **sans option d'écriture dist** `tools/build_m19_p28_r88_in_memory.py` produisent R88 v0.13.33 (75 040 octets, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`), API tentative `Aga Cache Blit(CacheBank,X,Y,Mode)`. Le cœur de Blitter masqué M18/P5 est réutilisé après validation de la banque AGPC, vraie Chip RAM, des adresses du back buffer, du Safe et de la compatibilité v2 ModeID. **Le contrôle obsolète `masque == OR des plans couleur` a été supprimé.**
+
+[Gate A MC68020 sous Unicorn](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43730486672) : **130 scénarios réels 68k interprété/relocations Compiler V2 PASS**, 288 comparaisons de format AGPC P0 PASS, 48 scénarios du cœur M18 PASS. Correctif d'un faux négatif du modèle : utiliser le **stride physique réel** (18 octets en mémoire de test, contre 10 octets utiles) lors des comparaisons d'oracle pixel.
+
+Le [banc P2.8](../tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc) a passé le préflight AMOS strict (ce n'est pas un essai WinUAE) et vise 8 parités avec masque indépendant, 12 séries de dessin seul et 12 séries de **frames complètes avec décor, VBL et Swap**, 24 frames par série. Le bundle créé après Gate A contient R88 temporaire, ASC et quatre banques v1/v2 AGAPIC+AGPC. **Gates B/C R88 NON TESTÉES et FPS non mesurés.** Aucune bibliothèque R87/R84 modifiée ni promue.

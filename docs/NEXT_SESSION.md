@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## CHANTIER ACTUEL — P2.8 R88 expérimental : Gate A native PASS, banc WinUAE préparé
+
+**R88 v0.13.33 est construite en mémoire uniquement** : **75 040 octets**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`. 78 commandes / 88 entrées AP20 ; nouvelle commande tentative `Aga Cache Blit(CacheBank,X,Y,Mode)`, **16×16×8 seulement, cache AGPC en Chip RAM**, alpha 1-bit indépendant des couleurs, v1/v2. **Gate A 68020 PASS : 130 cas Interpreter + Compiler V2 emulé**, en complément des 288 oracles host et 48 cas M18 core. L'ancien échec d'oracle venait d'un stride physique de 18 octets contre 10 attendus à tort par le test ; correction et rerun PASS [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43730486672). **Ce n'est PAS WinUAE/AMOS Compiler réel.**
+
+**Nouveau seul ASC actif** : `tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc` (350 lignes, Git blob `a9ee1aaa64d9b588e5b2d6e6134d63ec848e6181`, préflight AMOS strict PASS). **Quatre banques sources** v1/v2 AGAPIC/AGPC générées par `tools/m19_p28_winuae_bundle.py`, même motif et masque indépendant. La CI fournit une archive séparée **`M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE`** avec la **bibliothèque expérimentale R88**, l'ASC, les quatre ABK et les consignes d'installation. **Pas d'écriture dans dist, aucune promotion.**
+
+L'ASC compare **8 captures complètes** avant 12 séries de dessin seul (4/8/16, 64 répétitions AB/BA) et 12 séries de **frames complètes** (4/8/16, 24 frames par série, 288 Swap), incluant fond, Wait Vbl et Swap. Récupérer **`RAM:M19_P28_RUNTIME.TXT` / `RAM:M19_P28_COMPILED.TXT`**, puis analyser gains de dessin et FPS réels séparément. **Gates B/C R88 NON TESTÉES, aucun gain P2.8 encore démontré.**
+
+**R87 active inchangée** `dist/AMOSPro_AGA.Lib` (73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`), **R84 `LAST_GOOD` inchangée**. main exclusivement, pas de branche, tag, release ou promotion.
+
+---
+
 ## CHANTIER EN COURS — M19 P2.8 P0 (alpha independant)
 
 **Sources nouvelles sur `main` :** `tools/m19_p28_agapic_planar_cache.py` et `tools/test_m19_p28_agapic_planar_cache.py` ; [contrat P2.8](M19_P28_AGAPIC_PLANAR_CHIP_ALPHA_2026-11-15.md) ; [workflow Gate A](../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml). Convertir AGAPIC v1/v2 en snapshot planaire **avec alpha independant des indices couleur**, garder l'ownership en banque DATA et rejeter les buffers/preparations incomplets. Cas 16×16×8 : bloc 288 octets compatible avec le **coeur M18/P5 natif existant**, mais **PAS avec l'ancien wrapper AP20**, qui imposait `alpha == OR des plans couleur` et doit etre remplace avant toute API publique AGPC. **Gate A native a executer en CI** ; **AUCUN nouveau binaire R88, AUCUNE Gate B/C P2.8, AUCUN FPS mesure pour P2.8**.
