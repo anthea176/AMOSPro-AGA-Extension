@@ -255,7 +255,7 @@ def linked_ap20_asm(binary: bytes, revision: str, public: int,
             out.append('    include "' + group_files[index] + '"')
     out.extend(['', f'Entry_{len(segments):02d}:', 'C_Title:'])
     out.extend(_source_lines_for_data(title, 0, len(title)))
-    out.extend(['C_End:', '    dc.w 0', '    cnop 0,4',
+    out.extend(['C_End:', '    dc.w 0', '    dcb.b (-(*-HUNK_DATA))&3,0',
                 'HUNK_DATA_END:', '    dc.l $000003F2', ''])
     return '\n'.join(out)
 
