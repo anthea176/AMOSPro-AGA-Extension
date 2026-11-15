@@ -50,6 +50,10 @@ Les captures proviennent du même encodeur R84 et des mêmes dimensions ; leur r
 - Attention : ce benchmark **n'est pas directement comparable en valeur absolue** aux ~56,67 / 81,33 / 132 ms de P2.1, car il exclut volontairement les coûts de fond, présentation et tri Z. La comparaison pertinente est **BASIC contre Batch dans le même programme**.
 - Aucun gain présumé. En cas de `Timer=0` ou de dessin refusé, le verdict est FAIL (pas un gain artificiel).
 
+## Nettoyage prévu du code de test embarqué
+
+**Nettoyage obligatoire avant toute version publiable après les essais P2.4 :** retirer du **binaire natif** la commande temporaire `Aga Bob Probe` (token public, stub AP20, routine `PROBE_CODE` et toutes références embarquées), sans supprimer le moteur `Aga Bob Batch`. Mettre à jour le générateur, les offsets et les références de groupe AP20, contrôler ABI/relocations/portée BSR.W et limite 65 534 octets, puis construire la **nouvelle candidate uniquement dans `dist/AMOSPro_AGA.Lib`**, sans toucher à R84 `LAST_GOOD`. Rejouer les tests statiques/MC68020 et obtenir de **nouveaux** résultats WinUAE Runtime et Compiled : les Gates R86 ne sont pas transférables automatiquement au binaire nettoyé. Les tests et rapports restent archivés dans `tests/passed/`, `tools/` et `docs/` pour la non-régression : seule la sonde de diagnostic embarquée doit disparaître. Aucun tag, release ou promotion sans validation explicite.
+
 ## Validation et états
 
 **Gate statique P2.4** : [workflow dédié](../.github/workflows/m19-p24-bobs-pixels-static.yml) ; contrôle d'empreinte R84/R86, archive P2.3, unicité ASC, code des 19 probes, 256 indices capturés, géométrie et 4/8/16 descripteurs, AB/BA et fenêtres de chronométrage. **Gate statique PASS** — [CI 43701540717](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43701540717). Le validateur a contrôlé les 256 valeurs possibles de pixel 1×1, les 19 attentes géométriques, le témoin P2.3 archivé et la structure AB/BA. **Pas de Runtime/Compiled P2.4 exécutés.**
