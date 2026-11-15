@@ -4,7 +4,7 @@
 
 **Référence :** bibliothèque R84 v0.13.29 `LAST_GOOD` (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`) **inchangée**. Pas de nouvelle API M19, de compilation demandée, de `c2p.library`, ni de travail sur une autre branche.
 
-**État : premier journal WinUAE Runtime 68030 reçu, benchmark INTERROMPU (`RESULT 0`, `ERR 20`) à 41/240 frames par le test d'Échap.** Aucune erreur de dessin/Swap ni retry. Mesures N4 P0 complètes, N8 P0 partielles, N16 et second passage absents. [Rapport de l'exécution](../../benchmarks/RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). **Gate B benchmark NON VALIDÉE.** Un PASS P2.0 n'est pas un PASS benchmark. Le nouveau banc n'inclut pas d'AMAL : il mesure le gestionnaire BASIC et le rendu dans un scénario contrôlé.
+**État : second journal 68030/JIT activé selon l'auteur, `RESULT 1`, `VERDICT PASS`, `ERR 0`, 240 frames, 9 088 dessins, toutes les charges 4/8/16 complètes, 0 échec Draw/Swap et deltas mémoire nuls.** [Rapport du PASS](../../benchmarks/RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md). Le [premier essai interrompu](../../benchmarks/RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md) reste archivé. **Comparatif 68020/14 MHz/JIT OFF annoncé et non encore reçu.** Un PASS P2.0 n'est pas un PASS benchmark. Le nouveau banc n'inclut pas d'AMAL : il mesure le gestionnaire BASIC et le rendu dans un scénario contrôlé.
 
 ## Lancement WinUAE
 

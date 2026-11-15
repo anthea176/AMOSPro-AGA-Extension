@@ -1,6 +1,6 @@
 # M19 / P2 — Benchmark comparatif de 4, 8 et 16 Bobs (R84)
 
-> **État au 15/11/2026 : premier passage WinUAE Runtime 68030 reçu, mais interrompu après 41/240 frames (`ERR 20`, Échap signalé).** N4 P0 complet, tri/fond/composition N8 P0 complets, N16 et passage 1 non mesurés. [Résultats partiels](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). `main` uniquement, R84 `LAST_GOOD` protégée, aucune API native.
+> **État au 15/11/2026 : second passage complet WinUAE Runtime 68030 avec JIT activé selon l'auteur : PASS, 240/240 frames, 9 088 dessins, zéro échec Draw/Swap.** [Résultats complets 68030/JIT](RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md). [Premier essai interrompu](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md) conservé séparément. **Comparatif 68020/14 MHz/JIT OFF attendu.** `main` uniquement, R84 `LAST_GOOD` protégée, aucune API native.
 
 **Unique ASC actif :** [`tests/current/M19_P2_BENCH_BOBS_01.asc`](../tests/current/M19_P2_BENCH_BOBS_01.asc). Le [prototype P2.0 fonctionnel validé](../tests/passed/M19_P2_OBJECTS_01.asc) est archivé octet pour octet ; [rapport Runtime P2.0](../docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md).
 
