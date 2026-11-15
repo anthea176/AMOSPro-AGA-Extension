@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Configuration WinUAE de l'auteur — validation fonctionnelle / benchmarks
+
+**Gates B/C : WinUAE MC68030 + JIT activé**, en AGA PAL, interprété/Runtime puis AMOS Compiler réel. **MC68020 + JIT désactivé : benchmarks seulement.** Les documents historiques de tests 68020/JIT OFF restent des archives et ne remplacent pas ce choix. **Cible de génération native inchangée : MC68020 minimum.**
+
+
 ## M19 P0a — livraison GitHub disponible, candidate MC68020 non promue
 
 **Livree sur `main` :** [Lib MC68020](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib) (**79 660 octets**, SHA256 `e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`), [ZIP WinUAE avec exemple](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip), [ASC autonome](../examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc) et [notice](../examples/m19_p0a_68020/README.fr.md). **Aucune ressource externe necessaire** ; l'ABK est cree dans RAM: par le test. Le publisher reconstruite la meme candidate depuis R88, passe Gate A CPU MC68020 (74 cas) et preflight ASC, verifie SHA et la met dans `dist/experimental/` avec une archive ZIP. R88 `dist/AMOSPro_AGA.Lib`, ASC R88 actif et R84 `LAST_GOOD` conserves, **aucune promotion**. **Gate B WinUAE, Gate C vrai AMOS Compiler, Gate D physique : NON TESTEES.** L'exemple sert a produire les nouveaux journaux `RAM:M19_P0A_INTERPRETED.TXT`, `RAM:M19_P0A_RUNTIME.TXT` et `RAM:M19_P0A_COMPILED.TXT`; ne pas annoncer PASS avant execution reelle.

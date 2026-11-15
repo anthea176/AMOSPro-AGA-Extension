@@ -2,14 +2,14 @@
 
 **Statut : candidat experimental GATE A PASS uniquement.** Ce dossier accompagne **le fichier reel** [`dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib`](../../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib), qui doit etre copie sous le nom **`AMOSPro_AGA.Lib`** dans le slot d'extension habituel de `APSystem` pour les essais. Ne pas installer la R88 historique de `dist/AMOSPro_AGA.Lib` a la place : elle ne contient pas ces commandes.
 
-- CPU **MC68020 ou 68EC020 minimum** (WinUAE 68020, JIT OFF, PAL, chipset AGA). Aucun fallback 68000.
+- Code natif **MC68020 ou 68EC020 minimum** ; tests fonctionnels en WinUAE 68030, JIT ON, PAL, chipset AGA). Aucun fallback 68000.
 - SHA256 du candidat : `e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0` ; taille **79 660 octets** ; **80 commandes / 90 entrees AP20**.
 - [Programme ASCII](M19_P0A_MC68020_BANK_GET.asc) ; **aucune ressource externe** `.iff`, `.abk` ou police necessaire. Le test dessine ses images par `Aga Blit Fill` et genere un ABK dans `RAM:`.
 - Banque **24 exclusivement** : utiliser un programme AMOS vierge et verifier qu'elle est libre. Le programme refuse de l'ecraser si elle est deja occupee. Les essais peuvent effacer **uniquement la banque 24 creee par ce test** pour valider `Save` / `Load`.
 
 ## Utilisation
 
-1. Sauvegarder localement le fichier `AMOSPro_AGA.Lib` du slot AMOS actuel. Copier la candidate liee ci-dessus dans le bon slot sous son nom **`AMOSPro_AGA.Lib`**, puis **redemarrer** AMOS Professional dans WinUAE (CPU68020/AGA/JIT OFF). **Ne pas modifier `dist/AMOSPro_AGA_LAST_GOOD.Lib`.**
+1. Sauvegarder localement le fichier `AMOSPro_AGA.Lib` du slot AMOS actuel. Copier la candidate liee ci-dessus dans le bon slot sous son nom **`AMOSPro_AGA.Lib`**, puis **redemarrer** AMOS Professional dans WinUAE (CPU 68030 / JIT ON / AGA). **Ne pas modifier `dist/AMOSPro_AGA_LAST_GOOD.Lib`.**
 2. Dans un nouveau programme vide, faire **Project -> Merge ASCII** avec [`M19_P0A_MC68020_BANK_GET.asc`](M19_P0A_MC68020_BANK_GET.asc), surtout pas `Load` du `.asc` comme programme tokenise.
 3. Executer d'abord en interprete/Runtime. Trois rectangles sont dessines sur le *back buffer AGA*, et `Get AGA Bob` construit trois images ID 1,3,2 puis remplace l'image 2. Les tailles de banque attendues sont **552, 976, 1528, 1032 octets**. L'image est affichee 100 VBL si `Aga Swap` reussit.
 4. Apres fermeture de l'ecran, le programme effectue `Save "RAM:M19_P0A_68020_BOBS.ABK",24`, `Erase 24`, `Load` puis `Aga Bob Bank 24`, et verifie la taille `1032`, la signature `AGBO` et le compte `3`. Le fichier ABK est **une sortie**, pas un prerequis.
