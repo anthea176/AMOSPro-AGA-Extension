@@ -25,6 +25,8 @@ jobs:
           python-version: '3.12'
       - name: Validate reference codec syntax
         run: python -m py_compile tools/m19_agabob_abk.py tools/m19_agabob_fixture.py tools/test_m19_agabob_abk.py tools/m19_bobs_ap20_feasibility.py
+      - name: Verify uninstalled AGA Bob Bank native token and AP20 layout
+        run: python -B tools/m19_bobs_ap20_feasibility.py
       - name: Run multi-image planar, mask and save-load host regressions
         run: python -B tools/test_m19_agabob_abk.py
       - name: Compare committed ABK asset byte-for-byte with the fixture generator
