@@ -13,6 +13,10 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack,unpack_from
 
+# R88 stores the V2 reach validator under tools/experiments.
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent/"experiments"))
+
 from audit_ap20 import inspect,parse,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
