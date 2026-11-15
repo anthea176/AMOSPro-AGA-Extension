@@ -1,0 +1,415 @@
+{
+  "revision": "R88",
+  "compiler_format": "AP20 V2 multiple independently relocated native groups",
+  "input_sha256": "69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc",
+  "input_bytes": 75040,
+  "builder": "build_m19_p28_r88_in_memory",
+  "deterministic_builder_verified": true,
+  "pinned_build_metadata_sha256": "69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc",
+  "last_good_verified": true,
+  "input_is_read_only": true,
+  "public_entries": 84,
+  "ap20_entries": 88,
+  "groups": [
+    {
+      "unit": "C2P",
+      "sha256": "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700",
+      "bytes": 5558,
+      "public_entrypoints": [
+        {
+          "ap20_index": 70,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 71,
+          "unit_offset": 882
+        },
+        {
+          "ap20_index": 72,
+          "unit_offset": 2378
+        },
+        {
+          "ap20_index": 73,
+          "unit_offset": 2562
+        },
+        {
+          "ap20_index": 74,
+          "unit_offset": 4000
+        }
+      ],
+      "mnemonic_instructions": 522,
+      "mnemonic_bytes": 1946,
+      "raw_dc_bytes": 3612,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": false,
+      "file": "AMOSPro_AGA_R88_C2P_NATIVE.s",
+      "ap20_index": 84
+    },
+    {
+      "unit": "IFF",
+      "sha256": "4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b",
+      "bytes": 2508,
+      "public_entrypoints": [
+        {
+          "ap20_index": 75,
+          "unit_offset": 34
+        }
+      ],
+      "mnemonic_instructions": 117,
+      "mnemonic_bytes": 676,
+      "raw_dc_bytes": 1832,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": false,
+      "file": "AMOSPro_AGA_R88_IFF_NATIVE.s",
+      "ap20_index": 85
+    },
+    {
+      "unit": "BOBS",
+      "sha256": "3a7ce5fe584ff4fddb95edda1523b08625b739204cbd81035a6b102b8734d2ea",
+      "bytes": 7038,
+      "public_entrypoints": [
+        {
+          "ap20_index": 82,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 83,
+          "unit_offset": 5220
+        }
+      ],
+      "mnemonic_instructions": 78,
+      "mnemonic_bytes": 294,
+      "raw_dc_bytes": 6744,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": false,
+      "file": "AMOSPro_AGA_R88_BOBS_NATIVE.s",
+      "ap20_index": 86
+    },
+    {
+      "unit": "AGA",
+      "sha256": "c255a5631ac56b9c933e03c7485abbb293a5910b74f24a286a9efca55256efd5",
+      "bytes": 56580,
+      "public_entrypoints": [
+        {
+          "ap20_index": 0,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 2,
+          "unit_offset": 674
+        },
+        {
+          "ap20_index": 3,
+          "unit_offset": 690
+        },
+        {
+          "ap20_index": 4,
+          "unit_offset": 706
+        },
+        {
+          "ap20_index": 5,
+          "unit_offset": 802
+        },
+        {
+          "ap20_index": 6,
+          "unit_offset": 1136
+        },
+        {
+          "ap20_index": 7,
+          "unit_offset": 1892
+        },
+        {
+          "ap20_index": 8,
+          "unit_offset": 2042
+        },
+        {
+          "ap20_index": 9,
+          "unit_offset": 2658
+        },
+        {
+          "ap20_index": 10,
+          "unit_offset": 2688
+        },
+        {
+          "ap20_index": 11,
+          "unit_offset": 2978
+        },
+        {
+          "ap20_index": 12,
+          "unit_offset": 3230
+        },
+        {
+          "ap20_index": 13,
+          "unit_offset": 3388
+        },
+        {
+          "ap20_index": 14,
+          "unit_offset": 5592
+        },
+        {
+          "ap20_index": 15,
+          "unit_offset": 7134
+        },
+        {
+          "ap20_index": 17,
+          "unit_offset": 7192
+        },
+        {
+          "ap20_index": 18,
+          "unit_offset": 7876
+        },
+        {
+          "ap20_index": 19,
+          "unit_offset": 8604
+        },
+        {
+          "ap20_index": 20,
+          "unit_offset": 9056
+        },
+        {
+          "ap20_index": 21,
+          "unit_offset": 9604
+        },
+        {
+          "ap20_index": 22,
+          "unit_offset": 9642
+        },
+        {
+          "ap20_index": 23,
+          "unit_offset": 9872
+        },
+        {
+          "ap20_index": 24,
+          "unit_offset": 10044
+        },
+        {
+          "ap20_index": 25,
+          "unit_offset": 10284
+        },
+        {
+          "ap20_index": 26,
+          "unit_offset": 10650
+        },
+        {
+          "ap20_index": 27,
+          "unit_offset": 10978
+        },
+        {
+          "ap20_index": 28,
+          "unit_offset": 11194
+        },
+        {
+          "ap20_index": 29,
+          "unit_offset": 11306
+        },
+        {
+          "ap20_index": 30,
+          "unit_offset": 11418
+        },
+        {
+          "ap20_index": 31,
+          "unit_offset": 11664
+        },
+        {
+          "ap20_index": 32,
+          "unit_offset": 11770
+        },
+        {
+          "ap20_index": 33,
+          "unit_offset": 11876
+        },
+        {
+          "ap20_index": 34,
+          "unit_offset": 12668
+        },
+        {
+          "ap20_index": 35,
+          "unit_offset": 12772
+        },
+        {
+          "ap20_index": 36,
+          "unit_offset": 12912
+        },
+        {
+          "ap20_index": 37,
+          "unit_offset": 13556
+        },
+        {
+          "ap20_index": 38,
+          "unit_offset": 14884
+        },
+        {
+          "ap20_index": 39,
+          "unit_offset": 15186
+        },
+        {
+          "ap20_index": 40,
+          "unit_offset": 15430
+        },
+        {
+          "ap20_index": 41,
+          "unit_offset": 16666
+        },
+        {
+          "ap20_index": 42,
+          "unit_offset": 16982
+        },
+        {
+          "ap20_index": 43,
+          "unit_offset": 17642
+        },
+        {
+          "ap20_index": 44,
+          "unit_offset": 18334
+        },
+        {
+          "ap20_index": 45,
+          "unit_offset": 19264
+        },
+        {
+          "ap20_index": 46,
+          "unit_offset": 19788
+        },
+        {
+          "ap20_index": 47,
+          "unit_offset": 20312
+        },
+        {
+          "ap20_index": 48,
+          "unit_offset": 20816
+        },
+        {
+          "ap20_index": 49,
+          "unit_offset": 21262
+        },
+        {
+          "ap20_index": 50,
+          "unit_offset": 22278
+        },
+        {
+          "ap20_index": 51,
+          "unit_offset": 22726
+        },
+        {
+          "ap20_index": 52,
+          "unit_offset": 23674
+        },
+        {
+          "ap20_index": 53,
+          "unit_offset": 24734
+        },
+        {
+          "ap20_index": 54,
+          "unit_offset": 25900
+        },
+        {
+          "ap20_index": 55,
+          "unit_offset": 26232
+        },
+        {
+          "ap20_index": 56,
+          "unit_offset": 28682
+        },
+        {
+          "ap20_index": 57,
+          "unit_offset": 30684
+        },
+        {
+          "ap20_index": 58,
+          "unit_offset": 30840
+        },
+        {
+          "ap20_index": 59,
+          "unit_offset": 31574
+        },
+        {
+          "ap20_index": 60,
+          "unit_offset": 34152
+        },
+        {
+          "ap20_index": 61,
+          "unit_offset": 36058
+        },
+        {
+          "ap20_index": 62,
+          "unit_offset": 37928
+        },
+        {
+          "ap20_index": 63,
+          "unit_offset": 38244
+        },
+        {
+          "ap20_index": 64,
+          "unit_offset": 39216
+        },
+        {
+          "ap20_index": 65,
+          "unit_offset": 39582
+        },
+        {
+          "ap20_index": 66,
+          "unit_offset": 40810
+        },
+        {
+          "ap20_index": 67,
+          "unit_offset": 42102
+        },
+        {
+          "ap20_index": 68,
+          "unit_offset": 44858
+        },
+        {
+          "ap20_index": 69,
+          "unit_offset": 47358
+        },
+        {
+          "ap20_index": 76,
+          "unit_offset": 49862
+        },
+        {
+          "ap20_index": 77,
+          "unit_offset": 49988
+        },
+        {
+          "ap20_index": 78,
+          "unit_offset": 50114
+        },
+        {
+          "ap20_index": 79,
+          "unit_offset": 51416
+        },
+        {
+          "ap20_index": 80,
+          "unit_offset": 52978
+        },
+        {
+          "ap20_index": 81,
+          "unit_offset": 54070
+        }
+      ],
+      "mnemonic_instructions": 8894,
+      "mnemonic_bytes": 32220,
+      "raw_dc_bytes": 24360,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": false,
+      "file": "AMOSPro_AGA_R88_AGA_NATIVE.s",
+      "ap20_index": 87
+    }
+  ],
+  "exact_ap20_binary_roundtrip_verified": true,
+  "native_assembler_verified": false,
+  "source_status": "editable linked AP20 with included partial mnemonic units",
+  "linked_assembly_source": "AMOSPro_AGA_R88_NATIVE.s",
+  "strict_status": "pinned builder and exact-byte preservation verified; full code/data classification not claimed",
+  "baseline_comparison": "not available for separately relocated multi-unit AP20",
+  "warnings": [
+    "Rbsr FE31 is an AMOS linker pseudo-op, not Motorola machine code.",
+    "The exact AP20 source is byte-perfect DC.W/DC.B, not a symbolic source.",
+    "Native unit ASM is a partial mnemonic reconstruction: DC.B may include undecoded code.",
+    "AMOS Compiler and WinUAE Gates B/C are NOT validated by export."
+  ]
+}
