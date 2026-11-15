@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0a — développement depuis R88 (modèle de banque ABK, pas de nouvelle Lib)
+
+Suite à la demande explicite de reprendre **M19 Bobs multi-images uniquement depuis R88**, la première brique **P0a hôte** est ajoutée : `tools/m19_p0a_multi_bob_abk.py`, 11 tests locaux PASS dans `tools/test_m19_p0a_multi_bob_abk.py`, format et limites dans [`M19_P0A_ABK_FORMAT_2026-11-15.md`](M19_P0A_ABK_FORMAT_2026-11-15.md). Provenance figée : R88 `7c575a02087d550611b8e966a7708b5f6a8c4b71`, sans emploi de code ni d'exemple des builds ultérieurs. Payload `AGBO` v1 multi-images non compressées, masque indépendant, AMOS `AmBk` DATA, contrôle des corruptions, remplacement atomique dans le modèle. **Aucune commande AP20 ajoutée, aucune Gate A native/B/C, aucun nouveau ASC, aucune modification de `dist` ni de `LAST_GOOD`.** Prochaine étape technique : résoudre l'agrandissement non destructif des banques AMOS avant `Aga Bob Bank`/`Get AGA Bob` natifs.
+
+
 > **Consolidation documentaire (15/11/2026) :** les 33 corrections approuvées sont réunies dans [`EXTENSION_SOURCE_RULES.md`](../EXTENSION_SOURCE_RULES.md). Les 1 903 lignes précédentes sont conservées [en archive non normative](EXTENSION_SOURCE_RULES_HISTORIQUE_2026-11-15.md). Aucun binaire, builder, ASC ni test validé n'a été modifié par cette consolidation ; `LAST_GOOD` R84 reste protégée, aucune promotion automatique. Le checkpoint de travail documenté ci-dessous décrit R88 ; **ne pas supposer que c'est encore le HEAD ou le dernier chantier**, vérifier les commits de `main`, le builder et `dist/AMOSPro_AGA.Lib`. Les étapes de Bob multi-images restent distinctes du cache AGPC R88 et des Sprites matériels AGA. L'historique chronologique ci-après est conservé pour provenance, pas comme suite d'instructions concurrentes.
 
 ---

@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **M19 P0a en cours (source R88 figée).** Le format ABK multi-images `AGBO` v1 et son encodeur/décodeur de référence sont implémentés côté hôte, avec 11 tests PASS locaux. [Rapport et spécification](M19_P0A_ABK_FORMAT_2026-11-15.md). **Non intégré à l'API AP20 ; WinUAE et Compiler non testés ; `dist` et R84 `LAST_GOOD` intacts.** Aucune utilisation de code ni d'exemple postérieur à R88 pour ce chantier.
+
+
 > **Lecture des statuts :** ce document empile des checkpoints historiques Rxx. La candidate décrite dans le premier état R88 v0.13.33 avait été installée dans `dist/AMOSPro_AGA.Lib` au checkpoint du 15/11/2026 ; les mentions plus anciennes « en mémoire uniquement / jamais installée » concernent sa **phase précédente**, pas l'emplacement courant. Les développements ultérieurs de `main` peuvent être plus récents : consulter [les règles consolidées](../EXTENSION_SOURCE_RULES.md), [NEXT_SESSION](NEXT_SESSION.md), HEAD, binaire et builder avant de reprendre. **Aucune Gate ni promotion n'est déduite de cette correction documentaire.**
 
 

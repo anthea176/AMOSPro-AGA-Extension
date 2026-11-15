@@ -1,5 +1,8 @@
 # M19 — Contrat de conception des Bobs AGA multi-images
 
+> **Suivi du développement P0a :** le [format `AGBO` v1 et le modèle hôte testé](M19_P0A_ABK_FORMAT_2026-11-15.md) sont disponibles dans `tools/m19_p0a_multi_bob_abk.py` (11 tests locaux). Les commandes et le moteur Bob **restent NON implémentés dans la bibliothèque AGA R88**. Aucun exemple ni source des builds post-R88 n'est réutilisé ; aucun nouveau binaire n'est produit.
+
+
 **Décision utilisateur du 15/11/2026 — contrat fonctionnel retenu, NON implémenté.**
 Dépôt : `anthea176/AMOSPro-AGA-Extension`, branche `main` exclusivement.
 Ce document définit la cible de développement, **pas** une API déjà disponible dans R88. Aucun token AP20, programme AMOS, binaire ni test Compiler n'est créé par cette documentation. R84 v0.13.29 `LAST_GOOD` reste protégée ; R88 v0.13.33 reste expérimentale, sans promotion automatique.
