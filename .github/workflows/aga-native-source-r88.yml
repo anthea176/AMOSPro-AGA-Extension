@@ -8,6 +8,7 @@ on:
       - "tools/generate_aga_multiunit_source.py"
       - "tools/generate_aga_native_source.py"
       - "tools/test_generate_aga_multiunit_source.py"
+      - "EXPORT_REAL_SOURCE.bat"
   workflow_dispatch:
 
 permissions:
@@ -35,6 +36,13 @@ jobs:
             --lib dist/AMOSPro_AGA.Lib \
             --out "$RUNNER_TEMP/aga-source-verify" --strict \
             --baseline none --verify-vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Archive native assembly sources verified against R88
+        uses: actions/upload-artifact@v4
+        with:
+          name: AGA_R88_MC68020_BYTE_EXACT_ASM
+          path: ${{ runner.temp }}/aga-source-verify/
+          retention-days: 30
+          if-no-files-found: error
       - name: Ensure protected binaries and AMOS tests are not modified
         run: |
           git diff --exit-code -- dist/ tests/current/ tests/passed/
