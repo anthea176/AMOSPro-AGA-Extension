@@ -261,8 +261,12 @@ def main():
         cases+=1
         for kwargs in ({'scratch_fail':True},{'bank_alloc_fail':True},
                        {'safe':False},{'chip':False}):
-            m=CaptureMachine(binary,layout,8,**kwargs)
+            # The allocation failure must affect GET's replacement, not the
+            # initial bank selector which is the prerequisite of this test.
+            m=CaptureMachine(binary,layout,8,
+                             **{**kwargs,'bank_alloc_fail':False})
             assert m.run_select(10)==1
+            m.bank_alloc_fail=kwargs.get('bank_alloc_fail',False)
             before=m.bank_payload(10)
             assert m.run_get(1,2,2,18,7)==0,kwargs
             assert m.bank_payload(10)==before
