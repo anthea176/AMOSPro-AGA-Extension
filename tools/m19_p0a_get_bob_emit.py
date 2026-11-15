@@ -320,7 +320,7 @@ def emit_get_bob():
     S(D(0),'scan_id')
     G('img_id',D(1));c.alu('cmp',D(1),0)
     B(5,'maybe_insert_before')   # scan_id < target? copy old
-    B(6,'replace_here')          # equal
+    B(7,'replace_here')          # equal (BEQ, never BNE)
     # scan_id > target: insert first, then copy old.
     G('inserted',D(0));c.tst(D(0));B(6,'copy_old_entry')
     B(1,'emit_new_entry')
