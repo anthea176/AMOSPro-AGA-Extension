@@ -102,6 +102,13 @@ def trace_unit_code(group: bytes, seeds: set[int]):
     while stack:
         pc = stack.pop()
         while 0 <= pc < len(group) - 1 and not occupied[pc]:
+            # AMOS Main Rjsr ($FE11,$F700,index) is a six-byte linker
+            # pseudo-operation, not 68020 code. The *next* word is an
+            # instruction again. Continue the source-verified control flow
+            # while preserving the marker as literal AP20 bytes.
+            if group[pc:pc+4] == b"\xfe\x11\xf7\x00" and pc + 6 <= len(group):
+                stack.append(pc + 6)
+                break
             insn = decoder.decode(pc)
             if insn is None or pc + insn.size > len(group):
                 break
