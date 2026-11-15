@@ -1,6 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
-## Test de travail courant M19 benchmark 4/8/16 (15/11/2026)
+## Test actif M19 P2.1 — dernier comparatif Z BASE/CACHE (15/11/2026)
+
+**Un seul ASC dans tests/current :** `tests/current/M19_P21_ZCACHE_BENCH_01.asc` (source préflightée, Gate B WinUAE EN ATTENTE). Ancien benchmark **4/8/16 PASS MC68020/14 MHz/JIT OFF** archivé dans `tests/passed/M19_P2_BENCH_BOBS_01.asc` avec le **même blob Git** `4345d8728af1d6dba29a5936463219ac49b3b109`. [Nouveau protocole](benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Dernier rapport précédent](benchmarks/RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md).
+
+**R84 v0.13.29 `LAST_GOOD` inchangée ; aucune API native/AP20 nouvelle ; `main` exclusivement, pas de branche.** Les sections antérieures mentionnant un autre ASC actif sont historiques et ne rétablissent pas cet ancien test.
+
+---
+
+
+## HISTORIQUE — Test M19 benchmark 4/8/16 avant P2.1 (15/11/2026)
 
 **ASC actif unique :** `tests/current/M19_P2_BENCH_BOBS_01.asc` (mesure 4/8/16 Bobs, source préparée, Gate B benchmark **EN ATTENTE**). Le prototype **P2.0 déjà validé WinUAE Runtime PASS** est archivé **avec le même blob Git** à `tests/passed/M19_P2_OBJECTS_01.asc` ; son rapport reste [M19_P2_WINUAE_RUNTIME_2026-11-15.md](docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md). Il ne faut pas confondre le PASS du banc fonctionnel P2.0 avec un résultat de performance encore inexistant.
 
