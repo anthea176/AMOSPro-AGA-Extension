@@ -1,0 +1,45 @@
+name: M19 P2.8 AGAPIC independent-alpha planar cache - model and native Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-p28-agapic-planar-cache-gate-a.yml"
+      - "tools/m19_p28_agapic_planar_cache.py"
+      - "tools/test_m19_p28_agapic_planar_cache.py"
+      - "tools/m16_agapic.py"
+      - "tools/m16_agapic_v2.py"
+      - "tools/m18_ficon16_chip_blit_emit.py"
+      - "tools/test_m18_ficon16_chip_blit.py"
+      - "dist/AMOSPro_AGA.Lib"
+      - "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p28-model-and-native-68000:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CPU emulator and assembler decoder
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Verify frozen R84 LAST_GOOD and active unmodified R87
+        run: |
+          python -B tools/verify_fast.py
+          python -B -c "import hashlib,pathlib; a=pathlib.Path('dist/AMOSPro_AGA.Lib').read_bytes(); b=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes(); assert len(a)==73184 and hashlib.sha256(a).hexdigest()=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert len(b)==67904 and hashlib.sha256(b).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+      - name: AGAPIC original v1 and v2 parser/source contracts
+        run: |
+          python -B tools/test_m16_agapic.py
+          python -B tools/test_m16_agapic_v2.py
+      - name: Historical M18 real 68000 masked Chip-core regression
+        run: python -B tools/test_m18_ficon16_chip_blit.py
+      - name: P2.8 AGPC v1-v2 independent-alpha host and native core reuse
+        run: python -B tools/test_m19_p28_agapic_planar_cache.py
+      - name: Verify P2.8 does NOT emit a new library or change LAST_GOOD
+        run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/

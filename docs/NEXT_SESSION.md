@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## CHANTIER EN COURS — M19 P2.8 P0 (alpha independant)
+
+**Sources nouvelles sur `main` :** `tools/m19_p28_agapic_planar_cache.py` et `tools/test_m19_p28_agapic_planar_cache.py` ; [contrat P2.8](M19_P28_AGAPIC_PLANAR_CHIP_ALPHA_2026-11-15.md) ; [workflow Gate A](../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml). Convertir AGAPIC v1/v2 en snapshot planaire **avec alpha independant des indices couleur**, garder l'ownership en banque DATA et rejeter les buffers/preparations incomplets. Cas 16×16×8 : bloc 288 octets compatible avec le **coeur M18/P5 natif existant**, mais **PAS avec l'ancien wrapper AP20**, qui imposait `alpha == OR des plans couleur` et doit etre remplace avant toute API publique AGPC. **Gate A native a executer en CI** ; **AUCUN nouveau binaire R88, AUCUNE Gate B/C P2.8, AUCUN FPS mesure pour P2.8**.
+
+**Priorite suivante apres Gate A :** pont AGPC/AP20 pour une vraie banque Chip verifiee `TypeOfMem`, puis images hors 16×16, un benchmark complet avec fond, double buffering, Swap et cout de staging inclus. R87 et R84 `LAST_GOOD` restent identiques ; main exclusivement, aucune promotion.
+
+---
+
 ## PRIORITÉ ACTUELLE — M19 P2.8 : cache AGAPIC planaire et vrai rendu masqué
 
 **Constat P2.7 (WinUAE réel, 15/11/2026)** : le rendu AGAPIC RLE coûte **553 contre 225 ticks FICON8** en Runtime, **522 contre 198** en Compiled (somme 4/8/16 Bobs), soit **−59,31 % / −62,07 %**. La copie Blitter **opaque, pré-stagée** économise **41,67 % / 45,90 %** par rapport au CPU opaque. **Les neuf captures comparées sont identiques en Runtime et Compiled** (`PARITY_OK 9`, `PARITY_BAD 0`), `RESULT 1`, `ERR 0`, mémoire stable, fermeture réussie. **P2.7 Gate B Runtime PASS / Gate C Compiled PASS**. [Résultats détaillés](../benchmarks/RESULTATS_M19_P27_R87_CPU_RLE_FICON_BLITTER_2026-11-15.md), [log Runtime](../benchmarks/M19_P27_RUNTIME.TXT), [log Compiled](../benchmarks/M19_P27_COMPILED.TXT).
