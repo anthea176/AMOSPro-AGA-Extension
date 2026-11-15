@@ -36,6 +36,7 @@ R81_SHA = "9992d41d16038663a5f8705d0c2d7e07917d6d27977404c94716c211fa04c8f4"
 R82_SHA = "b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"
 R83_SHA = "01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+R85_SHA = "4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"
 
 
 def main() -> None:
@@ -50,10 +51,10 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA):
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
@@ -64,7 +65,12 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha == R84_SHA:
+        if active_sha == R85_SHA:
+            from build_m19_p22_fourth_unit_probe import build as build_r85
+            actual, actual_meta=build_r85()
+            assert active==actual and actual_meta["sha256"]==R85_SHA
+            assert actual_meta["ap20_entries"]==87
+        elif active_sha == R84_SHA:
             from build_aga_r84_agapic import build as build_r84
             actual, actual_meta=build_r84()
             assert active==actual and actual_meta["sha256"]==R84_SHA
