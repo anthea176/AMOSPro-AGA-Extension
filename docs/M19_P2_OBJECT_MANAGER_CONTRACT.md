@@ -1,7 +1,7 @@
 # M19 P2 — Contrat proposé du gestionnaire d'objets AGA (avant toute API)
 
 > **15/11/2026 — Contrat de conception de reference pour le prototype P2.0 BASIC ; API native NON VALIDEE.**
-> L'auteur a autorise le **prototype P2.0 en AMOS BASIC** (« ok go ») sur la base de ce contrat. **Aucune signature AP20, aucun format de banque public, aucune implementation native n'est approuvee.** [ASC P2.0](../tests/current/M19_P2_OBJECTS_01.asc) : source preparee, Gate B WinUAE en attente.
+> L'auteur a autorisé le **prototype P2.0 en AMOS BASIC** (« ok go »). **Gate B P2.0 WinUAE Runtime 68030 : PASS** sur le banc 8 plans (voir [rapport](M19_P2_WINUAE_RUNTIME_2026-11-15.md)). **Aucune signature AP20, aucun format de banque public, aucune implémentation native n'est approuvée.** [ASC P2.0](../tests/current/M19_P2_OBJECTS_01.asc).
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence : R84 v0.13.29 `LAST_GOOD` inchangée (76 commandes / 85 entrées AP20, MC68020+).
 
 ## 1. Base factuelle et limites
@@ -115,7 +115,7 @@ cadence application (éventuellement Aga Wait Vbl)
 4. Distinguer **mouvement AMAL, choix de frame, rendu et Swap** ; aucune action de dessin dans une interruption.
 5. Attendre un banc Runtime et des benchmarks avant de décider **la surface d'API AP20** (une ou plusieurs instructions), les limites d'objets, les codes de retour, l'ABI, la mémoire et le budget Compiler.
 
-**Statut P2.0 : prototype BASIC autorise, sans API native validee.** Le test P2.0 remplace P1 dans `tests/current/` en archivant l'ancien banc exact ; le document seul n'autorise aucune modification de `dist/`, de l'ABI ou d'une archive historiseee.
+**Statut P2.0 : prototype BASIC validé sous WinUAE Runtime 68030, sans API native validée.** Le test P2.0 remplace P1 dans `tests/current/` en archivant l'ancien banc exact ; le document seul n'autorise aucune modification de `dist/`, de l'ABI ou d'une archive historiseee.
 
 ### Références projet
 

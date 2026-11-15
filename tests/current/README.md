@@ -4,7 +4,7 @@
 
 **Binaire de reference :** R84 v0.13.29 **LAST_GOOD inchange** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucune nouvelle commande native ni dependance `c2p.library`. CPU 68020 minimum.
 
-**Etat : premier chargement AMOS P2.0 refuse (Syntax error sur `SORT_OBJECTS`). Les sous-routines de la version courante sont renommees avec un prefixe `_` ; import/retest WinUAE requis.** Preflight renforce, mais **Gate B P2.0 n'est PAS validee**. Gate C Compiler / Gate D physique non testees. Le resultat P1 ne vaut pas validation de P2.0.
+**État : Gate B P2.0 AMOS Runtime/WinUAE 68030 PASS** après correction des labels (`_SORT_OBJECTS`, etc.). Journal reçu : `RESULT 1`, `ERR 0`, 240 frames, 6 AGAPIC + 4 FICON8, créations 5, suppression 1, rejets invalides, zéro échec Draw/Swap, mémoire Chip/Fast stable et fermeture 1. [Rapport de validation](../../docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md). **Gate C Compiler M19 et Gate D Amiga physique non testées** ; `PRG_STATE 0` non testé.
 
 ## Premier essai sous AMOS / WinUAE
 
@@ -13,6 +13,10 @@
 3. La scene commence avec **quatre objets** : deux AGAPIC controles par **AMAL manuel** (mouvements horizontal et vertical), un FICON8 anime depuis BASIC, et un AGAPIC opaque. Le gestionnaire trie les visibles par **Z, puis ID** pour stabiliser les egalites.
 4. Pendant les **240 frames logiques** : quatre placements partiellement hors ecran (gauche, droite, haut, bas), un placement entierement hors ecran (culling), changement d'images a rythme lent, masquage puis reapparition, changement de Z, suppression de l'**ID 4** a la frame 121 et creation de l'**ID 5** a la frame 122. L'ancien ID 4 est refuse ; une frame 3 invalide et une source banque 23 absente sont egalement refusees.
 5. Laisser le programme terminer. Echap interrompt volontairement et peut donner `ERR 47` si moins de 180 frames. Observer **l'absence de trainees, de freeze et de scintillement rapide** ; apres fermeture l'affichage doit revenir a AMOS.
+
+## Résultat du journal transmis
+
+Toutes les conditions du tableau ci-dessous sont satisfaites : `RESULT 1`, `VERDICT PASS`, `ERR 0`, `FRAME_OK 240`, `CAP_OK 6`, `ICON_OK 4`, `PROBE_OK 1`, `PIXEL_DIFF 1`, `CREATE_COUNT 5`, `DELETE_COUNT 1`, `CLIP_OK 4`, `CULLED 2`, `DRAW_FAIL 0`, `SWAP_FAIL 0`, `CHIP_DELTA 0`, `FAST_DELTA 0` et `CLOSE_RETURNED 1`. 
 
 ## Journal RAM et criteres P2.0
 

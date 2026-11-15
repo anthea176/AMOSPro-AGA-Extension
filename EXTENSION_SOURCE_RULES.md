@@ -2,7 +2,7 @@
 
 ## Test de travail courant M19 P2.0 (15/11/2026)
 
-**Ce bloc actualise uniquement la reference du test actif** : `tests/current/M19_P2_OBJECTS_01.asc` est le seul ASC actif ; `tests/passed/M19_P1_AGAPIC_BOBS_01.asc` est le P1 WinUAE Runtime PASS archive **octet pour octet**. P2.0 est un prototype **AMOS BASIC uniquement**, a tester, et ne change pas la bibliotheque R84 v0.13.29 `LAST_GOOD` ni l'API AP20. Les listes de tests R84 ci-dessous restent des archives de leur etat au moment de la promotion, pas une instruction de remettre R84 comme ASC actif. **`main` uniquement, aucune nouvelle branche.** [Contrat P2](docs/M19_P2_OBJECT_MANAGER_CONTRACT.md) · [Reprise](docs/NEXT_SESSION.md).
+**Ce bloc actualise la référence du test actif et son résultat** : `tests/current/M19_P2_OBJECTS_01.asc` est le seul ASC actif ; `tests/passed/M19_P1_AGAPIC_BOBS_01.asc` est le P1 PASS archivé **octet pour octet**. Le prototype **P2.0 AMOS BASIC a passé la Gate B WinUAE Runtime 68030** : `RESULT 1`, `ERR 0`, 240 frames, 0 erreur Draw/Swap, Chip/Fast delta 0, `CLOSE_RETURNED 1`. [Rapport](docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md). Ce résultat ne change ni la bibliothèque R84 v0.13.29 `LAST_GOOD`, ni l'API AP20 ; Compiler et matériel M19 non testés. Les listes de tests R84 ci-dessous restent des archives de leur etat au moment de la promotion, pas une instruction de remettre R84 comme ASC actif. **`main` uniquement, aucune nouvelle branche.** [Contrat P2](docs/M19_P2_OBJECT_MANAGER_CONTRACT.md) · [Reprise](docs/NEXT_SESSION.md).
 
 ---
 

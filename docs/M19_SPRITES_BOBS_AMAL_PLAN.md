@@ -1,7 +1,7 @@
 # M19 — Sprites AGA, Bobs logiciels et AMAL : plan valide
 
 > **Décision auteur : plan approuvé le 14/11/2026 ; démarrage de P0 autorisé.**  
-> **Statut au 15/11/2026 : P0/P1 PASS WinUAE Runtime ; P2.0 prototype AMOS BASIC autorise et source preparee, Gate B en attente. [Contrat d'architecture P2](M19_P2_OBJECT_MANAGER_CONTRACT.md) ; aucune API native approuvee. Gates C/D M19 non testees.**  
+> **Statut au 15/11/2026 : P0, P1 et P2.0 PASS WinUAE Runtime dans leurs scénarios. [P2.0 : rapport Gate B](M19_P2_WINUAE_RUNTIME_2026-11-15.md). Aucune nouvelle API native approuvée ; Gates C/D M19 non testées.**  
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence de départ : **R84 v0.13.29 promue LAST_GOOD** (76 commandes, 85 entrées AP20, MC68020 minimum). Le binaire `dist/AMOSPro_AGA_LAST_GOOD.Lib` demeure protégé.
 
 ## 1. Objectif
@@ -56,7 +56,7 @@ La position précise de la mise à jour des sprites matériels par rapport aux n
 |---|---|---|---|
 | **P0 — AMAL manuel et Bobs témoins** | Deux canaux AMAL mémoire et deux Bobs 16×16 via `Aga F Icon` | Runtime/WinUAE PASS (211 frames, aucun refus de dessin/Swap), correction visuelle du clignotement confirmée ; source P0 archivée | **TESTÉ / ARCHIVÉ** |
 | **P1 — Bobs généraux** | Six images AGAPIC v1/v2 24×24, masquage/opaque, cadence 16/24 frames, ordre, clipping et double buffer en 8 plans | Gate B WinUAE Runtime PASS : 240 frames, 46 overlaps, pixel témoin 1, aucun échec de dessin/Swap ; [rapport P1](M19_P1_WINUAE_RUNTIME_2026-11-15.md). Autres profondeurs et Compiler non testés. | **TESTÉ / PASS RUNTIME 8 PLANS** |
-| **P2 — Objets gérés** | [Prototype BASIC P2.0](../tests/current/M19_P2_OBJECTS_01.asc) sur [contrat proposé](M19_P2_OBJECT_MANAGER_CONTRACT.md) : IDs, banques AGAPIC/FICON8, frames, position, hotspot, visibilité, Z stable, AMAL manuel, destruction | Préflight statique effectué ; **Gate B WinUAE P2.0 en attente**. Aucun contrat de commande native approuvé | **P2.0 SOURCE PRÊTE / À TESTER** |
+| **P2 — Objets gérés** | [Prototype BASIC P2.0](../tests/current/M19_P2_OBJECTS_01.asc) : IDs, AGAPIC/FICON8, frames, hotspot, visibilité, Z stable, AMAL manuel, destruction | **Gate B WinUAE Runtime 68030 PASS** : 240 frames, sources 6/4, 5 objets créés, 1 supprimé, rejets invalides, 4 clips, 0 erreur Draw/Swap, Chip/Fast stable. [Rapport](M19_P2_WINUAE_RUNTIME_2026-11-15.md). Pas de Gate C/D ni d'API native approuvée. | **P2.0 TESTÉ / PASS RUNTIME 8 PLANS** |
 | **P3 — Sprites matériels** | Audit ViewPort/Intuition, pointeur, canaux disponibles, allocation système, 16 pixels puis déplacement | Gate A ciblée + Gate B WinUAE ; ressources/cleanup ; aucun registre DMA brut imposé | À étudier |
 | **P4 — Extensions** | 32/64 pixels AGA, canaux attachés, cache/Blitter, Bobs optimisés et mélange Sprite/Bob | Benchmarks reproductibles sur MC68020+, étude mémoire et contraintes chipset | À étudier |
 
@@ -75,7 +75,7 @@ Ce prototype peut utiliser les **Fast Icons comme Bobs logiciels témoins** : il
 
 ## 6 bis. Définition de P1 — premier test logiciel
 
-- **Seul ASC actif :** [M19_P1_AGAPIC_BOBS_01.asc](../tests/current/M19_P1_AGAPIC_BOBS_01.asc) ; P0 déplacé sans modification dans `tests/passed/`.
+- **Test P1 historiquement actif** (désormais [archivé et figé](../tests/passed/M19_P1_AGAPIC_BOBS_01.asc)) ; l'unique ASC courant est le [test P2.0](../tests/current/M19_P2_OBJECTS_01.asc). P0 est également archivé dans `tests/passed/`.
 - **Banques :** 11 (16 octets pour 2 canaux AMAL), 12..17 (six AGAPIC 24×24, v1/v2, transparence de l'index 0 sauf l'image opaque 17), 18/19 (deux captures 1×1 de comparaison).
 - **Boucle :** `Synchro Off` / AMAL en mémoire et `Synchro` manuel ; deux déplacements X/Y, sélection des images toutes les 16/24 frames et inversion de priorité tous les 60 ticks. Toutes les opérations graphiques se déroulent depuis BASIC, après préparation du back buffer `Safe`.
 - **Images et masque :** `Aga Bank Image Capture` / `Aga Bank Image Draw` ; fond totalement redessiné à `Aga Blit Fill` puis objet opaque, deux Bobs masqués, objet fixe devant et quatre clips, Swap explicite.
