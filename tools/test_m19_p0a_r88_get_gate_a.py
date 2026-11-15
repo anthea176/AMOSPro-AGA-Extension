@@ -237,7 +237,7 @@ def main():
             imgs=parse_payload(m.bank_payload(10)).images
             assert tuple(x.image_id for x in imgs)==(1,2,3)
             original1=imgs[0].planes;original3=imgs[2].planes
-            assert m.run_get(2,16,0,46,12)==1
+            assert m.run_get(2,16,0,46,12)==1,(depth,layout,'replace',{'stages':m.stage_log[-8:],'calls':m.calls[-15:],'chip_calls':m.chip_calls,'waits':m.waits,'allocs':m.scratch_allocs})
             b=check_image(m,10,2,16,0,46,12)
             assert b.image(1).planes==original1 and b.image(3).planes==original3
             assert m.scratch_allocs==m.scratch_frees
