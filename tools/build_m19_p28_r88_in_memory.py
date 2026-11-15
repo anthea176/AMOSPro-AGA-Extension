@@ -12,6 +12,9 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack,unpack_from
 
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools/experiments'))
+
 from active_library import R84_SHA,R87_SHA
 from audit_ap20 import inspect,parse,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
