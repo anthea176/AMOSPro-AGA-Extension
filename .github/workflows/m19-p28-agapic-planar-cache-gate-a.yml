@@ -7,6 +7,9 @@ on:
       - ".github/workflows/m19-p28-agapic-planar-cache-gate-a.yml"
       - "tools/m19_p28_agapic_planar_cache.py"
       - "tools/test_m19_p28_agapic_planar_cache.py"
+      - "tools/m19_p28_agpc_ap20_emit.py"
+      - "tools/build_m19_p28_r88_in_memory.py"
+      - "tools/test_m19_p28_r88_gate_a.py"
       - "tools/m16_agapic.py"
       - "tools/m16_agapic_v2.py"
       - "tools/m18_ficon16_chip_blit_emit.py"
@@ -41,5 +44,9 @@ jobs:
         run: python -B tools/test_m18_ficon16_chip_blit.py
       - name: P2.8 AGPC v1-v2 independent-alpha host and native core reuse
         run: python -B tools/test_m19_p28_agapic_planar_cache.py
+      - name: Rebuild R88 in memory; verify AP20 tokens and Compiler V2 relocations
+        run: python -B tools/build_m19_p28_r88_in_memory.py
+      - name: P2.8 native AP20 68020 interpreter and compiled-layout emulation
+        run: python -B tools/test_m19_p28_r88_gate_a.py
       - name: Verify P2.8 does NOT emit a new library or change LAST_GOOD
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
