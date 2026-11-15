@@ -37,6 +37,8 @@ class Engine(NativeBobMachine):
           'draw':self.entry+(report['bob_draw_offset']-baseline_len),
         }
         self.mask_pcs=deque(maxlen=25)
+        self.mask_select_regs=deque(maxlen=8)
+        self.uc.hook_add(UC_HOOK_CODE,lambda uc,addr,size,user:self.mask_select_regs.append((self.d(0),hex(self.a(4)),bytes(self.uc.mem_read(self.a(4),2)).hex())),begin=self.entries['mask']+60,end=self.entries['mask']+60)
         self.uc.hook_add(UC_HOOK_CODE,lambda uc,addr,size,user:self.mask_pcs.append(addr-self.entries['mask']),begin=self.entries['mask'],end=self.entries['nomask']-1)
         self.saved_background=[bytes(self.uc.mem_read(p,self.stride*H))
                                for p in self.planes]
@@ -148,7 +150,7 @@ def main():
             assert m.call('get',(2,17,1,47,12))==1
             src_idx=pixel(3,2)&((1<<depth)-1)
             _mk=m.invoke('mask',1,src_idx)
-            assert _mk==1,(layout,depth,'make_mask_status',_mk,'mask_trace',list(m.mask_pcs),'selected',hex(m.uc.mem_read(m.entry+(meta['selected_word_offset']-len(unpack_ap20(R88.read_bytes())[1][86])),2)[0]))
+            assert _mk==1,(layout,depth,'make_mask_status',_mk,'mask_trace',list(m.mask_pcs),'mask_regs',list(m.mask_select_regs),'selected',bytes(m.uc.mem_read(m.entry+(meta['selected_word_offset']-len(unpack_ap20(R88.read_bytes())[1][86])),2)).hex())
             assert m.source_image(1)[3][0]==0,'transparent index not masked'
             # Make 0 the transparency index separately (not forced globally).
             assert m.invoke('mask',1,0)==1
