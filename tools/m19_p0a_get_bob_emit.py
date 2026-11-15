@@ -308,7 +308,7 @@ def emit_get_bob():
     G('old_gen',D(0));c.quick(1,D(0));c.move(D(0),M(4,24))
     c.move(I(0),M(4,28))
     G('temp',D(0));c.imm('add',HEADER,D(0));S(D(0),'new_dir')
-    G('new_start',D(1));check_add(0,D(1));S(D(0),'new_cursor')
+    G('temp',D(0));G('new_start',D(1));check_add(0,D(1));S(D(0),'new_cursor')
     c.move(I(0),M(2,F['inserted']))
     G('bankptr',D(0));c.imm('add',HEADER,D(0));S(D(0),'old_entry')
     c.move(I(0),M(2,F['old_index']))
