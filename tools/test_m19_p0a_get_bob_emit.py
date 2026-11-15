@@ -42,6 +42,13 @@ class R88NativeGetEmission(unittest.TestCase):
             self.assertIn(x,labels)
         self.assertLess(labels['capture_pixel'],labels['capture_plane']+2000)
 
+    def test_padding_uses_address_register_not_stride_register(self):
+        raw,labels=emit_get_bob()
+        pad=raw[labels['check_padding']:labels['padding_accept']]
+        # ADDA.L D1,A1 must position the first trailing WORD and advance rows.
+        self.assertEqual(pad.count(bytes.fromhex('d3c1')),2)
+        self.assertNotIn(bytes.fromhex('d281'),pad)  # ADD.L D1,D1 doubles stride
+
     def test_repeated_byte_output_is_deterministic(self):
         a,labels1=emit_get_bob()
         b,labels2=emit_get_bob()

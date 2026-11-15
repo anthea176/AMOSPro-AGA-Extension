@@ -376,11 +376,11 @@ def emit_get_bob():
     c.raw('e24c')        # LSR.W #1,D4
     c.quick(1,D(5),sub=True);B(6,'padding_shift')
     c.move(D(2),D(6));c.word(0xccc3) # MULU.W D3,D6
-    c.move(A(0),A(1));c.alu('add',D(1),1);c.quick(2,A(1),sub=True)
+    c.move(A(0),A(1));c.word(0xd3c1);c.quick(2,A(1),sub=True) # ADDA.L D1,A1
     L('padding_loop')
     c.move(I(0),D(7));c.move(M(1),D(7),'w')
     c.alu('and',D(4),7,'w');c.tst(D(7),'w');B(6,'padding_reject')
-    c.alu('add',D(1),1)
+    c.word(0xd3c1)         # ADDA.L D1,A1: next physical row
     c.quick(1,D(6),sub=True);B(6,'padding_loop')
     L('padding_accept')
     c.move(I(1),D(0));c.raw('4e75')
