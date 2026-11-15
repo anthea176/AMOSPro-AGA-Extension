@@ -19,11 +19,21 @@ sys.path.insert(0, str(ROOT / "tools"))
 from active_library import R84_SHA, R88_SHA, verify_active
 from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
+from decoder68k import Decoder
 from generate_aga_multiunit_source import (
     digest, export, identify, native_unit_source, validate_wrapped,
 )
 
 def run() -> None:
+    # Authentic MC68000 signed and unsigned integer DIV/MUL mnemonics.
+    for opcode, expected in (
+        ("80c1", "divu.w d1,d0"),
+        ("81c1", "divs.w d1,d0"),
+        ("c0c1", "mulu.w d1,d0"),
+        ("c1c1", "muls.w d1,d0"),
+    ):
+        actual = Decoder(bytes.fromhex(opcode)).decode(0)
+        assert actual is not None and actual.text == expected, (opcode, actual)
     current_file = ROOT / "dist/AMOSPro_AGA.Lib"
     good_file = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
     before = current_file.read_bytes()
