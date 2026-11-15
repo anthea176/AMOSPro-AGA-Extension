@@ -1,4 +1,4 @@
-name: M19 R87 native Gate A and P2.6 draw benchmark preflight
+name: M19 R87 native Gate A and P2.7 cache CPU Blitter preflight
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
       - "tools/test_m19_p25_no_probe.py"
       - "tools/test_m19_p25_r87_smoke_static.py"
       - "tools/test_m19_p26_r87_bobs_bench_static.py"
+      - "tools/test_m19_p27_cache_bench_static.py"
+      - "tests/passed/M19_P26_R87_DRAW_BENCH_01.asc"
       - "tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc"
       - "tools/amos_preflight.py"
       - "tools/test_amos_preflight.py"
@@ -47,12 +49,13 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P26_R87_DRAW_BENCH_01.asc
-      - name: Verify archived smoke and unique current benchmark
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P27_R87_CACHE_CPU_BLITTER_01.asc
+      - name: Verify archived P2.5/P2.6 and unique current P2.7 cache benchmark
         run: |
           python -B tools/test_current_ram_log.py
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
+          python -B tools/test_m19_p27_cache_bench_static.py
       - name: Write candidate ONLY to dist/AMOSPro_AGA.Lib
         run: |
           python -B tools/build_m19_p25_no_probe.py --write-dist

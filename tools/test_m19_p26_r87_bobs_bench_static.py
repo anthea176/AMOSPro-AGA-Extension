@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M19 P2.6 R87 static benchmark preflight (never claims WinUAE results)."""
+"""M19 P2.6 R87 archived PASS benchmark source integrity (read-only)."""
 from __future__ import annotations
 
 from hashlib import sha1, sha256
@@ -34,8 +34,8 @@ def main() -> None:
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(asc)==1 and asc[0].name==TEST
-    data=asc[0].read_bytes()
+    assert len(asc)==1 and asc[0].name=="M19_P27_R87_CACHE_CPU_BLITTER_01.asc"
+    data=(ROOT/"tests/passed"/TEST).read_bytes()
     assert git_blob(data)==ASC_BLOB, "Benchmark source changed without rechecking"
     smoke=(ROOT/"tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc").read_bytes()
     assert git_blob(smoke)==SMOKE_BLOB, "Previously validated smoke altered"
@@ -77,9 +77,9 @@ def main() -> None:
         assert int.from_bytes(out[8:12],"big")==n
         assert all(0<=20+(i%4)*44+40<=320 for i in range(n))
         assert all(0<=20+(i//4)*44+40<=256 for i in range(n))
-    print("M19 P2.6 STATIC PREFLIGHT PASS: R84/R87 pinned, smoke archived unchanged,")
+    print("M19 P2.6 ARCHIVED SOURCE PASS: R84/R87 pinned, P2.6 archived unchanged,")
     print("one benchmark ASC; 4/8/16 descriptor layout; 64 x AB/BA; draw-only timing.")
-    print("R87 benchmark WinUAE Runtime and Compiled: NOT TESTED.")
+    print("P2.6 R87 Runtime and Compiled PASS in user logs; does not validate P2.7.")
 
 if __name__=="__main__":
     main()

@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## PRIORITÉ ACTUELLE — M19 P2.6 R87 : mesurer BASIC vs Batch (15/11/2026)
+## PRIORITÉ ACTUELLE — M19 P2.7, cache planaire et essai Blitter
+
+**Un seul ASC actif** : `tests/current/M19_P27_R87_CACHE_CPU_BLITTER_01.asc` (Git blob `e1062818abdfeb2d7e699d8c1dc9e9696250af65`). R87 v0.13.32 inchangée, 73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`. Le programme crée le **même motif** 16×16 en AGAPIC v1/v2 et FICON8, vérifie **9 comparaisons intégrales** (opaque, masqué, X décalé, clipping, copie Blitter), puis chronomètre 4/8/16 Bobs masqués et un transfert opaque Blitter 8 Bobs. **Ne pas confondre copie Blitter opaque déjà stagée et rendu AGAPIC masqué natif**. **Gate A nouveau modèle/préflight local : PASS ; Gate B/C P2.7 NON TESTÉES.** WinUAE demandé : MC68020 14 MHz, PAL, JIT OFF, même ASC en Runtime et AMOS Compiler V2. Journaux `RAM:M19_P27_RUNTIME.TXT` et `RAM:M19_P27_COMPILED.TXT`. [Contrat P2.7](M19_P27_AGAPIC_CACHE_BACKENDS_2026-11-15.md).
+
+**P2.6 désormais qualifié** : Runtime et Compiled `RESULT 1 / ERR 0 / VERDICT PASS` dans les journaux transmis ; gains Batch **2,42 % / 0,43 %** cumulés. ASC **archivé octet pour octet** dans `tests/passed/M19_P26_R87_DRAW_BENCH_01.asc`. [Résultats](../benchmarks/RESULTATS_M19_P26_R87_DRAW_2026-11-15.md). **Ne pas refaire le smoke ou le Batch pour P2.7.** R84 `LAST_GOOD` intangible. main seulement, pas de branche/tag/release/promotion.
+
+---
+
+## HISTORIQUE — M19 P2.6 R87 : préparation du banc BASIC vs Batch (15/11/2026)
 
 **À tester maintenant :** `tests/current/M19_P26_R87_DRAW_BENCH_01.asc` (**267 lignes**, Git blob `c6c03b24bb273027492776ba24e53193ec52198b`). Uniquement **4/8/16 Bobs**, 64 répétitions, passes AB puis BA, **12 séries draw-only**, sans Z-sort, Fill, Swap, VBL ou allocation *pendant les chronos*. Le programme journalise les ticks bruts `BASIC_TICKS`, `BATCH_TICKS`, `PASS0_N` et `PASS1_N` dans `RAM:M19_P26_RUNTIME.TXT` puis `RAM:M19_P26_COMPILED.TXT`. **P2.6 Runtime/Compiled NON TESTÉ**, aucun gain présumé. Configuration WinUAE 68020/14 MHz/PAL/JIT OFF. [Protocole](M19_P26_R87_DRAW_PERFORMANCE_2026-11-15.md).
 
@@ -10,7 +18,7 @@
 
 ---
 
-## PRIORITÉ — M19 P2.5 R87, smoke AMOS après audit du skill
+## HISTORIQUE — M19 P2.5 R87, smoke AMOS après audit du skill
 
 Le nouveau **seul test actif** est `tests/current/M19_P25_R87_BOBS_SMOKE_01.asc` (Git blob `347e35d4e79b4afc331a732f33c448bbb61ddef9`, 209 lignes) : base du véritable test R86 P2.3 PASS, retrait du Probe R87, des fausses validations pixel et du benchmark non qualifié. Vérification des banques **avant tout Erase** via `_BANKS_SAFE`. Préflight strict `amos-pro-aga-rules` **PASS**, 21 tests du checker **PASS** en local ; nouvelle CI dédiée à contrôler. **Gates B/C R87 NON TESTÉES.**
 
