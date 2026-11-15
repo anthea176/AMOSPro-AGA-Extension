@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -35,7 +35,8 @@ def main():
     assert historical_r81_meta["ap20_entries"]==77
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
-    assert cur==good and len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD must be identical to current"
+    assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD hash must be immutable"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -59,11 +60,23 @@ def main():
     report=inspect(parse(good))
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76
-    assert label.startswith("R84 v0.13.29 AGAPIC v1/v2 PROMOTED LAST_GOOD")
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==R84_SHA:
+        if digest==R85_SHA:
+            from build_m19_p22_fourth_unit_probe import build as build_r85
+            candidate,actual_meta=build_r85()
+            assert cur==candidate and actual_meta["sha256"]==R85_SHA
+            assert actual_meta["commands"]==77 and actual_meta["ap20_entries"]==87
+            assert label.startswith("R85 v0.13.30")
+            _,current_parts,_=unpack_ap20(cur)
+            _,historical_parts,_=unpack_ap20(good)
+            assert (current_parts[83]==historical_parts[82] and
+                    current_parts[84]==historical_parts[83] and
+                    current_parts[86]==historical_parts[84]), "R85 altered old native groups"
+            assert sha256(good).hexdigest()==R84_SHA, "LAST_GOOD overwritten"
+        elif digest==R84_SHA:
             from build_aga_r84_agapic import build as build_r84
             candidate,actual_meta=build_r84()
             assert cur==candidate and actual_meta["sha256"]==R84_SHA
@@ -158,9 +171,10 @@ def main():
         assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert cur==good and sha256(good).hexdigest()==R84_SHA
+    assert sha256(good).hexdigest()==R84_SHA
+    assert current.read_bytes()==cur and last_good.read_bytes()==good
     assert validated!=promoted and historical_r81!=promoted
-    print("R84 LAST_GOOD BYTE-EXACT PROMOTION PASS",R84_SHA,len(good),
+    print("R84 LAST_GOOD FROZEN / ACTIVE SHA-PINNED CANDIDATE PASS",R84_SHA,len(good),
           "active bytes",len(cur),"R81 frozen parent",R81_SHA,"3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 
