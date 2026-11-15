@@ -22,7 +22,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"/"experiments"))
-from active_library import R83_SHA, R84_SHA
+from active_library import R83_SHA, R84_SHA, R85_SHA
 from build_aga_r83_modular import build as build_r83
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -108,12 +108,12 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("R84 must have exactly 80 live native stubs")
     if parts[82]!=old[80] or parts[83]!=old[81] or not parts[84].startswith(old[82]):
         raise AssertionError("R83 native C2P/IFF/AGA bytes not preserved")
-    active=ACTIVE.read_bytes()
-    active_sha=sha256(active).hexdigest()
-    if active_sha!=R84_SHA or active!=protected:
-        raise AssertionError("R84 active and promoted LAST_GOOD must be byte-identical")
-    if active!=candidate:
-        raise AssertionError("Installed R84 candidate differs from deterministic builder")
+    # The frozen R84 is authoritative even when the active dist file is a
+    # newer SHA-pinned candidate. Never silently accept a changed LAST_GOOD.
+    assert candidate==protected, "Rebuilt R84 differs from frozen LAST_GOOD"
+    active_sha=sha256(ACTIVE.read_bytes()).hexdigest()
+    if active_sha not in (R84_SHA, R85_SHA):
+        raise AssertionError("Unknown active dist binary during historical R84 rebuild")
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
     return candidate,dict(
@@ -134,8 +134,8 @@ class R84Layout(unittest.TestCase):
     def test_historical_r83_and_promoted_r84(self):
         self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
         self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R84_SHA)
-        self.assertEqual(PREVIOUS.read_bytes(),ACTIVE.read_bytes())
-        self.assertEqual(ACTIVE.read_bytes(),self.image)
+        self.assertEqual(PREVIOUS.read_bytes(),self.image)
+        self.assertIn(sha256(ACTIVE.read_bytes()).hexdigest(), (R84_SHA, R85_SHA))
     def test_new_api_and_layout(self):
         self.assertEqual(self.meta["commands"],76)
         self.assertEqual(self.meta["ap20_entries"],85)

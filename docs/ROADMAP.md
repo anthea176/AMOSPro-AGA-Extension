@@ -1,5 +1,7 @@
 # Roadmap — AMOSPro AGA Extension
 
+**M19 P2.2 (15/11/2026) : candidat actif R85 v0.13.30 dans [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), Gate A native MC68020 PASS.** Quatrième unité BOBS 40 octets (témoin `Aga Bob Probe`, **pas encore de dessin Batch**). Binaire actif 67 988 octets SHA256 `4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f`. **LAST_GOOD R84** 67 904 octets SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` préservée. WinUAE Gate B et Compiler Gate C R85 **en attente**. [Rapport](M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md).
+
 **M19 P2.2 — développement du quatrième groupe natif BOBS engagé** (accord de l'auteur le 15/11/2026), **d'abord comme témoin AP20 isolé** `Aga Bob Probe` et non encore `Aga Bob Batch`. [Architecture et test Gate A](M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md) ; R84 `LAST_GOOD` inchangée, aucune API native de production publiée. La Gate A doit être exécutée, puis les Gates B Runtime et C Compiler sur une bibliothèque expérimentale distincte.
 
 

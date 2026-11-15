@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,20 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==R85_SHA:
+            # Four independent native groups, not a monolithic emitter.
+            from build_m19_p22_fourth_unit_probe import build as build_r85
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect, parse
+            candidate, meta=build_r85()
+            assert wrapped==candidate and meta["sha256"]==R85_SHA
+            _, groups, title=unpack_ap20(wrapped)
+            assert len(groups)==87 and tuple(map(len,groups[83:]))==(5558,2508,40,56580)
+            assert b"R85 v0.13.30" in title and b"TEST ONLY" in title
+            assert not inspect(parse(wrapped))["issues"]
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            print("STRICT R85 FOUR-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==R84_SHA:
             # Three-module R84 is not a single-unit strict ASM export.
             # Deterministically reconstruct all units and verify provenance.
@@ -36,7 +50,7 @@ def main() -> None:
             _, native_units, title=unpack_ap20(wrapped)
             assert len(native_units)==85 and tuple(map(len,native_units[82:]))==meta["units"]
             assert b"R84 v0.13.29" in title
-            assert sha256(original[1]).hexdigest()==R84_SHA and original[0]==original[1]
+            assert sha256(original[1]).hexdigest()==R84_SHA and wrapped==original[1]
             print("STRICT R84 THREE-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
             continue
         if exp.sha(wrapped)==R83_SHA:

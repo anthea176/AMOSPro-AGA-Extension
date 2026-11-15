@@ -50,7 +50,16 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R84 v0.13.29"):
+    if active.startswith("R85 v0.13.30"):
+        from active_library import R84_SHA, R85_SHA
+        from build_m19_p22_fourth_unit_probe import build as build_r85
+        candidate, meta=build_r85()
+        assert current==candidate and meta["sha256"]==R85_SHA
+        assert meta["size"]==67988 and meta["commands"]==77 and meta["ap20_entries"]==87
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R84_SHA
+        assert current!=LAST_GOOD.read_bytes()
+        print("CURRENT M19 P2.2 R85 EXPERIMENTAL FOURTH AP20 BOBS UNIT: native Gate A PASS, Runtime B / Compiler C pending, LAST_GOOD R84 protected",meta)
+    elif active.startswith("R84 v0.13.29"):
         from build_aga_r84_agapic import build as build_r84
         candidate,meta=build_r84()
         assert candidate==current and meta["sha256"]=="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
