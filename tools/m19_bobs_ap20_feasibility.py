@@ -239,11 +239,9 @@ def build() -> tuple[bytes, dict]:
         if group not in (84, 85, 86, 87):
             raise ValueError(f'unknown native group {group}')
         stubs.append(RBSR + pack('>HH', group + 1, offset) + old_stub[6:])
-    stubs[-1] += GETP
-
     bank_offset = len(original_parts[86]) - len(DISPATCH_V2)
     stubs.append(RBSR + pack('>HH', GROUP_BOBS, bank_offset)
-                 + bytes.fromhex('4e75'))
+                 + bytes.fromhex('4e75') + GETP)
     groups = [original_parts[84], original_parts[85],
               original_parts[86] + native, original_parts[87]]
     packed = repack_ap20(
