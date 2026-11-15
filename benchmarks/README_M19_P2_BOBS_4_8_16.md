@@ -1,6 +1,6 @@
 # M19 / P2 — Benchmark comparatif de 4, 8 et 16 Bobs (R84)
 
-> **État au 15/11/2026 : second passage complet WinUAE Runtime 68030 avec JIT activé selon l'auteur : PASS, 240/240 frames, 9 088 dessins, zéro échec Draw/Swap.** [Résultats complets 68030/JIT](RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md). [Premier essai interrompu](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md) conservé séparément. **Comparatif 68020/14 MHz/JIT OFF attendu.** `main` uniquement, R84 `LAST_GOOD` protégée, aucune API native.
+> **État au 15/11/2026 : benchmarks complets 68030/JIT et MC68020 à 14 MHz/JIT OFF tous deux PASS, avec 240/240 frames et 9 088 dessins chacun.** [Résultat MC68020/JIT OFF](RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md) · [Résultat 68030/JIT](RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md) · [Premier essai 68030 interrompu](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). Les deux configurations ne sont **pas** interchangeables. `main` uniquement, R84 `LAST_GOOD` intacte, aucune API native.
 
 **Unique ASC actif :** [`tests/current/M19_P2_BENCH_BOBS_01.asc`](../tests/current/M19_P2_BENCH_BOBS_01.asc). Le [prototype P2.0 fonctionnel validé](../tests/passed/M19_P2_OBJECTS_01.asc) est archivé octet pour octet ; [rapport Runtime P2.0](../docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md).
 

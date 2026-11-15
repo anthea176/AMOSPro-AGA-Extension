@@ -52,7 +52,7 @@ Les six mesures de présentation sont **80 ticks/40 frames = 40 ms/frame (≈25 
 
 Le [premier journal](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md) était **interrompu** après 41 frames avec `ERR 20` (`Aga Key=69`, Échap signalé), sans échec de dessin/Swap. Il reste archivé séparément ; **le second essai complet est PASS**.
 
-**Prochain essai annoncé par l'auteur :** reprendre **exactement le même ASC** sur WinUAE **MC68020 à 14 MHz, PAL, JIT OFF** ; relever le fichier RAM après 240 frames, sans mélanger les deux configurations. La fréquence réelle 68030/JIT et le réglage JIT ne figurent pas dans ce log, hormis le témoignage de l'auteur.
+**Essai comparatif maintenant reçu :** [MC68020 à 14 MHz / JIT OFF : PASS et analyse séparée](RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md). Composition mesurée ~60,08 / 96,25 / 189,50 ms/frame à 4/8/16 Bobs, contre ~23,25 / 23,42 / 23,83 ms/frame dans l'ancienne configuration 68030/JIT. Ne pas confondre les deux environnements. La fréquence réelle 68030/JIT et le réglage JIT ne figurent pas dans ce log, hormis le témoignage de l'auteur.
 
 **Aucune décision d'API native M19.** Le benchmark ne qualifie ni AMOS Compiler M19, ni Amiga physique, ni les sprites matériels AGA.
 

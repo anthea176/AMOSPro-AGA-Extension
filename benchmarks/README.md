@@ -1,11 +1,11 @@
 # Benchmarks graphiques AMOS / AMCAF / AGA
 
-## M19 / P2 — coût de 4, 8 et 16 Bobs logiciels (68030 JIT PASS ; 68020 sans JIT attendu)
+## M19 / P2 — 4, 8 et 16 Bobs logiciels (68020/14 MHz JIT OFF et 68030/JIT : PASS)
 
 [Test AMOS unique actif](../tests/current/M19_P2_BENCH_BOBS_01.asc) · [protocole complet](README_M19_P2_BOBS_4_8_16.md) · [P2.0 fonctionnel archivé](../tests/passed/M19_P2_OBJECTS_01.asc). Bibliothèque R84 `LAST_GOOD` intacte. Deux passages pour 4/8/16 objets (répartition masqué/opaque/FICON8 constante) ; mesures `Timer` séparées : tri BASIC, Blit Fill, composition sans Swap, et VBL+Swap. **Premier journal Runtime 68030 partiel** : `ERR 20` (Échap signalé) après 41/240 frames. N4 P0 : fond 139 ticks /120 appels, composition 140 ticks /120 frames, présentation 80 ticks /40 frames ; N8 P0 : fond 140, composition 140, présentation interrompue. **N16 et second passage non mesurés**. [Analyse détaillée](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). Refaire le benchmark en PAL JIT OFF et CPU fixe ; aucune conclusion d'API native.
 
 
-**Second journal complet (68030 avec JIT selon l'auteur) :** `RESULT 1`, `VERDICT PASS`, 240 frames, 9 088 dessins, 0 échec Draw/Swap, 1 retry Safe global (aucun pendant les six compositions chronométrées), Chip/Fast delta 0. Composition moyenne 4/8/16 Bobs : **23,25 / 23,42 / 23,83 ms/frame** (PAL nominal, temps écoulé). [Rapport complet](RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md). **MC68020 à 14 MHz / JIT OFF à mesurer.**
+**Second journal complet (68030 avec JIT selon l'auteur) :** `RESULT 1`, `VERDICT PASS`, 240 frames, 9 088 dessins, 0 échec Draw/Swap, 1 retry Safe global (aucun pendant les six compositions chronométrées), Chip/Fast delta 0. Composition moyenne 4/8/16 Bobs : **23,25 / 23,42 / 23,83 ms/frame** (PAL nominal, temps écoulé). [Rapport complet](RESULTATS_M19_P2_BOBS_68030_JIT_2026-11-15.md). **MC68020 à 14 MHz / JIT OFF désormais mesuré : PASS, 240 frames, 9 088 dessins, aucun refus ou retry Safe/Swap, Chip/Fast delta 0.** Temps de composition 4/8/16 : **60,08 / 96,25 / 189,50 ms/frame** ; présentation : **80,00 / 100,75 / 200,50 ms/frame**. Tri 4/8/16 : **4,06 / 15,10 / 58,68 ms/appel**, surtout coûteux à N16. [Rapport 68020/JIT OFF et analyse comparative](RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md). **Pas d'API native décidée.**
 
 ## OPT020/P1e — comparaison R60 (R68 LAST_GOOD) / R69, WinUAE JIT OFF
 
