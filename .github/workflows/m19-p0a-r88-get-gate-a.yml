@@ -10,6 +10,8 @@ on:
       - tools/m19_p0a_amos_bank_transaction_emit.py
       - tools/m19_p0a_bank_select_emit.py
       - tools/m19_p0a_get_bob_emit.py
+      - tools/m19_p0b_mask020_emit.py
+      - tools/test_m19_p0b_mask020_native.py
       - tools/build_m19_p0a_r88_bank_in_memory.py
       - tools/build_m19_p0a_r88_get_in_memory.py
       - tools/test_m19_p0a_get_bob_emit.py
@@ -51,6 +53,8 @@ jobs:
         run: |
           python -B tools/test_m19_p0a_r88_bank_gate_a.py
           python -B tools/test_m19_p0a_r88_get_gate_a.py
+      - name: MC68020 independent 1-bit mask source kernel (private Gate A)
+        run: python -B tools/test_m19_p0b_mask020_native.py
       - name: Export exact MC68020 Gate A candidate outside dist
         run: |
           python -B - <<'PY'
