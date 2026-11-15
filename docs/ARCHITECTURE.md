@@ -1,8 +1,23 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## État autoritaire — R84 v0.13.29 `LAST_GOOD` PROMUE (14/11/2026)
+## Repère actif de l'architecture (audit du 15/11/2026)
 
-**Binaire actif et `LAST_GOOD` identiques** : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes, 85 entrées AP20, 3 groupes natifs (C2P 5 558, IFF 2 508, AGA/AGAPIC 56 580). Le builder `tools/build_aga_r84_agapic.py` reconstruit R84 depuis un builder R83 historique indépendant du chemin mobile `LAST_GOOD`. La R83 (SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, 64 188 octets) reste reconstructible et visible dans l'historique Git.
+Le suivi de version de ce document contient plusieurs états historiques R46, R59 et R84. **Ne pas les considérer comme la version actuellement installable.** Au checkpoint documentaire R88, la candidate non promue était `dist/AMOSPro_AGA.Lib` **R88 v0.13.33** (75 040 octets, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **78 commandes / 88 entrées AP20, quatre unités natives V2**). **R84 v0.13.29 reste `LAST_GOOD`** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Depuis ce checkpoint, des commits plus récents peuvent avoir été ajoutés : vérifier `main` HEAD, `dist/AMOSPro_AGA.Lib` et son builder avant tout nouveau code. Gate A R88 : 130 cas PASS ; le premier essai WinUAE P2.8 a échoué `ERR 12` avec ABK Fast ; la révision Chip restait à retester ; Gate C R88 non démontrée à cette date. Les nouvelles commandes Bob multi-images restent des **contrats de conception**, pas des capacités automatiquement présentes dans R88.
+
+**Structures partagées : provenance historique, pas d'offsets garantis sur toute version.** Les anciennes règles (sections 6–7 de l'[archive intégrale](EXTENSION_SOURCE_RULES_HISTORIQUE_2026-11-15.md), blob `d450f41475d32f838186c23f5e7e6eb13a8458ce`) décrivent les positions suivantes, à **recontrôler dans le code natif et le builder cible avant réutilisation** :
+
+| Ancienne structure | Offsets documentés (octets) | Contrat |
+|---|---|---|
+| `State` | `+0 Screen*`, `+4 IntuitionBase`, `+8 GfxBase`, `+12 width`, `+16 height`, `+20 colors`, `+24 ModeID`, `+28 depth`, `+32 DBState*`, `+36 Window*` | Chaque accès doit correspondre au layout du binaire exact |
+| `DBState` | `+0 ScreenBuffer original`, `+4 alternatif`, `+8 front`, `+12 SafePort`, `+16 DispPort`, `+20 réservé` | Notifications en vol et cycle de vie Safe/Disp à conserver |
+
+Les offsets système AmigaOS/NDK (`BitMap`, `ScreenBuffer`, `ViewPort`, `RasInfo`) doivent également être vérifiés sur leurs définitions officielles et sur le mode de compilation choisi. Ne pas créer un état parallèle pour les Bobs AGA. Le [contrat permanent](../EXTENSION_SOURCE_RULES.md) est désormais la référence opérationnelle.
+
+---
+
+## Historique — R84 v0.13.29 `LAST_GOOD` PROMUE (14/11/2026)
+
+**À ce checkpoint R84, le binaire actif et `LAST_GOOD` étaient identiques** : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, 76 commandes, 85 entrées AP20, 3 groupes natifs (C2P 5 558, IFF 2 508, AGA/AGAPIC 56 580). Le builder `tools/build_aga_r84_agapic.py` reconstruit R84 depuis un builder R83 historique indépendant du chemin mobile `LAST_GOOD`. La R83 (SHA256 `01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb`, 64 188 octets) reste reconstructible et visible dans l'historique Git.
 
 **Gates A CPU/CI et C AMOS Compiler PASS** ; compilation WinUAE 68030 avec une banque, 4/8 plans, tous indicateurs fonctionnels à 1, `ERR 0`, Chip 0, Fast −11 920 octets (4 ABK conservés dans RAM:). **Gate B Runtime corrigée non attestée séparément** ; Gate D physique et `PRG_STATE 0` strict non testés. Promotion explicitement autorisée sans imposer un nouveau test. Aucun tag ou publication.
 
@@ -20,7 +35,7 @@
 
 ---
 
-## État actuel — M17/R59 compacte `LAST_GOOD` PROMUE, Gates A/B/C PASS (12/11/2026)
+## Historique — M17/R59 compacte `LAST_GOOD` PROMUE, Gates A/B/C PASS (12/11/2026)
 
 **Bibliothèque officielle et `LAST_GOOD` identiques :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), R59 0.13.4, 32 984 octets, SHA256 `00d56b03fa455c851501fe19ac98e0cea46c04a7c8c7786b94042ffcced6b08d`. **53 commandes, 60 entrées AP20, 59 routines natives R57 strictement identiques**. Le dispatcher V2 de 34 octets traite des offsets non signés avec `MOVEQ #0,D0` et `ADDA.L`. Monolithe **30 782 octets** (34 dispatcher + 30 748 natifs). Les stubs AP20 et le code natif de R57 sont identiques ; seule l'enveloppe de 32 à 34 octets et le titre changent. `Aga Probe` utilise son chemin d'origine, **sans routine témoin à 40 Ko**.
 
