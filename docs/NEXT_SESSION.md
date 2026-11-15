@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**NOUVEAU CHANTIER DOCUMENTÉ — SPRITES MATÉRIELS AGA (15/11/2026), PAS DE CODE NI DE TEST :** [contrat S0/S1/S2/S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Deux moteurs **séparés** : Bobs logiciels M19 (Blitter, banque multi-images 256 couleurs, priorité P0) versus **Sprites matériels AGA** (8 canaux DMA, largeur 16/32/64 via FMODE, 3 couleurs+transparent, paires attachées 15+transparent, choix de tranches de palette AGA, Chip/Copper/Intuition). **S0 audit** écran privé/ressources/ownership avant API ; **S1** Sprite 16 px ; **S2** attaché/largeurs/coordonnées/palettes ; **S3** multiplexage/AMAL facultatif/collisions. Les « 56 computed Sprites » du manuel AMOS OCS ne sont PAS 56 canaux AGA. Ne pas installer de nouvelle API sans vérification AP20/Compiler et Gates distinctes. R84 LAST_GOOD et R88 inchangées. Note de liaison ajoutée au [plan M19 historique](M19_SPRITES_BOBS_AMAL_PLAN.md) et au [contrat Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md).
+
+---
+
 **FEUILLE DE ROUTE M19 P0/P1/P2 (15/11/2026) — DOCUMENTATION UNIQUEMENT :** le [contrat Bobs AGA](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md) contient désormais l'inventaire fonctionnel tiré des chapitres 7.01–7.04 du manuel AMOS. **P0 :** banques/capture/mask/Chip, objets persistants, `Aga Bob Off`, `Aga Bob Update`, `Aga Bob Clear`/`Aga Bob Draw` ; rendu dans le back buffer AGA, **pas de `Aga Swap` implicite**. **P1 :** lecture X/Y/image, hotspot, priorités, Paste, Limit, édition de banque. **P2 :** collisions, HREV/VREV/REV, Set Bob, intégration AMAL, automatisation éventuelle. Les nouveaux noms AGA sont des propositions **non implémentées** ; préflight/token AP20/Compiler avant codage. **R84 LAST_GOOD inchangée, R88 candidate inchangée ; aucune nouvelle Gate validée.**
 
 ---

@@ -175,3 +175,7 @@ Un **objet Bob** doit pouvoir retenir au minimum : ID, banque AMOS d'origine, ID
 Références : [README API](../README.fr.md), [AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md), [contrat objets P2](M19_P2_OBJECT_MANAGER_CONTRACT.md), [cache M18](M18_FAST_ICON_CACHE.md), [incident Chip R88](M19_P28_R88_CHIP_BANK_DIAGNOSTIC_2026-11-15.md), [exemple AMOS OCS effectiveBobs](https://github.com/alain-treesong/amiga_coding_in_amos/tree/main/snippet-014_effectiveBobs).
 
 **À développer :** format binaire ABK multi-images (enveloppe + répertoire), API/AP20, capture, masque, gestionnaire de Bobs, préparation Chip, sauvegarde/lecture, tests et benchmarks. **Documentation seule à ce stade.**
+
+## 10. Chantier séparé — Sprites matériels AGA
+
+Le moteur Bob logiciel décrit ici n'est **pas** un moteur de Sprites DMA. L'auteur demande de traiter également les **Sprites matériels AGA**. Le plan détaillé est consigné séparément dans [Sprites AGA — S0/S1/S2/S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md) : audit Intuition/Chip/DMA/Copper, premier Sprite 16 px, paires attachées/largeur 32–64 px, puis multiplexage et collisions. Les 8 canaux matériels AGA, les « computed Sprites » AMOS et les objets Bob AGA ne sont **pas interchangeables**. Ne pas étendre implicitement l'API Bob ni changer sa priorité P0.
