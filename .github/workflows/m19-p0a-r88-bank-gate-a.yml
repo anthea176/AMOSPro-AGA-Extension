@@ -1,0 +1,50 @@
+name: M19 P0a R88 bank-select native Gate A (no promotion)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p0a-r88-bank-gate-a.yml'
+      - 'tools/m19_p0a_bank_select_emit.py'
+      - 'tools/build_m19_p0a_r88_bank_in_memory.py'
+      - 'tools/test_m19_p0a_bank_select_emit.py'
+      - 'tools/test_m19_p0a_r88_bank_gate_a.py'
+      - 'tools/m19_p0a_amos_bank_transaction_emit.py'
+      - 'tools/test_m19_p0a_amos_bank_transaction_emit.py'
+      - 'tools/m19_p0a_multi_bob_abk.py'
+      - 'tools/m19_p0a_capture_transaction.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m19-p0a-r88-bank-select-gate-a
+  cancel-in-progress: true
+
+jobs:
+  native-r88-bank-select:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare MC68000 test runner
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Assert R88 + R84 frozen base
+        run: |
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+      - name: P0a host format + capture + private transaction regression
+        run: |
+          python -B tools/test_m19_p0a_multi_bob_abk.py
+          python -B tools/test_m19_p0a_capture_transaction.py
+          python -B tools/test_m19_p0a_amos_bank_transaction_emit.py
+          python -B tools/test_m19_p0a_bank_select_emit.py
+      - name: Construct R88-derived AP20 in memory and verify relocation
+        run: python -B tools/build_m19_p0a_r88_bank_in_memory.py
+      - name: MC68000 native code execution (mocked AMOS; 2 relocated layouts)
+        run: python -B tools/test_m19_p0a_r88_bank_gate_a.py
+      - name: Verify immutable active R88, R84 and ASC
+        run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
