@@ -4,7 +4,7 @@ Date : 15 novembre 2026. **NOUVEAU TEST EN PRÉPARATION**, aucune Gate B/C P2.4 
 
 ## Périmètre et prérequis
 
-- **Nouveau candidat R87 v0.13.32**, généré directement dans `dist/AMOSPro_AGA.Lib` depuis R84 figée après Gate A, **77 commandes / 87 entrées AP20**, et aucune commande `Aga Bob Probe`. La R86 v0.13.31 (SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`) reste un jalon historique. **Pas de promotion.**
+- **Nouveau candidat R87 v0.13.32**, généré directement dans `dist/AMOSPro_AGA.Lib` depuis R84 figée, **73 184 octets**, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`, **Gate A native 9/9 PASS**, **77 commandes / 87 entrées AP20**, et aucune commande `Aga Bob Probe`. La R86 v0.13.31 (SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`) reste un jalon historique. **Pas de promotion.**
 - Fichier **actif unique** : [`tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc`](../tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc).
 - Le programme P2.3 déjà qualifié Runtime/Compiled est **archivé octet pour octet** dans [`tests/passed/M19_P23_BOBS_BATCH_01.asc`](../tests/passed/M19_P23_BOBS_BATCH_01.asc), Git blob `19ad2044252783454f4082c118e53b34a6b83478` ; [rapport P2.3](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md).
 - Matériel de benchmark de référence : **WinUAE 68020 à 14 MHz, PAL, JIT désactivé**, comme le [benchmark M19 P2.1](../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). Exécuter le même programme en **Runtime** puis en **Compiled** et récupérer les deux TXT depuis `RAM:` avant reboot.
@@ -67,3 +67,5 @@ Critères de PASS fonctionnel : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PIXEL_OK 1
 **LAST_GOOD R84 non modifiée ; pas de branche, tag ou release.** La CI générale historique `Artifact integrity` est suivie séparément ; elle peut comporter des garde-fous anciens ne reconnaissant pas encore R86.
 
 **Migration R87 du test P2.4 :** l'appel initial à `Aga Bob Probe` est supprimé, mais les 19 oracles, 3 parités et 12 fenêtres de timing sont conservés. **Les résultats P2.4 sur R86 n'ont jamais été exécutés** ; les validations seront effectuées uniquement sur la R87 sans Probe.
+
+**R87 native validée en Gate A** : [CI 43719479059](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43719479059), 9/9 tests, commande Probe absente, 77 commandes / 87 entrées AP20. Le nouveau programme WinUAE n'a **pas** encore été exécuté ; B/C R87 restent PENDING.

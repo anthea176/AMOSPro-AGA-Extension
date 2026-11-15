@@ -15,7 +15,7 @@ from struct import pack, unpack_from
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "tools"), str(ROOT / "tools" / "experiments")]
-from active_library import R84_SHA, R85_SHA, R86_SHA
+from active_library import R84_SHA, R85_SHA, R86_SHA, R87_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -32,8 +32,7 @@ BATCH_ENTRY = 82
 GROUP_C2P, GROUP_IFF, GROUP_BOBS, GROUP_AGA = 83, 84, 85, 86
 REMAP = {82: GROUP_C2P, 83: GROUP_IFF, 84: GROUP_AGA}
 API = ("aga bob batch", 1, BATCH_ENTRY, "00,0")
-# R87_SHA is pinned in active_library.py after deterministic CI build;
-# until then no unknown candidate may be overwritten.
+# SHA-pinned R87 candidate: only the source-backed deterministic output is accepted.
 
 
 def build() -> tuple[bytes, dict]:
@@ -84,6 +83,8 @@ def build() -> tuple[bytes, dict]:
         raise AssertionError("R87 must have 83 public + 4 native entries")
     tokens = previous[:-6] + token(*API) + bytes(6)
     output = repack_ap20(protected, tokens, entries, TITLE)
+    if sha256(output).hexdigest() != R87_SHA:
+        raise ValueError("R87 deterministic source SHA differs from pinned binary")
     unpacked_tokens, unpacked_entries, unpacked_title = unpack_ap20(output)
     if (unpacked_tokens, unpacked_entries, unpacked_title) != (tokens, entries, TITLE):
         raise AssertionError("R87 AP20 pack/unpack not byte exact")
@@ -116,7 +117,7 @@ def build() -> tuple[bytes, dict]:
         raise ValueError("Compiler V2 unit exceeds 65,534 bytes")
     active = ACTIVE.read_bytes()
     current_sha = sha256(active).hexdigest()
-    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, sha256(output).hexdigest()):
+    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA):
         raise ValueError("Unknown dist/ candidate: refusing overwrite")
 
     return output, {
@@ -137,7 +138,7 @@ def build() -> tuple[bytes, dict]:
         "batch_offset":0,
         "native_labels":labels,
         "native_bsr_w_reach":max(map(abs,links.values())),
-        "gate_a":"NOT TESTED UNTIL CI",
+        "gate_a":"9/9 MC68020 PASS (CI 43719479059)",
         "gate_b":"NOT TESTED",
         "gate_c":"NOT TESTED",
     }

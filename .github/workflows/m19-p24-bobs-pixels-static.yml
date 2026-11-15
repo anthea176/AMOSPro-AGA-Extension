@@ -1,4 +1,4 @@
-name: M19 P2.4 R86 BOBS pixel oracle and benchmark - static pre-WinUAE
+name: M19 P2.4 R87 BOBS pixel oracle and benchmark - static pre-WinUAE
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
     paths:
       - ".github/workflows/m19-p24-bobs-pixels-static.yml"
       - "tools/test_m19_p24_bobs_pixels_bench_static.py"
+      - "tools/build_m19_p25_no_probe.py"
+      - "tools/active_library.py"
       - "tests/current/*.asc"
       - "tests/passed/M19_P23_BOBS_BATCH_01.asc"
       - "tests/current/README.md"

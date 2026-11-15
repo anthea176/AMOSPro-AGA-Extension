@@ -14,7 +14,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "tools"), str(ROOT / "tools" / "experiments")]
-from active_library import R84_SHA, R85_SHA
+from active_library import R84_SHA, R85_SHA, R87_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -111,7 +111,7 @@ def build() -> tuple[bytes, dict]:
     if any(len(parts[x]) > 65534 for x in (GROUP_C2P,GROUP_IFF,GROUP_BOBS,GROUP_AGA)):
         raise ValueError("16-bit module exceeds size")
     if ACTIVE.read_bytes() not in (original, output) and (
-            sha256(ACTIVE.read_bytes()).hexdigest() != R85_SHA):
+            sha256(ACTIVE.read_bytes()).hexdigest() not in (R85_SHA, R87_SHA)):
         raise ValueError("Unknown active candidate: refusing overwrite")
     return output, {
         "version": "R86 v0.13.31 M19 P2.3",

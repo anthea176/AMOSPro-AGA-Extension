@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ASC_NAME = "M19_P24_BOBS_PIXELS_BENCH_01.asc"
 LEGACY_GIT_SHA = "19ad2044252783454f4082c118e53b34a6b83478"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
-R86_SHA = "63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"
+R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 from build_m19_p25_no_probe import build as build_r87
 
 
@@ -143,9 +143,9 @@ def main():
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
     current_sha=sha256(current_lib).hexdigest()
-    assert (len(current_lib)==73232 and current_sha==R86_SHA) or (current_lib==candidate and current_sha==meta["sha256"])
-    if current_sha!=R86_SHA:
-        assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]<5226
+    assert len(current_lib)==73184 and current_sha==R87_SHA
+    assert current_lib==candidate and meta["sha256"]==R87_SHA
+    assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
     assert len(active) == 1 and active[0].name == ASC_NAME
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"

@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,25 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==R87_SHA:
+            # Four independently relocated native groups. Byte-exact
+            # deterministic provenance is stronger than falsely exporting
+            # an unsupported single-unit ASM view.
+            from build_m19_p25_no_probe import build as build_r87
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect, parse
+            candidate,meta=build_r87()
+            assert wrapped==candidate and meta["sha256"]==R87_SHA
+            _, groups, title=unpack_ap20(wrapped)
+            assert len(groups)==87 and tuple(map(len,groups[83:]))==(5558,2508,5220,56580)
+            assert b"R87 v0.13.32" in title and b"CANDIDATE" in title
+            report=inspect(parse(wrapped))
+            assert not report["issues"]
+            names=[x["name"] for x in report["tokens"]]
+            assert "aga bob probe" not in names and "aga bob batch" in names
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            print("STRICT R87 FOUR-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==R86_SHA:
             # Four independent R86 Compiler V2 groups. The strict ASM
             # exporter still supports only the older single V2 monolith;

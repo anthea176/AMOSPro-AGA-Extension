@@ -56,6 +56,7 @@ R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R8
 R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 PROMOTED LAST_GOOD, Gate A CPU/CI and C AMOS Compiler PASS (bank included); corrected B not separately evidenced
 R85_SHA="4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"  # M19 P2.2 0.13.30 historical four-group probe, Gates A/B Runtime/C Compiled PASS
 R86_SHA="63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"  # M19 P2.3 0.13.31 BOBS native A PASS, WinUAE Runtime B/Compiled C PASS per author logs; NOT LAST_GOOD
+R87_SHA="02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"  # M19 P2.5 0.13.32 no probe, native MC68020 Gate A 9/9 PASS, WinUAE B/C NOT TESTED; NOT LAST_GOOD
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -83,13 +84,13 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
-    if b"R87 v0.13.32" in cur:
-        # During R87's first deterministic build, verify the candidate against
-        # its frozen-source producer; pin its literal SHA256 once Gate A passes.
+    if current_sha == R87_SHA:
+        # Pinned R87 candidate, reconstructed byte-exact from protected R84.
         from compiler_relocation import unpack_ap20
         from build_m19_p25_no_probe import build as build_r87
         image,meta=build_r87()
-        assert cur==image and cur!=good and meta["sha256"]==current_sha
+        assert cur==image and cur!=good and meta["sha256"]==R87_SHA
+        assert len(cur)==73184 and meta["native_units"]["BOBS"]==5220
         assert meta["commands"]==77 and meta["ap20_entries"]==87
         assert sha256(good).hexdigest()==R84_SHA and len(good)==67904
         _,segments,title=unpack_ap20(cur)
@@ -102,7 +103,7 @@ def verify_active(root: Path):
         names=[x["name"] for x in audit["tokens"]]
         assert "aga bob probe" not in names and "aga bob batch" in names
         assert len([x for x in names if x.startswith("aga ")])==77
-        return cur,good,"R87 v0.13.32 M19 P2.5 BOBS native Batch without diagnostic probe: rebuild byte exact, Gate B/C NOT TESTED; R84 LAST_GOOD protected"
+        return cur,good,"R87 v0.13.32 M19 P2.5 BOBS native Batch without diagnostic probe: MC68020 Gate A 9/9 PASS; WinUAE Runtime B / Compiled C NOT TESTED; R84 LAST_GOOD protected"
     if current_sha == R86_SHA:
         from compiler_relocation import unpack_ap20
         from build_m19_p23_bob_batch import build as build_r86
