@@ -155,7 +155,7 @@ def native_unit_source(name: str, group: bytes, entries: list[tuple[int, int]]):
         "; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.",
         "; DC.B preserves unclassified code/data, GetP and AMOS linker markers.",
         "; Mnemonic equivalence is NOT proven without --verify-vasm.",
-        "    cpu 68020", "",
+        "; MC68020: assemble with vasmm68k_mot -m68020", "",
     ]
     pos = 0
     decoded_bytes = 0
@@ -212,8 +212,56 @@ def native_unit_source(name: str, group: bytes, entries: list[tuple[int, int]]):
     }
 
 
+
+def linked_ap20_asm(binary: bytes, revision: str, public: int,
+                    group_files: dict[int, str]) -> str:
+    """Build the REAL AP20 .Lib from include'd native Motorola source units.
+
+    After source export, running vasm on this linked source requires neither
+    the original .Lib nor any old Python source emitter. AP20 jump sizes and
+    HUNK sizes are resolved by assembler labels, so size changes remain safe.
+    """
+    tokens, segments, title = unpack_ap20(binary)
+    require(len(segments) > public and len(group_files) == len(segments)-public,
+            'missing native unit include')
+    out = [
+        '; EDITABLE AP20/HUNK assembly (Rbsr stubs are AMOS linker words).',
+        '; Source generated from exact SHA-pinned ' + revision + ' library.',
+        '; Edit included native .s, then reassemble this file with vasm -Fbin.',
+        '; The historical Python byte emitters are NOT required to reassemble.',
+        '    ; MC68020: assemble with vasmm68k_mot -m68020', '',
+        'HUNK_HEADER:',
+        '    dc.l $000003F3,0,1,0,0',
+        '    dc.l (HUNK_DATA_END-HUNK_DATA)/4',
+        '    dc.l $000003E9',
+        '    dc.l (HUNK_DATA_END-HUNK_DATA)/4',
+        'HUNK_DATA:',
+        '    dc.l C_Tk-C_Off,C_Lib-C_Tk,C_Title-C_Lib,C_End-C_Title',
+        '    dc.w 0',
+        '    dc.b "AP20"',
+        'C_Off:',
+    ]
+    for i in range(len(segments)):
+        out.append(f'    dc.w (Entry_{i+1:02d}-Entry_{i:02d})/2')
+    out.extend(['', 'C_Tk:'])
+    out.extend(_source_lines_for_data(tokens, 0, len(tokens)))
+    out.extend(['', 'C_Lib:'])
+    for index, segment in enumerate(segments):
+        out.extend(['', f'Entry_{index:02d}:'])
+        if index < public:
+            # FE31 pseudo-code and GetP are data, not Motorola instructions.
+            out.extend(_source_lines_for_data(segment, 0, len(segment)))
+        else:
+            out.append('    include "' + group_files[index] + '"')
+    out.extend(['', f'Entry_{len(segments):02d}:', 'C_Title:'])
+    out.extend(_source_lines_for_data(title, 0, len(title)))
+    out.extend(['C_End:', '    dc.w 0', '    cnop 0,4',
+                'HUNK_DATA_END:', '    dc.l $000003F2', ''])
+    return '\n'.join(out)
+
+
 def _assemble(assembler, source: Path, result: Path):
-    cmd = [assembler, "-Fbin", "-m68020", "-quiet", "-o", str(result), str(source)]
+    cmd = [assembler, "-Fbin", "-m68020", "-quiet", "-I" + str(source.parent), "-o", str(result), str(source)]
     run = subprocess.run(cmd, text=True, capture_output=True, timeout=120)
     require(run.returncode == 0,
             "vasm failed on %s: %s %s" % (source.name, run.stdout, run.stderr))
@@ -248,10 +296,12 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
     require(decode_exact_asm(exact) == data, "lossless AP20 source round-trip failed")
     sources = {}
     reports = []
+    group_files = {}
     for index, name in enumerate(groups, start=public):
         source, report = native_unit_source(name, segments[index], refs[index])
         filename = "AMOSPro_AGA_%s_%s_NATIVE.s" % (revision, name)
         sources[filename] = source
+        group_files[index] = filename
         report["file"] = filename
         report["ap20_index"] = index
         reports.append(report)
@@ -266,7 +316,8 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
         "groups": reports,
         "exact_ap20_binary_roundtrip_verified": True,
         "native_assembler_verified": False,
-        "source_status": "partial verified-entrypoint disassembly plus exact DC data",
+        "source_status": "editable linked AP20 with included partial mnemonic units",
+        "linked_assembly_source": "AMOSPro_AGA_%s_NATIVE.s" % revision,
         "strict_status": ("pinned builder and exact-byte preservation verified; "
                           "full code/data classification not claimed"),
         "baseline_comparison": "not available for separately relocated multi-unit AP20",
@@ -283,6 +334,8 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
             "refusing to write generated files inside dist/")
     # Pre-check complete generation before creating the output directory.
     sources["AMOSPro_AGA_%s_AP20_EXACT.s" % revision] = exact
+    sources["AMOSPro_AGA_%s_NATIVE.s" % revision] = linked_ap20_asm(
+        data, revision, public, group_files)
     target.mkdir(parents=True, exist_ok=True)
     paths = []
     for filename, text in sources.items():
@@ -302,6 +355,10 @@ def export(data: bytes, *, root: Path, target: Path, strict: bool,
         output_file = target / ("AMOSPro_AGA_%s_AP20_ASSEMBLED.bin" % revision)
         require(_assemble(assembler, source_file, output_file) == data,
                 "exact AP20 vasm output differs from selected .Lib")
+        linked_file = target / ("AMOSPro_AGA_%s_NATIVE.s" % revision)
+        linked_output = target / ("AMOSPro_AGA_%s_LINKED_ASSEMBLED.Lib" % revision)
+        require(_assemble(assembler, linked_file, linked_output) == data,
+                "linked multi-unit AP20 ASM differs from selected .Lib")
         manifest["native_assembler_verified"] = True
     manifest_file = target / ("AMOSPro_AGA_%s_NATIVE.json" % revision)
     manifest_file.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
