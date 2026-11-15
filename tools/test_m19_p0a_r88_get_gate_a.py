@@ -47,7 +47,9 @@ class CaptureMachine(SelectMachine):
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
         self.get_entry=self.entry+self.labels['get_entry']
         self.stage_log=[]
-        for name in ('emit_new_entry','capture_plane','finished_entries','fail','bank_commit'):
+        for name in ('emit_new_entry','capture_plane','finished_entries','fail','bank_commit',
+                     'validate_old_loop','old_validated','no_mask','mask_checked',
+                     'padding_accept','padding_reject','padding_ok','not_replaced_size'):
             addr=self.entry+self.labels[name]
             self.uc.hook_add(UC_HOOK_CODE,self._stage_hook,user_data=name,
                              begin=addr,end=addr)
@@ -97,7 +99,9 @@ class CaptureMachine(SelectMachine):
     def _stage_hook(self,uc,address,size,name):
         base=self.a(2)
         if not 0x10000<base<0xff0000:return
-        keys=('bank','old_count','new_count','new_size','new_start',
+        keys=('bank','old_count','old_index','old_cursor','old_entry',
+              'old_last','old_pixlen','old_masklen','old_replaced','old_total',
+              'new_count','new_size','new_start',
               'temp','new_cursor','new_dir','inserted',
               'capture_bytes','width','height','depth',
               'planes_left','rows_left','pixels_left')
@@ -237,7 +241,7 @@ def main():
             imgs=parse_payload(m.bank_payload(10)).images
             assert tuple(x.image_id for x in imgs)==(1,2,3)
             original1=imgs[0].planes;original3=imgs[2].planes
-            assert m.run_get(2,16,0,46,12)==1,(depth,layout,'replace',{'stages':m.stage_log[-8:],'calls':m.calls[-15:],'chip_calls':m.chip_calls,'waits':m.waits,'allocs':m.scratch_allocs})
+            assert m.run_get(2,16,0,46,12)==1,(depth,layout,'replace',{'stages':m.stage_log[-12:],'calls':m.calls[-15:],'chip_calls':m.chip_calls,'waits':m.waits,'allocs':m.scratch_allocs})
             b=check_image(m,10,2,16,0,46,12)
             assert b.image(1).planes==original1 and b.image(3).planes==original3
             assert m.scratch_allocs==m.scratch_frees
