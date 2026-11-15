@@ -5,8 +5,8 @@ Prove an independent BOBS native unit is reachable in interpreted and
 compiler-V2 routing. The ONLY new public function is Aga Bob Probe(), a
 disposable infrastructure witness returning 1. It DOES NOT render anything.
 
-Never modifies dist/ or LAST_GOOD. Optional binary output is restricted to
-build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib for test installation.
+Working candidate is written ONLY to dist/AMOSPro_AGA.Lib with --write-dist.
+Frozen dist/AMOSPro_AGA_LAST_GOOD.Lib remains SHA-pinned and unmodified.
 R84 76-command public ABI and all three original native unit bytes remain
 identical. Compiler Gate C and WinUAE Gate B require real AMOS validation.
 """
@@ -30,11 +30,11 @@ from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 PROTECTED = ROOT / "dist" / "AMOSPro_AGA_LAST_GOOD.Lib"
 ACTIVE = ROOT / "dist" / "AMOSPro_AGA.Lib"
-PROBE_OUTPUT = ROOT / "build" / "m19-p22" / "AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib"
+# Only one active candidate in dist; LAST_GOOD remains frozen.
 PROBE_CODE = bytes.fromhex("760174004e75")  # MOVEQ #1,D3 / MOVEQ #0,D2 / RTS
 TITLE = (
-    b"M19 P2.2 FOUR NATIVE UNITS - EXPERIMENTAL PROBE ONLY\0"
-    b"$VER: AMOSPro_AGA P2.2 TEST 68020+ NO BOB DRAW\0"
+    b"AMOSPro AGA R85 v0.13.30 FOUR NATIVE UNITS - TEST ONLY\0"
+    b"$VER: AMOSPro_AGA 0.13.30 (R85) MC68020+ BOBS PROBE ONLY\0"
 )
 TITLE += bytes(len(TITLE) & 1)
 BASE_PUBLIC, NEW_PUBLIC = 82, 83
@@ -47,9 +47,7 @@ def build() -> tuple[bytes, dict]:
     protected = PROTECTED.read_bytes()
     if len(protected) != 67904 or sha256(protected).hexdigest() != R84_SHA:
         raise ValueError("R84 LAST_GOOD SHA/size mismatch; refusing candidate")
-    active = ACTIVE.read_bytes()
-    if active != protected:
-        raise ValueError("R84 active library differs from LAST_GOOD")
+    # Active may be R84 or this deterministic candidate; checked below.
     old_tokens, old, _ = unpack_ap20(protected)
     if len(old) != 85 or len(old_tokens) < 6 or old_tokens[-6:] != bytes(6):
         raise ValueError("Unexpected pinned R84 AP20 structure")
@@ -114,6 +112,8 @@ def build() -> tuple[bytes, dict]:
         raise AssertionError("Wrong number of interpreter RBSR links")
     if len(segments[GROUP_BOBS]) != 40:
         raise AssertionError("Unexpected fourth dispatcher+probe length")
+    if ACTIVE.read_bytes() not in (protected, built):
+        raise ValueError("Unknown dist active library, refuse candidate overwrite")
     return built, {
         "status": "EXPERIMENTAL ONLY; FOURTH BLOCK PROBE, NO BOB RENDER",
         "base": "R84 v0.13.29 LAST_GOOD",
@@ -138,23 +138,31 @@ def build() -> tuple[bytes, dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--output", type=Path,
-        help="Write ONLY build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib")
+    parser.add_argument("--write-dist", action="store_true",
+        help="Write ONLY dist/AMOSPro_AGA.Lib; protect LAST_GOOD SHA256")
+    parser.add_argument("--emit-base64", action="store_true",
+        help="Emit exact candidate base64 for committing the active dist file")
     args = parser.parse_args()
     data, report = build()
     print("M19 P2.2 FOURTH NATIVE UNIT STATIC GATE", report, flush=True)
-    if args.output:
-        destination = args.output.resolve()
-        if destination != PROBE_OUTPUT.resolve():
-            raise SystemExit("Refusing output outside isolated build/m19-p22")
-        if destination == PROTECTED.resolve() or destination == ACTIVE.resolve():
-            raise SystemExit("Refusing to touch R84 LAST_GOOD/active")
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(data)
-        if sha256(destination.read_bytes()).hexdigest() != report["sha256"]:
-            raise AssertionError("Written experimental candidate checksum mismatch")
-        print("M19 P2.2 DISPOSABLE PROBE LIBRARY", destination, flush=True)
+    if args.write_dist:
+        if ACTIVE.resolve() == PROTECTED.resolve():
+            raise SystemExit("Refusing to overwrite LAST_GOOD")
+        original = PROTECTED.read_bytes()
+        if len(original) != 67904 or sha256(original).hexdigest() != R84_SHA:
+            raise SystemExit("Refuse write: LAST_GOOD SHA mismatch")
+        ACTIVE.write_bytes(data)
+        if ACTIVE.read_bytes() != data or PROTECTED.read_bytes() != original:
+            raise AssertionError("Candidate corrupted or LAST_GOOD altered")
+        print("M19 P2.2 ACTIVE CANDIDATE dist/AMOSPro_AGA.Lib",
+              report["sha256"], flush=True)
+    if args.emit_base64:
+        import base64
+        encoded = base64.b64encode(data).decode("ascii")
+        print("M19_P22_DIST_LIB_B64_BEGIN", flush=True)
+        for pos in range(0, len(encoded), 120):
+            print("M19_P22_DIST_LIB_B64", encoded[pos:pos + 120], flush=True)
+        print("M19_P22_DIST_LIB_B64_END", flush=True)
 
 
 if __name__ == "__main__":

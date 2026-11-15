@@ -34,16 +34,19 @@ jobs:
         run: python -B tools/build_m19_p22_fourth_unit_probe.py
       - name: Four native units Gate A, ABI safety, REAL 68020 dispatch and body
         run: python -B tools/test_m19_p22_fourth_unit_probe.py
-      - name: Generate disposable, SHA-tested probe binary outside dist
-        run: python -B tools/build_m19_p22_fourth_unit_probe.py --output build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib
-      - name: Confirm frozen R84 and current ASC are unchanged
+      - name: Write SHA-tested active candidate to dist/AMOSPro_AGA.Lib
+        run: python -B tools/build_m19_p22_fourth_unit_probe.py --write-dist
+      - name: Confirm R84 LAST_GOOD and current ASC are unchanged
         run: |
-          git diff --exit-code -- dist/ tests/current/ tests/passed/
-          git status --short -- dist/ tests/current/ tests/passed/
-      - name: Upload experimental probe for later WinUAE Gate B and Compiler Gate C
+          git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
+          python -B -c "from pathlib import Path; import hashlib; p=Path('dist/AMOSPro_AGA_LAST_GOOD.Lib'); assert hashlib.sha256(p.read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'; print('R84 LAST_GOOD UNCHANGED PASS')"
+          git status --short -- dist/
+      - name: Emit exact candidate for the active dist Git blob
+        run: python -B tools/build_m19_p22_fourth_unit_probe.py --emit-base64
+      - name: Upload active candidate for WinUAE and Compiler validation
         uses: actions/upload-artifact@v4
         with:
-          name: M19_P22_4UNIT_PROBE_GATE_A_ONLY
-          path: build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib
+          name: M19_P22_DIST_CANDIDATE_GATE_A_ONLY
+          path: dist/AMOSPro_AGA.Lib
           if-no-files-found: error
           retention-days: 7
