@@ -1958,6 +1958,15 @@ def main(argv=None):
     if not input_path.is_absolute():input_path=root/input_path
     try:
         data=input_path.read_bytes()
+        # R83-R88 use independent V2-native AP20 units. Do not unwrap
+        # them as one monolith or interpret Rbsr/FE31 linker stubs as CPU.
+        from generate_aga_multiunit_source import identify, export
+        if identify(data) is not None:
+            dest=Path(args.out)
+            if not dest.is_absolute():dest=root/dest
+            export(data,root=root,target=dest,strict=args.strict,
+                   assembler=args.verify_vasm,baseline=args.baseline)
+            return 0
         source_data,compiler_context=source_binary_from_input(data)
         parsed=parse_lib(source_data)
         source,report=output(parsed)
