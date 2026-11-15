@@ -8,7 +8,7 @@
 
 Le **seul binaire à installer** est [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib). Le **seul ASC actif** se trouve dans `tests/current/`. Pour toute prochaine campagne, **les banques ABK et ressources nécessaires à son exécution doivent être réunies dans `tests/current/`**, après vérification des fichiers et de leurs SHA, sans modifier les sources de référence de la CI.
 
-**État constaté au 15/11/2026 : les quatre ABK R88 sont encore archivées dans [`tests/fixtures/m19_p28/`](../fixtures/m19_p28/).** Leur préparation/copie byte-identique dans `tests/current/` **reste à faire avant le prochain essai** ; cette correction documentaire ne crée, ne déplace et ne modifie aucune banque. Ne pas annoncer le test prêt tant que cette vérification n'a pas été effectuée. Les archives historiques `tests/passed/` et `dist/experimental/` ne deviennent pas des destinations pour de nouveaux essais.
+**Préparation des ressources R88 effectuée sur `main` :** les quatre ABK ont été ajoutées sous `tests/current/` à l'octet près, en conservant les sources originales dans [`tests/fixtures/m19_p28/`](../fixtures/m19_p28/). Les quatre SHA Git sont identiques à ceux des fixtures. La copie n'est **pas** une Gate B/C ; le banc WinUAE reste à rejouer avec l'ASC actif exact.
 
 ## Paquet expérimental historique
 
