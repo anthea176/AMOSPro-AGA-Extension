@@ -58,7 +58,7 @@ def run() -> None:
     with TemporaryDirectory(prefix="aga-r88-multiunit-") as tmp:
         output = Path(tmp) / "src/generated"
         paths = export(before, root=ROOT, target=output, strict=True)
-        assert len(paths) == 6, [str(p) for p in paths]
+        assert len(paths) == 7, [str(p) for p in paths]
         manifest = json.loads((output / "AMOSPro_AGA_R88_NATIVE.json").read_text())
         assert manifest["input_sha256"] == R88_SHA
         assert manifest["deterministic_builder_verified"] is True
@@ -66,6 +66,9 @@ def run() -> None:
         assert manifest["native_assembler_verified"] is False
         assert manifest["ap20_entries"] == 88
         assert len(manifest["groups"]) == 4
+        linked = (output / "AMOSPro_AGA_R88_NATIVE.s").read_text()
+        assert linked.count('    include "AMOSPro_AGA_R88_') == 4
+        assert "HUNK_DATA_END:" in linked
         exact = (output / "AMOSPro_AGA_R88_AP20_EXACT.s").read_text()
         assert decode_exact_asm(exact) == before
         for i, name in enumerate(("C2P", "IFF", "BOBS", "AGA"), 84):
@@ -73,7 +76,7 @@ def run() -> None:
             assert entry["sha256"] == sha256(segments[i]).hexdigest()
             assert entry["mnemonic_bytes"] + entry["raw_dc_bytes"] == len(segments[i])
             asm = (output / f"AMOSPro_AGA_R88_{name}_NATIVE.s").read_text()
-            assert "cpu 68020" in asm and "NOT" in asm
+            assert "MC68020" in asm and "NOT" in asm
         try:
             export(before, root=ROOT, target=ROOT / "dist/forbidden",
                    strict=True)
