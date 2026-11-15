@@ -38,7 +38,8 @@ TITLE = (
 )
 TITLE += bytes(len(TITLE) & 1)
 BASE_PUBLIC, NEW_PUBLIC = 82, 83
-GROUP_C2P, GROUP_IFF, GROUP_AGA, GROUP_BOBS = 83, 84, 85, 86
+GROUP_C2P, GROUP_IFF, GROUP_BOBS, GROUP_AGA = 83, 84, 85, 86
+GROUP_REMAP = {82: GROUP_C2P, 83: GROUP_IFF, 84: GROUP_AGA}
 NEW_FUNCTION = ("aga bob probe", 1, BASE_PUBLIC, "0")
 
 
@@ -70,7 +71,7 @@ def build() -> tuple[bytes, dict]:
         group, offset = unpack_from(">HH", stub, 2)
         if group not in (82, 83, 84):
             raise ValueError(f"Unknown historical group {group}")
-        new_stub = RBSR + pack(">HH", group + 1, offset) + stub[6:]
+        new_stub = RBSR + pack(">HH", GROUP_REMAP[group], offset) + stub[6:]
         if i == BASE_PUBLIC - 1:
             # The old final token is now followed by Aga Bob Probe.
             if len(new_stub) != 8:
@@ -81,7 +82,10 @@ def build() -> tuple[bytes, dict]:
     bob_unit = DISPATCH_V2 + PROBE_CODE
     if len(bob_unit) > 65534 or len(bob_unit) & 1:
         raise ValueError("New BOBS group exceeds Compiler 16-bit bound")
-    segments = stubs + units + [bob_unit]
+    # The AMOS loader BSR.W reach is signed 16-bit: BOBS cannot be
+    # placed AFTER the 56580-byte AGA core (measured +64652 bytes).
+    # Keep the two small historical units, then BOBS, then AGA.
+    segments = stubs + units[:2] + [bob_unit, units[2]]
     if len(segments) != NEW_PUBLIC + 4:
         raise AssertionError("Four native unit structure incorrect")
     toks = old_tokens[:-6] + token(*NEW_FUNCTION) + bytes(6)
@@ -102,7 +106,8 @@ def build() -> tuple[bytes, dict]:
     if [i["parameters"] for i in candidate["parameter_checks"]
             if i["index"] == BASE_PUBLIC]:
         raise AssertionError("Zero-argument probe must have no GetP check")
-    if tuple(pp[NEW_PUBLIC:NEW_PUBLIC+3]) != tuple(old[BASE_PUBLIC:]):
+    if (pp[GROUP_C2P] != old[82] or pp[GROUP_IFF] != old[83]
+            or pp[GROUP_AGA] != old[84]):
         raise AssertionError("Historical native C2P/IFF/AGA bytes changed")
     links = interpreter_rbsr_displacements(pp)
     if len(links) != 81 or BASE_PUBLIC not in links:

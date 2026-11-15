@@ -50,9 +50,10 @@ class FourUnitProbeGateA(unittest.TestCase):
     def test_four_independent_v2_units_and_public_abi(self):
         self.assertEqual(len(self.parts), 87)
         self.assertEqual(len(self.old_parts), 85)
-        self.assertEqual(tuple(map(len, self.parts[83:])), (5558, 2508, 56580, 40))
-        self.assertEqual(self.parts[83:86], self.old_parts[82:85])
-        self.assertEqual(self.parts[86], DISPATCH_V2 + PROBE_CODE)
+        self.assertEqual(tuple(map(len, self.parts[83:])), (5558, 2508, 40, 56580))
+        self.assertEqual(self.parts[83:85], self.old_parts[82:84])
+        self.assertEqual(self.parts[86], self.old_parts[84])
+        self.assertEqual(self.parts[85], DISPATCH_V2 + PROBE_CODE)
         self.assertTrue(all(p.startswith(DISPATCH_V2) and len(p) <= 65534
                             and len(p) % 2 == 0 for p in self.parts[83:]))
         report = inspect(parse(self.candidate))
@@ -71,19 +72,20 @@ class FourUnitProbeGateA(unittest.TestCase):
                 self.assertEqual(now, original)
                 continue
             expected = RBSR + pack(">HH",
-                                   unpack_from(">H", original, 2)[0]+1,
+                                   {82: GROUP_C2P, 83: GROUP_IFF, 84: GROUP_AGA}[
+                                       unpack_from(">H", original, 2)[0]],
                                    unpack_from(">H", original, 4)[0]) + original[6:]
             if i == 81:
                 expected += GETP
             self.assertEqual(now, expected, f"historical R84 stub {i} changed")
-        self.assertEqual(self.parts[82], RBSR + pack(">HH", 86, 0)
+        self.assertEqual(self.parts[82], RBSR + pack(">HH", GROUP_BOBS, 0)
                          + bytes.fromhex("4e75"))
 
     def test_interpreter_bsr_displacements_and_error_injection(self):
         links = interpreter_rbsr_displacements(self.parts)
         self.assertEqual(len(links), 81)
         self.assertTrue(all(abs(d) < 32766 and d % 2 == 0 for d in links.values()))
-        self.assertEqual(unpack_from(">H", self.parts[82], 2)[0], 86)
+        self.assertEqual(unpack_from(">H", self.parts[82], 2)[0], GROUP_BOBS)
         broken = list(self.parts)
         broken[82] = RBSR + pack(">HH", 87, 0) + bytes.fromhex("4e75")
         with self.assertRaises(ValueError):

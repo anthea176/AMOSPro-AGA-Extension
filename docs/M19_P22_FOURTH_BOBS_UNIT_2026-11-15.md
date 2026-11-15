@@ -17,9 +17,11 @@ R84 dispose de **trois unités natives** : C2P **5 558**, IFF **2 508**, AGA/AGA
 - Lit **R84 active et `LAST_GOOD`**, vérifie leur identité octet pour octet, taille et SHA attendu ; **ne les réécrit jamais**.
 - Préserve la table des **76 commandes** R84, leurs tokens/signatures et les **trois corps natifs inchangés**. Décale de +1 uniquement les indices des groupes cibles pour ajouter une nouvelle entrée publique et appose `GetP` à la dernière ancienne entrée, devenue non terminale.
 - Ajoute **un groupe indépendant** `BOBS`, avec un dispatcher Compiler V2 **34 octets** et un témoin 68020 **6 octets**. Il fournit uniquement la fonction expérimentale `Aga Bob Probe` qui **renvoie 1** en D3, **0 en D2**, sans lire d'arguments ni dessiner.
-- Produit **77 commandes, 87 entrées AP20, 4 unités** : index public nouveau **82**, groupes C2P **83**, IFF **84**, AGA **85**, BOBS **86**. Les 3 corps natifs historiques restent 5 558 / 2 508 / 56 580 octets ; groupe BOBS témoin **40 octets**.
+- Produit **77 commandes, 87 entrées AP20, 4 unités** : index public nouveau **82**, groupes C2P **83**, IFF **84**, BOBS **85**, AGA **86**. Les 3 corps natifs historiques restent 5 558 / 2 508 / 56 580 octets ; groupe BOBS témoin **40 octets**.
 - Le constructeur ne dépose aucun fichier par défaut. L'option `--output` accepte **seulement** `build/m19-p22/AMOSPro_AGA_M19_P22_4UNIT_PROBE.Lib` ; elle **refuse tout chemin `dist/`**, `LAST_GOOD` ou binaire actif. Ce fichier est **TEST ONLY**, non publié comme nouvelle version.
 - `Aga Bob Probe` n'est **pas** une commande de production et ne figure pas dans les 76 signatures publiques officielles. Aucune API `Aga Bob Batch` n'est encore figée.
+
+**Retour du premier Gate A (commit aab2cec) : FAIL de portée BSR.W.** En ajoutant BOBS *après* le groupe AGA de 56 580 octets, le saut relatif depuis l'entrée 82 atteint **64 652 octets**, au-delà de la portée signée 16 bits du loader AMOS (`AMOS365 ILLEGAL GRouB`). **Correction : intercaler le petit bloc BOBS avant AGA**, sans modifier un seul octet des trois groupes historiques. C'est précisément le type de problème que la Gate A doit détecter ; la nouvelle disposition doit repasser les tests et ne vaut toujours pas une Gate C Compiler.
 
 ## 3. Qualification native Gate A en CI
 
