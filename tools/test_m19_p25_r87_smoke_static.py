@@ -2,7 +2,7 @@
 """M19 P2.5 R87: read-only preflight of minimal AMOS smoke source.
 
 This does not compile AMOS or execute WinUAE. The historical R86 source and
-R87 smoke file are pinned byte-for-byte to prevent accidental test drift.
+R87 smoke file is archived byte-for-byte, separately from the P2.6 benchmark.
 """
 from __future__ import annotations
 
@@ -26,8 +26,8 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "Wrong R87 candidate"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(files)==1 and files[0].name==SMOKE, files
-    raw=files[0].read_bytes()
+    assert len(files)==1 and files[0].name=="M19_P26_R87_DRAW_BENCH_01.asc", files
+    raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
     assert blob_sha(raw)==SMOKE_GIT, "Smoke changed without requalification"
     assert blob_sha((ROOT/"tests/passed/M19_P23_BOBS_BATCH_01.asc").read_bytes())==R86_PASSED_GIT
     assert blob_sha((ROOT/"tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc").read_bytes())==DRAFT_GIT
@@ -50,9 +50,9 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 STATIC SMOKE PASS: R87 SHA, R84 frozen, one active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one P2.6 active ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
-    print("AMOS Professional Runtime B / Compiler C NOT TESTED.")
+    print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 
 if __name__=="__main__":
     main()

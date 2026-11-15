@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## PRIORITÉ ACTUELLE — M19 P2.6 R87 : mesurer BASIC vs Batch (15/11/2026)
+
+**À tester maintenant :** `tests/current/M19_P26_R87_DRAW_BENCH_01.asc` (**267 lignes**, Git blob `c6c03b24bb273027492776ba24e53193ec52198b`). Uniquement **4/8/16 Bobs**, 64 répétitions, passes AB puis BA, **12 séries draw-only**, sans Z-sort, Fill, Swap, VBL ou allocation *pendant les chronos*. Le programme journalise les ticks bruts `BASIC_TICKS`, `BATCH_TICKS`, `PASS0_N` et `PASS1_N` dans `RAM:M19_P26_RUNTIME.TXT` puis `RAM:M19_P26_COMPILED.TXT`. **P2.6 Runtime/Compiled NON TESTÉ**, aucun gain présumé. Configuration WinUAE 68020/14 MHz/PAL/JIT OFF. [Protocole](M19_P26_R87_DRAW_PERFORMANCE_2026-11-15.md).
+
+**Le smoke P2.5 R87 a déjà PASS en Runtime et Compiled** (`RESULT=1`, `ERR=0`, `VERDICT=PASS`, `DRAW=3`, `REJECT=3`, mémoire Chip/Fast stable). Son fichier source est maintenant archivé **sans modification** : `tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc`, Git blob `347e35d4e79b4afc331a732f33c448bbb61ddef9`. Les journaux P2.5 ne sont **pas** des benchmarks ; ne pas relancer un nouveau smoke à la place de P2.6. Le brouillon P2.4 reste en `tests/design/` non validé.
+
+**Candidate R87 v0.13.32 inchangée** : `dist/AMOSPro_AGA.Lib`, 73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`. R84 `LAST_GOOD` intouchable. **main uniquement**, pas de tag, branche supplémentaire, release ou promotion.
+
+---
+
 ## PRIORITÉ — M19 P2.5 R87, smoke AMOS après audit du skill
 
 Le nouveau **seul test actif** est `tests/current/M19_P25_R87_BOBS_SMOKE_01.asc` (Git blob `347e35d4e79b4afc331a732f33c448bbb61ddef9`, 209 lignes) : base du véritable test R86 P2.3 PASS, retrait du Probe R87, des fausses validations pixel et du benchmark non qualifié. Vérification des banques **avant tout Erase** via `_BANKS_SAFE`. Préflight strict `amos-pro-aga-rules` **PASS**, 21 tests du checker **PASS** en local ; nouvelle CI dédiée à contrôler. **Gates B/C R87 NON TESTÉES.**

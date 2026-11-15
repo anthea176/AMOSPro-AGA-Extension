@@ -1,4 +1,4 @@
-name: M19 P2.5 R87 native BOBS Batch - Probe removed - Gate A
+name: M19 R87 native Gate A and P2.6 draw benchmark preflight
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
       - "tools/build_m19_p25_no_probe.py"
       - "tools/test_m19_p25_no_probe.py"
       - "tools/test_m19_p25_r87_smoke_static.py"
+      - "tools/test_m19_p26_r87_bobs_bench_static.py"
+      - "tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc"
       - "tools/amos_preflight.py"
       - "tools/test_amos_preflight.py"
       - "tests/current/*.asc"
@@ -45,11 +47,12 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P25_R87_BOBS_SMOKE_01.asc
-      - name: Verify unique current smoke ASC and source provenance
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P26_R87_DRAW_BENCH_01.asc
+      - name: Verify archived smoke and unique current benchmark
         run: |
           python -B tools/test_current_ram_log.py
           python -B tools/test_m19_p25_r87_smoke_static.py
+          python -B tools/test_m19_p26_r87_bobs_bench_static.py
       - name: Write candidate ONLY to dist/AMOSPro_AGA.Lib
         run: |
           python -B tools/build_m19_p25_no_probe.py --write-dist
@@ -58,6 +61,7 @@ jobs:
         run: |
           python -B tools/verify_fast.py
           python -B tools/test_m19_p25_r87_smoke_static.py
+          python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B -c "import hashlib,pathlib; p=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib'); assert len(p.read_bytes())==67904; assert hashlib.sha256(p.read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
           git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
       - uses: actions/upload-artifact@v4
