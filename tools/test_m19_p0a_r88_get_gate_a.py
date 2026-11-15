@@ -78,7 +78,9 @@ class CaptureMachine(SelectMachine):
         self.put(DB+4,SB)
         self.put(DB+8,0)
         self.put(DB+12,0x5b000)
-        self.put(DB+20,1 if safe else 0)
+        # R88 M18/R67: ScreenBuffer flag 0=already safe, bit 0 set=pending.
+        # An unavailable Safe message must be tested with pending=1.
+        self.put(DB+20,0 if safe else 1)
         self.put(SB,BITMAP)
         self.uc.mem_write(BITMAP,pack('>HHBBH',STRIDE,SCREEN_H,0,depth,0))
         for p,addr in enumerate(self.screen_planes):
