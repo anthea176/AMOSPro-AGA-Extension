@@ -9,13 +9,14 @@ This is NOT a WinUAE Runtime or real AMOS Compiler test.
 from __future__ import annotations
 from struct import pack
 
+from unicorn import UC_HOOK_CODE
 from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
 
 from test_m5_generic import DR,AR,AMOS,EXEC,GFX,STACK,STOP
 from amos_link_test_support import relocate
 from test_m19_p0a_r88_bank_gate_a import SelectMachine,HEAD
-from m19_p0a_get_bob_emit import emit_get_bob
+from m19_p0a_get_bob_emit import emit_get_bob,F
 from m19_p0a_multi_bob_abk import parse_payload,make_mask,put_image
 from build_m19_p0a_r88_get_in_memory import build
 from compiler_relocation import unpack_ap20
@@ -45,6 +46,11 @@ class CaptureMachine(SelectMachine):
         self.native,self.labels=emit_get_bob()
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
         self.get_entry=self.entry+self.labels['get_entry']
+        self.stage_log=[]
+        for name in ('emit_new_entry','capture_plane','finished_entries','fail','bank_commit'):
+            addr=self.entry+self.labels[name]
+            self.uc.hook_add(UC_HOOK_CODE,self._stage_hook,user_data=name,
+                             begin=addr,end=addr)
         self.depth=depth
         self.safe=safe
         self.chip=chip
@@ -87,6 +93,17 @@ class CaptureMachine(SelectMachine):
         self.uc.mem_write(GFX-228,b'\x4e\x75')
         for off in (-534,-684,-690,-372):
             self.uc.mem_write(EXEC+off,b'\x4e\x75')
+
+    def _stage_hook(self,uc,address,size,name):
+        base=self.a(2)
+        if not 0x10000<base<0xff0000:return
+        keys=('bank','old_count','new_count','new_size','new_start',
+              'temp','new_cursor','new_dir','inserted',
+              'capture_bytes','width','height','depth',
+              'planes_left','rows_left','pixels_left')
+        state={key:self.get(base+F[key]) for key in keys}
+        self.stage_log.append((name,state))
+        if len(self.stage_log)>12:self.stage_log=self.stage_log[-12:]
 
     def _os_return(self,result):
         self.uc.reg_write(DR[0],result & 0xffffffff)
@@ -213,7 +230,8 @@ def main():
                      'waits':m.waits,'scratch_allocs':m.scratch_allocs,
                      'scratch_frees':m.scratch_frees,'state_ptr':m.get(AMOS+0x1c8),
                      'active_bank':m.get(m.entry+m.labels['bank_active_state']),
-                     'active_ptr':m.get(m.entry+m.labels['bank_active_state']+4)})
+                     'active_ptr':m.get(m.entry+m.labels['bank_active_state']+4),
+                     'stages':m.stage_log[-6:]})
                 check_image(m,10,n,*rect)
                 cases+=1
             imgs=parse_payload(m.bank_payload(10)).images
