@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 build/asm_export/
 archive/Aminet/AMOSProAGA.lha
+examples/demo/Demo.AMOS
+examples/demo/Demo.Bak
+examples/demo/LIRE_MOI.md
+examples/demo/POC_APERCU_3x.png
+examples/demo/RPG_BG.iff
+examples/demo/RPG_HERO.abk
+examples/demo/RPG_MOVE_192_POC.asc
