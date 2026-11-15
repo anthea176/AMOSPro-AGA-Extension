@@ -1,0 +1,59 @@
+name: M19 R89 native multi-image Bob Bank and Get - Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-r89-bobs-native-gate-a.yml"
+      - "tools/m19_bobs_capture_emit.py"
+      - "tools/m19_bobs_ap20_feasibility.py"
+      - "tools/build_m19_bobs_native_r89.py"
+      - "tools/test_m19_bobs_native_r89_gate_a.py"
+      - "tests/design/M19_R89_NATIVE_BOB_BANK_GET_01.asc"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-r89:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CPU emulator and decoder
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Check native Python source syntax
+        run: |
+          python -m py_compile tools/m19_bobs_capture_emit.py tools/m19_bobs_ap20_feasibility.py tools/build_m19_bobs_native_r89.py tools/test_m19_bobs_native_r89_gate_a.py
+      - name: Check pinned R84 and R88 and exact AP20 Compiler V2 layout
+        run: python -B tools/build_m19_bobs_native_r89.py
+      - name: Execute MC68020 Bank and Get native Gate A
+        run: python -B tools/test_m19_bobs_native_r89_gate_a.py
+      - name: Static AMOS Pro syntax preflight
+        run: python -B tools/amos_preflight.py tests/design/M19_R89_NATIVE_BOB_BANK_GET_01.asc
+      - name: Generate R89 experimental library, never active or LAST_GOOD
+        run: |
+          python -B tools/build_m19_bobs_native_r89.py --output "out/R89/AMOSPro_AGA_R89_v0.13.34_M19_BOB_CAPTURE_UNVALIDATED.Lib"
+          cp tests/design/M19_R89_NATIVE_BOB_BANK_GET_01.asc out/R89/
+          cat > out/R89/README.txt <<'EOF'
+          M19 R89 v0.13.34 - EXPERIMENTAL, NEVER PROMOTED
+          Commands: Aga Bob Bank N, Get AGA Bob I,X1,Y1,X2,Y2
+          Gate A: CPU emulation + AP20 static, if this workflow is green.
+          Gate B: WinUAE AMOS interpreted NOT RUN.
+          Gate C: real AMOS Compiler NOT RUN.
+          Install only in a separate WinUAE test setup, never over LAST_GOOD.
+          Test file: M19_R89_NATIVE_BOB_BANK_GET_01.asc
+          The 1..8-plane capture stores bank-owned planar pixels, NOT yet rendered Bobs.
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: M19_R89_NATIVE_BOB_BANK_CAPTURE_GATE_A_ONLY
+          path: out/R89/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Ensure protected binaries, active test and passed tests unchanged
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
