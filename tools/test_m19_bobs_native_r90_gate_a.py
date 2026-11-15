@@ -8,7 +8,7 @@ bank relookup and preserved registers. Not a WinUAE/AMOS Compiler claim.
 from __future__ import annotations
 from struct import unpack_from
 from collections import deque
-from unicorn import UC_HOOK_CODE
+from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_WRITE
 from hashlib import sha256
 from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
 from amos_link_test_support import relocate
@@ -36,6 +36,9 @@ class Engine(NativeBobMachine):
           'off':self.entry+(report['bob_off_offset']-baseline_len),
           'draw':self.entry+(report['bob_draw_offset']-baseline_len),
         }
+        self.sel_addr=self.entry+(report['selected_word_offset']-len(r88parts[86]))
+        self.sel_writes=deque(maxlen=20)
+        self.uc.hook_add(UC_HOOK_MEM_WRITE,lambda uc,access,addr,size,value,user:self.sel_writes.append((hex(self.uc.reg_read(UC_M68K_REG_PC)),hex(addr),size,hex(value))),begin=self.sel_addr,end=self.sel_addr+1)
         self.mask_pcs=deque(maxlen=25)
         self.mask_select_regs=deque(maxlen=8)
         self.uc.hook_add(UC_HOOK_CODE,lambda uc,addr,size,user:self.mask_select_regs.append((self.d(0),hex(self.a(4)),bytes(self.uc.mem_read(self.a(4),2)).hex())),begin=self.entries['mask']+60,end=self.entries['mask']+60)
@@ -150,7 +153,7 @@ def main():
             assert m.call('get',(2,17,1,47,12))==1
             src_idx=pixel(3,2)&((1<<depth)-1)
             _mk=m.invoke('mask',1,src_idx)
-            assert _mk==1,(layout,depth,'make_mask_status',_mk,'mask_trace',list(m.mask_pcs),'mask_regs',list(m.mask_select_regs),'selected',bytes(m.uc.mem_read(m.entry+(meta['selected_word_offset']-len(unpack_ap20(R88.read_bytes())[1][86])),2)).hex())
+            assert _mk==1,(layout,depth,'make_mask_status',_mk,'mask_trace',list(m.mask_pcs),'mask_regs',list(m.mask_select_regs),'writes',list(m.sel_writes),'selected',bytes(m.uc.mem_read(m.entry+(meta['selected_word_offset']-len(unpack_ap20(R88.read_bytes())[1][86])),2)).hex())
             assert m.source_image(1)[3][0]==0,'transparent index not masked'
             # Make 0 the transparency index separately (not forced globally).
             assert m.invoke('mask',1,0)==1
