@@ -1,6 +1,19 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## ÉTAT ACTUEL — M19 P2.3 R86 : Gates A/B/C PASS, pas de promotion (15/11/2026)
+## ÉTAT ACTUEL — M19 P2.4, banc pixels + benchmark R86 (15/11/2026)
+
+- **Branche main uniquement** ; aucun tag, aucune release, aucune promotion. Binaire **R86 v0.13.31** dans `dist/AMOSPro_AGA.Lib` : 73 232 octets, SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`. **R84 LAST_GOOD** reste figée : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`.
+- **Test actif unique** : `tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc`. **L'ancien ASC P2.3 archivé sans changement** : `tests/passed/M19_P23_BOBS_BATCH_01.asc`, blob Git `19ad2044252783454f4082c118e53b34a6b83478`. Le P2.3 dispose déjà de **Gates A/B/C PASS** ; son rapport demeure [M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md).
+- **Nouveau P2.4** : 19 indices de couleur vérifiés par décodage d'une capture AGAPIC v1 1×1 (pas de faux flag `CLIP`/`MASK`/`ORDER`), front contrôlé après Swap explicite, parité d'images complètes BASIC/Batch 144×144 sur **4/8/16 Bobs**, comparaison de tous les octets RLE.
+- **Mesure unique prévue** : draw-only, **64 itérations × 2 passages AB/BA** pour 4/8/16 Bobs ; **12 sous-runs et 3 584 dessins par méthode**. Aucun Swap, Wait VBL, fond, capture, tri Z ou allocation dans les plages chronométrées. `Timer` en ticks ; ne pas comparer directement les ms P2.1, périmètres différents. WinUAE cible 68020/14 MHz/PAL/JIT OFF.
+- **Gates P2.4 WinUAE B Runtime/C Compiled : PENDING**, nouveaux journaux attendus `RAM:M19_P24_RUNTIME.TXT` et `RAM:M19_P24_COMPILED.TXT`. Ne pas annoncer de gain sans mesures réelles. Le contrôle de source/CI statique est distinct des Gates WinUAE.
+- **CI générale historique** : dernier diagnostic `build_aga_r84_agapic.py` refuse encore le SHA de la candidate R86 lors d'un test de reconstruction R84 ; chantier d'outillage séparé, aucune modification de la bibliothèque R84.
+
+[Contrat de validation P2.4](M19_P24_PIXEL_ORACLE_BENCH_PLAN_2026-11-15.md).
+
+---
+
+## HISTORIQUE — M19 P2.3 R86 : Gates A/B/C PASS, pas de promotion (15/11/2026)
 
 **Branche `main` uniquement**, aucun tag, release ou changement de branche. **Candidate active** `dist/AMOSPro_AGA.Lib` R86 v0.13.31 : **73 232 octets**, SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`, **78 commandes / 88 entrées AP20**, blocs C2P 5 558 / IFF 2 508 / BOBS 5 226 / AGA 56 580. `Aga Bob Batch(DescriptorBank,Count)` fonctionne dans le scénario livré, `Aga Bob Probe` est conservée. **R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` toujours figée** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`).
 

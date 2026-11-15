@@ -1,0 +1,36 @@
+name: M19 P2.4 R86 BOBS pixel oracle and benchmark - static pre-WinUAE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-p24-bobs-pixels-static.yml"
+      - "tools/test_m19_p24_bobs_pixels_bench_static.py"
+      - "tests/current/*.asc"
+      - "tests/passed/M19_P23_BOBS_BATCH_01.asc"
+      - "tests/current/README.md"
+      - "tools/test_current_ram_log.py"
+      - "dist/AMOSPro_AGA.Lib"
+      - "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate installed candidate identity and protected R84
+        run: python -B tools/verify_fast.py
+      - name: Validate unique active AMOS source and RAM log
+        run: python -B tools/test_current_ram_log.py
+      - name: Pixel oracle, archive identity, descriptor and benchmark preflight
+        run: python -B tools/test_m19_p24_bobs_pixels_bench_static.py
+      - name: Reject modified binary artifacts
+        run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib

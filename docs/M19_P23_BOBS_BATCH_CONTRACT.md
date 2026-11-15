@@ -46,4 +46,6 @@ AGAPIC accepte les formats v1/v2 avec contraintes propres (notamment ModeID v2).
 - **Limites des contrôles WinUAE :** les compteurs `ORDER`, `MASK`, `CLIP` sont posés après retour positif et ne constituent **pas** un oracle pixel par pixel. La chaîne `LIBRARY R86_V0.13.31` dans les journaux est écrite par l'ASC et **ne prouve pas** à elle seule la SHA du binaire installé.
 - **Gate D Amiga physique : non testée.** Aucun changement de `LAST_GOOD`, pas de promotion, branche, tag ou release.
 
-Voir [rapport détaillé et deux journaux](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) · [test actif](../tests/current/M19_P23_BOBS_BATCH_01.asc). Les règles d'erreur restent valables : un retour Batch=0 interdit de présenter un frame partiel et impose de reconstruire le fond avant réessai.
+Voir [rapport détaillé et deux journaux](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) · [test actif](../tests/passed/M19_P23_BOBS_BATCH_01.asc). Les règles d'erreur restent valables : un retour Batch=0 interdit de présenter un frame partiel et impose de reconstruire le fond avant réessai.
+
+Depuis le passage au banc P2.4, l'ASC P2.3 qualifié est conservé dans `tests/passed/` ; [le test actuel P2.4](../tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc) vérifie séparément les couleurs de pixels et prépare un benchmark draw-only, **sans changer l'API R86**.

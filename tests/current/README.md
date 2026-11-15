@@ -1,11 +1,20 @@
-# Test actif — M19 P2.3 BOBS natif R86
+# Test actif — M19 P2.4, validation pixels et benchmark R86
 
-**Seul ASC actif** : [M19_P23_BOBS_BATCH_01.asc](M19_P23_BOBS_BATCH_01.asc).
+**Un seul ASC actif : [M19_P24_BOBS_PIXELS_BENCH_01.asc](M19_P24_BOBS_PIXELS_BENCH_01.asc).**
 
-- Requiert la bibliothèque R86 candidate dans `dist/AMOSPro_AGA.Lib` et installée dans AMOS (la R84 LAST_GOOD ne possède pas la commande).
-- Crée ses propres banques AGAPIC v1/v2, FICON8, et BOB1 dans AMOS, sans ressource externe.
-- **Gates B/C déjà PASS** selon les journaux fournis du 15/11/2026 : Runtime `PRG_STATE 1`, Compiled `PRG_STATE -1`, les deux `RESULT 1`, `ERR 0`, `VERDICT PASS`, Chip/Fast sans delta. [Rapport détaillé](../../docs/M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md). Ces journaux attestent le scénario, mais les compteurs de clipping/ordre/transparence ne comparent pas les pixels à un oracle WinUAE.
-- **Ne pas modifier cet ASC** tant qu'il sert de preuve des Gates B/C ; garder un seul ASC actif. Un retour 0 au Batch signifie **ne pas faire Swap** avant reconstitution du fond. Le benchmark 4 itérations a donné 13 ticks BASIC / 13 ticks Batch (aucun gain démontré).
-- Le test historique de quatrième unité est archivé **octet pour octet** dans `tests/passed/M19_P22_4UNIT_PROBE_01.asc`.
+Le test M19 P2.3 déjà qualifié a été [archivé octet pour octet](../passed/M19_P23_BOBS_BATCH_01.asc), sans changement du code. Son [rapport Gates B/C](../../docs/M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) reste valide ; ses anciens journaux ne peuvent pas servir à valider P2.4.
 
-Voir [contrat M19 P2.3](../../docs/M19_P23_BOBS_BATCH_CONTRACT.md).
+**Candidat à installer :** `dist/AMOSPro_AGA.Lib` **R86 v0.13.31**, inchangée, SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`. `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 reste protégée.
+
+Le nouveau programme crée lui-même AGAPIC v1/v2 et FICON8. Il compare **19 vrais indices de pixels** issus de captures 1×1, contrôle l'ordre Z, l'opacité du pen 0, la transparence, les clips et l'ancien front après le Swap explicite. Il compare ensuite **le flux image complet** entre commandes individuelles et `Aga Bob Batch` pour 4, 8 et 16 Bobs.
+
+Le benchmark intégré utilise 64 répétitions × 2 passages inversés par méthode et par nombre de Bobs, **sans tri Z, fond, Swap ou Wait VBL dans la zone chronométrée**. Il ne mesure donc pas exactement le même périmètre que le benchmark P2.1.
+
+**Exécution WinUAE :** de préférence 68020, 14 MHz, PAL et JIT désactivé. Exécuter d'abord en Runtime, puis Compiler. Récupérer dans `RAM:` :
+
+- `M19_P24_RUNTIME.TXT`
+- `M19_P24_COMPILED.TXT`
+
+**Statut :** préflight/CI statique à vérifier ; **Gates WinUAE Runtime/Compiled P2.4 non testées** jusqu'à réception des deux nouveaux journaux. Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PIXEL_OK 19`, `PIXEL_BAD 0`, `PARITY_OK 3`, `PARITY_BAD 0`, `BENCH_RUNS 12`, `CLOSE_RETURNED 1`.
+
+[Plan technique et limites](../../docs/M19_P24_PIXEL_ORACLE_BENCH_PLAN_2026-11-15.md).

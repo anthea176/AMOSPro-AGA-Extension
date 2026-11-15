@@ -1,12 +1,12 @@
 # M19 P2.3 — R86 v0.13.31 : WinUAE Runtime et Compiled PASS (15/11/2026)
 
-**Gates B (Runtime) et C (AMOS Compiler) du test actif `Aga Bob Batch` : PASS**, sur les deux journaux transmis par l'auteur. Ces preuves s'appliquent au scénario `tests/current/M19_P23_BOBS_BATCH_01.asc`, et **ne constituent ni une promotion de R86, ni une démonstration de gain de vitesse, ni une validation exhaustive de tous les pixels WinUAE**.
+**Gates B (Runtime) et C (AMOS Compiler) du test actif `Aga Bob Batch` : PASS**, sur les deux journaux transmis par l'auteur. Ces preuves s'appliquent au scénario `tests/passed/M19_P23_BOBS_BATCH_01.asc`, et **ne constituent ni une promotion de R86, ni une démonstration de gain de vitesse, ni une validation exhaustive de tous les pixels WinUAE**.
 
 ## Version, test et intégrité
 
 - Dépôt : `anthea176/AMOSPro-AGA-Extension` ; branche **`main`** uniquement.
 - Candidat installé attendu : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **R86 v0.13.31** : 73 232 octets ; SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`. 78 commandes, 88 entrées AP20 ; blocs C2P 5 558 / IFF 2 508 / BOBS 5 226 / AGA 56 580 octets.
-- Source du test AMOS : [`tests/current/M19_P23_BOBS_BATCH_01.asc`](../tests/current/M19_P23_BOBS_BATCH_01.asc), blob Git `19ad2044252783454f4082c118e53b34a6b83478`.
+- Source du test AMOS : [`tests/passed/M19_P23_BOBS_BATCH_01.asc`](../tests/passed/M19_P23_BOBS_BATCH_01.asc), blob Git `19ad2044252783454f4082c118e53b34a6b83478`.
 - R84 [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) **intouchable**, 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`.
 - Gate A réelle MC68020 : **8 tests PASS** dans la [CI dédiée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43700178749), dont pixels AGAPIC v1/v2 et FICON8, ModelID v2, ABI, rejets, clipping, modes et protection du front.
 - **Limite d'attribution binaire** : les deux logs contiennent `LIBRARY R86_V0.13.31`, chaîne écrite dans le programme ASC ; ils **ne mesurent pas le SHA256** du binaire effectivement chargé dans WinUAE. La SHA indiquée ci-dessus est celle du candidat construit et conservé dans Git.
@@ -107,6 +107,9 @@ CLOSE_RETURNED  1
 
 ## Suite
 
-Ne pas modifier le test déjà qualifié afin de conserver la correspondance avec les journaux. Un **nouveau test à venir**, à installer seul dans `tests/current/` en archivant celui-ci octet pour octet dans `tests/passed/`, pourra vérifier un oracle de pixel WinUAE sur chevauchement, transparence et clipping, puis effectuer une mesure plus longue et ciblée du coût de dessin. Ne pas annoncer de gain avant cette mesure.
+**Suite engagée sur `main` :** le test P2.3 est archivé sans modification dans `tests/passed/M19_P23_BOBS_BATCH_01.asc`. Le nouveau banc [M19 P2.4 pixels et performance](M19_P24_PIXEL_ORACLE_BENCH_PLAN_2026-11-15.md) est le **seul ASC actif** et attend ses propres journaux WinUAE. **Gates B/C P2.4 non testées** ; ne pas lui attribuer les résultats P2.3.
 
-[Contrat R86](M19_P23_BOBS_BATCH_CONTRACT.md) · [Test actif](../tests/current/M19_P23_BOBS_BATCH_01.asc) · [Roadmap](ROADMAP.md)
+
+Ne pas modifier le test déjà qualifié afin de conserver la correspondance avec les journaux. Le **nouveau test P2.4**, installé seul dans `tests/current/` après archivage de P2.3, doit vérifier un oracle de pixel WinUAE sur chevauchement, transparence et clipping, puis effectuer une mesure plus longue et ciblée du coût de dessin. Son résultat WinUAE est encore en attente. Ne pas annoncer de gain avant cette mesure.
+
+[Contrat R86](M19_P23_BOBS_BATCH_CONTRACT.md) · [Test actif](../tests/passed/M19_P23_BOBS_BATCH_01.asc) · [Roadmap](ROADMAP.md)
