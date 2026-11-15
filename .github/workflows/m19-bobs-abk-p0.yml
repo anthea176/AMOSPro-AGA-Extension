@@ -8,6 +8,9 @@ on:
       - 'tools/test_m19_agabob_abk.py'
       - 'tools/m19_agabob_fixture.py'
       - 'tools/m19_bobs_ap20_feasibility.py'
+      - 'tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk'
+      - 'tests/fixtures/m19_bobs/README.md'
+      - 'tests/design/M19_BOBS_ABK_P0_LOAD_SAVE_01.asc'
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,14 +27,13 @@ jobs:
         run: python -m py_compile tools/m19_agabob_abk.py tools/m19_agabob_fixture.py tools/test_m19_agabob_abk.py tools/m19_bobs_ap20_feasibility.py
       - name: Run multi-image planar, mask and save-load host regressions
         run: python -B tools/test_m19_agabob_abk.py
-      - name: Regenerate deterministic ABK and verify its checksum
+      - name: Compare committed ABK asset byte-for-byte with the fixture generator
         run: |
-          python -B tools/m19_agabob_fixture.py
-          python -B -c "import hashlib,pathlib; p=pathlib.Path('M19_BOBS_HERO_BANK10.abk'); assert len(p.read_bytes())==131092; assert hashlib.sha256(p.read_bytes()).hexdigest()=='b98aff949c0d2d28797c1a72dca66b466ffdbc2fffeb851669971b430e8a1ca6'"
+          python -B -c "import hashlib,sys,pathlib; sys.path.insert(0,'tools'); from m19_agabob_fixture import build_fixture; p=pathlib.Path('tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk'); b=p.read_bytes(); assert b==build_fixture(); assert len(b)==131092; assert hashlib.sha256(b).hexdigest()=='b98aff949c0d2d28797c1a72dca66b466ffdbc2fffeb851669971b430e8a1ca6'"
       - uses: actions/upload-artifact@v4
         with:
           name: M19_BOBS_ABK_P0_HOST_FIXTURE_ONLY
-          path: M19_BOBS_HERO_BANK10.abk
+          path: tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk
           retention-days: 14
           if-no-files-found: error
       - name: Ensure immutable library and active test unchanged

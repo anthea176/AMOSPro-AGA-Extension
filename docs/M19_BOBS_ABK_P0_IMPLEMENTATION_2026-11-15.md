@@ -26,9 +26,12 @@ PREPARE seulement : tools/m19_bobs_ap20_feasibility.py, sondage structurel des d
 - tools/test_m19_agabob_abk.py : lancer python -B tools/test_m19_agabob_abk.py.
 - tools/m19_agabob_fixture.py : lancer python -B tools/m19_agabob_fixture.py pour créer M19_BOBS_HERO_BANK10.abk.
 - tools/m19_bobs_ap20_feasibility.py : lancer python -B tools/m19_bobs_ap20_feasibility.py à la racine du dépôt avec les archives R84/R88 ; test de structure uniquement.
+- tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk : **asset ABK réel archivé dans le dépôt**, indépendant du ZIP et de GitHub Actions.
 - tests/design/M19_BOBS_ABK_P0_LOAD_SAVE_01.asc : programme AMOS à exécuter via Project -> Merge ASCII, qui vérifie Load, Save, Erase, Load du fixture ; NE FAIT PAS appel aux nouveaux tokens absents.
 
-## Fixture canonique
+## Fixture canonique — asset GitHub présent
+
+**Fichier ABK versionné :** [tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk](../tests/fixtures/m19_bobs/M19_BOBS_HERO_BANK10.abk). Voir [le README des assets](../tests/fixtures/m19_bobs/README.md) pour la copie **conjointe** de l'ABK et du test ASC dans le répertoire courant AMOS.
 
 Banque 10 : image 1 31x19x4 masque index 0, image 2 37x20x8 masque index 27, image 3 1x1x1 non masquée. 131092 octets (enveloppe comprise), SHA256 b98aff949c0d2d28797c1a72dca66b466ffdbc2fffeb851669971b430e8a1ca6.
 
