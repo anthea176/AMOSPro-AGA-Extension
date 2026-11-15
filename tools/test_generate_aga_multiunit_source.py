@@ -21,10 +21,16 @@ from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
 from decoder68k import Decoder
 from generate_aga_multiunit_source import (
-    digest, export, identify, native_unit_source, validate_wrapped,
+    digest, export, identify, native_unit_source, validate_wrapped, trace_unit_code,
 )
 
 def run() -> None:
+    # AMOS Rjsr is a 6-byte linker word, and decoded CPU code resumes after it.
+    fixture = bytes.fromhex("7001fe11f700031d70024e75")
+    decoded, covered = trace_unit_code(fixture, {0})
+    assert set(decoded) == {0, 8, 10}
+    assert decoded[8].text == "moveq #2,d0"
+    assert not any(covered[2:8])
     # Authentic MC68000 signed and unsigned integer DIV/MUL mnemonics.
     for opcode, expected in (
         ("80c1", "divu.w d1,d0"),
