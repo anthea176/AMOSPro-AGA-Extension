@@ -1,0 +1,38 @@
+name: M19 AGA Bobs P0 - ABK model regression (no native promotion)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-bobs-abk-p0.yml'
+      - 'tools/m19_agabob_abk.py'
+      - 'tools/test_m19_agabob_abk.py'
+      - 'tools/m19_agabob_fixture.py'
+      - 'tools/m19_bobs_ap20_feasibility.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  abk-host-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate reference codec syntax
+        run: python -m py_compile tools/m19_agabob_abk.py tools/m19_agabob_fixture.py tools/test_m19_agabob_abk.py tools/m19_bobs_ap20_feasibility.py
+      - name: Run multi-image planar, mask and save-load host regressions
+        run: python -B tools/test_m19_agabob_abk.py
+      - name: Regenerate deterministic ABK and verify its checksum
+        run: |
+          python -B tools/m19_agabob_fixture.py
+          python -B -c "import hashlib,pathlib; p=pathlib.Path('M19_BOBS_HERO_BANK10.abk'); assert len(p.read_bytes())==131092; assert hashlib.sha256(p.read_bytes()).hexdigest()=='b98aff949c0d2d28797c1a72dca66b466ffdbc2fffeb851669971b430e8a1ca6'"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: M19_BOBS_ABK_P0_HOST_FIXTURE_ONLY
+          path: M19_BOBS_HERO_BANK10.abk
+          retention-days: 14
+          if-no-files-found: error
+      - name: Ensure immutable library and active test unchanged
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
