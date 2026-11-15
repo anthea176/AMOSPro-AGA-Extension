@@ -1,0 +1,50 @@
+name: M19 R90 native masked persistent AGA Bobs - Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-r90-native-masked-bobs-gate-a.yml"
+      - "tools/m19_bobs_mask_native_emit.py"
+      - "tools/m19_bobs_object_native_emit.py"
+      - "tools/build_m19_bobs_native_r90.py"
+      - "tools/test_m19_bobs_native_r90_gate_a.py"
+      - "tests/design/M19_R90_NATIVE_MASKED_BOBS_ANIM_01.asc"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  r90-cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install MC68020 test emulator and disassembler
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Verify native Python syntax
+        run: |
+          python -m py_compile tools/m19_bobs_mask_native_emit.py tools/m19_bobs_object_native_emit.py tools/build_m19_bobs_native_r90.py tools/test_m19_bobs_native_r90_gate_a.py
+      - name: Rebuild SHA-pinned R90, full AP20 and Compiler V2 static audit
+        run: python -B tools/build_m19_bobs_native_r90.py
+      - name: Execute native MC68020 mask and Bob animation pixel oracle
+        run: python -B tools/test_m19_bobs_native_r90_gate_a.py
+      - name: AMOS syntax preflight
+        run: python -B tools/amos_preflight.py tests/design/M19_R90_NATIVE_MASKED_BOBS_ANIM_01.asc
+      - name: Create standalone R90 extension and ASC for WinUAE
+        run: |
+          python -B tools/build_m19_bobs_native_r90.py --output out/R90/AMOSPro_AGA_R90_v0.13.35_M19_MASKED_BOBS_GATE_A_ONLY.Lib
+          cp tests/design/M19_R90_NATIVE_MASKED_BOBS_ANIM_01.asc out/R90/
+          printf '%s\n' 'M19 R90 masked Bobs, CPU compositor' 'Gate A only, no WinUAE B or compiler C execution' 'No automatic Aga Swap; test calls it explicitly.' 'Install in isolated WinUAE extension slot 14, never over LAST_GOOD.' > out/R90/READ_THIS_FIRST.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: M19_R90_NATIVE_MASKED_BOBS_GATE_A_ONLY
+          path: out/R90/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Audit immutable candidates and tests
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
