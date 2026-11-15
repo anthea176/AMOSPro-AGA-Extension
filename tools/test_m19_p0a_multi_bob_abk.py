@@ -29,6 +29,35 @@ class MultiBobP0a(unittest.TestCase):
                 self.assertEqual((number, flags, bank.raw),
                                  (n, 3 if prefer_chip else 1, payload))
 
+    def test_native_amos_save_length_bit31_real_m19_geometry(self):
+        # Reproduce the observed AMOS Runtime Save: 3 images, generation 5,
+        # 1,032 payload bytes, 1,052 file bytes, size word 0x80000410.
+        payload = put_image(empty_bank(), 1, 17, 15, 8, bytes([255]) * (17 * 15))
+        payload = put_image(payload, 3, 37, 8, 8, bytes([37]) * (37 * 8))
+        payload = put_image(payload, 2, 31, 16, 8, bytes([127]) * (31 * 16))
+        payload = put_image(payload, 2, 1, 1, 8, bytes([127]))
+        self.assertEqual((len(payload), parse_payload(payload).generation), (1032, 5))
+        file = make_abk(24, payload)
+        self.assertEqual(len(file), 1052)
+        native = bytearray(file)
+        pack_into(">I", native, 8, 0x80000000 | (len(file) - 12))
+        self.assertEqual(native[8:12], bytes.fromhex("80000410"))
+        number, flags, bank = parse_abk(bytes(native))
+        self.assertEqual((number, flags, bank.raw), (24, 1, payload))
+        self.assertEqual([im.image_id for im in bank.images], [1, 2, 3])
+        self.assertEqual([bank.image(i).colour(0, 0) for i in (1, 2, 3)],
+                         [255, 127, 37])
+        # The host-produced unflagged AmBk envelope remains supported.
+        self.assertEqual(parse_abk(file)[2].raw, payload)
+        # Ignore ONLY the high bit; wrong low bits or other high bits fail.
+        for bad_length in (0x80000412, 0x00000412, 0x40000410, 0x80000000):
+            damaged = bytearray(native)
+            pack_into(">I", damaged, 8, bad_length)
+            with self.assertRaises(ValueError):
+                parse_abk(bytes(damaged))
+        with self.assertRaises(ValueError):
+            parse_abk(bytes(native) + bytes([0]))
+
     def test_plane_major_one_pixel_and_zero_opaque(self):
         img = pack_pixels(1, 1, 1, 8, b"\x89")
         self.assertEqual(img.stride, 2)

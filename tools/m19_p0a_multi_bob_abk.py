@@ -282,7 +282,12 @@ def parse_abk(raw: bytes) -> tuple[int, int, BobBank]:
     if type(raw) is not bytes or len(raw) < ABK.size:
         raise ValueError("invalid AMOS bank file")
     magic, number, flags, length, name = ABK.unpack_from(raw)
+    # Native AMOS Save may set bit 31 of the length field (observed on
+    # M19_P0A_68020_BOBS.ABK); the low 31 bits still equal file size - 12.
+    # Keep the exact-length check: never accept truncated or trailing bytes.
+    actual_length = length & 0x7FFFFFFF
     if (magic != b"AmBk" or not 5 <= number <= 65535 or
-            flags not in (1, 3) or length != len(raw) - 12 or name != BANK_NAME):
+            flags not in (1, 3) or actual_length != len(raw) - 12 or
+            name != BANK_NAME):
         raise ValueError("invalid AMOS DATA bank header")
     return number, flags, parse_payload(raw[ABK.size:])
