@@ -12,6 +12,9 @@ on:
       - tools/m19_p0a_get_bob_emit.py
       - tools/m19_p0b_mask020_emit.py
       - tools/test_m19_p0b_mask020_native.py
+      - tools/m19_p0b_masks_emit.py
+      - tools/build_m19_p0b_masks_in_memory.py
+      - tools/test_m19_p0b_masks_gate_a.py
       - tools/build_m19_p0a_r88_bank_in_memory.py
       - tools/build_m19_p0a_r88_get_in_memory.py
       - tools/test_m19_p0a_get_bob_emit.py
@@ -55,6 +58,10 @@ jobs:
           python -B tools/test_m19_p0a_r88_get_gate_a.py
       - name: MC68020 independent 1-bit mask source kernel (private Gate A)
         run: python -B tools/test_m19_p0b_mask020_native.py
+      - name: M19 P0b full Make/No Mask AP20 candidate, in memory only
+        run: python -B tools/build_m19_p0b_masks_in_memory.py
+      - name: MC68020 Make and No Mask pixel-exact CPU Gate A
+        run: python -B tools/test_m19_p0b_masks_gate_a.py
       - name: Export exact MC68020 Gate A candidate outside dist
         run: |
           python -B - <<'PY'
