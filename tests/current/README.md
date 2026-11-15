@@ -1,29 +1,26 @@
-# M19 P2.1 — dernier benchmark Z BASIC vs cache Z (68020/noJIT)
+# Test actif — M19 P2.2, quatrième bloc natif BOBS (R85)
 
-**Un seul ASC actif :** [M19_P21_ZCACHE_BENCH_01.asc](M19_P21_ZCACHE_BENCH_01.asc). Benchmark P2 4/8/16 **déjà PASS** archivé avec blob identique [ici](../passed/M19_P2_BENCH_BOBS_01.asc). [Rapport du précédent essai MC68020/14 MHz/JIT OFF](../../benchmarks/RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md).
+**Un seul ASC actif : [M19_P22_4UNIT_PROBE_01.asc](M19_P22_4UNIT_PROBE_01.asc)**
 
-**Binaire R84 v0.13.29 `LAST_GOOD` inchangé** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucun token AP20 nouveau, aucun test Compiler ou Amiga réel demandé.
+Il doit **toujours être cherché ici, dans `tests/current/`**, et non dans `tests/design/`. La bibliothèque de travail correspondante est [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), candidate **R85 v0.13.30**. Le fichier [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est **R84 v0.13.29**, sauvegarde protégée **à ne pas remplacer**.
 
-**État : P2.1 Gate B AMOS Runtime/WinUAE 68020 PASS** : `RESULT 1`, `ERR 0`, 240 frames, 9 088 dessins, 5 invalidations, 17 reconstructions, 1 188 réutilisations, 0 erreur/retry graphique, Chip/Fast delta 0. Le cache réduit la composition de **5,8 % / 15,6 % / 30,4 %** à 4/8/16 Bobs. [Rapport final](../../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). **Aucun autre essai demandé** ; source et R84 `LAST_GOOD` inchangées.
+## Résultats de l'essai
 
-## Démarrage direct sur le profil noJIT
+**Deux journaux WinUAE ont été reçus, tous les deux PASS :**
 
-1. Utiliser **68020 à 14 MHz, JIT OFF, AGA PAL**. Banques AMOS **11 à 23 libres**.
-2. Dans AMOS, repartir d'un programme vide, puis **Project → Merge ASCII** avec le [nouvel ASC](M19_P21_ZCACHE_BENCH_01.asc).
-3. Ne pas appuyer sur **Échap** (`ERR 41`). Les phases sans Swap peuvent donner un écran temporairement immobile. Laisser terminer **240 présentations** au total.
-4. Récupérer **`RAM:M19_P21_ZCACHE_RUNTIME.TXT`** et le renvoyer ici.
+| Mode | Fichier produit | Verdict |
+|---|---|---|
+| AMOS Runtime (`Prg State = 1`) | `RAM:M19_P22_4UNIT_RUNTIME.TXT` | **PASS, ERR 0, BOB_PROBE 1** |
+| Compiled (`Prg State = -1`) | `RAM:M19_P22_4UNIT_COMPILED.TXT` | **PASS, ERR 0, BOB_PROBE 1** |
 
-## Vérifications intégrées
+Les deux affichent aussi `AGA_DETECT -1`, `CLOSE_RETURNED 1`. [Journaux et analyse](../../docs/M19_P22_4UNIT_WINUAE_RUNTIME_COMPILED_2026-11-15.md).
 
-| Champ | Attendu |
-|---|---:|
-| `RESULT` / `ERR` | `1` / `0` |
-| `CACHE_INVALID_TESTS` / `BENCH_CASES` | `5` / `12` |
-| `SORT_CALLS_TOTAL` / `CACHE_BUILDS_TOTAL` / `CACHE_HITS_TOTAL` | `1225` / `17` / `1188` |
-| `FRAME_OK` / `DRAW_OK` | `240` / `9088` |
-| `SORT_FAIL`, `FILL_FAIL`, `DRAW_FAIL`, `SWAP_FAIL` | tous `0` |
-| `CLOSE_RETURNED` | `1` |
+**Ce test vérifie le quatrième groupe AP20**, pas le dessin des Bobs. `Aga Bob Batch` est encore à développer.
 
-Pour les **4/8/16 Bobs**, deux passages inversant l'ordre **BASE/CACHE**. Chaque passage mesure **120 demandes de tri, 60 compositions et 20 frames VBL+Swap** par mode. À comparer dans le journal : `N4_P0_BASE_COMP_TICKS` / `N4_P0_CACHE_COMP_TICKS`, idem pour N8, N16, P1, avec leurs **comptages de tris**. Le gain mesuré de composition est **5,8 % / 15,6 % / 30,4 %** à 4/8/16 Bobs ; voir le [rapport final](../../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md).
+Le benchmark antérieur P2.1 sur le cache Z, validé sous WinUAE, est [archivé à l'identique](../passed/M19_P21_ZCACHE_BENCH_01.asc), avec son [rapport final](../../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md).
 
-[Protocole complet](../../benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Plan M19](../../docs/M19_SPRITES_BOBS_AMAL_PLAN.md) · [Règles](../../EXTENSION_SOURCE_RULES.md).
+## Pour relancer ce test R85, si nécessaire
+
+Dans AMOS, importer le **seul ASC actif de ce dossier** via **Project → Merge ASCII**, en partant d'un programme vide et avec **R85 installée**. Ne pas lancer le test avec R84 `LAST_GOOD`, qui ne possède pas `Aga Bob Probe`. Le test écrit automatiquement le journal correspondant au mode d'exécution.
+
+**État :** témoin P2.2 Runtime/Compiled PASS ; R85 candidate non promue ; prochain développement = **véritable API native de Bobs**, distincte de ce témoin.

@@ -33,15 +33,20 @@ R84 dispose de **trois unités natives** : C2P **5 558**, IFF **2 508**, AGA/AGA
 4. **Vrai cœur MC68020 émulé avec Unicorn** : dispatch d'un ensemble d'entrées historiques et de la nouvelle entrée 82, puis **exécution réelle de `MOVEQ #1,D3 / MOVEQ #0,D2 / RTS`** via le quatrième dispatcher. Vérification de D0/D1/D4, A3 et pile préservés.
 5. Retour `inspect(parse(...))` de l'AP20 sans erreurs, aucune mutation de **`LAST_GOOD`**, `tests/current/` ou `tests/passed/`, et **seul `dist/AMOSPro_AGA.Lib` modifiable**.
 
-[Workflow dédié `m19-p22-fourth-unit-gate-a.yml`](../.github/workflows/m19-p22-fourth-unit-gate-a.yml). **Gate A PASS** : [CI native MC68020](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43696972204), dispatcher et témoin exécutable validés (test host CPU, pas WinUAE). Le workflow génère **`dist/AMOSPro_AGA.Lib`** en protégeant `LAST_GOOD`, puis vérifie sa SHA256. L'artefact CI s'appelle `M19_P22_DIST_CANDIDATE_GATE_A_ONLY`, et le binaire actif du dépôt correspond exactement au constructeur. **Gates B Runtime et C Compiler R85 NON TESTÉES**.
+[Workflow dédié `m19-p22-fourth-unit-gate-a.yml`](../.github/workflows/m19-p22-fourth-unit-gate-a.yml). **Gate A PASS** : [CI native MC68020](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43696972204), dispatcher et témoin exécutable validés (test host CPU, pas WinUAE). Le workflow génère **`dist/AMOSPro_AGA.Lib`** en protégeant `LAST_GOOD`, puis vérifie sa SHA256. L'artefact CI s'appelle `M19_P22_DIST_CANDIDATE_GATE_A_ONLY`, et le binaire actif du dépôt correspond exactement au constructeur. **Gates B Runtime et C Compiled du témoin R85 désormais PASS** sur les deux journaux fournis, [rapport](M19_P22_4UNIT_WINUAE_RUNTIME_COMPILED_2026-11-15.md). Le futur `Aga Bob Batch` reste non testé.
 
-## 4. Tests AMOS réels non encore réalisés
+## 4. Tests AMOS réels — Runtime et Compiled PASS
 
-Le témoin AMOS [`tests/design/M19_P22_4UNIT_PROBE_01.asc`](../tests/design/M19_P22_4UNIT_PROBE_01.asc) est **en réserve** : il appellera l'ancienne commande `Aga Detect` et la nouvelle `Aga Bob Probe`, et écrira un log `RAM:M19_P22_4UNIT_RUNTIME.TXT`. **Ne pas le lancer avec la R84 seule** : `Aga Bob Probe` n'y existe pas.
+**Le témoin est désormais l'unique ASC actif :** [`tests/current/M19_P22_4UNIT_PROBE_01.asc`](../tests/current/M19_P22_4UNIT_PROBE_01.asc). L'avoir placé dans `tests/design/` était une erreur d'organisation, corrigée **en déplaçant le même blob Git, sans modifier le source déjà testé**. Le P2.1 validé a été archivé octet pour octet dans [`tests/passed/M19_P21_ZCACHE_BENCH_01.asc`](../tests/passed/M19_P21_ZCACHE_BENCH_01.asc).
 
-**Ne pas remplacer le test actif** `tests/current/M19_P21_ZCACHE_BENCH_01.asc` validé Gate B sans nouvelle étape explicite ; rester à **un unique ASC actif**.
+L'auteur a transmis les deux journaux du témoin, disponibles intégralement dans le [rapport WinUAE M19 P2.2 Runtime/Compiled](M19_P22_4UNIT_WINUAE_RUNTIME_COMPILED_2026-11-15.md).
 
-**Le candidat R85 est maintenant dans `dist/AMOSPro_AGA.Lib`**. Pour tester, installer ce fichier dans AMOS (en gardant la R84 `LAST_GOOD` séparée). Puis qualifier par **WinUAE/AMOS Runtime (Gate B)** et **AMOS Compiler (Gate C)**. Ces deux gates sont **NON TESTÉES** ; le PASS Unicorn ne prouve pas que le chargeur Compiler fonctionne. Restaurer R84 avec `dist/AMOSPro_AGA_LAST_GOOD.Lib` si nécessaire ; **ne jamais l'écraser**. Gate D physique non testée.
+| Environnement signalé par le programme | Verdict | `AGA_DETECT` | `BOB_PROBE` | `ERR` |
+|---|---|---:|---:|---:|
+| Runtime, `PRG_STATE 1` | **PASS** | −1 | 1 | 0 |
+| Compiled, `PRG_STATE -1` | **PASS** | −1 | 1 | 0 |
+
+**Gate B du témoin PASS et Gate C Compiled du témoin PASS dans ce scénario** : le nouveau groupe AP20 est bien appelé et retourne une valeur valide. Les journaux n'enregistrent pas la SHA du fichier installé, les réglages WinUAE ni de dessin. **Ne pas interpréter ce résultat comme une validation d'une API de Bobs complète.** R85 reste le candidat de `dist/AMOSPro_AGA.Lib` ; R84 `LAST_GOOD` protégée.
 
 ## 5. Étape suivante si les quatre unités sont confirmées
 

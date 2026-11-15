@@ -1,6 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
-## M19 P2.2 — bloc BOBS AP20 expérimental, infrastructure native (15/11/2026)
+## ÉTAT ACTUEL M19 P2.2 — un seul ASC dans tests/current, témoins Runtime/Compiled PASS (15/11/2026)
+
+**Test courant : [`tests/current/M19_P22_4UNIT_PROBE_01.asc`](tests/current/M19_P22_4UNIT_PROBE_01.asc), et aucun autre fichier `.asc` dans `tests/current/`.** Le déposer ailleurs a été une erreur corrigée. Source P2.2 déplacée sans changement (blob `cd564aa660f8927b1c4d0b63456de58b5535fae0`), ancien banc P2.1 [archivé à l'identique](tests/passed/M19_P21_ZCACHE_BENCH_01.asc) (blob `f75af1a84b4c658d5f1cb330d58d248413e72cc7`). Les mentions plus anciennes de tests actifs sont **historiques**.
+
+**Témoin natif `Aga Bob Probe` : Runtime `PRG_STATE 1` PASS et Compiled `PRG_STATE -1` PASS** ; les deux journaux donnent `RESULT 1`, `ERR 0`, `AGA_DETECT -1`, `BOB_PROBE 1`, `CLOSE_RETURNED 1`. [Rapport](docs/M19_P22_4UNIT_WINUAE_RUNTIME_COMPILED_2026-11-15.md). Aucun moteur Bobs ni API Batch validés. Candidat actif **R85** dans `dist/AMOSPro_AGA.Lib` ; `LAST_GOOD` **R84** intacte. Sur **`main` exclusivement**.
+
+---
+
+
+## HISTORIQUE — M19 P2.2 avant les essais Runtime/Compiled (15/11/2026)
 
 Le chantier de **quatrième unité native AP20 BOBS** est engagé sur `main`. Le binaire de travail **R85 v0.13.30** est **`dist/AMOSPro_AGA.Lib` (67 988 octets, SHA256 `4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f`)** ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste strictement **R84 v0.13.29** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Le candidat est un **témoin seulement**, `Aga Bob Probe`, **pas** `Aga Bob Batch` : [documentation](docs/M19_P22_FOURTH_BOBS_UNIT_2026-11-15.md). Gate A MC68020 PASS ; Gates B Runtime et C Compiler R85 non testées. Le programme `tests/design/M19_P22_4UNIT_PROBE_01.asc` n'est **pas actif** et nécessite un binaire expérimental quatre unités. Le seul `tests/current/*.asc` demeure `M19_P21_ZCACHE_BENCH_01.asc` validé Runtime. La Gate A native/CI est **PASS**, Gates B/C réelles à qualifier **séparément** ; aucune API Batch publiée ni nouvelle branche. Le constructeur n'écrit qu'à `dist/AMOSPro_AGA.Lib` sous l'option `--write-dist`, **jamais** la LAST_GOOD.
 

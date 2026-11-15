@@ -40,7 +40,7 @@ def verify(source):
         "file print":r"\bPrint\s*#\s*\d+",
         "trapped close":r"\bTrap\s+Close\b",
         "I/O result":r"\bErrtrap\b",
-        "mode field":r"RUN_MODE",
+        "mode field (RUN_MODE or PRG_STATE)":r"\b(?:RUN_MODE|PRG_STATE)\b",
         "result field":r"\bRESULT\b",
         "close field":r"CLOSE_RETURNED",
     }
