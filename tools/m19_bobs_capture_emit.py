@@ -115,8 +115,8 @@ def emit_get_bob() -> tuple[bytes, dict[str,int]]:
     c.imm('cmp',DATA_START,D(0));B(5,'reject')
     c.imm('cmp',DATA_BYTES,D(0));B(2,'reject')
     st(D(0),'offset')
-    c.move(I(0),D(0));c.move(M(0,12),D(0),'w')
-    c.tst(D(0));B(6,'reject')  # flags must be zero
+    c.move(I(0),D(0));c.move(M(0,14),D(0),'w')
+    c.tst(D(0));B(6,'reject')  # flags at +14, count at +12
 
     # Validate private AGA Screen state and inactive ScreenBuffer.
     c.move(M(5,STATE_PTR),A(4))
