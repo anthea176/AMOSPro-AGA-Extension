@@ -14,7 +14,7 @@ from unicorn.m68k_const import (
     UC_CPU_M68K_M68020, UC_M68K_REG_A0, UC_M68K_REG_A1,
     UC_M68K_REG_A7, UC_M68K_REG_D0, UC_M68K_REG_D1,
     UC_M68K_REG_D2, UC_M68K_REG_D3, UC_M68K_REG_D4,
-    UC_M68K_REG_PC, UC_M68K_REG_SR,
+    UC_M68K_REG_PC, UC_M68K_REG_SR, UC_M68K_REG_A2, UC_M68K_REG_A4,
 )
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_020
 
@@ -64,7 +64,22 @@ def run_case(raw, *, base=0x10000, width=17, height=3, depth=8,
              (UC_M68K_REG_D4,stride if bad_stride is None else bad_stride),
              (UC_M68K_REG_A7,STACK),(UC_M68K_REG_SR,0x2000)]
     for reg,val in regvals:uc.reg_write(reg,val)
-    uc.emu_start(base,STOP,count=4000000)
+    try:
+        uc.emu_start(base,STOP,count=4000000)
+    except Exception as exc:
+        regs = {name: hex(uc.reg_read(reg)) for name,reg in
+                (('PC', UC_M68K_REG_PC), ('A0', UC_M68K_REG_A0),
+                 ('A1', UC_M68K_REG_A1), ('A2', UC_M68K_REG_A2),
+                 ('A4', UC_M68K_REG_A4), ('SP', UC_M68K_REG_A7),
+                 ('D0', UC_M68K_REG_D0), ('D1', UC_M68K_REG_D1),
+                 ('D2', UC_M68K_REG_D2), ('D3', UC_M68K_REG_D3),
+                 ('D4', UC_M68K_REG_D4))}
+        pc=uc.reg_read(UC_M68K_REG_PC)
+        dis=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
+                 .disasm(uc.mem_read(pc,12),pc))
+        raise AssertionError(('mask CPU exception', str(exc),
+                              width,height,depth,transparent,base,
+                              regs,[f'{i.mnemonic} {i.op_str}' for i in dis[:2]])) from exc
     assert uc.reg_read(UC_M68K_REG_PC)==STOP
     assert uc.reg_read(UC_M68K_REG_A7)==STACK+4
     assert uc.reg_read(UC_M68K_REG_D2)==0
