@@ -1,6 +1,15 @@
 # EXTENSION_SOURCE_RULES.md
 
-## Test de travail courant M19 P2.0 (15/11/2026)
+## Test de travail courant M19 benchmark 4/8/16 (15/11/2026)
+
+**ASC actif unique :** `tests/current/M19_P2_BENCH_BOBS_01.asc` (mesure 4/8/16 Bobs, source préparée, Gate B benchmark **EN ATTENTE**). Le prototype **P2.0 déjà validé WinUAE Runtime PASS** est archivé **avec le même blob Git** à `tests/passed/M19_P2_OBJECTS_01.asc` ; son rapport reste [M19_P2_WINUAE_RUNTIME_2026-11-15.md](docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md). Il ne faut pas confondre le PASS du banc fonctionnel P2.0 avec un résultat de performance encore inexistant.
+
+**R84 v0.13.29 `LAST_GOOD` inchangée, 76 commandes / 85 AP20.** Benchmark AMOS BASIC, aucune nouvelle API. Protocole de mesure [4/8/16](benchmarks/README_M19_P2_BOBS_4_8_16.md), `main` uniquement, pas de branche. Les états historiques ci-dessous restent des preuves datées mais ne rétablissent pas un ancien test comme ASC actif.
+
+---
+
+
+## HISTORIQUE — Test de travail M19 P2.0 avant benchmark (15/11/2026)
 
 **Ce bloc actualise la référence du test actif et son résultat** : `tests/current/M19_P2_OBJECTS_01.asc` est le seul ASC actif ; `tests/passed/M19_P1_AGAPIC_BOBS_01.asc` est le P1 PASS archivé **octet pour octet**. Le prototype **P2.0 AMOS BASIC a passé la Gate B WinUAE Runtime 68030** : `RESULT 1`, `ERR 0`, 240 frames, 0 erreur Draw/Swap, Chip/Fast delta 0, `CLOSE_RETURNED 1`. [Rapport](docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md). Ce résultat ne change ni la bibliothèque R84 v0.13.29 `LAST_GOOD`, ni l'API AP20 ; Compiler et matériel M19 non testés. Les listes de tests R84 ci-dessous restent des archives de leur etat au moment de la promotion, pas une instruction de remettre R84 comme ASC actif. **`main` uniquement, aucune nouvelle branche.** [Contrat P2](docs/M19_P2_OBJECT_MANAGER_CONTRACT.md) · [Reprise](docs/NEXT_SESSION.md).
 

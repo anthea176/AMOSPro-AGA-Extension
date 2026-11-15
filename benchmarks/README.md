@@ -1,5 +1,10 @@
 # Benchmarks graphiques AMOS / AMCAF / AGA
 
+## M19 / P2 — coût de 4, 8 et 16 Bobs logiciels (préparé, non mesuré)
+
+[Test AMOS unique actif](../tests/current/M19_P2_BENCH_BOBS_01.asc) · [protocole complet](README_M19_P2_BOBS_4_8_16.md) · [P2.0 fonctionnel archivé](../tests/passed/M19_P2_OBJECTS_01.asc). Bibliothèque R84 `LAST_GOOD` intacte. Deux passages pour 4/8/16 objets (répartition masqué/opaque/FICON8 constante) ; mesures `Timer` séparées : tri BASIC, Blit Fill, composition sans Swap, et VBL+Swap. **Aucune valeur WinUAE disponible** ; le benchmark doit être exécuté en PAL, JIT OFF et CPU fixe pour une comparaison pertinente.
+
+
 ## OPT020/P1e — comparaison R60 (R68 LAST_GOOD) / R69, WinUAE JIT OFF
 
 [**Benchmark comparatif R60 vs R69**](opt020_p1e_r60_vs_r69.asc) · [protocole de mesure](README_OPT020_P1E_R60_VS_R69.md) · [résultats compilés](RESULTATS_OPT020_P1E_R60_VS_R69_COMPILE_2026-11-13.md) : compilations utilisateur **PASS** des deux versions, R69 **3,39×** en OPA32 et **3,21×** en MSK32, sans fuite Chip. **Mesures WinUAE INTERPRÉTÉ / 68020 14 MHz / JIT OFF : PASS (13/11/2026).** Même ASC, même banque AGAPIC, même WinUAE 68020 / 14 MHz / PAL / JIT OFF, en **interprété uniquement**. La R68 protégée fournit le peintre R60 inchangé ; R69 active apporte le noyau 68020. Dix géométries, trois séries de 240 appels, masque réellement rempli et vérification de tous les retours. [Résultats bruts et analyse R60/R69](RESULTATS_OPT020_P1E_R60_VS_R69_2026-11-13.md) : opaque 16×16 **2,17×**, opaque 32×20 **3,32×**, masqué 32×20 **3,25×** ; jusqu'à 69,9 % de temps en moins. `ERR 0`, `RESULT 1`, Chip Free stable dans les deux passages. Aucun binaire ni ASC actif modifié, **AMOS Compiler non lancé** ; ces gains concernent ce benchmark interprété, pas le matériel physique.

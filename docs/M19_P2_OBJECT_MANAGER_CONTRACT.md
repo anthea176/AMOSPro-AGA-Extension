@@ -1,7 +1,7 @@
 # M19 P2 — Contrat proposé du gestionnaire d'objets AGA (avant toute API)
 
 > **15/11/2026 — Contrat de conception de reference pour le prototype P2.0 BASIC ; API native NON VALIDEE.**
-> L'auteur a autorisé le **prototype P2.0 en AMOS BASIC** (« ok go »). **Gate B P2.0 WinUAE Runtime 68030 : PASS** sur le banc 8 plans (voir [rapport](M19_P2_WINUAE_RUNTIME_2026-11-15.md)). **Aucune signature AP20, aucun format de banque public, aucune implémentation native n'est approuvée.** [ASC P2.0](../tests/current/M19_P2_OBJECTS_01.asc).
+> L'auteur a autorisé le **prototype P2.0 en AMOS BASIC** (« ok go »). **Gate B P2.0 WinUAE Runtime 68030 : PASS** sur le banc 8 plans (voir [rapport](M19_P2_WINUAE_RUNTIME_2026-11-15.md)). **Aucune signature AP20, aucun format de banque public, aucune implémentation native n'est approuvée.** [ASC P2.0 archivé](../tests/passed/M19_P2_OBJECTS_01.asc). Étude de performance active : [4/8/16 Bobs](../tests/current/M19_P2_BENCH_BOBS_01.asc), Gate B benchmark en attente.
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, **branche `main` uniquement**. Référence : R84 v0.13.29 `LAST_GOOD` inchangée (76 commandes / 85 entrées AP20, MC68020+).
 
 ## 1. Base factuelle et limites
@@ -123,4 +123,4 @@ cadence application (éventuellement Aga Wait Vbl)
 - [Rapport P1 Runtime 68030](M19_P1_WINUAE_RUNTIME_2026-11-15.md)
 - [Architecture privée R84](ARCHITECTURE.md) et [protection Safe du Blitter](M12_SAFE_BLITTER_R27.md)
 - [API publique R84](../README.fr.md), [règles permanentes](../EXTENSION_SOURCE_RULES.md)
-- [Test P2.0 actif](../tests/current/M19_P2_OBJECTS_01.asc) · [Test P1 validé archivé](../tests/passed/M19_P1_AGAPIC_BOBS_01.asc)
+- [Test P2.0 validé archivé](../tests/passed/M19_P2_OBJECTS_01.asc) · [Benchmark actif 4/8/16 Bobs](../tests/current/M19_P2_BENCH_BOBS_01.asc) · [Test P1 validé archivé](../tests/passed/M19_P1_AGAPIC_BOBS_01.asc)
