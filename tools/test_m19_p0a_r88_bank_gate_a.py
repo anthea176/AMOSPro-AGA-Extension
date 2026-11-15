@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R88-derived M19 P0a: real MC68000 Unicorn bank-selection Gate A.
+"""R88-derived M19 P0a: MC68020-only Unicorn bank-selection Gate A.
 
 Tests private native Bank Select + embedded 365 list transaction. Main AMOS
 service effects are MOCKS, both interpreter and compiled-style relocated native
@@ -8,11 +8,12 @@ layouts are exercised. This is NOT AMOS Runtime / Compiler / WinUAE validation.
 from __future__ import annotations
 
 from struct import pack
+from unittest.mock import patch
 from unicorn import UC_HOOK_CODE
-from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
-from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
+from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR,UC_CPU_M68K_M68020
+from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 
-from test_m5_generic import Machine,DR,AR,AMOS,STACK,STOP
+from test_m5_generic import Machine,DR,AR,AMOS,EXEC,STACK,STOP
 from amos_link_test_support import main_table,relocate,MAIN_BASE
 from amos_main_abi import declarations
 from build_m19_p0a_r88_bank_in_memory import build
@@ -30,7 +31,11 @@ NAMES=('Bnk.GetAdr','Lst.Cree','Lst.Del','Bnk.Change')
 class SelectMachine(Machine):
     def __init__(self,lib,layout='interpreted',occupied=None,
                  alloc_fail=False,foreign=False):
-        super().__init__(lib,None)
+        # The test framework defaults to M68000; this experiment must NEVER
+        # run a Gate A in CPU000 mode. R88's own P2.8 tests use this patch.
+        with patch('test_m5_generic.UC_CPU_M68K_M68000',UC_CPU_M68K_M68020):
+            super().__init__(lib,None)
+        self.uc.mem_write(EXEC+0x128,b'\x00\x02') # AFF_68020
         t,n=main_table(self.uc)
         self.targets={t[i]:name for i,name,*_ in declarations() if name in NAMES}
         assert set(self.targets.values())==set(NAMES)
@@ -155,7 +160,7 @@ class SelectMachine(Machine):
         try:
             self.uc.emu_start(self.entry,STOP,count=350000)
         except Exception as exc:
-            raise AssertionError(('68000 Bank Select exception',str(exc),
+            raise AssertionError(('68020 Bank Select exception',str(exc),
                 hex(self.uc.reg_read(UC_M68K_REG_PC)),n,self.calls)) from exc
         assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
         assert self.a(7)==STACK+4,'stack leak'
@@ -174,14 +179,14 @@ def main():
     tokens,entries,title=unpack_ap20(binary)
     raw,labels=emit_bank_select()
     assert entries[87].endswith(raw),'public stub not routed into BOBS native unit'
-    assert len(raw)==1336
+    assert len(raw)==len(emit_bank_select()[0])
     # capstone must consume the executable region before the state/dataset.
     m=SelectMachine(binary)
     patched=relocate(raw,ENTRY,{},m.uc)
     executable=patched[:labels['active_state']]
-    diss=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_000)
+    diss=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
               .disasm(executable,ENTRY))
-    assert sum(i.size for i in diss)==len(executable),'invalid native 68000 instruction'
+    assert sum(i.size for i in diss)==len(executable),'invalid native 68020 instruction'
     count=0
     for layout in ('interpreted','compiled'):
         m=SelectMachine(binary,layout=layout)
@@ -218,7 +223,12 @@ def main():
         assert m.run_select(11)==1
         assert m.find(11)==old and m.allocations==0
         count+=1
-    print('M19 P0a R88 native 68000 Gate A:',count,
+        m=SelectMachine(binary,layout=layout)
+        m.uc.mem_write(EXEC+0x128,b'\x00\x00')
+        assert m.run_select(10)==0 # simulated pre-020 feature flag
+        assert m.allocations==m.notifications==0
+        count+=1
+    print('M19 P0a R88 native 68020 Gate A:',count,
           'CPU cases, two separately relocated layouts,',
           '79 AP20 commands, no dist writes, SHA256',meta['sha256'])
 

@@ -1,4 +1,4 @@
-"""M19 P0a (R88 source only): Aga Bob Bank N, preliminary native selection.
+"""M19 P0a (R88 source only): MC68020-only Aga Bob Bank N selection.
 
 An AMOS DATA bank is created by the previously source-audited atomic list
 transaction, or a compatible existing AGBO bank is selected. The selected
@@ -36,6 +36,13 @@ def emit_bank_select():
     c.move(A(7),A(2))
     put(D(3),'bank')
     c.move(I(0),D(3))
+    # M19 native policy: CPU MC68020 minimum. On 68000/68010 return 0,
+    # never enter a fallback path or an AMOS bank allocation routine.
+    c.raw('20780004')            # MOVEA.L (4).W,A0 = ExecBase
+    c.move(A(0),D(0));c.tst(D(0));B(7,'done')
+    c.move(M(0,0x128),D(0),'w') # ExecBase.AttnFlags
+    c.word(0x0800);c.word(1)   # BTST #AFF_68020,D0
+    B(7,'done')                # BEQ: no 020 -> refuse
     get('bank',D(0))
     c.imm('cmp',5,D(0));B(5,'done')
     c.imm('cmp',65535,D(0));B(2,'done')

@@ -1,0 +1,57 @@
+name: M19 P0a R88-only MC68020 multi-image native Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/m19-p0a-r88-get-gate-a.yml
+      - tools/m19_p0a_multi_bob_abk.py
+      - tools/m19_p0a_capture_transaction.py
+      - tools/m19_p0a_amos_bank_transaction_emit.py
+      - tools/m19_p0a_bank_select_emit.py
+      - tools/m19_p0a_get_bob_emit.py
+      - tools/build_m19_p0a_r88_bank_in_memory.py
+      - tools/build_m19_p0a_r88_get_in_memory.py
+      - tools/test_m19_p0a_get_bob_emit.py
+      - tools/test_m19_p0a_r88_get_gate_a.py
+      - tools/test_m19_p0a_r88_bank_gate_a.py
+      - dist/AMOSPro_AGA.Lib
+      - dist/AMOSPro_AGA_LAST_GOOD.Lib
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  get-bob-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: MC68020 emulator and disassembler
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Immutable R88 and R84 bases
+        run: |
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+      - name: P0a host format, capture, and transaction regression
+        run: |
+          python -B tools/test_m19_p0a_multi_bob_abk.py
+          python -B tools/test_m19_p0a_capture_transaction.py
+          python -B tools/test_m19_p0a_amos_bank_transaction_emit.py
+          python -B tools/test_m19_p0a_bank_select_emit.py
+          python -B tools/test_m19_p0a_get_bob_emit.py
+      - name: Rebuild exact R88-based AP20 candidate in memory
+        run: |
+          python -B tools/build_m19_p0a_r88_bank_in_memory.py
+          python -B tools/build_m19_p0a_r88_get_in_memory.py
+      - name: MC68020 bank selection and pixel-exact Get AGA Bob Gate A
+        run: |
+          python -B tools/test_m19_p0a_r88_bank_gate_a.py
+          python -B tools/test_m19_p0a_r88_get_gate_a.py
+      - name: Ensure no binary, ASC or passed tests changed
+        run: |
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
+          git status --short
