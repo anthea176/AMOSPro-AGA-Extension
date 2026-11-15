@@ -1,5 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
+R86 v0.13.31 is the active NON-PROMOTED M19 P2.3 Batch candidate; native Gate A and WinUAE Runtime B/Compiled C passed for the dedicated test. No speedup established. R84 LAST_GOOD unchanged.
+
 R84 v0.13.29 is PROMOTED LAST_GOOD with explicit author approval: native Gate A PASS and WinUAE AMOS Compiler Gate C PASS (with a bank in the compiled program). Separate corrected Runtime Gate B NOT evidenced; physical Gate D untested.
 R83 v0.13.28 is the reproducible historical LAST_GOOD with A/B/C PASS on its own WinUAE test.
 R82 v0.13.27 remains the historical SHA-pinned source built from its own deterministic builder.
@@ -52,7 +54,7 @@ R82_SHA="b0a69766e1f07978d69498c0408ff349ad457d9284832f254cabd89c7c2b2a36"  # R8
 R83_SHA="01cc389fc5d28f306e52c7e4ec29b653d56c92807289c51731e685b0d3469feb"  # R83 0.13.28 modular former LAST_GOOD; R82 historical pinned
 R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 0.13.29 PROMOTED LAST_GOOD, Gate A CPU/CI and C AMOS Compiler PASS (bank included); corrected B not separately evidenced
 R85_SHA="4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"  # M19 P2.2 0.13.30 historical four-group probe, Gates A/B Runtime/C Compiled PASS
-R86_SHA="63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"  # M19 P2.3 0.13.31 native BOBS Batch, native Gate A PASS, WinUAE B/C PENDING; NOT LAST_GOOD
+R86_SHA="63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"  # M19 P2.3 0.13.31 BOBS native A PASS, WinUAE Runtime B/Compiled C PASS per author logs; NOT LAST_GOOD
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -93,7 +95,7 @@ def verify_active(root: Path):
         audit=inspect(parse(cur))
         assert not audit["issues"], audit["issues"]
         assert len([row for row in audit["tokens"] if row["name"].startswith("aga ")])==78
-        return cur,good,"R86 v0.13.31 M19 P2.3 BOBS native Batch: MC68020 Gate A PASS, WinUAE Runtime B / Compiled C NOT TESTED; R84 LAST_GOOD protected"
+        return cur,good,"R86 v0.13.31 M19 P2.3 BOBS native Batch: MC68020 Gate A PASS, WinUAE Runtime B / Compiled C PASS on author test logs (13/13 ticks, no speedup demonstrated); R84 LAST_GOOD protected"
     if current_sha == R85_SHA:
         from compiler_relocation import unpack_ap20
         from build_m19_p22_fourth_unit_probe import build as build_r85

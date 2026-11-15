@@ -37,6 +37,13 @@ L'en-tête, le nombre, les types, les coordonnées, modes et numéros de banques
 
 AGAPIC accepte les formats v1/v2 avec contraintes propres (notamment ModeID v2). FICON8 accepte seulement le format FICON8 à 8 plans. Les coordonnées sont clippées par les moteurs originaux.
 
-## Qualification
+## Qualification vérifiée (15/11/2026)
 
-Gate A : vrai MC68020 émulé, liaison AP20/Compiler V2, flux de pixels AGAPIC/FICON8, clipping, transparence, Z, rejets, buffers et fermeture statique, seulement après succès vérifié de la CI. Gates B/C : **NON TESTÉES**, en attente des logs WinUAE Runtime et Compiled de `tests/current/M19_P23_BOBS_BATCH_01.asc`. Les tests host ne prouvent pas un appel réel AMOS. Ne pas toucher à R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib`. Aucun tag/release.
+- **Gate A MC68020 : PASS**, 8/8 tests natifs Unicorn, avec oracle de pixels AGAPIC v1/v2 / FICON8, garde ModeID v2, clipping, modes opaque/transparence, ordre de dessin, erreurs, ABI et front buffer protégé. [CI dédiée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43700178749).
+- **Gate B WinUAE Runtime : PASS**, `RESULT 1`, `ERR 0`, `PRG_STATE 1`, `VERDICT PASS`.
+- **Gate C WinUAE Compiled : PASS**, `RESULT 1`, `ERR 0`, `PRG_STATE -1`, `VERDICT PASS`.
+- **Mesures :** 13 ticks en BASIC et 13 en Batch dans les deux modes sur quatre itérations incluant le fond ; **aucun gain démontré**. Delta Chip/Fast nul pour chaque test.
+- **Limites des contrôles WinUAE :** les compteurs `ORDER`, `MASK`, `CLIP` sont posés après retour positif et ne constituent **pas** un oracle pixel par pixel. La chaîne `LIBRARY R86_V0.13.31` dans les journaux est écrite par l'ASC et **ne prouve pas** à elle seule la SHA du binaire installé.
+- **Gate D Amiga physique : non testée.** Aucun changement de `LAST_GOOD`, pas de promotion, branche, tag ou release.
+
+Voir [rapport détaillé et deux journaux](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) · [test actif](../tests/current/M19_P23_BOBS_BATCH_01.asc). Les règles d'erreur restent valables : un retour Batch=0 interdit de présenter un frame partiel et impose de reconstruire le fond avant réessai.

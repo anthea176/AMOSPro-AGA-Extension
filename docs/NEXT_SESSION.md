@@ -1,6 +1,22 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## ÉTAT ACTUEL — M19 P2.3 R86 candidat natif (15/11/2026)
+## ÉTAT ACTUEL — M19 P2.3 R86 : Gates A/B/C PASS, pas de promotion (15/11/2026)
+
+**Branche `main` uniquement**, aucun tag, release ou changement de branche. **Candidate active** `dist/AMOSPro_AGA.Lib` R86 v0.13.31 : **73 232 octets**, SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`, **78 commandes / 88 entrées AP20**, blocs C2P 5 558 / IFF 2 508 / BOBS 5 226 / AGA 56 580. `Aga Bob Batch(DescriptorBank,Count)` fonctionne dans le scénario livré, `Aga Bob Probe` est conservée. **R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` toujours figée** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`).
+
+**Gates :** A native MC68020 **8/8 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43700178749)), **B WinUAE Runtime PASS** (`PRG_STATE 1`, `RESULT 1`, `ERR 0`), **C WinUAE Compiled PASS** (`PRG_STATE -1`, `RESULT 1`, `ERR 0`). Les deux journaux fournis établissent `VERDICT PASS`, `CAPTURE 2`, `DRAW 3`, `REJECT 3`, `CLOSE_RETURNED 1`, mémoire Chip/Fast revenue au point initial dans chaque exécution. **BASIC_TICKS 13 / BATCH_TICKS 13 dans les deux modes : aucun gain démontré** sur quatre itérations avec fond inclus.
+
+**Périmètre réel :** les flags `ORDER`/`CLIP`/`MASK` de cet ASC sont mis à 1 après retour positif et ne vérifient pas indépendamment les pixels WinUAE ; les comparaisons de pixels sont celles de la Gate A native. Les logs affichent la chaîne de version ASC, **pas le SHA256 du binaire chargé**. Gate D Amiga physique non exécutée ; ne pas promouvoir `LAST_GOOD`.
+
+**Seul test actif** : `tests/current/M19_P23_BOBS_BATCH_01.asc` ; blob Git `19ad2044252783454f4082c118e53b34a6b83478`, **ne pas modifier le test couvert par ces journaux**. Ancien témoin P2.2 déjà archivé octet pour octet dans `tests/passed/M19_P22_4UNIT_PROBE_01.asc`. Si un nouveau test est décidé, archiver d'abord le P2.3 sans le modifier puis ne garder qu'un ASC dans `tests/current/`.
+
+**Suite recommandée** : nouveau banc ciblé avec oracles de pixels WinUAE pour transparence, chevauchement et clipping ; comparaison BASIC/Batch sur durée suffisante et sans confondre le coût du fond ou le cache Z. **Aucune campagne supplémentaire n'a encore été exécutée.** Le contrôle général `Artifact integrity` peut rester en échec pour des tests historiques/expérimentaux sans remettre en cause la CI ciblée ; vérifier sa cause exacte au besoin.
+
+**Rapport signé par les deux journaux** : [M19 P2.3 R86 Runtime / Compiled](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) · [Contrat API](M19_P23_BOBS_BATCH_CONTRACT.md).
+
+---
+
+## HISTORIQUE — M19 P2.3 R86 avant les journaux WinUAE (15/11/2026)
 
 Sur `main` exclusivement, deux nouvelles commandes actuelles : `Aga Bob Batch(DescriptorBank,Count)` et témoin `Aga Bob Probe`. R86 v0.13.31: 78 commandes publiques, 88 entrées AP20, quatre unités natives. Le constructeur `tools/build_m19_p23_bob_batch.py` produit **uniquement** `dist/AMOSPro_AGA.Lib` avec `--write-dist` ; `LAST_GOOD` R84 reste intouchable (67904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). CI dédiée : `.github/workflows/m19-p23-bobs-batch-gate-a.yml`. Ne pas annoncer un PASS sans le résultat d'exécution de la nouvelle CI.
 
