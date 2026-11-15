@@ -10,6 +10,11 @@ is not installable until its exact native CPU Gate A is proven.
 from __future__ import annotations
 from hashlib import sha256
 from struct import pack,unpack_from
+from pathlib import Path
+import sys
+
+# The signed interpreter branch-range checker lives under tools/experiments.
+sys.path.insert(0,str(Path(__file__).resolve().parent/"experiments"))
 
 from audit_ap20 import inspect,parse,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
