@@ -1,5 +1,10 @@
 # AMOSPro AGA — exemples et démonstrations
 
+## M19 P0a — candidate MC68020 et exemple autonome
+
+**Nouvelle livraison experimentale (Gate A PASS, WinUAE/Compiler NON TESTES) :** [bibliotheque MC68020 79 660 octets](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib), [pack WinUAE (Lib + ASC + notice + SHA)](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip), [programme `M19_P0A_MC68020_BANK_GET.asc`](m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc), [notice](m19_p0a_68020/README.fr.md). **Aucun asset externe requis** : les rectangles et le fichier `RAM:M19_P0A_68020_BOBS.ABK` sont produits par le programme. Ne pas confondre avec R88 dans `dist/AMOSPro_AGA.Lib`; R84 `LAST_GOOD` reste protegee.
+
+
 [English](README.md) · [Installation](../INSTALL.fr.md) · [Bibliothèque R73 promue](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
 
 **Référence promue : R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). **Candidate courante R80 v0.13.25** : chargeur natif IFF -> chunky directement dans une banque DATA, Gate A CPU PASS, **Gate B WinUAE R80 et Gate C Compiler non testées**. L'ancien exemple IFF R79 reste compatible avec R80 mais utilise encore un compagnon `.chk` ; **le nouvel ASC R80 n'en utilise pas**. Pour l'affichage C2P : CPU 68020+ et `LIBS:c2p.library`. Gate D Amiga physique non testée.

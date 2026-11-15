@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0a — GitHub Lib MC68020 + exemple livre, Gates B/C ouvertes
+
+**Livraison :** [candidate M19 P0a](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib), [pack WinUAE](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip), [programme AMOS](../examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc), [instructions](../examples/m19_p0a_68020/README.fr.md). 79 660 octets, SHA256 `e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`. **Gate A 68020 PASS / preflight ASC PASS** ; **Gates B/C/D NON TESTEES**. Aucune ressource externe requise : `Get AGA Bob` capture des formes dessinees par `Aga Blit Fill`. Aucune promotion, R88 et LAST_GOOD proteges. Suite : WinUAE 68020 PAL JIT OFF puis vrai AMOS Compiler avec le meme ASC et journaux distincts.
+
+
 ## M19 P0a — MC68020 exclusif : Gate A 74/74 PASS
 
 **Décision utilisateur du 15/11/2026 : aucun nouveau noyau 68000/68010, aucun fallback, aucune double voie CPU000/CPU020.** Implémentation MC68020/68EC020 exclusive de `Aga Bob Bank N` et `Get AGA Bob I,X1,Y1,X2,Y2`, capture par **`BFEXTU` + `BFINS`** (champs de bits de largeur variable 1..16, sans lecture au-delà de X2). Les deux points d'entrée refusent un CPU inférieur avant de manipuler la banque ou la mémoire AGA. Seule la base figée R88 est conservée comme patrimoine ; les parties nouvelles sont 68020 exclusivement.
