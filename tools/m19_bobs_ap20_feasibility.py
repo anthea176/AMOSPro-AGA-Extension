@@ -30,7 +30,7 @@ COMMAND = ('aga bob bank', BANK, 1, 'I0')
 TITLE = b'M19 AGA BOB BANK NATIVE EXPERIMENT - UNINSTALLED\0'
 TITLE += bytes(len(TITLE) & 1)
 
-from m68k_emit import Code, D, A, M, POST, I
+from m68k_emit import Code, D, A, M, POST, PRE, I
 from amos_main_abi import main_index, rjsr
 
 GETADR = rjsr(main_index('Bnk.GetAdr'))
@@ -55,8 +55,10 @@ def emit_bank_select() -> tuple[bytes, dict]:
 
     def mem_ok(src, failure):
         c.move(src, A(1))
+        c.move(A(6), PRE(7))          # preserve AMOS A6 across Exec call
         c.raw('2c780004')             # MOVEA.L 4.W,A6 (ExecBase)
         c.call_os(LVO_TYPEOFMEM)
+        c.move(POST(7), A(6))
         c.tst(D(0))
         B(7, failure)                 # BEQ: unmapped
 
@@ -239,9 +241,10 @@ def build() -> tuple[bytes, dict]:
         if group not in (84, 85, 86, 87):
             raise ValueError(f'unknown native group {group}')
         stubs.append(RBSR + pack('>HH', group + 1, offset) + old_stub[6:])
+    stubs[-1] += GETP
     bank_offset = len(original_parts[86]) - len(DISPATCH_V2)
     stubs.append(RBSR + pack('>HH', GROUP_BOBS, bank_offset)
-                 + bytes.fromhex('4e75') + GETP)
+                 + bytes.fromhex('4e75'))
     groups = [original_parts[84], original_parts[85],
               original_parts[86] + native, original_parts[87]]
     packed = repack_ap20(
