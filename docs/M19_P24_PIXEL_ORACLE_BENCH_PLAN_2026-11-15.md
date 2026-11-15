@@ -52,7 +52,7 @@ Les captures proviennent du même encodeur R84 et des mêmes dimensions ; leur r
 
 ## Validation et états
 
-**Gate statique P2.4** : [workflow dédié](../.github/workflows/m19-p24-bobs-pixels-static.yml) ; contrôle d'empreinte R84/R86, archive P2.3, unicité ASC, code des 19 probes, 256 indices capturés, géométrie et 4/8/16 descripteurs, AB/BA et fenêtres de chronométrage. Résultat à établir via CI.
+**Gate statique P2.4** : [workflow dédié](../.github/workflows/m19-p24-bobs-pixels-static.yml) ; contrôle d'empreinte R84/R86, archive P2.3, unicité ASC, code des 19 probes, 256 indices capturés, géométrie et 4/8/16 descripteurs, AB/BA et fenêtres de chronométrage. **Gate statique PASS** — [CI 43701540717](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43701540717). Le validateur a contrôlé les 256 valeurs possibles de pixel 1×1, les 19 attentes géométriques, le témoin P2.3 archivé et la structure AB/BA. **Pas de Runtime/Compiled P2.4 exécutés.**
 
 **Gates WinUAE P2.4** : **PENDING** — les anciens journaux P2.3 ne valident **pas** les nouveaux oracles ni ce benchmark. Quand les fichiers seront exécutés, récupérer :
 - `RAM:M19_P24_RUNTIME.TXT`

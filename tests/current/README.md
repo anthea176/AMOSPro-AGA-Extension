@@ -15,6 +15,6 @@ Le benchmark intégré utilise 64 répétitions × 2 passages inversés par mét
 - `M19_P24_RUNTIME.TXT`
 - `M19_P24_COMPILED.TXT`
 
-**Statut :** préflight/CI statique à vérifier ; **Gates WinUAE Runtime/Compiled P2.4 non testées** jusqu'à réception des deux nouveaux journaux. Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PIXEL_OK 19`, `PIXEL_BAD 0`, `PARITY_OK 3`, `PARITY_BAD 0`, `BENCH_RUNS 12`, `CLOSE_RETURNED 1`.
+**Statut :** [CI statique PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43701540717) ; **Gates WinUAE Runtime/Compiled P2.4 non testées** jusqu'à réception des deux nouveaux journaux. Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PIXEL_OK 19`, `PIXEL_BAD 0`, `PARITY_OK 3`, `PARITY_BAD 0`, `BENCH_RUNS 12`, `CLOSE_RETURNED 1`.
 
 [Plan technique et limites](../../docs/M19_P24_PIXEL_ORACLE_BENCH_PLAN_2026-11-15.md).
