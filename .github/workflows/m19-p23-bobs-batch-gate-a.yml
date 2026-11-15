@@ -7,6 +7,7 @@ on:
       - ".github/workflows/m19-p23-bobs-batch-gate-a.yml"
       - "tools/m19_bob_batch_emit.py"
       - "tools/build_m19_p23_bob_batch.py"
+      - "tools/active_library.py"
       - "tools/test_m19_p23_bob_batch.py"
       - "dist/AMOSPro_AGA.Lib"
       - "dist/AMOSPro_AGA_LAST_GOOD.Lib"
@@ -42,6 +43,8 @@ jobs:
         run: |
           python -B tools/build_m19_p23_bob_batch.py --write-dist
           python -B tools/build_m19_p23_bob_batch.py --check-dist
+      - name: Full active-identity SHA/AP20 integrity gate
+        run: python -B tools/verify_fast.py
       - name: SHA pin and archive integrity
         run: |
           python -B -c "import hashlib,pathlib; p=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib'); assert len(p.read_bytes())==67904; assert hashlib.sha256(p.read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
