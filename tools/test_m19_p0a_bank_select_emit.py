@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M19 P0a bank-select native preflight (STATIC, not CPU Gate A)."""
+"""M19 P0a MC68020-only bank-select preflight (STATIC, not CPU Gate A)."""
 import unittest
 from hashlib import sha256
 from struct import pack
@@ -18,9 +18,9 @@ class BankSelectEmission(unittest.TestCase):
 
     def test_deterministic_bytes(self):
         self.assertEqual((self.raw,self.labels),emit_bank_select())
-        self.assertEqual(len(self.raw),1336)
+        self.assertEqual(len(self.raw),1360)
         self.assertEqual(sha256(self.raw).hexdigest(),
-            '7f2658c8f53a0b21502fd4505212015b8619b76fd0ef56fbcd2292ac5962554b')
+            'b25a0fea124153f6f99bce60f809447ded83401ff8ea57581825f7abec4dc292')
 
     def test_abi_and_embedded_transaction(self):
         self.assertEqual(self.raw[:8],bytes.fromhex('48e7efee4fefffc0'))
@@ -40,6 +40,13 @@ class BankSelectEmission(unittest.TestCase):
         self.assertLess(self.labels['done'],self.labels['commit'])
         self.assertLess(self.labels['commit'],state)
         self.assertEqual(self.labels['bank_select'],0)
+
+    def test_mc68020_minimum_cpu_guard(self):
+        # Guard must execute before first AMOS bank service, no 68000 fallback.
+        self.assertIn(bytes.fromhex('20780004'),self.raw[:40])
+        self.assertIn(bytes.fromhex('08000001'),self.raw[:64])
+        self.assertLess(self.raw.find(bytes.fromhex('08000001')),
+                        self.raw.find(MARKER))
 
     def test_non_destructive_selection_guards(self):
         for k in ('bank_select','existing','flags_ok','done','commit',

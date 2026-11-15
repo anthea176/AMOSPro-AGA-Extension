@@ -30,17 +30,17 @@ TITLE+=bytes(len(TITLE)&1)
 def build():
     original,oldinfo=build_bank() # checks R88/R84 SHA and old 79 tokens
     orig_tokens,orig_parts,_=unpack_ap20(original)
-    if len(orig_parts)!=89 or len(orig_parts[87])!=8374:
+    if len(orig_parts)!=89 or len(orig_parts[87])!=7038+len(emit_bank_select()[0]):
         raise ValueError('R88-derived Bank Select layout mismatch')
     select,_=emit_bank_select()
     combined,labels=emit_get_bob()
-    if len(select)!=1336 or combined[:len(select)]!=select or labels['get_entry']!=len(select):
+    if combined[:len(select)]!=select or labels['get_entry']!=len(select):
         raise ValueError('native Bank Select prefix was modified')
     if not orig_parts[87].endswith(select):
         raise ValueError('Bank Select not at end of R88 BOBS group')
     new_capture=combined[len(select):]
     entry=len(orig_parts[87])-len(DISPATCH_V2)
-    if entry!=8340 or entry+len(new_capture)>65534:
+    if entry!=7004+len(select) or entry+len(new_capture)>65534:
         raise ValueError('BOBS append offset or Compiler unit size')
     new_bobs=orig_parts[87]+new_capture
     stubs=[]

@@ -1,4 +1,4 @@
-"""M19 P0a R88-only native Get AGA Bob capture; not an installed AMOS command.
+"""M19 P0a R88-only native MC68020 Get AGA Bob; not installed.
 
 AMOS Professional syntax (proposed): Get AGA Bob I,X1,Y1,X2,Y2
 IN D3=Y2, A3 pops X2,Y1,X1,I.  OUT D2=0, D3=1/0.
@@ -63,6 +63,13 @@ def emit_get_bob():
     c.move(I(0),M(2,F['temp']))
     c.move(I(0),M(2,F['return_value']))
     c.move(I(0),D(3))
+    # Explicitly reject 68000/68010 BEFORE accessing AMOS bank/screen state.
+    # AFF_68020 from R88's verified M18/R67 CPU feature probe.
+    c.raw('20780004')            # MOVEA.L (4).W,A0
+    c.move(A(0),D(0));c.tst(D(0));B(7,'fail')
+    c.move(M(0,0x128),D(0),'w') # ExecBase.AttnFlags
+    c.word(0x0800);c.word(1)   # BTST #AFF_68020,D0
+    B(7,'fail')
 
     G('img_id',D(0));c.imm('cmp',1,D(0));B(5,'fail')
     c.imm('cmp',4096,D(0));B(2,'fail')
@@ -266,8 +273,8 @@ def emit_get_bob():
     G('x1',D(0));c.shift(0,3,left=False)
     G('y1',D(1));G('src_stride',D(5));c.word(0xc2c5) # MULU.W D5,D1
     check_add(1,D(0));S(D(1),'src_row0')
-    G('x1',D(0));c.imm('and',7,D(0));c.move(I(7),D(1))
-    c.alu('sub',D(0),1);S(D(1),'src_bit0')
+    # BFEXTU offset is MSB-first bit count (0..7), NOT BTST bit index.
+    G('x1',D(0));c.imm('and',7,D(0));S(D(0),'src_bit0')
     # Validate physical source Chip memory boundaries for ALL source planes.
     G('bitmap',A(4));c.quick(8,A(4));G('depth',D(6))
     L('check_chip_loop')
@@ -452,21 +459,23 @@ def emit_get_bob():
     L('capture_row')
     G('src_plane_base',D(0));G('src_row',D(1));c.alu('add',D(1),0)
     c.move(D(0),A(0));G('dst_row',A(1))
-    G('src_bit0',D(1));c.move(I(7),D(2))
-    G('width',D(7))
-    L('capture_pixel')
-    c.move(I(0),D(0));c.move(M(0),D(0),'b')
-    c.word(0x0300)      # BTST D1,D0
-    B(7,'capture_pixel_empty')
-    c.word(0x05d1)      # BSET D2,(A1), 68k memory byte bit
-    L('capture_pixel_empty')
-    c.quick(1,D(1),sub=True);B(10,'src_bit_positive')
-    c.quick(1,A(0));c.move(I(7),D(1))
-    L('src_bit_positive')
-    c.quick(1,D(2),sub=True);B(10,'dst_bit_positive')
-    c.quick(1,A(1));c.move(I(7),D(2))
-    L('dst_bit_positive')
-    c.quick(1,D(7),sub=True);B(6,'capture_pixel')
+    G('src_bit0',D(1))         # source offset 0..7 from MSB
+    G('width',D(7))            # remaining pixels in this row
+    L('capture_word')
+    c.move(I(16),D(3))         # group width <= 16 bits
+    c.imm('cmp',16,D(7));B(4,'group_width_ready') # BCC: >=16
+    c.move(D(7),D(3))          # final partial word: 1..15 bits
+    L('group_width_ready')
+    # MC68020-ONLY register-width bitfield instructions.
+    # BFEXTU (A0){D1:D3},D4; offset and width dynamic.
+    # BFINS  D4,(A1){0:D3}; scratch is MEMF_CLEAR so unused bits = 0.
+    # Both operands access ONLY the requested pixel span (no 16-bit overread
+    # when x2 reaches the right screen boundary).
+    c.word(0xe9d0);c.word(0x4863)
+    c.word(0xefd1);c.word(0x4023)
+    c.quick(2,A(0));c.quick(2,A(1))  # next 16-pixel word
+    c.alu('sub',D(3),7)
+    B(6,'capture_word')
     G('src_row',D(0));G('src_stride',D(1));c.alu('add',D(1),0);S(D(0),'src_row')
     G('dst_row',D(0));G('dst_stride',D(1));c.alu('add',D(1),0);S(D(0),'dst_row')
     G('rows_left',D(0));c.quick(1,D(0),sub=True);S(D(0),'rows_left')

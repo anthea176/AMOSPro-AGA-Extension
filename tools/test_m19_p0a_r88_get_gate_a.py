@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M19/P0a R88 native 68000/Get AGA Bob Gate A (OS and AMOS calls mocked).
+"""M19/P0a R88-derived MC68020-only Get AGA Bob Gate A (AMOS mocked).
 
 Executes exactly the builder's BOBS code on Unicorn in two separately placed
 layouts. Checks 1/4/8 planar capture, unaligned pixels, sorted insert, replace,
@@ -11,7 +11,7 @@ from struct import pack
 
 from unicorn import UC_HOOK_CODE
 from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
-from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_000
+from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 
 from test_m5_generic import DR,AR,AMOS,EXEC,GFX,STACK,STOP
 from amos_link_test_support import relocate
@@ -170,7 +170,7 @@ class CaptureMachine(SelectMachine):
         try:
             self.uc.emu_start(self.get_entry,STOP,count=limit)
         except Exception as exc:
-            raise AssertionError(('68000 Get AGA Bob error',str(exc),
+            raise AssertionError(('68020 Get AGA Bob error',str(exc),
                 hex(self.uc.reg_read(UC_M68K_REG_PC)),
                 (image_id,x1,y1,x2,y2),self.calls[-8:])) from exc
         assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
@@ -223,7 +223,7 @@ def main():
     m=CaptureMachine(binary)
     dis=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_000)
              .disasm(m.uc.mem_read(m.get_entry,len(capture)),m.get_entry))
-    assert sum(x.size for x in dis)==len(capture),'invalid 68000 capture opcodes'
+    assert sum(x.size for x in dis)==len(capture),'invalid 68020 capture opcodes'
     assert not any(x.mnemonic.startswith('dc.') for x in dis)
     cases=0
     for layout in ('interpreted','compiled'):
@@ -285,6 +285,14 @@ def main():
             assert m.bank_payload(10)==before
             cases+=1
         # Erase/reload invalidates an old selected AMOS bank reference.
+        # Verify Get refuses to run if OS does not advertise MC68020.
+        m=CaptureMachine(binary,layout,8)
+        assert m.run_select(10)==1
+        before=m.bank_payload(10)
+        m.uc.mem_write(EXEC+0x128,b'\x00\x00')
+        assert m.run_get(1,0,0,0,0)==0
+        assert m.bank_payload(10)==before
+        cases+=1
         m=CaptureMachine(binary,layout,8)
         assert m.run_select(10)==1
         original=m.find(10)
@@ -295,7 +303,7 @@ def main():
         assert m.run_get(1,0,0,0,0)==0
         assert m.bank_payload(10)==before
         cases+=1
-    print('M19 P0a GET AGA BOB Gate A 68000 PASS',cases,
+    print('M19 P0a GET AGA BOB Gate A 68020 PASS',cases,
           'scenarios, layouts interpreted & Compiler-style, SHA256',meta['sha256'],
           'size',meta['size'],'no dist/ WinUAE/ real Compiler writes')
 

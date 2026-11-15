@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M19 P0a R88 source-level regression; NOT a 68000 execution."""
+"""M19 P0a R88->MC68020 source-level regression; NOT CPU execution."""
 from __future__ import annotations
 import hashlib,unittest
 from m19_p0a_get_bob_emit import emit_get_bob,FRAME,GETADR
@@ -37,10 +37,21 @@ class R88NativeGetEmission(unittest.TestCase):
         _,labels=emit_get_bob()
         for x in ('check_padding','padding_loop','padding_accept',
                   'copy_bytes','copy_long_loop','emit_copy_old',
-                  'emit_new_entry','capture_plane','capture_row','capture_pixel',
+                  'emit_new_entry','capture_plane','capture_row','capture_word',
                   'finished_entries','bank_commit'):
             self.assertIn(x,labels)
-        self.assertLess(labels['capture_pixel'],labels['capture_plane']+2000)
+        self.assertLess(labels['capture_word'],labels['capture_plane']+2000)
+
+    def test_mc68020_only_dynamic_bitfields_and_guard(self):
+        raw,labels=emit_get_bob()
+        capture=raw[labels['capture_word']:labels['capture_word']+80]
+        self.assertIn(bytes.fromhex('e9d04863'),capture) # BFEXTU D1:D3 -> D4
+        self.assertIn(bytes.fromhex('efd14023'),capture) # BFINS D4 -> {0:D3}
+        # Shared Bank and Get entrypoints reject CPUs without AFF_68020.
+        guard=bytes.fromhex('20780004')
+        self.assertEqual(raw.count(guard),2)
+        self.assertGreaterEqual(raw.count(bytes.fromhex('08000001')),2)
+        self.assertNotIn(bytes.fromhex('05d1'),capture) # no BSET per pixel
 
     def test_padding_uses_address_register_not_stride_register(self):
         raw,labels=emit_get_bob()

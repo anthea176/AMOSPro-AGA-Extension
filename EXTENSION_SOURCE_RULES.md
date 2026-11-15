@@ -24,6 +24,9 @@ Consulter, dans cet ordre logique, le présent contrat, `docs/NEXT_SESSION.md`, 
 ### CPU
 
 - **Cible officielle pour tout nouveau développement : MC68020 / 68EC020 au minimum**, et 68030/040/060 ; aucun nouveau repli fonctionnel 68000/68010 imposé.
+- **Décision explicite du 15/11/2026 — 68020 EXCLUSIF :** dès M19 P0a, tout **nouveau code natif AGA** cible le MC68020/68EC020 (et CPU supérieurs). Interdit d'ajouter un nouveau cœur 68000/68010, une double implémentation CPU000/CPU020 ou un repli 68000 pour les Bobs. Les chemins chauds de capture/dessin doivent utiliser une implémentation conçue pour le 68020 (par exemple `BFEXTU`/`BFINS` lorsque le gain est pertinent), et refuser proprement les CPU antérieurs avant toute instruction 020.
+- **Preuves CPU obligatoires pour ce chantier :** Gate A avec **modèle réellement configuré en MC68020** (`UC_CPU_M68K_M68020` ou émulateur CPU020 vérifié), décodage `CS_MODE_M68K_020`, tests pixel-exacts + échecs/ABI/relocations. Les anciens PASS en MC68000 restent archivés, mais ne valident **jamais** les nouvelles commandes 68020. Vérifier la cible WinUAE **68020, JIT OFF** lors des Gates B/C. Préserver byte-for-byte la base historique R88 ainsi que R84 `LAST_GOOD`; ne pas réécrire rétroactivement leur code 68000.
+
 - Conserver les résultats 68000 historiques avec leur version. Des **tests négatifs CPU000** peuvent vérifier qu'une ancienne routine optimisée refuse proprement l'appel ; ne pas en déduire une nouvelle cible supportée.
 - Toute détection de CPU exécutée avant le code 68020 doit utiliser des instructions sûres sur le CPU qui l'exécute. Ne jamais supposer l'existence d'un garde CPU global non vérifié.
 
