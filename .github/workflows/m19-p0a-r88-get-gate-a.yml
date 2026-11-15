@@ -51,6 +51,32 @@ jobs:
         run: |
           python -B tools/test_m19_p0a_r88_bank_gate_a.py
           python -B tools/test_m19_p0a_r88_get_gate_a.py
+      - name: Export exact MC68020 Gate A candidate outside dist
+        run: |
+          python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'tools')
+          from build_m19_p0a_r88_get_in_memory import build
+          lib, details = build()
+          digest = sha256(lib).hexdigest()
+          assert len(lib) == 79660, len(lib)
+          assert digest == 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0', digest
+          assert details['commands'] == 80 and details['entries'] == 90
+          dest = Path('m19_p0a_candidate/AMOSPro_AGA.Lib')
+          dest.parent.mkdir(parents=True, exist_ok=True)
+          dest.write_bytes(lib)
+          assert sha256(dest.read_bytes()).hexdigest() == digest
+          print('CANDIDATE GATE A ONLY', dest, len(lib), digest, 'WinUAE B / real Compiler C NOT TESTED')
+          PY
+      - name: Publish candidate as downloadable workflow artifact (not installed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AMOSPro_AGA_M19_P0a_MC68020_GATE_A
+          path: m19_p0a_candidate/AMOSPro_AGA.Lib
+          retention-days: 14
+          if-no-files-found: error
       - name: Ensure no binary, ASC or passed tests changed
         run: |
           git diff --exit-code -- dist/ tests/current/ tests/passed/
