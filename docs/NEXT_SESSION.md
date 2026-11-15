@@ -12,6 +12,8 @@
 
 **Suite recommandée** : nouveau banc ciblé avec oracles de pixels WinUAE pour transparence, chevauchement et clipping ; comparaison BASIC/Batch sur durée suffisante et sans confondre le coût du fond ou le cache Z. **Aucune campagne supplémentaire n'a encore été exécutée.** Le contrôle général `Artifact integrity` peut rester en échec pour des tests historiques/expérimentaux sans remettre en cause la CI ciblée ; vérifier sa cause exacte au besoin.
 
+**État CI générale au 15/11/2026 : FAIL**, [run 43700905076](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43700905076). La vérification **R86 à quatre unités** dans `test_generate_current_native_source.py` passe désormais (`STRICT R86 FOUR-UNIT SOURCE PROVENANCE PASS`), mais l'étape suivante réexécute le constructeur historique `build_aga_r84_agapic.py` qui refuse encore le SHA de la R86 active (`AssertionError: Unknown active dist binary during historical R84 rebuild`). **C'est un garde-fou de compatibilité des outils historiques, pas un échec du moteur R86 ou des Gates A/B/C**. Adapter ce contrôle de façon ciblée lors d'un chantier CI dédié, sans altérer la R84 figée et sans contourner la validation d'origine.
+
 **Rapport signé par les deux journaux** : [M19 P2.3 R86 Runtime / Compiled](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md) · [Contrat API](M19_P23_BOBS_BATCH_CONTRACT.md).
 
 ---

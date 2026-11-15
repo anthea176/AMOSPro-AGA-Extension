@@ -101,6 +101,10 @@ FAST_AFTER  140617256
 CLOSE_RETURNED  1
 ```
 
+## Suivi de la CI générale (hors Gates A/B/C du Batch)
+
+**État CI générale au 15/11/2026 : FAIL**, [run 43700905076](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43700905076). La vérification **R86 à quatre unités** dans `test_generate_current_native_source.py` passe désormais (`STRICT R86 FOUR-UNIT SOURCE PROVENANCE PASS`), mais l'étape suivante réexécute le constructeur historique `build_aga_r84_agapic.py` qui refuse encore le SHA de la R86 active (`AssertionError: Unknown active dist binary during historical R84 rebuild`). **C'est un garde-fou de compatibilité des outils historiques, pas un échec du moteur R86 ou des Gates A/B/C**. Adapter ce contrôle de façon ciblée lors d'un chantier CI dédié, sans altérer la R84 figée et sans contourner la validation d'origine.
+
 ## Suite
 
 Ne pas modifier le test déjà qualifié afin de conserver la correspondance avec les journaux. Un **nouveau test à venir**, à installer seul dans `tests/current/` en archivant celui-ci octet pour octet dans `tests/passed/`, pourra vérifier un oracle de pixel WinUAE sur chevauchement, transparence et clipping, puis effectuer une mesure plus longue et ciblée du coût de dessin. Ne pas annoncer de gain avant cette mesure.
