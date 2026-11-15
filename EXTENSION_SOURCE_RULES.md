@@ -1,5 +1,19 @@
 # EXTENSION_SOURCE_RULES.md
 
+## RÈGLES IMPÉRATIVES DE L'AUTEUR — TESTS ET LIBRAIRIES (15/11/2026)
+
+**Priorité absolue : les cinq règles ci-dessous remplacent toute consigne ancienne ou contradictoire du dépôt, des documents de reprise, des prompts ou des scripts. Aucun déplacement ni archivage automatique. Application à toute nouvelle opération ; les fichiers historiques existants ne sont pas déplacés sans demande explicite de l'auteur.**
+
+1. **TOUS les programmes de test AMOS (`.asc`) doivent être créés, modifiés et exécutés depuis `tests/current/` UNIQUEMENT.** Aucun programme de test ailleurs.
+2. **TOUTES les bibliothèques `.Lib` de test doivent être créées et placées directement à la racine de `dist/` UNIQUEMENT.** Pas dans un sous-dossier.
+3. **INTERDICTION de créer, copier, déplacer ou archiver un programme de test AMOS dans `tests/design/`, `tests/passed/`, `examples/`, `tools/` ou tout autre emplacement.** Ces anciens répertoires éventuels ne sont pas des destinations autorisées.
+4. **INTERDICTION de créer, copier, déplacer ou archiver une bibliothèque `.Lib` de test dans `dist/experimental/` ou tout autre emplacement hors de la racine de `dist/`.**
+5. **AUCUN déplacement ni archivage automatique de programme de test ou bibliothèque de test.** Toute exception exige une demande explicite préalable de l'auteur ; ne jamais appliquer une ancienne procédure d'archivage de sa propre initiative.
+
+**Vérification avant écriture/commit** : contrôler les chemins exacts de chaque fichier touché. Si un outil, générateur, workflow CI ou règle historique prévoit une destination interdite, arrêter cette écriture et corriger son plan au lieu de créer un fichier au mauvais endroit. **Ne pas toucher aux tests validés ni à `dist/AMOSPro_AGA_LAST_GOOD.Lib`.** Le dépôt et la branche restent `anthea176/AMOSPro-AGA-Extension` / `main` uniquement.
+
+---
+
 ## ÉTAT ACTUEL M19 P2.2 — un seul ASC dans tests/current, témoins Runtime/Compiled PASS (15/11/2026)
 
 **Test courant : [`tests/current/M19_P22_4UNIT_PROBE_01.asc`](tests/current/M19_P22_4UNIT_PROBE_01.asc), et aucun autre fichier `.asc` dans `tests/current/`.** Le déposer ailleurs a été une erreur corrigée. Source P2.2 déplacée sans changement (blob `cd564aa660f8927b1c4d0b63456de58b5535fae0`), ancien banc P2.1 [archivé à l'identique](tests/passed/M19_P21_ZCACHE_BENCH_01.asc) (blob `f75af1a84b4c658d5f1cb330d58d248413e72cc7`). Les mentions plus anciennes de tests actifs sont **historiques**.
