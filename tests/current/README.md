@@ -6,15 +6,15 @@
 
 ## Paquet expérimental
 
-**Archives permanentes sur `main` :** [bibliothèque expérimentale R88 Gate A](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib) et [quatre banques ABK de test](../fixtures/m19_p28/). Vérification des cinq SHA256 par [`tools/verify_p28_archive.py`](../../tools/verify_p28_archive.py). **La R88 archivée n'est pas une promotion et ne remplace pas `dist/AMOSPro_AGA.Lib`.**
+**Candidate active sur `main` :** [R88 à installer](../../dist/AMOSPro_AGA.Lib) (mêmes octets que l'[archive expérimentale R88 Gate A](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib)) et [quatre banques ABK de test](../fixtures/m19_p28/). Vérification des cinq SHA256 par [`tools/verify_p28_archive.py`](../../tools/verify_p28_archive.py). **R88 candidate active, R87 conservée dans `dist/experimental/` et R84 `LAST_GOOD` inchangée. Ce n'est pas une promotion.**
 
-Télécharger **l'artifact GitHub Actions** `M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
+La [R88 candidate active](../../dist/AMOSPro_AGA.Lib) et les [ABK](../fixtures/m19_p28/) sont disponibles directement sur GitHub ; l'artifact Actions reste une alternative. Télécharger **l'artifact GitHub Actions** `M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
 
 - `AMOSPro_AGA.Lib` — **R88 expérimentale**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **75 040 octets**.
 - `M19_P28_R88_CACHE_BLIT_FPS_01.asc` — le programme de référence.
 - `AGAPIC_P28_V1_BANK10.abk`, `AGPC_P28_V1_BANK11.abk`, `AGAPIC_P28_V2_BANK12.abk`, `AGPC_P28_V2_BANK13.abk` — les **mêmes pixels 16×16×8** et **masque alpha indépendant** dans les deux formats v1/v2. Le cache AGPC doit être chargé en vraie **Chip RAM** : le wrapper vérifie `TypeOfMem(MEMF_CHIP)`.
 
-Sauvegarder localement la R87 avant l'essai ; installer temporairement **R88 dans le slot APSystem habituel**, redémarrer AMOS. Placer les quatre ABK dans le **répertoire courant** du programme. Ouvrir un AMOS vide et utiliser **Project → Merge ASCII**. Exécuter d'abord en Runtime, puis compiler exactement le même ASC avec **AMOS Compiler V2**. En cas de message d'erreur AMOS, relever la ligne et le message. En cas de Guru, ne pas déclarer PASS.
+Conserver une sauvegarde locale de la bibliothèque installée ; installer **R88 dans le slot APSystem habituel**, redémarrer AMOS. Placer les quatre ABK dans le **répertoire courant** du programme. Ouvrir un AMOS vide et utiliser **Project → Merge ASCII**. Exécuter d'abord en Runtime, puis compiler exactement le même ASC avec **AMOS Compiler V2**. En cas de message d'erreur AMOS, relever la ligne et le message. En cas de Guru, ne pas déclarer PASS.
 
 ## Validation intégrée à l'ASC
 

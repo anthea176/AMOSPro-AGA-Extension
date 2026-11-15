@@ -75,12 +75,12 @@ def main() -> None:
     (out/'README_P28.txt').write_text(
         'M19 P2.8 - R88 v0.13.33 EXPERIMENT ONLY. NOT LAST_GOOD.\n'
         'Copy AMOSPro_AGA.Lib temporarily to the AGA APSystem extension slot,\n'
-        'restart AMOS, and keep original R87 safely backed up.\n'
+        'restart AMOS; R87 is archived and R84 LAST_GOOD protected.\n'
         'Put four ABK files in the same current directory as the AMOS test.\n'
         'In an empty AMOS program: Project -> Merge ASCII -> '+args.asc.name+'\n'
         'Run Runtime then COMPILE THE SAME PROGRAM using AMOS Compiler V2.\n'
         'Collect RAM:M19_P28_RUNTIME.TXT and RAM:M19_P28_COMPILED.TXT.\n'
-        'No change to GitHub dist/ libraries or LAST_GOOD.\n'
+        'R88 is the active unpromoted GitHub candidate; R84 LAST_GOOD unchanged.\n'
         'Library SHA256 '+meta['sha256']+'\n',encoding='ascii')
     print('R88 GATE A ONLY BUNDLE READY:',out,len(library),meta['sha256'])
 

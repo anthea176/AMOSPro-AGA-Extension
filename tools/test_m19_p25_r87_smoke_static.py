@@ -22,9 +22,11 @@ def blob_sha(b:bytes)->str:
 
 def main()->None:
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
+    active=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
-    assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "Wrong R87 candidate"
+    assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
+    active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
+    assert len(active_candidate)==75040 and sha256(active_candidate).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
     assert len(files)==1 and files[0].name=="M19_P28_R88_CACHE_BLIT_FPS_01.asc", files
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()

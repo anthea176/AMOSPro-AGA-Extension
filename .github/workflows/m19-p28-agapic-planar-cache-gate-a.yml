@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   p28-model-and-native-68000:
@@ -37,10 +37,10 @@ jobs:
           python-version: "3.12"
       - name: Install CPU emulator and assembler decoder
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
-      - name: Verify frozen R84 LAST_GOOD and active unmodified R87
+      - name: Verify R88 active candidate, historical R87 and R84 LAST_GOOD
         run: |
           python -B tools/verify_fast.py
-          python -B -c "import hashlib,pathlib; a=pathlib.Path('dist/AMOSPro_AGA.Lib').read_bytes(); b=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes(); assert len(a)==73184 and hashlib.sha256(a).hexdigest()=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert len(b)==67904 and hashlib.sha256(b).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
           python -B tools/test_m16_agapic.py
@@ -69,34 +69,8 @@ jobs:
           if-no-files-found: error
       - name: Verify P2.8 does NOT emit a new active library or change LAST_GOOD
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
-      - name: Archive exact R88 Gate-A binaries on main (not a promotion)
-        if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+      - name: Verify permanent R88 experimental archive and ABK fixtures
         run: |
-          set -eu
           python -B tools/verify_p28_archive.py --bundle p28-gate-a-only
-          mkdir -p dist/experimental tests/fixtures/m19_p28
-          source=p28-gate-a-only/AMOSPro_AGA.Lib
-          target=dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib
-          if [ -e "$target" ] && ! cmp -s "$source" "$target"; then
-            echo "Refusing to overwrite an archived R88 artifact"
-            exit 1
-          fi
-          cp "$source" "$target"
-          for file in AGAPIC_P28_V1_BANK10.abk AGPC_P28_V1_BANK11.abk AGAPIC_P28_V2_BANK12.abk AGPC_P28_V2_BANK13.abk; do
-            source="p28-gate-a-only/$file"
-            target="tests/fixtures/m19_p28/$file"
-            if [ -e "$target" ] && ! cmp -s "$source" "$target"; then
-              echo "Refusing to overwrite archived bank $file"
-              exit 1
-            fi
-            cp "$source" "$target"
-          done
           python -B tools/verify_p28_archive.py
-          git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib tests/fixtures/m19_p28/*.abk
-          if ! git diff --cached --quiet; then
-            git commit -m "Archive R88 P2.8 Gate-A-only library and four ABK fixtures (NOT promoted)"
-            git push origin HEAD:main
-          fi
+          git diff --exit-code -- dist/ tests/current/ tests/passed/

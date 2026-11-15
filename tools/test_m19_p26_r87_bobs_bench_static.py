@@ -29,8 +29,10 @@ def descriptors(n: int) -> bytes:
     return pack(">IHHII",0x424F4231,1,20,n,0)+b"".join(records)
 
 def main() -> None:
-    current=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
+    current=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
+    assert len(active)==75040 and sha256(active).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc"
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))

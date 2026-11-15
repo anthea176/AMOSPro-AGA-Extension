@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -36,7 +36,7 @@ def main():
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD hash must be immutable"
-    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA), "Active candidate not pinned"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -60,11 +60,24 @@ def main():
     report=inspect(parse(good))
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32"))
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==R87_SHA:
+        if digest==R88_SHA:
+            from build_m19_p28_r88_in_memory import build as build_r88
+            candidate,actual_meta=build_r88()
+            assert cur==candidate and actual_meta["sha256"]==R88_SHA
+            assert actual_meta["commands"]==78 and actual_meta["entries"]==88
+            assert label.startswith("R88 v0.13.33")
+            _,current_parts,_=unpack_ap20(cur)
+            _,historical_parts,_=unpack_ap20(good)
+            assert (current_parts[84]==historical_parts[82] and
+                    current_parts[85]==historical_parts[83] and
+                    current_parts[87]==historical_parts[84]), "R88 changed frozen R84 native engines"
+            assert len(current_parts[86])==7038
+            assert sha256(good).hexdigest()==R84_SHA, "R84 LAST_GOOD changed"
+        elif digest==R87_SHA:
             from build_m19_p25_no_probe import build as build_r87
             candidate, actual_meta = build_r87()
             assert cur==candidate and actual_meta["sha256"]==R87_SHA

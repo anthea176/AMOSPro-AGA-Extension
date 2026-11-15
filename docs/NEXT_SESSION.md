@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## CANDIDATE ACTIVE R88 — correction du chemin (15/11/2026)
+
+**`dist/AMOSPro_AGA.Lib` contient R88 v0.13.33** (**75 040 octets**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`). La **R87 v0.13.32 précédente** est archivée sans changement dans `dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib` (**73 184 octets**). Les quatre banques P2.8 restent dans `tests/fixtures/m19_p28/`, l'unique ASC dans `tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc`. **Gate A native R88 PASS ; Gates WinUAE B/C NON TESTÉES.** R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte et non remplacée. Aucun tag, release, promotion ni branche. [Contrat du changement](M19_P28_R88_ACTIVE_CANDIDATE_2026-11-15.md).
+
+---
+
 ## ARCHIVAGE R88 GATE A SUR GITHUB — uniquement expérimental
 
 La bibliothèque **R88 v0.13.33 (75 040 octets, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`)** est conservée sur `main` sous [`dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib`](../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib). Les **quatre banques ABK v1/v2** du banc sont également conservées durablement sous [`tests/fixtures/m19_p28/`](../tests/fixtures/m19_p28/). [Vérificateur SHA/taille](../tools/verify_p28_archive.py) et [CI de génération](../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml) : Gate A PASS. **R87 candidate active et R84 `LAST_GOOD` restent intactes, WinUAE Runtime et Compiler R88 non testés, aucun binaire promu.**

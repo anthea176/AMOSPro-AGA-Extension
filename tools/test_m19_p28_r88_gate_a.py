@@ -253,7 +253,7 @@ def main():
                         safe_ready=False,expect_ok=True)
     print('P2.8 R88 IN-MEMORY AP20 NATIVE GATE A PASS:',cases,
           '68020 interpreter+Compiler V2 emulation; independent zero-alpha; Safe/TypeOfMem/WaitBlit')
-    print('R87 candidate, R84 LAST_GOOD, WinUAE Runtime/Compiled NOT CHANGED OR TESTED FOR R88')
+    print('R88 current candidate, R87 archived, R84 LAST_GOOD protected; WinUAE B/C R88 NOT TESTED')
 
 if __name__=='__main__':
     main()

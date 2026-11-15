@@ -22,7 +22,9 @@ def main()->None:
     g=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     a=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     assert len(g)==67904 and sha256(g).hexdigest()==R84_SHA
-    assert len(a)==73184 and sha256(a).hexdigest()==R87_SHA
+    assert len(a)==75040 and sha256(a).hexdigest()=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
+    prior=(ROOT/'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
+    assert len(prior)==73184 and sha256(prior).hexdigest()==R87_SHA
     active=sorted((ROOT/'tests/current').glob('*.asc'))
     assert len(active)==1 and active[0].name==SOURCE
     raw=active[0].read_bytes()
@@ -56,7 +58,7 @@ def main()->None:
     assert len(files['AGPC_P28_V1_BANK11.abk'])==len(files['AGPC_P28_V2_BANK13.abk'])==380
     print('M19 P2.8 STATIC WINUAE BUNDLE PASS: one ASC, four exact matching AGAPIC/AGPC banks,')
     print('8 pixel comparisons before 12 draw-only and 12 full-frame A/B measures;')
-    print('R87/R84 original binaries pinned, R88 built only as experimental bundle.')
+    print('R88 active candidate, R87 historical and R84 LAST_GOOD byte-exact; R88 B/C NOT TESTED.')
     print('WinUAE P2.8 Runtime and Compiled NOT TESTED.')
 
 if __name__=='__main__':

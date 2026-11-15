@@ -12,6 +12,7 @@ from pathlib import Path
 
 R84_SHA = '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
 R87_SHA = '02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'
+R88_SHA = '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
 R88_NAME = 'AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib'
 FILES = {
     R88_NAME: (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
@@ -51,7 +52,8 @@ def main() -> None:
             if filename != R88_NAME:
                 verify(root / 'tests/fixtures/m19_p28' / filename, filename)
     for filename, length, digest in [
-        ('dist/AMOSPro_AGA.Lib', 73184, R87_SHA),
+        ('dist/AMOSPro_AGA.Lib', 75040, R88_SHA),
+        ('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib', 73184, R87_SHA),
         ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 67904, R84_SHA),
     ]:
         path = root / filename

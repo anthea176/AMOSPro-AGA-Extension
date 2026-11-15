@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,22 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==R88_SHA:
+            # R88 consists of four relocated V2 native groups; verify exact
+            # deterministic provenance rather than exporting a false monolith.
+            from build_m19_p28_r88_in_memory import build as build_r88
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_r88()
+            assert wrapped==candidate and meta["sha256"]==R88_SHA
+            _,groups,title=unpack_ap20(wrapped)
+            assert len(groups)==88 and tuple(map(len,groups[84:]))==(5558,2508,7038,56580)
+            assert b"R88 v0.13.33" in title
+            report=inspect(parse(wrapped))
+            assert not report["issues"] and len([x for x in report["tokens"] if x["name"].startswith("aga ")])==78
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            print("STRICT R88 FOUR-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==R87_SHA:
             # Four independently relocated native groups. Byte-exact
             # deterministic provenance is stronger than falsely exporting

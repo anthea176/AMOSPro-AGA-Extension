@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """M19 P2.8 P1: experimental R88 AP20 image, generated IN MEMORY ONLY.
 
-Never modifies R87 candidate or R84 LAST_GOOD. Adds a 16x16x8 AGPC
+Reads frozen R87 archive; never modifies active candidate or R84 LAST_GOOD. Adds a 16x16x8 AGPC
 independent-alpha masked Blitter wrapper to the R87 four-unit AP20. No
 promotion, binary upload, tag or WinUAE claim. New public API tentative:
   Aga Cache Blit(CacheBank,X,Y,Mode) -> integer (0 rejection/1 success)
@@ -24,7 +24,7 @@ from m19_p28_agpc_ap20_emit import emit_agpc_ap20,ENTRY_INDEX,GETADR_MARKER
 
 ROOT=Path(__file__).resolve().parents[1]
 R84=ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib'
-R87=ROOT/'dist/AMOSPro_AGA.Lib'
+R87=ROOT/'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib'
 BATCH_PUBLIC=82
 CACHE_PUBLIC=83
 GROUP_C2P=84
@@ -42,7 +42,7 @@ def build():
     if len(good)!=67904 or sha256(good).hexdigest()!=R84_SHA:
         raise ValueError('R84 LAST_GOOD differs from pinned binary')
     if len(old)!=73184 or sha256(old).hexdigest()!=R87_SHA:
-        raise ValueError('R87 candidate differs from pinned binary')
+        raise ValueError('R87 historical predecessor differs from pinned binary')
     tokens,parts,_=unpack_ap20(old)
     if len(parts)!=87 or tuple(map(len,parts[83:]))!=(5558,2508,5220,56580):
         raise ValueError('R87 AP20 layout differs')
@@ -117,4 +117,4 @@ if __name__=='__main__':
     candidate,info=build()
     info.pop('labels')
     print('M19 P2.8 R88 UNINSTALLED AP20 CANDIDATE',info)
-    print('R87 active and R84 LAST_GOOD remain UNCHANGED; NO --write-dist exists')
+    print('R88 active candidate, R87 archived and R84 LAST_GOOD protected; builder has no --write-dist')

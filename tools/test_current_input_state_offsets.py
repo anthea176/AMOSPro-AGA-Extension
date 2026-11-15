@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -47,7 +47,35 @@ def negative_cases(parts):
 
 def main():
     image=BINARY.read_bytes()
-    if sha256(image).hexdigest() in (R83_SHA,R84_SHA,R85_SHA):
+    digest=sha256(image).hexdigest()
+    if digest in (R87_SHA,R88_SHA):
+        # Modular V2 groups cannot be read as a single V2 monolith.
+        # Check their inherited AGA unit byte-for-byte against frozen R84,
+        # then run all seven independent LEA checks and eight negative cases
+        # on the exact R82 ancestor of that unchanged AGA native unit.
+        from build_agapic_v2_r82_full_preview import build as build_r82
+        ancestor,_=build_r82()
+        assert sha256(ancestor).hexdigest()==R82_SHA
+        _,original=unwrap_native_parts_v2(ancestor)
+        last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+        assert sha256(last_good).hexdigest()==R84_SHA
+        _,units,_=unpack_ap20(image)
+        _,frozen_units,_=unpack_ap20(last_good)
+        aga_index=86 if digest==R87_SHA else 87
+        bob_index=85 if digest==R87_SHA else 86
+        assert len(units)==(87 if digest==R87_SHA else 88), "Unexpected modular segment count"
+        assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
+        assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
+        if digest==R88_SHA:
+            from build_m19_p28_r88_in_memory import build as build_r88
+            assert image==build_r88()[0], "Active R88 SHA-pinned build differs"
+        else:
+            from build_m19_p25_no_probe import build as build_r87
+            assert image==build_r87()[0], "Active R87 SHA-pinned build differs"
+        # R84 retained the complete R82 state source; no offsets or LEA
+        # opcodes are accepted without checking their frozen source bytes.
+        parts=original
+    elif sha256(image).hexdigest() in (R83_SHA,R84_SHA,R85_SHA):
         # Check inherited native input-state code independently from source.
         from build_agapic_v2_r82_full_preview import build as build_r82
         frozen, _ = build_r82()
@@ -79,7 +107,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; R83 core byte-verified if active")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; R84 modular input-state group byte-verified against LAST_GOOD for R87/R88")
 
 if __name__=="__main__":
     main()

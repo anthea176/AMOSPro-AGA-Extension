@@ -1,6 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R87 v0.13.32 is the unpromoted BOBS Batch no-probe candidate; Gate A/B/C must be rerun for the changed binary.
+R88 v0.13.33 is the unpromoted active AGPC masked Blitter candidate (Gate A PASS; B/C pending).
+R87 v0.13.32 is frozen in dist/experimental with P2.5/P2.6/P2.7 WinUAE evidence.
 R86 v0.13.31 was the prior NON-PROMOTED M19 P2.3 Batch candidate; native Gate A and WinUAE Runtime B/Compiled C passed for the dedicated test. No speedup established. R84 LAST_GOOD unchanged.
 
 R84 v0.13.29 is PROMOTED LAST_GOOD with explicit author approval: native Gate A PASS and WinUAE AMOS Compiler Gate C PASS (with a bank in the compiled program). Separate corrected Runtime Gate B NOT evidenced; physical Gate D untested.
@@ -57,6 +58,7 @@ R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R8
 R85_SHA="4accb5768503735b38b465a41a7ea712b400dcf92b4becad563ff7a95abdd84f"  # M19 P2.2 0.13.30 historical four-group probe, Gates A/B Runtime/C Compiled PASS
 R86_SHA="63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"  # M19 P2.3 0.13.31 BOBS native A PASS, WinUAE Runtime B/Compiled C PASS per author logs; NOT LAST_GOOD
 R87_SHA="02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"  # M19 P2.5 0.13.32 no probe, native MC68020 Gate A 9/9 PASS, WinUAE B/C NOT TESTED; NOT LAST_GOOD
+R88_SHA="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc"  # P2.8 native MC68020 Gate A PASS, WinUAE B/C pending, NOT LAST_GOOD
 P5_EXPERIMENT_SHA="db55149f19f2d4753232cb5768167f38c82e86c5e2613a056e093fa9c23897af"  # active dist on experiment branch only, NOT LAST_GOOD
 R57_SHA="aee712c8fee75982c74421acc023fdaad733e3f390f3e143050765802c7925d0"  # Historical reproducible R57 0.13.2, formerly LAST_GOOD
 CANDIDATE_HASHES={
@@ -84,6 +86,23 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == R88_SHA:
+        from compiler_relocation import unpack_ap20
+        from build_m19_p28_r88_in_memory import build as build_r88
+        historical=(root/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
+        assert len(historical)==73184 and sha256(historical).hexdigest()==R87_SHA, "R87 predecessor archive changed"
+        candidate,meta=build_r88()
+        assert cur==candidate and len(cur)==75040 and meta["sha256"]==R88_SHA, "R88 active differs from pinned builder"
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        _,segments,title=unpack_ap20(cur)
+        assert len(segments)==88 and tuple(map(len,segments[84:]))==(5558,2508,7038,56580), "R88 native unit layout differs"
+        assert b"R88 v0.13.33" in title
+        audit=inspect(parse(cur))
+        assert not audit["issues"],audit["issues"]
+        names=[x["name"] for x in audit["tokens"]]
+        assert "aga cache blit" in names and "aga bob batch" in names and "aga bob probe" not in names
+        assert len([x for x in names if x.startswith("aga ")])==78
+        return cur,good,"R88 v0.13.33 M19 P2.8 AGPC masked Blitter ACTIVE CANDIDATE: MC68020 Gate A PASS; WinUAE Runtime B / Compiled C NOT TESTED; R84 LAST_GOOD protected"
     if current_sha == R87_SHA:
         # Pinned R87 candidate, reconstructed byte-exact from protected R84.
         from compiler_relocation import unpack_ap20

@@ -50,7 +50,15 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R85 v0.13.30"):
+    if active.startswith("R88 v0.13.33"):
+        from active_library import R84_SHA,R88_SHA
+        from build_m19_p28_r88_in_memory import build as build_r88
+        candidate,meta=build_r88()
+        assert current==candidate and meta["sha256"]==R88_SHA
+        assert len(current)==75040 and meta["commands"]==78 and meta["entries"]==88
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R84_SHA
+        print("CURRENT R88 P2.8 UNPROMOTED CANDIDATE: native Gate A PASS; WinUAE B/C NOT TESTED; R84 LAST_GOOD protected")
+    elif active.startswith("R85 v0.13.30"):
         from active_library import R84_SHA, R85_SHA
         from build_m19_p22_fourth_unit_probe import build as build_r85
         candidate, meta=build_r85()
