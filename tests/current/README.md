@@ -1,38 +1,41 @@
-# Test actif — M19 P2.8 R88 : cache AGAPIC / Blitter masqué / FPS complets
+# Test actif — M19 P0a MC68020 : banque Bob AGBO multi-images
 
-**ASC actif unique** : [`M19_P28_R88_CACHE_BLIT_FPS_01.asc`](M19_P28_R88_CACHE_BLIT_FPS_01.asc) (397 lignes, Git blob `001396551cad6fed57903b714bc374e0988f63ea`).
+**Bibliothèque active unique :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **79 660 octets**, SHA256
+`e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`.
+**ASC actif unique :** [`M19_P0A_MC68020_BANK_GET.asc`](M19_P0A_MC68020_BANK_GET.asc).
 
-**Attention :** l'ASC exige R88 v0.13.33 ; `Aga Cache Blit(CacheBank,X,Y,Mode)` n'existe pas dans R87. **R88 est la candidate active non promue** (`dist/AMOSPro_AGA.Lib`). **Gate A 130 cas PASS ; ancien banc WinUAE Runtime FAIL `ERR 12` : les banques 11/13 etaient chargees en Fast RAM**. La revision courante de l'ASC recopie les caches dans une banque `Reserve As Chip Data` et demande une **nouvelle Gate B**. Gate C R88 non testee.
+**Configuration de test fonctionnel de l'auteur :** WinUAE **68030 + JIT activé**, AGA PAL.
+**68020 sans JIT : réservé aux benchmarks** (pas à cette campagne).
+Code natif **68020 minimum**, sans chemin 68000. **Gate A MC68020 PASS 74 scénarios** ;
+**Gate B WinUAE et Gate C Compiler réel NON TESTÉES**.
 
-## Emplacements de la campagne WinUAE (règle consolidée)
+## Lancer
 
-Le **seul binaire à installer** est [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib). Le **seul ASC actif** se trouve dans `tests/current/`. Pour toute prochaine campagne, **les banques ABK et ressources nécessaires à son exécution doivent être réunies dans `tests/current/`**, après vérification des fichiers et de leurs SHA, sans modifier les sources de référence de la CI.
+1. Installer exactement [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib)
+   sous le nom `AMOSPro_AGA.Lib` dans le slot d'extension `APSystem` ; redémarrer AMOS.
+2. Créer un programme vierge. Importer
+   [`M19_P0A_MC68020_BANK_GET.asc`](M19_P0A_MC68020_BANK_GET.asc)
+   via **Project → Merge ASCII**, pas via `Load`.
+3. Exécuter d'abord en interprété / Runtime, puis dans AMOS Compiler V2.
+   Récupérer le journal `RAM:M19_P0A_INTERPRETED.TXT`,
+   `RAM:M19_P0A_RUNTIME.TXT` ou `RAM:M19_P0A_COMPILED.TXT` suivant le mode.
+4. Attendu après exécution réelle : `PASS ERR 0`, `ABK RELOADED 1`,
+   `CLOSE RETURNED 1`. Toute erreur ou Guru constitue un échec.
 
-**Préparation des ressources R88 effectuée sur `main` :** les quatre ABK ont été ajoutées sous `tests/current/` à l'octet près, en conservant les sources originales dans [`tests/fixtures/m19_p28/`](../fixtures/m19_p28/). Les quatre SHA Git sont identiques à ceux des fixtures. La copie n'est **pas** une Gate B/C ; le banc WinUAE reste à rejouer avec l'ASC actif exact.
+**Ressources externes : aucune.** Les formes sont dessinées par `Aga Blit Fill`,
+les images sont capturées par `Get AGA Bob`, et le fichier ABK est généré
+dans `RAM:` par le programme. La banque AMOS 24 doit être libre au lancement.
 
-## Paquet expérimental historique
+## Conservation des anciens jalons
 
-**Candidate active sur `main` :** [R88 à installer](../../dist/AMOSPro_AGA.Lib) (mêmes octets que l'[archive expérimentale R88 Gate A](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib)) et [quatre banques ABK de test](../fixtures/m19_p28/). Vérification des cinq SHA256 par [`tools/verify_p28_archive.py`](../../tools/verify_p28_archive.py). **R88 candidate active, R87 conservée dans `dist/experimental/` et R84 `LAST_GOOD` inchangée. Ce n'est pas une promotion.**
+- **R88 v0.13.33 source figée :** [archive originale 75 040 octets](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib),
+  SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`.
+- **R84 LAST_GOOD :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib),
+  SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; inchangée.
+- L'ancien ASC R88 P2.8 n'est plus dans `tests/current/` :
+  son contenu est conservé par l'historique Git du jalon R88
+  (Git blob `001396551cad6fed57903b714bc374e0988f63ea`).
+  Les anciennes ressources ABK/IFF de la campagne R88 restent inchangées,
+  mais ne sont pas utilisées par le test P0a.
 
-La [R88 candidate du checkpoint](../../dist/AMOSPro_AGA.Lib) et les [ABK sources historiques](../fixtures/m19_p28/) sont disponibles sur GitHub ; **ne pas installer un ancien binaire depuis un artifact Actions en lieu et place de la bibliothèque unique de `dist/`**. Le bundle CI initial contient un **ancien ASC avant la correction Chip** : pour toute nouvelle execution, prendre **l'ASC courant dans `tests/current/`** et les quatre ABK archives. L'artifact GitHub Actions `M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
-
-- `AMOSPro_AGA.Lib` — **R88 expérimentale**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **75 040 octets**.
-- `M19_P28_R88_CACHE_BLIT_FPS_01.asc` — le programme de référence.
-- `AGAPIC_P28_V1_BANK10.abk`, `AGPC_P28_V1_BANK11.abk`, `AGAPIC_P28_V2_BANK12.abk`, `AGPC_P28_V2_BANK13.abk` — les **mêmes pixels 16×16×8** et **masque alpha indépendant** dans les deux formats v1/v2. Le cache AGPC doit être chargé en vraie **Chip RAM** : le wrapper vérifie `TypeOfMem(MEMF_CHIP)`.
-
-Conserver une sauvegarde locale de la bibliothèque installée ; installer **R88 dans le slot APSystem habituel**, redémarrer AMOS. Après préparation et vérification, placer les quatre ABK depuis `tests/current/` dans le **répertoire courant WinUAE** du programme. Ouvrir un AMOS vide et utiliser **Project → Merge ASCII**. Exécuter d'abord en Runtime, puis compiler exactement le même ASC avec **AMOS Compiler V2**. En cas de message d'erreur AMOS, relever la ligne et le message. En cas de Guru, ne pas déclarer PASS.
-
-## Validation intégrée à l'ASC
-
-1. **Huit comparaisons complètes de captures 32×32** : RLE AGAPIC v1/v2 vs Blitter R88 sur le même écran 320×256, couleurs identiques, modes opaques/masqués, X impair et clipping quatre côtés. `PARITY_OK 8`, `PARITY_BAD 0` impératifs avant le benchmark. L'alpha couvre la couleur 0 opaque et une couleur non nulle invisible.
-2. **Dessin seul :** 4/8/16 Bobs, 64 répétitions × 2 passes AB/BA, 12 fenêtres, **3 584 dessins RLE et 3 584 dessins Blitter**. Fill, VBL, Swap et staging exclus.
-3. **Frames complètes :** 4/8/16 Bobs, **24 frames × 2 passes × 2 méthodes**, 12 fenêtres, **288 Swap réussis**. Le chronomètre inclut `Aga Wait Vbl`, `Aga Blit Fill`, les dessins, les retries et `Aga Swap`. Le coût du pré-décodage/Load reste **hors frames** : ce sont des FPS en cache chaud, pas un temps de démarrage. Aucun FPS n'est annoncé avant mesure.
-4. Staging AGPC v1/v2 via banque temporaire 20 vers `Reserve As Chip Data 11/13,360`, copie du nom `AGPCACHE` sans toucher aux flags de type ; verific. des flags 3 et de `CHIP_STAGE_DELTA` positif, nettoyage des banques 10..15 et 20. Le staging se fait hors chronometrage des frames.
-
-**Journaux :** une reussite sur la revision Chip doit aussi donner `CHIP_BANKS_STAGED 2`, `CHIP_FLAG11 3`, `CHIP_FLAG13 3`, `CHIP_STAGE_DELTA` positif.
-
-**Journaux :** `RAM:M19_P28_RUNTIME.TXT` et `RAM:M19_P28_COMPILED.TXT`. Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PARITY_OK 8`, `REJECT 2`, `MICRO_RUNS 12`, `RLE_CALLS 3584`, `CACHE_CALLS 3584`, `FRAME_RUNS 12`, `FRAMES_TOTAL 288`, `SWAPS 288`, `CLOSE_RETURNED 1`. Reporter les ticks individuels `DRAW_PASS0/1` et `FRAME_PASS0/1`, la fréquence WinUAE et les retries.
-
-**État actuel :** Gate A native R88 **PASS 130 cas** (ancienne candidate native inchangée) ; premier WinUAE Runtime **FAIL ERR 12** avec banques AGPC en Fast ; correction **préparée et non encore testée sous WinUAE** ; Gate C **NON TESTÉE** ; Amiga physique non testé. Le [P2.7 Runtime+Compiled PASS](../passed/M19_P27_R87_CACHE_CPU_BLITTER_01.asc) reste archivé octet pour octet et n'est plus l'ASC actif.
-
-**`dist/AMOSPro_AGA.Lib` R88, archive R87 et `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 : octets inchangés, aucune promotion.**
+**Ce n'est pas une promotion LAST_GOOD.** Ne jamais déduire une Gate B/C des seuls tests CPU.

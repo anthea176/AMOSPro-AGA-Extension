@@ -1,13 +1,8 @@
 # AMOSPro AGA — examples
 
-## M19 P0a — MC68020 candidate and self-contained example
+## M19 P0a — active MC68020 library and test
 
-**New experimental delivery (Gate A PASS, WinUAE/real Compiler NOT TESTED):** [MC68020 library (79,660 bytes)](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib), [WinUAE bundle (Lib + ASC + instructions + SHA)](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip), [AMOS ASCII test](m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc), [French instructions](m19_p0a_68020/README.fr.md). **No external assets needed**: both the pixels and the output ABK are generated at runtime. The R88 original in `dist/AMOSPro_AGA.Lib` and R84 `LAST_GOOD` remain untouched.
-
-
-[Français](README.fr.md) · [Installation](../INSTALL.md) · [Promoted R73 library](../dist/AMOSPro_AGA_LAST_GOOD.Lib)
-
-**Promoted reference: R73 v0.13.18 `LAST_GOOD`** (Gates A/B/C). **Current R80 v0.13.25 candidate** adds native indexed IFF-to-chunky loading directly into a DATA bank, CPU Gate A PASS; **R80 WinUAE Gate B and Compiler Gate C pending**. The original R79 IFF example remains compatible with R80 but retains its `.chk` fixture; **the new R80 ASC does not require one**. C2P display uses CPU 68020+ and `LIBS:c2p.library`. Physical Gate D untested.
+**Active candidate:** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (79,660 bytes, MC68020 CPU Gate A PASS, actual WinUAE/Compiler NOT TESTED), [active ASCII test](../tests/current/M19_P0A_MC68020_BANK_GET.asc), [instructions](../tests/current/README.md). **Functional WinUAE: 68030 with JIT enabled**; 68020 with JIT disabled is reserved for benchmarking. No external IFF/ABK assets required. R88 preserved under `dist/experimental/` and R84 `LAST_GOOD` unchanged.
 
 ## Run an example
 

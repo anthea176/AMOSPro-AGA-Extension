@@ -26,7 +26,7 @@ jobs:
       - name: Preflight the exact source and CPU policy
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -B tools/amos_preflight.py --strict-target examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0A_MC68020_BANK_GET.asc
           python -B tools/test_amos_preflight.py
       - name: Verify original R88 and protected R84
         run: |
@@ -34,7 +34,8 @@ jobs:
           from pathlib import Path
           from hashlib import sha256
           b = lambda p: sha256(Path(p).read_bytes()).hexdigest()
-          assert b('dist/AMOSPro_AGA.Lib') == '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
+          assert b('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib') == '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
+          assert b('dist/AMOSPro_AGA.Lib') == 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'
           assert b('dist/AMOSPro_AGA_LAST_GOOD.Lib') == '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
           PY
       - name: Run host, AP20 and native MC68020 Gate A tests

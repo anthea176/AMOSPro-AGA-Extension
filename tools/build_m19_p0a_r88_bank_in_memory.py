@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+# AGA_NATIVE_MIN_CPU: MC68020
 """M19 P0a experimental AP20 constructor with R88 *exact* frozen base.
 
 No use of R89/R90 code, builders, examples or binaries. Does NOT write to
-`dist/` or replace the sole installable working Lib / protected LAST_GOOD.
+`dist/` or replace the active Lib / protected LAST_GOOD.
 New public command: Aga Bob Bank N (bank selection + empty AGBO bank create).
 Get AGA Bob capture is NOT exported until its full native implementation is
 validated. Not yet a complete multi-image Bob engine.
@@ -26,7 +27,7 @@ from m19_p0a_bank_select_emit import emit_bank_select
 ROOT=Path(__file__).resolve().parents[1]
 R88_SHA='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
 R84_SHA='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
-R88=ROOT/'dist/AMOSPro_AGA.Lib'
+R88=ROOT/'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib'
 R84=ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib'
 PUBLIC=84
 OLD_LAST_PUBLIC=83

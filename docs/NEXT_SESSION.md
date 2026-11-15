@@ -1,5 +1,20 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## ACTIF M19 P0a — bibliothèque et ASC en chemins canoniques
+
+**Livraison M19 P0a sur main :** `dist/AMOSPro_AGA.Lib` **79 660 octets**, SHA256
+`e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`.
+**Seul ASC de campagne :** `tests/current/M19_P0A_MC68020_BANK_GET.asc` ; voir
+[`tests/current/README.md`](../tests/current/README.md). L'ancien R88 est conservé
+à l'octet près dans `dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib`.
+Le builder P0a reprend cette **archive R88** par SHA, jamais la bibliothèque active.
+**R84 LAST_GOOD inchangée, aucune promotion.** Nouvelle bibliothèque : **Gate A MC68020 PASS** ;
+**Gates B/C NON TESTÉES**. Tests fonctionnels WinUAE **68030 + JIT ON** ;
+68020/JIT OFF uniquement pour benchmark. Le nouvel ASC est autonome ; aucune
+ressource IFF ou ABK initiale nécessaire. **Les anciens paragraphes ci-dessous
+restent un historique et ne désignent plus la bibliothèque ni l'ASC actifs.**
+
+
 ## Configuration WinUAE de l'auteur — validation fonctionnelle / benchmarks
 
 **Gates B/C : WinUAE MC68030 + JIT activé**, en AGA PAL, interprété/Runtime puis AMOS Compiler réel. **MC68020 + JIT désactivé : benchmarks seulement.** Les documents historiques de tests 68020/JIT OFF restent des archives et ne remplacent pas ce choix. **Cible de génération native inchangée : MC68020 minimum.**
