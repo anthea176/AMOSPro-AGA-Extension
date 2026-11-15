@@ -55,7 +55,7 @@ def build():
     native,labels=emit_bank_select()
     # No new instructions can enter an old group at unknown offsets.
     entry=len(parts[86])-len(DISPATCH_V2)
-    if entry!=5186:
+    if entry!=7004:
         raise ValueError('BOBS group entry offset does not match R88')
     bob_unit=parts[86]+native
     if len(bob_unit)>65534 or len(bob_unit)&1:
