@@ -8,6 +8,7 @@ the exact call signatures and the active binary version.
 from __future__ import annotations
 
 from collections import Counter
+from hashlib import sha256
 from pathlib import Path
 import re
 
@@ -82,6 +83,13 @@ def check_readme(
     assert marker in table, (
         f"{language}: wrong README API version, expected {marker!r}"
     )
+    # A link to the active .Lib is not proof that the README describes it:
+    # validate the first version summary against the *current binary bytes*.
+    summary = readme.split(library_heading, 1)[1].strip().splitlines()[0]
+    digest = sha256(LIB.read_bytes()).hexdigest()
+    assert digest in summary, (
+        f"{language}: active library SHA256 absent/stale in README summary"
+    )
 
     documented: dict[str, str] = {}
     names: list[str] = []
@@ -92,7 +100,7 @@ def check_readme(
         if len(cells) < 5:
             raise AssertionError(f"{language}: malformed API row: {line}")
         first, syntax, description = (x.strip() for x in cells[1:4])
-        match = re.search(r"`(Aga [^`]+)`", first)
+        match = re.search(r"`((?:Aga|Get AGA) [^`]+)`", first)
         if not match:
             continue
         name = match.group(1).casefold()
@@ -130,16 +138,25 @@ def main() -> None:
     exported = {
         token["name"].casefold(): token
         for token in audit["tokens"]
-        if token["name"].lower().startswith("aga ")
+        if token["name"].lower().startswith(("aga ", "get aga "))
     }
     assert exported, "No named AP20 commands found in current library"
     title = library.title.decode("latin-1")
-    # Compiler-safe R46 C1 retains the exact user-tested title
-    # "R46 Compiler Gate C candidate 0.12.1-C1".
-    revision = re.search(r"\bR(\d+)\b", title)
-    version = re.search(r"\$VER:\s*AMOSPro_AGA\s+(\d+\.\d+\.\d+)", title)
-    assert revision and version, "Cannot read Rxx and $VER from current AP20 title"
-    release = f"R{revision.group(1)} {version.group(1)}"
+    # M19 P0a identifies its own stage in $VER while retaining the frozen R88
+    # base version; it is not itself an R88 candidate.
+    m19 = re.search(
+        r"\$VER:\s*AMOSPro_AGA\s+(M\d+\s+P\d+[a-z]?)\s+from\s+"
+        r"(R\d+)\s+(\d+\.\d+\.\d+)",
+        title, re.IGNORECASE,
+    )
+    if m19:
+        release = f"{m19.group(1)} ({m19.group(2)} base {m19.group(3)})"
+    else:
+        # Older Rxx candidates keep their historical $VER syntax.
+        revision = re.search(r"\bR(\d+)\b", title)
+        version = re.search(r"\$VER:\s*AMOSPro_AGA\s+(\d+\.\d+\.\d+)", title)
+        assert revision and version, "Cannot read active AP20 release from $VER"
+        release = f"R{revision.group(1)} {version.group(1)}"
 
     english = check_readme(*READMES[0], exported, release)
     french = check_readme(*READMES[1], exported, release)
