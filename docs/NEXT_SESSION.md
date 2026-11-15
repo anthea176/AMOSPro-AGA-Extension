@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## ÉTAT ACTUEL — M19 P2.3 R86 candidat natif (15/11/2026)
+
+Sur `main` exclusivement, deux nouvelles commandes actuelles : `Aga Bob Batch(DescriptorBank,Count)` et témoin `Aga Bob Probe`. R86 v0.13.31: 78 commandes publiques, 88 entrées AP20, quatre unités natives. Le constructeur `tools/build_m19_p23_bob_batch.py` produit **uniquement** `dist/AMOSPro_AGA.Lib` avec `--write-dist` ; `LAST_GOOD` R84 reste intouchable (67904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). CI dédiée : `.github/workflows/m19-p23-bobs-batch-gate-a.yml`. Ne pas annoncer un PASS sans le résultat d'exécution de la nouvelle CI.
+
+**Test actif unique** : `tests/current/M19_P23_BOBS_BATCH_01.asc`. Ancien témoin R85 à archiver dans `tests/passed/` avec les mêmes octets. Le Batch dessine en groupe sur le back buffer, ne fait pas Swap/Wait VBL, et peut laisser un frame partiel en cas d'erreur sur un Bob tardif : **si résultat 0, ne pas Swap**. Tests WinUAE Runtime et Compiled **en attente des vrais journaux** `RAM:M19_P23_RUNTIME.TXT` et `RAM:M19_P23_COMPILED.TXT` ; performance pas encore mesurée.
+
+**Point CI préexistant** : `Artifact integrity` échoue déjà sur le jalon expérimental `Experimental Compiler V2 68000 bridge Gate A` (run 43698493395), indépendamment du test spécifique BOBS R85. [Contrat API](M19_P23_BOBS_BATCH_CONTRACT.md).
+
+---
+
+
 ## ÉTAT ACTUEL — M19 P2.2 R85, témoin quatrième bloc PASS (15/11/2026)
 
 **Correction de l'organisation : seul ASC actif = [`tests/current/M19_P22_4UNIT_PROBE_01.asc`](../tests/current/M19_P22_4UNIT_PROBE_01.asc)**, déplacé sans modification depuis `tests/design/`. **Ne plus chercher le nouveau test dans `tests/design/`.** Précédent P2.1 PASS archivé exactement dans [`tests/passed/M19_P21_ZCACHE_BENCH_01.asc`](../tests/passed/M19_P21_ZCACHE_BENCH_01.asc), blob Git `f75af1a84b4c658d5f1cb330d58d248413e72cc7`. Le source P2.2 correspond au blob Git `cd564aa660f8927b1c4d0b63456de58b5535fae0`.

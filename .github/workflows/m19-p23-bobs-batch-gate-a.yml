@@ -1,0 +1,62 @@
+name: M19 P2.3 R86 native BOBS batch - Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/m19-p23-bobs-batch-gate-a.yml"
+      - "tools/m19_bob_batch_emit.py"
+      - "tools/build_m19_p23_bob_batch.py"
+      - "tools/test_m19_p23_bob_batch.py"
+      - "dist/AMOSPro_AGA.Lib"
+      - "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: m19-p23-bobs-batch-main
+  cancel-in-progress: true
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install native MC68020 test dependencies
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Build R86 in memory
+        run: python -B tools/build_m19_p23_bob_batch.py
+      - name: Real 68020 BOBS Gate A - images, ABI, errors and front-buffer integrity
+        run: python -B tools/test_m19_p23_bob_batch.py
+      - name: Emit only the active binary in dist (never LAST_GOOD)
+        run: |
+          python -B tools/build_m19_p23_bob_batch.py --write-dist
+          python -B tools/build_m19_p23_bob_batch.py --check-dist
+      - name: SHA pin and archive integrity
+        run: |
+          python -B -c "import hashlib,pathlib; p=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib'); assert len(p.read_bytes())==67904; assert hashlib.sha256(p.read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: M19_P23_R86_GATE_A_CANDIDATE
+          path: dist/AMOSPro_AGA.Lib
+          if-no-files-found: error
+          retention-days: 14
+      - name: Commit only R86 active binary to main after Gate A passes
+        if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dist/AMOSPro_AGA.Lib
+          if ! git diff --cached --quiet; then
+            git commit -m "M19 P2.3 R86 candidate binary - MC68020 Gate A"
+            git push origin HEAD:main
+          fi
