@@ -208,7 +208,12 @@ def main():
             m=CaptureMachine(binary,layout,depth)
             assert m.run_select(10)==1
             for n,rect in ((1,(0,0,0,0)),(3,(3,5,19,19)),(2,(4,7,40,14))):
-                assert m.run_get(n,*rect)==1,(depth,layout,n,m.calls[-5:])
+                assert m.run_get(n,*rect)==1,(depth,layout,n,
+                    {'calls':m.calls[-9:],'chip_calls':m.chip_calls,
+                     'waits':m.waits,'scratch_allocs':m.scratch_allocs,
+                     'scratch_frees':m.scratch_frees,'state_ptr':m.get(AMOS+0x1c8),
+                     'active_bank':m.get(m.entry+m.labels['bank_active_state']),
+                     'active_ptr':m.get(m.entry+m.labels['bank_active_state']+4)})
                 check_image(m,10,n,*rect)
                 cases+=1
             imgs=parse_payload(m.bank_payload(10)).images
