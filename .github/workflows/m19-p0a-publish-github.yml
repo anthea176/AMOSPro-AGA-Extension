@@ -1,4 +1,4 @@
-name: M19 P0a - verify canonical MC68020 Lib (read only)
+name: M19 P0b - verify canonical MC68020 Lib (read only)
 
 # Historical filename kept to avoid breaking external references.
 # This workflow MUST NOT publish artifacts, ZIPs, or commit to main.
@@ -9,7 +9,10 @@ on:
       - '.github/workflows/m19-p0a-publish-github.yml'
       - 'tools/m19_p0a_*.py'
       - 'tools/build_m19_p0a_r88_*.py'
-      - 'tests/current/M19_P0A_MC68020_BANK_GET.asc'
+      - 'tests/current/M19_P0B_MC68020_MASK_BANK.asc'
+      - 'tools/m19_p0b_*.py'
+      - 'tools/build_m19_p0b_masks_in_memory.py'
+      - 'tools/test_m19_p0b_*.py'
       - 'dist/AMOSPro_AGA.Lib'
   workflow_dispatch:
 
@@ -35,7 +38,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0A_MC68020_BANK_GET.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0B_MC68020_MASK_BANK.asc
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -44,7 +47,7 @@ jobs:
           from pathlib import Path
           expected = {
               'dist/AMOSPro_AGA.Lib':
-                  (79660, 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'),
+                  (82376, 'f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'),
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
@@ -54,7 +57,7 @@ jobs:
               data = Path(path).read_bytes()
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
-          assert asc == ['M19_P0A_MC68020_BANK_GET.asc'], asc
+          assert asc == ['M19_P0B_MC68020_MASK_BANK.asc'], asc
           print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
@@ -66,6 +69,9 @@ jobs:
           python -B tools/test_m19_p0a_get_bob_emit.py
           python -B tools/test_m19_p0a_r88_bank_gate_a.py
           python -B tools/test_m19_p0a_r88_get_gate_a.py
+          python -B tools/test_m19_p0b_mask020_native.py
+          python -B tools/build_m19_p0b_masks_in_memory.py
+          python -B tools/test_m19_p0b_masks_gate_a.py
       - name: Rebuild in memory and compare byte-for-byte to canonical dist
         run: |
           python -B - <<'PY'
@@ -73,11 +79,11 @@ jobs:
           from hashlib import sha256
           import sys
           sys.path.insert(0, 'tools')
-          from build_m19_p0a_r88_get_in_memory import build
+          from build_m19_p0b_masks_in_memory import build
           data, meta = build()
-          expected = 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'
-          assert (len(data), sha256(data).hexdigest()) == (79660, expected)
-          assert meta['commands'] == 80 and meta['entries'] == 90
+          expected = 'f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'
+          assert (len(data), sha256(data).hexdigest()) == (82376, expected)
+          assert meta['commands'] == 82 and meta['entries'] == 92
           assert data == Path('dist/AMOSPro_AGA.Lib').read_bytes(), 'active Lib differs from R88-based rebuild'
           print('PASS: in-memory MC68020 rebuild identical to dist/AMOSPro_AGA.Lib')
           print('Gate A only: WinUAE Gate B and real Compiler Gate C NOT tested here')

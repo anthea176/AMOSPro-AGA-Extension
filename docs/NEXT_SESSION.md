@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0b — ACTIF : masques individuels (Gate A MC68020 PASS)
+
+**Livraison active sur `main` :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (**82 376 octets**, SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`, 82 commandes / 92 entrées AP20) avec [ASC unique `tests/current/M19_P0B_MC68020_MASK_BANK.asc`](../tests/current/M19_P0B_MC68020_MASK_BANK.asc) et [notice](../tests/current/README.md). **Deux nouvelles instructions :** `Make AGA Bob Mask I,C` et `No AGA Bob Mask I` ; index transparent explicite (0 peut être opaque), masque 1 bit indépendant, préservation des autres images, transaction atomique. [CPU Gate A MC68020 PASS — 116 scénarios pour Make/No + 104 noyau](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758224492), source candidate reconstruite/validée en CI [43758332071](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758332071). **Runtime P0a : PASS sur journal utilisateur ; Runtime P0b et vrai AMOS Compiler P0b : NON TESTÉS.** WinUAE fonctionnel **68030/JIT ON** ; 68020/JIT OFF uniquement pour benchmark. Aucun IFF/ABK initial requis : génération par le test AMOS. `LAST_GOOD` R84 et archives inchangées, **aucune promotion**. Les sections P0a ci-dessous sont historiques.
+
+
 ## ACTIF M19 P0a — bibliothèque et ASC en chemins canoniques
 
 **Livraison M19 P0a sur main :** `dist/AMOSPro_AGA.Lib` **79 660 octets**, SHA256

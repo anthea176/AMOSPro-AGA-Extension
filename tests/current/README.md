@@ -1,41 +1,54 @@
-# Test actif — M19 P0a MC68020 : banque Bob AGBO multi-images
+# Test actif — M19 P0b : Bobs AGA multi-images, masques indépendants MC68020
 
-**Bibliothèque active unique :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **79 660 octets**, SHA256
-`e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`.
-**ASC actif unique :** [`M19_P0A_MC68020_BANK_GET.asc`](M19_P0A_MC68020_BANK_GET.asc).
+**Bibliothèque unique de test :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib),
+**82 376 octets**, SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`.
+**Programme AMOS actif unique :** [`M19_P0B_MC68020_MASK_BANK.asc`](M19_P0B_MC68020_MASK_BANK.asc).
 
-**Configuration de test fonctionnel de l'auteur :** WinUAE **68030 + JIT activé**, AGA PAL.
-**68020 sans JIT : réservé aux benchmarks** (pas à cette campagne).
-Code natif **68020 minimum**, sans chemin 68000. **Gate A MC68020 PASS 74 scénarios** ;
-**Gate B WinUAE et Gate C Compiler réel NON TESTÉES**.
+**Cible native : MC68020 minimum, sans fallback 68000.** Les tests fonctionnels
+se font sous **WinUAE 68030 + JIT activé, AGA PAL** ; le **68020 sans JIT** est
+réservé aux benchmarks, pas à ce test.
 
-## Lancer
+## Ce que teste l'ASC
 
-1. Installer exactement [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib)
-   sous le nom `AMOSPro_AGA.Lib` dans le slot d'extension `APSystem` ; redémarrer AMOS.
-2. Créer un programme vierge. Importer
-   [`M19_P0A_MC68020_BANK_GET.asc`](M19_P0A_MC68020_BANK_GET.asc)
-   via **Project → Merge ASCII**, pas via `Load`.
-3. Exécuter d'abord en interprété / Runtime, puis dans AMOS Compiler V2.
-   Récupérer le journal `RAM:M19_P0A_INTERPRETED.TXT`,
-   `RAM:M19_P0A_RUNTIME.TXT` ou `RAM:M19_P0A_COMPILED.TXT` suivant le mode.
-4. Attendu après exécution réelle : `PASS ERR 0`, `ABK RELOADED 1`,
-   `CLOSE RETURNED 1`. Toute erreur ou Guru constitue un échec.
+- Régression P0a : `Aga Bob Bank 24`, trois captures `Get AGA Bob`, insertion
+  au milieu puis remplacement d'une image, sans perdre les autres ; tailles
+  `552`, `976`, `1528`, `1032` octets.
+- P0b : `Make AGA Bob Mask I,C` avec indices transparents **0, 127 et 37**,
+  bitplane de masque indépendant de la couleur, largeur **17** non alignée ;
+  tailles AGBO successives **1092 / 1094 / 1142** octets.
+- `No AGA Bob Mask I` pour deux images : **1140 / 1092** octets. Suppression
+  répétée sur une image déjà opaque = **aucune nouvelle génération**.
+- Contrôle des flags du répertoire, décalage du masque et des mots `$7FFF/$8000`
+  (pixel de couleur 0 transparent, autres pixels opaques), puis sauvegarde native
+  AMOS, `Erase`, `Load`, resélection et recontrôle du masque.
 
-**Ressources externes : aucune.** Les formes sont dessinées par `Aga Blit Fill`,
-les images sont capturées par `Get AGA Bob`, et le fichier ABK est généré
-dans `RAM:` par le programme. La banque AMOS 24 doit être libre au lancement.
+**Aucune ressource externe `.IFF` ou `.ABK` n'est nécessaire** : l'ASC dessine
+lui-même les pixels et crée le fichier `RAM:M19_P0B_68020_BOBS.ABK`.
+La banque AMOS **24 doit être libre** dans le nouveau programme au lancement.
 
-## Conservation des anciens jalons
+## Essai WinUAE
 
-- **R88 v0.13.33 source figée :** [archive originale 75 040 octets](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib),
-  SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`.
-- **R84 LAST_GOOD :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib),
-  SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` ; inchangée.
-- L'ancien ASC R88 P2.8 n'est plus dans `tests/current/` :
-  son contenu est conservé par l'historique Git du jalon R88
-  (Git blob `001396551cad6fed57903b714bc374e0988f63ea`).
-  Les anciennes ressources ABK/IFF de la campagne R88 restent inchangées,
-  mais ne sont pas utilisées par le test P0a.
+1. Installer exactement [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) sous
+   le nom `AMOSPro_AGA.Lib` dans le slot AGA habituel de `APSystem`, puis redémarrer AMOS.
+2. Dans un programme vierge, utiliser **Project → Merge ASCII** pour importer
+   `M19_P0B_MC68020_MASK_BANK.asc` ; ne pas utiliser `Load` sur l'ASCII.
+3. Exécuter en Runtime, puis lire `RAM:M19_P0B_RUNTIME.TXT` (ou
+   `RAM:M19_P0B_INTERPRETED.TXT`). Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`,
+   `MASKS_OK 1`, `MASK_SIZE_AFTER_NO_3 1092`, `ABK_RELOADED 1`,
+   `CLOSE_RETURNED 1`. **Cela reste NON TESTÉ sous WinUAE pour P0b.**
+4. Compiler **le même ASC** avec le véritable AMOS Compiler V2, exécuter le
+   binaire obtenu et lire `RAM:M19_P0B_COMPILED.TXT`. Un gel, une erreur
+   de banque ou un Guru = **FAIL** ; ne pas déduire Gate C de Gate A.
 
-**Ce n'est pas une promotion LAST_GOOD.** Ne jamais déduire une Gate B/C des seuls tests CPU.
+## Preuves et protections
+
+- **Gate A P0b CPU MC68020 : PASS** : 116 scénarios des deux commandes,
+  deux placements de code, plus 104 scénarios du noyau privé (services AMOS simulés).
+  [CI P0b](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758224492).
+- **Gate B P0b WinUAE : NON TESTÉE**. **Gate C P0b Compiler réel : NON TESTÉE**.
+  Le précédent **P0a Runtime PASS** concerne un **autre binaire et ASC** et ne
+  valide pas automatiquement cette nouvelle version.
+- **R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` intouchée**, aucune promotion.
+  La base R88 native est conservée à l'identique dans son archive existante.
+- L'ASC P0a antérieur reste récupérable dans l'historique Git, sans deuxième
+  test actif ni modification de `tests/passed/`.

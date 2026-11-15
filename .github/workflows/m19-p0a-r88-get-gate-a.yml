@@ -40,7 +40,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
