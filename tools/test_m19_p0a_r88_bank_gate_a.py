@@ -184,7 +184,7 @@ def main():
     m=SelectMachine(binary)
     patched=relocate(raw,ENTRY,{},m.uc)
     executable=patched[:labels['active_state']]
-    diss=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_000)
+    diss=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
               .disasm(executable,ENTRY))
     assert sum(i.size for i in diss)==len(executable),'invalid native 68020 instruction'
     count=0

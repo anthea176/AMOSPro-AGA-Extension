@@ -221,7 +221,7 @@ def main():
     assert parts[88].endswith(native) # R88 BOBS + Bank Select + Get Capture
     capture=native[labels['get_entry']:]
     m=CaptureMachine(binary)
-    dis=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_000)
+    dis=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
              .disasm(m.uc.mem_read(m.get_entry,len(capture)),m.get_entry))
     assert sum(x.size for x in dis)==len(capture),'invalid 68020 capture opcodes'
     assert not any(x.mnemonic.startswith('dc.') for x in dis)
