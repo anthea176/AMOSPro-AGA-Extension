@@ -4,14 +4,14 @@
 
 **Référence :** bibliothèque R84 v0.13.29 `LAST_GOOD` (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`) **inchangée**. Pas de nouvelle API M19, de compilation demandée, de `c2p.library`, ni de travail sur une autre branche.
 
-**État : ASC benchmark préparé avec vérifications de structure et de logique ; WinUAE non exécuté pour ce nouveau test, mesures et Gate B en attente.** Un PASS P2.0 n'est pas un PASS benchmark. Le nouveau banc n'inclut pas d'AMAL : il mesure le gestionnaire BASIC et le rendu dans un scénario contrôlé.
+**État : premier journal WinUAE Runtime 68030 reçu, benchmark INTERROMPU (`RESULT 0`, `ERR 20`) à 41/240 frames par le test d'Échap.** Aucune erreur de dessin/Swap ni retry. Mesures N4 P0 complètes, N8 P0 partielles, N16 et second passage absents. [Rapport de l'exécution](../../benchmarks/RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). **Gate B benchmark NON VALIDÉE.** Un PASS P2.0 n'est pas un PASS benchmark. Le nouveau banc n'inclut pas d'AMAL : il mesure le gestionnaire BASIC et le rendu dans un scénario contrôlé.
 
 ## Lancement WinUAE
 
 1. Vérifier les banques **11 à 23 libres** ; WinUAE AGA **PAL, JIT OFF**, MC68020 **14 MHz fixe** pour le benchmark de référence (ou démarrer en 68030 pour un premier contrôle).
 2. Charger R84 puis **Project → Merge ASCII** dans un programme vide. **`Set Buffer 20` doit être la première instruction exécutée.**
 3. Le programme prépare 6 sources AGAPIC et 4 FICON8, puis exécute **deux passages** des charges 4, 8 et 16. Le tri de 800 itérations et les 120 effacements/120 compositions **n'ont pas de Swap** et peuvent montrer un écran fixe ; **40 frames visibles par charge et par passage** sont ensuite affichées avec Swap.
-4. Après les **240 frames de présentation** au total, attendre le retour AMOS et relever `RAM:M19_P2_BENCH_BOBS_RUNTIME.TXT` (ou suffixe du mode). Faire une copie du journal avant une nouvelle exécution.
+4. **Ne pas appuyer sur Échap** : `Aga Key=69` provoque `ERR 20` et quitte le banc avant le résultat final. Après les **240 frames de présentation** au total, attendre le retour AMOS et relever `RAM:M19_P2_BENCH_BOBS_RUNTIME.TXT` (ou suffixe du mode). Faire une copie du journal avant une nouvelle exécution. Si `ERR 20` revient sans appui Échap, le signaler pour diagnostic.
 
 ## Champs essentiels
 

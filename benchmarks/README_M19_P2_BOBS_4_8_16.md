@@ -1,6 +1,6 @@
 # M19 / P2 — Benchmark comparatif de 4, 8 et 16 Bobs (R84)
 
-> **État au 15/11/2026 : benchmark AMOS BASIC préparé, pas encore exécuté sur WinUAE.** Aucune mesure réelle n'est présentée ici. `main` uniquement. Bibliothèque R84 v0.13.29 `LAST_GOOD` protégée, aucune nouvelle API native.
+> **État au 15/11/2026 : premier passage WinUAE Runtime 68030 reçu, mais interrompu après 41/240 frames (`ERR 20`, Échap signalé).** N4 P0 complet, tri/fond/composition N8 P0 complets, N16 et passage 1 non mesurés. [Résultats partiels](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). `main` uniquement, R84 `LAST_GOOD` protégée, aucune API native.
 
 **Unique ASC actif :** [`tests/current/M19_P2_BENCH_BOBS_01.asc`](../tests/current/M19_P2_BENCH_BOBS_01.asc). Le [prototype P2.0 fonctionnel validé](../tests/passed/M19_P2_OBJECTS_01.asc) est archivé octet pour octet ; [rapport Runtime P2.0](../docs/M19_P2_WINUAE_RUNTIME_2026-11-15.md).
 
@@ -31,7 +31,7 @@ Mesurer le **coût de tri du gestionnaire BASIC**, le coût d'effacement 320×25
 
 1. Démarrer WinUAE en AGA, PAL, **JIT OFF**. Pour l'étude 68020, choisir **MC68020 à 14 MHz, vitesse CPU fixe**. Noter également la fréquence chipset/réglage WinUAE, Chip RAM et Fast RAM. Pour une vérification rapide, commencer éventuellement en 68030 mais **ne pas comparer** ces nombres avec ceux du 68020.
 2. Installer la bibliothèque R84 `LAST_GOOD` ; s'assurer que les banques **11 à 23 sont libres** et lancer depuis un programme vide **Project → Merge ASCII** avec le seul ASC actif.
-3. L'écran AGA est initialement peu animé pendant les phases chronométrées sans Swap ; c'est **normal**. Les séquences visibles avec 4, puis 8, puis 16 Bobs sont courtes. Ne pas cliquer sur l'écran ni modifier les préférences WinUAE pendant l'essai. Échap interrompt et produit un résultat incomplet.
+3. L'écran AGA est initialement peu animé pendant les phases chronométrées sans Swap ; c'est **normal**. Les séquences visibles avec 4, puis 8, puis 16 Bobs sont courtes. Ne pas cliquer sur l'écran ni modifier les préférences WinUAE pendant l'essai. **Échap interrompt immédiatement avec `ERR 20`** ; le premier journal reçu s'est interrompu après la première frame présentée à 8 Bobs. Éviter tout appui sur Échap pendant les mesures ; si le code revient sans appui, le signaler.
 4. Laisser finir les **2 passages × 3 charges**, jusqu'au retour AMOS. Récupérer **`RAM:M19_P2_BENCH_BOBS_RUNTIME.TXT`** (ou suffixe selon `Prg State`). **Copier le journal hors de RAM: avant de relancer**, car il sera écrasé.
 5. Répéter idéalement deux à trois fois à configuration strictement identique. Chaque fichier est analysé séparément ; utiliser le **médian** des passages ou relances et garder les mesures brutes.
 

@@ -2,7 +2,7 @@
 
 ## M19 / P2 — coût de 4, 8 et 16 Bobs logiciels (préparé, non mesuré)
 
-[Test AMOS unique actif](../tests/current/M19_P2_BENCH_BOBS_01.asc) · [protocole complet](README_M19_P2_BOBS_4_8_16.md) · [P2.0 fonctionnel archivé](../tests/passed/M19_P2_OBJECTS_01.asc). Bibliothèque R84 `LAST_GOOD` intacte. Deux passages pour 4/8/16 objets (répartition masqué/opaque/FICON8 constante) ; mesures `Timer` séparées : tri BASIC, Blit Fill, composition sans Swap, et VBL+Swap. **Aucune valeur WinUAE disponible** ; le benchmark doit être exécuté en PAL, JIT OFF et CPU fixe pour une comparaison pertinente.
+[Test AMOS unique actif](../tests/current/M19_P2_BENCH_BOBS_01.asc) · [protocole complet](README_M19_P2_BOBS_4_8_16.md) · [P2.0 fonctionnel archivé](../tests/passed/M19_P2_OBJECTS_01.asc). Bibliothèque R84 `LAST_GOOD` intacte. Deux passages pour 4/8/16 objets (répartition masqué/opaque/FICON8 constante) ; mesures `Timer` séparées : tri BASIC, Blit Fill, composition sans Swap, et VBL+Swap. **Premier journal Runtime 68030 partiel** : `ERR 20` (Échap signalé) après 41/240 frames. N4 P0 : fond 139 ticks /120 appels, composition 140 ticks /120 frames, présentation 80 ticks /40 frames ; N8 P0 : fond 140, composition 140, présentation interrompue. **N16 et second passage non mesurés**. [Analyse détaillée](RESULTATS_M19_P2_BOBS_4_8_16_2026-11-15.md). Refaire le benchmark en PAL JIT OFF et CPU fixe ; aucune conclusion d'API native.
 
 
 ## OPT020/P1e — comparaison R60 (R68 LAST_GOOD) / R69, WinUAE JIT OFF
