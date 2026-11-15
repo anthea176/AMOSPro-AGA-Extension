@@ -2,11 +2,13 @@
 
 **ASC actif unique** : [`M19_P28_R88_CACHE_BLIT_FPS_01.asc`](M19_P28_R88_CACHE_BLIT_FPS_01.asc) (350 lignes, Git blob `a9ee1aaa64d9b588e5b2d6e6134d63ec848e6181`).
 
-**Attention :** cet ASC utilise une **API expérimentale R88 v0.13.33 qui n'existe pas dans R87** : `Aga Cache Blit(CacheBank,X,Y,Mode)`. **R88 n'est PAS installée dans `dist/` et n'est pas promue.** Sa construction en mémoire et ses 130 scénarios AP20 sous émulation 68020 ont passé Gate A ; les Gates WinUAE B/C sont **NON TESTÉES**.
+**Attention :** cet ASC utilise une **API expérimentale R88 v0.13.33 qui n'existe pas dans R87** : `Aga Cache Blit(CacheBank,X,Y,Mode)`. **R88 est archivée uniquement dans `dist/experimental/` et n'est pas promue ; `dist/AMOSPro_AGA.Lib` reste R87.** Sa construction en mémoire et ses 130 scénarios AP20 sous émulation 68020 ont passé Gate A ; les Gates WinUAE B/C sont **NON TESTÉES**.
 
 ## Paquet expérimental
 
-Télécharger **l'artifact GitHub Actions** `M19_P28_R88_IN_MEMORY_GATE_A_ONLY_NOT_WINUAE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
+**Archives permanentes sur `main` :** [bibliothèque expérimentale R88 Gate A](../../dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib) et [quatre banques ABK de test](../fixtures/m19_p28/). Vérification des cinq SHA256 par [`tools/verify_p28_archive.py`](../../tools/verify_p28_archive.py). **La R88 archivée n'est pas une promotion et ne remplace pas `dist/AMOSPro_AGA.Lib`.**
+
+Télécharger **l'artifact GitHub Actions** `M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE` de la [CI P2.8](../../.github/workflows/m19-p28-agapic-planar-cache-gate-a.yml), qui comprend :
 
 - `AMOSPro_AGA.Lib` — **R88 expérimentale**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **75 040 octets**.
 - `M19_P28_R88_CACHE_BLIT_FPS_01.asc` — le programme de référence.
