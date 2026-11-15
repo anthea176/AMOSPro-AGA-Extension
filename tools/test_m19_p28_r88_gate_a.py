@@ -122,9 +122,10 @@ class AgpcMachine(CaptureMachine):
         super().os_call(uc,address,size,user)
 
 
-def oracle(before,x,y,mode):
+def oracle(before,x,y,mode,stride):
     out=[bytearray(p) for p in before]
-    stride=((WIDTH+15)//16)*2
+    assert stride >= ((WIDTH+15)//16)*2 and stride % 2 == 0
+    assert all(len(p) >= stride*HEIGHT for p in out)
     for sy in range(16):
         ty=y+sy
         if not 0<=ty<HEIGHT:continue
@@ -190,7 +191,7 @@ def one_case(binary,*,layout='interpreted',cache=CACHES[0],front=0,
     assert m.alloc_count==m.free_count==m.reserve_count==m.erase_count==0
     assert bytes(m.uc.mem_read(BANK,len(cache)))==src_before,'source cache mutated'
     if expect_ok:
-        expected=oracle(before,x,y,mode)
+        expected=oracle(before,x,y,mode,m.stride)
         actual=[bytearray(v) for v in m.snapshot()]
         if actual!=expected:
             first=next((p,j,expected[p][j],actual[p][j])
