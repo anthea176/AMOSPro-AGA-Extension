@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0a — capture transactionnelle (depuis R88 uniquement)
+
+Deuxième étape P0a : `tools/m19_p0a_capture_transaction.py` et `tools/test_m19_p0a_capture_transaction.py` ajoutés, avec 14 nouveaux tests hôte PASS (25 au total avec les 11 tests du format AGBO). Capture bitmap planaire Safe, stride physique, coins inclusifs, banques multiples, remplacement d'image sans perte, échec d'allocation sans mutation et resélection obligatoire après `Erase`/`Load`. [Rapport](M19_P0A_CAPTURE_TRANSACTION_2026-11-15.md). **Ce modèle n'est ni une instruction AP20, ni une Gate A native.** La transaction de remplacement d'une banque AMOS Professional 365 reste à vérifier sur son implémentation exacte avant toute mutation native. Aucun binaire, ASC, R84 `LAST_GOOD` ou builder R88 modifié.
+
+
 ## M19 P0a — développement depuis R88 (modèle de banque ABK, pas de nouvelle Lib)
 
 Suite à la demande explicite de reprendre **M19 Bobs multi-images uniquement depuis R88**, la première brique **P0a hôte** est ajoutée : `tools/m19_p0a_multi_bob_abk.py`, 11 tests locaux PASS dans `tools/test_m19_p0a_multi_bob_abk.py`, format et limites dans [`M19_P0A_ABK_FORMAT_2026-11-15.md`](M19_P0A_ABK_FORMAT_2026-11-15.md). Provenance figée : R88 `7c575a02087d550611b8e966a7708b5f6a8c4b71`, sans emploi de code ni d'exemple des builds ultérieurs. Payload `AGBO` v1 multi-images non compressées, masque indépendant, AMOS `AmBk` DATA, contrôle des corruptions, remplacement atomique dans le modèle. **Aucune commande AP20 ajoutée, aucune Gate A native/B/C, aucun nouveau ASC, aucune modification de `dist` ni de `LAST_GOOD`.** Prochaine étape technique : résoudre l'agrandissement non destructif des banques AMOS avant `Aga Bob Bank`/`Get AGA Bob` natifs.

@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0a — capture transactionnelle (hôte uniquement)
+
+[Implémentation et tests](M19_P0A_CAPTURE_TRANSACTION_2026-11-15.md) : 14 tests hôte supplémentaires PASS (25 P0a au total), capture planaire 1/4/8 plans et coords inclusives, transaction allouer → valider → échanger en modèle. **Pas encore d'API native AP20 ni Gate A/B/C** : remplacement sûr d'une banque réelle AMOS Professional 365 à auditer d'abord. Source figée R88, aucune R89/R90 utilisée, R84 `LAST_GOOD` préservée.
+
+
 > **M19 P0a en cours (source R88 figée).** Le format ABK multi-images `AGBO` v1 et son encodeur/décodeur de référence sont implémentés côté hôte, avec 11 tests PASS locaux. [Rapport et spécification](M19_P0A_ABK_FORMAT_2026-11-15.md). **Non intégré à l'API AP20 ; WinUAE et Compiler non testés ; `dist` et R84 `LAST_GOOD` intacts.** Aucune utilisation de code ni d'exemple postérieur à R88 pour ce chantier.
 
 
