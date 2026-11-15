@@ -19,6 +19,7 @@ ASC_NAME = "M19_P24_BOBS_PIXELS_BENCH_01.asc"
 LEGACY_GIT_SHA = "19ad2044252783454f4082c118e53b34a6b83478"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 R86_SHA = "63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f"
+from build_m19_p25_no_probe import build as build_r87
 
 
 def git_blob_sha(raw: bytes) -> str:
@@ -139,7 +140,12 @@ def main():
     last_good = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     current_lib = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
-    assert len(current_lib) == 73232 and sha256(current_lib).hexdigest() == R86_SHA
+    candidate, meta=build_r87()
+    assert meta["commands"]==77 and meta["ap20_entries"]==87
+    current_sha=sha256(current_lib).hexdigest()
+    assert (len(current_lib)==73232 and current_sha==R86_SHA) or (current_lib==candidate and current_sha==meta["sha256"])
+    if current_sha!=R86_SHA:
+        assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]<5226
     active = list((ROOT / "tests/current").glob("*.asc"))
     assert len(active) == 1 and active[0].name == ASC_NAME
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
@@ -147,13 +153,15 @@ def main():
     source = active[0].read_bytes().decode("latin-1")
     model = check_model()
     verify_script(source, model)
+    assert "Aga Bob Probe" not in source
+    assert "LIBRARY_EXPECTED R87_V0.13.32" in source
     for colour in range(256):
         test_bank = pack_image(1, 1, 8, bytes((colour,)))
         assert decode_single_pixel_v1(test_bank) == colour
     print("M19 P2.4 STATIC PRE-WINUAE PASS: 19 independent pixel expectations,"
           " 256 v1 capture decode colours, 4/8/16 descriptor sizes, 3 byte-identical"
           " full-image parity checks specified, two AB/BA benchmark passes.")
-    print("R86 candidate and R84 LAST_GOOD untouched; Runtime/Compiled NOT TESTED.")
+    print("R87 candidate reconstructed; R84 LAST_GOOD protected; R87 Runtime/Compiled NOT TESTED.")
 
 
 if __name__ == "__main__":

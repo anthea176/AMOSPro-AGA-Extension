@@ -1,6 +1,7 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-R86 v0.13.31 is the active NON-PROMOTED M19 P2.3 Batch candidate; native Gate A and WinUAE Runtime B/Compiled C passed for the dedicated test. No speedup established. R84 LAST_GOOD unchanged.
+R87 v0.13.32 is the unpromoted BOBS Batch no-probe candidate; Gate A/B/C must be rerun for the changed binary.
+R86 v0.13.31 was the prior NON-PROMOTED M19 P2.3 Batch candidate; native Gate A and WinUAE Runtime B/Compiled C passed for the dedicated test. No speedup established. R84 LAST_GOOD unchanged.
 
 R84 v0.13.29 is PROMOTED LAST_GOOD with explicit author approval: native Gate A PASS and WinUAE AMOS Compiler Gate C PASS (with a bank in the compiled program). Separate corrected Runtime Gate B NOT evidenced; physical Gate D untested.
 R83 v0.13.28 is the reproducible historical LAST_GOOD with A/B/C PASS on its own WinUAE test.
@@ -82,6 +83,26 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if b"R87 v0.13.32" in cur:
+        # During R87's first deterministic build, verify the candidate against
+        # its frozen-source producer; pin its literal SHA256 once Gate A passes.
+        from compiler_relocation import unpack_ap20
+        from build_m19_p25_no_probe import build as build_r87
+        image,meta=build_r87()
+        assert cur==image and cur!=good and meta["sha256"]==current_sha
+        assert meta["commands"]==77 and meta["ap20_entries"]==87
+        assert sha256(good).hexdigest()==R84_SHA and len(good)==67904
+        _,segments,title=unpack_ap20(cur)
+        assert len(segments)==87
+        assert tuple(map(len,segments[83:])) == (
+            5558,2508,meta["native_units"]["BOBS"],56580)
+        assert b"R87 v0.13.32" in title
+        audit=inspect(parse(cur))
+        assert not audit["issues"],audit["issues"]
+        names=[x["name"] for x in audit["tokens"]]
+        assert "aga bob probe" not in names and "aga bob batch" in names
+        assert len([x for x in names if x.startswith("aga ")])==77
+        return cur,good,"R87 v0.13.32 M19 P2.5 BOBS native Batch without diagnostic probe: rebuild byte exact, Gate B/C NOT TESTED; R84 LAST_GOOD protected"
     if current_sha == R86_SHA:
         from compiler_relocation import unpack_ap20
         from build_m19_p23_bob_batch import build as build_r86

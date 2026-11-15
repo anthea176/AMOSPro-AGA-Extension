@@ -1,10 +1,10 @@
-# M19 P2.4 — validation pixel WinUAE et mesure BASIC/Batch R86
+# M19 P2.4 — validation pixel WinUAE et mesure BASIC/Batch R87
 
-Date : 15 novembre 2026. **NOUVEAU TEST EN PRÉPARATION**, aucune Gate B/C P2.4 ne peut être déclarée PASS avant les journaux WinUAE. Ne change ni la R86 v0.13.31 ni la R84 `LAST_GOOD`.
+Date : 15 novembre 2026. **NOUVEAU TEST EN PRÉPARATION**, aucune Gate B/C P2.4 ne peut être déclarée PASS avant les journaux WinUAE. Ce test valide la nouvelle R87 v0.13.32 sans diagnostic Probe. Ne change pas la R84 `LAST_GOOD`.
 
 ## Périmètre et prérequis
 
-- Candidat **R86 v0.13.31** toujours dans `dist/AMOSPro_AGA.Lib`, 73 232 octets, SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`. 78 commandes / 88 entrées AP20. **Aucune reconstruction ni promotion** pour P2.4.
+- **Nouveau candidat R87 v0.13.32**, généré directement dans `dist/AMOSPro_AGA.Lib` depuis R84 figée après Gate A, **77 commandes / 87 entrées AP20**, et aucune commande `Aga Bob Probe`. La R86 v0.13.31 (SHA256 `63ad295d49c807cda1ba7e2482855fe8c00d6f9e71987f3aa9bc3fdbedd5a93f`) reste un jalon historique. **Pas de promotion.**
 - Fichier **actif unique** : [`tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc`](../tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc).
 - Le programme P2.3 déjà qualifié Runtime/Compiled est **archivé octet pour octet** dans [`tests/passed/M19_P23_BOBS_BATCH_01.asc`](../tests/passed/M19_P23_BOBS_BATCH_01.asc), Git blob `19ad2044252783454f4082c118e53b34a6b83478` ; [rapport P2.3](M19_P23_R86_WINUAE_RUNTIME_COMPILED_2026-11-15.md).
 - Matériel de benchmark de référence : **WinUAE 68020 à 14 MHz, PAL, JIT désactivé**, comme le [benchmark M19 P2.1](../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). Exécuter le même programme en **Runtime** puis en **Compiled** et récupérer les deux TXT depuis `RAM:` avant reboot.
@@ -65,3 +65,5 @@ Les captures proviennent du même encodeur R84 et des mêmes dimensions ; leur r
 Critères de PASS fonctionnel : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PIXEL_OK 19`, `PIXEL_BAD 0`, `PIX_CAPTURE_BAD 0`, `PARITY_OK 3`, `PARITY_BAD 0`, `BENCH_RUNS 12`, `DRAW_ERR 0`, `CLOSE_RETURNED 1`. Les temps se rapportent **séparément**, même en cas d'absence de gain.
 
 **LAST_GOOD R84 non modifiée ; pas de branche, tag ou release.** La CI générale historique `Artifact integrity` est suivie séparément ; elle peut comporter des garde-fous anciens ne reconnaissant pas encore R86.
+
+**Migration R87 du test P2.4 :** l'appel initial à `Aga Bob Probe` est supprimé, mais les 19 oracles, 3 parités et 12 fenêtres de timing sont conservés. **Les résultats P2.4 sur R86 n'ont jamais été exécutés** ; les validations seront effectuées uniquement sur la R87 sans Probe.

@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## CHANTIER ACTIF — M19 P2.5 R87 : suppression du témoin BOBS (15/11/2026)
+
+**Branche `main` uniquement.** Le nouveau constructeur `tools/build_m19_p25_no_probe.py` retire définitivement **du candidat R87** le token `Aga Bob Probe`, son stub et la routine `PROBE_CODE` ; `Aga Bob Batch` reste identique, indice AP20 **82**, groupe BOBS **85**, 77 commandes et 87 entrées AP20. Le nouveau test natif MC68020 `tools/test_m19_p25_no_probe.py` vérifie ABI, absence de Probe, contenu moteur, portée BSR.W, pixels, sécurité du front, erreurs et R84 historique. Le workflow R86 obsolète est désactivé en push pour éviter un retour arrière automatique.
+
+**État initial du chantier :** R86 encore dans `dist/AMOSPro_AGA.Lib` jusqu'à réussite de la CI R87 et écriture exclusive dans ce même chemin. **R84 `LAST_GOOD` absolument inchangée.** Le seul ASC actif `tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc` est ciblé **R87** (plus d'appel au Probe). Les anciens logs R86 P2.3 **ne valident pas** R87. **Gates B/C R87 NON TESTÉES**, aucun gain de performance présumé. Nouvelle validation sous WinUAE 68020/14 MHz/JIT OFF via `RAM:M19_P24_RUNTIME.TXT` et `RAM:M19_P24_COMPILED.TXT`. Aucune branche/tag/release ou promotion.
+
+[Contrat R87](M19_P25_R87_NO_PROBE_2026-11-15.md) · [Test actuel](../tests/current/M19_P24_BOBS_PIXELS_BENCH_01.asc).
+
+---
+
 ## ÉTAT ACTUEL — M19 P2.4, banc pixels + benchmark R86 (15/11/2026)
 
 **Nettoyage obligatoire avant toute version publiable après les essais P2.4 :** retirer du **binaire natif** la commande temporaire `Aga Bob Probe` (token public, stub AP20, routine `PROBE_CODE` et toutes références embarquées), sans supprimer le moteur `Aga Bob Batch`. Mettre à jour le générateur, les offsets et les références de groupe AP20, contrôler ABI/relocations/portée BSR.W et limite 65 534 octets, puis construire la **nouvelle candidate uniquement dans `dist/AMOSPro_AGA.Lib`**, sans toucher à R84 `LAST_GOOD`. Rejouer les tests statiques/MC68020 et obtenir de **nouveaux** résultats WinUAE Runtime et Compiled : les Gates R86 ne sont pas transférables automatiquement au binaire nettoyé. Les tests et rapports restent archivés dans `tests/passed/`, `tools/` et `docs/` pour la non-régression : seule la sonde de diagnostic embarquée doit disparaître. Aucun tag, release ou promotion sans validation explicite.
