@@ -198,7 +198,11 @@ def one_case(binary,*,layout='interpreted',cache=CACHES[0],front=0,
                        if expected[p][j]!=actual[p][j])
             raise AssertionError(('pixels differ',layout,x,y,mode,
                                   first,'gfx',m.gfx_calls[-8:],
-                                  'cache_magic',bytes(m.uc.mem_read(BANK,12)).hex()))
+                                  'cache_magic',bytes(m.uc.mem_read(BANK,12)).hex(),
+                                  'source_plane0_row1',bytes(m.uc.mem_read(BANK+104+2,2)).hex(),
+                                  'before_byte',before[first[0]][first[1]],
+                                  'dst_plane_base',hex(m.planes[first[0]]),
+                                  'bitmap',hex(m.expected_bitmap)))
         visible=-16<x<WIDTH and -16<y<HEIGHT
         assert sum(z[0]=='WaitBlit' for z in m.gfx_calls)==int(visible)
         assert sum(z[0]=='InitRastPort' for z in m.gfx_calls)==int(visible)
