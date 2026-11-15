@@ -62,7 +62,7 @@ def run_case(raw, *, base=0x10000, width=17, height=3, depth=8,
              (UC_M68K_REG_D2,depth&0xffffffff),
              (UC_M68K_REG_D3,transparent&0xffffffff),
              (UC_M68K_REG_D4,stride if bad_stride is None else bad_stride),
-             (UC_M68K_REG_A7,STACK),(UC_M68K_REG_SR,0x2000)]
+             (UC_M68K_REG_SR,0x2000),(UC_M68K_REG_A7,STACK)]
     for reg,val in regvals:uc.reg_write(reg,val)
     try:
         uc.emu_start(base,STOP,count=4000000)
