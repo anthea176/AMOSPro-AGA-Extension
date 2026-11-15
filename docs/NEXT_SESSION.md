@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P2.8 — diagnostic WinUAE du 15/11/2026 : banque AGPC en Fast RAM
+
+**R88 v0.13.33 Gate A PASS (130 cas) ; WinUAE Runtime B FAIL sur le banc original, `ERR 12`**. Le journal `M19_P28_DIAG_RUNTIME.TXT` montre `B11/B13 LENGTH 360`, `AGPCACHE`, flags AGPC 3, mais `CHIP_AFTER_LOAD=CHIP_BEFORE=1 796 336` et `FAST_AFTER_LOAD-FAST_BEFORE=-768` : les deux banques de 384 octets (avec enveloppe AMOS) resident en Fast RAM. `Aga Cache Blit` renvoie 0 dans les deux modes sur les deux banques, conforme au refus `MEMF_CHIP` du coeur M18. **Diagnostic termine sans Guru : `DIAG_DONE 1`, `ERR 0`, `CLOSE_RETURNED 1`** ne constituent pas une Gate B PASS.
+
+**ASC actif corrige (tests/courant)** : [`M19_P28_R88_CACHE_BLIT_FPS_01.asc`](../tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc), Git blob `001396551cad6fed57903b714bc374e0988f63ea`, staging AGPC en **vraies banques Chip Data 11/13** (via temp 20, copie exacte du payload 360 octets et du nom AGPCACHE, sans modifier les flags AMOS). **Correction PREPAREE uniquement** : nouvelle Gate B WinUAE attendue ; Gate C Compiler non testee. Les binaires R88 candidat, R87 archive et R84 `LAST_GOOD` sont inchanges. Pas de branche, promotion, tag ni release. [Rapport du diagnostic](M19_P28_R88_CHIP_BANK_DIAGNOSTIC_2026-11-15.md).
+
+---
+
 ## CANDIDATE ACTIVE R88 — correction du chemin (15/11/2026)
 
 **`dist/AMOSPro_AGA.Lib` contient R88 v0.13.33** (**75 040 octets**, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`). La **R87 v0.13.32 précédente** est archivée sans changement dans `dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib` (**73 184 octets**). Les quatre banques P2.8 restent dans `tests/fixtures/m19_p28/`, l'unique ASC dans `tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc`. **Gate A native R88 PASS ; Gates WinUAE B/C NON TESTÉES.** R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` intacte et non remplacée. Aucun tag, release, promotion ni branche. [Contrat du changement](M19_P28_R88_ACTIVE_CANDIDATE_2026-11-15.md).
