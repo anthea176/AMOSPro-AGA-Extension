@@ -1,5 +1,10 @@
 # M19 P0a — `Get AGA Bob` multi-images, candidat dérivé exclusivement de R88
 
+## Livraison GitHub effective — 15 novembre 2026
+
+Le binaire exact MC68020 Gate A PASS a ete ajoute a [dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A.Lib). Taille **79 660**, SHA256 `e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0`. Il accompagne un [ZIP de test WinUAE](../dist/experimental/AMOSPro_AGA_M19_P0A_MC68020_GATE_A_WINUAE.zip) contenant la Lib (nom `AMOSPro_AGA.Lib`), l'[ASC](../examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc), la [notice](../examples/m19_p0a_68020/README.fr.md) et le SHA. **Pas de ressource IFF ou ABK initiale**. Les formes et l'ABK RAM sont crees par le test. **Ceci ne constitue pas une Gate B/C**, qui restent NON TESTEES. `dist/AMOSPro_AGA.Lib` original R88 et R84 LAST_GOOD sont inchanges ; seule la candidate autonome dans `dist/experimental/` est livree. Les mentions plus anciennes « en memoire uniquement » ci-dessous decrivent l'etat avant publication et sont maintenant historiques.
+
+
 ## M19 P0a — MC68020 exclusif : Gate A 74/74 PASS
 
 **Décision utilisateur du 15/11/2026 : aucun nouveau noyau 68000/68010, aucun fallback, aucune double voie CPU000/CPU020.** Implémentation MC68020/68EC020 exclusive de `Aga Bob Bank N` et `Get AGA Bob I,X1,Y1,X2,Y2`, capture par **`BFEXTU` + `BFINS`** (champs de bits de largeur variable 1..16, sans lecture au-delà de X2). Les deux points d'entrée refusent un CPU inférieur avant de manipuler la banque ou la mémoire AGA. Seule la base figée R88 est conservée comme patrimoine ; les parties nouvelles sont 68020 exclusivement.
