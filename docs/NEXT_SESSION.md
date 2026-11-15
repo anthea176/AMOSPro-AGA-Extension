@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**Orientation utilisateur Bobs (15/11/2026) :** API simple prioritaire et **plusieurs images numerotees dans un seul fichier ABK** (tailles et masques individuels). Le programme AMOS ne doit pas gerer la Chip RAM ni les caches AGPC ; leur preparation reste interne. **Conception seulement, pas de commande AMOS ajoutee :** [contrat multi-images](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md). Ne pas confondre ce choix avec l'API R88 existante. Conserver R84 `LAST_GOOD` et l'unique ASC courant.
+
+---
+
 ## M19 P2.8 — diagnostic WinUAE du 15/11/2026 : banque AGPC en Fast RAM
 
 **R88 v0.13.33 Gate A PASS (130 cas) ; WinUAE Runtime B FAIL sur le banc original, `ERR 12`**. Le journal `M19_P28_DIAG_RUNTIME.TXT` montre `B11/B13 LENGTH 360`, `AGPCACHE`, flags AGPC 3, mais `CHIP_AFTER_LOAD=CHIP_BEFORE=1 796 336` et `FAST_AFTER_LOAD-FAST_BEFORE=-768` : les deux banques de 384 octets (avec enveloppe AMOS) resident en Fast RAM. `Aga Cache Blit` renvoie 0 dans les deux modes sur les deux banques, conforme au refus `MEMF_CHIP` du coeur M18. **Diagnostic termine sans Guru : `DIAG_DONE 1`, `ERR 0`, `CLOSE_RETURNED 1`** ne constituent pas une Gate B PASS.
