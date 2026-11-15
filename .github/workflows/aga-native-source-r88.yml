@@ -1,0 +1,40 @@
+name: AGA R88 native source export - byte-exact Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/aga-native-source-r88.yml"
+      - "tools/generate_aga_multiunit_source.py"
+      - "tools/generate_aga_native_source.py"
+      - "tools/test_generate_aga_multiunit_source.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-reconstruction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify real R88 against deterministic source and SHA-pinned R84
+        run: python -B tools/test_generate_aga_multiunit_source.py
+      - name: Build vasm Motorola MC68020 assembler in temporary directory
+        run: |
+          git clone --depth 1 https://github.com/rhargreaves/vasm.git "$RUNNER_TEMP/vasm"
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+          test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Assemble the 4 native units and exact AP20, compare bytes to R88
+        run: |
+          python -B tools/generate_aga_native_source.py \
+            --lib dist/AMOSPro_AGA.Lib \
+            --out "$RUNNER_TEMP/aga-source-verify" --strict \
+            --baseline none --verify-vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Ensure protected binaries and AMOS tests are not modified
+        run: |
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
