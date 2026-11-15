@@ -1,6 +1,16 @@
 # M19 P0a — `Get AGA Bob` multi-images, candidat dérivé exclusivement de R88
 
-**État initial du présent rapport : CODE NATIF PRODUIT ; Gate A CPU à confirmer par la CI ; Gate B/C NON TESTÉES.**
+**État vérifié : GATE A CPU/AP20 PASS sur la candidate exacte ; Gates B/C/D NON TESTÉES.**
+
+## Gate A validée — 15 novembre 2026
+
+- **Exécution CI confirmée :** [run GitHub Actions 43753489991](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43753489991), commit exact `8352aaef331caeccac5cd45aa0631614846568d0` ; **toutes les étapes PASS**, y compris l'invariance des fichiers protégés.
+- **Get AGA Bob : 50 cas CPU MC68000 PASS** sous Unicorn (deux placements de code : interprété et disposition Compiler V2 simulée), pixels de 1/4/8 bitplanes comparés à l'oracle de référence, capture 1×1, dimensions et décalages non alignés, insertion triée, remplacement, conservation de l'image et du masque des autres entrées, échec d'allocation, buffer Safe indisponible, Chip invalide, arguments invalides, références périmées.
+- **Aga Bob Bank : 20 cas CPU PASS** avec le constructeur de la même lignée, SHA256 de l'étape précédente `82060e0fedf3357f64426817348b218381dc8ed3b640552bd89c0ca433e79d74`.
+- **42 tests hôte et structure native PASS** (11 + 14 + 7 + 4 + 6), dont contrôle de l'adressage par `ADDA.L D1,A1` du padding.
+- **Candidate exacte, produite en mémoire :** 79 640 octets, SHA256 `988a1d2151fd9c53c03d047af3eac23c5dc8ba4c1152ca2338635c9410deb526`, 80 commandes / 90 entrées AP20 ; groupe BOBS 11 568 octets, capture native 3 194 octets, déplacement maximal 20 616 octets.
+- **Contrat Safe R88 conservé :** bit 0 à 0 = buffer immédiatement utilisable ; bit 0 à 1 = attendre le message Safe, sans accepter un message absent. Les services AMOS et OS restent simulés lors de la Gate A.
+- **Protection :** `dist/AMOSPro_AGA.Lib`, `dist/AMOSPro_AGA_LAST_GOOD.Lib`, le builder R88 original, `tests/current/` et `tests/passed/` sont inchangés. Aucune installation, promotion ou validation WinUAE/Compiler réel.
 
 ## Base autorisée et limites
 

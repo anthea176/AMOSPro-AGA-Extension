@@ -1,5 +1,9 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0a — Get AGA Bob Gate A CPU PASS (base R88)
+
+[Implémentation native, builder mémoire, tests, preuves](M19_P0A_R88_GET_AGA_BOB_GATE_A.md) : `Aga Bob Bank N` et `Get AGA Bob I,X1,Y1,X2,Y2` dans une candidate **non installée** de 79 640 octets, SHA256 `988a1d2151fd9c53c03d047af3eac23c5dc8ba4c1152ca2338635c9410deb526`. **Gate A PASS** [run 43753489991](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43753489991) : 50 scénarios CPU Get + 20 Bank + 42 tests hôte/statiques ; 80 commandes / 90 AP20. **Étape suivante :** préflight ASC ciblé et préparation de l'essai WinUAE après décision d'installation de la candidate, puis vrai AMOS Compiler ; en parallèle, préparation Chip/moteur d'affichage Bob dans une étape distincte. **Gates B/C/D NON TESTÉES.** Aucune modification de R88 installable, R84 LAST_GOOD ni tests/passed ; aucun code ni exemple post-R88 utilisé.
+
 ## M19 P0a — AP20 `Aga Bob Bank N` expérimentale, Gate A CPU PASS
 
 [Programme natif, builder in-memory, tests et Gate A](M19_P0A_R88_BANK_SELECT_GATE_A.md) : **20 scénarios CPU 68000 PASS** [GitHub Actions](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43751680955), 36 contrôles statiques/modèle PASS ; R88 figée, candidate **non installée** SHA256 `82060e0fedf3357f64426817348b218381dc8ed3b640552bd89c0ca433e79d74`, 76 408 octets, 79 commandes / 89 AP20. **`Get AGA Bob` pas encore implémenté, Chip/DMA non préparée, WinUAE B et Compiler C NON TESTÉES**. `dist`, `LAST_GOOD` et ASC actif inchangés. L'étape transactionnelle décrite ci-dessous est l'historique préparatoire, pas le statut final de cette étape.
