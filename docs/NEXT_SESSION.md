@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0a — transaction native 365 (source R88 uniquement)
+
+**Étape 3, code natif privé :** `tools/m19_p0a_amos_bank_transaction_emit.py` (874 octets 68000/68020 déterministes) et ses [7 tests de préflight statique](../tools/test_m19_p0a_amos_bank_transaction_emit.py) ; [audit complet](M19_P0A_NATIVE_BANK_TRANSACTION_2026-11-15.md). La source AMOS Professional 365 `marc365` épingle `Cur_Banks(A5)=$05EA` et `Lst.Cree`/`Lst.Del`/`Bnk.Change`, d'où un remplacement de banque **sans Bnk.Reserve destructif et sans seconde banque AMOS numérotée** : stage privé → contrôle d'identité → publication → notification → libération. **32/32 contrôles locaux PASS** (25 modèle + 7 statiques) ; **aucune Gate A CPU**, **aucune Gate B/C**, **aucune commande AP20**. `dist`, R84 LAST_GOOD, R88 et `tests/current/` inchangés. Le code et les exemples R89/R90 sont hors périmètre.
+
+
 ## M19 P0a — capture transactionnelle (depuis R88 uniquement)
 
 Deuxième étape P0a : `tools/m19_p0a_capture_transaction.py` et `tools/test_m19_p0a_capture_transaction.py` ajoutés, avec 14 nouveaux tests hôte PASS (25 au total avec les 11 tests du format AGBO). Capture bitmap planaire Safe, stride physique, coins inclusifs, banques multiples, remplacement d'image sans perte, échec d'allocation sans mutation et resélection obligatoire après `Erase`/`Load`. [Rapport](M19_P0A_CAPTURE_TRANSACTION_2026-11-15.md). **Ce modèle n'est ni une instruction AP20, ni une Gate A native.** La transaction de remplacement d'une banque AMOS Professional 365 reste à vérifier sur son implémentation exacte avant toute mutation native. Aucun binaire, ASC, R84 `LAST_GOOD` ou builder R88 modifié.

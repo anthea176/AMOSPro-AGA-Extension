@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0a — transaction native 365 non branchée dans AP20
+
+**Code nouveau :** [émetteur privé 68000/68020](../tools/m19_p0a_amos_bank_transaction_emit.py), [7 tests statiques](../tools/test_m19_p0a_amos_bank_transaction_emit.py) et [rapport source-backed](M19_P0A_NATIVE_BANK_TRANSACTION_2026-11-15.md). Vérification source AMOS Professional 365 des listes (`Cur_Banks(A5)=$05EA`, `Lst.Cree` détaché, `Lst.Del`, `Bnk.Change`). 32/32 vérifications **hôte + statiques** PASS ; **aucune commande AMOS `Aga Bob Bank` ni `Get AGA Bob` intégrée**, Gate A CPU/B/C NON TESTÉES. Base exclusivement R88, `dist` et `LAST_GOOD` inchangés.
+
+
 ## M19 P0a — capture transactionnelle (hôte uniquement)
 
 [Implémentation et tests](M19_P0A_CAPTURE_TRANSACTION_2026-11-15.md) : 14 tests hôte supplémentaires PASS (25 P0a au total), capture planaire 1/4/8 plans et coords inclusives, transaction allouer → valider → échanger en modèle. **Pas encore d'API native AP20 ni Gate A/B/C** : remplacement sûr d'une banque réelle AMOS Professional 365 à auditer d'abord. Source figée R88, aucune R89/R90 utilisée, R84 `LAST_GOOD` préservée.
