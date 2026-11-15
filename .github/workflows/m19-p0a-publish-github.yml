@@ -91,5 +91,7 @@ jobs:
             git -c user.name='github-actions[bot]' \
               -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
               commit -m 'build(M19 P0a): publish reproducible MC68020 Lib and WinUAE test bundle'
+            git fetch origin main
+            git rebase origin/main
             git push origin HEAD:main
           fi
