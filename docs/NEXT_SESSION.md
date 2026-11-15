@@ -1,6 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## PRIORITÉ ACTUELLE — M19 P2.7, cache planaire et essai Blitter
+## PRIORITÉ ACTUELLE — M19 P2.8 : cache AGAPIC planaire et vrai rendu masqué
+
+**Constat P2.7 (WinUAE réel, 15/11/2026)** : le rendu AGAPIC RLE coûte **553 contre 225 ticks FICON8** en Runtime, **522 contre 198** en Compiled (somme 4/8/16 Bobs), soit **−59,31 % / −62,07 %**. La copie Blitter **opaque, pré-stagée** économise **41,67 % / 45,90 %** par rapport au CPU opaque. **Les neuf captures comparées sont identiques en Runtime et Compiled** (`PARITY_OK 9`, `PARITY_BAD 0`), `RESULT 1`, `ERR 0`, mémoire stable, fermeture réussie. **P2.7 Gate B Runtime PASS / Gate C Compiled PASS**. [Résultats détaillés](../benchmarks/RESULTATS_M19_P27_R87_CPU_RLE_FICON_BLITTER_2026-11-15.md), [log Runtime](../benchmarks/M19_P27_RUNTIME.TXT), [log Compiled](../benchmarks/M19_P27_COMPILED.TXT).
+
+**Étape à développer :** cache AGAPIC pré-décodé, **sans perte du masque alpha indépendant** (y compris couleur zéro opaque), préparation hors frame, propriété AMOS de la mémoire, validité après Erase/Load et Blitter masqué Chip→Chip (reprendre M18 pour ABI, Safe et WaitBlit). Benchmarker **cache CPU vs vrai cache Chip/Blitter**, staging inclus/amorti, puis la frame complète avec Swap, décor et FPS. **P2.8 reste NON IMPLÉMENTÉ / NON TESTÉ.** Pas de modifications de l'actuel binaire R87 avant nouveaux tests natifs, aucune promotion automatique, branche `main` uniquement, R84 `LAST_GOOD` protégée.
+
+**Source P2.7 archivée** `tests/passed/M19_P27_R87_CACHE_CPU_BLITTER_01.asc` **inchangée** (Git blob `e1062818abdfeb2d7e699d8c1dc9e9696250af65`). Une copie reste dans `tests/current/` comme référence unique jusqu'à la préparation du prochain ASC ; ne pas l'interpréter comme un nouveau test à refaire.
+
+---
+
+## HISTORIQUE — M19 P2.7, préparation du banc cache et Blitter
 
 **Un seul ASC actif** : `tests/current/M19_P27_R87_CACHE_CPU_BLITTER_01.asc` (Git blob `e1062818abdfeb2d7e699d8c1dc9e9696250af65`). R87 v0.13.32 inchangée, 73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`. Le programme crée le **même motif** 16×16 en AGAPIC v1/v2 et FICON8, vérifie **9 comparaisons intégrales** (opaque, masqué, X décalé, clipping, copie Blitter), puis chronomètre 4/8/16 Bobs masqués et un transfert opaque Blitter 8 Bobs. **Ne pas confondre copie Blitter opaque déjà stagée et rendu AGAPIC masqué natif**. **Gate A nouveau modèle/préflight local : PASS ; Gate B/C P2.7 NON TESTÉES.** WinUAE demandé : MC68020 14 MHz, PAL, JIT OFF, même ASC en Runtime et AMOS Compiler V2. Journaux `RAM:M19_P27_RUNTIME.TXT` et `RAM:M19_P27_COMPILED.TXT`. [Contrat P2.7](M19_P27_AGAPIC_CACHE_BACKENDS_2026-11-15.md).
 

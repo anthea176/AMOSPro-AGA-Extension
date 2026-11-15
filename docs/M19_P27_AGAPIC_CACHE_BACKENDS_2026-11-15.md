@@ -1,5 +1,7 @@
 # M19 P2.7 — qualification des pistes AGAPIC pré-décodé / Blitter
 
+**CAMPAGNE TERMINÉE : P2.7 Runtime PASS / Compiled PASS.** Gains mesurés, pas des FPS complets : [rapport et sources brutes](../benchmarks/RESULTATS_M19_P27_R87_CPU_RLE_FICON_BLITTER_2026-11-15.md). **Prochaine étape P2.8 : cache planaire AGAPIC à alpha indépendant + vrai Blitter masqué (non implémentés / non testés).**
+
 **15 novembre 2026. Branche `main` uniquement.** R87 v0.13.32 active inchangée (73 184 octets, SHA256 `02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302`). R84 `LAST_GOOD` protégée, aucune promotion, aucun tag ou release.
 
 ## Hypothèse, pas gain annoncé
@@ -38,7 +40,7 @@ Préflight local strict exécuté sur l'ASC exact :
 
 Le modèle `tools/test_m19_p27_cache_bench_static.py` vérifie la construction du motif et des 9 scènes simulées, la provenance P2.6, les checksums R84/R87 et la structure des chronos. Il **ne compile pas AMOS** et **n'émule pas le Blitter Amiga**.
 
-WinUAE recommandé : **68020 / 14 MHz / PAL / JIT OFF**. Importer dans AMOS vide par **Project → Merge ASCII**, exécuter en Runtime puis compiler avec AMOS Compiler V2 le **même fichier** ; récupérer `RAM:M19_P27_RUNTIME.TXT` et `RAM:M19_P27_COMPILED.TXT`. Exiger les compteurs décrits dans [le README actif](../tests/current/README.md), absence de Guru/freezes et fermeture correcte. **Gates B/C P2.7 NON TESTÉES tant que ces journaux ne sont pas reçus.**
+WinUAE recommandé : **68020 / 14 MHz / PAL / JIT OFF**. Importer dans AMOS vide par **Project → Merge ASCII**, exécuter en Runtime puis compiler avec AMOS Compiler V2 le **même fichier** ; récupérer `RAM:M19_P27_RUNTIME.TXT` et `RAM:M19_P27_COMPILED.TXT`. Exiger les compteurs décrits dans [le README actif](../tests/current/README.md), absence de Guru/freezes et fermeture correcte. **Gates B et C P2.7 PASS** sur les deux journaux reçus et archivés : [Runtime](../benchmarks/M19_P27_RUNTIME.TXT), [Compiled](../benchmarks/M19_P27_COMPILED.TXT).
 
 ## Décision après résultats
 

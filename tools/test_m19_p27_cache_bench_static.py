@@ -178,7 +178,7 @@ def main() -> None:
     print('  9 independent 32x32 reference scenarios; 12 masked runs and 4 opaque runs')
     print('  4/8/16, 64 reps, AB/BA, 3584 AGAPIC and 3584 FICON calls')
     print('  Opaque BlitCopy 1024 calls + 4 out-of-chrono stage drawings')
-    print('WinUAE Runtime/AMOS Compiler P2.7: NOT TESTED; no FPS inferred')
+    print('P2.7 WinUAE Runtime and Compiled PASS documented in benchmarks; this script checks static sources only, not FPS')
 
 
 if __name__ == '__main__':
