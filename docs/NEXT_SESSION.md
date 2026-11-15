@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0a — `Aga Bob Bank N` AP20 depuis R88 : GATE A CPU PASS
+
+Commande **expérimentale** `Aga Bob Bank N` (instruction 1 argument) ajoutée par builder **en mémoire** `tools/build_m19_p0a_r88_bank_in_memory.py` à partir de la Lib **R88 SHA256 69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc**. [Gate A 68000 + AP20 / Compiler-style relocation](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43751680955) **PASS : 20 cas CPU**, et **36 contrôles hôte+statiques PASS**, commit testé `0b1eea12aabbb42caabe03e1eeced9e8dd24145b`. Binaire reconstruit **en mémoire uniquement**, 76 408 octets, SHA256 `82060e0fedf3357f64426817348b218381dc8ed3b640552bd89c0ca433e79d74`, 79 commandes / 89 entrées AP20 ; [rapport](M19_P0A_R88_BANK_SELECT_GATE_A.md). **AUCUNE Gate B/C**, aucun `Get AGA Bob`, préparation Chip non implémentée, aucun binaire installé ni promotion. R88, ASC actif, R84 `LAST_GOOD` intacts. Le groupe BOBS R88 était de 7 038 octets et son offset d'append est **7004**, pas 5186 (R87). Aucun code ni exemple R89/R90 utilisé.
+
+
 ## M19 P0a — transaction native 365 (source R88 uniquement)
 
 **Étape 3, code natif privé :** `tools/m19_p0a_amos_bank_transaction_emit.py` (874 octets 68000/68020 déterministes) et ses [7 tests de préflight statique](../tools/test_m19_p0a_amos_bank_transaction_emit.py) ; [audit complet](M19_P0A_NATIVE_BANK_TRANSACTION_2026-11-15.md). La source AMOS Professional 365 `marc365` épingle `Cur_Banks(A5)=$05EA` et `Lst.Cree`/`Lst.Del`/`Bnk.Change`, d'où un remplacement de banque **sans Bnk.Reserve destructif et sans seconde banque AMOS numérotée** : stage privé → contrôle d'identité → publication → notification → libération. **32/32 contrôles locaux PASS** (25 modèle + 7 statiques) ; **aucune Gate A CPU**, **aucune Gate B/C**, **aucune commande AP20**. `dist`, R84 LAST_GOOD, R88 et `tests/current/` inchangés. Le code et les exemples R89/R90 sont hors périmètre.

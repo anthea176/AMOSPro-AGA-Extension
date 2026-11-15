@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0a — AP20 `Aga Bob Bank N` expérimentale, Gate A CPU PASS
+
+[Programme natif, builder in-memory, tests et Gate A](M19_P0A_R88_BANK_SELECT_GATE_A.md) : **20 scénarios CPU 68000 PASS** [GitHub Actions](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43751680955), 36 contrôles statiques/modèle PASS ; R88 figée, candidate **non installée** SHA256 `82060e0fedf3357f64426817348b218381dc8ed3b640552bd89c0ca433e79d74`, 76 408 octets, 79 commandes / 89 AP20. **`Get AGA Bob` pas encore implémenté, Chip/DMA non préparée, WinUAE B et Compiler C NON TESTÉES**. `dist`, `LAST_GOOD` et ASC actif inchangés. L'étape transactionnelle décrite ci-dessous est l'historique préparatoire, pas le statut final de cette étape.
+
+
 ## M19 P0a — transaction native 365 non branchée dans AP20
 
 **Code nouveau :** [émetteur privé 68000/68020](../tools/m19_p0a_amos_bank_transaction_emit.py), [7 tests statiques](../tools/test_m19_p0a_amos_bank_transaction_emit.py) et [rapport source-backed](M19_P0A_NATIVE_BANK_TRANSACTION_2026-11-15.md). Vérification source AMOS Professional 365 des listes (`Cur_Banks(A5)=$05EA`, `Lst.Cree` détaché, `Lst.Del`, `Bnk.Change`). 32/32 vérifications **hôte + statiques** PASS ; **aucune commande AMOS `Aga Bob Bank` ni `Get AGA Bob` intégrée**, Gate A CPU/B/C NON TESTÉES. Base exclusivement R88, `dist` et `LAST_GOOD` inchangés.

@@ -19,7 +19,9 @@
 ## Statuts de validation
 
 - Tests hôte et préflight : voir la sortie des scripts et les résultats du workflow ; ne pas confondre ces résultats avec la Gate A CPU.
-- **Gate A CPU/AP20 : en attente du résultat du workflow sur le commit exact.**
+- **GATE A CPU/AP20 BANK SELECT : PASS**, [workflow exact 43751680955](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43751680955) (commit `0b1eea12aabbb42caabe03e1eeced9e8dd24145b`). **20 cas MC68000** avec services AMOS simulés et deux placements natifs (interprété / disposition Compiler V2 simulée). Les 36 contrôles hôte et préflight statiques précédents sont également PASS.
+- **Candidate construite uniquement en mémoire :** 76 408 octets, SHA256 `82060e0fedf3357f64426817348b218381dc8ed3b640552bd89c0ca433e79d74` ; **79 commandes, 89 entrées AP20**, groupe BOBS 8 374 octets, append R88 exact à l'offset **7004** (5186 était l'offset pré-R88), portée maximale BSR.W 17 410.
+- **Portée limitée :** ces 20 scénarios CPU ne constituent pas un AMOS interprété réel, un AMOS Compiler réel ni une preuve de sécurité Chip DMA.
 - **Gate B Runtime WinUAE : NON TESTÉE. Gate C AMOS Compiler : NON TESTÉE. Gate D physique : NON TESTÉE.**
 - Aucune installation ni promotion n'est effectuée automatiquement, même en cas de Gate A PASS.
 
