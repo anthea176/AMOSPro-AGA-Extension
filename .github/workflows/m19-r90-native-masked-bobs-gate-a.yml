@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   r90-cpu:
@@ -48,3 +48,23 @@ jobs:
           if-no-files-found: error
       - name: Audit immutable candidates and tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
+      - name: Commit the CPU-tested R90 binary directly to main (experimental archive only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = "anthea176/AMOSPro-AGA-Extension"
+          candidate="dist/experimental/AMOSPro_AGA_R90_v0.13.35_M19_MASKED_BOBS_GATE_A_ONLY.Lib"
+          mkdir -p dist/experimental
+          cp "out/R90/AMOSPro_AGA_R90_v0.13.35_M19_MASKED_BOBS_GATE_A_ONLY.Lib" "${candidate}"
+          echo "56c4d708df0ef376c46315b85adfec2fbe1b7e8575b8d61953c613c0871bff2d  ${candidate}" | sha256sum --check --status
+          git add -- "${candidate}"
+          changed="$(git diff --cached --name-only)"
+          if [ -z "${changed}" ]; then
+            echo "R90 experimental library already tracked at the correct SHA."
+            exit 0
+          fi
+          test "${changed}" = "${candidate}" || { echo "Refusing unintended staged changes: ${changed}"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build(M19): archive CPU-tested R90 Bob AGA candidate only"
+          git push origin HEAD:main
