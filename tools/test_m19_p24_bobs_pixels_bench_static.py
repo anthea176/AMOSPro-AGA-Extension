@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M19 P2.4 read-only static test: exact AMOS 1x1 RLE probe and scene oracle.
+"""M19 P2.4 archived UNVALIDATED design model: 1x1 pixel oracle.
 
 This does NOT execute AMOS or WinUAE. It checks that the sole new active
 ASC encodes valid source/descriptor layouts and expected pixel values
@@ -15,7 +15,7 @@ import re
 from m16_agapic import pack_image
 
 ROOT = Path(__file__).resolve().parents[1]
-ASC_NAME = "M19_P24_BOBS_PIXELS_BENCH_01.asc"
+ASC_NAME = "M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc"
 LEGACY_GIT_SHA = "19ad2044252783454f4082c118e53b34a6b83478"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
@@ -147,10 +147,10 @@ def main():
     assert current_lib==candidate and meta["sha256"]==R87_SHA
     assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active) == 1 and active[0].name == ASC_NAME
+    assert len(active) == 1 and active[0].name == "M19_P25_R87_BOBS_SMOKE_01.asc"
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
     assert legacy.exists() and git_blob_sha(legacy.read_bytes()) == LEGACY_GIT_SHA
-    source = active[0].read_bytes().decode("latin-1")
+    source = (ROOT / "tests/design" / ASC_NAME).read_bytes().decode("latin-1")
     model = check_model()
     verify_script(source, model)
     assert "Aga Bob Probe" not in source
@@ -158,10 +158,10 @@ def main():
     for colour in range(256):
         test_bank = pack_image(1, 1, 8, bytes((colour,)))
         assert decode_single_pixel_v1(test_bank) == colour
-    print("M19 P2.4 STATIC PRE-WINUAE PASS: 19 independent pixel expectations,"
+    print("M19 P2.4 ARCHIVED UNVALIDATED DESIGN: 19 expected pixels,"
           " 256 v1 capture decode colours, 4/8/16 descriptor sizes, 3 byte-identical"
           " full-image parity checks specified, two AB/BA benchmark passes.")
-    print("R87 candidate reconstructed; R84 LAST_GOOD protected; R87 Runtime/Compiled NOT TESTED.")
+    print("P2.4 DESIGN FILE IS NOT THE ACTIVE ASC. R87 Runtime/Compiled NOT TESTED.")
 
 
 if __name__ == "__main__":

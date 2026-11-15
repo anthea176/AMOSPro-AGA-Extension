@@ -1,4 +1,4 @@
-name: M19 P2.4 R87 BOBS pixel oracle and benchmark - static pre-WinUAE
+name: M19 P2.4 archived UNVALIDATED design model - static only
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
       - "tools/build_m19_p25_no_probe.py"
       - "tools/active_library.py"
       - "tests/current/*.asc"
+      - "tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc"
       - "tests/passed/M19_P23_BOBS_BATCH_01.asc"
       - "tests/current/README.md"
       - "tools/test_current_ram_log.py"
@@ -32,7 +33,7 @@ jobs:
         run: python -B tools/verify_fast.py
       - name: Validate unique active AMOS source and RAM log
         run: python -B tools/test_current_ram_log.py
-      - name: Pixel oracle, archive identity, descriptor and benchmark preflight
+      - name: Archived design model only - not an AMOS executable qualification
         run: python -B tools/test_m19_p24_bobs_pixels_bench_static.py
       - name: Reject modified binary artifacts
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib

@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## PRIORITÉ — M19 P2.5 R87, smoke AMOS après audit du skill
+
+Le nouveau **seul test actif** est `tests/current/M19_P25_R87_BOBS_SMOKE_01.asc` (Git blob `347e35d4e79b4afc331a732f33c448bbb61ddef9`, 209 lignes) : base du véritable test R86 P2.3 PASS, retrait du Probe R87, des fausses validations pixel et du benchmark non qualifié. Vérification des banques **avant tout Erase** via `_BANKS_SAFE`. Préflight strict `amos-pro-aga-rules` **PASS**, 21 tests du checker **PASS** en local ; nouvelle CI dédiée à contrôler. **Gates B/C R87 NON TESTÉES.**
+
+L'ancien `M19_P24_BOBS_PIXELS_BENCH_01.asc` est déplacé **octet pour octet** dans `tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc`. Il comportait 611 lignes et n'a jamais été validé en Runtime/Compiler ; il n'est plus l'ASC actif ni un test `passed`. Ses travaux de pixel oracle et de benchmark reprendront une fois le smoke R87 validé sous AMOS.
+
+**Fichiers attendus WinUAE pour le test actuel :** `RAM:M19_P25_RUNTIME.TXT` puis `RAM:M19_P25_COMPILED.TXT` (68020/14 MHz/PAL/JIT OFF). Résultat ciblé : `RESULT 1`, `ERR 0`, `VERDICT PASS`, `CAPTURE 2`, `DRAW 3`, `REJECT 3`, `CLOSE_RETURNED 1`. [Guide et problèmes corrigés](M19_P25_R87_AMOS_SMOKE_REVIEW_2026-11-15.md).
+
+La candidate `dist/AMOSPro_AGA.Lib` **R87 v0.13.32 est inchangée** ; R84 `LAST_GOOD` reste intouchable. Pas de branche, tag, release ou promotion.
+
+---
+
 ## CHANTIER ACTIF — M19 P2.5 R87 : suppression du témoin BOBS (15/11/2026)
 
 **Branche `main` uniquement.** Le nouveau constructeur `tools/build_m19_p25_no_probe.py` retire définitivement **du candidat R87** le token `Aga Bob Probe`, son stub et la routine `PROBE_CODE` ; `Aga Bob Batch` reste identique, indice AP20 **82**, groupe BOBS **85**, 77 commandes et 87 entrées AP20. Le nouveau test natif MC68020 `tools/test_m19_p25_no_probe.py` vérifie ABI, absence de Probe, contenu moteur, portée BSR.W, pixels, sécurité du front, erreurs et R84 historique. Le workflow R86 obsolète est désactivé en push pour éviter un retour arrière automatique.
@@ -10,7 +22,7 @@
 
 ---
 
-## ÉTAT ACTUEL — M19 P2.4, banc pixels + benchmark R86 (15/11/2026)
+## HISTORIQUE — M19 P2.4, banc pixels + benchmark non validé (15/11/2026)
 
 **Nettoyage obligatoire avant toute version publiable après les essais P2.4 :** retirer du **binaire natif** la commande temporaire `Aga Bob Probe` (token public, stub AP20, routine `PROBE_CODE` et toutes références embarquées), sans supprimer le moteur `Aga Bob Batch`. Mettre à jour le générateur, les offsets et les références de groupe AP20, contrôler ABI/relocations/portée BSR.W et limite 65 534 octets, puis construire la **nouvelle candidate uniquement dans `dist/AMOSPro_AGA.Lib`**, sans toucher à R84 `LAST_GOOD`. Rejouer les tests statiques/MC68020 et obtenir de **nouveaux** résultats WinUAE Runtime et Compiled : les Gates R86 ne sont pas transférables automatiquement au binaire nettoyé. Les tests et rapports restent archivés dans `tests/passed/`, `tools/` et `docs/` pour la non-régression : seule la sonde de diagnostic embarquée doit disparaître. Aucun tag, release ou promotion sans validation explicite.
 

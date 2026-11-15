@@ -1,3 +1,5 @@
+> **STATUT CORRIGÉ : DOCUMENT DE CONCEPTION, NON QUALIFIÉ WINUAE.** L'ASC de 611 lignes a été conservé sans modification dans `tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc`. Il n'est **plus dans tests/current/** et les vérifications statiques précédentes ne prouvent pas sa compatibilité AMOS/Compiler. Le seul test actif est le [smoke R87 P2.5](../tests/current/M19_P25_R87_BOBS_SMOKE_01.asc). Ne pas associer les Gates A/B/C au brouillon P2.4. [Revue](M19_P25_R87_AMOS_SMOKE_REVIEW_2026-11-15.md).
+
 # M19 P2.4 — validation pixel WinUAE et mesure BASIC/Batch R87
 
 Date : 15 novembre 2026. **NOUVEAU TEST EN PRÉPARATION**, aucune Gate B/C P2.4 ne peut être déclarée PASS avant les journaux WinUAE. Ce test valide la nouvelle R87 v0.13.32 sans diagnostic Probe. Ne change pas la R84 `LAST_GOOD`.

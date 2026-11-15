@@ -7,7 +7,11 @@ on:
       - ".github/workflows/m19-p25-r87-no-probe-gate-a.yml"
       - "tools/build_m19_p25_no_probe.py"
       - "tools/test_m19_p25_no_probe.py"
-      - "tools/test_m19_p24_bobs_pixels_bench_static.py"
+      - "tools/test_m19_p25_r87_smoke_static.py"
+      - "tools/amos_preflight.py"
+      - "tools/test_amos_preflight.py"
+      - "tests/current/*.asc"
+      - "tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc"
       - "tools/active_library.py"
       - "tools/m19_bob_batch_emit.py"
       - "dist/AMOSPro_AGA.Lib"
@@ -38,10 +42,14 @@ jobs:
         run: python -B tools/build_m19_p25_no_probe.py
       - name: Real MC68020 BOBS Batch Gate A with no diagnostic Probe
         run: python -B tools/test_m19_p25_no_probe.py
-      - name: Verify only one current ASC and independent pixel expectations
+      - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
+        run: |
+          python -B tools/test_amos_preflight.py
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P25_R87_BOBS_SMOKE_01.asc
+      - name: Verify unique current smoke ASC and source provenance
         run: |
           python -B tools/test_current_ram_log.py
-          python -B tools/test_m19_p24_bobs_pixels_bench_static.py
+          python -B tools/test_m19_p25_r87_smoke_static.py
       - name: Write candidate ONLY to dist/AMOSPro_AGA.Lib
         run: |
           python -B tools/build_m19_p25_no_probe.py --write-dist
@@ -49,7 +57,7 @@ jobs:
       - name: Verify active AP20 identity, no Probe and frozen R84
         run: |
           python -B tools/verify_fast.py
-          python -B tools/test_m19_p24_bobs_pixels_bench_static.py
+          python -B tools/test_m19_p25_r87_smoke_static.py
           python -B -c "import hashlib,pathlib; p=pathlib.Path('dist/AMOSPro_AGA_LAST_GOOD.Lib'); assert len(p.read_bytes())==67904; assert hashlib.sha256(p.read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
           git diff --exit-code -- dist/AMOSPro_AGA_LAST_GOOD.Lib tests/current/ tests/passed/
       - uses: actions/upload-artifact@v4
