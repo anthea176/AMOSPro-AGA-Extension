@@ -2,6 +2,32 @@
 
 **Statut : contrat de conception utilisateur ; aucune nouvelle commande AMOS ni nouvelle bibliotheque n'est implementee ou validee par ce document.** Depot `anthea176/AMOSPro-AGA-Extension`, uniquement `main`. Candidate R88 et R84 `LAST_GOOD` protegees. Reprendre les API et fichiers actuels avant tout changement de code.
 
+## Creation des images directement sous AMOS Professional — EXIGENCE DE L'AUTEUR
+
+**Pas de convertisseur PC comme chemin de creation principal.** L'utilisateur veut capturer ses images directement sur **l'ecran AGA prive de l'extension**, par une commande analogue au `Get Bob` OCS, en conservant l'ergonomie AMOS :
+
+```text
+Get AGA Bob 1,0,0 To 31,31
+Get AGA Bob 2,32,0 To 63,31
+Get AGA Bob 3,64,0 To 95,31
+```
+
+**Cette syntaxe exacte est une cible a etudier, pas une commande validee sous AMOS, AP20 ou AMOS Compiler V2.** Ne pas la remplacer d'autorite par un convertisseur ou par une API a sept parametres. Verifier en premier si le tokenizer d'extension et le Compiler permettent la combinaison multi-mots `Get AGA Bob` avec separateur `To`. Si impossible, documenter la contrainte et proposer le plus proche equivalent pour decision de l'auteur AVANT de coder.
+
+Chaque appel **cree ou remplace l'image I** dans la meme banque AGA multi-images ; les appels suivants conservent les autres indices. La source est l'ecran AGA de l'extension, **pas l'ecran OCS prive a AMOS**. Le conteneur doit accepter 1..8 bitplanes (jusqu'a 256 couleurs), tailles variables et masques par image. Une fois peuplee, la banque est sauvegardable en un **seul fichier ABK**, rechargeable sous AMOS comme les autres banques. Le code utilisateur ne manipule pas de cache ou de Chip RAM.
+
+**Points restant a arbitrer sans supposer de comportement :**
+
+- **Quelle banque contient les captures ?** La commande demandee ne comporte pas de numero de banque. Il faut definir une banque d'objets AGA active, son numero, sa creation et sa selection, sans forcer la banque native OCS n°1 ni ecraser une banque existante.
+- **Convention des bornes `To` :** comparer au `Get Bob` AMOS documente, puis verrouiller par tests pixel (largeur de 1 pixel, bords, alignements) ; ne pas deduire les bornes de `Aga Blit Fill` ou `Screen Copy`.
+- **Masque independant :** un ecran indexe seul n'encode pas de transparence. Decider comment indiquer les pixels transparents (index de transparence, masque explicite, autre mecanisme) tout en preservant une couleur 0 opaque quand c'est demande.
+- **Palettes, ecrans et double buffering :** choisir le buffer source, fixer les exigences de profondeur et le traitement palette ; assurer les protections DMA/Safe sans les exposer a l'utilisateur.
+- **Reprise apres `Load`, `Save`, `Erase` :** eviter les pointeurs caches invalides et confirmer qu'une banque avec plusieurs images reste portable entre interpreteur et Compiler.
+
+La commande historique `Aga Bank Image Capture(Bank,X,Y,Width,Height,TransparentIndex,Version)` capture deja **une image par banque AGAPIC** ; c'est un socle technique a etudier, mais **ce n'est pas la fonction multi-images demandee**. Conserver AGAPIC et ses decodages si pertinent, sans ajouter une contrainte de conversion PC.
+
+**Reference d'ergonomie AMOS OCS :** [effectiveBobs — creation d'une banque via `Get Bob` / `Save`](https://github.com/alain-treesong/amiga_coding_in_amos/tree/main/snippet-014_effectiveBobs). Reprendre le principe multi-images, pas le format OCS limite en profondeur.
+
 ## Exigences retenues avec l'auteur
 
 - **Simplicite utilisateur avant micro-optimisation** : un programme AMOS charge ses images, choisit l'image et deplace/affiche ses Bobs ; il n'a pas a gerer des caches AGPC, des banques temporaires, la Chip RAM ou un choix manuel CPU/Blitter.
@@ -43,6 +69,6 @@ Exemple de contenu d'une banque : indices 1..4 marche bas, 5..8 marche haut, 9..
 
 ## Decision de perimetre
 
-**Ce qui est fixe :** banque ABK multi-images, interface utilisateur simple, pas de staging Chip manuel, distinction image/objet. **Ce qui reste a concevoir :** representation binaire precise, createur/convertisseur ABK, API finale, budget et politique cache/CPU, hotspots/animation, politique palettes. Avant d'implementer, obtenir la validation du contrat concret et tester un programme AMOS minimal. Ne pas remplacer le binaire R88 ou promouvoir `LAST_GOOD` sur la base de cette note.
+**Ce qui est fixe :** banque ABK multi-images, interface utilisateur simple, pas de staging Chip manuel, distinction image/objet. **Ce qui reste a concevoir :** representation binaire precise, capture `Get AGA Bob` native et ses contraintes AP20/Compiler, choix de la banque active, convention `To`, transparence, API de dessin, budget et politique cache/CPU, hotspots/animation, politique palettes. **Aucun convertisseur PC impose.** Avant d'implementer, obtenir la validation du contrat concret et tester un programme AMOS minimal. Ne pas remplacer le binaire R88 ou promouvoir `LAST_GOOD` sur la base de cette note.
 
 Sources : [format AGAPIC](M16_AGAPIC_FORMAT_DESIGN.md), [contrat manager P2](M19_P2_OBJECT_MANAGER_CONTRACT.md), [FICON8/Chip](M18_FAST_ICON_CACHE.md), [API publique courante](../README.fr.md), [incident P2.8](M19_P28_R88_CHIP_BANK_DIAGNOSTIC_2026-11-15.md).

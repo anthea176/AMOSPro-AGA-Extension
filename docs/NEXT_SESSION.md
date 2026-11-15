@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**CHOIX UTILISATEUR — capturer les Bobs depuis AMOS AGA :** commande visee `Get AGA Bob I,X1,Y1 To X2,Y2`, plusieurs images numerotees dans **une seule banque ABK**, 1..8 bitplanes / 256 couleurs. **Pas de convertisseur PC impose** et pas de gestion manuelle Chip/cache par l'utilisateur. Syntaxe AP20/Compiler, banque active, bornes `To` et mode de masque a verifier **avant toute implementation**. [Contrat detaille](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md). **Aucune nouvelle commande implementee.**
+
+---
+
 **Orientation utilisateur Bobs (15/11/2026) :** API simple prioritaire et **plusieurs images numerotees dans un seul fichier ABK** (tailles et masques individuels). Le programme AMOS ne doit pas gerer la Chip RAM ni les caches AGPC ; leur preparation reste interne. **Conception seulement, pas de commande AMOS ajoutee :** [contrat multi-images](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md). Ne pas confondre ce choix avec l'API R88 existante. Conserver R84 `LAST_GOOD` et l'unique ASC courant.
 
 ---
