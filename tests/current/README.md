@@ -4,7 +4,7 @@
 
 **Binaire R84 v0.13.29 `LAST_GOOD` inchangé** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Aucun token AP20 nouveau, aucun test Compiler ou Amiga réel demandé.
 
-**État : programme P2.1 contrôlé statiquement et prêt ; aucune exécution WinUAE P2.1 reçue, Gate B P2.1 EN ATTENTE.**
+**État : P2.1 Gate B AMOS Runtime/WinUAE 68020 PASS** : `RESULT 1`, `ERR 0`, 240 frames, 9 088 dessins, 5 invalidations, 17 reconstructions, 1 188 réutilisations, 0 erreur/retry graphique, Chip/Fast delta 0. Le cache réduit la composition de **5,8 % / 15,6 % / 30,4 %** à 4/8/16 Bobs. [Rapport final](../../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). **Aucun autre essai demandé** ; source et R84 `LAST_GOOD` inchangées.
 
 ## Démarrage direct sur le profil noJIT
 
@@ -24,6 +24,6 @@
 | `SORT_FAIL`, `FILL_FAIL`, `DRAW_FAIL`, `SWAP_FAIL` | tous `0` |
 | `CLOSE_RETURNED` | `1` |
 
-Pour les **4/8/16 Bobs**, deux passages inversant l'ordre **BASE/CACHE**. Chaque passage mesure **120 demandes de tri, 60 compositions et 20 frames VBL+Swap** par mode. À comparer dans le journal : `N4_P0_BASE_COMP_TICKS` / `N4_P0_CACHE_COMP_TICKS`, idem pour N8, N16, P1, avec leurs **comptages de tris**. Le gain de performance est **inconnu avant le test**.
+Pour les **4/8/16 Bobs**, deux passages inversant l'ordre **BASE/CACHE**. Chaque passage mesure **120 demandes de tri, 60 compositions et 20 frames VBL+Swap** par mode. À comparer dans le journal : `N4_P0_BASE_COMP_TICKS` / `N4_P0_CACHE_COMP_TICKS`, idem pour N8, N16, P1, avec leurs **comptages de tris**. Le gain mesuré de composition est **5,8 % / 15,6 % / 30,4 %** à 4/8/16 Bobs ; voir le [rapport final](../../benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md).
 
 [Protocole complet](../../benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Plan M19](../../docs/M19_SPRITES_BOBS_AMAL_PLAN.md) · [Règles](../../EXTENSION_SOURCE_RULES.md).

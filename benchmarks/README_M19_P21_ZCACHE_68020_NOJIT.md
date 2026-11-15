@@ -1,6 +1,6 @@
 # M19 P2.1 — Dernier benchmark A/B : tri Z BASIC vs cache Z
 
-**Statut : nouveau programme de test préparé, non encore exécuté dans AMOS/WinUAE.** Test prévu directement sur **WinUAE AGA PAL, MC68020 à 14 MHz, JIT OFF**. `main` uniquement, bibliothèque **R84 v0.13.29 `LAST_GOOD` intacte**, aucune nouvelle commande native/AP20.
+**Statut : dernier benchmark P2.1 VALIDÉ — Gate B AMOS Runtime/WinUAE 68020 PASS** : 240 frames, 9 088 dessins, 5 invalidations et 12 séries validées, aucun échec ni retry graphique, Chip/Fast delta 0. **Gain de composition du cache : 5,8 % / 15,6 % / 30,4 %** à 4/8/16 Bobs. [Rapport des mesures](RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). Test prévu directement sur **WinUAE AGA PAL, MC68020 à 14 MHz, JIT OFF**. `main` uniquement, bibliothèque **R84 v0.13.29 `LAST_GOOD` intacte**, aucune nouvelle commande native/AP20.
 
 **ASC unique actif :** [`tests/current/M19_P21_ZCACHE_BENCH_01.asc`](../tests/current/M19_P21_ZCACHE_BENCH_01.asc). L'ancien [benchmark 4/8/16 validé](../tests/passed/M19_P2_BENCH_BOBS_01.asc) est archivé **avec son blob Git identique** (`4345d8728af1d6dba29a5936463219ac49b3b109`). [Résultat 68020 noJIT](RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md) : tri répétitif ~4/15/59 ms par appel à 4/8/16 Bobs ; d'où cet essai final.
 

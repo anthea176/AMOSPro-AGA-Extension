@@ -2,7 +2,7 @@
 
 ## Test actif M19 P2.1 — dernier comparatif Z BASE/CACHE (15/11/2026)
 
-**Un seul ASC dans tests/current :** `tests/current/M19_P21_ZCACHE_BENCH_01.asc` (source préflightée, Gate B WinUAE EN ATTENTE). Ancien benchmark **4/8/16 PASS MC68020/14 MHz/JIT OFF** archivé dans `tests/passed/M19_P2_BENCH_BOBS_01.asc` avec le **même blob Git** `4345d8728af1d6dba29a5936463219ac49b3b109`. [Nouveau protocole](benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Dernier rapport précédent](benchmarks/RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md).
+**Un seul ASC dans tests/current :** `tests/current/M19_P21_ZCACHE_BENCH_01.asc` (**Gate B WinUAE Runtime 68020 PASS**, dernier journal utilisateur). `RESULT 1`, `ERR 0`, 240 frames, 9 088 dessins, 5 invalidations, 17 reconstructions/1 188 réutilisations, 0 erreur/retry graphique, Chip/Fast delta 0. Gains composition **5,8 % / 15,6 % / 30,4 %** à 4/8/16. [Rapport](benchmarks/RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). Aucun nouveau benchmark requis. Ancien benchmark **4/8/16 PASS MC68020/14 MHz/JIT OFF** archivé dans `tests/passed/M19_P2_BENCH_BOBS_01.asc` avec le **même blob Git** `4345d8728af1d6dba29a5936463219ac49b3b109`. [Nouveau protocole](benchmarks/README_M19_P21_ZCACHE_68020_NOJIT.md) · [Dernier rapport précédent](benchmarks/RESULTATS_M19_P2_BOBS_68020_14MHZ_NOJIT_2026-11-15.md).
 
 **R84 v0.13.29 `LAST_GOOD` inchangée ; aucune API native/AP20 nouvelle ; `main` exclusivement, pas de branche.** Les sections antérieures mentionnant un autre ASC actif sont historiques et ne rétablissent pas cet ancien test.
 

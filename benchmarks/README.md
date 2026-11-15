@@ -1,8 +1,8 @@
 # Benchmarks graphiques AMOS / AMCAF / AGA
 
-## M19 P2.1 — dernier banc A/B de cache Z (source prête, WinUAE attendu)
+## M19 P2.1 — dernier essai cache Z, Gate B 68020 PASS
 
-[ASC actif, comparatif tri BASE/CACHE](../tests/current/M19_P21_ZCACHE_BENCH_01.asc) · [protocole direct 68020/noJIT](README_M19_P21_ZCACHE_68020_NOJIT.md). **Même R84 `LAST_GOOD`, mêmes Bobs que le P2 précédent, pas d'API native.** Deux passages équilibrés 4/8/16 ; 120 demandes de tri, 60 compositions, 20 présentations pour chaque mode. Exécution WinUAE P2.1 non encore attestée.
+[ASC actif, comparatif tri BASE/CACHE](../tests/current/M19_P21_ZCACHE_BENCH_01.asc) · [protocole direct 68020/noJIT](README_M19_P21_ZCACHE_68020_NOJIT.md). **Même R84 `LAST_GOOD`, mêmes Bobs que le P2 précédent, pas d'API native.** Deux passages équilibrés 4/8/16 ; 120 demandes de tri, 60 compositions, 20 présentations pour chaque mode. **Journal P2.1 reçu : PASS** sous WinUAE Runtime/68020 (profil 14 MHz, JIT OFF annoncé) : 240 frames, 9 088 dessins, 5 invalidations validées, 17 reconstructions et 1 188 réutilisations, 0 erreur ou retry graphique. Gains de composition 4/8/16 : **5,8 % / 15,6 % / 30,4 %**. [Rapport de clôture](RESULTATS_M19_P21_ZCACHE_68020_NOJIT_2026-11-15.md). **Aucun nouveau benchmark prévu.**
 
 
 ## M19 / P2 — 4, 8 et 16 Bobs logiciels (68020/14 MHz JIT OFF et 68030/JIT : PASS)
