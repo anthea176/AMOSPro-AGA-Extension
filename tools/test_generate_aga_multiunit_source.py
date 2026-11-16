@@ -16,7 +16,8 @@ from tempfile import TemporaryDirectory
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from active_library import R84_SHA, R88_SHA, verify_active
+from active_library import R84_SHA, R88_SHA, P0C_SHA, verify_active
+from build_m19_p28_r88_in_memory import build as build_r88
 from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
 from decoder68k import Decoder
@@ -42,12 +43,17 @@ def run() -> None:
         assert actual is not None and actual.text == expected, (opcode, actual)
     current_file = ROOT / "dist/AMOSPro_AGA.Lib"
     good_file = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    before = current_file.read_bytes()
+    # R88 is historical now: rebuild the exact image from its pinned R87
+    # predecessor; never make a second installable .Lib or replace P0c.
+    active_before = current_file.read_bytes()
     good = good_file.read_bytes()
-    assert digest(before) == R88_SHA, "This campaign requires R88 as active"
+    assert digest(active_before) == P0C_SHA, "Active P0c differs from pinned SHA"
     assert digest(good) == R84_SHA, "Protected R84 LAST_GOOD changed"
     active, frozen, _ = verify_active(ROOT)
-    assert active == before and frozen == good
+    assert active == active_before and frozen == good
+    before, meta = build_r88()
+    assert len(before) == 75040 and digest(before) == R88_SHA
+    assert meta["sha256"] == R88_SHA and meta["entries"] == 88
     assert identify(before)[0] == "R88"
     segments, title, refs = validate_wrapped(
         before, 84, ("C2P", "IFF", "BOBS", "AGA")
@@ -100,9 +106,9 @@ def run() -> None:
             pass
         else:
             raise AssertionError("Export was allowed inside dist/")
-    assert current_file.read_bytes() == before, "Active .Lib modified"
+    assert current_file.read_bytes() == active_before, "Active P0c .Lib modified"
     assert good_file.read_bytes() == good, "LAST_GOOD modified"
-    print("R88 MULTI-UNIT GATE A EXPORT PASS: 4 groups, exact AP20 bytes, SHA, RBSR, dist protected")
+    print("R88 HISTORICAL MULTI-UNIT GATE A EXPORT PASS: frozen builder, 4 groups, exact AP20 bytes, SHA, RBSR; active P0c and LAST_GOOD protected")
     print("NOTE: native vasm reassembly, WinUAE B and Compiler C NOT RUN")
 
 if __name__ == "__main__":

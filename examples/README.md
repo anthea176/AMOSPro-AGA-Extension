@@ -1,8 +1,10 @@
 # AMOSPro AGA — examples
 
-## M19 P0a — active MC68020 library and test
+## Active candidate: M19 P0c (MC68020+)
 
-**Active candidate:** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (79,660 bytes, MC68020 CPU Gate A PASS, actual WinUAE/Compiler NOT TESTED), [active ASCII test](../tests/current/M19_P0A_MC68020_BANK_GET.asc), [instructions](../tests/current/README.md). **Functional WinUAE: 68030 with JIT enabled**; 68020 with JIT disabled is reserved for benchmarking. No external IFF/ABK assets required. R88 preserved under `dist/experimental/` and R84 `LAST_GOOD` unchanged.
+[`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) is the **only current installable candidate** (87,020 bytes, native Gate A PASS; [Runtime B and Compiler C PASS according to user logs](../docs/M19_P0C_GATES_BC_2026-11-16.md)). The [single active ASC](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) tests the native `Aga Screen Close` bridge. R84 `LAST_GOOD` remains protected, without promotion.
+
+The [historical M19 P0a Bob-bank capture example](aga_bob_bank_get/README.fr.md) is **not** the active test; it has not been independently validated on P0c. Its public directory and filename have been normalized while its ASC bytes remain unchanged.
 
 ## Run an example
 
