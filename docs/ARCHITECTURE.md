@@ -1,5 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## État M19 P0b vérifié le 16/11/2026
+
+Le binaire installable actif est **M19 P0b**, 82 376 octets (SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`), 82 commandes / 92 entrées AP20. Gates A, B Runtime et C Compiler **PASS** pour le scénario de capture/masques multi-images; voir [les preuves](M19_P0B_GATES_BC_2026-11-16.md). **La préparation en vraie Chip RAM pour dessin DMA n'est toujours pas intégrée.** Le repère R88 ci-dessous est historique, non le binaire courant. R84 `LAST_GOOD` reste distinct et non promu.
+
+
 ## Repère actif de l'architecture (audit du 15/11/2026)
 
 Le suivi de version de ce document contient plusieurs états historiques R46, R59 et R84. **Ne pas les considérer comme la version actuellement installable.** Au checkpoint documentaire R88, la candidate non promue était `dist/AMOSPro_AGA.Lib` **R88 v0.13.33** (75 040 octets, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **78 commandes / 88 entrées AP20, quatre unités natives V2**). **R84 v0.13.29 reste `LAST_GOOD`** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Depuis ce checkpoint, des commits plus récents peuvent avoir été ajoutés : vérifier `main` HEAD, `dist/AMOSPro_AGA.Lib` et son builder avant tout nouveau code. Gate A R88 : 130 cas PASS ; le premier essai WinUAE P2.8 a échoué `ERR 12` avec ABK Fast ; la révision Chip restait à retester ; Gate C R88 non démontrée à cette date. Les nouvelles commandes Bob multi-images restent des **contrats de conception**, pas des capacités automatiquement présentes dans R88.

@@ -1,6 +1,13 @@
 # Roadmap — AMOSPro AGA Extension
 
-## M19 P0b — ACTIF : masques individuels (Gate A MC68020 PASS)
+
+## M19 P0b — Gates A, B Runtime et C validées (16/11/2026)
+
+**État courant de main :** bibliothèque unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 82 376 octets, SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`, 82 commandes / 92 entrées AP20. **Gate A MC68020 PASS** (116 scénarios commandes + 104 noyau), **Gate B Runtime WinUAE PASS** (`PRG_STATE 1`), **Gate C véritable AMOS Compiler PASS** (`PRG_STATE -1`), suivant les deux journaux fournis le 16/11. [Rapport et empreintes de l'ABK](M19_P0B_GATES_BC_2026-11-16.md). Interpréteur strict (`PRG_STATE 0`) et matériel physique NON TESTÉS. Ne pas confondre les anciennes mentions « NON TESTÉS » ci-dessous avec ce résultat plus récent.
+
+**Suite du chantier :** préparer une représentation *privée* des images AGBO en vraie Chip RAM, vérifier les plages DMA entières et la durée de vie de l'allocation, puis seulement développer le dessin Blitter et les objets persistants. Le code natif actuel `Aga Bob Bank` gère sélection/métadonnées : il ne prépare pas encore de Chip DMA. Le format AGBO v1, les quatre commandes P0a/P0b validées et R84 `LAST_GOOD` sont conservés sans modification/promotion. Le test M19 P0b reste l'unique ASC actif.
+
+## Historique M19 P0b — livraison initiale Gate A (avant Gates B/C)
 
 **Livraison active sur `main` :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) (**82 376 octets**, SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`, 82 commandes / 92 entrées AP20) avec [ASC unique `tests/current/M19_P0B_MC68020_MASK_BANK.asc`](../tests/current/M19_P0B_MC68020_MASK_BANK.asc) et [notice](../tests/current/README.md). **Deux nouvelles instructions :** `Make AGA Bob Mask I,C` et `No AGA Bob Mask I` ; index transparent explicite (0 peut être opaque), masque 1 bit indépendant, préservation des autres images, transaction atomique. [CPU Gate A MC68020 PASS — 116 scénarios pour Make/No + 104 noyau](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758224492), source candidate reconstruite/validée en CI [43758332071](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758332071). **Runtime P0a : PASS sur journal utilisateur ; Runtime P0b et vrai AMOS Compiler P0b : NON TESTÉS.** WinUAE fonctionnel **68030/JIT ON** ; 68020/JIT OFF uniquement pour benchmark. Aucun IFF/ABK initial requis : génération par le test AMOS. `LAST_GOOD` R84 et archives inchangées, **aucune promotion**. Les sections P0a ci-dessous sont historiques.
 
