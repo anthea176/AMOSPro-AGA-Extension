@@ -139,8 +139,8 @@ def verify_script(text: str, model):
 def main():
     last_good = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     current_lib = (ROOT / "dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
-    active_p0c = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active_p0c)==87020 and sha256(active_p0c).hexdigest()=="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
+    active_p0d = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    assert len(active_p0d)==91300 and sha256(active_p0d).hexdigest()=="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
@@ -149,7 +149,7 @@ def main():
     assert current_lib==candidate and meta["sha256"]==R87_SHA
     assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active) == 1 and active[0].name == "M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc"
+    assert len(active) == 1 and active[0].name == "M19_P0D_BOB_BLIT_01.asc"
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
     assert legacy.exists() and git_blob_sha(legacy.read_bytes()) == LEGACY_GIT_SHA
     source = (ROOT / "tests/design" / ASC_NAME).read_bytes().decode("latin-1")
