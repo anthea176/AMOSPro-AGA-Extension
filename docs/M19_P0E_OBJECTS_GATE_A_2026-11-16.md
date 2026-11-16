@@ -1,5 +1,8 @@
 # M19 P0e — Registre privé des Bobs persistants (MC68020) : Gate A
 
+> **ACTUALISATION — pont validé en Gate A le 16/11/2026.** Le blocage « pont entre groupes manquant » documenté dans la section historique ci-dessous est **résolu pour le registre privé** : [pont source natif BOBS → AGA](../tools/m19_p0e_v2_object_bridge_emit.py), **60 tests MC68020 PASS**, [rapport détaillé](M19_P0E_V2_CROSS_UNIT_BRIDGE_GATE_A_2026-11-16.md). Il manque encore les commandes publiques, le moteur Draw et le reset automatique Close/End. La bibliothèque P0d active n'est pas remplacée.
+
+
 Date : 16 novembre 2026. Dépôt **`anthea176/AMOSPro-AGA-Extension`**, **`main` exclusivement**.
 
 ## Statut précis
