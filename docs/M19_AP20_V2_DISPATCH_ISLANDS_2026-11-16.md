@@ -45,4 +45,4 @@ Les tailles et empreintes ci-dessus sont celles du **builder source-only affich�
 - `tests/current/M19_P0D_BOB_BLIT_01.asc` reste seul et inchangé.
 - Aucun changement d'API P0d, `Draw`, `End`, archive, nouvelle branche, ZIP ou binaire installable.
 
-**Statut à ce checkpoint : expérimentation livrée en source, premier bilan PC16 favorable ; Gate A ciblée du dispatch MC68020 PASS (CI sur commit `0639440`, [run 43973879479](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)); Gates B/C/D non testées sur les îlots.**
+**Statut vérifié : expérimentation source-only livrée. Gate A ciblée et workflow M19 complet PASS** ([run 43973879479](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479), commit `0639440`) ; politique CPU/chemins PASS ([run 43973879253](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879253)). **Gates B/C/D des îlots NON TESTÉES**, aucune promotion ni bascule.
