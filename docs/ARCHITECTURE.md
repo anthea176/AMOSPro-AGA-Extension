@@ -2,7 +2,7 @@
 
 ## M19 P0c — futur staging Chip (source-only, 16/11/2026)
 
-Un noyau [MC68020 privé](../tools/m19_p0c_chip_stage_emit.py) de **1 304 octets** a passé **64 tests Gate A CPU020 sous Unicorn** ([résultats](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md)). Il alloue une zone propriétaire \`MEMF_CHIP|MEMF_PUBLIC\`, vérifie les bornes via \`TypeOfMem\`, copie les plans et masques et attend \`WaitBlit\` avant \`FreeVec\`. Les appels Exec/graphics sont **mockés** : il n'est pas lié à AP20 ni à une table de contextes persistants dans la bibliothèque active. La vérification complète du conteneur AGBO et les appels Blitter de dessin restent à intégrer et tester. **Les octets P0b installables, les résultats Gates B/C et R84 \`LAST_GOOD\` ne changent pas.**
+Un noyau [MC68020 privé](../tools/m19_p0c_chip_stage_emit.py) de **1 304 octets** a passé **64 tests Gate A CPU020 sous Unicorn** ([résultats](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md)). Il alloue une zone propriétaire `MEMF_CHIP|MEMF_PUBLIC`, vérifie les bornes via `TypeOfMem`, copie les plans et masques et attend `WaitBlit` avant `FreeVec`. Les appels Exec/graphics sont **mockés** : il n'est pas lié à AP20 ni à une table de contextes persistants dans la bibliothèque active. La vérification complète du conteneur AGBO et les appels Blitter de dessin restent à intégrer et tester. **Les octets P0b installables, les résultats Gates B/C et R84 `LAST_GOOD` ne changent pas.**
 
 ## État M19 P0b vérifié le 16/11/2026
 
