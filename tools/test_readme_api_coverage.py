@@ -90,6 +90,10 @@ def check_readme(
     assert digest in summary, (
         f"{language}: active library SHA256 absent/stale in README summary"
     )
+    count_label = "commandes" if language == "Français" else "commands"
+    assert re.search(rf"\b{len(exported)}\s+{count_label}\b", summary), (
+        f"{language}: README summary does not report {len(exported)} public commands"
+    )
 
     documented: dict[str, str] = {}
     names: list[str] = []
@@ -100,7 +104,7 @@ def check_readme(
         if len(cells) < 5:
             raise AssertionError(f"{language}: malformed API row: {line}")
         first, syntax, description = (x.strip() for x in cells[1:4])
-        match = re.search(r"`((?:Aga|Get AGA) [^`]+)`", first)
+        match = re.search(r"`((?:Aga|Get AGA|Make AGA|No AGA) [^`]+)`", first)
         if not match:
             continue
         name = match.group(1).casefold()
@@ -138,19 +142,18 @@ def main() -> None:
     exported = {
         token["name"].casefold(): token
         for token in audit["tokens"]
-        if token["name"].lower().startswith(("aga ", "get aga "))
+        if token["name"].lower().startswith(("aga ", "get aga ", "make aga ", "no aga "))
     }
     assert exported, "No named AP20 commands found in current library"
     title = library.title.decode("latin-1")
-    # M19 P0a identifies its own stage in $VER while retaining the frozen R88
-    # base version; it is not itself an R88 candidate.
+    # M19 P0a/P0b/P0c titles have different $VER suffixes. Read the
+    # actual M19 milestone, never infer the active version from an R88 base.
     m19 = re.search(
-        r"\$VER:\s*AMOSPro_AGA\s+(M\d+\s+P\d+[a-z]?)\s+from\s+"
-        r"(R\d+)\s+(\d+\.\d+\.\d+)",
+        r"\$VER:\s*AMOSPro_AGA\s+(M\d+\s+P\d+[a-z]?)\b",
         title, re.IGNORECASE,
     )
     if m19:
-        release = f"{m19.group(1)} ({m19.group(2)} base {m19.group(3)})"
+        release = m19.group(1)
     else:
         # Older Rxx candidates keep their historical $VER syntax.
         revision = re.search(r"\bR(\d+)\b", title)
