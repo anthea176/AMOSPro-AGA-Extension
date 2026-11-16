@@ -215,6 +215,19 @@ def main():
         assert m.table()==snapshot
         m.reject_type=None
         total+=1
+        # The State pointer must be checked with TypeOfMem BEFORE loading
+        # its Screen field (avoids an invalid/stale native State address).
+        m.reject_type=m.real_state
+        assert m.bridge_call('put',ident=3)[0]==0
+        assert m.table()==snapshot
+        m.reject_type=None
+        total+=1
+        # Lost A5->State anchor must also refuse, without side effects.
+        m.put(AMOS+0x1c8,0)
+        assert m.bridge_call('put',ident=3)[0]==0
+        assert m.table()==snapshot
+        m.put(AMOS+0x1c8,m.real_state)
+        total+=1
 
         # No AGA screen: close/End may no longer use object table API;
         # explicit reset must happen BEFORE the old AGA screen is closed.
