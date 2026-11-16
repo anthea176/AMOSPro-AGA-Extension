@@ -12,12 +12,15 @@ Safe, chooses a bank, creates an object, or calls Aga Swap.
 Entry: A0 = image plane-0 ptr in verified *contiguous* private Chip allocation
        A1 = optional independent 1-bit mask ptr (0 means fully opaque)
        A2 = inactive SAFE AGA BitMap ptr (Intuition-owned)
+       A3 = caller-owned pair of longs (logical width, logical height)
        A6 = valid graphics.library base from the live AGA State
        D0 = signed pixel X, D1 = signed pixel Y (both signed 16-bit range)
        D3 = planar bytes-per-row (even; 2*ceil(width/16))
        D4 = image width, D5 = image height (pixels, 1..4096)
        D6 = depth (1..8, must equal the active screen BitMap depth in P0d)
        D7 = bytes per whole image plane (=D3*D5)
+Logical dimensions in A3 are mandatory: BytesPerRow*8 can include padding;
+no Blitter write may cross the logical screen width or height.
 Return D3=1 on success including completely off-screen no-op, D3=0 on refusal;
        D2=0; preserve A3, A5 and the project AMOS register set, balance A7.
 
@@ -45,7 +48,8 @@ RP_OFFSET = 64
 F = {name: 192 + 4*i for i, name in enumerate((
     'src mask dst gfx x y stride width height depth plane_bytes '
     'dst_stride dst_width dst_height dst_plane_bytes '
-    'sx sy dx dy cw ch src_end mask_end dest_ptr dest_end result'
+    'sx sy dx dy cw ch src_end mask_end dest_ptr dest_end result '
+    'logical_ptr logical_w logical_h'
 ).split())}
 assert max(F.values()) + 4 < FRAME
 
@@ -116,7 +120,8 @@ def emit_private_bob_blit() -> tuple[bytes, dict[str, int]]:
     c.raw('4feffe80')        # LEA -384(SP),SP
     c.move(A(7), A(4))      # frame base
     for reg, name in ((A(0),'src'), (A(1),'mask'), (A(2),'dst'),
-                      (A(6),'gfx'), (D(0),'x'), (D(1),'y'),
+                      (A(6),'gfx'), (A(3),'logical_ptr'),
+                      (D(0),'x'), (D(1),'y'),
                       (D(3),'stride'), (D(4),'width'),
                       (D(5),'height'), (D(6),'depth'),
                       (D(7),'plane_bytes')):
@@ -124,8 +129,21 @@ def emit_private_bob_blit() -> tuple[bytes, dict[str, int]]:
     S(I(0), 'result')
     cpu_guard()
 
-    for name in ('src', 'dst', 'gfx'):
+    for name in ('src', 'dst', 'gfx', 'logical_ptr'):
         check_nonzero_even(name)
+    # Explicit logical dimensions are passed by a private trusted caller.
+    # Verify the second long is addressable before reading both values.
+    G('logical_ptr', D(0))
+    c.imm('add', 7, D(0)); B(5, 'reject')
+    c.move(D(0), A(1))
+    c.raw('2c780004'); c.call_os(TYPEOFMEM)
+    c.tst(D(0)); B(7, 'reject')
+    G('logical_ptr', A(0))
+    for off, name in ((0, 'logical_w'), (4, 'logical_h')):
+        c.move(M(0, off), D(0))
+        c.imm('cmp', 1, D(0)); B(5, 'reject')
+        c.imm('cmp', 4096, D(0)); B(2, 'reject')
+        S(D(0), name)
     G('mask', D(0)); c.tst(D(0)); B(7, 'mask_ptr_valid')
     c.imm('and', 1, D(0)); B(6, 'reject')
     L('mask_ptr_valid')
@@ -158,11 +176,14 @@ def emit_private_bob_blit() -> tuple[bytes, dict[str, int]]:
     c.imm('cmp', 2, D(0)); B(5, 'reject')
     c.imm('cmp', 512, D(0)); B(2, 'reject')
     S(D(0), 'dst_stride')
-    c.shift(0, 3, left=True); S(D(0), 'dst_width')
+    c.shift(0, 3, left=True)
+    G('logical_w', D(1)); c.alu('cmp', D(1), 0); B(13, 'reject')
+    S(D(1), 'dst_width')
     c.move(I(0), D(0)); c.move(M(0, 2), D(0), 'w')
     c.imm('cmp', 1, D(0)); B(5, 'reject')
     c.imm('cmp', 4096, D(0)); B(2, 'reject')
-    S(D(0), 'dst_height')
+    G('logical_h', D(1)); c.alu('cmp', D(1), 0); B(13, 'reject')
+    S(D(1), 'dst_height')
     c.move(I(0), D(0)); c.move(M(0, 5), D(0), 'b')
     G('depth', D(1)); c.alu('cmp', D(1), 0); B(6, 'reject')
     G('dst_stride', D(0)); G('dst_height', D(1))
