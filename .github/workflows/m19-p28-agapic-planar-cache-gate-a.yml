@@ -1,4 +1,4 @@
-name: M19 P2.8 AGAPIC independent-alpha planar cache - model and native Gate A
+name: M19 P2.8 R88 historical source/model/native Gate A (no test distribution)
 
 on:
   push:
@@ -37,10 +37,10 @@ jobs:
           python-version: "3.12"
       - name: Install CPU emulator and assembler decoder
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
-      - name: Verify R88 active candidate, historical R87 and R84 LAST_GOOD
+      - name: Verify active P0c, historical R88/R87 and protected R84
         run: |
           python -B tools/verify_fast.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
           python -B tools/test_m16_agapic.py
@@ -53,24 +53,13 @@ jobs:
         run: python -B tools/build_m19_p28_r88_in_memory.py
       - name: P2.8 native AP20 68020 interpreter and compiled-layout emulation
         run: python -B tools/test_m19_p28_r88_gate_a.py
-      - name: Strict AMOS Pro P2.8 source preflight
+      - name: Strict AMOS Pro P0c active source preflight
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc
-      - name: P2.8 exact source and four AGAPIC/AGPC fixture contracts
-        run: python -B tools/test_m19_p28_winuae_static.py
-      - name: Build standalone R88 experiment bundle after Gate A
-        run: python -B tools/m19_p28_winuae_bundle.py --out p28-gate-a-only --asc tests/current/M19_P28_R88_CACHE_BLIT_FPS_01.asc
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M19_P28_R88_GATE_A_ONLY_WINUAE_BUNDLE
-          path: p28-gate-a-only/
-          retention-days: 14
-          if-no-files-found: error
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
       - name: Verify P2.8 does NOT emit a new active library or change LAST_GOOD
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
       - name: Verify permanent R88 experimental archive and ABK fixtures
         run: |
-          python -B tools/verify_p28_archive.py --bundle p28-gate-a-only
           python -B tools/verify_p28_archive.py
           git diff --exit-code -- dist/ tests/current/ tests/passed/

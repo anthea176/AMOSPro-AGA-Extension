@@ -32,11 +32,11 @@ def main() -> None:
     current=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active)==75040 and sha256(active).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc"
+    assert len(active)==87020 and sha256(active).hexdigest()=="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(asc)==1 and asc[0].name=="M19_P28_R88_CACHE_BLIT_FPS_01.asc"
+    assert len(asc)==1 and asc[0].name=="M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc"
     data=(ROOT/"tests/passed"/TEST).read_bytes()
     assert git_blob(data)==ASC_BLOB, "Benchmark source changed without rechecking"
     smoke=(ROOT/"tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc").read_bytes()

@@ -42,15 +42,20 @@ def verify(source):
         "I/O result":r"\bErrtrap\b",
         "mode field (RUN_MODE or PRG_STATE)":r"\b(?:RUN_MODE|PRG_STATE)\b",
         "result field":r"\bRESULT\b",
-        "close field":r"CLOSE_RETURNED",
     }
     for label,pattern in required.items():
         assert re.search(pattern,source,re.I),("missing AMOS RAM log",label)
+    # Older benches use one CLOSE_RETURNED flag. P0c deliberately records
+    # three independent public Close results, without a fabricated field.
+    close_markers=("CLOSE_FIRST","CLOSE_WITH_DB","CLOSE_REOPEN")
+    assert "CLOSE_RETURNED" in source.upper() or all(
+        marker in source.upper() for marker in close_markers), ("missing AMOS RAM log","close field")
     executable=[line.strip() for line in source.splitlines()
                 if line.strip() and not line.lstrip().startswith("'")]
     assert has_normal_program_end(executable), (
         "ASC must END normally; GOSUB routines after END must end in RETURN")
-    after_status=source[source.upper().rfind("CLOSE_RETURNED"):]
+    end_marker=max(source.upper().rfind(m) for m in ("CLOSE_RETURNED",)+close_markers)
+    after_status=source[end_marker:]
     assert not re.search(r"(?im)^\s*Do\s*\r?\n\s*(?:Aga\s+)?Wait\s+Vbl\s*\r?\n\s*Loop\s*$",after_status), (
         "terminal result holding VBL loop forbidden")
 
