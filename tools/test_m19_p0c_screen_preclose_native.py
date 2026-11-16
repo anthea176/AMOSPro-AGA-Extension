@@ -69,7 +69,7 @@ def main():
     close_stub=parts[8]
     assert close_stub[:2]==RBSR and close_stub[6:8]==b'\x4e\x75'
     group,close_offset=unpack_from('>HH',close_stub,2)
-    assert group==88,'public Screen Close unexpectedly redirected'
+    assert group==88,('legacy public entry 8 group',group,'offset',close_offset,'stub',close_stub.hex())
     assert parts[group].startswith(DISPATCH_V2)
     assert 0<=close_offset<len(parts[group])-len(DISPATCH_V2)
     assert len(parts[group])>32766,'AGA native unit unexpectedly shrank'
