@@ -70,6 +70,8 @@ jobs:
         run: python -B tools/build_m19_p0d_bob_blit_in_memory.py
       - name: M19 P0d public Bob Blit CPU020 + AP20 + lazy Chip/End Gate A
         run: python -B tools/test_m19_p0d_public_blit_gate_a.py
+      - name: M19 P0e PRIVATE persistent Bob object metadata MC68020 Gate A
+        run: python -B tools/test_m19_p0e_object_table_native.py
       - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'
