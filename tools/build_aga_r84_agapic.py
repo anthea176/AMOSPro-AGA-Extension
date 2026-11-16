@@ -8,12 +8,13 @@ The original Aga Image Capture(...,TransparentIndex) is unchanged.
 Uses the existing three native AP20 groups. Moves group IDs 80..82 to
 82..84 while preserving their original C2P/IFF/AGA bytecode, and appends
 only new native code to the AGA group (no fourth group and no padding).
-R84 LAST_GOOD is SHA-pinned and byte-identical to the active binary. The
-historical R83 source is rebuilt from its own frozen R82-based builder.
+R84 LAST_GOOD is SHA-pinned independently of the newer active candidate.
+The historical R83 source is rebuilt from its own frozen R82-based builder.
 No dist write is offered by this builder.
 """
 from __future__ import annotations
 import argparse
+import tempfile
 from hashlib import sha256
 from struct import pack,unpack_from
 from pathlib import Path
@@ -22,7 +23,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"/"experiments"))
-from active_library import R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA
+from active_library import R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA
 from build_aga_r83_modular import build as build_r83
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -41,6 +42,16 @@ API=(
 GROUPS={80:82,81:83,82:84}
 PREVIOUS=ROOT/"dist"/"AMOSPro_AGA_LAST_GOOD.Lib"
 ACTIVE=ROOT/"dist"/"AMOSPro_AGA.Lib"
+
+# The moving working candidate is independent of frozen, promoted R84.
+# Admit only exact SHA-pinned identities; never weaken the LAST_GOOD check.
+KNOWN_ACTIVE_SHAS=(R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA)
+
+def verify_known_active(path: Path) -> str:
+    active_sha=sha256(path.read_bytes()).hexdigest()
+    if active_sha not in KNOWN_ACTIVE_SHAS:
+        raise AssertionError("Unknown active dist binary during historical R84 rebuild")
+    return active_sha
 
 def build()->tuple[bytes,dict]:
     frozen,info=build_r83()
@@ -111,9 +122,7 @@ def build()->tuple[bytes,dict]:
     # The frozen R84 is authoritative even when the active dist file is a
     # newer SHA-pinned candidate. Never silently accept a changed LAST_GOOD.
     assert candidate==protected, "Rebuilt R84 differs from frozen LAST_GOOD"
-    active_sha=sha256(ACTIVE.read_bytes()).hexdigest()
-    if active_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA):
-        raise AssertionError("Unknown active dist binary during historical R84 rebuild")
+    verify_known_active(ACTIVE)
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
     return candidate,dict(
@@ -135,7 +144,16 @@ class R84Layout(unittest.TestCase):
         self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
         self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R84_SHA)
         self.assertEqual(PREVIOUS.read_bytes(),self.image)
-        self.assertIn(sha256(ACTIVE.read_bytes()).hexdigest(), (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA))
+        self.assertEqual(verify_known_active(ACTIVE), sha256(ACTIVE.read_bytes()).hexdigest())
+    def test_unknown_candidate_is_still_rejected(self):
+        # Exercise the guard without writing to the real dist/ directory.
+        with tempfile.TemporaryDirectory() as directory:
+            unknown=Path(directory)/"AMOSPro_AGA.Lib"
+            unknown.write_bytes(b"untrusted version")
+            with self.assertRaisesRegex(AssertionError, "Unknown active dist binary"):
+                verify_known_active(unknown)
+        self.assertIn(P0C_SHA, KNOWN_ACTIVE_SHAS)
+
     def test_new_api_and_layout(self):
         self.assertEqual(self.meta["commands"],76)
         self.assertEqual(self.meta["ap20_entries"],85)
