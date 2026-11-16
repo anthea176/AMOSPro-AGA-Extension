@@ -17,8 +17,8 @@ from m68k_emit import Code,D
 from m19_p0e_split_bridge_emit import emit_split_bobs_public
 
 
-def emit_split_with_close() -> tuple[bytes,dict[str,int]]:
-    base,lab=emit_split_bobs_public()
+def emit_split_with_close(*, put_offset: int|None=None) -> tuple[bytes,dict[str,int]]:
+    base,lab=emit_split_bobs_public(put_offset=put_offset)
     c=Code()
     c.raw(base.hex())
     c.labels.update(lab)

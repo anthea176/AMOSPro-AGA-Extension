@@ -100,6 +100,10 @@ jobs:
         run: python -B tools/build_m19_p0f_object_identity_in_memory.py
       - name: M19 P0f transactional per-object bank identity native CPU020 Gate A
         run: python -B tools/test_m19_p0f_object_identity_native.py
+      - name: M19 P0f public Aga Bob routed into bank identity AGA V2 Gate A
+        run: python -B tools/build_m19_p0f_public_bound_in_memory.py
+      - name: M19 P0f public Aga Bob bank-escrow MC68020 two-layout Gate A
+        run: python -B tools/test_m19_p0f_public_bound_native.py
       - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'

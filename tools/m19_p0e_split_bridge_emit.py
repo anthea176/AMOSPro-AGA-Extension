@@ -40,7 +40,12 @@ AGA_OFFSETS={kind:AGA_CORE_LABELS['object_bridge_'+kind+'_entry']-AGA_CORE_BASE
 assert AGA_OFFSETS['put']==0 and all(o%2==0 for o in AGA_OFFSETS.values())
 
 
-def emit_split_bobs_public() -> tuple[bytes,dict[str,int]]:
+def emit_split_bobs_public(*, put_offset: int|None=None) -> tuple[bytes,dict[str,int]]:
+    # Default P0e layout must remain byte-exact; the P0f source route
+    # changes only the long native target offset for put_selected.
+    if put_offset is not None and (put_offset<0 or put_offset>=65534
+                                   or put_offset&1):
+        raise ValueError('invalid AGA identity binder offset')
     c=Code(); B,L=c.branch,c.label
     c.raw(P0D.hex())
     c.labels.update(P0D_LABELS)
@@ -51,7 +56,7 @@ def emit_split_bobs_public() -> tuple[bytes,dict[str,int]]:
     c.raw('48e7efee')
     c.lea(0,'bank_active_state')
     c.move(M(0,0),D(1))
-    c.move(I(AGA_OFFSETS['put']),D(7))
+    c.move(I(AGA_OFFSETS['put'] if put_offset is None else put_offset),D(7))
     B(0,'relay_common')
     for kind in ('put','off','read','reset'):
         L('relay_'+kind+'_entry')
