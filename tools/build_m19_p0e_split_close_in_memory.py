@@ -41,13 +41,15 @@ def build():
            all_labels['public_aga_p0e_close_entry']-len(original))
     if len(native_suffix)&1 or entry&1 or entry>=65534:
         raise ValueError('Close native offset/size invalid')
-    if parts[CLOSE][:2]!=RBSR or len(parts[CLOSE])!=8:
+    if (parts[CLOSE][:2]!=RBSR or len(parts[CLOSE]) not in (8,12)
+            or parts[CLOSE][6:8]!=bytes.fromhex('4e75')
+            or (len(parts[CLOSE])==12 and parts[CLOSE][8:]!=GETP)):
         raise ValueError('existing public Close stub damaged')
     source_group,source_offset=unpack_from('>HH',parts[CLOSE],2)
     if source_group!=BOBS or source_offset==entry:
         raise ValueError('old Close not routed to expected P0d BOBS group')
     modified=list(parts)
-    modified[CLOSE]=RBSR+pack('>HH',BOBS,entry)+bytes.fromhex('4e75')
+    modified[CLOSE]=RBSR+pack('>HH',BOBS,entry)+parts[CLOSE][6:]
     modified[BOBS]=parts[BOBS]+native_suffix
     if len(modified[BOBS])>65534 or any(len(x)&1 for x in modified):
         raise ValueError('Compiler V2 word-boundary error')
