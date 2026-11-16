@@ -36,7 +36,7 @@ FRAME = 256
 DESC_SIZE = 36
 F = {name:64+4*i for i,name in enumerate((
     'bank image x y state db gfx back_sb front_sb bitmap depth '
-    'screen_w screen_h result'
+    'screen_w screen_h result saved_a3'
 ).split())}
 assert max(F.values())+4 <= FRAME
 
@@ -75,6 +75,7 @@ def emit_safe_bank_blit() -> tuple[bytes, dict[str,int]]:
     S(D(0),'image')
     S(D(1),'x')
     S(D(4),'y')
+    S(A(3),'saved_a3')
     S(I(0),'result')
     B(1,'registry_cpu_guard')
     c.tst(D(0)); B(7,'draw_reject')
@@ -156,6 +157,10 @@ def emit_safe_bank_blit() -> tuple[bytes, dict[str,int]]:
     c.move(M(4,4),A(1))              # Chip mask or 0
     G('bitmap',A(2))                 # NON-displayed BitMap
     G('gfx',A(6))
+    # The painter clips to actual logical AGA width/height, not BitMap
+    # BytesPerRow*8 padding. A3 is private input, restored immediately.
+    c.move(A(4),D(0)); c.imm('add',F['screen_w'],D(0))
+    c.move(D(0),A(3))
     G('x',D(0)); G('y',D(1))
     c.move(M(4,16),D(3))             # stride
     c.move(M(4,8),D(4))              # width
@@ -163,6 +168,7 @@ def emit_safe_bank_blit() -> tuple[bytes, dict[str,int]]:
     c.move(M(4,20),D(6))             # depth
     c.move(M(4,24),D(7))             # bytes per plane
     B(1,'private_bob_blit_entry')
+    G('saved_a3',A(3))
     c.tst(D(3)); B(7,'draw_reject')
     S(I(1),'result')
 
