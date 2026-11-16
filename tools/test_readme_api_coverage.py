@@ -94,6 +94,25 @@ def check_readme(
     assert re.search(rf"\b{len(exported)}\s+{count_label}\b", summary), (
         f"{language}: README summary does not report {len(exported)} public commands"
     )
+    assert release.split()[0] in summary, (
+        f"{language}: active release {release!r} missing from library summary"
+    )
+    # Keep the README as a quick-start: historical benchmarks and checkpoints
+    # belong in docs/ rather than being accumulated before the API table.
+    overview = readme.split(library_heading, 1)[1].split(api_heading, 1)[0].strip()
+    paragraphs = [p for p in overview.split("\n\n") if p.strip()]
+    assert len(overview) <= 1800 and 1 <= len(paragraphs) <= 3, (
+        f"{language}: Libraries and tests grew too long "
+        f"({len(overview)} characters, {len(paragraphs)} paragraphs); "
+        f"move historical detail to docs/"
+    )
+    active_tests = sorted((ROOT / "tests/current").glob("*.asc"))
+    assert len(active_tests) == 1 and active_tests[0].name in overview, (
+        f"{language}: library overview must link to the unique active ASC"
+    )
+    assert "LIBRARY_TEST_HISTORY" in overview and "LAST_GOOD" in overview, (
+        f"{language}: historical versions and protected LAST_GOOD need links"
+    )
 
     documented: dict[str, str] = {}
     names: list[str] = []
