@@ -1,0 +1,45 @@
+name: AGA documentation and examples (fast)
+
+# Docs-only changes no longer run the historical native CPU regression suite.
+# This job checks the exact public API against the canonical active Lib.
+on:
+  push:
+    branches: [main]
+    paths: &documentation_paths
+      - 'README.md'
+      - 'README.fr.md'
+      - 'INSTALL.md'
+      - 'INSTALL.fr.md'
+      - 'examples/**'
+      - 'tools/test_readme_api_coverage.py'
+      - 'tools/test_examples.py'
+      - 'tools/audit_ap20.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - '.github/workflows/aga-docs-fast.yml'
+  pull_request:
+    branches: [main]
+    paths: *documentation_paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aga-docs-fast-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
+jobs:
+  public-documentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout read-only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check both README APIs against active AP20 and validate examples
+        run: |
+          python3 -B tools/test_readme_api_coverage.py
+          python3 -B tools/test_examples.py
+      - name: Ensure documentation checks never modify protected artifacts
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
