@@ -1,5 +1,12 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0d — bibliothèque de test active : Bob Blit AP20/Compiler V2 (16/11/2026)
+
+La bascule canonique autorisée P0c → P0d fournit **`dist/AMOSPro_AGA.Lib` (91 300 octets ; SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`)**, 83 commandes/93 entrées V2. Le constructeur [`build_m19_p0d_bob_blit_in_memory.py`](../tools/build_m19_p0d_bob_blit_in_memory.py) repart **uniquement des sources figées et vérifiées P0b/P0c** ; il conserve octet pour octet les unités natives AGA/C2P/IFF, ajoute le stub `Aga Bob Blit(I,X,Y)` et les sources MC68020 du pont AGBO/Chip/Safe/Blitter au groupe BOBS V2. Le décalage RBSR maximal **32 196** exige une future organisation en groupes : ne plus agrandir le bloc sans preuve de portée PC16.
+
+**Gate A CPU020 PASS**, OS/graphics/DMA simulés ; **Gates B Runtime et C Compiler réels en attente**, Gate D physique non testée. Programme actif `tests/current/M19_P0D_BOB_BLIT_01.asc`; [protocole](../tests/current/README.md). `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 protégée. Les sections antérieures mentionnant P0c comme candidate active restent des historiques techniques.
+
+
 ## M19 P0c — CANDIDATE ACTIVE pour Gates B/C (autorisation du 16/11/2026)
 
 **Bascule autorisée sur `main`** : binaire unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a` ; **82 commandes / 92 entrées AP20**, source [builder P0c](../tools/build_m19_p0c_screen_close_in_memory.py) dérivée du P0b figé. **Seul ASC actif** : [`tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc`](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) ; son design reste inchangé. Gate A native MC68020 PASS ; Gates B Runtime WinUAE et C vrai AMOS Compiler **NON TESTÉES**, Gate D NON TESTÉE. CPU 68030/JIT ON pour essais fonctionnels. **Aucune promotion `LAST_GOOD`** (R84 SHA inchangé), ni publication/ZIP/artefact CI. Le test actif P0b quitte `tests/current/` et reste accessible par Git, sans archivage forcé.

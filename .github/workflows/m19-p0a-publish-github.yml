@@ -1,4 +1,4 @@
-name: M19 P0c - verify canonical MC68020 Lib (read only)
+name: M19 P0d - verify canonical MC68020 Lib (read only)
 
 # Historical filename kept to avoid breaking external references.
 # This workflow MUST NOT publish artifacts, ZIPs, or commit to main.
@@ -40,7 +40,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0D_BOB_BLIT_01.asc
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -49,7 +49,7 @@ jobs:
           from pathlib import Path
           expected = {
               'dist/AMOSPro_AGA.Lib':
-                  (87020, '277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'),
+                  (91300, 'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'),
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
@@ -59,7 +59,7 @@ jobs:
               data = Path(path).read_bytes()
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
-          assert asc == ['M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc'], asc
+          assert asc == ['M19_P0D_BOB_BLIT_01.asc'], asc
           print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
@@ -76,6 +76,10 @@ jobs:
           python -B tools/test_m19_p0b_masks_gate_a.py
           python -B tools/test_m19_p0c_screen_close_real_gate_a.py
           python -B tools/test_m19_p0c_program_end_real_gate_a.py
+          python -B tools/test_m19_p0d_private_blit_native.py
+          python -B tools/test_m19_p0d_bank_image_resolve_native.py
+          python -B tools/test_m19_p0d_safe_bank_blit_native.py
+          python -B tools/test_m19_p0d_public_blit_gate_a.py
       - name: Rebuild in memory and compare byte-for-byte to canonical dist
         run: |
           python -B - <<'PY'
@@ -83,13 +87,13 @@ jobs:
           from hashlib import sha256
           import sys
           sys.path.insert(0, 'tools')
-          from build_m19_p0c_screen_close_in_memory import build
+          from build_m19_p0d_bob_blit_in_memory import build
           data, meta = build()
-          expected = '277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'
-          assert (len(data), sha256(data).hexdigest()) == (87020, expected)
-          assert meta['public_commands'] == 82 and meta['ap20_entries'] == 92
-          assert meta['program_end_hook'].startswith('PRIVATE')
-          assert data == Path('dist/AMOSPro_AGA.Lib').read_bytes(), 'active Lib differs from P0c source-backed rebuild'
+          expected = 'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+          assert (len(data), sha256(data).hexdigest()) == (91300, expected)
+          assert meta['commands'] == 83 and meta['entries'] == 93
+          assert meta['public_signature']==('aga bob blit',1,88,'00,0,0')
+          assert data == Path('dist/AMOSPro_AGA.Lib').read_bytes(), 'active Lib differs from P0d source-backed rebuild'
           print('PASS: in-memory MC68020 rebuild identical to dist/AMOSPro_AGA.Lib')
           print('Gate A only: WinUAE Gate B and real Compiler Gate C NOT tested here')
           PY

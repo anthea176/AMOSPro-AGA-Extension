@@ -1,5 +1,12 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0d — candidate installable active pour Gate B / C (16/11/2026)
+
+Autorisation explicite de bascule P0c → P0d sur `main`, **sans promotion LAST_GOOD**. Bibliothèque unique `dist/AMOSPro_AGA.Lib` : **91 300 octets**, SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`, 83 commandes / 93 entrées AP20, source MC68020 depuis [builder P0d](../tools/build_m19_p0d_bob_blit_in_memory.py). Test actif unique [M19_P0D_BOB_BLIT_01.asc](../tests/current/M19_P0D_BOB_BLIT_01.asc) ; pas de fichier IFF/ABK externe, quatre dessins dont clipping, transparence et un seul Swap explicite.
+
+**Gate A MC68020 PASS** (108 scénarios publics, OS/graphics simulés). **Gate B Runtime WinUAE en attente ; Gate C vrai AMOS Compiler en attente ; Gate D physique en attente.** Installer la bibliothèque du dépôt, vérifier SHA de la copie APSystem, puis [exécuter les deux modes et inspecter visuellement](../tests/current/README.md). La roadmap garde l'objectif futur `Aga Bob N,X,Y,I` persistant. P0c B/C PASS historiques limités à Screen Close sur l'ancien binaire. `LAST_GOOD` R84 intacte. **Les sections précédentes ci-dessous sont historiques.**
+
+
 ## M19 P0c — journaux Gates B et C PASS (16/11/2026)
 
 Deux fichiers transmis par l'auteur : **`M19_P0C_RUNTIME.TXT`** (`PRG_STATE 1`) et **`M19_P0C_COMPILED.TXT`** (`PRG_STATE -1`). Dans **les deux** : `RESULT 1`, `ERR 0`, `VERDICT PASS` et `CLOSE_FIRST`, `CLOSE_WITH_DB`, `CLOSE_REOPEN` à **1**. **Gate A MC68020 PASS ; Gate B Runtime et Gate C Compiler PASS selon ces journaux** pour les trois séquences de fermeture. [Preuves, SHA256 des deux TXT et limites](M19_P0C_GATES_BC_2026-11-16.md).

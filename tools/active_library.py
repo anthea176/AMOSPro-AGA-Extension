@@ -23,7 +23,9 @@ No synthetic 40K padding is included.
 from hashlib import sha256
 from pathlib import Path
 
-# M19 P0c: active Gate-A candidate (not promoted; WinUAE B/C pending).
+# M19 P0d: active test candidate; WinUAE B/C pending.
+P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
+# M19 P0c is frozen previous source-built candidate.
 P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
@@ -89,6 +91,24 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P0D_SHA:
+        from compiler_relocation import unpack_ap20
+        from build_m19_p0d_bob_blit_in_memory import build as build_p0d
+        expected,meta=build_p0d()
+        assert cur==expected and len(cur)==91300 and meta["sha256"]==P0D_SHA, "P0d builder/SHA drift"
+        assert (meta["previous_sha"],meta["commands"],meta["entries"]) == (
+            P0C_SHA,83,93), "P0d API/source provenance drift"
+        assert meta["public_signature"]==("aga bob blit",1,88,"00,0,0")
+        assert (meta["group"],meta["entry"])==(91,22688)
+        _,parts,title=unpack_ap20(cur)
+        assert len(parts)==93 and b"M19 P0d" in title
+        audit=inspect(parse(cur))
+        named=[t for t in audit["tokens"]
+               if t["name"].startswith(("aga ","get aga ","make aga ","no aga "))]
+        assert not audit["issues"] and len(named)==83
+        assert named[-1]["name"]=="aga bob blit"
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur,good,"M19 P0d MC68020 public Aga Bob Blit ACTIVE TEST CANDIDATE; native Gate A PASS; Runtime B / real Compiler C NOT TESTED; R84 LAST_GOOD unchanged"
     if current_sha == P0C_SHA:
         # Public Close bridge + PRIVATE End hook. Byte-exact builder, not an
         # unchecked fallback to a historical "Compiler-safe" monolith.

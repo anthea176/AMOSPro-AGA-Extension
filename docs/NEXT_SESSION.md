@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0d — candidate installable active pour Gates B et C (bascule autorisée le 16/11/2026)
+
+**Bascule P0c → P0d expressément autorisée par l'auteur**, sur `main`. Seule bibliothèque de campagne : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **91 300 octets**, SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`, **83 commandes / 93 entrées AP20**, reconstruite octet pour octet par [`tools/build_m19_p0d_bob_blit_in_memory.py`](../tools/build_m19_p0d_bob_blit_in_memory.py) depuis la base P0c source-vérifiée. Seul ASC actif : [`tests/current/M19_P0D_BOB_BLIT_01.asc`](../tests/current/M19_P0D_BOB_BLIT_01.asc). L'ancien ASC P0c demeure dans l'historique Git sans duplication ni archivage forcé ; son code est remplacé uniquement dans `tests/current/`.
+
+**Première fonction publique :** `_OK=Aga Bob Blit(_I,_X,_Y)` (image AGBO de la banque choisie, préparation Chip paresseuse au premier appel, masque indépendant, vrai back buffer AGA Safe, Blitter/WaitBlit, aucun Swap implicite, callback End armé et synchronisé). **Ce n'est pas encore l'API des objets Bob persistants.**
+
+**Statuts : Gate A native MC68020 PASS (108 scénarios publics, API/ABI et code réel exécuté sous Unicorn, OS/graphics/DMA simulés)** ; préflight ASC strict PASS ; **Gate B Runtime WinUAE NON TESTÉE ; Gate C réel AMOS Compiler NON TESTÉE ; Gate D physique NON TESTÉE**. [Rapport et provenance](M19_P0D_PUBLIC_BOB_BLIT_GATE_A_2026-11-16.md) · [protocole d'installation et contrôle visuel](../tests/current/README.md). Tester WinUAE AGA PAL 68030/JIT ON, installer et vérifier SHA du fichier réel en `APSystem`, puis import dans un programme vide via `Project → Merge ASCII`, exécuter Runtime `PRG_STATE 1` et Compiler `PRG_STATE -1`, observer quatre Bobs/clipping, lire `RAM:M19_P0D_RUNTIME.TXT` et `RAM:M19_P0D_COMPILED.TXT`.
+
+**Protections :** `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` **strictement inchangée** ; ni promotion, ni release, ni autre dépôt ou branche. P0c Gates B/C historiques valent uniquement pour le test Screen Close de P0c. **Toutes les sections plus anciennes ci-dessous (P0d source-only / P0c active) sont des checkpoints historiques, non le statut installable actuel.**
+
+
 ## M19 P0d — premier Bob public AP20/MC68020 Gate A PASS (16/11/2026)
 
 **Nouveau jalon sur `main`, SOURCE-ONLY :** fonction expérimentale `_OK=Aga Bob Blit(_I,_X,_Y)`, **premier Bob immédiat** sur le back buffer AGA avec `Aga Swap` strictement explicite. L'objet Bob persistant `Aga Bob N,X,Y,I` du contrat fonctionnel **n'est pas encore développé**. La sélection `Aga Bob Bank N` accepte toujours une banque vide ; à la première fonction `Aga Bob Blit`, le wrapper [source MC68020](../tools/m19_p0d_public_blit_emit.py) prépare la banque AGBO en Chip après vérification, arme le callback P0c `End`, réutilise les données aux appels suivants, reconstruit après changement de génération et lance [le pont Safe/Blitter P0d](../tools/m19_p0d_safe_bank_blit_emit.py). **Écart assumé du contrat cible :** préparation initiale différée au premier dessin, et non dès la sélection de banque, afin de préserver le cas création de banque vide ; à évaluer pour la future API de préparation anticipée.

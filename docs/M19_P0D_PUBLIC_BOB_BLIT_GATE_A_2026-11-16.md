@@ -1,5 +1,8 @@
 # M19 P0d — Premier Bob AGA public `Aga Bob Blit(I,X,Y)` — Gate A MC68020
 
+> **ACTUALISATION — BASCULE P0c → P0d AUTORISÉE (16/11/2026).** Ce rapport décrivait initialement la construction P0d **en mémoire uniquement**. La même candidate source-vérifiée (91 300 octets, SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`) est maintenant la **bibliothèque active unique** `dist/AMOSPro_AGA.Lib` avec le seul [ASC actif](../tests/current/M19_P0D_BOB_BLIT_01.asc). **Gate A native MC68020 PASS** ; **Gates B WinUAE Runtime et C réel AMOS Compiler restent NON TESTÉES** sur cette candidate. Suivre le [protocole de campagne actuel](../tests/current/README.md). Le terme « non installée » dans les paragraphes historiques suivants se rapporte à l'étape **avant** cette autorisation, et non à la situation actuelle. `LAST_GOOD` R84 n'a pas été promue.
+
+
 Date : 16/11/2026. Dépôt **`anthea176/AMOSPro-AGA-Extension`**, branche **`main` uniquement**.
 
 ## Résultat constaté

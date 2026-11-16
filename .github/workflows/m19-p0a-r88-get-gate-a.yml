@@ -42,7 +42,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
@@ -70,22 +70,17 @@ jobs:
         run: python -B tools/build_m19_p0d_bob_blit_in_memory.py
       - name: M19 P0d public Bob Blit CPU020 + AP20 + lazy Chip/End Gate A
         run: python -B tools/test_m19_p0d_public_blit_gate_a.py
-      # One-time read-only transfer of exact MC68020 candidate bytes to the
-      # GitHub blob API for explicitly authorized canonical main bascule.
-      # No build artifact, no Git write from CI, no alternate Lib.
-      - name: M19 P0d authorized canonical byte handoff (no artifact or push)
+      - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'
-          import sys, base64, hashlib
+          import sys,hashlib,pathlib
           sys.path.insert(0,'tools')
           from build_m19_p0d_bob_blit_in_memory import build
           raw,meta=build()
-          assert len(raw)==91300
-          assert hashlib.sha256(raw).hexdigest()=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
-          print('AGA_P0D_TRANSFER_BEGIN',len(raw),meta['sha256'], flush=True)
-          for i in range(0,len(raw),96):
-              print('AGA_P0D_TRANSFER_CHUNK',i//96,base64.b64encode(raw[i:i+96]).decode('ascii'))
-          print('AGA_P0D_TRANSFER_END',(len(raw)+95)//96, flush=True)
+          active=pathlib.Path('dist/AMOSPro_AGA.Lib').read_bytes()
+          assert active==raw and len(raw)==91300 and hashlib.sha256(raw).hexdigest()=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+          assert meta['commands']==83 and meta['entries']==93
+          print('PASS P0d canonical byte-exact source build',len(raw),meta['sha256'])
           PY
       - name: M19 P0d design ASC static AMOS preflight (NOT WinUAE)
         run: python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
@@ -131,9 +126,10 @@ jobs:
                   assert meta['program_end_hook'].startswith('PRIVATE')
               print(label, 'IN_MEMORY_GATE_A', size, expected, 'NOT_DISTRIBUTED')
           PY
-      - name: M19 P0c active and design ASC static preflight
+      - name: M19 P0d active and historical design ASC static preflight
         run: |
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0D_BOB_BLIT_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
       - name: Ensure no binary, ASC or passed tests changed
         run: |
