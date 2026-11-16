@@ -6,7 +6,7 @@
 
 **Seul programme ASC actif :** [`M19_P0D_BOB_BLIT_01.asc`](M19_P0D_BOB_BLIT_01.asc), dérivé du [brouillon P0d](../design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc) avec **commentaires d'en-tête seuls changés**.
 
-**Validation :** Gate A native Unicorn MC68020 **PASS** (108 scénarios publics, AP20/ABI et pixels contrôlés avec services Exec/Intuition/graphics simulés) ; préflight statique ASC **PASS** ; **Gate B Runtime WinUAE NON TESTÉE ; Gate C vrai AMOS Compiler NON TESTÉE ; Gate D physique NON TESTÉE.** [Rapport P0d](../../docs/M19_P0D_PUBLIC_BOB_BLIT_GATE_A_2026-11-16.md). Les Gates B/C P0c historiques restent valides **pour leur ancien binaire et ancien test uniquement**.
+**Validation actualisée le 16/11/2026 :** Gate A native Unicorn MC68020 **PASS** (108 scénarios publics, OS/DMA simulés) ; préflight ASC **PASS** ; **Gate B Runtime WinUAE PASS** (`PRG_STATE 1`, `RESULT 1`, `ERR 0`) et **Gate C vrai AMOS Compiler PASS** (`PRG_STATE -1`, `RESULT 1`, `ERR 0`) d'après **les deux journaux fournis et la confirmation visuelle explicite de l'auteur** des quatre Bobs/masques/clipping. **Gate D physique NON TESTÉE.** [Rapport des preuves B/C](../../docs/M19_P0D_GATES_BC_2026-11-16.md) ; absence de capture jointe et de SHA indépendant de la copie APSystem. Les Gates B/C P0c historiques restent limitées à leur ancien binaire/test. Ce programme demeure **le seul ASC actif** ; le registre privé P0e n'y est pas testé.
 
 ## Préparation WinUAE
 
