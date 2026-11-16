@@ -22,8 +22,10 @@ from compiler_relocation import GETP,RBSR,repack_ap20,unpack_ap20
 from build_m19_p0b_masks_in_memory import build as build_p0b
 from m19_p0b_masks_emit import emit_mask_commands
 from m19_p0c_screen_close_bridge_emit import (
-    emit_screen_close_bridge,AGA_STATE_OFFSET,AGA_CLOSE_ENTRY_OFFSET,
-    CLOSE_STATE_DELTA,CLOSE_SIGNATURE,
+    AGA_STATE_OFFSET,AGA_CLOSE_ENTRY_OFFSET,CLOSE_STATE_DELTA,CLOSE_SIGNATURE,
+)
+from m19_p0c_program_end_bridge_emit import (
+    emit_program_end_bridge, END_SIGNATURE, AGA_END_OFF,
 )
 from pathlib import Path
 import sys
@@ -66,6 +68,14 @@ def verify_aga_legacy(parts):
     observed=tuple(unpack_from('>I',aga,close_target+4*i)[0] for i in range(3))
     if observed!=CLOSE_SIGNATURE:
         raise ValueError('native Screen Close 020 prologue drift')
+    # Real program-End hooks: init records +1CC/+1D0 to AGA+0x5A.
+    if aga[0x34:0x40]!=bytes.fromhex('41fa00242b4801cc2b4801d0'):
+        raise ValueError('AGA init End callback slots changed')
+    if 0x36+unpack_from('>h',aga,0x36)[0]!=AGA_END_OFF:
+        raise ValueError('AGA init End callback target changed')
+    end_signature=tuple(unpack_from('>I',aga,AGA_END_OFF+4*i)[0] for i in range(3))
+    if end_signature!=END_SIGNATURE:
+        raise ValueError('AGA original End callback signature changed')
     if aga[state_target:state_target+40]!=bytes(40):
         raise ValueError('native AGA state init/data layout drift')
     return old_close
@@ -86,7 +96,7 @@ def build():
     original_close=verify_aga_legacy(parts)
 
     old_private,_=emit_mask_commands()
-    extended,labels=emit_screen_close_bridge()
+    extended,labels=emit_program_end_bridge()
     bobs=parts[OLD_BOBS]
     if not bobs.startswith(DISPATCH_V2) or not bobs.endswith(old_private):
         raise ValueError('P0b original BOBS source prefix mismatch')
@@ -128,10 +138,12 @@ def build():
         max_signed_rbsr=max(map(abs,displacements.values())),
         labels=labels,
         gate_a='PENDING',gate_b='NOT TESTED',gate_c='NOT TESTED',
-        program_end_hook='NOT IMPLEMENTED')
+        program_end_hook='PRIVATE ARM+END SOURCE ONLY; public staging hook NOT EXPORTED',
+        end_arm_offset=len(bobs)-len(DISPATCH_V2)+(labels['program_end_arm_entry']-len(old_private)),
+        end_callback_offset=len(bobs)-len(DISPATCH_V2)+(labels['program_end_bridge_entry']-len(old_private)))
 
 
 if __name__=='__main__':
     _,report=build()
-    print('M19 P0c Screen Close EXPERIMENT IN MEMORY ONLY',
+    print('M19 P0c Screen Close plus PRIVATE End EXPERIMENT IN MEMORY ONLY',
           {k:v for k,v in report.items() if k!='labels'})
