@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+# AGA_NATIVE_MIN_CPU: MC68020
+"""M19 AP20 V2 grouped dispatch experiment FROM the frozen P0f source.
+
+Gate A only; no alternate installed .Lib, no new ASC and no P0d promotion.
+The 4 actual native P0f groups are copied unchanged into local AP20 islands.
+Compiler acceptance of INTERLEAVED entries and groups still needs Gate C.
+"""
+from __future__ import annotations
+from hashlib import sha256
+from pathlib import Path
+
+from ap20_v2_island_dispatch import dispatch_islands, pc16_displacements
+from compiler_relocation import unpack_ap20
+from audit_ap20 import inspect, parse
+from build_m19_p0f_public_bound_in_memory import build as build_p0f
+
+P0F_SHA = '6175705e22ed0c3f52c1ba317b2fad7aaca5af0db507c63a1ed629a724609a45'
+P0D_SHA = 'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+LAST_GOOD_SHA = '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+TITLE = (b'AMOSPro AGA M19 AP20 V2 ISLAND DISPATCH MC68020 SOURCE ONLY\0'
+         b'$VER: AGA M19 AP20 islands UNINSTALLED P0f foundation\0')
+TITLE += bytes(len(TITLE) & 1)
+
+
+def build():
+    root = Path(__file__).resolve().parents[1]
+    p0d = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
+    good = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    if sha256(p0d).hexdigest()!=P0D_SHA or sha256(good).hexdigest()!=LAST_GOOD_SHA:
+        raise ValueError('P0d or LAST_GOOD changed: refuse AP20 experiment')
+    source, old_meta = build_p0f()
+    if sha256(source).hexdigest()!=P0F_SHA or len(source)!=96744:
+        raise ValueError('P0f source provenance mismatch')
+    candidate, layout = dispatch_islands(source, title=TITLE)
+    token, parts, _ = unpack_ap20(candidate)
+    original_tokens, original, _ = unpack_ap20(source)
+    for i,j in layout.group_map.items():
+        if parts[j]!=original[i]:
+            raise ValueError(f'Native unit {i} modified')
+    old = inspect(parse(source))
+    new = inspect(parse(candidate))
+    if new['issues'] or len(old['tokens'])!=len(new['tokens']):
+        raise ValueError('Incompatible public AP20 token table')
+    for before, after in zip(old['tokens'], new['tokens']):
+        if (before['name'],before['signature'])!=(after['name'],after['signature']):
+            raise ValueError('Public command changed')
+    if len(token)!=len(original_tokens):
+        raise ValueError('Token string encoding was modified')
+    if layout.max_pc16 >= 32000:
+        raise ValueError('Islands did not remove the PC16 bottleneck')
+    return candidate, dict(
+        sha256=sha256(candidate).hexdigest(), size=len(candidate),
+        source_sha=P0F_SHA, source_entries=len(original),
+        ap20_entries=len(parts), native_groups=layout.group_map,
+        old_pc16=max(map(abs, pc16_displacements(original).values())),
+        new_pc16=layout.max_pc16, added_getp_markers=layout.added_getp_markers,
+        entries_rebound=len(layout.entry_map), tokens=len(new['tokens']),
+        gate_a='PENDING CPU/CI', gate_b='NOT TESTED', gate_c='NOT TESTED',
+        distribution='IN MEMORY ONLY', layout=layout)
+
+
+if __name__=='__main__':
+    _out,_meta=build()
+    print('M19 AP20 V2 DISPATCH ISLANDS SOURCE-ONLY',
+          {k:v for k,v in _meta.items() if k!='layout'})
