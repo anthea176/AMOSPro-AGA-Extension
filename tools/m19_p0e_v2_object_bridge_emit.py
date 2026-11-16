@@ -44,7 +44,7 @@ F=dict(ident=0,bank=4,image=8,x=12,y=16,output=20,entry_offset=24)
 assert OBJ_RELATIVE==56130
 
 
-def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
+def emit_v2_object_bridge(*, aga_side: bool=False) -> tuple[bytes, dict[str,int]]:
     p0d,labels=emit_public_blit()
     objects,obj_labels=emit_object_table()
     assert len(objects)==2332 and obj_labels['object_put_entry']==0
@@ -60,12 +60,13 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     c.labels.update(labels)
     B,L=c.branch,c.label
 
-    # The selected-bank variant uses a private -1 sentinel, NOT a
-    # caller-controlled address: the CPU guard runs before bank-state access.
-    L('object_bridge_put_selected_entry')
-    c.raw('48e7efee')
-    c.move(I(-1),D(7))
-    B(0,'object_bridge_common')
+    # AGA-side relocation deliberately removes the BOBS bank-state entry:
+    # only BOBS can read its own PC-relative bank_active_state.
+    if not aga_side:
+        L('object_bridge_put_selected_entry')
+        c.raw('48e7efee')
+        c.move(I(-1),D(7))
+        B(0,'object_bridge_common')
     for key in ('put','off','read','reset'):
         L('object_bridge_'+key+'_entry')
         c.raw('48e7efee')         # preserve AMOS register set except D2/D3
@@ -91,12 +92,15 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     c.imm('and',1,D(0));B(6,'object_bridge_return')
     c.move(M(2,F['entry_offset']),D(0))
     c.imm('cmp',-1,D(0))
-    B(6,'object_bridge_bank_ready')
-    c.lea(0,'bank_active_state')
-    c.move(M(0,0),D(1))
-    c.move(D(1),M(2,F['bank']))
-    c.move(I(0),M(2,F['entry_offset']))  # object_put native offset
-    L('object_bridge_bank_ready')
+    if aga_side:
+        B(7,'object_bridge_return')  # no PC-relative BOBS data in AGA unit
+    else:
+        B(6,'object_bridge_bank_ready')
+        c.lea(0,'bank_active_state')
+        c.move(M(0,0),D(1))
+        c.move(D(1),M(2,F['bank']))
+        c.move(I(0),M(2,F['entry_offset']))  # object_put native offset
+        L('object_bridge_bank_ready')
     # Object management requires an OPEN AGA screen. The original AGA
     # State is executable-unit-local and State+0 is the live Screen ptr.
     c.move(M(5,STATE_A5),D(0))
@@ -164,8 +168,12 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
 
     result=c.out()
     assert result[:len(p0d)]==p0d
-    assert c.labels['object_bridge_put_selected_entry']==len(p0d)
-    assert result[c.labels['object_bridge_put_selected_entry']:] and len(result)%2==0
+    if not aga_side:
+        assert c.labels['object_bridge_put_selected_entry']==len(p0d)
+    else:
+        assert c.labels['object_bridge_put_entry']==len(p0d)
+        assert 'object_bridge_put_selected_entry' not in c.labels
+    assert result.startswith(p0d) and len(result)%2==0
     return result,c.labels
 
 
