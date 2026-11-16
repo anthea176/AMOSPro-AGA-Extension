@@ -326,6 +326,71 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     c.raw('4cdf77f7')       # restore AMOS ABI
     c.raw('74004e75')       # D2=0, RTS
 
+    # LOOKUP: the bank still must be selected and its current AMOS payload
+    # address must match the staged identity; no stale DMA pointer after Erase.
+    L('checked_lookup_entry')
+    c.raw('48e7efee')       # preserve caller registers, MC68020
+    c.raw('4fefff50')       # local 176-byte frame
+    c.move(A(7), A(2))
+    S(D(3), 'bank')
+    S(A(1), 'ctx')
+    S(I(0), 'result')
+    c.raw('20780004')
+    c.move(A(0), D(0))
+    c.tst(D(0)); B(7, 'checked_lookup_fail')
+    c.move(M(0, 0x128), D(0), 'w')
+    c.word(0x0800); c.word(1)
+    B(7, 'checked_lookup_fail')
+    G('ctx', D(0)); c.tst(D(0)); B(7, 'checked_lookup_fail')
+    c.imm('and', 1, D(0)); B(6, 'checked_lookup_fail')
+    G('bank', D(0))
+    c.imm('cmp', 5, D(0)); B(5, 'checked_lookup_fail')
+    c.imm('cmp', 65535, D(0)); B(2, 'checked_lookup_fail')
+    c.lea(0, 'bank_active_state')
+    c.move(M(0, 0), D(0))
+    G('bank', D(1))
+    c.alu('cmp', D(1), 0); B(6, 'checked_lookup_fail')
+    c.lea(0, 'bank_active_state')
+    c.move(M(0, 4), D(0)); S(D(0), 'bankptr')
+    c.tst(D(0)); B(7, 'checked_lookup_fail')
+    c.move(M(0, 8), D(0)); S(D(0), 'head')
+    c.move(M(5, CUR_BANKS_A5), D(0))
+    G('head', D(1))
+    c.alu('cmp', D(1), 0); B(6, 'checked_lookup_fail')
+    G('bank', D(0))
+    c.raw(GETADR.hex())
+    c.move(A(0), D(0))
+    G('bankptr', D(1))
+    c.alu('cmp', D(1), 0); B(6, 'checked_lookup_fail')
+    c.imm('cmp', 24, D(0)); B(3, 'checked_lookup_fail')
+    c.move(D(0), D(1)); c.imm('and', 1, D(1))
+    B(6, 'checked_lookup_fail')
+    G('bankptr', A(1))
+    osbase(); c.call_os(-534)
+    c.tst(D(0)); B(7, 'checked_lookup_fail')
+    G('bankptr', A(4))
+    c.move(M(4, 0), D(0))
+    c.imm('cmp', 0x4147424f, D(0))
+    B(6, 'checked_lookup_fail')
+    c.move(M(4, 24), D(1))
+    c.tst(D(1)); B(7, 'checked_lookup_fail')
+    G('bankptr', D(0))
+    G('ctx', A(1))
+    B(1, 'checked_chip_lookup_entry')
+    c.tst(D(3)); B(7, 'checked_lookup_fail')
+    S(I(1), 'result')
+    L('checked_lookup_fail')
+    G('result', D(3))
+    c.raw('4fef00b0')
+    c.raw('4cdf77f7')
+    c.raw('74004e75')
+
+    # RELEASE is valid even if Erase/Load removed the original bank.
+    # Context belongs to the private calling registry; the helper validates
+    # its ownership cookie and performs WaitBlit before FreeVec.
+    L('checked_release_entry')
+    B(0, 'checked_chip_release_entry')
+
     L('checked_chip_stage')
     c.raw(chip.hex())
     for key, off in chip_labels.items():
