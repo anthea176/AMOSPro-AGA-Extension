@@ -8,7 +8,7 @@ Aga Screen Close and AMOS Compiler are NOT exercised by this test.
 """
 from __future__ import annotations
 
-from struct import pack
+from struct import pack, unpack_from
 
 from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_020
 from test_m5_generic import AMOS,EXEC,GFX
@@ -18,6 +18,8 @@ from test_m19_p0a_r88_get_gate_a import STATE,HEAD
 from m19_p0c_bank_registry_emit import emit_bank_registry
 from m19_p0c_screen_preclose_emit import emit_screen_preclose
 from build_m19_p0b_masks_in_memory import build
+from compiler_relocation import RBSR,unpack_ap20
+from compiler_bridge_v2_probe import DISPATCH_V2
 
 class PreCloseMachine(RegistryMachine):
     def __init__(self,lib,layout='interpreted',depth=8,**kw):
@@ -60,6 +62,18 @@ def main():
     assert not any(i.mnemonic.startswith('dc.') for i in dis)
     lib,meta=build()
     assert meta['sha256']=='f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'
+
+    # Prove current public Aga Screen Close is STILL in the legacy AGA native
+    # group. The new BOBS preclose has no cross-unit 16-bit branch to it.
+    _tokens,parts,_title=unpack_ap20(lib)
+    close_stub=parts[8]
+    assert close_stub[:2]==RBSR and close_stub[6:8]==b'\\x4e\\x75'
+    group,close_offset=unpack_from('>HH',close_stub,2)
+    assert group==88,'public Screen Close unexpectedly redirected'
+    assert parts[group].startswith(DISPATCH_V2)
+    assert 0<=close_offset<len(parts[group])-len(DISPATCH_V2)
+    assert len(parts[group])>32766,'AGA native unit unexpectedly shrank'
+    assert parts[90].startswith(DISPATCH_V2),'BOBS native unit moved'
 
     cases=0
     for layout in ('interpreted','compiled'):
