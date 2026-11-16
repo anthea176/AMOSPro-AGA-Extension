@@ -29,7 +29,7 @@ Cette voie **réutilise la résolution native de `Rbsr` par AMOS et AMOS Compile
 | Unités natives | 4 | **4, octet pour octet** |
 | Groupes natifs AP20 | 91, 92, 93, 94 | 153, 156, 177, 142 respectivement |
 
-Les tailles et empreintes ci-dessus sont celles du **builder source-only affichées en CI**, pas celles d'un binaire installé ou testé sous AMOS. Le premier passage CI a échoué sur une assertion de test incorrecte (`85` tokens au lieu de `86`, car l'entrée initiale factice est comptée). Cette assertion a été corrigée ; **la Gate A complète reste à confirmer sur le HEAD corrigé**. Le calcul PC16 est une preuve structurelle seulement.
+Les tailles et empreintes ci-dessus sont celles du **builder source-only affichées en CI**, pas celles d'un binaire installé ou testé sous AMOS. Le premier passage CI avait échoué sur une assertion de test incorrecte (`85` tokens au lieu de `86`, car l'entrée initiale factice est comptée). Cette assertion a été corrigée ; **le banc de dispatch MC68020 du HEAD corrigé a passé sa Gate A ciblée**. Cette preuve n'exécute pas l'AMOS Compiler réel ; les routines natives cibles sont seulement rejointes, pas rejouées dans leur intégralité. Le calcul PC16 est une preuve structurelle seulement.
 
 ## Verrous pour accepter l'architecture
 
@@ -45,4 +45,4 @@ Les tailles et empreintes ci-dessus sont celles du **builder source-only affich�
 - `tests/current/M19_P0D_BOB_BLIT_01.asc` reste seul et inchangé.
 - Aucun changement d'API P0d, `Draw`, `End`, archive, nouvelle branche, ZIP ou binaire installable.
 
-**Statut à ce checkpoint : expérimentation livrée en source, premier bilan PC16 favorable ; Gate A du HEAD corrigé en cours, Gates B/C/D non testées sur les îlots.**
+**Statut à ce checkpoint : expérimentation livrée en source, premier bilan PC16 favorable ; Gate A ciblée du dispatch MC68020 PASS (CI sur commit `0639440`, [run 43973879479](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)); Gates B/C/D non testées sur les îlots.**
