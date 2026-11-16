@@ -23,7 +23,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parent/'experiments'))
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 BOBS=93
-CLOSE=8
+CLOSE=8CLOSE_SHA='8185ae2d056da209a88c0b91e315d1cbb97acabadf7b55352e8cd7a348c1b207'
+
 TITLE=(b'AMOSPro AGA M19 P0e CPU020 SPLIT BOB SET OFF CLOSE-RESET GATE A\0'
        b'$VER: AMOSPro_AGA P0e source-only reset-before-close UNINSTALLED\0')
 TITLE+=bytes(len(TITLE)&1)
@@ -67,6 +68,9 @@ def build():
     reach=max(map(abs,links.values()))
     if CLOSE not in links or reach>=32766 or 32766-reach<64:
         raise ValueError(f'unsafe reset-before-Close PC16 reach {reach}')
+    if (len(new)!=94532 or len(native_suffix)!=24 or reach!=32576
+            or sha256(new).hexdigest()!=CLOSE_SHA):
+        raise ValueError('P0e Close reset source/PC16 byte-exact drift')
     return new,dict(
         sha256=sha256(new).hexdigest(),size=len(new),
         previous_sha=meta['sha256'],public_commands=85,ap20_entries=95,
