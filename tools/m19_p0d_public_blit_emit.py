@@ -85,6 +85,17 @@ def emit_public_blit() -> tuple[bytes, dict[str,int]]:
     G('state',A(1))
     c.raw('2c780004'); c.call_os(-534)  # Exec TypeOfMem(state)
     c.tst(D(0)); B(7,'public_blit_return')
+    # State+32 holds DBState. Probe both endpoints of the structure before
+    # reading GfxBase or DBState, and reject pointer arithmetic overflow.
+    G('state',D(0))
+    c.imm('add',32,D(0)); B(5,'public_blit_return')
+    c.move(D(0),A(1))
+    c.raw('2c780004'); c.call_os(-534) # Exec TypeOfMem(state+32)
+    c.tst(D(0)); B(7,'public_blit_return')
+    G('state',A(0))
+    c.move(M(0,32),D(0))
+    c.tst(D(0)); B(7,'public_blit_return') # no AGA Double Buffer
+    c.imm('and',1,D(0)); B(6,'public_blit_return')
     G('state',A(0))
     c.move(M(0,8),D(0)); S(D(0),'gfx')
     c.tst(D(0)); B(7,'public_blit_return')
