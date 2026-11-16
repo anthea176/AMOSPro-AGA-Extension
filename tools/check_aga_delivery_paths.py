@@ -42,10 +42,17 @@ def workflow_errors(path: str, content: str) -> list[str]:
         return []
     # A workflow that touches the AGA release slot must never push itself.
     release_related = any(x in content for x in ('AMOSPro_AGA', 'dist/', 'dist\/'))
+    errors = []
     if release_related and (re.search(r'\bgit\s+push\b', content) or
                             re.search(r'(?m)^\s*contents:\s*write\s*$', content)):
-        return ['AGA release workflow must be read-only (no git push / contents: write)']
-    return []
+        errors.append('AGA release workflow must be read-only (no git push / contents: write)')
+    # A Gate A may verify exact binaries in RAM, but must not distribute a
+    # second installable Lib/ZIP via GitHub Actions artifacts.
+    for step in re.split(r'(?m)^[ \t]*-[ \t]*name:[ \t]*', content)[1:]:
+        if (re.search(r'(?m)^[ \t]*uses:[ \t]*actions/upload-artifact@', step)
+                and re.search(r'(?i)\.(?:lib|zip)\b', step)):
+            errors.append('AGA library/ZIP artifacts forbidden; use canonical dist/AMOSPro_AGA.Lib')
+    return errors
 
 
 def changed_files(base: str, head: str) -> list[str]:
@@ -111,6 +118,28 @@ class DeliveryPolicyTests(unittest.TestCase):
     def test_self_publishing_workflow_rejected(self):
         raw = 'permissions:\n  contents: write\nrun: git push origin HEAD:main\n# dist/experimental/FILE.Lib'
         self.assertTrue(workflow_errors('.github/workflows/test.yml', raw))
+
+    def test_reject_library_artifact(self):
+        raw = ('jobs:\n  a:\n    steps:\n'
+               '      - name: Bad binary publication\n'
+               '        uses: actions/upload-artifact@v4\n'
+               '        with:\n'
+               '          path: m19_p0c_uninstalled/AMOSPro_AGA.Lib\n')
+        self.assertTrue(workflow_errors('.github/workflows/test.yml', raw))
+
+    def test_reject_zip_artifact(self):
+        raw = ('      - name: Bad ZIP\n'
+               '        uses: actions/upload-artifact@v4\n'
+               '        with:\n'
+               '          path: m19_p0c_uninstalled/install.zip\n')
+        self.assertTrue(workflow_errors('.github/workflows/test.yml', raw))
+
+    def test_allow_log_artifact(self):
+        raw = ('      - name: Gate A logs\n'
+               '        uses: actions/upload-artifact@v4\n'
+               '        with:\n'
+               '          path: results/*.txt\n')
+        self.assertEqual(workflow_errors('.github/workflows/test.yml', raw), [])
 
 
 if __name__ == '__main__':

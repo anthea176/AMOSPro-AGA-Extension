@@ -94,84 +94,30 @@ jobs:
         run: python -B tools/build_m19_p0b_masks_in_memory.py
       - name: MC68020 Make and No Mask pixel-exact CPU Gate A
         run: python -B tools/test_m19_p0b_masks_gate_a.py
-      - name: Export exact MC68020 Gate A candidate outside dist
+      - name: Verify P0a, P0b and P0c candidates in memory (never distribute from CI)
         run: |
           python -B - <<'PY'
           from hashlib import sha256
-          from pathlib import Path
           import sys
           sys.path.insert(0, 'tools')
-          from build_m19_p0a_r88_get_in_memory import build
-          lib, details = build()
-          digest = sha256(lib).hexdigest()
-          assert len(lib) == 79660, len(lib)
-          assert digest == 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0', digest
-          assert details['commands'] == 80 and details['entries'] == 90
-          dest = Path('m19_p0a_candidate/AMOSPro_AGA.Lib')
-          dest.parent.mkdir(parents=True, exist_ok=True)
-          dest.write_bytes(lib)
-          assert sha256(dest.read_bytes()).hexdigest() == digest
-          print('CANDIDATE GATE A ONLY', dest, len(lib), digest, 'WinUAE B / real Compiler C NOT TESTED')
+          from build_m19_p0a_r88_get_in_memory import build as build_a
+          from build_m19_p0b_masks_in_memory import build as build_b
+          from build_m19_p0c_screen_close_in_memory import build as build_c
+          checks = (
+              ('P0a', build_a, 79660, 'e98a1a17a5e1de579dd100c5cdeba2b8372f62f175274a4412ddeea21034e3b0', 'commands', 'entries', 80, 90),
+              ('P0b', build_b, 82376, 'f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9', 'commands', 'entries', 82, 92),
+              ('P0c', build_c, 87020, '277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a', 'public_commands', 'ap20_entries', 82, 92),
+          )
+          for label,builder,size,expected,cmd_field,entry_field,commands,entries in checks:
+              raw,meta = builder()
+              assert len(raw)==size and sha256(raw).hexdigest()==expected, label
+              assert (meta[cmd_field],meta[entry_field])==(commands,entries), label
+              if label=='P0c':
+                  assert meta['program_end_hook'].startswith('PRIVATE')
+              print(label, 'IN_MEMORY_GATE_A', size, expected, 'NOT_DISTRIBUTED')
           PY
-      - name: Publish candidate as downloadable workflow artifact (not installed)
-        uses: actions/upload-artifact@v4
-        with:
-          name: AMOSPro_AGA_M19_P0a_MC68020_GATE_A
-          path: m19_p0a_candidate/AMOSPro_AGA.Lib
-          retention-days: 14
-          if-no-files-found: error
-      - name: M19 P0b exact in-memory MC68020 candidate for canonical GitHub delivery
-        run: |
-          python -B - <<'PY'
-          import sys
-          from hashlib import sha256
-          from pathlib import Path
-          sys.path.insert(0,'tools')
-          from build_m19_p0b_masks_in_memory import build
-          lib,meta=build()
-          digest=sha256(lib).hexdigest()
-          assert (len(lib),digest,meta['commands'],meta['entries']) == (
-              82376,'f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9',82,92)
-          dest=Path('m19_p0b_stage/AMOSPro_AGA.Lib')
-          dest.parent.mkdir(parents=True,exist_ok=True)
-          dest.write_bytes(lib)
-          assert sha256(dest.read_bytes()).hexdigest()==digest
-          print('M19 P0b source-verified MC68020 Gate A candidate',dest,len(lib),digest)
-          PY
-      - name: M19_P0B_EXACT_MAIN_STAGE artifact (delivery intermediary, not installation)
-        uses: actions/upload-artifact@v4
-        with:
-          name: M19_P0b_MC68020_VALIDATED_LIB_FOR_MAIN
-          path: m19_p0b_stage/AMOSPro_AGA.Lib
-          retention-days: 3
-          if-no-files-found: error
-      - name: M19 P0c design ASC AMOS static preflight only
+      - name: M19 P0c design ASC static preflight (not an active test)
         run: python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
-      - name: Stage P0c Close bridge for MANUAL WinUAE Gates B/C outside dist
-        run: |
-          python -B - <<'PY'
-          from pathlib import Path
-          import sys, hashlib
-          sys.path.insert(0,'tools')
-          from build_m19_p0c_screen_close_in_memory import build
-          raw,meta=build()
-          expected='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'
-          assert len(raw)==87020 and hashlib.sha256(raw).hexdigest()==expected
-          assert (meta['public_commands'],meta['ap20_entries'])==(82,92)
-          assert meta['program_end_hook'].startswith('PRIVATE')
-          target=Path('m19_p0c_uninstalled/AMOSPro_AGA.Lib')
-          target.parent.mkdir(parents=True,exist_ok=True)
-          target.write_bytes(raw)
-          assert hashlib.sha256(target.read_bytes()).hexdigest()==expected
-          print('EXPERIMENT GATE A ONLY; WinUAE Gates B/C NOT TESTED',target,len(raw),expected)
-          PY
-      - name: M19 P0c experimental uninstalled library for manual WinUAE B/C
-        uses: actions/upload-artifact@v4
-        with:
-          name: M19_P0C_CLOSE_EXPERIMENT_GATE_A_UNINSTALLED
-          path: m19_p0c_uninstalled/AMOSPro_AGA.Lib
-          retention-days: 14
-          if-no-files-found: error
       - name: Ensure no binary, ASC or passed tests changed
         run: |
           git diff --exit-code -- dist/ tests/current/ tests/passed/
