@@ -23,7 +23,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parent/'experiments'))
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 BOBS=93
-CLOSE=8CLOSE_SHA='8185ae2d056da209a88c0b91e315d1cbb97acabadf7b55352e8cd7a348c1b207'
+CLOSE=8
+CLOSE_SHA='8185ae2d056da209a88c0b91e315d1cbb97acabadf7b55352e8cd7a348c1b207'
 
 TITLE=(b'AMOSPro AGA M19 P0e CPU020 SPLIT BOB SET OFF CLOSE-RESET GATE A\0'
        b'$VER: AMOSPro_AGA P0e source-only reset-before-close UNINSTALLED\0')
