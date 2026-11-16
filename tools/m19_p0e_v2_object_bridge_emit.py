@@ -84,6 +84,9 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     c.move(M(5,STATE_A5),D(0))
     c.tst(D(0));B(7,'object_bridge_return')
     c.imm('and',1,D(0));B(6,'object_bridge_return')
+    c.move(M(5,STATE_A5),A(1))
+    c.raw('2c780004');c.call_os(-534)  # TypeOfMem(State), before dereference
+    c.tst(D(0));B(7,'object_bridge_return')
     c.move(M(5,STATE_A5),A(0))
     c.tst(M(0,0));B(7,'object_bridge_return')
 
