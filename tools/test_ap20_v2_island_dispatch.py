@@ -120,7 +120,7 @@ def main():
     checks=static_tests()
     candidate,meta=build()
     assert meta['old_pc16']==32576 and meta['new_pc16']<32000
-    assert meta['tokens']==85
+    assert meta['tokens']==86  # includes the AP20 dummy token (85 public commands)
     _,parts,_=unpack_ap20(candidate)
     groups={i for i,p in enumerate(parts) if p.startswith(DISPATCH_V2)}
     calls=[i for i,p in enumerate(parts) if p.startswith(RBSR)]
