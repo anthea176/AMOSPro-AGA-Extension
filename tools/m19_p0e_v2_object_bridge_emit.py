@@ -16,10 +16,14 @@ Four PRIVATE BOBS entrypoints (the same ABI as P0e object-table entries):
   bridge_off:   D0=object ID
   bridge_read:  D0=object ID, A1=valid 24-byte destination
   bridge_reset: A5=AMOS owner
+Additional entry bridge_put_selected: D0=object ID, D4=image, D5=X,
+D6=Y. It reads the ACTUAL BOBS bank_active_state only AFTER the CPU and
+A5 checks, then calls P0e object_put. The saved bank ID survives later
+selection changes. This entry still requires a valid prior Aga Bob Bank.
+
 Each preserves the usual AMOS D0/D1/D4-D7/A0-A2/A4-A6, A3, A5 and SP;
-returns D2=0, D3=1/0. Only the native BOBS caller supplies source bank,
-not this bridge. Do not call through raw absolute addresses or via an
-unverified End callback pointer. No drawing, no Swap, no Chip allocation.
+returns D2=0, D3=1/0. Do not call through raw absolute addresses or via
+an unverified End callback pointer. No drawing, no Swap, no Chip allocation.
 
 Future Draw can invoke bridge_read from BOBS and call its own verified P0d
 Safe/Chip painter. No AGA -> BOBS absolute call is needed.
@@ -56,6 +60,12 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     c.labels.update(labels)
     B,L=c.branch,c.label
 
+    # The selected-bank variant uses a private -1 sentinel, NOT a
+    # caller-controlled address: the CPU guard runs before bank-state access.
+    L('object_bridge_put_selected_entry')
+    c.raw('48e7efee')
+    c.move(I(-1),D(7))
+    B(0,'object_bridge_common')
     for key in ('put','off','read','reset'):
         L('object_bridge_'+key+'_entry')
         c.raw('48e7efee')         # preserve AMOS register set except D2/D3
@@ -79,6 +89,14 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     B(7,'object_bridge_return')
     c.move(A(5),D(0));c.tst(D(0));B(7,'object_bridge_return')
     c.imm('and',1,D(0));B(6,'object_bridge_return')
+    c.move(M(2,F['entry_offset']),D(0))
+    c.imm('cmp',-1,D(0))
+    B(6,'object_bridge_bank_ready')
+    c.lea(0,'bank_active_state')
+    c.move(M(0,0),D(1))
+    c.move(D(1),M(2,F['bank']))
+    c.move(I(0),M(2,F['entry_offset']))  # object_put native offset
+    L('object_bridge_bank_ready')
     # Object management requires an OPEN AGA screen. The original AGA
     # State is executable-unit-local and State+0 is the live Screen ptr.
     c.move(M(5,STATE_A5),D(0))
@@ -146,7 +164,8 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
 
     result=c.out()
     assert result[:len(p0d)]==p0d
-    assert result[c.labels['object_bridge_put_entry']:] and len(result)%2==0
+    assert c.labels['object_bridge_put_selected_entry']==len(p0d)
+    assert result[c.labels['object_bridge_put_selected_entry']:] and len(result)%2==0
     return result,c.labels
 
 
@@ -155,4 +174,4 @@ if __name__=='__main__':
     src,labels=emit_v2_object_bridge()
     print('M19 P0e PRIVATE cross-unit bridge SOURCE-ONLY',
           len(src),sha256(src).hexdigest(),
-          len(src)-labels['object_bridge_put_entry'])
+          len(src)-labels['object_bridge_put_selected_entry'])
