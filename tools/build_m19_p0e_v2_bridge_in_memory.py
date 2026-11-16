@@ -80,7 +80,7 @@ def build():
     # Caller gets all four labels relative to the compiled BOBS native start.
     offsets={key:len(parts[BOBS_GROUP])-len(DISPATCH_V2)+
              linked_labels['object_bridge_'+key+'_entry']-len(original_native)
-             for key in ('put','off','read','reset')}
+             for key in ('put_selected','put','off','read','reset')}
     assert all(0<=value<65534 and value%2==0 for value in offsets.values())
     return raw,dict(
         sha256=sha256(raw).hexdigest(),bytes=len(raw),previous_sha=P0E_SHA,
