@@ -108,6 +108,7 @@ def build():
     if not all(i in links for i in (0,70,88,OLD_PUBLIC,OLD_PUBLIC+1)):
         raise ValueError('old/new public entry missing from RBSR reach audit')
     reach=max(map(abs,links.values()))
+    worst=sorted(links.items(),key=lambda item:abs(item[1]),reverse=True)[:8]
     if reach>=32766:
         raise ValueError(f'new public Bob API exceeds signed PC16: {reach}')
     # Never mistake a new public compiler group for a 68000 flat monolith.
@@ -118,6 +119,7 @@ def build():
         bobs_bytes=len(parts[93]),aga_bytes=len(parts[94]),
         appended_bytes=len(appended),old_pc16_reach=old['rbsr_max'],
         new_pc16_reach=reach,pc16_margin=32766-reach,
+        worst_stub_displacements=tuple(worst),
         tokens=API,compiled_offsets=offsets,group=NEW_BOBS,
         gate_a='PENDING',gate_b='NOT TESTED',gate_c='NOT TESTED',
         draw='NOT IMPLEMENTED',close_reset='NOT IMPLEMENTED')
