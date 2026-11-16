@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# AGA_NATIVE_PURPOSE: AUDIT_ONLY
 """AMOS Professional AGA AP20 -> native-looking Motorola 68k source.
 
 This exporter reconstructs *instruction mnemonics* and PC labels for the
