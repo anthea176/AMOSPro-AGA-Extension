@@ -73,7 +73,7 @@ class RealCloseMachine(PreCloseMachine):
         self.put(self.real_state, self.screen)
         self.put(self.real_state+4, INTUI)
         self.put(self.real_state+8, GFX)
-        if with_db:
+        if self.with_db:
             self.put(self.real_state+32,DB)
             self.put(DB,0x54000)    # ScreenBuffer A
             self.put(DB+4,0x54100)  # ScreenBuffer B
