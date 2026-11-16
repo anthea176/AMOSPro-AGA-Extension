@@ -67,7 +67,7 @@ def main():
     # group. The new BOBS preclose has no cross-unit 16-bit branch to it.
     _tokens,parts,_title=unpack_ap20(lib)
     close_stub=parts[8]
-    assert close_stub[:2]==RBSR and close_stub[6:8]==b'\\x4e\\x75'
+    assert close_stub[:2]==RBSR and close_stub[6:8]==b'\x4e\x75'
     group,close_offset=unpack_from('>HH',close_stub,2)
     assert group==88,'public Screen Close unexpectedly redirected'
     assert parts[group].startswith(DISPATCH_V2)
