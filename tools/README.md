@@ -1,5 +1,11 @@
 # Outils Python — builder actif et historique versionné
 
+## M19 P0c — registre automatique Chip par banque (Gate A privée, 16/11/2026)
+
+- [`m19_p0c_bank_registry_emit.py`](m19_p0c_bank_registry_emit.py) : source native MC68020 privée, liste de contextes par banque, `registry_prepare`/`lookup`/`free`/`close`, allocation/rollback et libération après `WaitBlit`. Préfixe P0b/P0c immuable.
+- [`test_m19_p0c_bank_registry_native.py`](test_m19_p0c_bank_registry_native.py) : **64 scénarios CPU020 PASS**, y compris deux banques, remplacement, erreur d'allocation, propriétaire A5, fermeture idempotente et libération après `Erase` ; [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43917996936).
+- La fermeture est **privée, non branchée à la commande publique `Aga Screen Close`**. Aucun binaire `.Lib` P0c ni token AP20 nouveau, aucune preuve Runtime/Compiler P0c ; [rapport](../docs/M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md).
+
 ## M19 P0c — wrapper privé AGBO et Chip (16/11/2026)
 
 - [`m19_p0c_checked_bank_stage_emit.py`](m19_p0c_checked_bank_stage_emit.py) : ajout **source-only** à la fin du groupe natif P0b figé. Vérification stricte de la banque AGBO et de ses masques avant staging dans la zone Chip.

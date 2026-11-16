@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0c — registre propriétaire de contexts Chip (16/11/2026)
+
+Le [registre natif privé](../tools/m19_p0c_bank_registry_emit.py) prolonge le groupe BOBS source sans modifier le préfixe P0b/P0c existant. Un état PC relatif de **8 octets** contient l'identité de programme AMOS (A5) et la tête d'une liste de nœuds alloués par Exec (**32 octets chacun**, numéro de banque + contexte Chip de 20 octets). L'entrée `registry_prepare_entry` ajoute un nœud seulement après validation complète de la banque AGBO et allocation Chip réussie ; `registry_lookup_entry` refuse les références obsolètes ; `registry_free_entry` libère une banque ; `registry_close_entry` vide toute la liste avec synchronisation Blitter, y compris si les banques AMOS ont été supprimées. Parcours bornés à **256 entrées**, pas de banque AMOS auxiliaire.
+
+**Gate A privée : 64 scénarios MC68020 PASS**, unité groupée 11 094 octets, CI [43917996936](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43917996936). Le cleanup est **une entrée privée testée, pas un hook réel dans `Aga Screen Close`** ; les allocations système sont simulées. L'étape suivante consiste à prouver le raccordement Open/Close et le cycle de vie, puis les objets Bob et le rendu masqué. Aucune modification de `dist/AMOSPro_AGA.Lib` ni de `LAST_GOOD`.
+
 ## M19 P0c — validation native du conteneur AGBO (16/11/2026)
 
 Le [wrapper privé](../tools/m19_p0c_checked_bank_stage_emit.py) assemble le **préfixe natif P0b strictement identique** avec un validateur AGBO complet et le [helper Chip privé](../tools/m19_p0c_chip_stage_emit.py). Il recontrôle banque sélectionnée, `Bnk.GetAdr`, tête de liste AMOS, taille et nom du DATA bank, répertoire strict de toutes les images, géométries, offsets, masques séparés et padding planaire avant `AllocVec(MEMF_CHIP)`. **120 scénarios Gate A CPU020 simulés PASS**, incluant deux allocations propres à deux banques et invalidation sur changement d'adresse/génération, source native totale 10 044 octets (y compris P0b). [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43916465599) et [rapport](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md).
