@@ -98,18 +98,7 @@ def emit_bank_registry() -> tuple[bytes,dict[str,int]]:
         B(7,'registry_return')
 
     def unlink_and_free():
-        # Called only once checked_release has returned success.
-        G('node',A(0))
-        c.move(M(0),D(1))     # next
-        G('prevlink',A(0))
-        c.move(D(1),M(0))     # unlink in ONE longword write
-        G('node',A(1))
-        osbase();c.call_os(-690)   # FreeVec metadata, no size parameter
-        G('root',A(0))
-        c.tst(M(0,4))
-        B(6,'registry_keep_owner')
-        c.move(I(0),M(0,0))
-        L('registry_keep_owner')
+        B(1,'registry_unlink_and_free')
 
     # Prepare selected bank, using allocated or existing per-bank context.
     L('registry_prepare_entry')
@@ -239,6 +228,22 @@ def emit_bank_registry() -> tuple[bytes,dict[str,int]]:
     S(I(1),'bad')
     L('registry_find_exit')
     c.raw('4e75')
+
+    L('registry_unlink_and_free')
+    # Called only once checked_release has returned success.
+    G('node',A(0))
+    c.move(M(0),D(1))     # next
+    G('prevlink',A(0))
+    c.move(D(1),M(0))     # unlink in ONE longword write
+    G('node',A(1))
+    osbase();c.call_os(-690)   # FreeVec metadata, no size parameter
+    G('root',A(0))
+    c.tst(M(0,4))
+    B(6,'registry_keep_owner')
+    c.move(I(0),M(0,0))
+    L('registry_keep_owner')
+    c.raw('4e75')   # RTS
+
 
     # Per-code-unit owner protection, preventing reuse of Chip resources
     # across different AMOS program contexts. D0=1/0.
