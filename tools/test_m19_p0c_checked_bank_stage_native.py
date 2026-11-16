@@ -14,6 +14,7 @@ from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_020
 from test_m5_generic import DR, AR, AMOS, EXEC, GFX, STACK, STOP
 from amos_link_test_support import relocate
 from test_m19_p0b_masks_gate_a import MaskMachine
+from test_m19_p0a_r88_get_gate_a import HEAD
 from m19_p0a_multi_bob_abk import parse_payload
 from build_m19_p0b_masks_in_memory import build
 from m19_p0c_checked_bank_stage_emit import emit_checked_bank_stage
