@@ -4,9 +4,9 @@
 
 Extends the source-verified checked AGBO->Chip emitter without changing any of
 its bytes or public AP20 entries. One private registry per native BOBS unit,
-scoped to the current AMOS A5 program identity. Nodes (28 bytes) are Exec
+scoped to the current AMOS A5 program identity. Nodes (32 bytes) are Exec
 AllocVec(MEMF_PUBLIC|MEMF_CLEAR), never AMOS banks: next(+0), bank(+4),
-Chip context(+8..+27). The Chip allocations belong to the existing P0c helper.
+Chip context(+8..+27), reserved(+28..+31). The Chip allocations belong to the existing P0c helper.
 
 PRIVATE ENTRYPOINTS (D2=0, D3=1 success or 0 refusal, all other AMOS regs saved):
   registry_prepare: D3=selected bank, A5=AMOS, A4=valid GfxBase
@@ -32,7 +32,7 @@ from m68k_emit import Code, D, A, M, I
 from m19_p0c_checked_bank_stage_emit import emit_checked_bank_stage
 
 FRAME=96
-NODE_SIZE=28
+NODE_SIZE=32
 MAX_NODES=256
 META_FLAGS=0x00010001  # MEMF_PUBLIC | MEMF_CLEAR
 K=('bank owner gfx root prevlink node newnode result count bad').split()
