@@ -138,7 +138,7 @@ class CPU:
             src, dst, count = self.a(0), self.a(1), self.d(0)
             assert src == SOURCE and count == self.source_size
             assert dst in self.allocations and self.allocations[dst] == count
-            self.uc.mem_write(dst, self.uc.mem_read(src, count))
+            self.uc.mem_write(dst, bytes(self.uc.mem_read(src, count)))
             self.copies += 1
         elif addr == GFX + L_WAITBLIT:
             self.waits += 1
