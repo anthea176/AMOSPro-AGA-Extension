@@ -64,8 +64,9 @@ def main():
     lib,meta=build()
     assert meta['sha256']=='f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'
 
-    # Resolve public Aga Screen Close by its live AP20 token name, NOT the
-    # historical R73 native entry 8. R88/P0b uses modular V2 groups.
+    # Resolve the public API by its real token name, then prove its V2
+    # group=91 (AGA), while BOBS belongs to group=90. The public index 8
+    # survived R88; the native GROUP ordering changed from earlier code.
     _tokens,parts,_title=unpack_ap20(lib)
     matches=[t for t in inspect(parse(lib))['tokens']
              if t['name']=='aga screen close']
@@ -75,7 +76,7 @@ def main():
     close_stub=parts[close_idx]
     assert close_stub[:2]==RBSR and close_stub[6:8]==b'\x4e\x75'
     group,close_offset=unpack_from('>HH',close_stub,2)
-    assert group==88,('Aga Screen Close group',group,'public token',close_idx,'offset',close_offset)
+    assert (close_idx,group)==(8,91),('Aga Screen Close AP20 mapping',close_idx,group,close_offset)
     assert parts[group].startswith(DISPATCH_V2)
     assert 0<=close_offset<len(parts[group])-len(DISPATCH_V2)
     assert len(parts[group])>32766,'AGA native unit unexpectedly shrank'
