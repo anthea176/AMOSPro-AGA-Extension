@@ -1,6 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
 
+## M19 P0c — staging Chip natif privé : Gate A MC68020 PASS (16/11/2026)
+
+**Suite source-only de P0b** : [émetteur natif MC68020](../tools/m19_p0c_chip_stage_emit.py) (1 304 octets) et [banc Unicorn CPU020](../tools/test_m19_p0c_chip_stage_native.py) : **64 cas PASS** sur les allocations \`AllocVec(MEMF_CHIP|MEMF_PUBLIC)\`, \`TypeOfMem\`, \`CopyMem\`, remplacement atomique, \`WaitBlit\` avant \`FreeVec\`, garde CPU, registres/pile et identités périmées. [CI Gate A privée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43914021013) et [rapport de détail](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md). **Exec/graphics sont MOCKÉS : pas encore de véritable allocation Chip WinUAE ni de commande AP20 P0c.** Ne pas annoncer un Bob affichable. Le seul binaire installable reste P0b (82 376 octets, SHA256 \`f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9\`) et les résultats Gate B Runtime / Gate C Compiler P0b demeurent valides. \`LAST_GOOD\` R84 n'a pas été promue.
+
+**Prochaine intégration bloquante :** wrapper validant tout AGBO + banque AMOS, véritable table native des contextes Chip et invalidation, puis dessin Blitter des Bobs masqués à dimensions variables (sans \`Swap\` implicite). Le test unique \`tests/current/M19_P0B_MC68020_MASK_BANK.asc\` et les archives restent intacts.
+
 ## M19 P0b — Gates A, B Runtime et C validées (16/11/2026)
 
 **État courant de main :** bibliothèque unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), 82 376 octets, SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`, 82 commandes / 92 entrées AP20. **Gate A MC68020 PASS** (116 scénarios commandes + 104 noyau), **Gate B Runtime WinUAE PASS** (`PRG_STATE 1`), **Gate C véritable AMOS Compiler PASS** (`PRG_STATE -1`), suivant les deux journaux fournis le 16/11. [Rapport et empreintes de l'ABK](M19_P0B_GATES_BC_2026-11-16.md). Interpréteur strict (`PRG_STATE 0`) et matériel physique NON TESTÉS. Ne pas confondre les anciennes mentions « NON TESTÉS » ci-dessous avec ce résultat plus récent.

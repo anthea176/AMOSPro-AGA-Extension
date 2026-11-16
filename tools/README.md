@@ -1,5 +1,9 @@
 # Outils Python — builder actif et historique versionné
 
+## M19 P0c privé — staging Chip MC68020 (16/11/2026)
+
+Les scripts [\`m19_p0c_chip_stage_emit.py\`](m19_p0c_chip_stage_emit.py) et [\`test_m19_p0c_chip_stage_native.py\`](test_m19_p0c_chip_stage_native.py) préparent le **noyau natif privé** (allocations Chip/TypeOfMem/CopyMem/WaitBlit/FreeVec). **64 cas Gate A CPU020 PASS**, système Amiga simulé. **Ce ne sont pas les builders de la bibliothèque P0b**, et ils ne produisent ni nouvelle Lib ni token AP20. Voir [le rapport technique](../docs/M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md). Builder installable P0b vérifié : \`build_m19_p0b_masks_in_memory.py\`; source de base R88 figée, R84 \`LAST_GOOD\` protégée.
+
 ## Point d'entrée actif (audit du 15/11/2026)
 
 Le builder à examiner pour la bibliothèque installable de travail est `tools/build_aga_current.py`, à confronter à `dist/AMOSPro_AGA.Lib`, à ses SHA et au HEAD réel de `main`. Au checkpoint R88 v0.13.33, le builder source `tools/build_m19_p28_r88_in_memory.py` reconstruit la candidate à partir de l'archive R87 figée ; cela ne rend pas R87 installable à la place de `dist/AMOSPro_AGA.Lib`. Les builders et tests plus anciens restent conservés pour la reproductibilité et peuvent être appelés par la CI ou par des scripts actuels. **Aucun déplacement automatique dans `tools/obsolete/`, aucune suppression ni nouvelle arborescence.**
