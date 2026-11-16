@@ -88,6 +88,8 @@ def run(binary, base, img, bg, width, height, depth, x, y, transparent,
     uc.mem_write(base, binary)
     uc.mem_write(STOP, bytes.fromhex('4e71'))
     uc.mem_write(4, pack('>I', EXEC))
+    # Private MC68020 painter receives true logical screen bounds via A3.
+    uc.mem_write(0x90304, pack('>II', W, H))
     uc.mem_write(EXEC + 0x128, pack('>H', 0 if no_cpu else 2))
     uc.mem_write(EXEC - 534, bytes.fromhex('4e75'))
     for off in (198, 606, 636, 228):
