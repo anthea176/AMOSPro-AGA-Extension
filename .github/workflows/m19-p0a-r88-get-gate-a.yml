@@ -7,6 +7,9 @@ on:
     paths:
       - '.github/workflows/m19-p0a-r88-get-gate-a.yml'
       - 'tools/m19_p0*.py'
+      - 'tools/ap20_v2_island_dispatch.py'
+      - 'tools/build_m19_ap20_islands_in_memory.py'
+      - 'tools/test_ap20_v2_island_dispatch.py'
       - 'tools/test_m19_p0*.py'
       - 'tools/build_m19_p0*.py'
       - 'tools/amos_preflight.py'
@@ -104,6 +107,10 @@ jobs:
         run: python -B tools/build_m19_p0f_public_bound_in_memory.py
       - name: M19 P0f public Aga Bob bank-escrow MC68020 two-layout Gate A
         run: python -B tools/test_m19_p0f_public_bound_native.py
+      - name: M19 AP20 V2 island dispatch P0f source-only MC68020 Gate A
+        run: |
+          python -B tools/build_m19_ap20_islands_in_memory.py
+          python -B tools/test_ap20_v2_island_dispatch.py
       - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'
