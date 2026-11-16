@@ -5,19 +5,21 @@ name: M19 P0c - verify canonical MC68020 Lib (read only)
 on:
   push:
     branches: [main]
+    # Source-only M19 changes already run the dedicated native Gate A workflow.
+    # This independent check is for changes to the real installable Lib.
     paths:
       - '.github/workflows/m19-p0a-publish-github.yml'
-      - 'tools/m19_p0a_*.py'
-      - 'tools/build_m19_p0a_r88_*.py'
-      - 'tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc'
-      - 'tools/m19_p0b_*.py'
-      - 'tools/build_m19_p0b_masks_in_memory.py'
-      - 'tools/test_m19_p0b_*.py'
       - 'dist/AMOSPro_AGA.Lib'
+      - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: m19-canonical-lib-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 jobs:
   verify-canonical-m19-p0a:
