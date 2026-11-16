@@ -1,5 +1,9 @@
 # Outils Python — builder actif et historique versionné
 
+## État actif — M19 P0c distribué pour Gates WinUAE B/C (16/11/2026)
+
+Avec autorisation explicite, le candidat reconstruit par [`build_m19_p0c_screen_close_in_memory.py`](build_m19_p0c_screen_close_in_memory.py) est maintenant installé **uniquement** sous [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, **82 commandes / 92 entrées AP20**. Le [seul ASC actif](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) passe le preflight statique de la Gate A ; Gates B Runtime WinUAE et C vrai Compiler encore NON TESTÉES. Le bloc ci-dessous décrit l'état **historique avant cette autorisation**. La Lib P0b est reproductible via son builder figé ; `LAST_GOOD` R84 et archives intacts. Aucun artefact CI alternatif.
+
 ## M19 P0c — pont source-only Screen Close et End, Gate A CPU020 (16/11/2026)
 
 Le builder [`build_m19_p0c_screen_close_in_memory.py`](build_m19_p0c_screen_close_in_memory.py) utilise **exclusivement** le constructeur P0b exact, contrôle les signatures du code AGA **historique et inchangé** (groupe 91), redirige le seul token `Aga Screen Close` (index 8) vers le [pont MC68020](m19_p0c_screen_close_bridge_emit.py) ajouté à BOBS (groupe 90) et ajoute [l'armement/callback End privé](m19_p0c_program_end_bridge_emit.py). Aucune modification de la Lib P0b ni de `LAST_GOOD`.

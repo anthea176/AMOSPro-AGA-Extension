@@ -1,5 +1,12 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0c — CANDIDATE ACTIVE pour Gates B/C (autorisation du 16/11/2026)
+
+**Bascule autorisée sur `main`** : binaire unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a` ; **82 commandes / 92 entrées AP20**, source [builder P0c](../tools/build_m19_p0c_screen_close_in_memory.py) dérivée du P0b figé. **Seul ASC actif** : [`tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc`](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) ; son design reste inchangé. Gate A native MC68020 PASS ; Gates B Runtime WinUAE et C vrai AMOS Compiler **NON TESTÉES**, Gate D NON TESTÉE. CPU 68030/JIT ON pour essais fonctionnels. **Aucune promotion `LAST_GOOD`** (R84 SHA inchangé), ni publication/ZIP/artefact CI. Le test actif P0b quitte `tests/current/` et reste accessible par Git, sans archivage forcé.
+
+**Actions :** installer la Lib canonique dans le slot AGA d'AMOS, redémarrer, importer l'ASC par `Project → Merge ASCII`, exécuter Runtime puis Compiler et recueillir deux journaux distincts. [Protocole complet](M19_P0C_GATES_BC_WINUAE_PREPARATION_2026-11-16.md). **Les sections P0c/P0b qui suivent sont des checkpoints historiques antérieurs à cette bascule**, et ne désignent plus la candidate ou l'ASC actif.
+
+
 
 ## M19 P0c — Screen Close public + callback End privé : Gate A MC68020 PASS (16/11/2026)
 

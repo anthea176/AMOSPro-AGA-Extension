@@ -28,6 +28,7 @@ on:
       - tools/test_m19_p0c_screen_close_real_gate_a.py
       - tools/test_m19_p0c_program_end_real_gate_a.py
       - tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
+      - tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
       - tools/test_m19_p0c_screen_preclose_native.py
       - tools/build_m19_p0b_masks_in_memory.py
       - tools/test_m19_p0b_masks_gate_a.py
@@ -56,7 +57,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
@@ -116,8 +117,10 @@ jobs:
                   assert meta['program_end_hook'].startswith('PRIVATE')
               print(label, 'IN_MEMORY_GATE_A', size, expected, 'NOT_DISTRIBUTED')
           PY
-      - name: M19 P0c design ASC static preflight (not an active test)
-        run: python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
+      - name: M19 P0c active and design ASC static preflight
+        run: |
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
       - name: Ensure no binary, ASC or passed tests changed
         run: |
           git diff --exit-code -- dist/ tests/current/ tests/passed/

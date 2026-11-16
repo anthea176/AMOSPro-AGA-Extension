@@ -23,6 +23,9 @@ No synthetic 40K padding is included.
 from hashlib import sha256
 from pathlib import Path
 
+# M19 P0c: active Gate-A candidate (not promoted; WinUAE B/C pending).
+P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
+
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 LAST_GOOD_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 v0.13.29 promoted by explicit author approval; A/C PASS, B not separately revalidated
@@ -86,6 +89,25 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P0C_SHA:
+        # Public Close bridge + PRIVATE End hook. Byte-exact builder, not an
+        # unchecked fallback to a historical "Compiler-safe" monolith.
+        from compiler_relocation import unpack_ap20
+        from build_m19_p0c_screen_close_in_memory import build as build_p0c
+        expected,meta=build_p0c()
+        assert cur==expected and len(cur)==87020 and meta["sha256"]==P0C_SHA, "P0c builder/SHA drift"
+        assert (meta["provenance"],meta["public_commands"],meta["ap20_entries"]) == (
+            "f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9",82,92), "P0c API/source drift"
+        assert (meta["screen_close_index"],meta["bridge_group"],meta["old_aga_group"],
+                meta["old_aga_offset"],meta["rel_aga_close"]) == (8,90,91,2008,0x638)
+        assert meta["program_end_hook"].startswith("PRIVATE"), "End arm must remain private"
+        _,parts,title=unpack_ap20(cur)
+        assert len(parts)==92 and b"Screen Close bridge EXPERIMENT UNINSTALLED" in title
+        audit=inspect(parse(cur))
+        assert not audit["issues"] and len([t for t in audit["tokens"]
+                if t["name"].startswith(("aga ","get aga ","make aga ","no aga "))])==82
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur,good,"M19 P0c MC68020 Screen Close bridge ACTIVE TEST CANDIDATE; Gate A PASS; WinUAE Runtime B / real Compiler C NOT TESTED; End arm PRIVATE; R84 LAST_GOOD unchanged"
     if current_sha == R88_SHA:
         from compiler_relocation import unpack_ap20
         from build_m19_p28_r88_in_memory import build as build_r88

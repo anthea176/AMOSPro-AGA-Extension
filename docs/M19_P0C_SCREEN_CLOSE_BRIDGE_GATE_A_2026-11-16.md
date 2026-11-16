@@ -1,5 +1,7 @@
 # M19 P0c — pont public Screen Close et callback AMOS End : Gate A expérimentale (16/11/2026)
 
+> **Actualisation après Gate A :** le candidat exact de cette Gate A (87 020 octets, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`) a été **autorisé comme bibliothèque active de test** sous `dist/AMOSPro_AGA.Lib` ; l'ASC [`tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc`](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) est désormais le seul test actif. Les références « UNINSTALLED », artefact CI et protection P0b ci-dessous documentent **l'état historique au moment de la Gate A**, pas la distribution courante. Gates B/C encore NON TESTÉES. [Procédure mise à jour](M19_P0C_GATES_BC_WINUAE_PREPARATION_2026-11-16.md).
+
 ## Identité immuable et statut
 
 | Élément | Preuve |
