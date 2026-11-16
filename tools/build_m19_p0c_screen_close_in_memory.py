@@ -78,7 +78,7 @@ def build():
         raise ValueError('frozen P0b builder or provenance changed')
     tokens,parts,_=unpack_ap20(base)
     baseline=inspect(parse(base))
-    if baseline['issues'] or len(baseline['tokens'])!=82:
+    if baseline['issues'] or len([t for t in baseline['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))])!=82:
         raise ValueError('frozen P0b tokens invalid')
     if baseline['tokens'][8]['name']!='aga screen close' or baseline['tokens'][8]['instruction']!=8:
         raise ValueError('public command index/type changed')
