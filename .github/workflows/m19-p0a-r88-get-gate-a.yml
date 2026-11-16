@@ -78,6 +78,8 @@ jobs:
         run: python -B tools/build_m19_p0e_v2_bridge_in_memory.py
       - name: M19 P0e cross-unit BOBS to AGA two-layout real-Init MC68020 Gate A
         run: python -B tools/test_m19_p0e_v2_object_bridge_native.py
+      - name: M19 P0e public Bob Set/Off AP20 compiler V2 GetP and PC16 source-only proof
+        run: python -B tools/build_m19_p0e_public_object_ops_in_memory.py
       - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'
