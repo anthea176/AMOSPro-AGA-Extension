@@ -31,7 +31,7 @@ from m19_p0c_screen_close_bridge_emit import (
 from amos_link_test_support import relocate
 
 # Physically disjoint units; Compiler may place them arbitrarily far apart.
-AGABASE={'interpreted':0x800000, 'compiled':0x900000}
+AGABASE={'interpreted':0x300000, 'compiled':0x400000} # outside fixture's 0x600000..0xa00000 screen write guard
 
 
 class RealCloseMachine(PreCloseMachine):
