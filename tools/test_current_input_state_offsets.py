@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,11 +48,12 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA):
+    if digest in (R87_SHA,R88_SHA,P0C_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
-        # Check their inherited AGA unit byte-for-byte against frozen R84,
-        # then run all seven independent LEA checks and eight negative cases
-        # on the exact R82 ancestor of that unchanged AGA native unit.
+        # P0c redirects public Close to its BOBS unit, so only the real
+        # multi-unit segment table and pinned builder may certify its identity.
+        # Verify the unchanged native AGA unit against frozen R84, then run
+        # all seven LEA checks plus eight negative cases on exact R82 source.
         from build_agapic_v2_r82_full_preview import build as build_r82
         ancestor,_=build_r82()
         assert sha256(ancestor).hexdigest()==R82_SHA
@@ -61,12 +62,22 @@ def main():
         assert sha256(last_good).hexdigest()==R84_SHA
         _,units,_=unpack_ap20(image)
         _,frozen_units,_=unpack_ap20(last_good)
-        aga_index=86 if digest==R87_SHA else 87
-        bob_index=85 if digest==R87_SHA else 86
-        assert len(units)==(87 if digest==R87_SHA else 88), "Unexpected modular segment count"
+        group_indices={
+            R87_SHA:(86,85,87),
+            R88_SHA:(87,86,88),
+            P0C_SHA:(91,90,92),
+        }
+        aga_index,bob_index,entry_count=group_indices[digest]
+        assert len(units)==entry_count, "Unexpected modular segment count"
         assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
         assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
-        if digest==R88_SHA:
+        if digest==P0C_SHA:
+            from build_m19_p0c_screen_close_in_memory import build as build_p0c
+            rebuilt, meta=build_p0c()
+            assert image==rebuilt and meta["sha256"]==P0C_SHA, "Active P0c builder mismatch"
+            assert meta["old_aga_group"]==aga_index and meta["bridge_group"]==bob_index
+            assert meta["screen_close_index"]==8 and meta["program_end_hook"].startswith("PRIVATE")
+        elif digest==R88_SHA:
             from build_m19_p28_r88_in_memory import build as build_r88
             assert image==build_r88()[0], "Active R88 SHA-pinned build differs"
         else:
@@ -107,7 +118,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; R84 modular input-state group byte-verified against LAST_GOOD for R87/R88")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; modular AGA input-state group byte-verified against R84 LAST_GOOD for R87/R88/P0c")
 
 if __name__=="__main__":
     main()
