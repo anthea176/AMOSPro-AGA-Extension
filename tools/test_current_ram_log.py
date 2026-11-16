@@ -49,7 +49,7 @@ def verify(source):
     # P0d logs its actual _CLOSED status as the explicit "CLOSE " field.
     close_markers=("CLOSE_FIRST","CLOSE_WITH_DB","CLOSE_REOPEN")
     p0d_close = re.search(
-        r'(?im)^\\s*Print\\s*#\\s*\\d+\\s*,\\s*"CLOSE\\s*"\\s*;\\s*_CLOSED\\b',
+        r'(?im)^\s*Print\s*#\s*\d+\s*,\s*"CLOSE\s*"\s*;\s*_CLOSED\b',
         source,
     )
     assert ("CLOSE_RETURNED" in source.upper() or all(
