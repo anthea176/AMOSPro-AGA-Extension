@@ -46,7 +46,8 @@ class RealCloseMachine(PreCloseMachine):
         self.registry_addr=self.entry+self.labels['registry_state']
 
         _tok,parts,_title=unpack_ap20(binary)
-        verify_aga_legacy(parts)
+        # build() already audited the OLD P0b public stub before redirect;
+        # the candidate's stub 8 now intentionally points to BOBS group 90.
         self.aga=AGABASE[layout]
         self.aga_native=parts[OLD_AGA]
         # Exact original compiler V2 native group, no rewritten legacy source.
