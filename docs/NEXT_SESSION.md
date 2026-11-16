@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
 
+## M19 P0c — Screen Close public + callback End privé : Gate A MC68020 PASS (16/11/2026)
+
+**Nouveau candidat expérimental source-only (NON INSTALLÉ dans `dist/`)** : [builder AP20 V2](../tools/build_m19_p0c_screen_close_in_memory.py), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, 82 commandes, 92 entrées AP20. Seuls le stub public `Aga Screen Close` (token 8) et le groupe BOBS 90 append-only changent ; groupe AGA 91 et API P0b restent intacts. Le vrai AGA Init, la vraie routine Screen Close et le vrai callback AMOS End sont exécutés sous Unicorn MC68020 avec services OS mockés. Pont `A5+0x1C8` → AGA State → ancienne routine Close (`+0x638`) sans BSR.W inter-unités ; libération Chip via `WaitBlit` **avant** l'ancienne fermeture. [Source Screen Close](../tools/m19_p0c_screen_close_bridge_emit.py) et [source End privé](../tools/m19_p0c_program_end_bridge_emit.py).
+
+**[CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43925480841) :** 38 scénarios réel Close, 54 scénarios End privé, 42 preclose, 64 registre, 120 AGBO/Chip, 64 Chip, 116 P0b ; [ASC de design préflight PASS](../tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc). [Rapport technique et procédure d'installation temporaire WinUAE](M19_P0C_SCREEN_CLOSE_BRIDGE_GATE_A_2026-11-16.md). Artefact CI téléchargeable : `M19_P0C_CLOSE_EXPERIMENT_GATE_A_UNINSTALLED` ([run](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43925480841)), conservé jusqu'au 30/11/2026.
+
+**Verrou maintenu :** le callback `End` n'est armé que par l'entrée **privée** `program_end_arm_entry`, après staging Chip ; les commandes AMOS P0b ne préparent pas de Chip Bob et **ne l'appellent pas**. Il n'existe toujours pas de véritable rendu Bob ni de commande publique staging. **Gate B Runtime et Gate C Compiler P0c NON TESTÉES** ; aucune affirmation de fonctionnement de la Lib installée. Tester le seul ASC de design avec la Lib expérimentale sans toucher au seul `tests/current/` P0b. `dist/AMOSPro_AGA.Lib` P0b (82 376 octets) et R84 `LAST_GOOD` inchangées.
+
 ## M19 P0c — garde de pré-fermeture AGA natif, Gate A privée PASS (16/11/2026)
 
 **Nouvelle source native MC68020 :** [`tools/m19_p0c_screen_preclose_emit.py`](../tools/m19_p0c_screen_preclose_emit.py), émetteur **source-only**, append-only sur le [registre P0c](../tools/m19_p0c_bank_registry_emit.py). Il ajoute `screen_preclose_entry` : vérification CPU/état, récupération de la base graphique **depuis `A5+0x1C8` → `State+8`** (et non le A4 du caller), contrôle de l'adresse de l'état, nettoyage des contextes Chip via `registry_close_entry`. Si le nettoyage échoue, il retourne **0 sans fermer l'écran** et sans écraser les allocations. Si le registre est vide, la fermeture répétée retourne **1**. **Le vrai `CloseWindow`/`CloseScreen` n'est jamais exécuté par cette entrée privée.**

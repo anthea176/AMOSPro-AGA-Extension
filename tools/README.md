@@ -1,5 +1,13 @@
 # Outils Python — builder actif et historique versionné
 
+## M19 P0c — pont source-only Screen Close et End, Gate A CPU020 (16/11/2026)
+
+Le builder [`build_m19_p0c_screen_close_in_memory.py`](build_m19_p0c_screen_close_in_memory.py) utilise **exclusivement** le constructeur P0b exact, contrôle les signatures du code AGA **historique et inchangé** (groupe 91), redirige le seul token `Aga Screen Close` (index 8) vers le [pont MC68020](m19_p0c_screen_close_bridge_emit.py) ajouté à BOBS (groupe 90) et ajoute [l'armement/callback End privé](m19_p0c_program_end_bridge_emit.py). Aucune modification de la Lib P0b ni de `LAST_GOOD`.
+
+La candidate AP20 expérimentale est produite **en mémoire** : **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, 82 commandes et 92 entrées. Les tests [`test_m19_p0c_screen_close_real_gate_a.py`](test_m19_p0c_screen_close_real_gate_a.py) et [`test_m19_p0c_program_end_real_gate_a.py`](test_m19_p0c_program_end_real_gate_a.py) exécutent les **vrais octets Init, Close et End natifs AGA** avec des services OS simulés. [CI Gate A et artefact non installé](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43925480841) PASS (38 scénarios Close, 54 End, 116 P0b). Le test [ASC séparé, préflight statique PASS](../tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc) attend les Gates B/C WinUAE. Documentation : [rapport et protocole](../docs/M19_P0C_SCREEN_CLOSE_BRIDGE_GATE_A_2026-11-16.md).
+
+**Ne pas présenter comme livré en production :** `End` est armé uniquement depuis une entrée Chip **privée**, aucune instruction AMOS ne prépare encore les Bobs en Chip ni ne déclenche ce callback ; pas de rendu, pas de test WinUAE/Compiler P0c.
+
 ## M19 P0c — pré-fermeture AGA privée MC68020 (16/11/2026)
 
 - [`m19_p0c_screen_preclose_emit.py`](m19_p0c_screen_preclose_emit.py) : entrée native privée après registre P0c, obtient `GfxBase` par `A5+0x1C8` / `State+8` et refuse un cleanup non sûr ; aucun appel `CloseWindow`/`CloseScreen`, aucun hook AP20.
