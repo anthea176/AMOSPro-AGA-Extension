@@ -228,12 +228,14 @@ def main():
         assert 'real_aga_close_entry' not in m.events
         cases+=2
 
-        # Direct End without the public Close has no Chip hook yet; DO NOT
-        # claim auto cleanup from this negative baseline.
+        # A direct End with live Chip would now DESTROY the AGA graphics
+        # base before P0c cleanup (unsafe). Verify it remains UNHOOKED, but
+        # deliberately never execute this dangerous legacy path on live DMA.
         m=ready(lib,layout)
         assert m.call('registry_prepare_entry')==1
-        m.invoke('native_end')
-        assert m.chip_live and m.metadata, 'unexpected End hook installed'
+        assert m.get(AMOS+0x1cc)==m.old_end
+        assert m.get(AMOS+0x1d0)==m.old_end
+        assert m.chip_live and m.metadata
         cases+=1
 
     print('M19 P0c REAL legacy AGA Screen Close CPU020 Gate A',
