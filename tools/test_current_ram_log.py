@@ -45,16 +45,24 @@ def verify(source):
     }
     for label,pattern in required.items():
         assert re.search(pattern,source,re.I),("missing AMOS RAM log",label)
-    # Older benches use one CLOSE_RETURNED flag. P0c deliberately records
-    # three independent public Close results, without a fabricated field.
+    # Older benches use CLOSE_RETURNED; P0c records three Close results.
+    # P0d logs its actual _CLOSED status as the explicit "CLOSE " field.
     close_markers=("CLOSE_FIRST","CLOSE_WITH_DB","CLOSE_REOPEN")
-    assert "CLOSE_RETURNED" in source.upper() or all(
-        marker in source.upper() for marker in close_markers), ("missing AMOS RAM log","close field")
+    p0d_close = re.search(
+        r'(?im)^\\s*Print\\s*#\\s*\\d+\\s*,\\s*"CLOSE\\s*"\\s*;\\s*_CLOSED\\b',
+        source,
+    )
+    assert ("CLOSE_RETURNED" in source.upper() or all(
+        marker in source.upper() for marker in close_markers) or p0d_close), (
+        "missing AMOS RAM log","close field")
     executable=[line.strip() for line in source.splitlines()
                 if line.strip() and not line.lstrip().startswith("'")]
     assert has_normal_program_end(executable), (
         "ASC must END normally; GOSUB routines after END must end in RETURN")
-    end_marker=max(source.upper().rfind(m) for m in ("CLOSE_RETURNED",)+close_markers)
+    end_marker=max(
+        [source.upper().rfind(m) for m in ("CLOSE_RETURNED",)+close_markers]
+        + ([p0d_close.start()] if p0d_close else [])
+    )
     after_status=source[end_marker:]
     assert not re.search(r"(?im)^\s*Do\s*\r?\n\s*(?:Aga\s+)?Wait\s+Vbl\s*\r?\n\s*Loop\s*$",after_status), (
         "terminal result holding VBL loop forbidden")
