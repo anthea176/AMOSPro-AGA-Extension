@@ -91,7 +91,26 @@ def main():
         assert m.run_get(1,7,8,16,15)==1
         assert m.run_select(10)==1
         m.activate_aga_state()
-        assert m.identity('bind',ident=1,bank=10,image=1,x=40,y=30)[0]==1
+        from unicorn import UC_HOOK_CODE
+        observed=[]
+        def trace_native(uc,address,size,name):
+            frame=m.a(2)
+            result_off=32 if name=='stamp_return' else 24
+            local=m.get(frame+result_off) if 0x10000<frame<0xff0000 else -1
+            observed.append((name,hex(address),local,m.d(0),m.d(3)))
+        locations=(
+            ('stamp_capture',m.identity_base+m.identity_labels['stamp_capture_entry']),
+            ('stamp_return',m.identity_base+m.identity_labels['stamp_return']),
+            ('obj_put',m.objbase),
+            ('bind_return',m.identity_base+m.identity_labels['identity_return']),
+        )
+        for name,address in locations:
+            m.uc.hook_add(UC_HOOK_CODE,trace_native,user_data=name,
+                          begin=address,end=address)
+        status,_=m.identity('bind',ident=1,bank=10,image=1,x=40,y=30)
+        assert status==1,('first identity bind failed',layout,observed[-20:],
+                          m.calls[-10:],m.table()[:32].hex(),
+                          m.shadows()[:32].hex())
         status,data=m.identity('check',ident=1)
         assert status==1 and unpack('>6I',data)==(10,1,40,30,1,0)
         assert m.shadows()[:16]!=bytes(16)
