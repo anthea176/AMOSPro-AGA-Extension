@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0c — point de pré-fermeture AGA, sans hook public (16/11/2026)
+
+L'entrée native privée [`screen_preclose_entry`](../tools/m19_p0c_screen_preclose_emit.py), MC68020, lit l'état AGA via `A5+0x1C8`, contrôle `State+8` (GfxBase), puis appelle le cleanup du registre BOBS **tant que GfxBase n'a pas été fermé**. Elle retourne un statut **1/0** ; l'échec doit faire interrompre le futur appel public de fermeture. Le nouveau garde préserve intégralement les préfixes P0b/P0c et a passé **42 scénarios Gate A CPU020 simulés** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43920983278)) ; l'ensemble du code source natif BOBS privé fait **11 294 octets**.
+
+L'audit du vrai AP20 P0b identifie `Aga Screen Close` **token 8 → groupe natif AGA 91, offset 2008** ; BOBS est le groupe 90. L'ancien groupe AGA est conservé tel quel. La seule `src/R88/...AGA_NATIVE.s` disponible est une **restitution partielle pour audit**, pas une source vérifiée de production. **Le trampoline inter-groupe n'est pas construit, le hook `Screen Close`/AMOS End n'est pas installé**, et les tests modélisent l'ordre destructif sans exécuter l'ancienne commande. Un `BSR.W` direct depuis BOBS n'est pas une liaison V2 démontrée (AGA R88 = 56 580 octets). Ne pas traiter Gate A privée comme Gate B/C ou valider la fermeture utilisateur à ce stade.
+
 ## M19 P0c — registre propriétaire de contexts Chip (16/11/2026)
 
 Le [registre natif privé](../tools/m19_p0c_bank_registry_emit.py) prolonge le groupe BOBS source sans modifier le préfixe P0b/P0c existant. Un état PC relatif de **8 octets** contient l'identité de programme AMOS (A5) et la tête d'une liste de nœuds alloués par Exec (**32 octets chacun**, numéro de banque + contexte Chip de 20 octets). L'entrée `registry_prepare_entry` ajoute un nœud seulement après validation complète de la banque AGBO et allocation Chip réussie ; `registry_lookup_entry` refuse les références obsolètes ; `registry_free_entry` libère une banque ; `registry_close_entry` vide toute la liste avec synchronisation Blitter, y compris si les banques AMOS ont été supprimées. Parcours bornés à **256 entrées**, pas de banque AMOS auxiliaire.
