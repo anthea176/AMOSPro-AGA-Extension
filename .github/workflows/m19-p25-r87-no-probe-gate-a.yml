@@ -49,7 +49,7 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0D_BOB_BLIT_01.asc
       - name: Verify archived P2.5/P2.6/P2.7 and unique current P2.8 ASC
         run: |
           python -B tools/test_current_ram_log.py
@@ -62,5 +62,5 @@ jobs:
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B tools/test_m19_p27_cache_bench_static.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA.Lib')=='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA.Lib')=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
           git diff --exit-code -- dist/ tests/current/ tests/passed/
