@@ -34,20 +34,23 @@ La banque AMOS **24 doit être libre** dans le nouveau programme au lancement.
    `M19_P0B_MC68020_MASK_BANK.asc` ; ne pas utiliser `Load` sur l'ASCII.
 3. Exécuter en Runtime, puis lire `RAM:M19_P0B_RUNTIME.TXT` (ou
    `RAM:M19_P0B_INTERPRETED.TXT`). Attendu : `RESULT 1`, `ERR 0`, `VERDICT PASS`,
-   `MASKS_OK 1`, `MASK_SIZE_AFTER_NO_3 1092`, `ABK_RELOADED 1`,
-   `CLOSE_RETURNED 1`. **Cela reste NON TESTÉ sous WinUAE pour P0b.**
+   `ABK_RELOADED 1`, `CLOSE_RETURNED 1`. **Gate B Runtime PASS**
+   selon le journal utilisateur du 16/11/2026 (`PRG_STATE 1`).
 4. Compiler **le même ASC** avec le véritable AMOS Compiler V2, exécuter le
-   binaire obtenu et lire `RAM:M19_P0B_COMPILED.TXT`. Un gel, une erreur
-   de banque ou un Guru = **FAIL** ; ne pas déduire Gate C de Gate A.
+   binaire obtenu et lire `RAM:M19_P0B_COMPILED.TXT`. **Gate C PASS** selon
+   le journal utilisateur du 16/11/2026 (`PRG_STATE -1`, `ERR 0`,
+   `CLOSE_RETURNED 1`). Aucun gel/Guru signalé pendant ce scénario.
 
 ## Preuves et protections
 
 - **Gate A P0b CPU MC68020 : PASS** : 116 scénarios des deux commandes,
   deux placements de code, plus 104 scénarios du noyau privé (services AMOS simulés).
   [CI P0b](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43758224492).
-- **Gate B P0b WinUAE : NON TESTÉE**. **Gate C P0b Compiler réel : NON TESTÉE**.
-  Le précédent **P0a Runtime PASS** concerne un **autre binaire et ASC** et ne
-  valide pas automatiquement cette nouvelle version.
+- **Gate B P0b Runtime WinUAE : PASS** (`PRG_STATE 1`, `RESULT 1`, `ERR 0`).
+  **Gate C P0b AMOS Compiler : PASS** (`PRG_STATE -1`, `RESULT 1`, `ERR 0`).
+  **Interpréteur strict** (`PRG_STATE 0`) et **Gate D** : non testés.
+  Voir le [rapport de preuves M19 P0b du 16/11/2026](../../docs/M19_P0B_GATES_BC_2026-11-16.md).
+  L'ABK Runtime et l'ABK Compiled sont identiques octet pour octet.
 - **R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` intouchée**, aucune promotion.
   La base R88 native est conservée à l'identique dans son archive existante.
 - L'ASC P0a antérieur reste récupérable dans l'historique Git, sans deuxième

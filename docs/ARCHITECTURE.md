@@ -1,5 +1,26 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0c — registre propriétaire de contexts Chip (16/11/2026)
+
+Le [registre natif privé](../tools/m19_p0c_bank_registry_emit.py) prolonge le groupe BOBS source sans modifier le préfixe P0b/P0c existant. Un état PC relatif de **8 octets** contient l'identité de programme AMOS (A5) et la tête d'une liste de nœuds alloués par Exec (**32 octets chacun**, numéro de banque + contexte Chip de 20 octets). L'entrée `registry_prepare_entry` ajoute un nœud seulement après validation complète de la banque AGBO et allocation Chip réussie ; `registry_lookup_entry` refuse les références obsolètes ; `registry_free_entry` libère une banque ; `registry_close_entry` vide toute la liste avec synchronisation Blitter, y compris si les banques AMOS ont été supprimées. Parcours bornés à **256 entrées**, pas de banque AMOS auxiliaire.
+
+**Gate A privée : 64 scénarios MC68020 PASS**, unité groupée 11 094 octets, CI [43917996936](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43917996936). Le cleanup est **une entrée privée testée, pas un hook réel dans `Aga Screen Close`** ; les allocations système sont simulées. L'étape suivante consiste à prouver le raccordement Open/Close et le cycle de vie, puis les objets Bob et le rendu masqué. Aucune modification de `dist/AMOSPro_AGA.Lib` ni de `LAST_GOOD`.
+
+## M19 P0c — validation native du conteneur AGBO (16/11/2026)
+
+Le [wrapper privé](../tools/m19_p0c_checked_bank_stage_emit.py) assemble le **préfixe natif P0b strictement identique** avec un validateur AGBO complet et le [helper Chip privé](../tools/m19_p0c_chip_stage_emit.py). Il recontrôle banque sélectionnée, `Bnk.GetAdr`, tête de liste AMOS, taille et nom du DATA bank, répertoire strict de toutes les images, géométries, offsets, masques séparés et padding planaire avant `AllocVec(MEMF_CHIP)`. **120 scénarios Gate A CPU020 simulés PASS**, incluant deux allocations propres à deux banques et invalidation sur changement d'adresse/génération, source native totale 10 044 octets (y compris P0b). [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43916465599) et [rapport](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md).
+
+Le contexte de 20 octets est **encore fourni par le caller privé** : pas de table par banque dans l'état global de l'extension, pas de token public, pas de rendu Blitter. La détection de réutilisation « ABA » d'une même adresse/génération après Erase/Load nécessite une discipline explicite de resélection et un futur état propriétaire. **Aucune modification du binaire P0b ni de LAST_GOOD.**
+
+## M19 P0c — futur staging Chip (source-only, 16/11/2026)
+
+Un noyau [MC68020 privé](../tools/m19_p0c_chip_stage_emit.py) de **1 304 octets** a passé **64 tests Gate A CPU020 sous Unicorn** ([résultats](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md)). Il alloue une zone propriétaire `MEMF_CHIP|MEMF_PUBLIC`, vérifie les bornes via `TypeOfMem`, copie les plans et masques et attend `WaitBlit` avant `FreeVec`. Les appels Exec/graphics sont **mockés** : il n'est pas lié à AP20 ni à une table de contextes persistants dans la bibliothèque active. La vérification complète du conteneur AGBO et les appels Blitter de dessin restent à intégrer et tester. **Les octets P0b installables, les résultats Gates B/C et R84 `LAST_GOOD` ne changent pas.**
+
+## État M19 P0b vérifié le 16/11/2026
+
+Le binaire installable actif est **M19 P0b**, 82 376 octets (SHA256 `f272a98a9d07eb66dc515fc4598b16f9fd64cb55d84c36ec29068f9f074a44d9`), 82 commandes / 92 entrées AP20. Gates A, B Runtime et C Compiler **PASS** pour le scénario de capture/masques multi-images; voir [les preuves](M19_P0B_GATES_BC_2026-11-16.md). **La préparation en vraie Chip RAM pour dessin DMA n'est toujours pas intégrée.** Le repère R88 ci-dessous est historique, non le binaire courant. R84 `LAST_GOOD` reste distinct et non promu.
+
+
 ## Repère actif de l'architecture (audit du 15/11/2026)
 
 Le suivi de version de ce document contient plusieurs états historiques R46, R59 et R84. **Ne pas les considérer comme la version actuellement installable.** Au checkpoint documentaire R88, la candidate non promue était `dist/AMOSPro_AGA.Lib` **R88 v0.13.33** (75 040 octets, SHA256 `69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc`, **78 commandes / 88 entrées AP20, quatre unités natives V2**). **R84 v0.13.29 reste `LAST_GOOD`** (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`). Depuis ce checkpoint, des commits plus récents peuvent avoir été ajoutés : vérifier `main` HEAD, `dist/AMOSPro_AGA.Lib` et son builder avant tout nouveau code. Gate A R88 : 130 cas PASS ; le premier essai WinUAE P2.8 a échoué `ERR 12` avec ABK Fast ; la révision Chip restait à retester ; Gate C R88 non démontrée à cette date. Les nouvelles commandes Bob multi-images restent des **contrats de conception**, pas des capacités automatiquement présentes dans R88.
