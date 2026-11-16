@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate active pour tests M19 P0c :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, 82 commandes / 92 entrées AP20. Gate A native MC68020 PASS ; Gates B Runtime WinUAE et C vrai Compiler **NON TESTÉES**. R84 `LAST_GOOD` demeure indépendante et protégée dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. **Ne pas confondre candidate et LAST_GOOD promue.** [Test WinUAE actif](tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc).
+**Candidate active pour tests M19 P0c :** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, 82 commandes / 92 entrées AP20. Gate A native MC68020 PASS ; Gates B Runtime WinUAE et C vrai Compiler **PASS selon les journaux de l'auteur**, avec les [limites de preuve détaillées](docs/M19_P0C_GATES_BC_2026-11-16.md). R84 `LAST_GOOD` demeure indépendante et protégée dans [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. **Ne pas confondre candidate et LAST_GOOD promue.** [Test WinUAE actif](tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc).
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 

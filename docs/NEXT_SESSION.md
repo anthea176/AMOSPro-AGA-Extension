@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0c — journaux Gates B et C PASS (16/11/2026)
+
+Deux fichiers transmis par l'auteur : **`M19_P0C_RUNTIME.TXT`** (`PRG_STATE 1`) et **`M19_P0C_COMPILED.TXT`** (`PRG_STATE -1`). Dans **les deux** : `RESULT 1`, `ERR 0`, `VERDICT PASS` et `CLOSE_FIRST`, `CLOSE_WITH_DB`, `CLOSE_REOPEN` à **1**. **Gate A MC68020 PASS ; Gate B Runtime et Gate C Compiler PASS selon ces journaux** pour les trois séquences de fermeture. [Preuves, SHA256 des deux TXT et limites](M19_P0C_GATES_BC_2026-11-16.md).
+
+Bibliothèque de travail **inchangée** : `dist/AMOSPro_AGA.Lib` P0c, **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a` ; seul ASC `tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc` **inchangé**. Les TXT n'attestent ni l'empreinte de la copie installée dans WinUAE, ni les captures/CPU/JIT/ligne d'écran, ni le retour après dernier `End`. Callback End privé, interpréteur strict et Gate D **NON TESTÉS**. `LAST_GOOD` R84 intacte, aucune promotion. **Les sections antérieures ci-dessous sont des checkpoints historiques.**
+
 ## M19 P0c — CANDIDATE ACTIVE pour Gates B/C (autorisation du 16/11/2026)
 
 **Bascule autorisée sur `main`** : binaire unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a` ; **82 commandes / 92 entrées AP20**, source [builder P0c](../tools/build_m19_p0c_screen_close_in_memory.py) dérivée du P0b figé. **Seul ASC actif** : [`tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc`](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) ; son design reste inchangé. Gate A native MC68020 PASS ; Gates B Runtime WinUAE et C vrai AMOS Compiler **NON TESTÉES**, Gate D NON TESTÉE. CPU 68030/JIT ON pour essais fonctionnels. **Aucune promotion `LAST_GOOD`** (R84 SHA inchangé), ni publication/ZIP/artefact CI. Le test actif P0b quitte `tests/current/` et reste accessible par Git, sans archivage forcé.

@@ -3,7 +3,9 @@
 **Bibliothèque unique de campagne :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`.
 **Programme ASC actif unique :** [`M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc`](M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc), dérivé du [design source](../design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc), sans changement dans les instructions BASIC (commentaires d'en-tête seuls adaptés).
 
-**Cible native : MC68020 / 68EC020 minimum ; validation fonctionnelle WinUAE AGA PAL 68030/JIT ON.** MC68020/JIT OFF réservé aux benchmarks. **Gate A MC68020 PASS ; Gates B Runtime et C véritable AMOS Compiler NON TESTÉES.** Gate D physique NON TESTÉE.
+**Cible native : MC68020 / 68EC020 minimum ; validation fonctionnelle WinUAE AGA PAL 68030/JIT ON.** MC68020/JIT OFF réservé aux benchmarks. **Gate A MC68020 PASS ; Gates B Runtime et C véritable AMOS Compiler PASS selon les journaux utilisateur du 16/11/2026.** Interpréteur strict et Gate D physique NON TESTÉS.
+
+**[Rapport des Gates B/C et empreintes des TXT](../../docs/M19_P0C_GATES_BC_2026-11-16.md)** : `RESULT 1`, `ERR 0`, `VERDICT PASS` ; trois fermetures à `1` en Runtime et en Compiled. Captures, SHA du binaire réellement installé et configuration WinUAE non attestés par les seuls fichiers. **Ne pas modifier l'ASC actif après ces résultats : les commentaires anciens indiquant « not yet validated » appartiennent à la source testée.**
 
 ## Scénario sans ressource extérieure
 
