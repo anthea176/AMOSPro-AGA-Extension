@@ -486,14 +486,17 @@ def verified_current_compiler_seeds(parsed):
     authenticates the current and LAST_GOOD Compiler wrappers. No altered,
     independently rebuilt, or future unknown binary receives these seeds.
     """
-    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA
+    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA
     from compiler_relocation import native_from_promoted, repack_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
-    if sha(current) in (R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA):
+    if sha(current) in (R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA):
         # This exporter only disassembles historical single-unit sources.
-        # verify_active() has checked both active and promoted R84.
-        # Rebuild the historical R82 source independently of moving LAST_GOOD.
+        # P0c is an audited multi-unit AP20 V2 library: public stub 8 targets
+        # its separate BOBS group, so monolithic unwrap must NOT be attempted.
+        # verify_active() has checked the exact source-built active candidate
+        # and protected R84. Use the independent pinned R82 ancestor solely
+        # to obtain historical CFG seeds; never export it as P0c source.
         need(sha(last_good) == R84_SHA,
              'Strict source: frozen R84 LAST_GOOD identity lost')
         from build_agapic_v2_r82_full_preview import build as build_r82
