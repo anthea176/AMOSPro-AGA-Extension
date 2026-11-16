@@ -137,14 +137,14 @@ def main() -> None:
     path = ROOT / 'tests/passed' / ACTIVE
     raw = path.read_bytes()
     assert len(list((ROOT/'tests/current').glob('*.asc'))) == 1
-    assert (ROOT/'tests/current'/'M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc').exists()
+    assert (ROOT/'tests/current'/'M19_P0D_BOB_BLIT_01.asc').exists()
     assert git_blob(raw) == ACTIVE_BLOB, 'P2.7 ASC changed without source review'
     previous = (ROOT / 'tests/passed/M19_P26_R87_DRAW_BENCH_01.asc').read_bytes()
     assert git_blob(previous) == P26_BLOB, 'P2.6 PASS source was modified'
     if not args.source_only:
         candidate = (ROOT / 'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
         active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
-        assert len(active)==87020 and sha256(active).hexdigest()=='277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a'
+        assert len(active)==91300 and sha256(active).hexdigest()=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
         lastgood = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         assert len(candidate) == 73184 and sha256(candidate).hexdigest() == R87_SHA
         assert len(lastgood) == 67904 and sha256(lastgood).hexdigest() == R84_SHA
