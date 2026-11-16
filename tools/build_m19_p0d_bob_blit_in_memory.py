@@ -48,9 +48,15 @@ def build():
             or prior['public_commands']!=82 or prior['ap20_entries']!=92):
         raise ValueError('P0c exact base/provenance mismatch')
     orig_tokens,orig_parts,orig_title=unpack_ap20(original)
-    verify_aga_legacy(orig_parts)
+    # P0c's PUBLIC Screen Close has already been redirected to BOBS 90;
+    # verify this exact approved bridge, not the obsolete P0b AGA stub.
+    # build_p0c() itself re-audits the frozen legacy AGA body and init.
     if len(orig_parts)!=92 or not orig_parts[OLD_BOBS].startswith(DISPATCH_V2):
         raise ValueError('P0c V2 group layout changed')
+    close=orig_parts[8]
+    if (close[:2]!=RBSR or close[6:8]!=bytes.fromhex('4e75')
+            or unpack_from('>HH',close,2)!=(OLD_BOBS,prior['bridge_offset'])):
+        raise ValueError('approved P0c public Screen Close bridge changed')
 
     old_native,old_labels=emit_program_end_bridge()
     new_native,labels=emit_public_blit()
