@@ -79,6 +79,13 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     B(7,'object_bridge_return')
     c.move(A(5),D(0));c.tst(D(0));B(7,'object_bridge_return')
     c.imm('and',1,D(0));B(6,'object_bridge_return')
+    # Object management requires an OPEN AGA screen. The original AGA
+    # State is executable-unit-local and State+0 is the live Screen ptr.
+    c.move(M(5,STATE_A5),D(0))
+    c.tst(D(0));B(7,'object_bridge_return')
+    c.imm('and',1,D(0));B(6,'object_bridge_return')
+    c.move(M(5,STATE_A5),A(0))
+    c.tst(M(0,0));B(7,'object_bridge_return')
 
     # Resolve and verify original AGA callback from the AGA State anchor:
     # AGA End=State-$168. Signature is frozen with the original AGA group.
