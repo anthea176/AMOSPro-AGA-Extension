@@ -147,7 +147,8 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             assert current_bytes != protected_bytes
             if active_hash == P0C_SHA:
                 from build_m19_p0c_screen_close_in_memory import build as build_p0c
-                from compiler_relocation import unpack_ap20
+                # unpack_ap20 is already imported at module scope; do not
+                # shadow it locally (earlier V2 static checks also call it).
                 rebuilt, meta = build_p0c()
                 assert current_bytes == rebuilt and meta["sha256"] == P0C_SHA
                 assert meta["public_commands"] == 82 and meta["ap20_entries"] == 92
