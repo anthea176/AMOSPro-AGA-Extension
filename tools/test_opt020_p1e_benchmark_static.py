@@ -15,6 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
+from active_library import P0C_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -54,10 +55,10 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA):
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
@@ -68,7 +69,24 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha == R88_SHA:
+        if active_sha == P0C_SHA:
+            # P0c retains R88's inherited R84 AGA/state group unchanged.
+            # Its public Close stub now routes to a separate BOBS V2 group.
+            from build_m19_p0c_screen_close_in_memory import build as build_p0c
+            from compiler_relocation import unpack_ap20
+            from compiler_bridge_v2_probe import DISPATCH_V2
+            candidate_current, meta_current = build_p0c()
+            assert active == candidate_current and meta_current["sha256"] == P0C_SHA
+            assert meta_current["public_commands"] == 82 and meta_current["ap20_entries"] == 92
+            _, units, _ = unpack_ap20(active)
+            frozen = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
+            assert sha256(frozen.read_bytes()).hexdigest() == R84_SHA
+            _, frozen_units, _ = unpack_ap20(frozen.read_bytes())
+            assert len(units) == 92 and units[91] == frozen_units[84], (
+                "P0c modified inherited R84 AGA native state")
+            assert units[90].startswith(DISPATCH_V2), "P0c BOBS V2 dispatcher changed"
+            assert meta_current["old_aga_group"] == 91 and meta_current["bridge_group"] == 90
+        elif active_sha == R88_SHA:
             from build_m19_p28_r88_in_memory import build as build_r88
             from compiler_relocation import unpack_ap20
             candidate_current, meta_current=build_r88()
