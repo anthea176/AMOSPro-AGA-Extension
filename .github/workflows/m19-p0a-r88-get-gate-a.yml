@@ -64,6 +64,8 @@ jobs:
         run: python -B tools/test_m19_p0d_private_blit_native.py
       - name: M19 P0d PRIVATE verified AGBO image to staged Chip descriptor MC68020 Gate A
         run: python -B tools/test_m19_p0d_bank_image_resolve_native.py
+      - name: M19 P0d PRIVATE Safe AGA back-buffer to staged AGBO Blitter MC68020 Gate A
+        run: python -B tools/test_m19_p0d_safe_bank_blit_native.py
       - name: M19 P0c in-memory public Screen Close V2 bridge provenance/ABI
         run: python -B tools/build_m19_p0c_screen_close_in_memory.py
       - name: M19 P0c REAL original AGA Screen Close CPU020 + BOBS preclose integration
