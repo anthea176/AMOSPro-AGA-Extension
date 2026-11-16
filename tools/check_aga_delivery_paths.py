@@ -17,10 +17,15 @@ import unittest
 ARCHIVES = ('dist/experimental/', 'tests/passed/', 'tests/historical/', 'tests/fixtures/')
 CANONICAL_LIB = 'dist/AMOSPro_AGA.Lib'
 PROTECTED_LIB = 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 
 
-def path_errors(path: str) -> list[str]:
-    """Check changes of any kind (including removal) to protected locations."""
+def path_errors(path: str, *, deleted: bool = False) -> list[str]:
+    """Check destinations and protect histories, including removals.
+
+    Public version-free examples/*.asc are not the single active test. Removing
+    an old versioned public example is allowed to normalize its filename.
+    """
     path = path.replace('\\', '/')
     errors = []
     if path == PROTECTED_LIB or path.startswith(ARCHIVES):
@@ -32,7 +37,10 @@ def path_errors(path: str) -> list[str]:
         if not errors:
             errors.append('ZIP is not an AGA Lib delivery destination')
     if path.lower().endswith('.asc') and not path.startswith('tests/current/'):
-        if not errors:
+        if path.startswith('examples/'):
+            if not deleted and PUBLIC_VERSION.search(path[len('examples/'):]):
+                errors.append('public AMOS example ASC needs a version-free filename')
+        elif not errors:
             errors.append('active AMOS test must live in tests/current/')
     return errors
 
@@ -66,7 +74,8 @@ def changed_files(base: str, head: str) -> list[str]:
 def run_check(base: str, head: str) -> int:
     issues = []
     for path in changed_files(base, head):
-        issues.extend((path, msg) for msg in path_errors(path))
+        issues.extend((path, msg) for msg in path_errors(
+            path, deleted=not Path(path).exists()))
         if path.startswith('.github/workflows/'):
             p = Path(path)
             if p.is_file():
@@ -107,6 +116,14 @@ class DeliveryPolicyTests(unittest.TestCase):
 
     def test_reject_test_in_examples(self):
         self.assertTrue(path_errors('examples/m19/new.asc'))
+        self.assertTrue(path_errors('examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc'))
+        self.assertTrue(path_errors('tests/design/new.asc'))
+
+    def test_allow_version_free_public_examples_and_old_name_cleanup(self):
+        self.assertEqual(path_errors('examples/aga_bob_bank_get/BANK_GET_MULTI.asc'), [])
+        self.assertEqual(path_errors('examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc',
+                                     deleted=True), [])
+        self.assertTrue(path_errors('tests/passed/OLD.asc', deleted=True))
 
     def test_reject_renamed_library(self):
         self.assertTrue(path_errors('dist/AMOSPro_AGA_M20.Lib'))
