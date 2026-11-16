@@ -25,7 +25,7 @@ from m19_p0c_bank_registry_emit import emit_bank_registry
 STATE_PTR_A5 = 0x1c8       # R74/R88 AGA state pointer in AMOS A5
 GFX_BASE_OFF = 8          # State+8; still valid before legacy Close
 FRAME = 64
-F = dict(state=0,gfx=4,result=8)
+F = dict(state=0,gfx=4,result=8,state_end=12)
 
 
 def emit_screen_preclose() -> tuple[bytes, dict[str, int]]:
@@ -66,12 +66,12 @@ def emit_screen_preclose() -> tuple[bytes, dict[str, int]]:
     c.move(D(0), D(1))
     c.imm('add', GFX_BASE_OFF, D(1))
     B(5, 'screen_preclose_return')
-    S(D(1), 'gfx')    # Temporarily hold the endpoint for TypeOfMem
+    S(D(1), 'state_end')    # Keep endpoint SEPARATE from GfxBase
     c.move(D(0), A(1))
     c.raw('2c780004')   # MOVEA.L (4).W,A6 = ExecBase
     c.call_os(-534)   # Exec TypeOfMem(State)
     c.tst(D(0)); B(7, 'screen_preclose_return')
-    G('gfx', A(1))
+    G('state_end', A(1))
     c.raw('2c780004')
     c.call_os(-534)   # Exec TypeOfMem(State+8), not GfxBase itself
     c.tst(D(0)); B(7, 'screen_preclose_return')
