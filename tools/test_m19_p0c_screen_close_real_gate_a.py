@@ -64,11 +64,22 @@ class RealCloseMachine(PreCloseMachine):
             self.uc.mem_write(vector,b'\x4e\x75')
 
     def activate_aga_state(self):
-        """Switch only AFTER real Get AGA Bob used the original screen fixture."""
-        self.put(AMOS+0x1c8,self.real_state)
-        self.put(AMOS+0x1cc,self.old_end)
-        self.put(AMOS+0x1d0,self.old_end)
-        self.uc.mem_write(self.real_state,bytes(40))
+        """Execute the ACTUAL original AGA V2 Init, after Get Bob capture."""
+        # Source-pinned native initializer: D1='APex' handshake, A5=AMOS.
+        # This must write State, End and Break callback pointers itself;
+        # unlike the former fixture, none are host-supplied shortcuts.
+        self.uc.reg_write(AR[5],AMOS)
+        self.uc.reg_write(DR[1],0x41506578)
+        self.uc.reg_write(UC_M68K_REG_SR,0x2000)
+        self.uc.reg_write(AR[7],STACK)
+        self.put(STACK,STOP)
+        self.uc.emu_start(self.aga+0x22,STOP,count=5000)
+        assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
+        assert self.a(7)==STACK+4
+        assert self.get(AMOS+0x1c8)==self.real_state
+        assert self.get(AMOS+0x1cc)==self.old_end
+        assert self.get(AMOS+0x1d0)==self.old_end
+        assert bytes(self.uc.mem_read(self.real_state,40))==bytes(40)
         self.screen=0x5a000
         self.put(self.real_state, self.screen)
         self.put(self.real_state+4, INTUI)
