@@ -126,7 +126,7 @@ def main():
         # the real AGA State at Init; capture both banks BEFORE Init so a
         # later bank switch tests object metadata, not fake screen geometry.
         assert m.run_select(11)==1
-        assert m.run_get(1,5,6,22,9)==1
+        assert m.run_get(1,7,8,16,15)==1  # known-good P0d bank-11 capture
         assert m.run_select(10)==1
 
         # Before ACTUAL AGA Init, the legacy fake Stage pointer must be
