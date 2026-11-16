@@ -30,6 +30,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent/'experiments'))
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 P0D_SHA='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+SPLIT_SHA='ca7dae58934056e4baf7cd3515a02363b05db75ece934afcd721988a952783ec'
 OLD_BRIDGE_SHA='f49037880fe75a3314364642336b3e5fb8f9e7854214cc1a23049fbc1becd0de'
 OLD_PUBLIC=89
 NEW_BOBS=93
@@ -118,6 +119,9 @@ def build():
         raise ValueError(f'signed-PC16 interpreter branch invalid: {reach}')
     if 32766-reach<80:
         raise ValueError(f'BOBS relay did not recover useful PC16 budget: {32766-reach}')
+    if (len(candidate)!=94508 or len(suffix)!=332 or len(AGA_CORE)!=470
+            or reach!=32552 or sha256(candidate).hexdigest()!=SPLIT_SHA):
+        raise ValueError('P0e split bridge byte-exact source/PC16 drift')
     assert all(parts[g].startswith(DISPATCH_V2) for g in (91,92,93,94))
     return candidate,dict(
         sha256=sha256(candidate).hexdigest(),size=len(candidate),
