@@ -89,7 +89,8 @@ class BankChipMachine(MaskMachine):
             self.pending_dma = False
         return super().os_call(uc, address, size, user)
 
-    def run_checked(self, bank=10, *, ctx=CONTEXT, gfx=GFX, limit=9000000):
+    def run_checked(self, bank=10, *, ctx=CONTEXT, gfx=GFX,
+                    entry_name='checked_stage_entry', limit=9000000):
         for i, r in enumerate(DR):
             self.uc.reg_write(r, 0x1230+i)
         for i, r in enumerate(AR[:7]):
@@ -103,7 +104,7 @@ class BankChipMachine(MaskMachine):
         self.uc.reg_write(AR[7], STACK)
         self.put(STACK, STOP)
         try:
-            self.uc.emu_start(self.checked_entry, STOP, count=limit)
+            self.uc.emu_start(self.entry+self.labels[entry_name], STOP, count=limit)
         except Exception as exc:
             raise AssertionError(('P0c checked bank CPU020 fault', str(exc),
                                   hex(self.uc.reg_read(UC_M68K_REG_PC)),
@@ -165,16 +166,60 @@ def main():
             assert bytes(m.uc.mem_read(chip+size, 4)) == b'\xa5\x5a\xab\xcd'
             assert (m.chip_allocs, m.chip_copies, m.chip_frees) == (1, 1, 0)
             cases += 1
+            assert m.run_checked(entry_name='checked_lookup_entry') == 1
+            assert m.run_checked(bank=11, entry_name='checked_lookup_entry') == 0
+            cases += 2
 
             # Updating a Bob invalidates the old identity: the new generation
             # is not reused; replacement waits for the DMA before FreeVec.
             m.pending_dma = True
             assert m.run_get(1, 4, 5, 20, 9) == 1
+            assert m.run_checked(entry_name='checked_lookup_entry') == 0
             assert m.run_checked() == 1
             assert m.chip_allocs == 2 and m.chip_frees == 1
             assert not m.pending_dma and m.context()[0] != chip
             assert bytes(m.uc.mem_read(m.context()[0], m.context()[1])) == expected_data(m)
-            cases += 1
+            assert m.run_checked(entry_name='checked_lookup_entry') == 1
+            cases += 3
+            # Releasing the private context works even without a live AGBO
+            # bank; FreeVec must be synchronized to the Blitter.
+            m.pending_dma = True
+            m.put(HEAD, 0)
+            assert m.run_checked(entry_name='checked_lookup_entry') == 0
+            assert m.run_checked(entry_name='checked_release_entry', gfx=0) == 0
+            assert m.context()[0] in m.chip_live
+            assert m.run_checked(entry_name='checked_release_entry') == 1
+            assert m.context() == (0, 0, 0, 0, 0)
+            assert m.chip_frees == 2 and not m.chip_live
+            assert not m.pending_dma
+            assert m.run_checked(entry_name='checked_release_entry') == 1
+            cases += 4
+
+        # Two independently owned private contexts, one for each AMOS bank.
+        m = ready(lib, layout, 8)
+        assert m.run_checked() == 1
+        first = m.context()
+        second_context = CONTEXT + 32
+        m.uc.mem_write(second_context, bytes(20))
+        assert m.run_select(11) == 1
+        assert m.run_get(1, 2, 2, 18, 3) == 1
+        assert m.run_checked(bank=11, ctx=second_context) == 1
+        second = tuple(m.get(second_context+4*i) for i in range(5))
+        assert first[0] != second[0] and first[0] in m.chip_live
+        assert second[0] in m.chip_live and len(m.chip_live) == 2
+        assert m.run_checked(bank=11, ctx=second_context,
+                             entry_name='checked_lookup_entry') == 1
+        assert m.run_checked(bank=10, entry_name='checked_lookup_entry') == 0
+        assert m.run_select(10) == 1
+        assert m.run_checked(bank=10, entry_name='checked_lookup_entry') == 1
+        assert m.run_checked(bank=11, ctx=second_context,
+                             entry_name='checked_lookup_entry') == 0
+        assert m.run_checked(entry_name='checked_release_entry') == 1
+        assert second[0] in m.chip_live
+        assert m.run_checked(bank=11, ctx=second_context,
+                             entry_name='checked_release_entry') == 1
+        assert not m.chip_live
+        cases += 9
 
         m = ready(lib, layout, 8)
         assert m.run_checked(11) == 0, 'wrong selection accepted'
