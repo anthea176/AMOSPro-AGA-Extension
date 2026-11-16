@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0c — validation native du conteneur AGBO (16/11/2026)
+
+Le [wrapper privé](../tools/m19_p0c_checked_bank_stage_emit.py) assemble le **préfixe natif P0b strictement identique** avec un validateur AGBO complet et le [helper Chip privé](../tools/m19_p0c_chip_stage_emit.py). Il recontrôle banque sélectionnée, `Bnk.GetAdr`, tête de liste AMOS, taille et nom du DATA bank, répertoire strict de toutes les images, géométries, offsets, masques séparés et padding planaire avant `AllocVec(MEMF_CHIP)`. **120 scénarios Gate A CPU020 simulés PASS**, incluant deux allocations propres à deux banques et invalidation sur changement d'adresse/génération, source native totale 10 044 octets (y compris P0b). [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43916465599) et [rapport](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md).
+
+Le contexte de 20 octets est **encore fourni par le caller privé** : pas de table par banque dans l'état global de l'extension, pas de token public, pas de rendu Blitter. La détection de réutilisation « ABA » d'une même adresse/génération après Erase/Load nécessite une discipline explicite de resélection et un futur état propriétaire. **Aucune modification du binaire P0b ni de LAST_GOOD.**
+
 ## M19 P0c — futur staging Chip (source-only, 16/11/2026)
 
 Un noyau [MC68020 privé](../tools/m19_p0c_chip_stage_emit.py) de **1 304 octets** a passé **64 tests Gate A CPU020 sous Unicorn** ([résultats](M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md)). Il alloue une zone propriétaire `MEMF_CHIP|MEMF_PUBLIC`, vérifie les bornes via `TypeOfMem`, copie les plans et masques et attend `WaitBlit` avant `FreeVec`. Les appels Exec/graphics sont **mockés** : il n'est pas lié à AP20 ni à une table de contextes persistants dans la bibliothèque active. La vérification complète du conteneur AGBO et les appels Blitter de dessin restent à intégrer et tester. **Les octets P0b installables, les résultats Gates B/C et R84 `LAST_GOOD` ne changent pas.**

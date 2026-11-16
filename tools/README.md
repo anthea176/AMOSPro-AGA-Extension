@@ -1,5 +1,11 @@
 # Outils Python — builder actif et historique versionné
 
+## M19 P0c — wrapper privé AGBO et Chip (16/11/2026)
+
+- [`m19_p0c_checked_bank_stage_emit.py`](m19_p0c_checked_bank_stage_emit.py) : ajout **source-only** à la fin du groupe natif P0b figé. Vérification stricte de la banque AGBO et de ses masques avant staging dans la zone Chip.
+- [`test_m19_p0c_checked_bank_stage_native.py`](test_m19_p0c_checked_bank_stage_native.py) : **120 scénarios CPU020 PASS**, deux placements, tests de corruption, lookup/release et **deux contextes Chip** indépendants. [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43916465599).
+- Le [helper `m19_p0c_chip_stage_emit.py`](m19_p0c_chip_stage_emit.py) conserve **64 tests privés PASS** ; le modèle AGBO hôte conserve ses **9 tests**. Pas de token AP20 nouveau, pas de sortie `.Lib`, pas de rendu. Le builder installable demeure `build_m19_p0b_masks_in_memory.py` pour la candidate P0b.
+
 ## M19 P0c privé — staging Chip MC68020 (16/11/2026)
 
 Les scripts [`m19_p0c_chip_stage_emit.py`](m19_p0c_chip_stage_emit.py) et [`test_m19_p0c_chip_stage_native.py`](test_m19_p0c_chip_stage_native.py) préparent le **noyau natif privé** (allocations Chip/TypeOfMem/CopyMem/WaitBlit/FreeVec). **64 cas Gate A CPU020 PASS**, système Amiga simulé. **Ce ne sont pas les builders de la bibliothèque P0b**, et ils ne produisent ni nouvelle Lib ni token AP20. Voir [le rapport technique](../docs/M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md). Builder installable P0b vérifié : `build_m19_p0b_masks_in_memory.py`; source de base R88 figée, R84 `LAST_GOOD` protégée.

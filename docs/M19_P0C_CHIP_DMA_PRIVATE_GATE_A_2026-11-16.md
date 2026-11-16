@@ -54,3 +54,20 @@ Sous Unicorn CPU modèle `UC_CPU_M68K_M68020`, les services système sont simul�
 5. Gate A CPU/AP20 de la **candidate complète** puis Gates B WinUAE et C AMOS Compiler réelles sur le nouveau test exact. Le test P0b (Runtime/Compiled PASS) ne valide pas automatiquement ce code P0c.
 
 **Protections :** `dist/AMOSPro_AGA.Lib`, `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84, `tests/current/M19_P0B_MC68020_MASK_BANK.asc` et tous les tests/archives existants restent inchangés. Aucune promotion, aucun exécutable AMOS P0c.
+
+
+## Étape suivante : wrapper complet banque AGBO → staging Chip (16/11/2026)
+
+La source [`tools/m19_p0c_checked_bank_stage_emit.py`](../tools/m19_p0c_checked_bank_stage_emit.py) **n'altère aucun octet du préfixe P0b**. Elle ajoute en interne les entrées privées `checked_stage_entry`, `checked_lookup_entry` et `checked_release_entry` ; celles-ci appellent le helper `emit_chip_stage` existant, sans ajouter de token AP20 ni changer la bibliothèque.
+
+**Entrées et garanties testées :** `checked_stage_entry` reçoit `A5=AMOS`, `D3=numéro de banque sélectionnée`, `A1=contexte privé 20 octets`, `A4=GfxBase`. Il interroge `Bnk.GetAdr`, vérifie la tête de liste et le pointeur de sélection, les métadonnées DATA/AGBO et **toutes** les entrées : ID stricts, largeurs et profondeurs 1..8, stride planaire, taille de pixel, masque 1 bit indépendant, offsets contigus et padding. **Une banque vide est valide pour la création, mais ne peut pas être préparée pour du dessin** (aucune source plane à allouer).
+
+Après validation exhaustive, le wrapper transmet la plage contiguë des **pixels/masques seulement** au helper `AllocVec(MEMF_CHIP|MEMF_PUBLIC)`, `TypeOfMem`, `CopyMem` et `WaitBlit` avant libération. `checked_lookup_entry` vérifie que la banque est toujours sélectionnée et que l'adresse/génération du payload correspond au contexte. `checked_release_entry` libère un contexte même si la banque AMOS a été effacée, après attente de fin du Blitter, sans effacer le DATA bank AMOS.
+
+**Gate A privée nouvelle :** [CI 43916465599](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43916465599) : **120 scénarios CPU020 PASS** avec appels AMOS/Exec/graphics simulés et deux déplacements du code (interprété/compilé-like) ; l'unité source reconstruite fait **10 044 octets** et contient le préfixe P0b à l'identique. Dans cette même CI, **64 scénarios** du noyau Chip privé et **116 scénarios** des commandes P0b restent PASS. [Code du banc](../tools/test_m19_p0c_checked_bank_stage_native.py).
+
+**Deux contextes sont réellement testés en parallèle dans le banc**, associés respectivement aux banques AMOS 10 et 11, sans duplication de la source par Bob. Mais ils sont **fournis par le banc** : la table interne allouant/trouvant le contexte d'une banque et son nettoyage global au `Aga Screen Close` ne sont pas encore codés. L'état persistant et le dessin de Bob restent absents.
+
+**Limite d'identité** : le seul couple pointeur AGBO / génération n'élimine pas une réutilisation de même adresse et génération (« ABA ») après `Erase`/`Load`. Le contrat exige une resélection de banque, la gestion propriétaire d'identité sera renforcée dans la future intégration. Modification arbitraire in-place par `Poke` non garantie.
+
+**Statuts** : Gate A CPU d'un **wrapper privé** PASS ; Gate B/C pour ce wrapper **NON TESTÉES**. Pas d'API publique, pas de modification de `dist/AMOSPro_AGA.Lib`, pas de promotion de R84 `LAST_GOOD`, pas de modification de l'ASC validé P0b. La partie `TypeOfMem` et `WaitBlit` est encore exercée sur des services simulés, pas sur les bibliothèques natives WinUAE.
