@@ -110,7 +110,7 @@ def main():
     assert bridge_meta['public_commands']==83 and bridge_meta['ap20_entries']==93
     assert bridge_meta['rbsr_max']<32766
     raw,labels=emit_v2_object_bridge()
-    code=raw[labels['object_bridge_put_entry']:]
+    code=raw[labels['object_bridge_put_selected_entry']:]
     inst=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
         .disasm(code,0x100000))
     assert sum(i.size for i in inst)==len(code)
@@ -143,7 +143,7 @@ def main():
 
         assert m.bridge_call('reset')[0]==1
         assert m.get(m.objroot)==AMOS
-        assert m.bridge_call('put',ident=1,bank=10,image=1,x=-5,y=23)[0]==1
+        assert m.bridge_call('put_selected',ident=1,bank=9999,image=1,x=-5,y=23)[0]==1
         st,rec=m.bridge_call('read',ident=1)
         assert st==1 and unpack('>6I',rec)==(
             10,1,(-5)&0xffffffff,23,1,0)
@@ -152,7 +152,7 @@ def main():
 
         # Each new object captures its BOBS selection AT DEFINITION.
         assert m.run_select(11)==1
-        assert m.bridge_call('put',ident=2,bank=11,image=1,x=20,y=26)[0]==1
+        assert m.bridge_call('put_selected',ident=2,bank=9999,image=1,x=20,y=26)[0]==1
         assert m.run_select(10)==1
         st,rec=m.bridge_call('read',ident=2)
         assert st==1 and unpack('>6I',rec)==(11,1,20,26,1,0)
@@ -175,6 +175,7 @@ def main():
             ('put',dict(ident=1,image=4097)),
             ('put',dict(ident=1,x=32768)),
             ('put',dict(ident=1,owner=OTHER)),
+            ('put_selected',dict(ident=1,bank=9999,owner=OTHER)),
             ('off',dict(ident=1,owner=OTHER)),
             ('read',dict(ident=0)),
             ('read',dict(ident=1,output=0)),
@@ -186,6 +187,16 @@ def main():
             st,_=m.bridge_call(kind,**kwargs)
             assert st==0 and m.table()==snapshot,(kind,kwargs)
             total+=1
+
+        # The bridge must read the ACTUAL bank selection inside BOBS,
+        # not accept the caller's stale/hardcoded bank argument.
+        selection=m.entry+m.labels['bank_active_state']
+        previous=m.get(selection)
+        m.put(selection,0)
+        assert m.bridge_call('put_selected',ident=3,bank=10)[0]==0
+        assert m.table()==snapshot
+        m.put(selection,previous)
+        total+=1
 
         # No CPU020 -> refusal before reading A5/State or native AGA bytes.
         m.uc.mem_write(EXEC+0x128,b'\0\0')
