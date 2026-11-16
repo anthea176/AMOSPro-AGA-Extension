@@ -122,6 +122,12 @@ def main():
         assert m.run_select(10)==1
         assert m.run_get(1,4,5,20,8)==1
         assert m.run_get(2,6,5,36,8)==1
+        # The synthetic CaptureMachine screen is deliberately replaced by
+        # the real AGA State at Init; capture both banks BEFORE Init so a
+        # later bank switch tests object metadata, not fake screen geometry.
+        assert m.run_select(11)==1
+        assert m.run_get(1,5,6,22,9)==1
+        assert m.run_select(10)==1
 
         # Before ACTUAL AGA Init, the legacy fake Stage pointer must be
         # rejected, never treated as an AGA native-unit relocation anchor.
@@ -146,7 +152,6 @@ def main():
 
         # Each new object captures its BOBS selection AT DEFINITION.
         assert m.run_select(11)==1
-        assert m.run_get(1,5,6,22,9)==1
         assert m.bridge_call('put',ident=2,bank=11,image=1,x=20,y=26)[0]==1
         assert m.run_select(10)==1
         st,rec=m.bridge_call('read',ident=2)
