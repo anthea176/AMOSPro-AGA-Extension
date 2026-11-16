@@ -67,7 +67,7 @@ class RegistryMachine(BankChipMachine):
             if self.meta_fail:
                 return self._os_return(0)
             ptr=self.next_metadata
-            self.next_metadata+=(NODE_SIZE+15)&~15
+            self.next_metadata+=(NODE_SIZE+16+15)&~15  # leave gap for test canary
             assert self.next_metadata<CHIP_START
             self.metadata[ptr]=NODE_SIZE
             self.uc.mem_write(ptr,bytes(NODE_SIZE))
