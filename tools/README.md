@@ -1,5 +1,11 @@
 # Outils Python — builder actif et historique versionné
 
+## M19 P0c — pré-fermeture AGA privée MC68020 (16/11/2026)
+
+- [`m19_p0c_screen_preclose_emit.py`](m19_p0c_screen_preclose_emit.py) : entrée native privée après registre P0c, obtient `GfxBase` par `A5+0x1C8` / `State+8` et refuse un cleanup non sûr ; aucun appel `CloseWindow`/`CloseScreen`, aucun hook AP20.
+- [`test_m19_p0c_screen_preclose_native.py`](test_m19_p0c_screen_preclose_native.py) : **42 tests MC68020 PASS**, deux placements, type mémoire/CPU/ABI, absence de GfxBase, double fermeture, deux banques, conservation des ressources en échec et contrôle du dispatch P0b réel (`Aga Screen Close` token 8, groupe 91, BOBS 90). [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43920983278).
+- **Pas de `.Lib` P0c**, pas de test de la vraie fermeture publique ni de WinUAE/Compiler. Le module AGA R88 assembleur n'est conservé qu'en restitution partielle d'audit, **non appropriée pour patcher le code de production**. [Rapport P0c](../docs/M19_P0C_CHIP_DMA_PRIVATE_GATE_A_2026-11-16.md).
+
 ## M19 P0c — registre automatique Chip par banque (Gate A privée, 16/11/2026)
 
 - [`m19_p0c_bank_registry_emit.py`](m19_p0c_bank_registry_emit.py) : source native MC68020 privée, liste de contextes par banque, `registry_prepare`/`lookup`/`free`/`close`, allocation/rollback et libération après `WaitBlit`. Préfixe P0b/P0c immuable.
