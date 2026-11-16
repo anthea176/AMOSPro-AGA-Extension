@@ -126,9 +126,9 @@ def emit_v2_object_bridge() -> tuple[bytes, dict[str,int]]:
     for name,reg in (('ident',D(0)),('bank',D(1)),('image',D(4)),
                      ('x',D(5)),('y',D(6)),('output',A(1))):
         c.move(M(2,F[name]),reg)
-    # Must NOT reload D4 image before preserving the native destination A4.
-    # The target address is saved in A0, then JSR (A0).
-    # (See the corrected bridge call below.)
+    # A4 still holds the checked object entry; D4 is a DIFFERENT register
+    # (data/image), so forwarding D4 does not affect the A4 code pointer.
+    c.raw('4e94')             # JSR (A4), actual relocated AGA object entry
     L('object_bridge_return')
     c.raw('4fef0020')          # LEA 32(SP),SP
     c.raw('4cdf77f7')          # restore AMOS registers
