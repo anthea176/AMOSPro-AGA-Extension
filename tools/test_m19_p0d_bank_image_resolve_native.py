@@ -147,7 +147,7 @@ def main():
                 passed += 1
 
             # Recapture invalidates the staged identity, with no stale DMA.
-            assert m.run_get(1, 4, 5, 21, 8) == 1  # change width and generation
+            assert m.mask(True, 1, (1 << depth)-1) == 1  # update AGBO generation
             assert m.resolve(1)[0] == 0
             assert m.call('registry_prepare_entry') == 1
             check_image(m,1)
