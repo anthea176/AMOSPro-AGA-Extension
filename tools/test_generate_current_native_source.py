@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,33 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==P0D_SHA:
+            # P0d consists of multiple independently relocated Compiler V2
+            # groups. The historical monolithic ASM exporter MUST reject it;
+            # verify source-backed MC68020 builder + exact full AP20 bytes.
+            from build_m19_p0d_bob_blit_in_memory import build as build_p0d
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_p0d()
+            assert wrapped==candidate and len(candidate)==91300
+            assert meta["sha256"]==P0D_SHA and meta["commands"]==83
+            assert meta["entries"]==93 and meta["previous_sha"]==P0C_SHA
+            assert meta["public_signature"]==("aga bob blit",1,88,"00,0,0")
+            _,groups,title=unpack_ap20(wrapped)
+            assert len(groups)==93 and meta["group"]==91 and meta["entry"]==22688
+            assert b"M19 P0d" in title
+            assert not inspect(parse(wrapped))["issues"]
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            # Preserve strict refusal of unsupported multiunit disassembly:
+            # only the maintained source constructor is production authority.
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert "Unsupported V2 compiler wrapper" in str(exc)
+            else:
+                raise AssertionError("P0d V2 multiunit wrapper was exported as a false monolith")
+            print("STRICT P0d MULTI-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==P0C_SHA:
             # M19 P0c is a true FOUR-unit Compiler V2 layout. The strict
             # source export intentionally rejects this non-monolithic format.
