@@ -207,6 +207,16 @@ def main():
             assert not m.chip_live and not m.metadata
             cases+=1
 
+            # AGA screen without Double Buffer must refuse BEFORE doing
+            # any Chip staging; this preserves the selected AMOS bank.
+            m=ready(p0c,layout,depth,two_banks=False)
+            saved=m.bank_payload(10)
+            m.put(m.real_state+32,0)
+            assert m.blit(1,7,8)==0
+            assert not m.chip_live and not m.metadata
+            assert m.bank_payload(10)==saved
+            cases+=1
+
             # Reject before any bank mutation when CPU lacks AFF_68020.
             m=ready(p0c,layout,depth,two_banks=False)
             m.uc.mem_write(EXEC+0x128,bytes.fromhex('0000'))
