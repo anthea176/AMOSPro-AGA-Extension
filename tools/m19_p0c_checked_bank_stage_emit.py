@@ -376,7 +376,7 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     c.tst(D(1)); B(7, 'checked_lookup_fail')
     G('bankptr', D(0))
     G('ctx', A(1))
-    B(1, 'checked_chip_lookup_entry')
+    B(1, 'chip_lookup_entry')
     c.tst(D(3)); B(7, 'checked_lookup_fail')
     S(I(1), 'result')
     L('checked_lookup_fail')
@@ -389,7 +389,7 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     # Context belongs to the private calling registry; the helper validates
     # its ownership cookie and performs WaitBlit before FreeVec.
     L('checked_release_entry')
-    B(0, 'checked_chip_release_entry')
+    B(0, 'chip_release_entry')
 
     L('checked_chip_stage')
     c.raw(chip.hex())
