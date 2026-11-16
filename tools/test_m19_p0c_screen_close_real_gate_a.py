@@ -55,6 +55,16 @@ class RealCloseMachine(PreCloseMachine):
         self.real_state=self.aga+AGA_STATE_OFFSET
         self.old_close=self.aga+AGA_CLOSE_ENTRY_OFFSET
         self.old_end=self.aga+0x5a
+        self.with_db=with_db
+        self.events=[]
+        self.uc.hook_add(UC_HOOK_CODE,self.on_native,
+                         begin=self.aga,end=self.aga+len(self.aga_native))
+        for vector in (INTUI-66, INTUI-774, INTUI-72,
+                       EXEC-414, EXEC-672, EXEC-372):
+            self.uc.mem_write(vector,b'\x4e\x75')
+
+    def activate_aga_state(self):
+        """Switch only AFTER real Get AGA Bob used the original screen fixture."""
         self.put(AMOS+0x1c8,self.real_state)
         self.put(AMOS+0x1cc,self.old_end)
         self.put(AMOS+0x1d0,self.old_end)
@@ -63,7 +73,6 @@ class RealCloseMachine(PreCloseMachine):
         self.put(self.real_state, self.screen)
         self.put(self.real_state+4, INTUI)
         self.put(self.real_state+8, GFX)
-        self.with_db=with_db
         if with_db:
             self.put(self.real_state+32,DB)
             self.put(DB,0x54000)    # ScreenBuffer A
@@ -71,12 +80,7 @@ class RealCloseMachine(PreCloseMachine):
             self.put(DB+12,0)       # no outstanding Safe/Disp msgport
             self.put(DB+16,0)
             self.put(DB+20,0)       # both pages are safe
-        self.events=[]
-        self.uc.hook_add(UC_HOOK_CODE,self.on_native,
-                         begin=self.aga,end=self.aga+len(self.aga_native))
-        for vector in (INTUI-66, INTUI-774, INTUI-72,
-                       EXEC-414, EXEC-672, EXEC-372):
-            self.uc.mem_write(vector,b'\x4e\x75')
+
 
     def on_native(self,uc,address,size,user):
         if address==self.old_close:
@@ -154,6 +158,7 @@ def ready(lib,layout='interpreted',depth=8,with_db=False):
     assert m.run_get(1,4,5,20,8)==1
     assert m.run_get(2,6,5,36,8)==1
     assert m.mask(True,1,0)==1
+    m.activate_aga_state()
     return m
 
 
