@@ -28,6 +28,7 @@ from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 P0D_SHA='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
 P0E_SHA='588345837105bdade12f8ab289b8a46f22cd1be5f9a14c8f88ca9f2220e28790'
+BRIDGE_SHA='f49037880fe75a3314364642336b3e5fb8f9e7854214cc1a23049fbc1becd0de'
 BOBS_GROUP=91
 AGA_GROUP=92
 TITLE=(b'AMOSPro AGA M19 P0e 020 PRIVATE VERIFIED BOBS-AGA LINK Gate A\0'
@@ -77,7 +78,10 @@ def build():
         raise ValueError('AP20 token/parameter audit failed')
     if len(revised[AGA_GROUP])!=58912 or not revised[AGA_GROUP].startswith(DISPATCH_V2):
         raise ValueError('P0e AGA source changed')
-    # Caller gets all four labels relative to the compiled BOBS native start.
+    if (len(raw)!=94144 or len(suffix)!=502 or maxreach!=32698
+            or sha256(raw).hexdigest()!=BRIDGE_SHA):
+        raise ValueError('P0e cross-unit byte-exact source/PC16 provenance drift')
+    # Caller gets all five labels relative to the compiled BOBS native start.
     offsets={key:len(parts[BOBS_GROUP])-len(DISPATCH_V2)+
              linked_labels['object_bridge_'+key+'_entry']-len(original_native)
              for key in ('put_selected','put','off','read','reset')}
