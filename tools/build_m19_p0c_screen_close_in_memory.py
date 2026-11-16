@@ -80,7 +80,8 @@ def build():
     baseline=inspect(parse(base))
     if baseline['issues'] or len([t for t in baseline['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))])!=82:
         raise ValueError('frozen P0b tokens invalid')
-    if baseline['tokens'][8]['name']!='aga screen close' or baseline['tokens'][8]['instruction']!=8:
+    close_tokens=[t for t in baseline['tokens'] if t['name']=='aga screen close']
+    if len(close_tokens)!=1 or close_tokens[0]['instruction']!=8:
         raise ValueError('public command index/type changed')
     original_close=verify_aga_legacy(parts)
 
