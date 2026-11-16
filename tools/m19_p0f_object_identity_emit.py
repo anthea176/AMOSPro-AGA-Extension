@@ -80,8 +80,8 @@ def emit_object_identity() -> tuple[bytes,dict[str,int]]:
     init()
     S(D(1),'bank');S(D(4),'image');S(D(5),'x');S(D(6),'y')
     valid_id()
-    G('bank',D(0))
-    scratch(SCRATCH_STAMP,1)
+    scratch(SCRATCH_STAMP,1)  # scratch computes A1 through D0
+    G('bank',D(0))             # restore bank AFTER scratch clobbers D0
     B(1,'stamp_capture_entry')
     c.tst(D(3));B(7,'identity_return')  # no stale transaction
     G('ident',D(0))
@@ -111,8 +111,8 @@ def emit_object_identity() -> tuple[bytes,dict[str,int]]:
     G('x',A(1))
     c.raw('2c780004');c.call_os(-534)
     c.tst(D(0));B(7,'identity_return')
-    G('ident',D(0))
-    scratch(SCRATCH_OBJECT,1)
+    scratch(SCRATCH_OBJECT,1) # scratch computes A1 through D0
+    G('ident',D(0))           # restore ID AFTER scratch clobbers D0
     B(1,'identity_old_object_read')
     c.tst(D(3));B(7,'identity_return')
     # Verify bank number from P0e checked ACTIVE object, not selected bank.
