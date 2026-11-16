@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,27 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==P0C_SHA:
+            # M19 P0c is a true FOUR-unit Compiler V2 layout. The strict
+            # source export intentionally rejects this non-monolithic format.
+            # Validate the exact maintained source builder and AP20 contracts
+            # instead; never pass desassembly off as production source.
+            from build_m19_p0c_screen_close_in_memory import build as build_p0c
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_p0c()
+            assert wrapped==candidate and len(candidate)==87020
+            assert meta["sha256"]==P0C_SHA and meta["public_commands"]==82
+            assert meta["ap20_entries"]==92 and meta["program_end_hook"].startswith("PRIVATE")
+            _,groups,title=unpack_ap20(wrapped)
+            assert len(groups)==92 and meta["screen_close_index"]==8
+            assert (meta["bridge_group"],meta["old_aga_group"],
+                    meta["old_aga_offset"])==(90,91,2008)
+            assert b"Screen Close bridge EXPERIMENT UNINSTALLED" in title
+            assert not inspect(parse(wrapped))["issues"]
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            print("STRICT P0c FOUR-UNIT SOURCE PROVENANCE PASS",meta["sha256"])
+            continue
         if exp.sha(wrapped)==R88_SHA:
             # R88 consists of four relocated V2 native groups; verify exact
             # deterministic provenance rather than exporting a false monolith.
