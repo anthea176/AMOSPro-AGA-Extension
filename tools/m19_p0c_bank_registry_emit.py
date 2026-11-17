@@ -125,6 +125,8 @@ def emit_bank_registry() -> tuple[bytes,dict[str,int]]:
     G('gfx',A(4))
     B(1,'checked_stage_entry')
     c.tst(D(3));B(7,'registry_prepare_free_new')
+    # Zero-byte continuation for explicit-bank registry preparation.
+    L('registry_prepare_after_stage')
     G('newnode',D(0));c.tst(D(0))
     B(7,'registry_prepare_success')
     # Atomic metadata publication after successful Chip staging.

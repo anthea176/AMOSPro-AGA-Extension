@@ -109,6 +109,9 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     c.imm('cmp', 24, D(0)); B(3, 'checked_fail')
     c.move(D(0), D(1)); c.imm('and', 1, D(1)); B(6, 'checked_fail')
 
+    # Zero-byte entry anchor for P0j explicit-bank staging. Native
+    # output stays strictly identical to the historical selected path.
+    L('checked_stage_live_bank_valid')
     # Probe AMOS bank header region through Exec before reading its size.
     G('bankptr', D(0))
     c.imm('sub', 24, D(0))
