@@ -81,9 +81,9 @@ def emit_multibank_paint() -> tuple[bytes,dict[str,int]]:
     c.move(M(0,8),D(0));S(D(0),'gfx')
     c.tst(D(0));B(7,'route_return')
     c.imm('and',1,D(0));B(6,'route_return')
-    G('gfx',A(1))
-    c.raw('2c780004');c.call_os(-534)
-    c.tst(D(0));B(7,'route_return')
+    # graphics.library base can live in ROM, so TypeOfMem(gfx) is not
+    # a valid rejection test. The real AGA Init signature was verified by
+    # relay_checked_read, and the Safe painter owns graphics validation.
 
     # Independent AMOS Bnk.GetAdr + real Cur_Banks identity. This
     # never calls Aga Bob Bank and never allocates/replaces an AMOS bank.
