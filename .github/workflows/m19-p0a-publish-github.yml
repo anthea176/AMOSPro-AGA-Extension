@@ -40,7 +40,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_AP20_ISLANDS_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_AP20_UNIT5_01.asc
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -49,7 +49,7 @@ jobs:
           from pathlib import Path
           expected = {
               'dist/AMOSPro_AGA.Lib':
-                  (96908, '34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'),
+                  (138044, '967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'),
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
@@ -80,25 +80,23 @@ jobs:
           python -B tools/test_m19_p0d_bank_image_resolve_native.py
           python -B tools/test_m19_p0d_safe_bank_blit_native.py
           python -B tools/test_m19_p0d_public_blit_gate_a.py
-      - name: Rebuild P0d independently and AP20 islands candidate exact in canonical dist
+      - name: Rebuild P0d, four islands and exact active fifth-unit in memory
         run: |
           python -B - <<'PY'
           from pathlib import Path
           from hashlib import sha256
           import sys
-          sys.path.insert(0, 'tools')
-          from build_m19_p0d_bob_blit_in_memory import build as build_p0d
-          from build_m19_ap20_islands_in_memory import build as build_islands
-          old,old_meta=build_p0d()
-          assert (len(old),sha256(old).hexdigest())==(91300,'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be')
-          assert old_meta['commands']==83 and old_meta['entries']==93
-          candidate,meta=build_islands()
+          sys.path.insert(0,'tools')
+          from build_m19_p0d_bob_blit_in_memory import build as p0d
+          from build_m19_ap20_islands_in_memory import build as four
+          from build_m19_ap20_unit5_in_memory import build as five
+          older,o=p0d();prev,p=four();now,n=five()
           active=Path('dist/AMOSPro_AGA.Lib').read_bytes()
-          assert candidate==active and len(active)==96908
-          assert sha256(active).hexdigest()=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
-          assert meta['ap20_entries']==178 and meta['new_pc16']==854
-          print('PASS: P0d historical reproducible, AP20 islands exact canonical candidate')
-          print('WinUAE Gate B and actual Compiler Gate C NOT tested here')
+          assert len(older)==91300 and o['sha256']=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+          assert len(prev)==96908 and p['sha256']=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
+          assert now==active and len(now)==138044 and sha256(now).hexdigest()=='967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'
+          assert n['ap20_entries']==181 and n['new_pc16']==854
+          print('PASS five-unit active source provenance; B/C not tested here')
           PY
       - name: Fail if validation creates files or changes the repository
         run: |

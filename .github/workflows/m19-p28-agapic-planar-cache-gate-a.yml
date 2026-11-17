@@ -40,7 +40,7 @@ jobs:
       - name: Verify active AP20 islands, historical R88/R87 and protected R84
         run: |
           python -B tools/verify_fast.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
           python -B tools/test_m16_agapic.py
@@ -56,7 +56,7 @@ jobs:
       - name: Strict AMOS Pro P0c active source preflight
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_AP20_ISLANDS_01.asc
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_AP20_UNIT5_01.asc
       - name: Verify P2.8 does NOT emit a new active library or change LAST_GOOD
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
       - name: Verify permanent R88 experimental archive and ABK fixtures
