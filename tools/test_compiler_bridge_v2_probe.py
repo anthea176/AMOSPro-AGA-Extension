@@ -148,7 +148,6 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             if active_hash == AP20_UNIT5_SHA:
                 from build_m19_ap20_unit5_in_memory import build as build_five
                 from build_m19_ap20_islands_in_memory import build as build_four
-                from compiler_relocation import unpack_ap20
                 rebuilt,meta=build_five()
                 original,old=build_four()
                 assert current_bytes==rebuilt and len(rebuilt)==138044

@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Candidate de test à cinq unités (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`, **87 commandes / 181 entrées AP20**, dont **deux diagnostics temporaires exclus de l'API publique stable**. Les **85 commandes stables** ci-dessous sont inchangées depuis la référence à quatre unités (96 908 octets), reconstructible depuis sa source figée. Gate A cinquième unité PASS ; **nouvelles Gates B/C NON TESTÉES**. Les résultats Runtime/Compiler à quatre unités restent [documentés séparément](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
+**M19 Candidate de test à cinq unités (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`, **87 commandes / 181 entrées AP20**, dont **deux diagnostics temporaires exclus de l'API publique stable**. Les **85 commandes** ci-dessous sont inchangées depuis la référence à quatre unités (96 908 octets), reconstructible depuis sa source figée. Gate A cinquième unité PASS ; **nouvelles Gates B/C NON TESTÉES**. Les résultats Runtime/Compiler à quatre unités restent [documentés séparément](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 
 **Test actif :** [M19_AP20_UNIT5_01.asc](tests/current/M19_AP20_UNIT5_01.asc) · [consignes WinUAE](tests/current/README.md). Les références à quatre unités AP20 islands et P0d Bob Blit restent reconstructibles depuis leurs sources historiques. `Aga Bob` / `Aga Bob Off` demeurent expérimentales avant Draw/End. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 

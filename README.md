@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Active five-unit test candidate (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **138,044 bytes**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`, **87 commands / 181 AP20 entries**, including **two temporary diagnostics excluded from the stable public API**. The **85 stable commands** below are unchanged from the source-pinned four-unit reference (96,908 bytes). Fifth-unit Gate A PASS; **new Gates B/C NOT TESTED**. The previous four-unit Runtime/Compiler results remain [documented separately](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
+**M19 Active five-unit test candidate (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **138,044 bytes**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`, **87 commands / 181 AP20 entries**, including **two temporary diagnostics excluded from the stable public API**. The **85 commands** below are unchanged from the source-pinned four-unit reference (96,908 bytes). Fifth-unit Gate A PASS; **new Gates B/C NOT TESTED**. The previous four-unit Runtime/Compiler results remain [documented separately](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 
 **Current test:** [M19_AP20_UNIT5_01.asc](tests/current/M19_AP20_UNIT5_01.asc) · [WinUAE instructions](tests/current/README.md). The original four-unit AP20 islands image and P0d Bob Blit remain reproducible from historical source. `Aga Bob` / `Aga Bob Off` remain experimental pending Draw/End. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
