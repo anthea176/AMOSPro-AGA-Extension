@@ -27,6 +27,19 @@ class MultiBankMachine(FrameMachine):
         self.uc.mem_write(self.entry,relocate(self.route_native,
                                             self.entry,{},self.uc))
         self.native=self.route_native
+        self.route_trace=[]
+        from unicorn import UC_HOOK_CODE
+        for key in ('frame_bank_preflight_entry','routed_paint_one_entry',
+                    'route_arm_end','route_unwind','route_restore',
+                    'route_inactive','route_return','route_all_return',
+                    'registry_lookup_entry','registry_prepare_entry',
+                    'program_end_arm_entry','safe_bank_blit_entry'):
+            address=self.entry+self.labels[key]
+            def trace(uc,addr,size,label):
+                self.route_trace.append((label,self.d(3),self.d(0),
+                                         self.a(2),self.selected_triple().hex()))
+            self.uc.hook_add(UC_HOOK_CODE,trace,user_data=key,
+                             begin=address,end=address)
 
     def route(self,kind='all',ident=1,owner=AMOS,count=27000000):
         assert kind in ('one','all')
@@ -91,7 +104,12 @@ def main():
         img10=parse_payload(m.bank_payload(10)).image(1)
         img11=parse_payload(m.bank_payload(11)).image(1)
         expected=oracle(oracle(start,img10,5,7),img11,9,11)
-        assert m.route('all')==1
+        assert m.preflight()==1,'P0h rejected valid multi-bank frame'
+        result=m.route('all')
+        assert result==1, (layout,'P0i route rejected',m.route_trace[-32:],
+                           m.paint_blits[-8:],m.events[-16:],
+                           m.root(),m.nodes() if m.metadata else {},
+                           m.selected_triple().hex(),selected.hex())
         assert m.selected_triple()==selected,'Aga Bob Bank changed after Draw'
         assert m.read_back()==expected,'BOBS source bank / draw order pixel drift'
         assert m.get(0x53000+8)==0,'unexpected automatic AGA Swap'
