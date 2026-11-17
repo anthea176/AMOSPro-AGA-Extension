@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 AP20 V2 — CINQUIÈME UNITÉ NATIVE, GATE A MC68020 PASS (17/11/2026)
+
+**Nouvelle expérience source-only validée sur `main` :** l'unité n°5 est **ajoutée en fin de code AP20**, sans modifier les octets ni les offsets relatifs des **178 entrées existantes** et des quatre unités déjà validées en B/C. La candidate expérimentale fait **138 044 octets**, SHA256 **`967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`**, avec **87 commandes (dont deux fonctions de diagnostic), 181 entrées AP20 et cinq unités**. Le nouveau bloc est de 41 060 octets, dont une table de **40 Kio effectivement lue** ; son second point d'entrée est à l'offset **41 012 octets (`$A034`)**, au-delà du PC16 signé. Toutes les liaisons PC16 existantes restent identiques, maximum **854 octets**.
+
+**Gate A réelle MC68020 : PASS**, y compris exécution de deux fonctions au travers de BSR.W interpréteur et deux modèles de relocation JSR.L Compiler, sortie `D3/D2`, pile, registres et test négatif sur les données, lors des CI [initiale 44135037050](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135037050) et [candidate SHA-pinnée 44135445819](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135445819). [Rapport et sources](M19_AP20_V2_FIFTH_UNIT_GATE_A_2026-11-17.md). Cette simulation n'est **pas** une compilation AMOS réelle.
+
+**Gates B/C de la candidate à CINQ unités NON TESTÉES :** `dist/AMOSPro_AGA.Lib` reste la candidate à **quatre unités**, 96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, et **l'unique ASC actif `tests/current/M19_AP20_ISLANDS_01.asc` reste inchangé**. Les Gates A/B/C PASS précédentes et la capture de la version compilée concernent **seulement ce banc à quatre unités**. La prochaine bascule vers cinq unités demande une autorisation explicite et la validation avec le vrai Compiler V2. `LAST_GOOD` R84 protégée, Gate D NON TESTÉE, Bobs persistants/Draw/End toujours non validés.
+
+Les sections en dessous sont des checkpoints antérieurs et ne doivent pas faire croire que les Gates B/C de la cinquième unité sont déjà PASS.
+
 ## M19 AP20 V2 — VALIDATION RUNTIME / VRAI COMPILER (17/11/2026, dernier statut)
 
 **Gates A, B et C : PASS sur le scénario de dispatch/Blitter `M19_AP20_ISLANDS_01.asc`.** Deux journaux fournis par l'auteur le 17/11/2026 : **Runtime `PRG_STATE 1`, `RESULT 1` / `ERR 0`** et **Compiled `PRG_STATE -1`, `RESULT 1` / `ERR 0`**. Les quatre Bobs, le masque et le clipping gauche/droite passent les assertions dans les deux modes. **L'auteur précise explicitement que la capture d'écran transmise provient de la version COMPILÉE** : preuve visuelle de Gate C seulement. [Rapport d'évidence, hashes des TXT et de l'image](M19_AP20_V2_GATES_BC_2026-11-17.md).

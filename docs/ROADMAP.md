@@ -1,5 +1,11 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 — Preuve de croissance AP20 V2 : CINQUIÈME unité en Gate A (17/11/2026)
+
+**Fait, source-only sur `main` :** cinquième unité native 41 060 octets ajoutée **après** les quatre unités historiques sans changer leur code ni leur position relative. Deux fonctions expérimentales de diagnostic ; second offset natif `$A034` (41 012, supérieur à 32 Kio), maximum PC16 **854 octets** inchangé, 87 commandes/181 entrées AP20. Candidate **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`. **Gate A MC68020 PASS**, incluant la vraie exécution du checksum des 40 Kio et les deux modèles de relocation ([rapport](M19_AP20_V2_FIFTH_UNIT_GATE_A_2026-11-17.md) ; [CI SHA-pinnée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135445819)).
+
+**Suite : autorisation distincte pour basculer la seule bibliothèque canonique et l'unique ASC afin de tester B Runtime et C vrai AMOS Compiler V2.** Pour la candidate à cinq unités B/C sont encore **NON TESTÉES** ; la bibliothèque installable à **quatre unités**, ses Gates A/B/C PASS historiques et R84 `LAST_GOOD` restent intactes. Puis seulement reprendre Bobs persistants, `Draw` et `End`.
+
 ## M19 — AP20 V2 : Gates B/C confirmées sur scénario Bob Blit (17/11/2026)
 
 **Gate A MC68020 PASS ; Gate B Runtime PASS sur journal `PRG_STATE 1` ; Gate C véritable AMOS Compiler PASS sur journal `PRG_STATE -1` et capture visuelle explicitement issue de l'exécutable compilé.** [Preuves exactes](M19_AP20_V2_GATES_BC_2026-11-17.md). La candidate installable unique reste 96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56` ; `LAST_GOOD` R84 protégée.

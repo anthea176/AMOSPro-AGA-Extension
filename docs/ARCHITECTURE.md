@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## AP20 V2 — croissance append-only à cinq unités, Gate A (17/11/2026)
+
+La [cinquième unité de diagnostic](M19_AP20_V2_FIFTH_UNIT_GATE_A_2026-11-17.md) **ajoute trois sections AP20 à la fin** de la candidate quatre îlots : deux stubs `Rbsr` (indices **178, 179**) et une unité V2 à l'indice **180**. Les sections **0…177** (dont les unités natives **142, 153, 156, 177**) demeurent **strictement identiques**, aux mêmes décalages dans le code AP20 concaténé ; les anciennes entrées publiques conservent leurs indices et tokens. Le bloc 180 fait **41 060 octets**, comprend un véritable tableau privé de 40 Kio et deux fonctions `D3/D2` ; la seconde est à l'offset natif non signé **41 012 (`$A034`)**, tout en gardant un `Rbsr` local de **6 octets**. Portée PC16 max de l'ensemble : **854 octets**, identique à quatre unités.
+
+La candidate source-only **138 044 octets** / SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1` passe **Gate A réelle MC68020**, avec relocation interpréteur et Compiler **modélisées** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135445819)). **Les vraies Gates B/C de cette cinquième unité et la Gate D sont NON TESTÉES.** Les Gates B/C précédentes concernent **quatre unités seulement**. Le binaire installé `dist/AMOSPro_AGA.Lib` (96 908 octets) et le test actif restent inchangés ; `LAST_GOOD` R84 protégée. Ne pas interpréter « offsets du code conservés » comme adresses absolues de relocation identiques : l'extension de la table de tokens déplace les offsets dans le HUNK.
+
 ## M19 — AP20 V2 par îlots : preuve Compiler réel (17/11/2026)
 
 **Gates A/B/C PASS pour le banc `M19_AP20_ISLANDS_01.asc`.** La **Gate C** est documentée par `PRG_STATE -1`, `RESULT 1` / `ERR 0` **et une capture d'écran provenant explicitement de l'exécutable compilé**, selon l'auteur ; Gate B par `PRG_STATE 1` et son journal. [Preuves et limites](M19_AP20_V2_GATES_BC_2026-11-17.md). Le Compiler V2 accepte et exécute ainsi le chemin de dispatch AP20 entrelacé emprunté par ce banc, sans prouver l'ensemble des exports ni une cinquième unité native.

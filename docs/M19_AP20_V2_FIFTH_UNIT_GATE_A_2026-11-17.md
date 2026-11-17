@@ -35,7 +35,7 @@ L'expression « sans déplacer » signifie ici **préfixe intégral inchangé du
 
 ## Preuves et statut des Gates
 
-**Gate A ciblée MC68020 : PASS**, [exécution GitHub Actions 44135037050](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135037050). Le banc confirme :
+**Gate A ciblée MC68020 : PASS**, [exécution initiale 44135037050](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135037050) et **[nouvelle exécution SHA-pinnée 44135445819 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135445819)**. Le banc confirme :
 - l'exécution réelle des deux fonctions de la cinquième unité, jusqu'au retour au faux appelant AMOS ; retour `D3` correct, type entier `D2=0`, pile et `D0/D1/D4/A0` préservés ;
 - les **40 960 octets parcourus**, et un contrôle négatif dans lequel changer un octet de la table change effectivement la somme retournée ;
 - l'entrée à **41 012 octets** exécutée au travers du dispatcher V2 sans interpréter ce déplacement comme signé ;
