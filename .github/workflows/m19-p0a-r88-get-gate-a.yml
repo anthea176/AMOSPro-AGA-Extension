@@ -13,6 +13,9 @@ on:
       - 'tools/m19_ap20_unit5_emit.py'
       - 'tools/build_m19_ap20_unit5_in_memory.py'
       - 'tools/test_m19_ap20_unit5_gate_a.py'
+      - 'tools/m19_p0g_checked_read_emit.py'
+      - 'tools/build_m19_p0g_checked_read_in_memory.py'
+      - 'tools/test_m19_p0g_checked_read_gate_a.py'
       - 'tools/test_m19_p0*.py'
       - 'tools/build_m19_p0*.py'
       - 'tools/amos_preflight.py'
@@ -110,6 +113,11 @@ jobs:
         run: python -B tools/build_m19_p0f_public_bound_in_memory.py
       - name: M19 P0f public Aga Bob bank-escrow MC68020 two-layout Gate A
         run: python -B tools/test_m19_p0f_public_bound_native.py
+      - name: M19 P0g PRIVATE stale-bank checked Bob read - MC68020 Gate A
+        run: |
+          python -B tools/m19_p0g_checked_read_emit.py
+          python -B tools/build_m19_p0g_checked_read_in_memory.py
+          python -B tools/test_m19_p0g_checked_read_gate_a.py
       - name: M19 AP20 V2 island dispatch P0f source-only MC68020 Gate A
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py

@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0g — nouvelle lecture privée avant Draw (17/11/2026)
+
+Développement source-only sur `main` : [P0g lecture sécurisée](M19_P0G_CHECKED_READ_GATE_A_2026-11-17.md). Un nouveau point d'entrée BOBS relie l'`identity_check` existant à la lecture d'un objet persistant ; il refuse les banques effacées/rechargées **sans sortie partielle**, conserve la lecture brute pour distinguer inactif/périmé et ne modifie aucune commande publique. Gate A à confirmer par CI sur le commit ; B/C/D non testées. La bibliothèque installable reste la quatre-unités SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, l'ASC actif et R84 LAST_GOOD inchangés.
+
+
 ## M19 — nettoyage des sondes cinq unités après Gates B/C (17/11/2026)
 
 **État actif sur `main` :** bibliothèque canonique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) revenue à la version **quatre unités fonctionnelles**, **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes, 178 entrées AP20**. Seul ASC actif : [`M19_AP20_ISLANDS_01.asc`](../tests/current/M19_AP20_ISLANDS_01.asc). **Gates A/B/C PASS historiques de cette image exacte**, selon les [preuves à quatre unités](M19_AP20_V2_GATES_BC_2026-11-17.md).
