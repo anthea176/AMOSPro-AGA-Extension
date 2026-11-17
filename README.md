@@ -17,6 +17,12 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 **Get started:** [Installation guide](INSTALL.md) · [AMOS example programs](examples/README.md).
 
+## AGA screen limit (by design)
+
+**The extension supports only one open AGA screen at a time.** `Aga Screen Open(...)` creates the single AGA screen managed by the extension; opening or switching between multiple simultaneous AGA screens is not supported. To change resolution or video mode, first close the current screen with `Aga Screen Close`, then open a new one.
+
+`Aga Double Buffer` and `Aga Swap` manage the **front and back buffers of that same screen**, not separate AGA screens. Multi-screen support is intentionally outside the project's scope.
+
 ## Libraries and tests
 
 **Active test candidate: M19 AP20 ISLANDS (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **96,908 bytes**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commands / 178 AP20 entries**. Dispatch stubs are grouped next to the four unchanged native units, reducing maximum PC16 reach to 854 bytes. **Gates A/B/C PASS for the Bob Blit test scenario**: Runtime and actual AMOS Compiler logs, plus a screenshot confirmed by the author to come from the **compiled executable**. [Gates B/C evidence and limits](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
