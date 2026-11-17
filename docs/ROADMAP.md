@@ -2,7 +2,7 @@
 
 ## M19 P0h — étape intermédiaire vers Aga Bob Draw
 
-[Précontrôle natif 64 objets](M19_P0H_FRAME_PREFLIGHT_GATE_A_2026-11-17.md) : le premier parcours teste l'identité de la banque de chaque Bob actif ; en cas d'identité périmée, refuse la frame avant accès Blitter. Source-only, aucune nouvelle commande publique ; Gate A à confirmer. **À faire ensuite :** préparer chaque banque d'origine en Chip sans modifier la sélection utilisateur, contrôler les images/pixels et dessiner tous les Bobs dans le back buffer Safe sans Swap implicite. `LAST_GOOD` protégée.
+[Précontrôle natif 64 objets](M19_P0H_FRAME_PREFLIGHT_GATE_A_2026-11-17.md) : le premier parcours teste l'identité de la banque de chaque Bob actif ; en cas d'identité périmée, refuse la frame avant accès Blitter. Source-only, aucune nouvelle commande publique ; **Gate A MC68020 PASS (60 contrôles)**, [CI M19](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44153906156). Candidate source seule **97 248 octets** ; l'unique bibliothèque installable n'a pas changé. **À faire ensuite :** préparer chaque banque d'origine en Chip sans modifier la sélection utilisateur, contrôler les images/pixels et dessiner tous les Bobs dans le back buffer Safe sans Swap implicite. `LAST_GOOD` protégée.
 
 
 ## M19 — nettoyage des sondes cinq unités après Gates B/C (17/11/2026)

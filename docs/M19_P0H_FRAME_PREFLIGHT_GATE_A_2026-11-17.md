@@ -14,7 +14,9 @@ Le source P0g ayant déjà une portée PC16 de 32 590 octets (marge seulement 17
 - [Builder AP20](../tools/build_m19_p0h_frame_preflight_in_memory.py) : reconstruction uniquement en mémoire depuis P0g, appel au `dispatch_islands`, contrôles ABI, HUNK, groupes inchangés et PC16.
 - [Banc MC68020](../tools/test_m19_p0h_frame_preflight_gate_a.py) : exécution dans Unicorn sur les deux implantations de groupes, plus test des 64 IDs et refus d'une banque à identité périmée.
 
-**Gate A :** à établir par la CI. **Gate B Runtime / Gate C véritable Compiler / Gate D Amiga réel : NON TESTÉES.** Aucun binaire ou ASC actif modifié.
+**Gate A MC68020 : PASS**, [CI M19 44153906156](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44153906156) : **60 contrôles** en deux implantations natives (interpreted/compiled simulés) ; 64 objets actifs, dernier objet sur une autre banque, corruption de génération du 64e objet refusée après 63 objets conformes, CPU <020 refusé, propriétaire AMOS incorrect, fausse signature AGA avant Init, fermeture/inactivation. **Gate B Runtime / Gate C véritable Compiler / Gate D Amiga réel : NON TESTÉES pour P0h.** Aucun binaire ou ASC actif modifié.
+
+**Provenance figée** : émetteur BOBS MC68020 **16 762 octets** (suffixe privé 318), SHA256 `2d5a9e7a7f53696427786e4cdaffd0786b9cbcdfa5b9f2039cdef480dcd6cc8b`. Bibliothèque AP20 **uniquement reconstruite en mémoire** : **97 248 octets**, SHA256 `2c5c371754a3b54c797c7b413769ef2536db92cdad7eba3db8185bb88dea7782`, **85 commandes, 178 entrées, 4 unités** aux indices 142/153/156/177, portée PC16 max **854**. Ces deux SHA et tailles sont contrôlés par les builders ; ne pas confondre la candidate en mémoire avec `dist/AMOSPro_AGA.Lib` installée.
 
 ### Limite fonctionnelle avant le dessin
 
