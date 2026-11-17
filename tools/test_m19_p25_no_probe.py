@@ -314,7 +314,7 @@ class BatchGateA(unittest.TestCase):
                        __import__("active_library").R88_SHA,
                        __import__("active_library").P0C_SHA,
                         __import__("active_library").P0D_SHA,
-                         __import__("active_library").AP20_ISLANDS_SHA,AP20_UNIT5_SHA))
+                         __import__("active_library").AP20_ISLANDS_SHA,__import__("active_library").AP20_UNIT5_SHA))
         self.assertEqual(PROTECTED.read_bytes(),self.old)
 
 

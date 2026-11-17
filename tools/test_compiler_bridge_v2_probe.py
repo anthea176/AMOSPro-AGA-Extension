@@ -13,7 +13,7 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack, unpack_from
 
-from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, verify_active  # SHA-pinned releases.
+from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, AP20_UNIT5_SHA, verify_active  # SHA-pinned releases.
 
 from compiler_bridge_v2_probe import (
     DISPATCH_V2, MAX_UNIT_BYTES, is_v2_wrapped,
@@ -132,20 +132,30 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256,R72_SHA256,R73_SHA256,R74_SHA256,R75_SHA256,R76_SHA256,R77_SHA256,R78_SHA256,R79_SHA256,R80_SHA256,R81_SHA256,R82_SHA256,R83_SHA256,R84_SHA256,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA), "Current must be an exact SHA-pinned V2 library"
+        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256,R72_SHA256,R73_SHA256,R74_SHA256,R75_SHA256,R76_SHA256,R77_SHA256,R78_SHA256,R79_SHA256,R80_SHA256,R81_SHA256,R82_SHA256,R83_SHA256,R84_SHA256,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,AP20_UNIT5_SHA), "Current must be an exact SHA-pinned V2 library"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
         assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        if active_hash in (R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA):
+        if active_hash in (R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,AP20_UNIT5_SHA):
             # Post-R84 candidates are AP20 multi-unit V2, not the historical
             # single-dispatcher probe format. Independently pin the installed
             # candidate and frozen R84 before testing the unchanged R57 bridge.
             verified, frozen, _ = verify_active(ROOT)
             assert verified == current_bytes and frozen == protected_bytes
             assert current_bytes != protected_bytes
-            if active_hash == AP20_ISLANDS_SHA:
+            if active_hash == AP20_UNIT5_SHA:
+                from build_m19_ap20_unit5_in_memory import build as build_five
+                from build_m19_ap20_islands_in_memory import build as build_four
+                from compiler_relocation import unpack_ap20
+                rebuilt,meta=build_five()
+                original,old=build_four()
+                assert current_bytes==rebuilt and len(rebuilt)==138044
+                assert meta["sha256"]==AP20_UNIT5_SHA and meta["ap20_entries"]==181
+                assert old["sha256"]==AP20_ISLANDS_SHA
+                assert unpack_ap20(rebuilt)[1][:178]==unpack_ap20(original)[1]
+            elif active_hash == AP20_ISLANDS_SHA:
                 from build_m19_ap20_islands_in_memory import build as build_islands
                 rebuilt,meta=build_islands()
                 assert current_bytes==rebuilt and len(current_bytes)==96908
