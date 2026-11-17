@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,31 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==B7_SHA:
+            # The B7 candidate is a four-island Compiler V2 AP20 image.
+            # Verify its SOURCE builder and reject the historical monolith
+            # native exporter; treating AP20 RBSR stubs as opcodes is unsafe.
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            from build_m19_p0j_end_lifecycle_in_memory import build as build_b7
+            candidate,meta=build_b7()
+            assert wrapped==candidate and len(candidate)==102072
+            assert meta["sha256"]==B7_SHA and meta["public_commands"]==86
+            assert meta["ap20_entries"]==181 and meta["native_groups"]==[142,153,156,177]
+            assert meta["pc16_max"]==28600
+            tokens,groups,title=unpack_ap20(wrapped)
+            assert len(groups)==181 and b"M19 P0j-b7" in title
+            assert not inspect(parse(wrapped))["issues"]
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert ("Rbsr entry without audited compiler dispatcher" in str(exc)
+                        or "Unsupported V2 compiler wrapper" in str(exc))
+            else:
+                raise AssertionError("B7 four-island wrapper exported as untrusted monolith")
+            print("STRICT P0j-b7 SOURCE BUILDER AND MULTIUNIT EXPORT REFUSAL PASS",B7_SHA)
+            continue
         if exp.sha(wrapped)==AP20_ISLANDS_SHA:
             # The active AP20 islands are interleaved multi-unit V2, not an
             # accepted monolithic wrapper for historical ASM export.
