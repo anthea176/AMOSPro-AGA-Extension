@@ -32,11 +32,11 @@ def main() -> None:
     current=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active)==96908 and sha256(active).hexdigest()=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
+    assert len(active)==102072 and sha256(active).hexdigest()=="f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b"
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(asc)==1 and asc[0].name=="M19_AP20_ISLANDS_01.asc"
+    assert len(asc)==1 and asc[0].name=="M19_P0J_B7_DRAW_BC_01.asc"
     data=(ROOT/"tests/passed"/TEST).read_bytes()
     assert git_blob(data)==ASC_BLOB, "Benchmark source changed without rechecking"
     smoke=(ROOT/"tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc").read_bytes()
