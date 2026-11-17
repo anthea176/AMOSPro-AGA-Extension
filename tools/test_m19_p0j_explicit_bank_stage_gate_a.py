@@ -81,7 +81,7 @@ def main():
             chip=int.from_bytes(out[8:12],'big')
             count=int.from_bytes(out[12:16],'big')
             images=parse_payload(m.bank_payload(bank)).images
-            expected=b''.join(b''.join(img.planes)+(img.mask or b'')
+            expected=b''.join(img.planes+(img.mask or b'')
                               for img in images)
             assert bytes(m.uc.mem_read(chip,count))==expected
             assert m.selected_triple()==selected
