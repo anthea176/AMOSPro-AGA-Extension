@@ -19,7 +19,7 @@ La **cinquième unité native** a été validée en Gates A/B/C pour son banc de
 
 **Objectif :** un rendu Blitter de **1 à 64 Bobs multi-banques**, dans le back buffer `Safe`, **sans projection temporaire de `bank_active_state`**, sans Swap implicite, sans mémoire Chip périmée et avec refus sûr d'une frame invalide.
 
-**Dernier jalon vérifié : M19 P0j-b4 — Gate A MC68020 PASS, 60 contrôles** ([CI 44174998272](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174998272)). Le parcours Safe/WaitBlit de 64 Bobs utilise les banques d'origine sans shadow, dessine les masques en Chip, garde le front intact et n'effectue aucun Swap. Candidate privée AP20 **100 596 octets** (SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`). **En cours :** tests renforcés de masques et défaut SafePort tardif, contrat de back buffer invalide et statut de retour AMOS, puis décision distincte de toute exposition publique. **Gates B/C/D de B4 non réalisées**. [Contrat et preuves](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md).
+**Dernier jalon vérifié : M19 P0j-b4 — Gate A MC68020 PASS, 104 contrôles** ([CI renforcée 44179811049](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44179811049), initialement 60 contrôles). Le parcours Safe/WaitBlit de 64 Bobs utilise les banques d'origine sans shadow, dessine les masques en Chip, garde le front intact et n'effectue aucun Swap. Candidate privée AP20 **100 596 octets** (SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`). **Tests renforcés PASS :** masque corrompu refusé avant DMA, clipping pixel-exact, échec tardif SafePort avec back partiel constaté. **Prochain verrou :** contrat de back buffer invalide et statut de retour AMOS, essais réels de Close en Safe pending, puis décision distincte de toute exposition publique. **Gates B/C/D de B4 non réalisées**. [Contrat et preuves](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md).
 
 | Ordre | Travail à faire | Critère de réussite |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ La **cinquième unité native** a été validée en Gates A/B/C pour son banc de
 | **4** | Intégrer le rendu au registre des objets et **sécuriser Close/End**. | Identité de banque conservée après `Aga Bob Off`, allocations libérées une seule fois, pointeurs DMA invalidés, fermeture et réouverture sûres. |
 | **5** | Préparer l'**API publique Draw** et son unique banc AMOS, **uniquement après autorisation de bascule**. | Gate A CPU020/ABI/AP20/relocations, puis B Runtime et C Compiler sur la **même candidate canonique** ; Gate D séparée. |
 
-**Acquis sans installation :** P0i (76 contrôles, mais shadow temporaire non réentrant), P0j-a (68 contrôles, préflight de 64 images), P0j-b1/b2/b3 (lookup/staging/résolution Chip explicites), puis **P0j-b4 (60 contrôles initiaux PASS)**. B4 retire la projection temporaire, **sans garantir l'atomicité complète ni empêcher un `Aga Swap` explicite après erreur**. **Ces résultats source-only ne prouvent pas les Gates B/C/D et ne changent pas la bibliothèque installée.**
+**Acquis sans installation :** P0i (76 contrôles, mais shadow temporaire non réentrant), P0j-a (68 contrôles, préflight de 64 images), P0j-b1/b2/b3 (lookup/staging/résolution Chip explicites), puis **P0j-b4 (104 contrôles Gate A PASS)**. B4 retire la projection temporaire, **sans garantir l'atomicité complète ni empêcher un `Aga Swap` explicite après erreur**. **Ces résultats source-only ne prouvent pas les Gates B/C/D et ne changent pas la bibliothèque installée.**
 
 ## 3. Après M19 — pistes non engagées
 

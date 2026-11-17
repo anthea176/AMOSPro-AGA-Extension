@@ -186,7 +186,7 @@ Le moteur Bob logiciel décrit ici n'est **pas** un moteur de Sprites DMA. L'aut
 
 ## 11. Précontrat Draw après P0j-b4 — NON exporté, arbitrage requis
 
-**Faits vérifiés :** le chemin natif privé `explicit_frame_draw_entry` traite 1 à 64 Bobs dans l'ordre croissant, conserve la banque source de chacun, dessine dans le back buffer Safe, applique les masques individuels en Chip et ne fait **aucun Swap**. Gate A MC68020 B4 initiale PASS (60 contrôles, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174998272)) ; Gates B/C/D B4 non faites. **`Aga Bob Draw` n'est pas un token public dans la Lib active.**
+**Faits vérifiés :** le chemin natif privé `explicit_frame_draw_entry` traite 1 à 64 Bobs dans l'ordre croissant, conserve la banque source de chacun, dessine dans le back buffer Safe, applique les masques individuels en Chip et ne fait **aucun Swap**. Gate A MC68020 B4 renforcée PASS (104 contrôles, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44179811049)) ; Gates B/C/D B4 non faites. **`Aga Bob Draw` n'est pas un token public dans la Lib active.**
 
 **Cible fonctionnelle proposée (non validée comme nouvelle signature AMOS) :** déclencher le dessin de tous les Bobs actifs (0 argument, identifiants 1..64), sans modification de la sélection globale, sans allocation Chip par objet, sans changement de palette, sans `Aga Swap` et sans double restauration de fond. Il faut encore choisir une **forme de retour/erreur observable par AMOS** avant de fixer instruction/fonction et token ; `D3=1/0` est pour l'instant un **retour natif privé**, pas une preuve que le programmeur AMOS peut le lire.
 
