@@ -121,7 +121,7 @@ def main():
             assert payload==m.find(bank)+24
             assert generation==m.get(payload+24)
             assert chip in cache and chiplen>0
-            assert bnum==bank and head==m.get(HEAD)
+            assert bnum==bank and head==HEAD,(layout,bank,head,HEAD)
             assert ctx and ctx%2==0
             assert m.selected_triple()==selection
             checks+=8
