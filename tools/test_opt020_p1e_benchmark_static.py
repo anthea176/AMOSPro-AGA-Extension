@@ -58,7 +58,9 @@ def main() -> None:
     assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA):
+    # Post-R82 candidates inherit the historical Region contract; the
+    # active P0d / AP20-islands images must not be compared to the R69 Lib.
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
