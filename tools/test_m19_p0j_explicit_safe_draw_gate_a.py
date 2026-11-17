@@ -7,6 +7,8 @@ Exec/graphics and Blitter are mocked, not WinUAE or real Compiler.
 """
 from __future__ import annotations
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
+from unicorn import UC_HOOK_CODE
+from test_m19_p0a_r88_get_gate_a import SCREEN_W
 from test_m5_generic import EXEC,AMOS
 from test_m19_p0j_explicit_image_resolve_gate_a import ResolverMachine
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
@@ -155,6 +157,84 @@ def main():
         assert m.read_back()==old and len(m.paint_blits)==blits
         assert m.get(0x53000+8)==0
         checks+=3
+
+        # Regression: actual transparent mask clipped at a negative X,
+        # then an opaque Bob clipped at the right screen boundary.
+        m=prepare(layout)
+        assert m.run_select(10)==1
+        assert m.public('bob',ident=1,x=-3,y=7,image=1)==1
+        assert m.run_select(11)==1
+        assert m.public('bob',ident=2,x=SCREEN_W-5,y=11,image=1)==1
+        selected=m.selected_triple()
+        front=tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)
+        before=m.read_back()
+        i10=parse_payload(m.bank_payload(10)).image(1)
+        i11=parse_payload(m.bank_payload(11)).image(1)
+        expected=oracle(oracle(before,i10,-3,7),i11,SCREEN_W-5,11)
+        assert m.frame()==1
+        assert m.read_back()==expected
+        assert [t[0] for t in m.paint_blits if t[0] in ('BltMask','BltOpaque')]==['BltMask','BltOpaque']
+        assert m.get(0x53000+8)==0 and m.selected_triple()==selected
+        assert tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)==front
+        checks+=5
+
+        # Regression: a damaged 1-bit mask length in source AGBO must
+        # reject the ENTIRE 64-object frame before Chip staging or DMA.
+        m=prepare(layout,all64=True)
+        masked_entry=m.find(10)+24+32
+        original_mask_len=m.get(masked_entry+24)
+        assert original_mask_len>1
+        m.put(masked_entry+24,original_mask_len-1)
+        selected=m.selected_triple()
+        front=tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)
+        before=m.read_back()
+        assert m.frame()==0
+        assert m.read_back()==before and not m.paint_blits
+        assert not m.chip_live and not m.metadata
+        assert m.chip_allocs==0 and m.chip_copies==0
+        assert m.get(0x53000+8)==0 and m.selected_triple()==selected
+        assert tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)==front
+        m.put(masked_entry+24,original_mask_len)
+        assert m.frame()==1
+        assert sum(t[0]=='BltMask' for t in m.paint_blits)==32
+        assert sum(t[0]=='BltOpaque' for t in m.paint_blits)==32
+        checks+=8
+
+        # Regression: force SafePort to fail AFTER Bob 1 has already
+        # Blitted. Return is failure; partial BACK exists but the FRONT
+        # remains unchanged, with no implicit Swap. This is NOT atomicity.
+        m=prepare(layout)
+        m.safe=True
+        m.put(0x53000+12,0x5b000)
+        m.put(0x53000+20,0)
+        selected=m.selected_triple()
+        front=tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)
+        before=m.read_back()
+        img=parse_payload(m.bank_payload(10)).image(1)
+        first_only=oracle(before,img,5,7)
+        visits=[]
+        def fail_safe_on_second_bob(uc,address,size,user):
+            visits.append(address)
+            if len(visits)==2:
+                m.safe=False
+                m.put(0x53000+20,3)
+        paint_entry=m.entry+m.labels['explicit_safe_blit_entry']
+        hook=m.uc.hook_add(UC_HOOK_CODE,fail_safe_on_second_bob,
+                           begin=paint_entry,end=paint_entry)
+        try:
+            assert m.frame()==0
+        finally:
+            m.uc.hook_del(hook)
+        assert len(visits)==2 and m.read_back()==first_only
+        assert sum(t[0]=='BltMask' for t in m.paint_blits)==1
+        assert sum(t[0]=='BltOpaque' for t in m.paint_blits)==0
+        assert sum(t[0]=='WaitBlit' for t in m.paint_blits)==1
+        assert len(m.getmsg)==1 and m.get(0x53000+20)==3
+        assert m.get(0x53000+8)==0 and m.selected_triple()==selected
+        assert tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)==front
+        m.invoke('bridge')
+        assert not m.chip_live and not m.metadata
+        checks+=9
 
     print('M19 P0j-b4 NO-SHADOW PERSISTENT 64-BOB BLITTER GATE A PASS',
           checks,'tests, two disjoint native V2 layouts; 64 real Bobs from',

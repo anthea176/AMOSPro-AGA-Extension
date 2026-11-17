@@ -182,3 +182,20 @@ Références : [README API](../README.fr.md), [AGAPIC](M16_AGAPIC_FORMAT_DESIGN.
 ## 10. Chantier séparé — Sprites matériels AGA
 
 Le moteur Bob logiciel décrit ici n'est **pas** un moteur de Sprites DMA. L'auteur demande de traiter également les **Sprites matériels AGA**. Le plan détaillé est consigné séparément dans [Sprites AGA — S0/S1/S2/S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md) : audit Intuition/Chip/DMA/Copper, premier Sprite 16 px, paires attachées/largeur 32–64 px, puis multiplexage et collisions. Les 8 canaux matériels AGA, les « computed Sprites » AMOS et les objets Bob AGA ne sont **pas interchangeables**. Ne pas étendre implicitement l'API Bob ni changer sa priorité P0.
+
+
+## 11. Précontrat Draw après P0j-b4 — NON exporté, arbitrage requis
+
+**Faits vérifiés :** le chemin natif privé `explicit_frame_draw_entry` traite 1 à 64 Bobs dans l'ordre croissant, conserve la banque source de chacun, dessine dans le back buffer Safe, applique les masques individuels en Chip et ne fait **aucun Swap**. Gate A MC68020 B4 initiale PASS (60 contrôles, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174998272)) ; Gates B/C/D B4 non faites. **`Aga Bob Draw` n'est pas un token public dans la Lib active.**
+
+**Cible fonctionnelle proposée (non validée comme nouvelle signature AMOS) :** déclencher le dessin de tous les Bobs actifs (0 argument, identifiants 1..64), sans modification de la sélection globale, sans allocation Chip par objet, sans changement de palette, sans `Aga Swap` et sans double restauration de fond. Il faut encore choisir une **forme de retour/erreur observable par AMOS** avant de fixer instruction/fonction et token ; `D3=1/0` est pour l'instant un **retour natif privé**, pas une preuve que le programmeur AMOS peut le lire.
+
+**Politique de frame à prouver avant publication :**
+
+1. **Préflight et staging** : vérifier d'abord toutes les identités/images/masques nécessaires et les sources Chip, ainsi que la disponibilité du vrai back buffer ; refuser proprement toute erreur avant le premier Blit lorsque possible.
+2. **Succès** : seulement après finition synchrone du dernier Blit (`WaitBlit`), déclarer la page arrière candidate à une **présentation par un unique `Aga Swap` explicite** du programme.
+3. **Échec avant le premier Blit** : retour échec, front et back inchangés ; aucun Swap implicite.
+4. **Échec après un Blit** : retour échec, **back potentiellement partiel**. Interdire sa présentation et imposer une reconstruction intégrale du décor + Bobs sur la bonne page avant d'autoriser un nouveau Swap. La méthode de contrôle effectif est **ouverte** : drapeau de validité par page contrôlé lors de `Aga Swap`, ou mécanisme strict équivalent vérifié ; ne pas présumer qu'un simple retour 0 suffit, car `Aga Swap` est une commande publique indépendante.
+5. **Double buffering et nettoyage** : différencier les deux pages physiques, les signaux Safe/Disp, les réouvertures d'écran, `Aga Screen Close` et `End`. Ne jamais libérer la source tant que le Blitter l'utilise, ni partager un indicateur de validité entre des pages indépendantes sans preuve.
+
+**Décisions ouvertes et bloquantes :** signature AMOS et moyen de lire l'échec ; politique d'invalidation/verrouillage de Swap ; commande ou séquence fiable de reconstruction du fond ; sémantique exacte de `Clear/Update`. Les valider individuellement avant code public/AP20, nouveau binaire ou changement du test `tests/current/` ; les Gates A/B/C/D restent distinctes.

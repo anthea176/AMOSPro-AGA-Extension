@@ -1,12 +1,21 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b4 — peintre Safe/WaitBlit multi-banques sans shadow (source-only)
+
+L'entrée privée `explicit_safe_blit_entry` reprend les précontrôles AGA/back buffer de P0d, appelle `explicit_image_resolve_entry` (P0j-b3) avec **D3 = banque AGBO d'origine**, puis rejoint à une étiquette zéro octet les instructions P0d originales de contrôle SafePort, Blitter, masques, clipping et `WaitBlit`. `explicit_frame_draw_entry` prévalide P0h/P0j-a, puis parcourt les 64 slots en appelant P0g et le staging P0j-b2 par banque, sans lire/écrire `bank_active_state` ni déclencher de Swap.
+
+**Gate A MC68020 PASS (60 contrôles initiaux)** : deux implantations V2 natives, 64 Bobs banques 10/11, masques pixel-exacts, deux allocations Chip réutilisées, front inchangé, zéro écriture dans le shadow. [CI 44174998272](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174998272) et [rapport B4](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md). Source BOBS **20 104 octets** / SHA256 `6cde37acbee13004acf4cf23582b267a11247c28c85011896de7570c190b60e8` ; candidate AP20 privée **100 596 octets** / SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b` ; 85 commandes, 178 entrées, 4 unités, PC16 max 854.
+
+**Limite :** un échec de SafePort ou source modifiée **après** le premier Blit peut laisser le back buffer partiel. Le moteur B4 ne présente rien de lui-même, mais ne protège pas encore un appel explicite à `Aga Swap` ; un état par page et un mécanisme de reconstruction/retour AMOS restent à définir avant l'API publique. Gates B/C/D B4 non testées. `dist/AMOSPro_AGA.Lib` et l'unique ASC actif restent ceux des îlots V2 précédemment validés B/C.
+
+
 ## M19 P0j-b3 — résolveur Chip indépendant de la sélection
 
 L'entrée privée `explicit_image_resolve_entry` reçoit banque D3, image D0, sortie 36 octets A1, A5 propriétaire. La vérification du contexte Chip de P0j-b1 précède un branchement vers le **validateur de répertoire/masques/offsets P0d original** à une étiquette zéro octet. Le source P0d historique n'a pas changé de bytes, et aucune lecture ni écriture du shadow sélectionné n'intervient dans ce nouveau parcours.
 
 **Gate A MC68020 PASS — 52 contrôles**, [CI 44174319362](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174319362), deux implantations AP20 V2, masques d'une banque 10 préparés en Chip tandis que 11 reste sélectionnée, descripteurs pixel et masque vérifiés en mémoire et refus des sources périmées. Source BOBS **19 338 octets** SHA256 `ac4252e15ec04467d6789869f0f247c49249c5799276bfc07099811529d51437`, AP20 en mémoire **99 832 octets** SHA256 `90b5d69743bb93c5de9f97039e802e9bedd6866302e7b655efdde4c4a2f5e585`, 85 commandes / 178 entrées / 4 groupes, PC16 max 854.
 
-**Reste P0j-b4** : mettre le peintre P0d Safe/WaitBlit sur cette nouvelle voie et parcourir les 64 objets sans shadow temporaire. Aucun changement Lib/ASC/R84 ni Gate B/C/D pour b3. [Rapport](M19_P0J_EXPLICIT_IMAGE_RESOLVE_GATE_A_2026-11-17.md).
+**À la date du jalon P0j-b3, il restait P0j-b4** ; ce raccordement est désormais testé en Gate A, voir la section B4 ci-dessus. Aucun changement Lib/ASC/R84 ni Gate B/C/D pour b3. [Rapport](M19_P0J_EXPLICIT_IMAGE_RESOLVE_GATE_A_2026-11-17.md).
 
 
 ## M19 P0j-b2 — staging Chip explicitement indexé par banque (17/11/2026)

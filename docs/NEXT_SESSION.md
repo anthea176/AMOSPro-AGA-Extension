@@ -1,9 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M19 P0j-b4 — rendu des Bobs persistants sans shadow, source-only
+## M19 P0j-b4 — parcours Safe/Blitter 64 Bobs sans shadow : Gate A PASS
 
-[Nouveau chemin P0j-b4](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md) : P0h/P0j-a préflight de 64 objets, P0j-b2 staging Chip explicite, P0j-b3 image/masque explicite, puis painter P0d Safe/WaitBlit **sans projection dans `bank_active_state`**. Gate A à valider ; aucune commande publique `Aga Bob Draw`, ni Lib/ASC modifiés. Gates B/C/D non exécutées. Un échec tardif peut laisser le back buffer masqué partiel et doit interdire la présentation.
+[Rapport et contrat d'échec](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md). **Gate A MC68020 PASS (60 contrôles natifs initiaux)** sur deux implantations AP20 V2, [CI 44174998272](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174998272). Le parcours privé exécute P0h/P0j-a avant DMA, P0j-b2 Chip par banque, P0j-b3 masque/image par banque, puis le peintre P0d Safe/WaitBlit ; **64 Bobs pixel-exacts sur banques 10/11, zéro écriture de `bank_active_state`, aucun Swap**. **Candidate source-only en mémoire : 100 596 octets**, SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`, 85 commandes / 178 entrées / quatre unités. Source BOBS 20 104 octets, SHA256 `6cde37acbee13004acf4cf23582b267a11247c28c85011896de7570c190b60e8`.
 
+**Risque bloquant avant Draw public :** si un échec survient après le premier Blit, le back buffer peut être partiel ; la commande n'a pas de Swap implicite, mais `Aga Swap` n'est **pas verrouillé** contre une présentation explicite ultérieure. Le banc B4 existant est renforcé pour vérifier une corruption de masque avant DMA, le clipping et un refus SafePort entre deux Bobs. **Statut de ces cas supplémentaires : à établir par leur CI propre**. Définir une politique vérifiable de page arrière invalide / reconstruction et un statut AMOS public avant toute exposition de `Aga Bob Draw`. **Gates B/C/D pour B4 non exécutées ; aucun binaire, ASC, LAST_GOOD ni archive touchés.**
 
 ## M19 P0j-b3 — descripteur d'image Chip par banque (source-only)
 
