@@ -1,12 +1,19 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## M19 P0j-b5 — barrière privée avant le Swap natif (Gate A en attente)
+## M19 P0j-b6 — token de fonction Draw source-only (Gate A en attente)
+
+Le builder `build_m19_p0j_public_draw_in_memory.py` reprend **l'intégralité** de P0j-b5 (SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`) et ajoute, **dans le HUNK AP20 reconstruit en mémoire uniquement**, un token `aga bob draw` fonction numérique (`instruction=1`, `function=180`, signature `0`). Le stub `Rbsr` local à l'îlot BOBS 177 vise l'entrée native B5 `guarded_frame_draw_entry`, sans nouveau source natif, sans arguments/GetP et sans toucher aux anciens tokens ou à l'AGA Swap original. La portée PC16 de tous les stubs doit rester signée 16 bits et l'inventaire passer de 85/180 à **86 commandes / 181 sections AP20** (quatre unités).
+
+La fonction renvoie le résultat privé MC68020 `D3=1` (frame complète) ou `D3=0` (échec) avec `D2=0` ; aucune permutation implicite. La routine `guarded_swap_entry` B5 reste obligatoire dans le même binaire pour refuser toute présentation d'une page DIRTY, notamment après un échec du deuxième Bob. **Gate A B6 en attente** ; les modèles de relocalisation ne constituent pas une preuve du véritable AMOS Compiler. Pas de modification `dist/` ni de l'ASC de campagne. [Contrat B6](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md).
+
+
+## M19 P0j-b5 — barrière privée avant le Swap natif (Gate A PASS, 86 contrôles)
 
 La candidate **source-only** part du SHA AP20 B4 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`. La nouvelle unité BOBS est une extension de source, le préfixe B4 et la routine AGA Swap originale restent inchangés. Le builder réindexe uniquement les tokens existants `Aga Swap` et `Aga Screen Close` vers deux nouveaux stubs AP20 placés **après** l'îlot BOBS (contrôle des portées PC16), sans ajouter de commande publique.
 
 `guarded_frame_draw_entry` conserve `D3=1` si le dessin synchrone des 64 objets a réussi, `D3=0` sinon. Il arme DIRTY avant appel B4, passe à READY uniquement sur succès, et laisse DIRTY persister après échec, **y compris avant DMA** (prudence). `guarded_swap_entry` refuse DIRTY et vérifie l'identité A5/AGA State/DBState/front; sur READY/aucune erreur, la cible originale vérifiée est `State + $09E0` (`AGA Swap` à l'offset groupe AGA `$0BA2`, State à `$01C2`). La commande originale retourne 1/0 ; le garde n'efface READY qu'après un succès. `guarded_close_entry` réutilise le pont P0c vérifié et efface la barrière seulement si l'écran est réellement fermé. Le périmètre n'inclut pas d'appel public `Aga Bob Draw` ni le nettoyage End en interruption.
 
-**Gate A B5 non encore vérifiée**, B/C/D non réalisées. Les services système, le Blitter et le matériel restent simulés dans les tests CPU020. Aucune bascule vers `dist/AMOSPro_AGA.Lib` ni modification du test WinUAE actif. [Contrat et limites](M19_P0J_SWAP_BARRIER_GATE_A_2026-11-17.md).
+**Gate A B5 MC68020 PASS : 86 contrôles sur deux placements** ([CI 44182795423](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44182795423)), candidate AP20 **101 460 octets**, SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`, quatre unités, 180 entrées, 85 commandes. B/C/D non réalisées. Les services système, le Blitter et le matériel restent simulés dans les tests CPU020. Aucune bascule vers `dist/AMOSPro_AGA.Lib` ni modification du test WinUAE actif. [Contrat et limites](M19_P0J_SWAP_BARRIER_GATE_A_2026-11-17.md).
 
 
 ## M19 P0j-b4 — peintre Safe/WaitBlit multi-banques sans shadow (source-only)

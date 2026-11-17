@@ -1,6 +1,6 @@
-# M19 P0j-b5 — garde de présentation des Bobs : Gate A en attente
+# M19 P0j-b5 — garde de présentation des Bobs : Gate A PASS (86 contrôles)
 
-**MC68020 / 68EC020 minimum.** Implémentation privée AP20 V2, construite exclusivement en mémoire depuis P0j-b4 (100 596 octets, SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`). **Aucune nouvelle commande publique**, `Aga Bob Draw` n'est pas exposée. Aucun changement de `dist/AMOSPro_AGA.Lib`, du seul ASC actif, de R84 LAST_GOOD ni des archives.
+**MC68020 / 68EC020 minimum. Gate A PASS : 86 contrôles natifs, deux implantations V2** ([CI 44182795423](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44182795423)). Candidate AP20 en mémoire : **101 460 octets**, SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e` ; source BOBS **20 944 octets**, SHA256 `d02eb6c89863fbb769d699296a923dc2997e2b39184c2c7d51800c28c10c1b5e` ; **85 commandes**, 180 entrées AP20, 4 unités, PC16 max 27 992.** Implémentation privée AP20 V2, construite exclusivement en mémoire depuis P0j-b4 (100 596 octets, SHA256 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`). **Aucune nouvelle commande publique**, `Aga Bob Draw` n'est pas exposée. Aucun changement de `dist/AMOSPro_AGA.Lib`, du seul ASC actif, de R84 LAST_GOOD ni des archives.
 
 ## Raccordements
 
@@ -9,7 +9,7 @@
 3. `guarded_close_entry` : route le token existant `Aga Screen Close` vers son pont P0c natif déjà vérifié. DIRTY n'est effacé **que si Screen est réellement fermé**. Fermer l'écran après un SafePort restant pending n'est pas validé par ce banc ; les réponses Safe/Disp doivent être résolues selon le contrat OS.
 4. Pour maintenir la portée PC16, les deux nouveaux stubs AP20 sont ajoutés **après** la quatrième unité BOBS sans modifier les stubs historiques, ni le noyau AGA. Les tokens existants changent seulement d'index d'entrée ; **85 signatures de commandes restent identiques**, quatre unités natives, aucune cinquième unité.
 
-## Tests demandés
+## Tests Gate A exécutés (PASS)
 
 [Émetteur](../tools/m19_p0j_swap_barrier_emit.py) · [Builder privé](../tools/build_m19_p0j_swap_barrier_in_memory.py) · [Banc natif MC68020](../tools/test_m19_p0j_swap_barrier_gate_a.py).
 
@@ -23,6 +23,6 @@
 
 ## Décisions et limites
 
-Le futur retour public proposé est `_OK=Aga Bob Draw` : **fonction numérique 0/1 sans argument, à confirmer par tokenisation et vrai AMOS Compiler**. La commande d'objet `Aga Bob N,X,Y,I` conserve sa fonction de mise à jour de l'état, sans dessin ni Swap.
+Le futur retour public proposé est `_OK=Aga Bob Draw` : **fonction numérique 0/1 sans argument**. La tokenisation est expérimentée séparément en P0j-b6 ([contrat](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md)), sans exposition dans la bibliothèque installable et sans vrai AMOS Compiler. La commande d'objet `Aga Bob N,X,Y,I` conserve sa fonction de mise à jour de l'état, sans dessin ni Swap.
 
 Cette solution est conservatrice : **la seule récupération après échec est Close/Reopen**. Une reconstruction du back buffer sans fermeture devra être prouvée avant de créer une commande de déverrouillage. Toute voie alternative appelant directement l'entrée native AGA Swap au lieu du token public sort du contrat ; le moteur doit ensuite vérifier End, Open/Close et les deux pages physiques. **Gates B Runtime, C vrai Compiler, D matériel non testées** pour B5. Ce document ne constitue aucune autorisation de bascule de bibliothèque.

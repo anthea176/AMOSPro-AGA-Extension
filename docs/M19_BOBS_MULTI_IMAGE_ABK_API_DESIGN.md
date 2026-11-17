@@ -203,6 +203,11 @@ Le moteur Bob logiciel décrit ici n'est **pas** un moteur de Sprites DMA. L'aut
 
 ## 12. P0j-b5 — contrat de retour et de présentation (prototype non installé)
 
-La **proposition** pour la future API publique est la fonction numérique sans argument `_OK=Aga Bob Draw` (retour `1` si toute la frame Bobs a été préparée sans erreur, `0` si refus), distincte de l'instruction de placement `Aga Bob N,X,Y,I`. Elle n'est **ni tokenisée ni compilée AMOS**. Cette fonction ne doit jamais déclencher de `Aga Swap` automatique.
+La **proposition** pour la future API publique est la fonction numérique sans argument `_OK=Aga Bob Draw` (retour `1` si toute la frame Bobs a été préparée sans erreur, `0` si refus), distincte de l'instruction de placement `Aga Bob N,X,Y,I`. Elle n'était pas tokenisée en B5 ; **P0j-b6 prépare désormais un token AP20 expérimental en mémoire**, sans véritable compilation AMOS ni installation. Cette fonction ne doit jamais déclencher de `Aga Swap` automatique.
 
 Le modèle B5 provisoire est volontairement **fail-closed** : Draw privé passe DIRTY avant le rendu, READY après succès ; un seul échec laisse DIRTY et **`Aga Swap` retourne 0 sans appeler `ChangeScreenBuffer`**, même si le premier Bob a déjà modifié le back buffer. Une nouvelle invocation de Draw ne permet pas d'ignorer l'erreur précédente. Seul un `Aga Screen Close` effectivement terminé efface la barrière. La reconstruction sans fermeture pourra être étudiée ensuite, mais nécessitera une preuve que le décor entier et tous les Bobs ont été régénérés sur **la bonne page** avant levée du verrou. **Ce protocole n'est pas encore une fonctionnalité de la bibliothèque installable** ; Gates B/C/D B5 non testées, voir [rapport B5](M19_P0J_SWAP_BARRIER_GATE_A_2026-11-17.md).
+
+
+## 13. P0j-b6 — prototype de signature publique Draw (source-only)
+
+La syntaxe candidate est `_OK=Aga Bob Draw` : fonction numérique sans argument, token AP20 `aga bob draw` avec signature `0`, entrée nouvelle 180 pointant directement sur le Draw privé protégé B5. Retour `1` pour le rendu complet et `0` après refus. Le programme doit appeler un seul `Aga Swap` explicite **uniquement après un Draw réussi** ; le Swap lui-même reste protégé contre toute frame DIRTY. Aucune instruction Draw à quatre paramètres n'est ajoutée. Le constructeur/source reste confiné en mémoire, le vrai Compiler AMOS et WinUAE n'ont pas validé le token, et la Lib publique active ne contient pas cette commande. [Protocole P0j-b6](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md).
