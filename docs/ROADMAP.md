@@ -2,7 +2,7 @@
 
 ## M19 P0j-b1 — première étape de suppression du shadow temporaire
 
-[Lookup par banque indépendante de la sélection](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md), MC68020 source-only. Étape suivante : valider et préparer une source AGBO par numéro de banque sans `bank_active_state`, puis résoudre ses images en Chip et dessiner dans le back buffer sans projection. Gate A du lookup à confirmer ; aucun binaire officiel remplacé.
+[Lookup par banque indépendante de la sélection](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md), MC68020 source-only. Étape suivante : valider et préparer une source AGBO par numéro de banque sans `bank_active_state`, puis résoudre ses images en Chip et dessiner dans le back buffer sans projection. **Gate A MC68020 PASS (68 contrôles)**, [CI M19](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44170930154) ; source 18 802 octets SHA256 `6f8d3d3edc887e707288d49981019c58b640b7a1f20b2b235bf73fafaebca7cf`, candidate en mémoire 99 280 octets SHA256 `757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e`. Seul le lookup du cache Chip est indépendant de la sélection ; la préparation et le résolveur P0d restent à refondre. Aucun binaire officiel remplacé.
 
 
 ## M19 P0j-a — premier précontrôle d'images avant DMA

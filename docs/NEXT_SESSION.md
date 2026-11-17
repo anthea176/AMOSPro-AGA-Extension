@@ -2,7 +2,7 @@
 
 ## M19 P0j-b1 — accès Chip explicite par banque, premier sous-jalon
 
-[Implémentation + banc P0j-b1](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md). Nouvelle entrée native privée `explicit_bank_lookup_entry` : vérifie directement AGBO, génération et P0c Chip par numéro de banque, **sans consulter ni modifier `bank_active_state`**. Test source-only sur deux banques déjà préparées ; Gate A à confirmer en CI, Gates B/C non exécutées. La préparation Chip et le résolveur d'image doivent encore devenir explicites avant la nouvelle commande Draw. Lib installable / ASC / LAST_GOOD protégés.
+[Implémentation + banc P0j-b1](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md). Nouvelle entrée native privée `explicit_bank_lookup_entry` : vérifie directement AGBO, génération et P0c Chip par numéro de banque, **sans consulter ni modifier `bank_active_state`**. Test source-only sur deux banques déjà préparées ; **Gate A MC68020 PASS : 68 cas**, [CI M19 44170930154](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44170930154). Code natif 18 802 octets SHA256 `6f8d3d3edc887e707288d49981019c58b640b7a1f20b2b235bf73fafaebca7cf` ; candidate AP20 source-only **99 280 octets**, SHA256 `757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e` ; B/C non exécutées. Le banc surveille les écritures dans `bank_active_state` pendant le lookup : zéro écriture autorisée. La préparation Chip et le résolveur d'image doivent encore devenir explicites avant la nouvelle commande Draw. Lib installable / ASC / LAST_GOOD protégés.
 
 
 ## M19 P0j-a — prévalidation des images de toute la frame (source-only)

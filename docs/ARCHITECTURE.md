@@ -1,5 +1,12 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b1 — lookup Chip source-only explicitement indexé par banque
+
+L'entrée privée `explicit_bank_lookup_entry` accepte D3 = banque AGBO, A1 = sortie 28 octets, A5 = owner AMOS. Elle retrouve le P0c registry node de **cette banque**, compare le pointeur `Bnk.GetAdr` et la génération de l'AGBO avec le contexte Chip, et contrôle MEMF_CHIP avant de publier la sortie. Aucune lecture/écriture de `bank_active_state` dans cette entrée, et hook de test de non-écriture. **Gate A MC68020 PASS (68 contrôles)**, [CI M19 44170930154](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44170930154), avec services système simulés et deux implantations AP20 V2. Code BOBS source-only **18 802 octets**, SHA256 `6f8d3d3edc887e707288d49981019c58b640b7a1f20b2b235bf73fafaebca7cf` ; image AP20 en mémoire **99 280 octets**, SHA256 `757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e`, 85 commandes / 178 entrées / 4 îlots. Gates B/C/D P0j-b1 non exécutées.
+
+**Le staging P0c et le résolveur P0d utilisent encore le shadow sélectionné** : b1 ne résout que la lecture du contexte déjà préparé. Aucun Draw public ni changement de Lib, ASC ou `LAST_GOOD`. [Rapport](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md).
+
+
 ## M19 P0j-a — prévalidation native de toute la frame avant Blitter (17/11/2026)
 
 La source-only candidate P0j-a ajoute un passage pré-DMA sur les **64 Bobs** après P0h et avant le P0i. Chaque objet actif utilise l'identité P0g et le `Bnk.GetAdr` de sa propre banque, recherche son image dans le répertoire AGBO et valide profondeur, géométrie, stride, longueurs et masques utilisés. **Gate A MC68020 PASS (68 vérifications)**, [CI M19 44167065047](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44167065047), avec services graphiques simulés. Les corruptions de l'image du 64e Bob refusent la frame avant le premier Blit. Candidate source-only **98 652 octets** SHA256 `4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab`, BOBS source natif **18 176 octets** SHA256 `a91a0b99a05811a7f333738e1327b90a90dfe1aa947ec712d4290f568b88f618`. API 85 commandes / 178 AP20 / quatre îlots inchangés.

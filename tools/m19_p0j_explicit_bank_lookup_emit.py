@@ -28,6 +28,8 @@ from m19_p0a_amos_bank_transaction_emit import CUR_BANKS_A5
 from m19_p0j_frame_image_preflight_emit import emit_image_preflight
 
 GETADR=rjsr(main_index('Bnk.GetAdr'))
+P0JB1_NATIVE_BYTES=18802
+P0JB1_NATIVE_SHA256='6f8d3d3edc887e707288d49981019c58b640b7a1f20b2b235bf73fafaebca7cf'
 MAX_NODES=256
 COOKIE=0x43484950
 MEMF_CHIP=2
@@ -163,6 +165,9 @@ def emit_explicit_bank_lookup() -> tuple[bytes,dict[str,int]]:
         raise ValueError('P0j-b1 changed historical native prefix or PC16')
     if native.count(GETADR)!=previous.count(GETADR)+1:
         raise ValueError('P0j-b1 explicit native branch lacks AMOS GetAdr')
+    if (len(native)!=P0JB1_NATIVE_BYTES or
+            sha256(native).hexdigest()!=P0JB1_NATIVE_SHA256):
+        raise ValueError('P0j-b1 MC68020 explicit-bank native source SHA drift')
     return native,c.labels
 
 if __name__=='__main__':

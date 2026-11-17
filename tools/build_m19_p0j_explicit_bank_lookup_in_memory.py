@@ -12,6 +12,8 @@ from m19_p0j_frame_image_preflight_emit import emit_image_preflight
 from m19_p0j_explicit_bank_lookup_emit import emit_explicit_bank_lookup
 
 P0JA_SHA='4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab'
+P0JB1_BYTES=99280
+P0JB1_SHA256='757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e'
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0j-b1 EXPLICIT PER-BANK CHIP LOOKUP SOURCE ONLY\0'
        b'$VER: AGA P0j-b1 uninstalled private bank lookup\0')
@@ -42,6 +44,9 @@ def build() -> tuple[bytes,dict]:
     links=pc16_displacements(pt)
     if groups!=[142,153,156,177] or max(map(abs,links.values()))>=1000:
         raise ValueError('P0j-b1 V2 island PC16 overflow')
+    if (len(result)!=P0JB1_BYTES or sha256(result).hexdigest()!=P0JB1_SHA256
+            or len(suffix)!=626 or max(map(abs,links.values()))!=854):
+        raise ValueError('P0j-b1 rebuilt AP20 source SHA/size/PC16 drift')
     return result,dict(
         sha256=sha256(result).hexdigest(),size=len(result),
         appended=len(suffix),public_commands=85,ap20_entries=178,

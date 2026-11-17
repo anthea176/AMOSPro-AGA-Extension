@@ -3,6 +3,7 @@
 """M19 P0j-b1: actual MC68020 original-bank lookup never touches selector."""
 from __future__ import annotations
 from struct import unpack
+from unicorn import UC_HOOK_MEM_WRITE
 from unicorn.m68k_const import UC_M68K_REG_SR,UC_M68K_REG_PC
 from test_m5_generic import DR,AR,STACK,STOP
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
@@ -27,6 +28,14 @@ class ExplicitMachine(ImageGateMachine):
             self.native_explicit,self.entry,{},self.uc))
         self.labels['routed_paint_all_entry']=self.labels['routed_paint_prechecked_entry']
         self.explicit_trace=[]
+        self.explicit_shadow_writes=[]
+        self.in_explicit_lookup=False
+        shadow_start=self.entry+self.labels['bank_active_state']
+        def track_selector(uc,access,address,size,value,user):
+            if self.in_explicit_lookup:
+                self.explicit_shadow_writes.append((address,size,value))
+        self.uc.hook_add(UC_HOOK_MEM_WRITE,track_selector,
+                         begin=shadow_start,end=shadow_start+11)
         from unicorn import UC_HOOK_CODE
         for key in ('explicit_bank_lookup_entry','explicit_lookup_node',
                     'explicit_lookup_found','explicit_lookup_return',
@@ -62,8 +71,15 @@ class ExplicitMachine(ImageGateMachine):
         self.uc.reg_write(UC_M68K_REG_SR,0x2000)
         self.uc.reg_write(AR[7],STACK)
         self.put(STACK,STOP)
-        self.uc.emu_start(self.entry+self.labels['explicit_bank_lookup_entry'],
-                          STOP,count=13000000)
+        self.explicit_shadow_writes=[]
+        self.in_explicit_lookup=True
+        try:
+            self.uc.emu_start(self.entry+self.labels['explicit_bank_lookup_entry'],
+                              STOP,count=13000000)
+        finally:
+            self.in_explicit_lookup=False
+        assert not self.explicit_shadow_writes,('bank_active_state written',
+                                                self.explicit_shadow_writes)
         assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
         assert self.a(7)==STACK+4
         for reg,previous in old.items():
