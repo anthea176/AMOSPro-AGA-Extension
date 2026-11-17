@@ -108,6 +108,9 @@ def emit_bank_image_resolve() -> tuple[bytes, dict[str,int]]:
     c.lea(0, 'bank_active_state')
     c.move(M(0, 4), D(0)); S(D(0), 'payload')
     c.tst(D(0)); B(7, 'resolve_fail')
+    # Zero-byte anchor: P0j-b3 can supply a verified payload directly
+    # without changing historical P0d resolver machine-code bytes.
+    L('resolve_live_payload')
     c.move(D(0), A(0))
     c.move(I(0), D(0))
     c.move(M(0, 8), D(0), 'w')
