@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0j-b1 — accès Chip explicite par banque, premier sous-jalon
+
+[Implémentation + banc P0j-b1](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md). Nouvelle entrée native privée `explicit_bank_lookup_entry` : vérifie directement AGBO, génération et P0c Chip par numéro de banque, **sans consulter ni modifier `bank_active_state`**. Test source-only sur deux banques déjà préparées ; Gate A à confirmer en CI, Gates B/C non exécutées. La préparation Chip et le résolveur d'image doivent encore devenir explicites avant la nouvelle commande Draw. Lib installable / ASC / LAST_GOOD protégés.
+
+
 ## M19 P0j-a — prévalidation des images de toute la frame (source-only)
 
 [Implémentation et limites P0j-a](M19_P0J_IMAGE_PREFLIGHT_GATE_A_2026-11-17.md). Source native MC68020, 64 objets, banque source individuelle, ID et géométrie d'image contrôlés avant le premier Chip/Blit. Nouveau wrapper privé P0j devant le rendu P0i inchangé. **Gate A MC68020 PASS : 68 contrôles**, [CI M19 44167065047](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44167065047). Source natif P0j SHA256 `a91a0b99a05811a7f333738e1327b90a90dfe1aa947ec712d4290f568b88f618` (18 176 octets) ; candidate AP20 V2 source-only **98 652 octets**, SHA256 `4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab`, 85 commandes/178 entrées/quatre unités ; B/C non exécutées. Les tests couvrent image absente n°64, profondeur, stride, masque et longueur des pixels corrompus avant le premier Blit. **La projection temporaire de sélection P0i est encore présente : étape explicite par banque restante.** Lib/ASC et LAST_GOOD inchangés.
