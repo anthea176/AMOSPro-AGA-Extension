@@ -21,6 +21,8 @@ from amos_main_abi import main_index,rjsr
 from m19_p0i_multibank_draw_emit import emit_multibank_paint,MAX_BOBS
 
 GETADR=rjsr(main_index('Bnk.GetAdr'))
+P0J_NATIVE_BYTES=18176
+P0J_NATIVE_SHA256='a91a0b99a05811a7f333738e1327b90a90dfe1aa947ec712d4290f568b88f618'
 FRAME_BYTES=160
 RECORD_OFFSET=96
 F=dict(ident=0,result=4,bank=8,image=12,ptr=16,count=20,
@@ -212,6 +214,8 @@ def emit_image_preflight() -> tuple[bytes,dict[str,int]]:
         raise ValueError('P0j source changed pinned P0i or exceeded PC16')
     if native.count(GETADR)!=previous.count(GETADR)+1:
         raise ValueError('P0j must use independently verified Bnk.GetAdr')
+    if len(native)!=P0J_NATIVE_BYTES or sha256(native).hexdigest()!=P0J_NATIVE_SHA256:
+        raise ValueError('P0j MC68020 native source byte-exact SHA drift')
     return native,c.labels
 
 

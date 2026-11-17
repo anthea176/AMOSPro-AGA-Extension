@@ -12,6 +12,8 @@ from m19_p0i_multibank_draw_emit import emit_multibank_paint
 from m19_p0j_frame_image_preflight_emit import emit_image_preflight
 
 P0I_SHA='004a04f9819fc2df9498ec8887e3de8a6533a7f620f04743c1fa1ae6ee872fa4'
+P0J_IMAGE_BYTES=98652
+P0J_IMAGE_SHA256='4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab'
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0j PRIVATE IMAGE GATE PRE-DMA SOURCE ONLY\0'
        b'$VER: AMOSPro_AGA P0j image preflight UNINSTALLED\0')
@@ -45,6 +47,9 @@ def build()->tuple[bytes,dict]:
     links=pc16_displacements(parts2)
     if groups!=[142,153,156,177] or max(map(abs,links.values()))>=1000:
         raise ValueError('P0j AP20 PC16 V2 island drift')
+    if (len(result)!=P0J_IMAGE_BYTES or sha256(result).hexdigest()!=P0J_IMAGE_SHA256
+            or len(suffix)!=846 or max(map(abs,links.values()))!=854):
+        raise ValueError('P0j in-memory AP20 V2 image SHA/PC16 drift')
     return result,dict(sha256=sha256(result).hexdigest(),size=len(result),
         predecessor_sha=meta['sha256'],appended=len(suffix),
         public_commands=85,ap20_entries=len(parts2),native_groups=groups,

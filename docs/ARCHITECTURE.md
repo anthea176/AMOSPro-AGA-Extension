@@ -1,5 +1,12 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-a — prévalidation native de toute la frame avant Blitter (17/11/2026)
+
+La source-only candidate P0j-a ajoute un passage pré-DMA sur les **64 Bobs** après P0h et avant le P0i. Chaque objet actif utilise l'identité P0g et le `Bnk.GetAdr` de sa propre banque, recherche son image dans le répertoire AGBO et valide profondeur, géométrie, stride, longueurs et masques utilisés. **Gate A MC68020 PASS (68 vérifications)**, [CI M19 44167065047](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44167065047), avec services graphiques simulés. Les corruptions de l'image du 64e Bob refusent la frame avant le premier Blit. Candidate source-only **98 652 octets** SHA256 `4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab`, BOBS source natif **18 176 octets** SHA256 `a91a0b99a05811a7f333738e1327b90a90dfe1aa947ec712d4290f568b88f618`. API 85 commandes / 178 AP20 / quatre îlots inchangés.
+
+**Limites** : le routage P0i effectue toujours une projection temporaire non réentrante de `bank_active_state`. Le staging Chip P0c vérifie intégralement les banques lors de la préparation après le précontrôle, et les échecs asynchrones ou la mutation d'une banque entre les passes ne sont pas atomiques. Aucun `Aga Bob Draw` public ; la Lib `dist/AMOSPro_AGA.Lib`, le seul ASC et `LAST_GOOD` restent identiques. [Rapport P0j-a](M19_P0J_IMAGE_PREFLIGHT_GATE_A_2026-11-17.md).
+
+
 ## M19 P0i — chaîne native multi-banques vers le Blitter (17/11/2026)
 
 **Gate A MC68020 PASS** — [CI M19 44163799991](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44163799991), **76 contrôles**, deux placements natifs AP20 V2 simulés, jusqu'à **64 Bobs réellement peints** depuis deux banques d'origine. L'entrée privée `routed_paint_all_entry` effectue un précontrôle P0h des 64 slots puis utilise la lecture P0g, le cache Chip P0c, la fonction Safe/WaitBlit P0d et l'identité P0f ; ordre 1..64, pas de Swap. Le front reste intact, le rendu Blitter est pixel-exact. Chaque banque reste indépendante dans le registre des allocations Chip.

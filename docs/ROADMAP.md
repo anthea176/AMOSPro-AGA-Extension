@@ -2,7 +2,7 @@
 
 ## M19 P0j-a — premier précontrôle d'images avant DMA
 
-[Source/validation P0j-a](M19_P0J_IMAGE_PREFLIGHT_GATE_A_2026-11-17.md) : passage supplémentaire sur 64 Bobs, vérifiant pour chaque banque d'origine l'existence de l'image et sa profondeur avant tout Blit. Source-only, Gate A à confirmer ; commande publique non exposée. **Suite de P0j :** supprimer le shadow temporaire en ajoutant les chemins explicites par banque aux routines P0c/P0d ; prévalidation ne constitue pas encore une frame entièrement atomique.
+[Source/validation P0j-a](M19_P0J_IMAGE_PREFLIGHT_GATE_A_2026-11-17.md) : passage supplémentaire sur 64 Bobs, vérifiant pour chaque banque d'origine l'existence de l'image et sa profondeur avant tout Blit. Source-only, **Gate A MC68020 PASS (68 vérifications)**, [CI M19 44167065047](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44167065047); candidate AP20 **98 652 octets**, SHA256 `4d43956a5dfbc1ae9cb1baf7058f48e6748f8bf80ef948fcc6b0a1872960a4ab`, commande publique non exposée. **Suite de P0j :** supprimer le shadow temporaire en ajoutant les chemins explicites par banque aux routines P0c/P0d ; prévalidation ne constitue pas encore une frame entièrement atomique.
 
 
 ## M19 P0i — prototype natif de dessin multi-banques
