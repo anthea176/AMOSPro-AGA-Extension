@@ -1,5 +1,8 @@
 name: Artifact integrity
 
+# M19 B7: historical source checks must accept only the SHA-pinned current Lib;
+# the archival builders and protected LAST_GOOD remain independently verified.
+
 on:
   push:
     branches: [main]
