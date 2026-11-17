@@ -233,7 +233,10 @@ def main():
         assert len(m.getmsg)==1 and m.get(0x53000+20)==3
         assert m.get(0x53000+8)==0 and m.selected_triple()==selected
         assert tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)==front
-        m.invoke('bridge')
+        # The mocked real AGA Close does not implement pending SafePort
+        # cleanup LVOs. Exercise only the native Chip registry here;
+        # full Close with Safe pending remains a separate B/C scenario.
+        assert m.call('registry_close_entry')==1
         assert not m.chip_live and not m.metadata
         checks+=9
 
