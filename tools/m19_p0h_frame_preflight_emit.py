@@ -19,6 +19,7 @@ from __future__ import annotations
 from hashlib import sha256
 from m68k_emit import Code, D, A, M, I
 from m19_p0g_checked_read_emit import emit_checked_read
+from m19_p0e_v2_object_bridge_emit import END_DELTA, END_SIGNATURE
 
 MAX_BOBS = 64
 FRAME_BYTES = 128
@@ -78,6 +79,20 @@ def emit_frame_preflight() -> tuple[bytes, dict[str, int]]:
     c.tst(D(0)); B(7, 'frame_preflight_return')
     G('state', A(0))
     c.tst(M(0, 0)); B(7, 'frame_preflight_return')  # live AGA Screen
+
+    # The P0c mock may have a plausible temporary screen pointer.
+    # Only the *original* AGA unit's native End prologue proves that
+    # A5+$1c8 comes from real AGA Init, even after Compiler relocation.
+    G('state', D(0))
+    c.imm('cmp', END_DELTA, D(0)); B(5, 'frame_preflight_return')
+    c.imm('sub', END_DELTA, D(0))
+    c.move(D(0), A(4))
+    c.move(A(4), A(1))
+    c.raw('2c780004'); c.call_os(-534)  # TypeOfMem(original AGA End)
+    c.tst(D(0)); B(7, 'frame_preflight_return')
+    for index, word in enumerate(END_SIGNATURE):
+        c.move(M(4, index*4), D(0))
+        c.imm('cmp', word, D(0)); B(6, 'frame_preflight_return')
 
     S(I(1), 'ident')
     L('frame_preflight_next')
