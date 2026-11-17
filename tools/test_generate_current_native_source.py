@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, AP20_UNIT5_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,31 +26,6 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
-        if exp.sha(wrapped)==AP20_UNIT5_SHA:
-            # The live five-unit image has two temporary diagnostic tokens.
-            # Historic monolithic source export MUST remain fail-closed.
-            from compiler_relocation import unpack_ap20
-            from audit_ap20 import inspect,parse
-            from build_m19_ap20_unit5_in_memory import build as build_five
-            from build_m19_ap20_islands_in_memory import build as build_four
-            image,meta=build_five()
-            baseline,base_meta=build_four()
-            assert wrapped==image and len(image)==138044
-            assert meta['sha256']==AP20_UNIT5_SHA and meta['ap20_entries']==181
-            assert meta['native_groups']==[142,153,156,177,180]
-            assert meta['far_unsigned_offset']==41012 and meta['new_pc16']==854
-            assert base_meta['sha256']==AP20_ISLANDS_SHA
-            assert unpack_ap20(image)[1][:178]==unpack_ap20(baseline)[1]
-            assert not inspect(parse(image))['issues']
-            assert sha256(original[1]).hexdigest()==R84_SHA
-            try:
-                exp.source_binary_from_input(wrapped)
-            except exp.ExportError as exc:
-                assert 'Unsupported V2 compiler wrapper' in str(exc)
-            else:
-                raise AssertionError('Five-unit image mis-exported as a source monolith')
-            print('STRICT AP20 FIFTH UNIT SOURCE PROVENANCE PASS',meta['sha256'])
-            continue
         if exp.sha(wrapped)==AP20_ISLANDS_SHA:
             # The active AP20 islands are interleaved multi-unit V2, not an
             # accepted monolithic wrapper for historical ASM export.

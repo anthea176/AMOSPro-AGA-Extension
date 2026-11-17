@@ -1,8 +1,12 @@
 # Roadmap — AMOSPro AGA Extension
 
-## M19 — CINQUIÈME unité AP20 V2 installée pour tests B/C (17/11/2026)
+## M19 — nettoyage des sondes cinq unités après Gates B/C (17/11/2026)
 
-**Candidate active unique sur `main` :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **138 044 octets / SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`**, 87 commandes dont **deux probes temporaires**, 181 entrées AP20 et cinq unités natives. Seul ASC [`tests/current/M19_AP20_UNIT5_01.asc`](../tests/current/M19_AP20_UNIT5_01.asc) : diagnostics sans parenthèses avant écran, puis quatre Bobs. [Instructions B/C](../tests/current/README.md). **Gate A MC68020 PASS ; nouvelles Gates B Runtime et C vrai Compiler V2 NON TESTÉES ; D non testée.** La source à quatre unités, 96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, est reconstructible et conserve uniquement ses anciens résultats B/C. R84 `LAST_GOOD` et les archives sont protégées. Retirer les deux fonctions temporaires et le bloc de 40 Kio après les Gates B/C, avec nouvelle qualification.
+**État actif sur `main` :** bibliothèque canonique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) revenue à la version **quatre unités fonctionnelles**, **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes, 178 entrées AP20**. Seul ASC actif : [`M19_AP20_ISLANDS_01.asc`](../tests/current/M19_AP20_ISLANDS_01.asc). **Gates A/B/C PASS historiques de cette image exacte**, selon les [preuves à quatre unités](M19_AP20_V2_GATES_BC_2026-11-17.md).
+
+**Expérience à cinq unités : Gate A/B/C PASS** pour le scénario dédié `M19_AP20_UNIT5_01.asc`, résultats de deux sondes (`UNIT5_SUM 5222400` et `UNIT5_TAIL 5898757`) et quatre Bobs confirmés par les journaux Runtime (`PRG_STATE 1`) et Compiler (`PRG_STATE -1`). Observation utilisateur : image identique à la précédente, **sans nouvelle capture**. [Rapport, empreintes et limites](M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md). Les sondes et les 40 Kio ne font plus partie de la bibliothèque installable, car l'unité n'avait aucune autre fonction native utile. La capacité d'ajout d'un cinquième groupe reste démontrée par l'historique et son builder, **mais non présente dans le binaire épuré**.
+
+**`LAST_GOOD` R84 et les archives restent protégés ; aucune promotion.** La prochaine unité native supplémentaire devra être une fonctionnalité réelle et être validée indépendamment. Les sections suivantes constituent des jalons antérieurs et non le statut actuel.
 
 
 ## M19 — Preuve de croissance AP20 V2 : CINQUIÈME unité en Gate A (17/11/2026)

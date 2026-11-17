@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## AP20 V2 — cinq unités installées pour test réel Compiler (17/11/2026)
+## AP20 V2 — retour à l'API fonctionnelle après preuve de cinq groupes (17/11/2026)
 
-La **candidate active unique** est maintenant `dist/AMOSPro_AGA.Lib` **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`. Cinq unités, 181 sections, 87 commandes dont les deux diagnostics *temporaires* `Aga Unit Five Sum` et `Aga Unit Five Tail`. Les 178 anciennes sections et les quatre unités natives demeurent identiques au modèle à quatre unités ; l'entrée native profonde est à `$A034` (41 012). Le binaire à quatre unités (96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`) reste reconstructible depuis les sources, et ses Gates B/C sont historiques.
+La bibliothèque installable unique est **l'image quatre unités source-reproductible** (96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`), avec 85 commandes et 178 sections AP20. Le banc à cinq unités, avec deux commandes temporaires et une table de 40 Kio, a **PASS Gate A/B/C** (Runtime et vrai Compiler) ; voir [le rapport de preuve](M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md). Sa cinquième unité ne contenait aucun code de production : elle a donc été retirée du binaire actif plutôt que laissée comme unité inerte.
 
-**Test actif unique :** `tests/current/M19_AP20_UNIT5_01.asc`, diagnostic avant écran puis quatre Bobs. **Gate A MC68020 PASS ; Gates B/C réelles cinq unités NON TESTÉES** ; D non testée. `LAST_GOOD` R84 intacte et aucune archive modifiée. Les probes et leurs 40 Kio doivent être retirées de la future API publique après cette campagne, puis le nouveau binaire revalidé. [Mode opératoire](../tests/current/README.md).
+La capacité de croissance du dispatch V2 est **démontrée dans l'historique**, pas perdue : l'émetteur et le builder déterministes restent conservés dans les sources pour audit. Le prochain cinquième groupe **utile** exigera de nouveaux tests Gate A/B/C. `LAST_GOOD` et archives protégés.
 
 
 ## AP20 V2 — croissance append-only à cinq unités, Gate A (17/11/2026)

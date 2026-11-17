@@ -103,12 +103,9 @@ def build() -> tuple[bytes, dict]:
         raise ValueError('Existing native code position shifted')
     if len(report['tokens']) != 88 or sum(p.startswith(DISPATCH_V2) for p in actual_parts)!=5:
         raise ValueError('Unexpected fifth-group layout')
-    active = (Path(__file__).resolve().parents[1] / 'dist/AMOSPro_AGA.Lib').read_bytes()
-    active_sha = sha256(active).hexdigest()
-    if active_sha not in (ISLAND_SHA, UNIT5_CANDIDATE_SHA256):
-        raise ValueError('Unknown active four/five-unit Lib: refuse reconstruction')
-    if active_sha == UNIT5_CANDIDATE_SHA256 and active != image:
-        raise ValueError('Active five-unit Lib differs from exact source-built candidate')
+    if sha256((Path(__file__).resolve().parents[1] /
+               'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() != ISLAND_SHA:
+        raise ValueError('Active installable Lib was changed during source-only build')
     return image, dict(
         sha256=sha256(image).hexdigest(), size=len(image),
         base_sha=ISLAND_SHA, base_size=len(old_raw),

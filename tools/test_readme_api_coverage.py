@@ -158,26 +158,9 @@ def main() -> None:
     library = parse(LIB.read_bytes())
     audit = inspect(library)
     assert not audit["issues"], f"AP20 invalid: {audit['issues']}"
-    from active_library import AP20_UNIT5_SHA, AP20_ISLANDS_SHA
-    active_sha = sha256(LIB.read_bytes()).hexdigest()
-    documentable_tokens = audit["tokens"]
-    if active_sha == AP20_UNIT5_SHA:
-        # The two temporary fifth-unit diagnostics are B/C probes only.
-        # The 85-token public table remains the exact four-unit prefix.
-        from build_m19_ap20_unit5_in_memory import build as build_five
-        from build_m19_ap20_islands_in_memory import build as build_four
-        candidate, five_meta = build_five()
-        predecessor, four_meta = build_four()
-        assert candidate == LIB.read_bytes() and five_meta["ap20_entries"] == 181
-        assert four_meta["sha256"] == AP20_ISLANDS_SHA and len(predecessor) == 96908
-        stable_tokens = inspect(parse(predecessor))["tokens"]
-        assert audit["tokens"][:len(stable_tokens)] == stable_tokens
-        assert [t["name"] for t in audit["tokens"][-2:]] == [
-            "aga unit five sum", "aga unit five tail"]
-        documentable_tokens = stable_tokens
     exported = {
         token["name"].casefold(): token
-        for token in documentable_tokens
+        for token in audit["tokens"]
         if token["name"].lower().startswith(("aga ", "get aga ", "make aga ", "no aga "))
     }
     assert exported, "No named AP20 commands found in current library"
@@ -189,9 +172,7 @@ def main() -> None:
         title, re.IGNORECASE,
     )
     islands = re.search(r"\$VER:\s*AGA\s+M19\s+AP20\s+islands\b", title, re.IGNORECASE)
-    if active_sha == AP20_UNIT5_SHA:
-        release = "M19 AP20 ISLANDS"
-    elif islands:
+    if islands:
         assert "M19 AP20 V2 ISLAND DISPATCH" in title, "Unexpected AP20 island title"
         release = "M19 AP20 ISLANDS"
     elif m19:

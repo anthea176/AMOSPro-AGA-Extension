@@ -19,15 +19,15 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 Candidate de test à cinq unités (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`, **87 commandes / 181 entrées AP20**, dont **deux diagnostics temporaires exclus de l'API publique stable**. Les **85 commandes** ci-dessous sont inchangées depuis la référence à quatre unités (96 908 octets), reconstructible depuis sa source figée. Gate A cinquième unité PASS ; **nouvelles Gates B/C NON TESTÉES**. Les résultats Runtime/Compiler à quatre unités restent [documentés séparément](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
+**Candidate de test active : M19 AP20 ISLANDS (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes / 178 entrées AP20**. Les stubs de dispatch sont regroupés auprès des quatre unités natives inchangées, avec une portée PC16 maximale de 854 octets. **Gates A/B/C PASS pour le banc Bob Blit** : journaux Runtime et véritable Compiler, avec une capture confirmée par l'auteur comme provenant de la **version compilée**. [Preuves Gates B/C et limites](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 
-**Test actif :** [M19_AP20_UNIT5_01.asc](tests/current/M19_AP20_UNIT5_01.asc) · [consignes WinUAE](tests/current/README.md). Les références à quatre unités AP20 islands et P0d Bob Blit restent reconstructibles depuis leurs sources historiques. `Aga Bob` / `Aga Bob Off` demeurent expérimentales avant Draw/End. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Test actif :** [M19_AP20_ISLANDS_01.asc](tests/current/M19_AP20_ISLANDS_01.asc) · [consignes WinUAE](tests/current/README.md). P0d Bob Blit (91 300 octets, Gates Runtime/Compiler précédemment PASS sur sa propre campagne) reste reproductible via l'historique Git. `Aga Bob` et `Aga Bob Off` de P0f sont incluses **pour vérification du routage AP20 uniquement**, sans autorisation d'utilisation applicative : gestion `Draw/End` encore incomplète. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-**Installation :** [INSTALL.fr.md](INSTALL.fr.md) (une mise à jour GitHub ne remplace pas la copie installée dans WinUAE). **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
+**Installation :** [INSTALL.fr.md](INSTALL.fr.md) (une mise à jour GitHub ne remplace pas la copie installée dans WinUAE). **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md) · [preuve B/C à cinq unités et suppression des sondes](docs/M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md).
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 AP20 ISLANDS** — les **85 commandes stables** (178 entrées AP20 historiques) restent inchangées dans la candidate à cinq unités. Les deux fonctions `Aga Unit Five` supplémentaires sont des sondes provisoires volontairement exclues de ce manuel public. Le cycle de vie persistant Draw/End n'est pas validé. [Architecture AP20 stable](docs/M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md).
+**API de la bibliothèque courante M19 AP20 ISLANDS** — candidate de test MC68020/68EC020 minimum, **PAS LAST_GOOD**, **85 commandes / 178 entrées AP20**. Les API et les unités natives P0d précédentes restent disponibles. `Aga Bob Blit` P0d avait passé les Gates Runtime/Compiler sur sa propre bibliothèque ; **la nouvelle architecture AP20 a passé B/C pour le scénario Bob Blit actif**. `Aga Bob` et `Aga Bob Off` sont exposées mais le cycle de vie persistant et `End` ne sont pas encore validés. [Gate A et limites](docs/M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md).
 
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
