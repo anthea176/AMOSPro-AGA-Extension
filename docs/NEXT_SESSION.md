@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0j-b4 — rendu des Bobs persistants sans shadow, source-only
+
+[Nouveau chemin P0j-b4](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md) : P0h/P0j-a préflight de 64 objets, P0j-b2 staging Chip explicite, P0j-b3 image/masque explicite, puis painter P0d Safe/WaitBlit **sans projection dans `bank_active_state`**. Gate A à valider ; aucune commande publique `Aga Bob Draw`, ni Lib/ASC modifiés. Gates B/C/D non exécutées. Un échec tardif peut laisser le back buffer masqué partiel et doit interdire la présentation.
+
+
 ## M19 P0j-b3 — descripteur d'image Chip par banque (source-only)
 
 [Nouveau résolveur P0j-b3](M19_P0J_EXPLICIT_IMAGE_RESOLVE_GATE_A_2026-11-17.md) : reçoit D3=banque d'origine, D0=image, et rejoint l'ancien P0d après validation directe du cache Chip, sans sélection globale. **Gate A MC68020 PASS : 52 contrôles**, [CI 44174319362](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174319362), masque transparent réel en Chip compris. Source BOBS **19 338 octets** SHA256 `ac4252e15ec04467d6789869f0f247c49249c5799276bfc07099811529d51437`, candidate AP20 **99 832 octets** SHA256 `90b5d69743bb93c5de9f97039e802e9bedd6866302e7b655efdde4c4a2f5e585`, uniquement en mémoire. B/C/D non effectuées. Le peintre P0d et le parcours de 64 Bobs restent à raccorder à cette nouvelle voie.
