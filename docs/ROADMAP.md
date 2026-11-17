@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0j-a — premier précontrôle d'images avant DMA
+
+[Source/validation P0j-a](M19_P0J_IMAGE_PREFLIGHT_GATE_A_2026-11-17.md) : passage supplémentaire sur 64 Bobs, vérifiant pour chaque banque d'origine l'existence de l'image et sa profondeur avant tout Blit. Source-only, Gate A à confirmer ; commande publique non exposée. **Suite de P0j :** supprimer le shadow temporaire en ajoutant les chemins explicites par banque aux routines P0c/P0d ; prévalidation ne constitue pas encore une frame entièrement atomique.
+
+
 ## M19 P0i — prototype natif de dessin multi-banques
 
 [Source et banc P0i](M19_P0I_MULTIBANK_DRAW_GATE_A_2026-11-17.md). Premier raccordement source-only de Bobs persistants à leurs banques d'origine, préparation Chip par banque, peinture Safe/WaitBlit dans l'ordre et restauration de la sélection. **Ne pas exposer Draw** avant clôture des points non réentrance, contrôle pré-DMA de chaque image, et politique de frame atomique. **Gate A MC68020 PASS (76 vérifications, 64 Bobs)** [CI M19](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44163799991) ; candidate source-only 97 820 octets SHA256 `004a04f9819fc2df9498ec8887e3de8a6533a7f620f04743c1fa1ae6ee872fa4` ; aucune nouvelle Lib installée. **Priorité P0j :** suppression de la projection temporaire du shadow de sélection par routage Chip explicitement indexé par banque, puis validation préalable des images (dimensions, profondeur, répertoire, mémoire) avant le premier Blit ; définir une politique de frame atomique avant l'API publique.

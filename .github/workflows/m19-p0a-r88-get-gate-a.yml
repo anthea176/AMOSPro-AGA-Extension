@@ -18,6 +18,9 @@ on:
       - 'tools/m19_p0i_multibank_draw_emit.py'
       - 'tools/build_m19_p0i_multibank_draw_in_memory.py'
       - 'tools/test_m19_p0i_multibank_draw_gate_a.py'
+      - 'tools/m19_p0j_frame_image_preflight_emit.py'
+      - 'tools/build_m19_p0j_frame_image_preflight_in_memory.py'
+      - 'tools/test_m19_p0j_frame_image_preflight_gate_a.py'
       - 'tools/build_m19_p0h_frame_preflight_in_memory.py'
       - 'tools/test_m19_p0h_frame_preflight_gate_a.py'
       - 'tools/build_m19_p0g_checked_read_in_memory.py'
@@ -134,6 +137,11 @@ jobs:
           python -B tools/m19_p0i_multibank_draw_emit.py
           python -B tools/build_m19_p0i_multibank_draw_in_memory.py
           python -B tools/test_m19_p0i_multibank_draw_gate_a.py
+      - name: M19 P0j 64-Bob image preflight BEFORE first Chip or Blit native Gate A
+        run: |
+          python -B tools/m19_p0j_frame_image_preflight_emit.py
+          python -B tools/build_m19_p0j_frame_image_preflight_in_memory.py
+          python -B tools/test_m19_p0j_frame_image_preflight_gate_a.py
       - name: M19 AP20 V2 island dispatch P0f source-only MC68020 Gate A
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py
