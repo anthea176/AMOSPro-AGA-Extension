@@ -17,6 +17,12 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Pour commencer :** [Notice d'installation](INSTALL.fr.md) · [Exemples AMOS](examples/README.fr.md).
 
+## Limite volontaire : un seul écran AGA
+
+**L'extension ne gère qu'un seul écran AGA ouvert à la fois.** `Aga Screen Open(...)` crée l'unique écran AGA géré par l'extension ; l'ouverture de plusieurs écrans AGA simultanés et le basculement entre eux ne sont pas pris en charge. Pour changer de résolution ou de mode vidéo, il faut d'abord fermer l'écran courant avec `Aga Screen Close`, puis en ouvrir un nouveau.
+
+`Aga Double Buffer` et `Aga Swap` gèrent les **buffers avant et arrière de ce même écran**, et non deux écrans AGA distincts. Le multi-écran AGA est volontairement hors du périmètre du projet.
+
 ## Bibliothèques et tests
 
 **Candidate de test active : M19 AP20 ISLANDS (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes / 178 entrées AP20**. Les stubs de dispatch sont regroupés auprès des quatre unités natives inchangées, avec une portée PC16 maximale de 854 octets. **Gates A/B/C PASS pour le banc Bob Blit** : journaux Runtime et véritable Compiler, avec une capture confirmée par l'auteur comme provenant de la **version compilée**. [Preuves Gates B/C et limites](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
