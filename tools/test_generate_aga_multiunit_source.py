@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, verify_active
+from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, verify_active
 from build_m19_p28_r88_in_memory import build as build_r88
 from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
@@ -47,7 +47,7 @@ def run() -> None:
     # predecessor; never make a second installable .Lib or replace P0c.
     active_before = current_file.read_bytes()
     good = good_file.read_bytes()
-    assert digest(active_before) == AP20_ISLANDS_SHA, "Active AP20 islands differs from pinned SHA"
+    assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA), "Active AP20 islands/B7 differs from pinned SHA"
     assert digest(good) == R84_SHA, "Protected R84 LAST_GOOD changed"
     active, frozen, _ = verify_active(ROOT)
     assert active == active_before and frozen == good
@@ -108,7 +108,7 @@ def run() -> None:
             raise AssertionError("Export was allowed inside dist/")
     assert current_file.read_bytes() == active_before, "Active AP20 islands .Lib modified"
     assert good_file.read_bytes() == good, "LAST_GOOD modified"
-    print("R88 HISTORICAL MULTI-UNIT GATE A EXPORT PASS: frozen builder, 4 groups, exact AP20 bytes, SHA, RBSR; active AP20 islands and LAST_GOOD protected")
+    print("R88 HISTORICAL MULTI-UNIT GATE A EXPORT PASS: frozen builder, 4 groups, exact AP20 bytes, SHA, RBSR; active canonical B7/AP20 islands and LAST_GOOD protected")
     print("NOTE: native vasm reassembly, WinUAE B and Compiler C NOT RUN")
 
 if __name__ == "__main__":

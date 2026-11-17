@@ -1,6 +1,6 @@
 """One current working binary in dist/ and independently frozen LAST_GOOD.
 
-M19 AP20 V2 ISLANDS is the authorized active TEST candidate (Gate A PASS; B/C pending).
+M19 P0j-b7 is the authorized active TEST candidate (Gate A PASS; B/C pending).
 P0d remains source-reproducible by its frozen builder and Git history.
 R88 v0.13.33 is a historical AGPC masked Blitter candidate.
 R87 v0.13.32 is frozen in dist/experimental with P2.5/P2.6/P2.7 WinUAE evidence.
@@ -27,6 +27,7 @@ from pathlib import Path
 
 # M19 P0d: protected functional predecessor, Gate B/C PASS on its own test.
 AP20_ISLANDS_SHA="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
+B7_SHA="f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b"  # MC68020 Gate A PASS; Runtime/real Compiler not yet tested
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
 P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
 # M19 P0c is frozen previous source-built candidate.
@@ -95,6 +96,27 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == B7_SHA:
+        from build_m19_p0j_end_lifecycle_in_memory import build as build_b7
+        from compiler_relocation import unpack_ap20
+        expected, meta = build_b7()
+        assert cur == expected and len(cur) == 102072, "B7 active candidate is not source-built byte-exact"
+        assert meta["sha256"] == B7_SHA and meta["predecessor_sha"] == (
+            "3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91"
+        ), "B7 provenance chain changed"
+        assert (meta["public_commands"],meta["ap20_entries"],meta["native_groups"],meta["pc16_max"]) == (
+            86,181,[142,153,156,177],28600
+        ), "B7 AP20/MC68020 ABI or PC16 layout changed"
+        tokens, parts, title = unpack_ap20(cur)
+        assert len(parts)==181 and b"M19 P0j-b7" in title, "B7 HUNK/native title mismatch"
+        audit = inspect(parse(cur))
+        named = [t for t in audit["tokens"]
+                 if t["name"].startswith(("aga ","get aga ","make aga ","no aga "))]
+        assert not audit["issues"] and len(named)==86, "B7 public API invalid"
+        draw = [t for t in named if t["name"]=="aga bob draw"]
+        assert len(draw)==1 and draw[0]["signature"]=="0" and draw[0]["function"]==180
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur, good, "M19 P0j-b7 BOBS multibank Draw/Swap/End ACTIVE TEST CANDIDATE; Gate A MC68020 PASS (88 cases); WinUAE Runtime B / true AMOS Compiler C NOT TESTED; R84 LAST_GOOD unchanged"
     if current_sha == AP20_ISLANDS_SHA:
         from build_m19_ap20_islands_in_memory import build as build_islands
         from compiler_relocation import unpack_ap20

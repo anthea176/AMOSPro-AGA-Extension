@@ -18,7 +18,7 @@ from pathlib import Path
 
 from audit_ap20 import inspect, parse, token
 from ap20_v2_island_dispatch import pc16_displacements
-from build_m19_ap20_islands_in_memory import build as build_islands, ISLAND_SHA
+from build_m19_ap20_islands_in_memory import build as build_islands, ISLAND_SHA, B7_SHA
 from compiler_bridge_v2_probe import DISPATCH_V2, MAX_UNIT_BYTES
 from compiler_relocation import RBSR, GETP, repack_ap20, unpack_ap20
 from m19_ap20_unit5_emit import emit_fifth_native, DATA, DATA_BYTES, EXPECTED_SUM, FAR_SIGNATURE
@@ -104,7 +104,7 @@ def build() -> tuple[bytes, dict]:
     if len(report['tokens']) != 88 or sum(p.startswith(DISPATCH_V2) for p in actual_parts)!=5:
         raise ValueError('Unexpected fifth-group layout')
     if sha256((Path(__file__).resolve().parents[1] /
-               'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() != ISLAND_SHA:
+               'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() not in (ISLAND_SHA,B7_SHA):
         raise ValueError('Active installable Lib was changed during source-only build')
     return image, dict(
         sha256=sha256(image).hexdigest(), size=len(image),

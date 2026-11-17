@@ -1,5 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## Référence active B7 (bascule autorisée pour Gates B/C le 17/11/2026)
+
+La seule bibliothèque installable de travail est maintenant `dist/AMOSPro_AGA.Lib` **102 072 octets**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, reproductible par `tools/build_m19_p0j_end_lifecycle_in_memory.py`. Le HUNK AP20 expose **86 commandes/181 sections/quatre groupes natifs MC68020**, dont la fonction numérique sans argument `Aga Bob Draw` et les gardes `Aga Swap` et `End` B7 ; le plafond PC16 mesuré est **28 600 octets**. L'unique programme actif est `tests/current/M19_P0J_B7_DRAW_BC_01.asc`, sans ressource externe. **Gate A PASS 88 cas, Gates B/C/D pas encore exécutées sur cette candidate**, en particulier WinUAE réel et le véritable Compiler V2. R84 LAST_GOOD et les archives ne sont pas promus ni modifiés. [Procédure](../tests/current/README.md) · [Rapport B7 Gate A](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
+
+
 ## M19 P0j-b7 — End callback après notifications Safe/Disp (Gate A PASS, 88 contrôles)
 
 Nouvel émetteur privé `m19_p0j_end_lifecycle_emit.py` à cible MC68020 minimum. Il conserve octet pour octet la source native B5/B6 et la routine AGA End R88 ; il ajoute deux entrées BOBS : `b7_guarded_draw_entry` (route le retour numérique de B5 et vérifie/arme le callback End courant) et `b7_end_entry` (raccorde le pont P0c End, contrôle le véritable Screen). Après End réussi, il remet la barrière Bobs à zéro ; après délai Safe/Disp épuisé, il ne la remet pas à zéro et conserve le callback afin qu'une tentative ultérieure reste possible. Toute autre extension ayant déjà remplacé les callbacks End entraîne un refus de la nouvelle présentation plutôt qu'un écrasement de son pointeur.
