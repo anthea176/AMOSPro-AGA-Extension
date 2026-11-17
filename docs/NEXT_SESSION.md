@@ -1,12 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M19 P0j-b7 — sécurisation native du callback End (source-only, Gate A à vérifier)
+## M19 P0j-b7 — sécurisation native du callback End : Gate A PASS (88 contrôles)
 
 Le diagnostic B6 sur **les vraies instructions natives R88** a PASS en CI ([run 44185013731](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185013731)) : Safe/Disp manquants entraînent un refus coopératif borné par `WaitTOF`, sans destruction prématurée des ScreenBuffers ou des ports ; les réponses tardives sont consommées une seule fois. **Blocage prouvé :** quand `End` finit par fermer l'écran, B6 laisse la barrière Bobs `DIRTY` persistante, contrairement à `Aga Screen Close`.
 
 **Correctif B7 privé en cours, sans installation** : conserver B6 (candidate 101 476 octets, SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91`) et les 86 tokens / 181 entrées AP20 / quatre unités ; ajouter un wrapper MC68020 de `Aga Bob Draw` qui enregistre un callback End protégé, puis contrôler la fermeture réelle. Après un End incomplet Safe/Disp, rester `DIRTY`, garder le callback pour une tentative ultérieure, **ne jamais libérer de ScreenBuffer/MsgPort en attente**. Après fermeture réelle, réinitialiser le verrou ; sous conflit de callbacks ou signature AGA End corrompue, refuser le Draw et bloquer Swap. B7 ne touche pas à la fonction AGA End historique, seulement à l'appel BOBS et à l'ancien stub Draw dans le HUNK AP20 reconstruit en mémoire.
 
-[Source B7, tests et limites](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md). **Gate A B7 en attente de CI ; Gates B/C/D non testées.** Aucune modification de `dist/AMOSPro_AGA.Lib`, ASC actif, `LAST_GOOD` ou archives ; WinUAE et véritable Compiler restent à tester uniquement après décision séparée de bascule.
+[Source B7, tests et limites](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md). **Gate A MC68020 PASS : 88 contrôles** sur deux placements ([CI 44185874211](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185874211)), après **44 contrôles de diagnostic B6** ; candidate B7 **102 072 octets**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, source native BOBS **21 544 octets**, SHA256 `4f5305f4b42e0af0b30e557adaf38b92fb2347e598dc123c9e7bb11002a4afbf`, **86 commandes, 181 sections, quatre unités**, portée PC16 maximale 28 600 octets. Le workflow de politique CPU/chemins est également PASS. **Gates B/C/D non testées.** Aucune modification de `dist/AMOSPro_AGA.Lib`, ASC actif, `LAST_GOOD` ou archives ; WinUAE et véritable Compiler restent à tester uniquement après décision séparée de bascule.
 
 
 ## M19 P0j-b6 — fonction numérique `Aga Bob Draw` : Gate A PASS (52 contrôles)

@@ -26,3 +26,8 @@
 Le futur retour public proposé est `_OK=Aga Bob Draw` : **fonction numérique 0/1 sans argument**. La tokenisation est expérimentée séparément en P0j-b6 ([contrat](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md)), sans exposition dans la bibliothèque installable et sans vrai AMOS Compiler. La commande d'objet `Aga Bob N,X,Y,I` conserve sa fonction de mise à jour de l'état, sans dessin ni Swap.
 
 Cette solution est conservatrice : **la seule récupération après échec est Close/Reopen**. Une reconstruction du back buffer sans fermeture devra être prouvée avant de créer une commande de déverrouillage. Toute voie alternative appelant directement l'entrée native AGA Swap au lieu du token public sort du contrat ; le moteur doit ensuite vérifier End, Open/Close et les deux pages physiques. **Gates B Runtime, C vrai Compiler, D matériel non testées** pour B5. Ce document ne constitue aucune autorisation de bascule de bibliothèque.
+
+
+## Suite B7 — fermeture End après Swap ou échec de frame
+
+La barrière B5 ne couvrait que `Aga Screen Close`. Le diagnostic natif B6 a démontré que le callback `End` laissait `DIRTY` persistant même après la fermeture de l'écran. L'évolution [B7](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md), **Gate A MC68020 PASS 88 contrôles** ([CI 44185874211](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185874211)), utilise un callback End du même propriétaire et ne libère pas les ScreenBuffers/ports en attente Safe/Disp. Ce statut est **source-only**, Gates B/C/D toujours non testées pour B7.

@@ -20,3 +20,8 @@
 ## Diagnostic complémentaire : notification Safe/Disp et End (B6)
 
 [Test natif CPU020](../tools/test_m19_p0j_pending_close_end_gate_a.py) exécuté en CI [44185013731](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185013731) : pas de FreeScreenBuffer/DeleteMsgPort quand une réponse Safe ou Disp est absente, WaitTOF borné, puis fermeture possible après réponse tardive. **Défaut documenté de B6 : le callback End historique ne remet pas à zéro le verrou DIRTY après une fermeture réussie**. Ce défaut impose le jalon B7, avant toute bascule vers `dist/AMOSPro_AGA.Lib`. Le nouveau wrapper End est décrit dans [M19 P0j-b7](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
+
+
+## Après B6 — sécurisation End P0j-b7
+
+Le diagnostic B6 (`GetMsg` Safe/Disp différé, fermeture native réelle) reproduit un `End` qui ne réinitialisait pas `DIRTY`. Le correctif [P0j-b7](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md) a **PASS 88 contrôles Gate A MC68020** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185874211)). Candidate B7 en mémoire 102 072 octets SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`. Le token `Aga Bob Draw` garde sa signature numérique 0/1, l'ancien `Aga Swap` garde son verrou. **Le vrai Runtime WinUAE et AMOS Compiler V2 de B7 restent non testés**, tout comme la fermeture d'un processus lorsqu'une réponse OS manque définitivement.
