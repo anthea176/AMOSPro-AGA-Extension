@@ -1,37 +1,38 @@
-# Test actif — M19 P0d / premier Bob AGA au Blitter
+# Test actif — M19 AP20 V2 ISLANDS : Runtime et vrai AMOS Compiler
 
-**Bascule P0c → P0d explicitement autorisée le 16/11/2026.**
+**Bascule de test autorisée explicitement le 17 novembre 2026.** Objectif : vérifier le dispatch AP20 V2 par îlots et l'acceptation des entrées/groupes entrelacés par le véritable AMOS Compiler. **Ce test n'est pas une validation des Bobs persistants P0f ni des Sprites matériels.**
 
-**Bibliothèque installable unique :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **91 300 octets**, SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be` ; **83 commandes / 93 entrées AP20**, MC68020/68EC020 minimum.
+## Binaire et programme uniques
 
-**Seul programme ASC actif :** [`M19_P0D_BOB_BLIT_01.asc`](M19_P0D_BOB_BLIT_01.asc), dérivé du [brouillon P0d](../design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc) avec **commentaires d'en-tête seuls changés**.
-
-**Validation actualisée le 16/11/2026 :** Gate A native Unicorn MC68020 **PASS** (108 scénarios publics, OS/DMA simulés) ; préflight ASC **PASS** ; **Gate B Runtime WinUAE PASS** (`PRG_STATE 1`, `RESULT 1`, `ERR 0`) et **Gate C vrai AMOS Compiler PASS** (`PRG_STATE -1`, `RESULT 1`, `ERR 0`) d'après **les deux journaux fournis et la confirmation visuelle explicite de l'auteur** des quatre Bobs/masques/clipping. **Gate D physique NON TESTÉE.** [Rapport des preuves B/C](../../docs/M19_P0D_GATES_BC_2026-11-16.md) ; absence de capture jointe et de SHA indépendant de la copie APSystem. Les Gates B/C P0c historiques restent limitées à leur ancien binaire/test. Ce programme demeure **le seul ASC actif** ; le registre privé P0e n'y est pas testé.
+- **Bibliothèque canonique installable** : [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **96 908 octets** ; SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`.
+- **Builder déterministe** : [`tools/build_m19_ap20_islands_in_memory.py`](../../tools/build_m19_ap20_islands_in_memory.py), source P0f SHA256 `6175705e22ed0c3f52c1ba317b2fad7aaca5af0db507c63a1ed629a724609a45`. 85 commandes, 178 entrées AP20, 4 groupes natifs byte-exacts ; déplacement PC16 max 854 octets.
+- **Seul ASC actif** : [`M19_AP20_ISLANDS_01.asc`](M19_AP20_ISLANDS_01.asc), dérivé du programme P0d validé et renommé uniquement pour l'identité de campagne, les messages et les journaux. Aucun fichier IFF ou ABK externe.
+- **P0d historique** : 91 300 octets / SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`, toujours reproductible via son builder et récupérable au commit précédent (pas de bibliothèque alternative dans `dist/`).
+- **`LAST_GOOD` R84** : inchangée, 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`.
 
 ## Préparation WinUAE
 
-1. Synchroniser le clone Windows sur `main`. Sauvegarder **hors dépôt** l'ancienne `AMOSPro_AGA.Lib` réellement installée dans `APSystem` ; ne pas remplacer `dist/AMOSPro_AGA_LAST_GOOD.Lib`.
-2. Installer **exactement** `dist/AMOSPro_AGA.Lib` P0d dans le slot AGA existant d'AMOS Professional. Vérifier la **taille (91 300)** et le **SHA256 du fichier réellement installé**, par exemple avec PowerShell : `Get-FileHash "CHEMIN_APSystem/AMOSPro_AGA.Lib" -Algorithm SHA256`. Redémarrer AMOS.
-3. Démarrer WinUAE AGA PAL avec CPU **68030/JIT ON**, RAM Chip/Fast suffisante ; relever la version d'AMOS Professional, du véritable AMOS Compiler V2, les paramètres CPU/JIT et l'empreinte de la bibliothèque installée.
-4. Vérifier que la banque AMOS **24 est libre**, sinon le banc refuse volontairement sans effacer les données.
-5. Dans un programme **vide**, faire **Project → Merge ASCII** sur le seul ASC actif `tests/current/M19_P0D_BOB_BLIT_01.asc`. **Ne pas utiliser `Load`** pour importer le source texte.
+1. Synchroniser le clone Windows du dépôt sur `main`. Sauvegarder **hors dépôt** l'actuelle copie du slot `APSystem` avant remplacement ; ne pas toucher à `LAST_GOOD`.
+2. Installer exactement `dist/AMOSPro_AGA.Lib` dans l'unique slot d'extension AGA d'AMOS Professional. Vérifier **96 908 octets** et l'empreinte **de la copie installée** avec PowerShell : `Get-FileHash "CHEMIN\\AMOSPro_AGA.Lib" -Algorithm SHA256`. Redémarrer AMOS, puis vérifier qu'il reconnaît ses commandes.
+3. Démarrer WinUAE AGA PAL, **68030 + JIT activé** pour les Gates B/C. Relever version d'AMOS Professional, version exacte du Compiler V2 et configuration RAM/CPU. Vérifier que la banque AMOS **24 est libre** : le banc refuse une banque occupée et ne l'efface pas.
+4. Dans un **programme AMOS vide**, utiliser **Project → Merge ASCII** pour importer `tests/current/M19_AP20_ISLANDS_01.asc` (ne pas faire `Load` sur le texte source).
 
-## Gate B — Runtime (Prg State=1)
+## Gate B — Runtime
 
-Exécuter en **Runtime**. Le programme ouvre un écran AGA 320×256×256, active le double buffering, crée dans la banque 24 deux images planaires (17×15 et 37×8), rend l'index 0 transparent uniquement pour la première, prépare automatiquement la Chip au premier `Aga Bob Blit`, dessine quatre Bobs avec clipping, tente un ID d'image absent (retour 0) et fait **un seul `Aga Swap` explicite**.
+Exécuter dans AMOS Runtime, journal `RAM:M19_AP20_ISLANDS_RUNTIME.TXT` avec `RUN_MODE RUNTIME` et `PRG_STATE 1`. Le test ouvre l'écran AGA 320×256×256, prépare deux images AGBO, applique un masque indépendant à la première, dessine **quatre Bobs**, dont deux coupés aux bords, appelle un ID invalide (retour attendu 0) puis effectue **un seul Swap explicite**.
 
-**Contrôle visuel indispensable :** sur fond bleu foncé (index 1), vérifier un petit Bob rouge/orange avec transparence interne à (103,72), un Bob jaune opaque à (180,110), un Bob rouge partiellement rogné à gauche (X=-5,Y=170) et un Bob jaune tronqué au bord droit (X=315,Y=200). Pas d'écran vide/noir, de pixel parasite, de Guru, de freeze ni de Swap implicite. Le programme doit fermer l'écran, revenir à AMOS et effacer seulement sa propre banque 24.
+**Observation visuelle obligatoire** : sur fond bleu sombre, premier Bob rouge/orange à (103,72) avec transparence interne, deuxième jaune opaque à (180,110), Bob rouge rogné à gauche (X=-5,Y=170), Bob jaune rogné à droite (X=315,Y=200). Aucun écran vide, pixel parasite, freeze ou Guru. L'écran doit se fermer, revenir à AMOS et la banque 24 être nettoyée.
 
-Journal attendu `RAM:M19_P0D_RUNTIME.TXT` : `TEST M19_P0D_BOB_BLIT_01`, `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `VERDICT PASS`, `IMAGE_COUNT 2`, `BANK_LENGTH 1036`, `MASK_FLAG 1`, `BLIT1 1`, `BLIT2 1`, `CLIP_LEFT 1`, `CLIP_RIGHT 1`, `MISSING_IMAGE 0`, `SWAP 1`, `CLOSE 1`. Vérifier aussi sur l'écran `LOG ... OPEN 0 CLOSE 0`. **Un PASS dans le TXT ne suffit pas à valider le rendu visible.**
+## Gate C — vrai AMOS Compiler V2
 
-## Gate C — réel AMOS Compiler (Prg State=-1)
+Depuis **le même ASC et la même bibliothèque** : compiler un **nouvel exécutable avec le véritable AMOS Compiler V2**, puis le lancer sous WinUAE. Vérifier les mêmes quatre Bobs, les couleurs/masques/clipping, l'absence de crash/freeze, la fermeture et le retour au système. Enregistrer séparément `RAM:M19_AP20_ISLANDS_COMPILED.TXT` avec `RUN_MODE COMPILED` et `PRG_STATE -1`. Un résultat `Prg State 0` correspond à l'interpréteur strict, **pas** à la Gate B.
 
-Depuis **le même ASC actif et la même bibliothèque P0d réellement installée**, compiler un **nouvel exécutable** avec le vrai AMOS Compiler V2. L'exécuter sous WinUAE, constater les mêmes quatre Bobs, les mêmes couleurs/masques/clipping, fermeture correcte et aucun Guru/freeze. Conserver **séparément** `RAM:M19_P0D_COMPILED.TXT`, les captures, les options Compiler, la version et le retour effectif à AMOS. Journal attendu identique, sauf `RUN_MODE COMPILED` et `PRG_STATE -1`.
+Pour chaque journal : `TEST M19_AP20_ISLANDS_01`, `CANDIDATE SHA256 34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, `RESULT 1`, `ERR 0`, `VERDICT PASS`, `IMAGE_COUNT 2`, `BANK_LENGTH 1036`, `MASK_FLAG 1`, `BLIT1/2 1`, `CLIP_LEFT/RIGHT 1`, `MISSING_IMAGE 0`, `SWAP 1`, `CLOSE 1`. Un PASS écrit par l'ASC **n'est pas** une preuve du SHA installé ni une validation visuelle.
 
-Si `Prg State` vaut 0, il s'agit du mode interprété strict et **pas** de la Gate B. Ne jamais déclarer B/C PASS sans les exécutables/journaux et l'observation.
+## Gates et points non encore couverts
 
-## Protections
+**Gate A source/CPU MC68020 : PASS** sur la candidate à îlots (CI [M19 Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)). **Gates B Runtime, C vrai Compiler, D Amiga physique : NON TESTÉES** tant que les journaux et l'observation réelle ne sont pas reçus.
 
-- `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 **inchangée** : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. **Aucune promotion ni publication**.
-- L'ancien ASC P0c est conservé via l'historique Git du commit précédent et son design `tests/design/` demeure intact ; il n'y a **qu'un seul ASC actif**.
-- La candidate P0d contient uniquement le **dessin immédiat** `Aga Bob Blit(I,X,Y)` : le futur objet persistant `Aga Bob N,X,Y,I` n'est pas encore implémenté. Aucune validation physique Gate D.
+Ce scénario teste surtout **AGA + BOBS** ; il ne couvre pas exhaustivement les commandes C2P/IFF ni les nouvelles commandes P0f d'objets persistants, dont le nettoyage End n'est pas encore finalisé. Il vérifie le risque central de cette première bascule : accès aux commandes publiques et exécution d'un programme compilé avec les groupes AP20 entrelacés.
+
+En cas d'échec au chargement/Compiler, **ne pas modifier l'ASC pour masquer un défaut natif** : relever le point d'arrêt, la configuration, les logs et restaurer localement la P0d validée si nécessaire. Aucune promotion de `LAST_GOOD` n'est autorisée par cette bascule.

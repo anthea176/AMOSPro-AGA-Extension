@@ -1,5 +1,9 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 — Gate B/C de l'architecture AP20 V2 en îlots (17/11/2026)
+
+**En cours :** l'auteur a autorisé la bascule de la bibliothèque canonique de travail vers **M19 AP20 V2 islands** (96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`), avec le test actif unique `tests/current/M19_AP20_ISLANDS_01.asc`. **Gate A MC68020 PASS ; Gate B Runtime et Gate C véritable AMOS Compiler à tester séparément**, Gate D non testée. [Rapport](M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md) · [protocole](../tests/current/README.md). Priorité : confirmer la compatibilité des groupes AP20 entrelacés en compilé avant tout développement `Aga Bob Draw` ou Sprites matériels. **P0d fonctionnelle conservée par l'historique et son builder ; R84 LAST_GOOD inchangée, aucune promotion.** Les checkpoints P0d ci-dessous ne sont plus le binaire actuellement proposé aux Gates B/C.
+
 ## M19 P0d — candidate installable active pour Gate B / C (16/11/2026)
 
 Autorisation explicite de bascule P0c → P0d sur `main`, **sans promotion LAST_GOOD**. Bibliothèque unique `dist/AMOSPro_AGA.Lib` : **91 300 octets**, SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`, 83 commandes / 93 entrées AP20, source MC68020 depuis [builder P0d](../tools/build_m19_p0d_bob_blit_in_memory.py). Test actif unique [M19_P0D_BOB_BLIT_01.asc](../tests/current/M19_P0D_BOB_BLIT_01.asc) ; pas de fichier IFF/ABK externe, quatre dessins dont clipping, transparence et un seul Swap explicite.

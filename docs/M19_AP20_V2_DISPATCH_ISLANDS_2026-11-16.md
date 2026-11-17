@@ -1,5 +1,13 @@
 # M19 — Refonte AP20 V2 : îlots locaux de dispatch (expérience source-only)
 
+## Mise à jour 17/11/2026 — bascule de test expressément autorisée
+
+Le palier expérimental source-only présenté ci-dessous a reçu l'autorisation explicite d'installer sa **candidate exacte** comme `dist/AMOSPro_AGA.Lib` de test, **sans promotion de `LAST_GOOD`**. Bibliothèque attendue : **96 908 octets**, SHA256 **`34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`**, builder SHA-pinné [`tools/build_m19_ap20_islands_in_memory.py`](../tools/build_m19_ap20_islands_in_memory.py). L'unique programme actif devient [`tests/current/M19_AP20_ISLANDS_01.asc`](../tests/current/M19_AP20_ISLANDS_01.asc), reprenant le test de Bob Blit visuel validé sous P0d. Le protocole des Gates B/C et les chemins de logs sont dans [`tests/current/README.md`](../tests/current/README.md).
+
+**Gates réelles de cette candidate : B (Runtime) NON TESTÉE, C (vrai Compiler V2) NON TESTÉE, D physique NON TESTÉE.** Gate A CPU020 PASS sur la candidate mémoire exacte ([CI complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)). La première compilation réelle devra vérifier si le Compiler V2 accepte les unités AP20 entrelacées avec les stubs et le déplacement des marqueurs `GetP`. Les commandes P0f de Bobs persistants ne font **pas** partie du test actif (cleanup `End` toujours à finaliser).
+
+**Référence préservée :** P0d 91 300 octets / SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be` dans l'historique Git, ainsi que par builder déterministe ; le seul `LAST_GOOD` R84 67 904 octets / SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` reste inchangé. Aucun nouveau dossier `dist`, aucune archive ni autre branche. Les passages « protection P0d active » ci-dessous documentent le checkpoint avant l'autorisation, **pas le statut après bascule**.
+
 **Date : 16/11/2026.** Dépôt autorisé : `anthea176/AMOSPro-AGA-Extension`, branche `main`. Cible : **MC68020 / 68EC020 minimum**. **Aucune autorisation de bascule de bibliothèque ni de promotion `LAST_GOOD`.**
 
 ## Objet et hypothèse à vérifier

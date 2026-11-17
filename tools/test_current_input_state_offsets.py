@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,7 +48,7 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA,P0C_SHA):
+    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
         # P0c redirects public Close to its BOBS unit, so only the real
         # multi-unit segment table and pinned builder may certify its identity.
@@ -66,12 +66,27 @@ def main():
             R87_SHA:(86,85,87),
             R88_SHA:(87,86,88),
             P0C_SHA:(91,90,92),
+            P0D_SHA:(92,91,93),
+            AP20_ISLANDS_SHA:(142,177,178),
         }
         aga_index,bob_index,entry_count=group_indices[digest]
         assert len(units)==entry_count, "Unexpected modular segment count"
-        assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
+        if digest==AP20_ISLANDS_SHA:
+            assert units[aga_index].startswith(frozen_units[84]), "AP20 islands inherited R84 AGA/state prefix altered"
+        else:
+            assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
         assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
-        if digest==P0C_SHA:
+        if digest==AP20_ISLANDS_SHA:
+            from build_m19_ap20_islands_in_memory import build as build_islands
+            rebuilt,meta=build_islands()
+            assert image==rebuilt and meta['sha256']==AP20_ISLANDS_SHA
+            assert meta['native_groups'][94]==aga_index
+            assert meta['native_groups'][93]==bob_index
+        elif digest==P0D_SHA:
+            from build_m19_p0d_bob_blit_in_memory import build as build_p0d
+            rebuilt,meta=build_p0d()
+            assert image==rebuilt and meta['sha256']==P0D_SHA
+        elif digest==P0C_SHA:
             from build_m19_p0c_screen_close_in_memory import build as build_p0c
             rebuilt, meta=build_p0c()
             assert image==rebuilt and meta["sha256"]==P0C_SHA, "Active P0c builder mismatch"
@@ -118,7 +133,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; modular AGA input-state group byte-verified against R84 LAST_GOOD for R87/R88/P0c")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; modular AGA input-state group byte-verified against R84 LAST_GOOD for R87/R88/P0c/P0d/AP20 islands")
 
 if __name__=="__main__":
     main()

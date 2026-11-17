@@ -17,6 +17,7 @@ from build_m19_p0f_public_bound_in_memory import build as build_p0f
 
 P0F_SHA = '6175705e22ed0c3f52c1ba317b2fad7aaca5af0db507c63a1ed629a724609a45'
 P0D_SHA = 'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
+ISLAND_SHA = '34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
 LAST_GOOD_SHA = '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
 TITLE = (b'AMOSPro AGA M19 AP20 V2 ISLAND DISPATCH MC68020 SOURCE ONLY\0'
          b'$VER: AGA M19 AP20 islands UNINSTALLED P0f foundation\0')
@@ -25,14 +26,19 @@ TITLE += bytes(len(TITLE) & 1)
 
 def build():
     root = Path(__file__).resolve().parents[1]
-    p0d = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
+    current = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    if sha256(p0d).hexdigest()!=P0D_SHA or sha256(good).hexdigest()!=LAST_GOOD_SHA:
-        raise ValueError('P0d or LAST_GOOD changed: refuse AP20 experiment')
+    if (sha256(current).hexdigest() not in (P0D_SHA,ISLAND_SHA)
+            or sha256(good).hexdigest()!=LAST_GOOD_SHA):
+        raise ValueError('Unknown active candidate or LAST_GOOD changed: refuse AP20 experiment')
     source, old_meta = build_p0f()
     if sha256(source).hexdigest()!=P0F_SHA or len(source)!=96744:
         raise ValueError('P0f source provenance mismatch')
     candidate, layout = dispatch_islands(source, title=TITLE)
+    if sha256(candidate).hexdigest()!=ISLAND_SHA or len(candidate)!=96908:
+        raise ValueError('AP20 islands candidate byte drift')
+    if sha256(current).hexdigest()==ISLAND_SHA and candidate!=current:
+        raise ValueError('Installed test candidate differs from pinned builder')
     token, parts, _ = unpack_ap20(candidate)
     original_tokens, original, _ = unpack_ap20(source)
     for i,j in layout.group_map.items():

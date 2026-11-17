@@ -1,5 +1,9 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 AP20 V2 — îlots de dispatch installés pour Gates B/C (17/11/2026)
+
+**Candidate de test autorisée** dans la seule `dist/AMOSPro_AGA.Lib` : **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`. [Remappeur](../tools/ap20_v2_island_dispatch.py) + [builder P0f](../tools/build_m19_ap20_islands_in_memory.py). Chaque unité native V2 est inchangée en octets, les stubs AP20 sont regroupés à proximité et le tableau des tokens est remappé ; les marqueurs `GetP` précèdent les nouveaux stubs. **PC16 maximal : 854 octets** (P0f originel 32 576). 85 commandes, 178 entrées AP20, quatre groupes natifs. Gate A CPU020 et CI PASS (lien dans [rapport](M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md)). **L'entrelacement stubs/groupes doit encore être validé par l'AMOS Compiler V2 réel (Gate C NON TESTÉE), comme la Gate B Runtime.** Test actif unique `tests/current/M19_AP20_ISLANDS_01.asc`. P0d reste reproductible à partir de son builder et de l'historique ; R84 `LAST_GOOD` protégée. Les sections P0d suivantes sont des checkpoints historiques, pas l'état actif.
+
 ## M19 P0d — bibliothèque de test active : Bob Blit AP20/Compiler V2 (16/11/2026)
 
 La bascule canonique autorisée P0c → P0d fournit **`dist/AMOSPro_AGA.Lib` (91 300 octets ; SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`)**, 83 commandes/93 entrées V2. Le constructeur [`build_m19_p0d_bob_blit_in_memory.py`](../tools/build_m19_p0d_bob_blit_in_memory.py) repart **uniquement des sources figées et vérifiées P0b/P0c** ; il conserve octet pour octet les unités natives AGA/C2P/IFF, ajoute le stub `Aga Bob Blit(I,X,Y)` et les sources MC68020 du pont AGBO/Chip/Safe/Blitter au groupe BOBS V2. Le décalage RBSR maximal **32 196** exige une future organisation en groupes : ne plus agrandir le bloc sans preuve de portée PC16.

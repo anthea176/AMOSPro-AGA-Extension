@@ -18,7 +18,7 @@ on:
       - 'tools/compiler_bridge_v2_probe.py'
       - 'tools/m68k_emit.py'
       - 'tools/experiments/ap20_v3_r82_split.py'
-      - 'tests/current/M19_P0*.asc'
+      - 'tests/current/M19_*.asc'
       - 'tests/design/M19_P0*.asc'
       - 'dist/AMOSPro_AGA.Lib'
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
@@ -45,7 +45,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
@@ -111,31 +111,21 @@ jobs:
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py
           python -B tools/test_ap20_v2_island_dispatch.py
-      - name: M19 AP20 V2 candidate transfer bytes for explicit canonical test switch (read-only)
-        run: |
-          python -B - <<'PY'
-          import base64,hashlib,sys
-          sys.path.insert(0,'tools')
-          from build_m19_ap20_islands_in_memory import build
-          raw,meta=build()
-          assert len(raw)==96908 and hashlib.sha256(raw).hexdigest()=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
-          print('M19_AP20_ISLANDS_BASE64_BEGIN',flush=True)
-          s=base64.b64encode(raw).decode('ascii')
-          for i in range(0,len(s),128):
-              print('M19_B64_CHUNK '+s[i:i+128],flush=True)
-          print('M19_AP20_ISLANDS_BASE64_END',flush=True)
-          PY
-      - name: M19 P0d canonical Lib is byte-for-byte source-built
+      - name: M19 AP20 V2 islands canonical Lib is source-built; P0d remains reproducible
         run: |
           python -B - <<'PY'
           import sys,hashlib,pathlib
           sys.path.insert(0,'tools')
-          from build_m19_p0d_bob_blit_in_memory import build
-          raw,meta=build()
+          from build_m19_p0d_bob_blit_in_memory import build as oldbuild
+          from build_m19_ap20_islands_in_memory import build as newbuild
+          p0d,old=oldbuild()
+          assert len(p0d)==91300 and old['sha256']=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
           active=pathlib.Path('dist/AMOSPro_AGA.Lib').read_bytes()
-          assert active==raw and len(raw)==91300 and hashlib.sha256(raw).hexdigest()=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
-          assert meta['commands']==83 and meta['entries']==93
-          print('PASS P0d canonical byte-exact source build',len(raw),meta['sha256'])
+          candidate,meta=newbuild()
+          assert active==candidate and len(candidate)==96908
+          assert hashlib.sha256(active).hexdigest()=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
+          assert meta['new_pc16']==854 and meta['ap20_entries']==178
+          print('PASS AP20 islands exact canonical candidate; previous P0d byte-reproducible')
           PY
       - name: M19 P0d design ASC static AMOS preflight (NOT WinUAE)
         run: python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
@@ -183,7 +173,7 @@ jobs:
           PY
       - name: M19 P0d active and historical design ASC static preflight
         run: |
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0D_BOB_BLIT_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_AP20_ISLANDS_01.asc
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
       - name: Ensure no binary, ASC or passed tests changed
