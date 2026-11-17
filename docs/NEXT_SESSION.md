@@ -2,7 +2,7 @@
 
 ## M19 P0j-b2 — préparation Chip explicite, source-only
 
-[Source et banc P0j-b2](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md). Deux fonctions privées MC68020 chargent la banque par numéro et réutilisent les validations P0c et le registre Chip sans modifier le shadow sélectionné. Gate A à confirmer en CI. P0d reste à adapter, Gates B/C non testées. Lib officielle/ASC/R84 protégés.
+[Source et banc P0j-b2](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md). Deux fonctions privées MC68020 chargent la banque par numéro et réutilisent les validations P0c et le registre Chip sans modifier le shadow sélectionné. **Gate A MC68020 PASS : 46 vérifications**, [CI M19 44172967134](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44172967134). Source BOBS **19 208 octets**, SHA256 `1e2f5102e384e717326b3038ee3efda0ed331c2cd644e1e4d7a643e280db26ff`; candidate AP20 en mémoire **99 672 octets**, SHA256 `8e1ef5daccde882aa78adb93c13108ee0d085063540920cbecfa80b4dddaad8d` (85 commandes, 178 entrées, quatre unités). Deux banques préparées avec sélection inchangée et cache réutilisé sans copie ; P0d reste à adapter, Gates B/C non testées. Lib officielle/ASC/R84 protégés.
 
 
 ## M19 P0j-b1 — accès Chip explicite par banque, premier sous-jalon

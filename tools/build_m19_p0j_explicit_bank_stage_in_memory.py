@@ -12,6 +12,8 @@ from m19_p0j_explicit_bank_lookup_emit import emit_explicit_bank_lookup
 from m19_p0j_explicit_bank_stage_emit import emit_explicit_bank_stage
 
 BASE_SHA='757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e'
+P0JB2_BYTES=99672
+P0JB2_SHA256='8e1ef5daccde882aa78adb93c13108ee0d085063540920cbecfa80b4dddaad8d'
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0j-b2 EXPLICIT CHIP STAGE SOURCE ONLY\0'
        b'$VER: AGA P0j-b2 private stage UNINSTALLED\0')
@@ -40,6 +42,9 @@ def build()->tuple[bytes,dict]:
     links=pc16_displacements(new)
     if groups!=[142,153,156,177] or max(map(abs,links.values()))>=1000:
         raise ValueError('P0j-b2 native AP20 island PC16 drift')
+    if (len(result)!=P0JB2_BYTES or sha256(result).hexdigest()!=P0JB2_SHA256
+            or len(suffix)!=406 or max(map(abs,links.values()))!=854):
+        raise ValueError('P0j-b2 canonical source-only AP20 image SHA/size drift')
     return result,dict(sha256=sha256(result).hexdigest(),size=len(result),
       predecessor=meta['sha256'],appended=len(suffix),public_commands=85,
       ap20_entries=178,native_groups=groups,max_pc16=max(map(abs,links.values())),

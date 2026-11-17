@@ -18,6 +18,8 @@ from m19_p0c_bank_registry_emit import F as RF,NODE_SIZE,META_FLAGS
 from m19_p0j_explicit_bank_lookup_emit import emit_explicit_bank_lookup
 
 GETADR=rjsr(main_index('Bnk.GetAdr'))
+P0JB2_NATIVE_BYTES=19208
+P0JB2_NATIVE_SHA256='1e2f5102e384e717326b3038ee3efda0ed331c2cd644e1e4d7a643e280db26ff'
 
 def emit_explicit_bank_stage() -> tuple[bytes,dict[str,int]]:
     old,labels=emit_explicit_bank_lookup()
@@ -112,6 +114,8 @@ def emit_explicit_bank_stage() -> tuple[bytes,dict[str,int]]:
         raise ValueError('P0j-b2 native prefix/CPU/PC16 drift')
     if data.count(GETADR)!=old.count(GETADR)+1:
         raise ValueError('P0j-b2 explicit stage lacks source Bnk.GetAdr')
+    if len(data)!=P0JB2_NATIVE_BYTES or sha256(data).hexdigest()!=P0JB2_NATIVE_SHA256:
+        raise ValueError('P0j-b2 native code source SHA/size drift')
     return data,c.labels
 
 if __name__=='__main__':

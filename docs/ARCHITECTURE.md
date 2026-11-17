@@ -1,5 +1,14 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b2 — staging Chip explicitement indexé par banque (17/11/2026)
+
+Les entrées privées `explicit_checked_stage_entry` et `explicit_registry_prepare_entry` prennent D3 = banque AGBO, A5 = propriétaire et A4 = GfxBase, réutilisent **les octets historiques du validateur P0c et la publication atomique du registre**, sans consulter `bank_active_state`. Deux labels de raccord zéro octet ont été insérés dans les emitters P0c sans modifier leur binaire. Le fast-path s'appuie sur P0j-b1 pour **réutiliser un contexte Chip valide sans CopyMem ni AllocVec**.
+
+**Gate A MC68020 PASS (46 vérifications)**, [CI 44172967134](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44172967134), deux implantations AP20 V2, banques 10/11 avec 11 toujours sélectionnée, intégrité des pixels Chip et aucune écriture du shadow. BOBS source **19 208 octets** SHA256 `1e2f5102e384e717326b3038ee3efda0ed331c2cd644e1e4d7a643e280db26ff`, candidate source-only AP20 **99 672 octets** SHA256 `8e1ef5daccde882aa78adb93c13108ee0d085063540920cbecfa80b4dddaad8d`, 85 commandes / 178 entrées / 4 îlots, PC16 max 854.
+
+**P0d résolveur d'image/peintre toujours lié au shadow** : P0j-b2 ne rend pas encore le `Draw` complet réentrant, n'est pas installé et ne vaut pas Gates B/C/D. `dist/AMOSPro_AGA.Lib`, ASC actif, archives et R84 protégés. [Rapport P0j-b2](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md).
+
+
 ## M19 P0j-b1 — lookup Chip source-only explicitement indexé par banque
 
 L'entrée privée `explicit_bank_lookup_entry` accepte D3 = banque AGBO, A1 = sortie 28 octets, A5 = owner AMOS. Elle retrouve le P0c registry node de **cette banque**, compare le pointeur `Bnk.GetAdr` et la génération de l'AGBO avec le contexte Chip, et contrôle MEMF_CHIP avant de publier la sortie. Aucune lecture/écriture de `bank_active_state` dans cette entrée, et hook de test de non-écriture. **Gate A MC68020 PASS (68 contrôles)**, [CI M19 44170930154](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44170930154), avec services système simulés et deux implantations AP20 V2. Code BOBS source-only **18 802 octets**, SHA256 `6f8d3d3edc887e707288d49981019c58b640b7a1f20b2b235bf73fafaebca7cf` ; image AP20 en mémoire **99 280 octets**, SHA256 `757025bbcf846694d8ecc0377a28fa08344d9b82964501dfdc4a7f0c4b6c171e`, 85 commandes / 178 entrées / 4 îlots. Gates B/C/D P0j-b1 non exécutées.

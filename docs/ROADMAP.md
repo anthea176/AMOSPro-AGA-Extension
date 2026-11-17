@@ -19,11 +19,11 @@ La **cinquième unité native** a été validée en Gates A/B/C pour son banc de
 
 **Objectif :** un rendu Blitter de **1 à 64 Bobs multi-banques**, dans le back buffer `Safe`, **sans projection temporaire de `bank_active_state`**, sans Swap implicite, sans mémoire Chip périmée et avec refus sûr d'une frame invalide.
 
-**Dernier jalon Gate A validé : M19 P0j-b1.** Lookup Chip indépendant de la sélection, **68 vérifications MC68020 PASS** ([preuve](M19_P0J_EXPLICIT_BANK_LOOKUP_GATE_A_2026-11-17.md)). **Étape en cours : P0j-b2**, préparation Chip explicitement par numéro de banque et réutilisation des validations P0c ; **source-only, Gate A encore à confirmer**, B/C/D non exécutées ([détail P0j-b2](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md)). Le résolveur d'image P0d reste à adapter avant `Aga Bob Draw`.
+**Dernier jalon Gate A validé : M19 P0j-b2.** Préparation Chip explicitement indexée par banque et cache réutilisé sans allocation supplémentaire : **46 vérifications MC68020 PASS** ([preuve](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md)). **Étape en cours : P0j-b3**, adapter la résolution d'image et le peintre P0d pour éliminer le shadow temporaire de P0i ; source-only, **Gates B/C/D non réalisées**. Le lookup indépendant P0j-b1 reste validé (68 vérifications).
 
 | Ordre | Travail à faire | Critère de réussite |
 | --- | --- | --- |
-| **1** | **Valider P0j-b2**, préparation Chip P0c explicitement par numéro de banque, puis intégrer ce chemin privé. | Gate A MC68020 PASS démontrant banques AGBO distinctes, génération/identité, MEMF_CHIP, réutilisation du cache et **zéro modification de la sélection globale**. |
+| **1** | **P0j-b2 : préparation Chip explicite — PASS source-only**. | **46 contrôles MC68020 PASS** ; deux banques distinctes, copie Chip contrôlée, cache sans recopie et zéro écriture du shadow. [Preuve](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md). |
 | **2** | Adapter la **résolution d'image P0d** et la route Blitter pour chaque banque ; éliminer le shadow temporaire du prototype P0i. | Dessin pixel-exact de 64 Bobs issus au minimum des banques 10/11, sans mutation de `bank_active_state` ni risque de réentrance dû à sa projection. |
 | **3** | Achever le **préflight intégral de frame avant DMA** et fixer la stratégie d'échec. | Dimensions, profondeur, répertoire, masques, sources, contexte Chip et port `Safe` validés avant peinture ; pas de Swap implicite ni de frame partielle présentée. |
 | **4** | Intégrer le rendu au registre des objets et **sécuriser Close/End**. | Identité de banque conservée après `Aga Bob Off`, allocations libérées une seule fois, pointeurs DMA invalidés, fermeture et réouverture sûres. |
