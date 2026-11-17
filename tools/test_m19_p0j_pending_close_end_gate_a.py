@@ -82,11 +82,11 @@ class PendingMachine(BarrierMachine):
             assert self.uc.reg_read(r)==v,('End ABI',r)
         return self.events
 
-def ready(layout):
+def ready(layout, cls=PendingMachine, *, inject_failure=True):
     # Same actual native B5 source, replace only the OS reply fixture.
     from build_m19_p0c_screen_close_in_memory import build as build_p0c
     src,_=build_p0c()
-    m=PendingMachine(src,layout)
+    m=cls(src,layout)
     assert m.run_select(10)==1
     assert m.run_get(1,4,5,20,8)==1
     assert m.mask(True,1,0)==1
@@ -104,11 +104,13 @@ def ready(layout):
     assert m.public('bob',ident=2,x=9,y=11,image=1)==1
     assert m.frame()==1
     assert m.status()==READY
-    assert m.get(AMOS+0x1cc)==m.entry+m.labels['program_end_bridge_entry']
-    assert m.get(AMOS+0x1d0)==m.entry+m.labels['program_end_bridge_entry']
-    m.put(DB+20,3)
-    assert m.frame()==0
-    assert m.status()==DIRTY
+    expected_end=m.entry+m.labels.get('b7_end_entry',m.labels['program_end_bridge_entry'])
+    assert m.get(AMOS+0x1cc)==expected_end
+    assert m.get(AMOS+0x1d0)==expected_end
+    if inject_failure:
+        m.put(DB+20,3)
+        assert m.frame()==0
+        assert m.status()==DIRTY
     return m
 
 def main():

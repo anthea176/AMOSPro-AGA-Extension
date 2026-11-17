@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0j-b7 — sécurisation native du callback End (source-only, Gate A à vérifier)
+
+Le diagnostic B6 sur **les vraies instructions natives R88** a PASS en CI ([run 44185013731](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44185013731)) : Safe/Disp manquants entraînent un refus coopératif borné par `WaitTOF`, sans destruction prématurée des ScreenBuffers ou des ports ; les réponses tardives sont consommées une seule fois. **Blocage prouvé :** quand `End` finit par fermer l'écran, B6 laisse la barrière Bobs `DIRTY` persistante, contrairement à `Aga Screen Close`.
+
+**Correctif B7 privé en cours, sans installation** : conserver B6 (candidate 101 476 octets, SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91`) et les 86 tokens / 181 entrées AP20 / quatre unités ; ajouter un wrapper MC68020 de `Aga Bob Draw` qui enregistre un callback End protégé, puis contrôler la fermeture réelle. Après un End incomplet Safe/Disp, rester `DIRTY`, garder le callback pour une tentative ultérieure, **ne jamais libérer de ScreenBuffer/MsgPort en attente**. Après fermeture réelle, réinitialiser le verrou ; sous conflit de callbacks ou signature AGA End corrompue, refuser le Draw et bloquer Swap. B7 ne touche pas à la fonction AGA End historique, seulement à l'appel BOBS et à l'ancien stub Draw dans le HUNK AP20 reconstruit en mémoire.
+
+[Source B7, tests et limites](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md). **Gate A B7 en attente de CI ; Gates B/C/D non testées.** Aucune modification de `dist/AMOSPro_AGA.Lib`, ASC actif, `LAST_GOOD` ou archives ; WinUAE et véritable Compiler restent à tester uniquement après décision séparée de bascule.
+
+
 ## M19 P0j-b6 — fonction numérique `Aga Bob Draw` : Gate A PASS (52 contrôles)
 
 [Builder AP20 et protocole](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md). Le constructeur B6 dérive strictement de la candidate B5 SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`, sans changer la source MC68020 des quatre unités ni les 180 sections précédentes. **Un seul token AMOS supplémentaire** est proposé : `_OK=Aga Bob Draw`, fonction numérique, **zéro argument**, résultat `1` si rendu complet ou `0` si refus. Son nouveau stub AP20 (index 180) pointe sur `guarded_frame_draw_entry` B5 ; le Swap public reste lui-même protégé. Le banc B6 doit vérifier GetP/ABI et relocalisation interpréteur + modèle Compiler sur deux implantations natives, images masquées, erreurs avant/après DMA et absence de Swap après refus.

@@ -1,5 +1,12 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b7 — End callback après notifications Safe/Disp (Gate A en attente)
+
+Nouvel émetteur privé `m19_p0j_end_lifecycle_emit.py` à cible MC68020 minimum. Il conserve octet pour octet la source native B5/B6 et la routine AGA End R88 ; il ajoute deux entrées BOBS : `b7_guarded_draw_entry` (route le retour numérique de B5 et vérifie/arme le callback End courant) et `b7_end_entry` (raccorde le pont P0c End, contrôle le véritable Screen). Après End réussi, il remet la barrière Bobs à zéro ; après délai Safe/Disp épuisé, il ne la remet pas à zéro et conserve le callback afin qu'une tentative ultérieure reste possible. Toute autre extension ayant déjà remplacé les callbacks End entraîne un refus de la nouvelle présentation plutôt qu'un écrasement de son pointeur.
+
+Builder `build_m19_p0j_end_lifecycle_in_memory.py` part de B6 AP20 SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91` : **86 tokens et 181 entrées inchangés**, stub Draw index 180 redirigé vers le nouveau wrapper, suffixe BOBS ajouté, quatre unités natives. **Aucun fichier Lib installé, aucun ASC modifié.** Le diagnostic [B6 pending](../tools/test_m19_p0j_pending_close_end_gate_a.py) reproduit une barrière DIRTY résiduelle après End : le correctif doit l'éliminer sans rendre dangereuse la fermeture. [Détails/tests](M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md). Gates B/C/D non testées.
+
+
 ## M19 P0j-b6 — token de fonction Draw source-only (Gate A PASS, 52 contrôles)
 
 Le builder `build_m19_p0j_public_draw_in_memory.py` reprend **l'intégralité** de P0j-b5 (SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`) et ajoute, **dans le HUNK AP20 reconstruit en mémoire uniquement**, un token `aga bob draw` fonction numérique (`instruction=1`, `function=180`, signature `0`). Le stub `Rbsr` local à l'îlot BOBS 177 vise l'entrée native B5 `guarded_frame_draw_entry`, sans nouveau source natif, sans arguments/GetP et sans toucher aux anciens tokens ou à l'AGA Swap original. La portée PC16 de tous les stubs doit rester signée 16 bits et l'inventaire passer de 85/180 à **86 commandes / 181 sections AP20** (quatre unités).

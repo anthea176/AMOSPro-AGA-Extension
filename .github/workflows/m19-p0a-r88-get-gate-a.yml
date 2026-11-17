@@ -39,6 +39,9 @@ on:
       - 'tools/build_m19_p0j_public_draw_in_memory.py'
       - 'tools/test_m19_p0j_public_draw_gate_a.py'
       - 'tools/test_m19_p0j_pending_close_end_gate_a.py'
+      - 'tools/m19_p0j_end_lifecycle_emit.py'
+      - 'tools/build_m19_p0j_end_lifecycle_in_memory.py'
+      - 'tools/test_m19_p0j_end_lifecycle_gate_a.py'
       - 'tools/build_m19_p0h_frame_preflight_in_memory.py'
       - 'tools/test_m19_p0h_frame_preflight_gate_a.py'
       - 'tools/build_m19_p0g_checked_read_in_memory.py'
@@ -192,6 +195,11 @@ jobs:
       - name: M19 P0j-b6 pending Safe/Disp Close-End native diagnostic MC68020
         run: |
           python -B tools/test_m19_p0j_pending_close_end_gate_a.py
+      - name: M19 P0j-b7 source-only End lifecycle guarded Draw MC68020 Gate A
+        run: |
+          python -B tools/m19_p0j_end_lifecycle_emit.py
+          python -B tools/build_m19_p0j_end_lifecycle_in_memory.py
+          python -B tools/test_m19_p0j_end_lifecycle_gate_a.py
       - name: M19 AP20 V2 island dispatch P0f source-only MC68020 Gate A
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py
