@@ -200,6 +200,8 @@ jobs:
           python -B tools/m19_p0j_end_lifecycle_emit.py
           python -B tools/build_m19_p0j_end_lifecycle_in_memory.py
           python -B tools/test_m19_p0j_end_lifecycle_gate_a.py
+      - name: M19 B7 one-shot verified canonical delivery delta read only
+        run: python -B tools/one_shot_b7_delivery_delta.py
       - name: M19 AP20 V2 island dispatch P0f source-only MC68020 Gate A
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py
