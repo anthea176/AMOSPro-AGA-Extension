@@ -12,6 +12,7 @@ They are not new production graphics APIs. All source is generated here;
 no disassembly/reconstruction from a binary is used as source authority.
 """
 from __future__ import annotations
+from hashlib import sha256
 
 from m68k_emit import Code, D, A, PRE, POST, I
 
@@ -20,6 +21,7 @@ FAR_SIGNATURE = 0x005A0205
 DATA = bytes(((i * 37) ^ (i >> 5) ^ 0xA5) & 0xFF
              for i in range(DATA_BYTES))
 EXPECTED_SUM = 0x004FB000
+NATIVE_SHA256 = '86a32352847145f9964ad4c1fd49e210b00a69274ef8e3613e78569a10be57bd'
 assert len(DATA) == 40960 and sum(DATA) == EXPECTED_SUM
 
 
@@ -65,13 +67,13 @@ def emit_fifth_native() -> tuple[bytes, dict[str, int]]:
     assert 32768 < labels['unit5_tail'] < 65536
     assert native[labels['unit5_data']:labels['unit5_tail']] == DATA
     assert native[labels['unit5_tail']:] == bytes.fromhex('263c005a0205243c000000004e75')
-    assert len(native) < 65534 - 34 and len(native) % 2 == 0
+    assert len(native) == 41026 and len(native) < 65534 - 34 and len(native) % 2 == 0
+    assert sha256(native).hexdigest() == NATIVE_SHA256, 'Native MC68020 source byte drift'
     return native, dict(labels, bytes=len(native), table_bytes=DATA_BYTES,
                         sum_expected=EXPECTED_SUM, tail_expected=FAR_SIGNATURE)
 
 
 if __name__ == '__main__':
-    from hashlib import sha256
     native,meta=emit_fifth_native()
     print('M19 AP20 V2 UNIT FIVE SOURCE ONLY MC68020',meta,
           'sha256',sha256(native).hexdigest(),
