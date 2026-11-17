@@ -27,6 +27,7 @@ from pathlib import Path
 
 # M19 P0d: protected functional predecessor, Gate B/C PASS on its own test.
 AP20_ISLANDS_SHA="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
+AP20_UNIT5_SHA="967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1"  # temporary five-unit B/C candidate
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
 P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
 # M19 P0c is frozen previous source-built candidate.
@@ -95,6 +96,27 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == AP20_UNIT5_SHA:
+        from build_m19_ap20_unit5_in_memory import build as build_five
+        from build_m19_ap20_islands_in_memory import build as build_four
+        from compiler_relocation import unpack_ap20
+        expected, meta = build_five()
+        assert cur==expected and len(cur)==138044, "Five-unit canonical test binary differs from source"
+        assert meta["sha256"]==AP20_UNIT5_SHA and meta["ap20_entries"]==181
+        assert meta["public_commands"]==87 and meta["native_groups"]==[142,153,156,177,180]
+        assert meta["far_unsigned_offset"]==41012 and meta["new_pc16"]==854
+        _,parts,title=unpack_ap20(cur)
+        frozen,old_meta=build_four()
+        _,old_parts,_=unpack_ap20(frozen)
+        assert parts[:178]==old_parts and old_meta["sha256"]==AP20_ISLANDS_SHA
+        assert b"M19 AP20 V2 FIVE UNITS" in title and len(parts)==181
+        audit=inspect(parse(cur))
+        named=[x for x in audit["tokens"] if x["name"].startswith(
+            ("aga ","get aga ","make aga ","no aga "))]
+        assert not audit["issues"] and len(named)==87, "Five-unit public API drift"
+        assert [x["name"] for x in named[-2:]]==["aga unit five sum","aga unit five tail"]
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur,good,"M19 AP20 V2 FIVE-UNIT TEMP TEST; CPU020 Gate A PASS; WinUAE Runtime B and true Compiler C NOT TESTED; diagnostic tokens MUST BE REMOVED after proof; R84 LAST_GOOD unchanged"
     if current_sha == AP20_ISLANDS_SHA:
         from build_m19_ap20_islands_in_memory import build as build_islands
         from compiler_relocation import unpack_ap20
