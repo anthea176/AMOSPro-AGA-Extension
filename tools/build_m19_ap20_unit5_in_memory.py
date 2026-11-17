@@ -30,6 +30,8 @@ UNIT5_GROUP = 180
 FUNCTIONS = (('aga unit five sum', 1, UNIT5_SUM, '0'),
              ('aga unit five tail', 1, UNIT5_TAIL, '0'))
 RTS = bytes.fromhex('4e75')
+UNIT5_CANDIDATE_SHA256 = '967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'
+UNIT5_CANDIDATE_BYTES = 138044
 TITLE = (b'AMOSPro AGA M19 AP20 V2 FIVE UNITS MC68020 SOURCE ONLY\0'
          b'$VER: M19 AP20 V2 five unit diagnostic EXPERIMENT UNINSTALLED\0')
 TITLE += bytes(len(TITLE) & 1)
@@ -53,10 +55,10 @@ def build() -> tuple[bytes, dict]:
 
     code, labels = emit_fifth_native()
     near_offset, tail_offset = labels['unit5_sum'], labels['unit5_tail']
-    if near_offset != 0 or tail_offset <= 32768:
+    if near_offset != 0 or tail_offset != 41012 or tail_offset <= 32768:
         raise ValueError('Fifth unit must exercise unsigned V2 deep offset')
     unit = DISPATCH_V2 + code
-    if len(unit) & 1 or len(unit) > MAX_UNIT_BYTES:
+    if len(unit) != 41060 or len(unit) & 1 or len(unit) > MAX_UNIT_BYTES:
         raise ValueError('Fifth unit beyond Compiler V2 65534-byte bound')
 
     new_parts = old_parts + [
@@ -73,6 +75,8 @@ def build() -> tuple[bytes, dict]:
 
     new_tokens = old_tokens[:-6] + b''.join(token(*fn) for fn in FUNCTIONS) + bytes(6)
     image = repack_ap20(old_raw, new_tokens, new_parts, TITLE)
+    if len(image) != UNIT5_CANDIDATE_BYTES or sha256(image).hexdigest() != UNIT5_CANDIDATE_SHA256:
+        raise ValueError('Fifth-unit in-memory candidate SHA256/size drift')
     actual_tokens, actual_parts, actual_title = unpack_ap20(image)
     if actual_parts != new_parts or actual_tokens != new_tokens or actual_title != TITLE:
         raise ValueError('AP20 HUNK re-pack not byte-identical')
