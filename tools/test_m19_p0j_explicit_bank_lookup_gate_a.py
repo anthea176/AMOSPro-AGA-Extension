@@ -24,6 +24,26 @@ class ExplicitMachine(ImageGateMachine):
         self.uc.mem_write(self.entry,relocate(
             self.native_explicit,self.entry,{},self.uc))
         self.labels['routed_paint_all_entry']=self.labels['routed_paint_prechecked_entry']
+        self.explicit_trace=[]
+        from unicorn import UC_HOOK_CODE
+        for key in ('explicit_bank_lookup_entry','explicit_lookup_node',
+                    'explicit_lookup_found','explicit_lookup_return',
+                    'chip_lookup_entry'):
+            addr=self.entry+self.labels[key]
+            def watch(uc,address,size,label):
+                self.explicit_trace.append((label,self.d(0),self.d(3),
+                    self.a(1),self.a(2),self.get(self.a(2)+12)
+                    if 0x50000<=self.a(2)<0xe00000 else 0))
+            self.uc.hook_add(UC_HOOK_CODE,watch,user_data=key,
+                             begin=addr,end=addr)
+
+    def os_call(self,uc,address,size,user):
+        # OUT is mapped writable scratch. The inherited test stub only
+        # marks addresses >=0x50000 as PUBLIC, but this harness passes A1
+        # at 0x43100. Model that exact mapped 28-byte output as PUBLIC.
+        if address==EXEC-534 and OUT<=self.a(1)<OUT+28:
+            return self._os_return(1)
+        return super().os_call(uc,address,size,user)
 
     def lookup(self,bank,owner=AMOS):
         self.uc.mem_write(OUT,CANARY)
@@ -77,7 +97,9 @@ def main():
         assert len(cache)==2
         for bank in (10,11):
             ok,out=m.lookup(bank)
-            assert ok==1,(layout,bank,out,m.route_trace[-15:])
+            assert ok==1,(layout,bank,out,m.explicit_trace[-35:],
+                           m.root(),m.nodes() if m.metadata else {},
+                           m.selected_triple().hex(),m.chip_live)
             payload,generation,chip,chiplen,ctx,bnum,head=unpack('>7I',out)
             assert payload==m.find(bank)+24
             assert generation==m.get(payload+24)
