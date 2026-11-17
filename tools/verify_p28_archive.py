@@ -52,7 +52,7 @@ def main() -> None:
             if filename != R88_NAME:
                 verify(root / 'tests/fixtures/m19_p28' / filename, filename)
     for filename, length, digest in [
-        ('dist/AMOSPro_AGA.Lib', 96908, '34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'),
+        ('dist/AMOSPro_AGA.Lib', 138044, '967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'),
         ('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib', 73184, R87_SHA),
         ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 67904, R84_SHA),
     ]:

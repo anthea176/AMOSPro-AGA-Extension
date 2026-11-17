@@ -119,32 +119,6 @@ jobs:
           python -B tools/m19_ap20_unit5_emit.py
           python -B tools/build_m19_ap20_unit5_in_memory.py
           python -B tools/test_m19_ap20_unit5_gate_a.py
-      - name: M19 UNIT5 TRANSFER - SHA pinned fifth unit candidate for authorized canonical B/C
-        run: |
-          python -B - <<'PY'
-          import base64,hashlib,sys
-          from pathlib import Path
-          sys.path.insert(0, 'tools')
-          from build_m19_ap20_unit5_in_memory import build
-          raw,meta=build()
-          assert len(raw)==138044 and hashlib.sha256(raw).hexdigest()=='967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'
-          print('M19_UNIT5_BASE64_BEGIN',flush=True)
-          b64=base64.b64encode(raw).decode('ascii')
-          for i in range(0,len(b64),160):
-              print('M19_UNIT5_B64_CHUNK '+b64[i:i+160],flush=True)
-          print('M19_UNIT5_BASE64_END',flush=True)
-          guards=('AP20_ISLANDS_SHA','34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56','M19_AP20_ISLANDS_01.asc','96908')
-          print('M19_GUARD_SCAN_BEGIN',flush=True)
-          for dirname in ('tools','.github/workflows'):
-              for path in sorted(Path(dirname).rglob('*')):
-                  if path.is_file() and path.suffix in ('.py','.yml'):
-                      try: lines=path.read_text(encoding='utf-8').splitlines()
-                      except UnicodeError: continue
-                      matches=[str(i+1)+':'+line.strip()[:170] for i,line in enumerate(lines) if any(needle in line for needle in guards)]
-                      if matches:
-                          print('M19_GUARD_PATH',str(path),' | '.join(matches[:14]),flush=True)
-          print('M19_GUARD_SCAN_END',flush=True)
-          PY
       - name: M19 AP20 five-unit canonical exact; retain four-unit and P0d repro
         run: |
           python -B - <<'PY'

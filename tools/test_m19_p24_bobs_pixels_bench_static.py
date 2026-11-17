@@ -145,8 +145,13 @@ def main():
     old_p0d, old_meta = build_p0d()
     assert len(old_p0d)==91300 and old_meta['sha256']=="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
     ready, island_meta = build_islands()
-    assert ready==active_islands and len(ready)==96908
+    assert len(ready)==96908
     assert island_meta['sha256']=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
+    from build_m19_ap20_unit5_in_memory import build as build_five
+    from compiler_relocation import unpack_ap20
+    five,five_meta=build_five()
+    assert five==active_islands and len(five)==138044 and five_meta['sha256']=="967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1"
+    assert unpack_ap20(five)[1][:178]==unpack_ap20(ready)[1]
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
@@ -155,7 +160,7 @@ def main():
     assert current_lib==candidate and meta["sha256"]==R87_SHA
     assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active) == 1 and active[0].name == "M19_AP20_ISLANDS_01.asc"
+    assert len(active) == 1 and active[0].name == "M19_AP20_UNIT5_01.asc"
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
     assert legacy.exists() and git_blob_sha(legacy.read_bytes()) == LEGACY_GIT_SHA
     source = (ROOT / "tests/design" / ASC_NAME).read_bytes().decode("latin-1")
