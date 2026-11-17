@@ -1,5 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 — AP20 V2 par îlots : preuve Compiler réel (17/11/2026)
+
+**Gates A/B/C PASS pour le banc `M19_AP20_ISLANDS_01.asc`.** La **Gate C** est documentée par `PRG_STATE -1`, `RESULT 1` / `ERR 0` **et une capture d'écran provenant explicitement de l'exécutable compilé**, selon l'auteur ; Gate B par `PRG_STATE 1` et son journal. [Preuves et limites](M19_AP20_V2_GATES_BC_2026-11-17.md). Le Compiler V2 accepte et exécute ainsi le chemin de dispatch AP20 entrelacé emprunté par ce banc, sans prouver l'ensemble des exports ni une cinquième unité native.
+
+Le binaire et le test demeurent inchangés : `dist/AMOSPro_AGA.Lib`, 96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56` ; `tests/current/M19_AP20_ISLANDS_01.asc` seul actif. **Gate D, objets persistants et callbacks `End` non testés ; R84 `LAST_GOOD` protégée.** Le checkpoint « Gates B/C NON TESTÉES » plus bas est historique.
+
 ## M19 AP20 V2 — îlots de dispatch installés pour Gates B/C (17/11/2026)
 
 **Candidate de test autorisée** dans la seule `dist/AMOSPro_AGA.Lib` : **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`. [Remappeur](../tools/ap20_v2_island_dispatch.py) + [builder P0f](../tools/build_m19_ap20_islands_in_memory.py). Chaque unité native V2 est inchangée en octets, les stubs AP20 sont regroupés à proximité et le tableau des tokens est remappé ; les marqueurs `GetP` précèdent les nouveaux stubs. **PC16 maximal : 854 octets** (P0f originel 32 576). 85 commandes, 178 entrées AP20, quatre groupes natifs. Gate A CPU020 et CI PASS (lien dans [rapport](M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md)). **L'entrelacement stubs/groupes doit encore être validé par l'AMOS Compiler V2 réel (Gate C NON TESTÉE), comme la Gate B Runtime.** Test actif unique `tests/current/M19_AP20_ISLANDS_01.asc`. P0d reste reproductible à partir de son builder et de l'historique ; R84 `LAST_GOOD` protégée. Les sections P0d suivantes sont des checkpoints historiques, pas l'état actif.

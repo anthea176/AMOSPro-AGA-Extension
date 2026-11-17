@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 AP20 V2 — VALIDATION RUNTIME / VRAI COMPILER (17/11/2026, dernier statut)
+
+**Gates A, B et C : PASS sur le scénario de dispatch/Blitter `M19_AP20_ISLANDS_01.asc`.** Deux journaux fournis par l'auteur le 17/11/2026 : **Runtime `PRG_STATE 1`, `RESULT 1` / `ERR 0`** et **Compiled `PRG_STATE -1`, `RESULT 1` / `ERR 0`**. Les quatre Bobs, le masque et le clipping gauche/droite passent les assertions dans les deux modes. **L'auteur précise explicitement que la capture d'écran transmise provient de la version COMPILÉE** : preuve visuelle de Gate C seulement. [Rapport d'évidence, hashes des TXT et de l'image](M19_AP20_V2_GATES_BC_2026-11-17.md).
+
+**Candidate inchangée** : `dist/AMOSPro_AGA.Lib`, 96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, 85 commandes / 178 entrées AP20, portée PC16 854 octets, quatre unités natives. **Gate D NON TESTÉE ; ajout d'une cinquième unité, objets Bobs persistants, `Aga Bob Draw` et nettoyage `End` NON VALIDÉS.** Le SHA mentionné dans les TXT est un texte fixe du banc, pas une preuve indépendante du SHA de la copie installée.
+
+**CI :** le test historique `tools/test_opt020_p1e_benchmark_static.py` a été corrigé le 17/11/2026 pour reconnaître la candidate AP20 dans le chemin post-R82, sans comparer l'ancienne R69 à la bibliothèque active. [CI Artifact integrity](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/workflows/artifact-integrity.yml) pour vérifier l'état de la campagne. **Pas de promotion de `LAST_GOOD` R84**, pas d'archive ou d'autre branche. P0d reste reconstructible par son builder historique.
+
+**Les paragraphes « Gate B/C en attente » figurant plus bas datent du checkpoint de bascule AVANT la réception des journaux. Le verdict actif est celui indiqué ci-dessus.**
+
 ## M19 — AP20 V2 ISLANDS, BIBLIOTHÈQUE DE TEST ACTIVE (17/11/2026)
 
 **Bascule de test expressément autorisée par l'auteur le 17/11/2026** sur `main`, **sans promotion LAST_GOOD**. La bibliothèque canonique unique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est la candidate **AP20 V2 par îlots**, **96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`** ; 85 commandes publiques, 178 entrées AP20, quatre unités natives conservées. Source figée P0f SHA `6175705e22ed0c3f52c1ba317b2fad7aaca5af0db507c63a1ed629a724609a45` ; [builder](../tools/build_m19_ap20_islands_in_memory.py) et [rapport](M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md). PC16 max **854** au lieu de **32 576** dans P0f. **Gate A MC68020 et CI M19 PASS** ([run 43973879479](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)), mais acceptation des stubs et unités entrelacés par le **vrai AMOS Compiler V2 NON TESTÉE**.

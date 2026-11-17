@@ -1,5 +1,11 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 — AP20 V2 : Gates B/C confirmées sur scénario Bob Blit (17/11/2026)
+
+**Gate A MC68020 PASS ; Gate B Runtime PASS sur journal `PRG_STATE 1` ; Gate C véritable AMOS Compiler PASS sur journal `PRG_STATE -1` et capture visuelle explicitement issue de l'exécutable compilé.** [Preuves exactes](M19_AP20_V2_GATES_BC_2026-11-17.md). La candidate installable unique reste 96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56` ; `LAST_GOOD` R84 protégée.
+
+**Prochaine démonstration avant extension de l'architecture :** ajout d'une cinquième unité native significative sans déplacer les quatre précédentes, nouveau Gate A + véritables Gates B/C. Les Bobs persistants P0f / `Aga Bob Draw` / nettoyage `End` et la Gate D physique ne sont pas validés. Le checkpoint « B/C à tester » ci-dessous est antérieur aux journaux du 17/11/2026.
+
 ## M19 — Gate B/C de l'architecture AP20 V2 en îlots (17/11/2026)
 
 **En cours :** l'auteur a autorisé la bascule de la bibliothèque canonique de travail vers **M19 AP20 V2 islands** (96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`), avec le test actif unique `tests/current/M19_AP20_ISLANDS_01.asc`. **Gate A MC68020 PASS ; Gate B Runtime et Gate C véritable AMOS Compiler à tester séparément**, Gate D non testée. [Rapport](M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md) · [protocole](../tests/current/README.md). Priorité : confirmer la compatibilité des groupes AP20 entrelacés en compilé avant tout développement `Aga Bob Draw` ou Sprites matériels. **P0d fonctionnelle conservée par l'historique et son builder ; R84 LAST_GOOD inchangée, aucune promotion.** Les checkpoints P0d ci-dessous ne sont plus le binaire actuellement proposé aux Gates B/C.

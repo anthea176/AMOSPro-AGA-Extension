@@ -1,5 +1,11 @@
 # M19 — Refonte AP20 V2 : îlots locaux de dispatch (expérience source-only)
 
+## Résultat postérieur : Gates B et C PASS (17/11/2026)
+
+Le **17 novembre 2026**, deux journaux WinUAE ont été fournis : **Gate B Runtime `PRG_STATE 1` / `RESULT 1` / `ERR 0` PASS**, **Gate C vrai AMOS Compiler `PRG_STATE -1` / `RESULT 1` / `ERR 0` PASS**. L'auteur a confirmé sans ambiguïté que **la capture de l'écran AGA à quatre Bobs provient de la version COMPILÉE**. Elle valide visuellement la Gate C pour ce scénario (masque, clipping, Swap, Close). [Rapport et empreintes des trois pièces](M19_AP20_V2_GATES_BC_2026-11-17.md).
+
+**L'hypothèse du dispatch V2 à îlots entrelacés est donc validée en Runtime et avec le vrai Compiler pour le chemin du banc actuel**, pas pour toutes les commandes ni pour une future cinquième unité native. Gate D et Bobs persistants/End non testés ; aucune promotion de `LAST_GOOD`. Les mentions « Gate B/C non testées » dans les anciennes sections ci-dessous documentent l'état avant réception des preuves.
+
 ## Mise à jour 17/11/2026 — bascule de test expressément autorisée
 
 Le palier expérimental source-only présenté ci-dessous a reçu l'autorisation explicite d'installer sa **candidate exacte** comme `dist/AMOSPro_AGA.Lib` de test, **sans promotion de `LAST_GOOD`**. Bibliothèque attendue : **96 908 octets**, SHA256 **`34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`**, builder SHA-pinné [`tools/build_m19_ap20_islands_in_memory.py`](../tools/build_m19_ap20_islands_in_memory.py). L'unique programme actif devient [`tests/current/M19_AP20_ISLANDS_01.asc`](../tests/current/M19_AP20_ISLANDS_01.asc), reprenant le test de Bob Blit visuel validé sous P0d. Le protocole des Gates B/C et les chemins de logs sont dans [`tests/current/README.md`](../tests/current/README.md).

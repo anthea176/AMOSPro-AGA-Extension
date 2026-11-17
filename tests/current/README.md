@@ -10,6 +10,12 @@
 - **P0d historique** : 91 300 octets / SHA256 `bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be`, toujours reproductible via son builder et récupérable au commit précédent (pas de bibliothèque alternative dans `dist/`).
 - **`LAST_GOOD` R84** : inchangée, 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`.
 
+## Résultats réels reçus le 17 novembre 2026
+
+**Gate B Runtime : PASS** (journal utilisateur `M19_AP20_ISLANDS_RUNTIME.TXT` : `PRG_STATE 1`, `RESULT 1`, `ERR 0`). **Gate C vrai AMOS Compiler : PASS** (journal `M19_AP20_ISLANDS_COMPILED.TXT` : `PRG_STATE -1`, `RESULT 1`, `ERR 0`). **La capture d'écran fournie par l'auteur provient précisément de la VERSION COMPILÉE**, avec les quatre Bobs, transparence et clipping conformes. La capture ne prouve pas l'affichage Runtime, attesté uniquement par son TXT.
+
+**Rapport exact (SHA256 des deux TXT reçus et de la capture, limites) :** [Gates B/C du 17 novembre](../../docs/M19_AP20_V2_GATES_BC_2026-11-17.md). La chaîne `CANDIDATE SHA256` écrite par l'ASC **n'est pas un hachage indépendant** de la bibliothèque installée. Gates A/B/C PASS **pour ce scénario uniquement**, Gate D non testée. Aucun test des Bobs persistants ou d'une cinquième unité native.
+
 ## Préparation WinUAE
 
 1. Synchroniser le clone Windows du dépôt sur `main`. Sauvegarder **hors dépôt** l'actuelle copie du slot `APSystem` avant remplacement ; ne pas toucher à `LAST_GOOD`.
@@ -31,7 +37,7 @@ Pour chaque journal : `TEST M19_AP20_ISLANDS_01`, `CANDIDATE SHA256 34f4e3c13f9a
 
 ## Gates et points non encore couverts
 
-**Gate A source/CPU MC68020 : PASS** sur la candidate à îlots (CI [M19 Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)). **Gates B Runtime, C vrai Compiler, D Amiga physique : NON TESTÉES** tant que les journaux et l'observation réelle ne sont pas reçus.
+**Gate A source/CPU MC68020 : PASS** ([CI M19](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/43973879479)). **Gate B Runtime : PASS sur le journal reçu ; Gate C vrai Compiler : PASS sur le journal et la capture explicitement issue du compilé** ([preuves](../../docs/M19_AP20_V2_GATES_BC_2026-11-17.md)). **Gate D Amiga physique : NON TESTÉE.**
 
 Ce scénario teste surtout **AGA + BOBS** ; il ne couvre pas exhaustivement les commandes C2P/IFF ni les nouvelles commandes P0f d'objets persistants, dont le nettoyage End n'est pas encore finalisé. Il vérifie le risque central de cette première bascule : accès aux commandes publiques et exécution d'un programme compilé avec les groupes AP20 entrelacés.
 
