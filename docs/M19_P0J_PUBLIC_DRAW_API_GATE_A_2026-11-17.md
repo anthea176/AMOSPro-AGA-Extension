@@ -1,6 +1,6 @@
-# M19 P0j-b6 — fonction numérique Aga Bob Draw (source-only)
+# M19 P0j-b6 — fonction numérique Aga Bob Draw : Gate A PASS
 
-**Cible MC68020/68EC020 minimum ; Gate A EN ATTENTE.** Cette expérimentation ne modifie **aucun octet du code natif B5** et n'installe rien. Les Gates B Runtime WinUAE, C véritable AMOS Compiler et D matériel ne sont pas effectuées.
+**Cible MC68020/68EC020 minimum ; Gate A PASS : 52 contrôles sur deux implantations natives V2.** [GitHub Actions 44183835343](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44183835343), commit `6cd3329`. Candidate AP20 source-only **101 476 octets**, SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91` ; **86 commandes, 181 sections AP20, 4 îlots natifs**, PC16 maximal **28 000 octets**. Cette expérimentation ne modifie **aucun octet du code natif B5** et n'installe rien. Les Gates B Runtime WinUAE, C véritable AMOS Compiler et D matériel ne sont pas effectuées.
 
 ## Origine et API
 
@@ -10,8 +10,8 @@
 - Le token existant `Aga Swap` continue d'utiliser **le garde B5** : une frame DIRTY retourne `0` avant tout `ChangeScreenBuffer`. Seule une fermeture AGA réussie permet de lever le verrou conservateur ; les réponses Safe/Disp en attente restent un risque à valider sur matériel.
 - **Un seul nouveau token** : les 85 commandes anciennes, leurs 180 sections AP20 et les quatre unités natives doivent rester identiques. Aucun ASC actif, aucune bibliothèque ou LAST_GOOD touché.
 
-## Gate A obligatoire
+## Gate A exécutée : PASS
 
-[Builder B6](../tools/build_m19_p0j_public_draw_in_memory.py) et [banc CPU020 B6](../tools/test_m19_p0j_public_draw_gate_a.py) : audit strict AP20/HUNK, token et signature `0`, portée PC16 et absence de mutation des unités. Exécution MC68020 des deux relocalisations (Rbsr interpréteur / JSR Compiler simulé) puis des sources natives sur deux implantations, en vérifiant ABI numérique 0/1, rendu masqué, refus de masque avant DMA et échec SafePort après un seul Bob. Le front doit rester intact et aucun `Aga Swap` du back partiel ne doit réussir.
+[Builder B6](../tools/build_m19_p0j_public_draw_in_memory.py) et [banc CPU020 B6](../tools/test_m19_p0j_public_draw_gate_a.py) : audit strict AP20/HUNK, token et signature `0`, portée PC16 et absence de mutation des unités. Exécution MC68020 des deux relocalisations (Rbsr interpréteur / JSR Compiler simulé) puis des sources natives sur deux implantations, en vérifiant ABI numérique 0/1, rendu masqué, refus de masque avant DMA et échec SafePort après un seul Bob. Résultat **PASS (52 vérifications)** : le front reste intact, la corruption du masque fait renvoyer 0 et interdit toute permutation, et le refus SafePort après le premier Bob ne permet pas de présenter le back partiel. Le dispatch AP20 de la fonction index 180 atteint l'entrée BOBS 177 offset 27 286 dans les deux modèles, et son retour conserve l'ABI numérique (`D2=0`, `D3=0/1`). [Journal CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44183835343).
 
 **Limite explicite :** un modèle de dispatch compilé ne démontre pas que le *véritable* AMOS Compiler V2 reconnaîtra la nouvelle fonction, ni que l'écran réel et Close/End/Swap seront corrects sous WinUAE. Ces Gates devront être effectuées **après autorisation distincte de bascule canonique**, avec l'unique Lib/ASC actifs du dépôt. La présente Gate A ne constitue aucune permission de promotion ni de publication.

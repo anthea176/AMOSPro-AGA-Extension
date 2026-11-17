@@ -1,10 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## M19 P0j-b6 — fonction numérique `Aga Bob Draw` (candidate source-only ; Gate A en attente)
+## M19 P0j-b6 — fonction numérique `Aga Bob Draw` : Gate A PASS (52 contrôles)
 
 [Builder AP20 et protocole](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md). Le constructeur B6 dérive strictement de la candidate B5 SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`, sans changer la source MC68020 des quatre unités ni les 180 sections précédentes. **Un seul token AMOS supplémentaire** est proposé : `_OK=Aga Bob Draw`, fonction numérique, **zéro argument**, résultat `1` si rendu complet ou `0` si refus. Son nouveau stub AP20 (index 180) pointe sur `guarded_frame_draw_entry` B5 ; le Swap public reste lui-même protégé. Le banc B6 doit vérifier GetP/ABI et relocalisation interpréteur + modèle Compiler sur deux implantations natives, images masquées, erreurs avant/après DMA et absence de Swap après refus.
 
-**Statut : source-only, Gate A à valider par la CI B6 ; Gates B/C/D non exécutées.** Le test AMOS actif, `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` R84 et les archives ne sont pas modifiés ; ce token expérimental n'est **pas disponible dans la Lib installable**. La véritable signature AMOS Compiler V2 et les séquences Screen Close/End après Safe pending restent à valider indépendamment.
+**Gate A MC68020 PASS (52 contrôles)** ([CI 44183835343](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44183835343)) : candidate en mémoire **101 476 octets**, SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91` ; **86 commandes, 181 entrées AP20, 4 unités**, PC16 max 28 000. Gates B/C/D non exécutées. Le test AMOS actif, `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` R84 et les archives ne sont pas modifiés ; ce token expérimental n'est **pas disponible dans la Lib installable**. La véritable signature AMOS Compiler V2 et les séquences Screen Close/End après Safe pending restent à valider indépendamment.
 
 ## M19 P0j-b5 — verrou de Swap après échec d'une frame (Gate A PASS 86 contrôles)
 

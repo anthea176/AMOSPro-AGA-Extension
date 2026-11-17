@@ -1,10 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## M19 P0j-b6 — token de fonction Draw source-only (Gate A en attente)
+## M19 P0j-b6 — token de fonction Draw source-only (Gate A PASS, 52 contrôles)
 
 Le builder `build_m19_p0j_public_draw_in_memory.py` reprend **l'intégralité** de P0j-b5 (SHA256 `a5a08853f331b7c70d8e71eb95911bee3d8944f18feb107fda2249f10477d55e`) et ajoute, **dans le HUNK AP20 reconstruit en mémoire uniquement**, un token `aga bob draw` fonction numérique (`instruction=1`, `function=180`, signature `0`). Le stub `Rbsr` local à l'îlot BOBS 177 vise l'entrée native B5 `guarded_frame_draw_entry`, sans nouveau source natif, sans arguments/GetP et sans toucher aux anciens tokens ou à l'AGA Swap original. La portée PC16 de tous les stubs doit rester signée 16 bits et l'inventaire passer de 85/180 à **86 commandes / 181 sections AP20** (quatre unités).
 
-La fonction renvoie le résultat privé MC68020 `D3=1` (frame complète) ou `D3=0` (échec) avec `D2=0` ; aucune permutation implicite. La routine `guarded_swap_entry` B5 reste obligatoire dans le même binaire pour refuser toute présentation d'une page DIRTY, notamment après un échec du deuxième Bob. **Gate A B6 en attente** ; les modèles de relocalisation ne constituent pas une preuve du véritable AMOS Compiler. Pas de modification `dist/` ni de l'ASC de campagne. [Contrat B6](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md).
+La fonction renvoie le résultat privé MC68020 `D3=1` (frame complète) ou `D3=0` (échec) avec `D2=0` ; aucune permutation implicite. La routine `guarded_swap_entry` B5 reste obligatoire dans le même binaire pour refuser toute présentation d'une page DIRTY, notamment après un échec du deuxième Bob. **Gate A B6 MC68020 PASS : 52 contrôles** ([CI 44183835343](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44183835343)), candidate AP20 **101 476 octets**, SHA256 `3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91` ; 86 commandes, 181 entrées, quatre unités, PC16 max 28 000. Le token `aga bob draw` est une fonction numérique à zéro argument (index 180, îlot BOBS 177, offset 27 286). Les modèles de relocalisation ne constituent **pas** une preuve du véritable AMOS Compiler. Pas de modification `dist/` ni de l'ASC de campagne. [Contrat B6](M19_P0J_PUBLIC_DRAW_API_GATE_A_2026-11-17.md).
 
 
 ## M19 P0j-b5 — barrière privée avant le Swap natif (Gate A PASS, 86 contrôles)
