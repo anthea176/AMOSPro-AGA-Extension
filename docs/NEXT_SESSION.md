@@ -2,7 +2,7 @@
 
 ## M19 P0g — nouvelle lecture privée avant Draw (17/11/2026)
 
-Développement source-only sur `main` : [P0g lecture sécurisée](M19_P0G_CHECKED_READ_GATE_A_2026-11-17.md). Un nouveau point d'entrée BOBS relie l'`identity_check` existant à la lecture d'un objet persistant ; il refuse les banques effacées/rechargées **sans sortie partielle**, conserve la lecture brute pour distinguer inactif/périmé et ne modifie aucune commande publique. Gate A à confirmer par CI sur le commit ; B/C/D non testées. La bibliothèque installable reste la quatre-unités SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, l'ASC actif et R84 LAST_GOOD inchangés.
+Développement source-only sur `main` : [P0g lecture sécurisée](M19_P0G_CHECKED_READ_GATE_A_2026-11-17.md). Un nouveau point d'entrée BOBS relie l'`identity_check` existant à la lecture d'un objet persistant ; il refuse les banques effacées/rechargées **sans sortie partielle**, conserve la lecture brute pour distinguer inactif/périmé et ne modifie aucune commande publique. **Gate A MC68020 PASS : 52 tests, deux implantations**, [CI 44150293973](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44150293973). Candidate source-only 96 752 octets, SHA256 `e1f8f8c04e24a38651ade50b6878cffb1dd288a766b104fb5c9fa9ae314d9536`; B/C/D de cette candidate non testées. La bibliothèque installable reste la quatre-unités SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, l'ASC actif et R84 LAST_GOOD inchangés.
 
 
 ## M19 — nettoyage des sondes cinq unités après Gates B/C (17/11/2026)

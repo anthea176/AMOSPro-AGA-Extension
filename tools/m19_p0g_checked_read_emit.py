@@ -14,10 +14,16 @@ D0/D1/D4-D7/A0-A6 including A3/A5 and SP are preserved as in relay_common.
 """
 from __future__ import annotations
 
+from hashlib import sha256
+
 from m68k_emit import Code, D, I
 from m19_p0e_split_bridge_emit import AGA_CORE
 from m19_p0f_object_identity_emit import emit_object_identity
 from build_m19_p0f_public_bound_in_memory import emit_bound_public
+
+
+NATIVE_CHECKED_READ_SHA = 'a30d4a4bc9c2ea1e50aa9a69fe62df6f684f58d1ffa0737559cd891becdc8f87'
+NATIVE_CHECKED_READ_BYTES = 16444
 
 
 def checked_read_offset() -> int:
@@ -46,6 +52,8 @@ def emit_checked_read() -> tuple[bytes, dict[str, int]]:
         raise ValueError('Checked-read is not a strictly appended private entry')
     if not native[len(original):].startswith(bytes.fromhex('48e7efee')):
         raise ValueError('Checked-read entry ABI damaged')
+    if len(native) != NATIVE_CHECKED_READ_BYTES or sha256(native).hexdigest() != NATIVE_CHECKED_READ_SHA:
+        raise ValueError('P0g checked-read native byte-exact source drift')
     return native, c.labels
 
 

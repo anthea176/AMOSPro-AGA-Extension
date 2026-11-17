@@ -24,6 +24,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / 'experiments'))
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 
 BOBS, AGA = 93, 94
+P0G_SHA = 'e1f8f8c04e24a38651ade50b6878cffb1dd288a766b104fb5c9fa9ae314d9536'
+P0G_BYTES = 96752
 TITLE = (b'AMOSPro AGA M19 P0g private checked Bob read SOURCE ONLY\0'
          b'$VER: AMOSPro_AGA P0g private Draw preflight UNINSTALLED\0')
 TITLE += bytes(len(TITLE) & 1)
@@ -67,6 +69,9 @@ def build() -> tuple[bytes, dict]:
         raise ValueError('P0g exceeded signed AP20 GRouB PC16 margin')
     if len(entries) != 95 or old_meta['public_commands'] != 85:
         raise ValueError('P0g must retain the P0f public ABI')
+    if (len(candidate) != P0G_BYTES or sha256(candidate).hexdigest() != P0G_SHA
+            or len(suffix) != 14 or checked_read_offset() != 1350 or reach != 32590):
+        raise ValueError('P0g candidate SHA256/size or PC16 provenance drift')
     return candidate, dict(
         sha256=sha256(candidate).hexdigest(), size=len(candidate),
         predecessor_sha=old_meta['sha256'], public_commands=85,
