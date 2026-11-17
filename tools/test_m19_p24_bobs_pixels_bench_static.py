@@ -139,8 +139,14 @@ def verify_script(text: str, model):
 def main():
     last_good = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     current_lib = (ROOT / "dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
-    active_p0d = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active_p0d)==91300 and sha256(active_p0d).hexdigest()=="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
+    active_islands = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    from build_m19_p0d_bob_blit_in_memory import build as build_p0d
+    from build_m19_ap20_islands_in_memory import build as build_islands
+    old_p0d, old_meta = build_p0d()
+    assert len(old_p0d)==91300 and old_meta['sha256']=="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
+    ready, island_meta = build_islands()
+    assert ready==active_islands and len(ready)==96908
+    assert island_meta['sha256']=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
@@ -149,7 +155,7 @@ def main():
     assert current_lib==candidate and meta["sha256"]==R87_SHA
     assert b"R87 v0.13.32" in candidate and meta["native_units"]["BOBS"]==5220
     active = list((ROOT / "tests/current").glob("*.asc"))
-    assert len(active) == 1 and active[0].name == "M19_P0D_BOB_BLIT_01.asc"
+    assert len(active) == 1 and active[0].name == "M19_AP20_ISLANDS_01.asc"
     legacy = ROOT / "tests/passed/M19_P23_BOBS_BATCH_01.asc"
     assert legacy.exists() and git_blob_sha(legacy.read_bytes()) == LEGACY_GIT_SHA
     source = (ROOT / "tests/design" / ASC_NAME).read_bytes().decode("latin-1")

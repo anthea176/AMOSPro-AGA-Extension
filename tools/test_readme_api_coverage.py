@@ -171,7 +171,11 @@ def main() -> None:
         r"\$VER:\s*AMOSPro_AGA\s+(M\d+\s+P\d+[a-z]?)\b",
         title, re.IGNORECASE,
     )
-    if m19:
+    islands = re.search(r"\$VER:\s*AGA\s+M19\s+AP20\s+islands\b", title, re.IGNORECASE)
+    if islands:
+        assert "M19 AP20 V2 ISLAND DISPATCH" in title, "Unexpected AP20 island title"
+        release = "M19 AP20 ISLANDS"
+    elif m19:
         release = m19.group(1)
     else:
         # Older Rxx candidates keep their historical $VER syntax.
