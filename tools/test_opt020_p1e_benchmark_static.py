@@ -15,7 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
-from active_library import P0C_SHA
+from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -55,7 +55,7 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
     if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA):
@@ -69,7 +69,21 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha == P0C_SHA:
+        if active_sha == AP20_ISLANDS_SHA:
+            from build_m19_ap20_islands_in_memory import build as build_islands
+            from compiler_relocation import unpack_ap20
+            candidate_current,meta_current=build_islands()
+            assert active==candidate_current and meta_current["sha256"]==AP20_ISLANDS_SHA
+            assert meta_current["ap20_entries"]==178 and meta_current["new_pc16"]==854
+            _,units,_=unpack_ap20(active)
+            _,frozen_units,_=unpack_ap20((ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes())
+            assert len(units)==178
+            assert units[meta_current["native_groups"][94]].startswith(frozen_units[84])
+        elif active_sha == P0D_SHA:
+            from build_m19_p0d_bob_blit_in_memory import build as build_p0d
+            candidate_current,meta_current=build_p0d()
+            assert active==candidate_current and meta_current["sha256"]==P0D_SHA
+        elif active_sha == P0C_SHA:
             # P0c retains R88's inherited R84 AGA/state group unchanged.
             # Its public Close stub now routes to a separate BOBS V2 group.
             from build_m19_p0c_screen_close_in_memory import build as build_p0c
