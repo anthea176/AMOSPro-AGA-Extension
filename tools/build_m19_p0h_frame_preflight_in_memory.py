@@ -22,6 +22,8 @@ from m19_p0h_frame_preflight_emit import emit_frame_preflight
 
 BOBS, AGA = 93, 94
 BASE_SHA = 'e1f8f8c04e24a38651ade50b6878cffb1dd288a766b104fb5c9fa9ae314d9536'
+P0H_BYTES = 97248
+P0H_SHA256 = '2c5c371754a3b54c797c7b413769ef2536db92cdad7eba3db8185bb88dea7782'
 TITLE = (b'AMOSPro AGA M19 P0h 64 BOBS PRIVATE PREFLIGHT MC68020 SOURCE ONLY\0'
          b'$VER: M19 P0h AP20 V2 private check only UNINSTALLED\0')
 TITLE += bytes(len(TITLE) & 1)
@@ -69,6 +71,10 @@ def build() -> tuple[bytes, dict]:
         raise ValueError('AP20 island PC16 margin is not safe')
     if len([t for t in new_api['tokens'] if t['name'].startswith('aga ')]) < 60:
         raise ValueError('Incomplete AMOS public token table')
+    if (len(islands) != P0H_BYTES or sha256(islands).hexdigest() != P0H_SHA256
+            or len(suffix) != 318 or groups != [142,153,156,177]
+            or max(map(abs, links.values())) != 854):
+        raise ValueError('P0h rebuilt AP20 island candidate byte-exact drift')
     return islands, dict(
         sha256=sha256(islands).hexdigest(),size=len(islands),
         base_sha=meta['sha256'],public_commands=85,

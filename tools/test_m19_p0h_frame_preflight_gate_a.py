@@ -151,15 +151,34 @@ def main():
         assert m.preflight()==0
         m.put(m.real_state,oldscreen)
         assert m.preflight()==1
-        cases+=3
+        # Fake or tampered AGA End signature must fail BEFORE scanning.
+        original_end=bytes(m.uc.mem_read(m.real_state-0x168,12))
+        before_raw=m.raw_reads
+        m.uc.mem_write(m.real_state-0x168,bytes.fromhex('4e714e71')+original_end[4:])
+        assert m.preflight()==0 and m.raw_reads==before_raw
+        m.uc.mem_write(m.real_state-0x168,original_end)
+        assert m.preflight()==1
+        cases+=5
 
-        # Exercise the top boundary (ID=64), always in ascending order.
+        # Exercise ALL 64 active objects, including the final bank-11 Bob.
         assert m.run_select(10)==1
-        assert m.public('bob',ident=64,x=0,y=0,image=1)==1
+        for ident in range(1,MAX_BOBS):
+            assert m.public('bob',ident=ident,x=ident,y=ident,image=1)==1
+        assert m.run_select(11)==1
+        assert m.public('bob',ident=MAX_BOBS,x=0,y=0,image=1)==1
         start_raw,start_checked=m.raw_reads,m.secure_reads
         assert m.preflight()==1
-        assert m.raw_reads-start_raw==64 and m.secure_reads-start_checked==1
-        cases+=2
+        assert m.raw_reads-start_raw==64 and m.secure_reads-start_checked==64
+        # A failure at object 64 must not be hidden by 63 valid objects.
+        node11=m.find(11)
+        generation11=m.get(node11+24+24)
+        m.put(node11+24+24,generation11+1)
+        start_raw,start_checked=m.raw_reads,m.secure_reads
+        assert m.preflight()==0
+        assert m.raw_reads-start_raw==64 and m.secure_reads-start_checked==64
+        m.put(node11+24+24,generation11)
+        assert m.preflight()==1
+        cases+=5
 
         # Off+reset: zero objects is valid; no stale shadow authorization.
         assert m.relay_call('reset')[0]==1

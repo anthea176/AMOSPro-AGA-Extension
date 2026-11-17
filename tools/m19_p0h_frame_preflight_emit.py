@@ -21,6 +21,8 @@ from m68k_emit import Code, D, A, M, I
 from m19_p0g_checked_read_emit import emit_checked_read
 from m19_p0e_v2_object_bridge_emit import END_DELTA, END_SIGNATURE
 
+NATIVE_P0H_BYTES = 16762
+NATIVE_P0H_SHA256 = '2d5a9e7a7f53696427786e4cdaffd0786b9cbcdfa5b9f2039cdef480dcd6cc8b'
 MAX_BOBS = 64
 FRAME_BYTES = 128
 RECORD_OFFSET = 64
@@ -135,6 +137,8 @@ def emit_frame_preflight() -> tuple[bytes, dict[str, int]]:
         raise ValueError('P0h preflight changed a frozen BOBS entry or exceeded V2 size')
     if not native[len(old):].startswith(bytes.fromhex('48e7efee4fefff80')):
         raise ValueError('Missing P0h private frame/ABI prologue')
+    if len(native) != NATIVE_P0H_BYTES or sha256(native).hexdigest() != NATIVE_P0H_SHA256:
+        raise ValueError('P0h native MC68020 source byte-exact drift')
     return native, c.labels
 
 
