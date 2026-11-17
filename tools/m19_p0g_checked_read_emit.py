@@ -17,7 +17,7 @@ from __future__ import annotations
 from m68k_emit import Code, D, I
 from m19_p0e_split_bridge_emit import AGA_CORE
 from m19_p0f_object_identity_emit import emit_object_identity
-from m19_p0f_public_bound_in_memory import emit_bound_public
+from build_m19_p0f_public_bound_in_memory import emit_bound_public
 
 
 def checked_read_offset() -> int:

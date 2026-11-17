@@ -15,7 +15,7 @@ from amos_link_test_support import relocate
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from build_m19_p0g_checked_read_in_memory import build
 from m19_p0g_checked_read_emit import emit_checked_read, checked_read_offset
-from m19_p0f_public_bound_in_memory import emit_bound_public
+from build_m19_p0f_public_bound_in_memory import emit_bound_public
 from test_m19_p0f_public_bound_native import BoundMachine
 from test_m19_p0e_v2_object_bridge_native import CANARY
 from test_m19_p0a_r88_bank_gate_a import HEAD

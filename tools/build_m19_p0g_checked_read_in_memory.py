@@ -17,7 +17,7 @@ from compiler_relocation import repack_ap20, unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2
 from m19_p0e_split_bridge_emit import AGA_CORE
 from m19_p0f_object_identity_emit import emit_object_identity
-from m19_p0f_public_bound_in_memory import build as build_p0f, emit_bound_public
+from build_m19_p0f_public_bound_in_memory import build as build_p0f, emit_bound_public
 from m19_p0g_checked_read_emit import emit_checked_read, checked_read_offset
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / 'experiments'))
