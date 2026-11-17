@@ -75,14 +75,14 @@ def main():
         assert m.get(0x53000+8)==0 and not m.chip_live
         passed+=6
 
-        # Mutate the real AGBO image directory at payload+32.
+        # Bnk.GetAdr payload begins node+24, image directory is payload+32.
         # The bank generation field instead resides at payload+24.
         for off,bad in ((6,b'\x00\x04'),        # bad depth
                         (8,b'\x00\x01'),        # bad stride
                         (10,b'\x00\x02'),       # unsupported mask flag
                         (16,b'\x00\x00\x00\x00')): # wrong pixel length
             n=prepare(layout)
-            entry=n.find(11)+32
+            entry=n.find(11)+24+32
             original=bytes(n.uc.mem_read(entry,40))
             n.uc.mem_write(entry+off,bad)
             before=n.read_back();p=len(n.paint_blits)
