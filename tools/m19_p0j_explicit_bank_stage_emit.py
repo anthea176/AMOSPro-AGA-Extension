@@ -70,6 +70,20 @@ def emit_explicit_bank_stage() -> tuple[bytes,dict[str,int]]:
     RG('bank',D(0))
     c.imm('cmp',5,D(0));B(5,'registry_return')
     c.imm('cmp',65535,D(0));B(2,'registry_return')
+    # Persistent Bobs: use a live, identity-checked Chip cache directly.
+    # The b1 lookup validates the exact bank/generation, Chip cookie,
+    # ownership and MEMF_CHIP without reading bank_active_state.
+    # Its 28-byte result lives in our unused frame tail (+64..+91).
+    # An absent or stale cache falls through to the original full stage.
+    RG('bank',D(3))
+    c.move(A(2),D(0))
+    c.imm('add',64,D(0))
+    c.move(D(0),A(1))
+    B(1,'explicit_bank_lookup_entry')
+    c.tst(D(3));B(7,'explicit_prepare_cache_miss')
+    RS(I(1),'result')
+    B(0,'registry_return')
+    L('explicit_prepare_cache_miss')
     B(1,'registry_find')
     RG('bad',D(0));c.tst(D(0));B(6,'registry_return')
     RG('node',D(0));c.tst(D(0))
