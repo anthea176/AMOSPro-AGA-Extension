@@ -29,6 +29,8 @@ from m19_p0a_amos_bank_transaction_emit import CUR_BANKS_A5
 from m19_p0h_frame_preflight_emit import emit_frame_preflight,MAX_BOBS
 
 GETADR=rjsr(main_index('Bnk.GetAdr'))
+NATIVE_P0I_BYTES=17330
+NATIVE_P0I_SHA256='e9d3d37401237574fa7b8e9a55817ae6d62673db68bb6207dc8a423a5a4364ea'
 FRAME=160
 RECORD=96
 F=dict(ident=0,result=4,bank=8,image=12,x=16,y=20,
@@ -181,6 +183,8 @@ def emit_multibank_paint() -> tuple[bytes,dict[str,int]]:
         raise ValueError('P0i renderer damaged P0h source or PC16')
     if raw.count(GETADR)!=old.count(GETADR)+1:
         raise ValueError('P0i lacks exact checked AMOS GetAdr marker')
+    if len(raw)!=NATIVE_P0I_BYTES or sha256(raw).hexdigest()!=NATIVE_P0I_SHA256:
+        raise ValueError('P0i native MC68020 byte-exact source drift')
     return raw,c.labels
 
 

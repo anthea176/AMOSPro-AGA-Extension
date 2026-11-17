@@ -17,6 +17,8 @@ from m19_p0h_frame_preflight_emit import emit_frame_preflight
 from m19_p0i_multibank_draw_emit import emit_multibank_paint
 
 BASE_SHA='2c5c371754a3b54c797c7b413769ef2536db92cdad7eba3db8185bb88dea7782'
+P0I_BYTES=97820
+P0I_SHA256='004a04f9819fc2df9498ec8887e3de8a6533a7f620f04743c1fa1ae6ee872fa4'
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0i PRIVATE MULTIBANK SAFE DRAW SOURCE ONLY\0'
        b'$VER: AMOSPro_AGA P0i internal back buffer Blitter UNINSTALLED\0')
@@ -50,6 +52,9 @@ def build()->tuple[bytes,dict]:
     links=pc16_displacements(parts2)
     if groups!=[142,153,156,177] or max(map(abs,links.values()))>=1000:
         raise ValueError('Unsafe native island PC16 layout')
+    if (len(candidate)!=P0I_BYTES or sha256(candidate).hexdigest()!=P0I_SHA256
+            or len(suffix)!=568 or max(map(abs,links.values()))!=854):
+        raise ValueError('P0i AP20 candidate SHA/PC16 provenance drift')
     return candidate,dict(
         sha256=sha256(candidate).hexdigest(),size=len(candidate),
         predecessor_sha=meta['sha256'],native_groups=groups,

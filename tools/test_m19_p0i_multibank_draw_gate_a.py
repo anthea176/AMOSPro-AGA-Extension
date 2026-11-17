@@ -12,7 +12,7 @@ from unicorn.m68k_const import UC_M68K_REG_PC,UC_M68K_REG_SR
 from test_m5_generic import DR,AR,AMOS,EXEC,STACK,STOP
 from test_m19_p0a_r88_bank_gate_a import HEAD
 from test_m19_p0h_frame_preflight_gate_a import FrameMachine
-from test_m19_p0d_safe_bank_blit_native import oracle
+from test_m19_p0d_safe_bank_blit_native import oracle,SIZE
 from m19_p0a_multi_bob_abk import parse_payload
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from build_m19_p0i_multibank_draw_in_memory import build
@@ -98,7 +98,7 @@ def main():
         assert m.run_select(11)==1
         assert m.public('bob',ident=2,x=9,y=11,image=1)==1
         selected=m.selected_triple()
-        original_front=tuple(bytes(m.uc.mem_read(p,128*64))
+        original_front=tuple(bytes(m.uc.mem_read(p,SIZE))
                              for p in m.screen_planes)
         start=m.read_back()
         img10=parse_payload(m.bank_payload(10)).image(1)
@@ -113,7 +113,7 @@ def main():
         assert m.selected_triple()==selected,'Aga Bob Bank changed after Draw'
         assert m.read_back()==expected,'BOBS source bank / draw order pixel drift'
         assert m.get(0x53000+8)==0,'unexpected automatic AGA Swap'
-        assert tuple(bytes(m.uc.mem_read(p,128*64))
+        assert tuple(bytes(m.uc.mem_read(p,SIZE))
                      for p in m.screen_planes)==original_front
         assert sum(x[0] in ('BltMask','BltOpaque') for x in m.paint_blits)==2
         assert len(m.chip_live)==2,'each original source bank must own Chip'
@@ -155,6 +155,80 @@ def main():
         m.invoke('bridge')
         assert not m.chip_live and not m.metadata
         passed+=2
+
+        # 64 real, distinct BOBS: 32 sourced from bank10 and 32 from bank11.
+        # The full Blitter output is pixel-exact even where objects overlap.
+        n=MultiBankMachine(original,layout)
+        assert n.run_select(10)==1
+        assert n.run_get(1,4,5,20,8)==1
+        assert n.run_select(11)==1
+        assert n.run_get(1,7,8,16,15)==1
+        n.activate_aga_state()
+        n.configure_real_state()
+        img10=parse_payload(n.bank_payload(10)).image(1)
+        img11=parse_payload(n.bank_payload(11)).image(1)
+        assert n.run_select(10)==1
+        poses=[]
+        for i in range(1,33):
+            x,y=(i*7)%65,(i*11)%45
+            assert n.public('bob',ident=i,x=x,y=y,image=1)==1
+            poses.append((img10,x,y))
+        assert n.run_select(11)==1
+        for i in range(33,65):
+            x,y=(i*7)%65,(i*11)%45
+            assert n.public('bob',ident=i,x=x,y=y,image=1)==1
+            poses.append((img11,x,y))
+        chosen=n.selected_triple()
+        first=n.read_back()
+        front=tuple(bytes(n.uc.mem_read(p,SIZE)) for p in n.screen_planes)
+        expected=first
+        for img,x,y in poses:
+            expected=oracle(expected,img,x,y)
+        assert n.route('all')==1,(layout,n.route_trace[-20:])
+        assert n.read_back()==expected,'64-Bob pixel composition/order mismatch'
+        assert n.selected_triple()==chosen
+        assert n.get(0x53000+8)==0
+        assert tuple(bytes(n.uc.mem_read(p,SIZE))
+                     for p in n.screen_planes)==front
+        assert len(n.chip_live)==2
+        assert sum(item[0] in ('BltOpaque','BltMask')
+                   for item in n.paint_blits)==64
+        passed+=8
+
+        # All 64 frames repeat with the same two Chip allocations.
+        memory=dict(n.chip_live)
+        assert n.route('all')==1
+        assert n.selected_triple()==chosen
+        assert n.chip_live==memory
+        assert n.read_back()==expected
+        passed+=4
+
+        # A corrupt 64th original bank means no new Blitter operation.
+        node=n.find(11)
+        gen=n.get(node+24+24)
+        n.put(node+24+24,gen+1)
+        prev=n.read_back()
+        before_count=len(n.paint_blits)
+        assert n.route('all')==0
+        assert n.read_back()==prev and len(n.paint_blits)==before_count
+        assert n.selected_triple()==chosen and n.get(0x53000+8)==0
+        n.put(node+24+24,gen)
+        passed+=3
+
+        # ID64 references a non-existing image: no implicit swap, and
+        # the RETURN is an error even if earlier objects already painted.
+        assert n.public('bob',ident=64,image=4096,x=5,y=5)==1
+        prev_front=tuple(bytes(n.uc.mem_read(p,SIZE))
+                         for p in n.screen_planes)
+        assert n.route('all')==0
+        assert n.selected_triple()==chosen and n.get(0x53000+8)==0
+        assert tuple(bytes(n.uc.mem_read(p,SIZE))
+                     for p in n.screen_planes)==prev_front
+        passed+=3
+
+        n.invoke('bridge')
+        assert not n.chip_live and not n.metadata
+        passed+=1
 
     print('M19 P0i PRIVATE TWO-BANK PERSISTENT BOB BLIT GATE A PASS',
           passed,'checks, source MC68020 + 2 disjoint V2 layouts',
