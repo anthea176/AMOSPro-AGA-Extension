@@ -1,5 +1,14 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0i — chaîne native multi-banques vers le Blitter (17/11/2026)
+
+**Gate A MC68020 PASS** — [CI M19 44163799991](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44163799991), **76 contrôles**, deux placements natifs AP20 V2 simulés, jusqu'à **64 Bobs réellement peints** depuis deux banques d'origine. L'entrée privée `routed_paint_all_entry` effectue un précontrôle P0h des 64 slots puis utilise la lecture P0g, le cache Chip P0c, la fonction Safe/WaitBlit P0d et l'identité P0f ; ordre 1..64, pas de Swap. Le front reste intact, le rendu Blitter est pixel-exact. Chaque banque reste indépendante dans le registre des allocations Chip.
+
+La bibliothèque expérimentale **en mémoire seulement** : **97 820 octets**, SHA256 `004a04f9819fc2df9498ec8887e3de8a6533a7f620f04743c1fa1ae6ee872fa4`, 85 commandes, 178 sections AP20, quatre îlots ; nouveau source BOBS 17 330 octets SHA256 `e9d3d37401237574fa7b8e9a55817ae6d62673db68bb6207dc8a423a5a4364ea`. Bibliothèque installable inchangée, 96 908 octets ; `LAST_GOOD` R84 protégée.
+
+**Limites avant exposition publique :** l'implémentation projette temporairement l'identité de la banque source dans `bank_active_state`, avant restauration systématique ; **non réentrante**. Un Bob manquant découvert après des peintures précédentes peut modifier partiellement le back buffer, même si aucun Swap n'est fait et si la fonction retourne 0. Éliminer la projection et valider l'intégralité des images en amont du DMA. Gates B/C/D non réalisées pour P0i. [Rapport détaillé](M19_P0I_MULTIBANK_DRAW_GATE_A_2026-11-17.md).
+
+
 ## AP20 V2 — retour à l'API fonctionnelle après preuve de cinq groupes (17/11/2026)
 
 La bibliothèque installable unique est **l'image quatre unités source-reproductible** (96 908 octets, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`), avec 85 commandes et 178 sections AP20. Le banc à cinq unités, avec deux commandes temporaires et une table de 40 Kio, a **PASS Gate A/B/C** (Runtime et vrai Compiler) ; voir [le rapport de preuve](M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md). Sa cinquième unité ne contenait aucun code de production : elle a donc été retirée du binaire actif plutôt que laissée comme unité inerte.

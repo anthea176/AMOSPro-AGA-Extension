@@ -2,7 +2,7 @@
 
 ## M19 P0i — rendu privé multi-banques, source-only (17/11/2026)
 
-[Implémentation / protocole P0i](M19_P0I_MULTIBANK_DRAW_GATE_A_2026-11-17.md). Routage de chaque Bob vers la banque AGBO enregistrée (10/11 test), cache Chip P0c, Blitter P0d Safe/WaitBlit ; précontrôle P0h des 64 objets avant rendu, pas de Swap. Le shadow privé de sélection est restauré sur tous les chemins mais **le prototype n'est pas réentrant** : aucune commande publique Draw. Gate A à confirmer en CI, B/C/D non testées pour P0i. Bibliothèque canonique et ASC inchangés.
+[Implémentation / protocole P0i](M19_P0I_MULTIBANK_DRAW_GATE_A_2026-11-17.md). Routage de chaque Bob vers la banque AGBO enregistrée (10/11 test), cache Chip P0c, Blitter P0d Safe/WaitBlit ; précontrôle P0h des 64 objets avant rendu, pas de Swap. Le shadow privé de sélection est restauré sur tous les chemins mais **le prototype n'est pas réentrant** : aucune commande publique Draw. **Gate A MC68020 PASS : 76 contrôles**, [CI M19 44163799991](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44163799991). Candidate AP20 strictement source-only **97 820 octets / SHA256 `004a04f9819fc2df9498ec8887e3de8a6533a7f620f04743c1fa1ae6ee872fa4`**. **64 Bobs réellement peints**, 32 issus de la banque 10, 32 de la banque 11, rendu pixel-exact et deux allocations Chip réutilisées. La sélection est restaurée, front non modifié et aucun Swap. Le prototype utilise néanmoins un shadow privé temporairement projeté (**non réentrant**) et peut laisser le back buffer partiel en cas de Bob invalide tardif : **ne pas exposer `Aga Bob Draw` avant correction**. Gates B/C/D non testées pour P0i. Bibliothèque canonique et ASC inchangés.
 
 
 ## M19 P0h — précontrôle de frame 64 Bobs (source-only)
