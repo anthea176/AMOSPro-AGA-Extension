@@ -3,6 +3,8 @@
 """M19 P0j-b1: actual MC68020 original-bank lookup never touches selector."""
 from __future__ import annotations
 from struct import unpack
+from unicorn.m68k_const import UC_M68K_REG_SR,UC_M68K_REG_PC
+from test_m5_generic import DR,AR,STACK,STOP
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 from test_m5_generic import AMOS,EXEC
 from test_m19_p0a_r88_bank_gate_a import HEAD
@@ -47,13 +49,28 @@ class ExplicitMachine(ImageGateMachine):
 
     def lookup(self,bank,owner=AMOS):
         self.uc.mem_write(OUT,CANARY)
-        original=self.labels['routed_paint_one_entry']
-        self.labels['routed_paint_one_entry']=self.labels['explicit_bank_lookup_entry']
-        try:
-            status=self.route(kind='one',ident=bank,owner=owner)
-        finally:
-            self.labels['routed_paint_one_entry']=original
-        return status,bytes(self.uc.mem_read(OUT,28))
+        # Independent ABI harness: explicit-bank entry takes D3=bank,
+        # NOT D0, as P0i's object-ID drawing entry does.
+        for n,r in enumerate(DR):
+            self.uc.reg_write(r,0x770000+n)
+        for n,r in enumerate(AR[:7]):
+            self.uc.reg_write(r,0x43000+n*0x100)
+        self.uc.reg_write(AR[5],owner)
+        self.uc.reg_write(AR[1],OUT)
+        self.uc.reg_write(DR[3],bank)
+        old={r:self.uc.reg_read(r) for r in DR+AR[:7]}
+        self.uc.reg_write(UC_M68K_REG_SR,0x2000)
+        self.uc.reg_write(AR[7],STACK)
+        self.put(STACK,STOP)
+        self.uc.emu_start(self.entry+self.labels['explicit_bank_lookup_entry'],
+                          STOP,count=13000000)
+        assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
+        assert self.a(7)==STACK+4
+        for reg,previous in old.items():
+            if reg not in (DR[2],DR[3]):
+                assert self.uc.reg_read(reg)==previous,('explicit-bank ABI',reg)
+        assert self.d(2)==0 and self.d(3) in (0,1)
+        return self.d(3),bytes(self.uc.mem_read(OUT,28))
 
 def prepare(layout):
     original,_=build_p0c()
@@ -131,9 +148,9 @@ def main():
         assert m.lookup(10,owner=AMOS+0x1000)==(0,CANARY)
         checks+=5
 
-        m.uc.mem_write(EXEC+0x128,b'\\x00\\x00')
+        m.uc.mem_write(EXEC+0x128,b'\x00\x00')
         assert m.lookup(10)==(0,CANARY)
-        m.uc.mem_write(EXEC+0x128,b'\\x00\\x02')
+        m.uc.mem_write(EXEC+0x128,b'\x00\x02')
         assert m.lookup(10)[0]==1
         checks+=2
 
