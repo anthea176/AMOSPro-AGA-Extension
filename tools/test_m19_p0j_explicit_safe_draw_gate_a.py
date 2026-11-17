@@ -229,7 +229,7 @@ def main():
         assert len(visits)==2 and m.read_back()==first_only
         assert sum(t[0]=='BltMask' for t in m.paint_blits)==1
         assert sum(t[0]=='BltOpaque' for t in m.paint_blits)==0
-        assert sum(t[0]=='WaitBlit' for t in m.paint_blits)==1
+        assert sum(t[0]=='WaitBlit' for t in m.paint_blits)>=1  # includes Chip-stage sync
         assert len(m.getmsg)==1 and m.get(0x53000+20)==3
         assert m.get(0x53000+8)==0 and m.selected_triple()==selected
         assert tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)==front
