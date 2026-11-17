@@ -75,6 +75,12 @@ def main():
         assert m.run_get(1,4,5,20,8)==1
         assert m.run_select(11)==1
         assert m.run_get(1,7,8,16,15)==1
+        # Make an actual indexed-0 transparency mask in bank 10, then
+        # restore selected bank 11. The resolver must find the ORIGINAL
+        # bank 10 mask in Chip without consulting the selected-bank shadow.
+        assert m.run_select(10)==1
+        assert m.mask(True,1,0)==1
+        assert m.run_select(11)==1
         m.activate_aga_state()
         m.configure_real_state()
         select=m.selected_triple()   # always bank 11
@@ -89,8 +95,12 @@ def main():
             plane0,mask,w,h,stride,depth,plane_bytes,chip,alloc=unpack('>9I',descr)
             img=parse_payload(m.bank_payload(bank)).image(1)
             assert (w,h,stride,depth)==(img.width,img.height,img.stride,img.depth)
-            assert plane_bytes==stride*h and mask==0
+            assert plane_bytes==stride*h
+            assert bool(mask)==bool(img.mask)
             assert chip in m.chip_live and alloc==m.chip_live[chip]
+            if img.mask:
+                assert chip<=mask<chip+alloc
+                assert bytes(m.uc.mem_read(mask,len(img.mask)))==img.mask
             assert chip<=plane0<chip+alloc
             assert bytes(m.uc.mem_read(plane0,len(img.planes)))==img.planes
             assert m.selected_triple()==select
