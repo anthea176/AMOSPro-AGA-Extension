@@ -111,6 +111,20 @@ jobs:
         run: |
           python -B tools/build_m19_ap20_islands_in_memory.py
           python -B tools/test_ap20_v2_island_dispatch.py
+      - name: M19 AP20 V2 candidate transfer bytes for explicit canonical test switch (read-only)
+        run: |
+          python -B - <<'PY'
+          import base64,hashlib,sys
+          sys.path.insert(0,'tools')
+          from build_m19_ap20_islands_in_memory import build
+          raw,meta=build()
+          assert len(raw)==96908 and hashlib.sha256(raw).hexdigest()=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
+          print('M19_AP20_ISLANDS_BASE64_BEGIN',flush=True)
+          s=base64.b64encode(raw).decode('ascii')
+          for i in range(0,len(s),128):
+              print('M19_B64_CHUNK '+s[i:i+128],flush=True)
+          print('M19_AP20_ISLANDS_BASE64_END',flush=True)
+          PY
       - name: M19 P0d canonical Lib is byte-for-byte source-built
         run: |
           python -B - <<'PY'
