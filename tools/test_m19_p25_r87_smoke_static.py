@@ -26,9 +26,9 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active_candidate)==91300 and sha256(active_candidate).hexdigest()=="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
+    assert len(active_candidate)==96908 and sha256(active_candidate).hexdigest()=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(files)==1 and files[0].name=="M19_P0D_BOB_BLIT_01.asc", files
+    assert len(files)==1 and files[0].name=="M19_AP20_ISLANDS_01.asc", files
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
     assert blob_sha(raw)==SMOKE_GIT, "Smoke changed without requalification"
     assert blob_sha((ROOT/"tests/passed/M19_P23_BOBS_BATCH_01.asc").read_bytes())==R86_PASSED_GIT
