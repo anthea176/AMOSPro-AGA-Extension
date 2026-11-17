@@ -86,15 +86,19 @@ def main():
         # An unopened AGA State cannot make an empty frame look successful.
         assert m.preflight()==0
         assert m.raw_reads==0
+        # Capture into the original synthetic screen BEFORE native AGA Init.
+        # After Init, the original capture harness is deliberately replaced
+        # by the real AGA State, as in the source-validated P0f Gate A.
+        assert m.run_select(10)==1
+        assert m.run_get(1,4,5,20,8)==1
+        assert m.run_select(11)==1
+        assert m.run_get(1,7,8,16,15)==1
+        assert m.run_select(10)==1
         m.activate_aga_state()
         assert m.preflight()==1
         assert m.raw_reads==64 and m.secure_reads==0
         cases+=3
 
-        assert m.run_select(10)==1
-        assert m.run_get(1,4,5,20,8)==1
-        assert m.run_select(11)==1
-        assert m.run_get(1,7,8,16,15)==1
         assert m.run_select(10)==1
         assert m.public('bob',ident=1,x=103,y=72,image=1)==1
         assert m.run_select(11)==1
