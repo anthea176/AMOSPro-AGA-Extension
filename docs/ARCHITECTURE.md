@@ -1,5 +1,14 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b5 — barrière privée avant le Swap natif (Gate A en attente)
+
+La candidate **source-only** part du SHA AP20 B4 `b6a318118d0f8c58ab839d905c4094b8de27b6f481d411c647626266d69a6a7b`. La nouvelle unité BOBS est une extension de source, le préfixe B4 et la routine AGA Swap originale restent inchangés. Le builder réindexe uniquement les tokens existants `Aga Swap` et `Aga Screen Close` vers deux nouveaux stubs AP20 placés **après** l'îlot BOBS (contrôle des portées PC16), sans ajouter de commande publique.
+
+`guarded_frame_draw_entry` conserve `D3=1` si le dessin synchrone des 64 objets a réussi, `D3=0` sinon. Il arme DIRTY avant appel B4, passe à READY uniquement sur succès, et laisse DIRTY persister après échec, **y compris avant DMA** (prudence). `guarded_swap_entry` refuse DIRTY et vérifie l'identité A5/AGA State/DBState/front; sur READY/aucune erreur, la cible originale vérifiée est `State + $09E0` (`AGA Swap` à l'offset groupe AGA `$0BA2`, State à `$01C2`). La commande originale retourne 1/0 ; le garde n'efface READY qu'après un succès. `guarded_close_entry` réutilise le pont P0c vérifié et efface la barrière seulement si l'écran est réellement fermé. Le périmètre n'inclut pas d'appel public `Aga Bob Draw` ni le nettoyage End en interruption.
+
+**Gate A B5 non encore vérifiée**, B/C/D non réalisées. Les services système, le Blitter et le matériel restent simulés dans les tests CPU020. Aucune bascule vers `dist/AMOSPro_AGA.Lib` ni modification du test WinUAE actif. [Contrat et limites](M19_P0J_SWAP_BARRIER_GATE_A_2026-11-17.md).
+
+
 ## M19 P0j-b4 — peintre Safe/WaitBlit multi-banques sans shadow (source-only)
 
 L'entrée privée `explicit_safe_blit_entry` reprend les précontrôles AGA/back buffer de P0d, appelle `explicit_image_resolve_entry` (P0j-b3) avec **D3 = banque AGBO d'origine**, puis rejoint à une étiquette zéro octet les instructions P0d originales de contrôle SafePort, Blitter, masques, clipping et `WaitBlit`. `explicit_frame_draw_entry` prévalide P0h/P0j-a, puis parcourt les 64 slots en appelant P0g et le staging P0j-b2 par banque, sans lire/écrire `bank_active_state` ni déclencher de Swap.

@@ -199,3 +199,10 @@ Le moteur Bob logiciel décrit ici n'est **pas** un moteur de Sprites DMA. L'aut
 5. **Double buffering et nettoyage** : différencier les deux pages physiques, les signaux Safe/Disp, les réouvertures d'écran, `Aga Screen Close` et `End`. Ne jamais libérer la source tant que le Blitter l'utilise, ni partager un indicateur de validité entre des pages indépendantes sans preuve.
 
 **Décisions ouvertes et bloquantes :** signature AMOS et moyen de lire l'échec ; politique d'invalidation/verrouillage de Swap ; commande ou séquence fiable de reconstruction du fond ; sémantique exacte de `Clear/Update`. Les valider individuellement avant code public/AP20, nouveau binaire ou changement du test `tests/current/` ; les Gates A/B/C/D restent distinctes.
+
+
+## 12. P0j-b5 — contrat de retour et de présentation (prototype non installé)
+
+La **proposition** pour la future API publique est la fonction numérique sans argument `_OK=Aga Bob Draw` (retour `1` si toute la frame Bobs a été préparée sans erreur, `0` si refus), distincte de l'instruction de placement `Aga Bob N,X,Y,I`. Elle n'est **ni tokenisée ni compilée AMOS**. Cette fonction ne doit jamais déclencher de `Aga Swap` automatique.
+
+Le modèle B5 provisoire est volontairement **fail-closed** : Draw privé passe DIRTY avant le rendu, READY après succès ; un seul échec laisse DIRTY et **`Aga Swap` retourne 0 sans appeler `ChangeScreenBuffer`**, même si le premier Bob a déjà modifié le back buffer. Une nouvelle invocation de Draw ne permet pas d'ignorer l'erreur précédente. Seul un `Aga Screen Close` effectivement terminé efface la barrière. La reconstruction sans fermeture pourra être étudiée ensuite, mais nécessitera une preuve que le décor entier et tous les Bobs ont été régénérés sur **la bonne page** avant levée du verrou. **Ce protocole n'est pas encore une fonctionnalité de la bibliothèque installable** ; Gates B/C/D B5 non testées, voir [rapport B5](M19_P0J_SWAP_BARRIER_GATE_A_2026-11-17.md).
