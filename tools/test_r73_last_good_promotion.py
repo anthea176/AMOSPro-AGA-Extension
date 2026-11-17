@@ -72,10 +72,13 @@ def main():
             assert actual_meta["ap20_entries"]==181 and actual_meta["native_groups"]==[142,153,156,177]
             assert label.startswith("M19 P0j-b7")
             _,parts,_=unpack_ap20(cur)
-            _,historical_parts,_=unpack_ap20(good)
-            assert (parts[142]==historical_parts[82] and
-                    parts[153]==historical_parts[83] and
-                    parts[156].startswith(historical_parts[84])), "B7 changed frozen R84 native engines"
+            from build_m19_ap20_islands_in_memory import build as build_islands
+            islands, islands_meta=build_islands()
+            assert sha256(islands).hexdigest()==AP20_ISLANDS_SHA
+            _,historical_islands,_=unpack_ap20(islands)
+            assert (parts[142]==historical_islands[142] and
+                    parts[153]==historical_islands[153] and
+                    parts[156]==historical_islands[156]), "B7 changed frozen AP20/R84 native islands"
             assert sha256(good).hexdigest()==R84_SHA, "R84 LAST_GOOD changed"
         elif digest==AP20_ISLANDS_SHA:
             from build_m19_ap20_islands_in_memory import build as build_islands
