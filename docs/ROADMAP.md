@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 P0h — étape intermédiaire vers Aga Bob Draw
+
+[Précontrôle natif 64 objets](M19_P0H_FRAME_PREFLIGHT_GATE_A_2026-11-17.md) : le premier parcours teste l'identité de la banque de chaque Bob actif ; en cas d'identité périmée, refuse la frame avant accès Blitter. Source-only, aucune nouvelle commande publique ; Gate A à confirmer. **À faire ensuite :** préparer chaque banque d'origine en Chip sans modifier la sélection utilisateur, contrôler les images/pixels et dessiner tous les Bobs dans le back buffer Safe sans Swap implicite. `LAST_GOOD` protégée.
+
+
 ## M19 — nettoyage des sondes cinq unités après Gates B/C (17/11/2026)
 
 **État actif sur `main` :** bibliothèque canonique [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) revenue à la version **quatre unités fonctionnelles**, **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes, 178 entrées AP20**. Seul ASC actif : [`M19_AP20_ISLANDS_01.asc`](../tests/current/M19_AP20_ISLANDS_01.asc). **Gates A/B/C PASS historiques de cette image exacte**, selon les [preuves à quatre unités](M19_AP20_V2_GATES_BC_2026-11-17.md).

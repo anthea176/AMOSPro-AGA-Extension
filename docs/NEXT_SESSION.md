@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 P0h — précontrôle de frame 64 Bobs (source-only)
+
+[Source + protocole de validation P0h](M19_P0H_FRAME_PREFLIGHT_GATE_A_2026-11-17.md). Nouveau `frame_bank_preflight_entry` privé MC68020 : contrôles de 1 à 64, objets inactifs sautés, banques périmées refusées **avant tout dessin**, API et R84 inchangées. Repack AP20 par îlots pour rester loin de la limite PC16 du P0g. Gate A **à confirmer par CI** ; aucune préparation Chip multi-banques ni Draw effectués ici, Gates B/C non testées. La Lib installable reste à **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`.
+
+
 ## M19 P0g — nouvelle lecture privée avant Draw (17/11/2026)
 
 Développement source-only sur `main` : [P0g lecture sécurisée](M19_P0G_CHECKED_READ_GATE_A_2026-11-17.md). Un nouveau point d'entrée BOBS relie l'`identity_check` existant à la lecture d'un objet persistant ; il refuse les banques effacées/rechargées **sans sortie partielle**, conserve la lecture brute pour distinguer inactif/périmé et ne modifie aucune commande publique. **Gate A MC68020 PASS : 52 tests, deux implantations**, [CI 44150293973](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44150293973). Candidate source-only 96 752 octets, SHA256 `e1f8f8c04e24a38651ade50b6878cffb1dd288a766b104fb5c9fa9ae314d9536`; B/C/D de cette candidate non testées. La bibliothèque installable reste la quatre-unités SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, l'ASC actif et R84 LAST_GOOD inchangés.
