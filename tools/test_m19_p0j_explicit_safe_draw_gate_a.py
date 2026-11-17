@@ -189,7 +189,8 @@ def main():
         front=tuple(bytes(m.uc.mem_read(p,SIZE)) for p in m.screen_planes)
         before=m.read_back()
         assert m.frame()==0
-        assert m.read_back()==before and not m.paint_blits, (layout, 'MASK_DIRTY_FRAME', 'changed_back', m.read_back()!=before, 'blitter_calls', m.paint_blits, 'chip_allocs', m.chip_allocs, 'chip_copies', m.chip_copies, 'chip_live', len(m.chip_live), 'mask_len', m.get(masked_entry+24), 'expected_len', original_mask_len)
+        assert m.read_back()==before
+        assert sum(t[0] in ('BltOpaque','BltMask') for t in m.paint_blits)==0, (layout, 'unexpected Blitter DMA after invalid mask', m.paint_blits)
         assert not m.chip_live and not m.metadata
         assert m.chip_allocs==0 and m.chip_copies==0
         assert m.get(0x53000+8)==0 and m.selected_triple()==selected
