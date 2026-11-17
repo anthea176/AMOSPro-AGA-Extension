@@ -172,7 +172,11 @@ def main() -> None:
         title, re.IGNORECASE,
     )
     islands = re.search(r"\$VER:\s*AGA\s+M19\s+AP20\s+islands\b", title, re.IGNORECASE)
-    if islands:
+    b7 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7)\b", title, re.IGNORECASE)
+    if b7:
+        assert sha256(LIB.read_bytes()).hexdigest() == "f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b", "B7 release must be exact source-built canonical"
+        release = "M19 P0j-b7"
+    elif islands:
         assert "M19 AP20 V2 ISLAND DISPATCH" in title, "Unexpected AP20 island title"
         release = "M19 AP20 ISLANDS"
     elif m19:

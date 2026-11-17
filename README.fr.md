@@ -17,31 +17,24 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Pour commencer :** [Notice d'installation](INSTALL.fr.md) · [Exemples AMOS](examples/README.fr.md).
 
-## Limite volontaire : un seul écran AGA
-
-**L'extension ne gère qu'un seul écran AGA ouvert à la fois.** `Aga Screen Open(...)` crée l'unique écran AGA géré par l'extension ; l'ouverture de plusieurs écrans AGA simultanés et le basculement entre eux ne sont pas pris en charge. Pour changer de résolution ou de mode vidéo, il faut d'abord fermer l'écran courant avec `Aga Screen Close`, puis en ouvrir un nouveau.
-
-`Aga Double Buffer` et `Aga Swap` gèrent les **buffers avant et arrière de ce même écran**, et non deux écrans AGA distincts. Le multi-écran AGA est volontairement hors du périmètre du projet.
-
 ## Bibliothèques et tests
 
-**Candidate de test active : M19 AP20 ISLANDS (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **96 908 octets**, SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, **85 commandes / 178 entrées AP20**. Les stubs de dispatch sont regroupés auprès des quatre unités natives inchangées, avec une portée PC16 maximale de 854 octets. **Gates A/B/C PASS pour le banc Bob Blit** : journaux Runtime et véritable Compiler, avec une capture confirmée par l'auteur comme provenant de la **version compilée**. [Preuves Gates B/C et limites](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
+**Candidate de travail active : M19 P0j-b7 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102 072 octets**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, **86 commandes / 181 entrées AP20**, quatre unités natives. **Gate A MC68020 PASS (88 contrôles)** ; **Runtime WinUAE B, véritable AMOS Compiler C et matériel D NON TESTÉS pour B7**. [Rapport B7](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 
-**Test actif :** [M19_AP20_ISLANDS_01.asc](tests/current/M19_AP20_ISLANDS_01.asc) · [consignes WinUAE](tests/current/README.md). P0d Bob Blit (91 300 octets, Gates Runtime/Compiler précédemment PASS sur sa propre campagne) reste reproductible via l'historique Git. `Aga Bob` et `Aga Bob Off` de P0f sont incluses **pour vérification du routage AP20 uniquement**, sans autorisation d'utilisation applicative : gestion `Draw/End` encore incomplète. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Test actif unique :** [M19_P0J_B7_DRAW_BC_01.asc](tests/current/M19_P0J_B7_DRAW_BC_01.asc) · [consignes WinUAE et journaux attendus](tests/current/README.md). L'ancien banc AP20 islands avait **PASS B/C avec sa propre Lib**, sans prouver B7. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-**Installation :** [INSTALL.fr.md](INSTALL.fr.md) (une mise à jour GitHub ne remplace pas la copie installée dans WinUAE). **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md) · [preuve B/C à cinq unités et suppression des sondes](docs/M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md).
+**Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md) · [preuve AP20 islands B/C](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 AP20 ISLANDS** — candidate de test MC68020/68EC020 minimum, **PAS LAST_GOOD**, **85 commandes / 178 entrées AP20**. Les API et les unités natives P0d précédentes restent disponibles. `Aga Bob Blit` P0d avait passé les Gates Runtime/Compiler sur sa propre bibliothèque ; **la nouvelle architecture AP20 a passé B/C pour le scénario Bob Blit actif**. `Aga Bob` et `Aga Bob Off` sont exposées mais le cycle de vie persistant et `End` ne sont pas encore validés. [Gate A et limites](docs/M19_AP20_V2_DISPATCH_ISLANDS_2026-11-16.md).
-
+**API de la bibliothèque courante M19 P0j-b7** — **86 commandes / 181 entrées AP20** (MC68020 minimum). `Aga Bob Draw` est une fonction numérique 0/1 sans paramètre ; `Aga Swap` refuse une frame invalide et `End` contrôle la libération Safe/Disp. **Gate A PASS ; Gates B/C/D B7 NON TESTÉES.** [Bilan et test actif](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
 | `Aga Screen Open` | `_OK=Aga Screen Open(largeur,hauteur,nbCouleurs,modeID)` | Dimensions en pixels ; **nombre de couleurs**, pas nombre de bitplanes (`2,4,8,16,32,64,128,256` en mode indexé) ; identifiant vidéo AmigaOS, par exemple `$00021000` en PAL LowRes. Retour `1`/`0`. |
-| `Aga Screen Close` | `Aga Screen Close` | Sans argument ; ferme l'écran AGA et libère les ressources. |
+| `Aga Screen Close` | `Aga Screen Close` | Sans argument ; ferme l'écran AGA si les notifications Safe/Disp ont été acquittées ; ne libère pas les ports ni les buffers encore attendus. Gate A B7 PASS, Runtime/Compiler non testés. |
 | `Aga Double Buffer` | `_DB=Aga Double Buffer` | Sans argument ; active les deux buffers. Retour `1`/`0`. |
-| `Aga Swap` | `_SW=Aga Swap` | Sans argument ; présente le back buffer préparé. Retour `1`/`0`. |
+| `Aga Swap` | `_SW=Aga Swap` | Sans argument ; présente le back buffer préparé. Retour `1`/`0` ; en B7, refuse toute frame marquée DIRTY sans appeler `ChangeScreenBuffer`. Gate A PASS, B/C B7 non testées. |
 | `Aga Pic Info` | `_V=Aga Pic Info(fichier$,champ)` | Chemin ILBM puis numéro de champ `0..7` (voir tableau suivant) ; renvoie une valeur ou `-1` en cas d'erreur. |
 | `Aga Iff Load` | `_OK=Aga Iff Load(fichier$)` | Chemin IFF/ILBM ; charge pixels et palette sur l'écran/buffer compatible. Retour `1`/`0`. |
 | `Aga Palette Load` | `_OK=Aga Palette Load(_FILE$)` | Importe uniquement le `CMAP` d'un **IFF standard FORM ILBM**, y compris les palettes PPaint/DPaint sans `BODY` ni `BMHD` ; ne modifie aucun pixel. Retour 1 succès, 0 en cas de refus. |
@@ -102,9 +95,10 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Get AGA Bob`** | `Get AGA Bob _I,_X1,_Y1,_X2,_Y2` | **Instruction sans valeur de retour, cinq entiers.** Identifiant image `_I` = 1..4096 ; coins du rectangle **inclusifs** (0,0 à 31,31 capture 32×32). Capture de 1..8 bitplanes planaires depuis le back buffer AGA privé et `Safe` vers la banque `AGBO` sélectionnée, avec synchronisation du Blitter ; ajoute/remplace une image en conservant les autres. Une nouvelle image n'a **aucun masque** : l'index couleur 0 reste opaque. Aucun dessin de Bob ni `Aga Swap` implicite ; `Save`/`Load` AMOS assurent la persistance. **P0b Gates A/B/C PASS sur P0b ; les tests P0c de fermeture ne retestent pas cette opération.** [Preuves P0b et ABK sauvegardé](docs/M19_P0B_GATES_BC_2026-11-16.md). |
 | **`Make AGA Bob Mask`** | `Make AGA Bob Mask _I,_C` | **Instruction sans valeur de retour.** Pour une image `_I` existante (1..4096) dans la banque `AGBO` sélectionnée, crée/remplace un **masque de transparence 1 bit indépendant**. L'index de palette `_C` (0..2^profondeur-1) devient transparent (bit 0) ; les autres pixels restent visibles (bit 1). L'index couleur 0 n'est pas transparent par défaut. Les autres images sont conservées ; aucun dessin, staging DMA Chip ni Swap implicite. **P0b Gates A/B/C PASS sur P0b ; P0c B/C concerne Screen Close uniquement.** |
 | **`No AGA Bob Mask`** | `No AGA Bob Mask _I` | **Instruction sans valeur de retour.** Retire le masque de l'image `_I` existante de la banque `AGBO` sélectionnée : tous les pixels redeviennent opaques, **index couleur 0 compris**. Les autres images restent inchangées ; aucun dessin, staging DMA Chip ni Swap implicite. **P0b Gates A/B/C PASS sur P0b ; P0c B/C concerne Screen Close uniquement.** |
-| **`Aga Bob Blit`** | `_OK=Aga Bob Blit(_I,_X,_Y)` | **Fonction numérique, 3 entiers, renvoie 1/0.** Dessine immédiatement l'image `_I` de la banque AGBO sélectionnée en `_X,_Y` signés sur le back buffer AGA inactif et Safe. Prépare/réutilise pixels et masque indépendant en vraie Chip RAM, lance le Blitter puis WaitBlit. Aucun `Aga Swap` implicite ; exige `Aga Double Buffer`. **Gate A MC68020 PASS ; Runtime WinUAE et vrai Compiler PASS sur le banc Bob Blit actif (capture compilée).** |
-| **`Aga Bob`** | `Aga Bob _N,_X,_Y,_I` | Enregistre un Bob persistant (ID `1..64`, X/Y signés, ID image) avec contrôle d'identité de la banque source. **Interface expérimentale uniquement** : pas encore de `Aga Bob Draw` public ; nettoyage `End` incomplet, donc ne pas utiliser en production. Aucun dessin ni Swap implicite. |
-| **`Aga Bob Off`** | `Aga Bob Off _N` | Désactive le Bob persistant ID `1..64`. **Interface expérimentale uniquement**, sans dessin immédiat ni Swap. Gate A source/CPU PASS ; Runtime/Compiler de la nouvelle architecture NON TESTÉS. |
+| **`Aga Bob Blit`** | `_OK=Aga Bob Blit(_I,_X,_Y)` | **Fonction numérique, 3 entiers, renvoie 1/0.** Dessine immédiatement l'image `_I` de la banque AGBO sélectionnée en `_X,_Y` signés sur le back buffer AGA inactif et Safe. Prépare/réutilise pixels et masque indépendant en vraie Chip RAM, lance le Blitter puis WaitBlit. Aucun `Aga Swap` implicite ; exige `Aga Double Buffer`. **Gate A MC68020 PASS ; les PASS Runtime et Compiler concernent les anciennes candidates P0d/AP20, pas la bibliothèque B7.** |
+| **`Aga Bob`** | `Aga Bob _N,_X,_Y,_I` | Enregistre un Bob persistant (ID `1..64`, X/Y signés, ID image) avec contrôle d'identité de la banque source. **Disponible en B7 pour essais B/C**, mais sans affichage immédiat : `Aga Bob Draw` doit dessiner la frame et `Aga Swap` doit être appelé explicitement après succès. Gate A PASS ; Gates B/C non testées. Aucun dessin ni Swap implicite. |
+| **`Aga Bob Off`** | `Aga Bob Off _N` | Désactive le Bob persistant ID `1..64`. Désactivation du Bob persistant sans dessin ni Swap immédiats. **Gate A B7 PASS ; Runtime/Compiler B/C non testés.** |
+| **`Aga Bob Draw`** | `_OK=Aga Bob Draw` | **Fonction numérique sans paramètre, retour 1/0.** Dessine tous les Bobs actifs (1..64) dans le back buffer AGA Safe, banques d'origine et masques indépendants, avec clipping et Blitter synchronisé. Aucune permutation implicite. Après échec, le verrou DIRTY interdit `Aga Swap` ; seule une fermeture réellement terminée libère le verrou. **Gate A MC68020 PASS, B/C/D B7 non testées.** |
 
 ### C2P — graphismes chunky et import IFF (6 commandes)
 
@@ -424,3 +418,8 @@ Sous AMOS, utiliser la syntaxe `If condition` / `End If` (sans `Then`) et fermer
 - **Rapports techniques :** [architecture](docs/ARCHITECTURE.md), [BankFont R38](docs/M14_FONT_BANK_R38.md), [historique et validations](docs/LIBRARY_TEST_HISTORY.fr.md), [feuille de route](docs/ROADMAP.md).
 - **Développement :** [outils](tools/README.md), [intégrité des binaires](tools/verify_artifacts.py), [contrôle API bilingue](tools/test_readme_api_coverage.py), [CI](.github/workflows/artifact-integrity.yml), [règles techniques](EXTENSION_SOURCE_RULES.md).
 
+## Limite volontaire : un seul écran AGA
+
+**L'extension ne gère qu'un seul écran AGA ouvert à la fois.** `Aga Screen Open(...)` crée l'unique écran AGA géré par l'extension ; l'ouverture de plusieurs écrans AGA simultanés et le basculement entre eux ne sont pas pris en charge. Pour changer de résolution ou de mode vidéo, il faut d'abord fermer l'écran courant avec `Aga Screen Close`, puis en ouvrir un nouveau.
+
+`Aga Double Buffer` et `Aga Swap` gèrent les **buffers avant et arrière de ce même écran**, et non deux écrans AGA distincts. Le multi-écran AGA est volontairement hors du périmètre du projet.
