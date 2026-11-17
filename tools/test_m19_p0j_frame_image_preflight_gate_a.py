@@ -75,17 +75,23 @@ def main():
         assert m.get(0x53000+8)==0 and not m.chip_live
         passed+=6
 
-        # Depth mismatch on a valid entry: refuse BEFORE any drawing.
-        n=prepare(layout)
-        origin=bytes(n.uc.mem_read(n.find(11)+24,32))
-        n.uc.mem_write(n.find(11)+24+6,b'\x00\x04')
-        # The checked AGBO stamp and P0c stage may reject mutation as well;
-        # the preflight must ensure zero new graphics activity either way.
-        before=n.read_back();p=len(n.paint_blits)
-        assert n.route('all')==0
-        assert n.read_back()==before and len(n.paint_blits)==p
-        passed+=2
-        n.uc.mem_write(n.find(11)+24,origin)
+        # Mutate the real AGBO image directory at payload+32.
+        # The bank generation field instead resides at payload+24.
+        for off,bad in ((6,b'\x00\x04'),        # bad depth
+                        (8,b'\x00\x01'),        # bad stride
+                        (10,b'\x00\x02'),       # unsupported mask flag
+                        (16,b'\x00\x00\x00\x00')): # wrong pixel length
+            n=prepare(layout)
+            entry=n.find(11)+32
+            original=bytes(n.uc.mem_read(entry,40))
+            n.uc.mem_write(entry+off,bad)
+            before=n.read_back();p=len(n.paint_blits)
+            allocs=n.chip_allocs
+            assert n.route('all')==0,(layout,off)
+            assert n.read_back()==before and len(n.paint_blits)==p
+            assert n.chip_allocs==allocs and not n.chip_live
+            n.uc.mem_write(entry,original)
+            passed+=4
 
         # All 64 valid images: paint exactly all objects, pixel by pixel.
         n=prepare(layout)

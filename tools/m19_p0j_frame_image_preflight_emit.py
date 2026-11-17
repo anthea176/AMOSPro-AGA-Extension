@@ -24,7 +24,9 @@ GETADR=rjsr(main_index('Bnk.GetAdr'))
 FRAME_BYTES=160
 RECORD_OFFSET=96
 F=dict(ident=0,result=4,bank=8,image=12,ptr=16,count=20,
-       remaining=24,entry=28,state=32,dir_bytes=36)
+       remaining=24,entry=28,state=32,dir_bytes=36,payload_size=40,
+       width=44,height=48,depth=52,stride=56,plane_bytes=60,
+       pix_off=64,pix_len=68,mask_off=72,mask_len=76,flags=80,total=84)
 assert RECORD_OFFSET+24<=FRAME_BYTES
 
 
@@ -39,6 +41,12 @@ def emit_image_preflight() -> tuple[bytes,dict[str,int]]:
         c.move(A(2),D(0))
         c.imm('add',RECORD_OFFSET,D(0))
         c.move(D(0),A(1))
+    def checked_span(off_name,len_name):
+        G(off_name,D(0));G('dir_bytes',D(1))
+        c.alu('cmp',D(1),0);B(5,'img_gate_return')
+        G('payload_size',D(1));G(len_name,D(7))
+        c.alu('sub',D(7),1);B(5,'img_gate_return')
+        c.alu('cmp',D(1),0);B(2,'img_gate_return')
 
     L('image_frame_preflight_entry')
     c.raw('48e7efee')             # preserve AMOS ABI
@@ -95,6 +103,7 @@ def emit_image_preflight() -> tuple[bytes,dict[str,int]]:
     S(D(0),'dir_bytes')
     G('ptr',A(0))
     c.move(M(0,20),D(1))          # AGBO validated payload length
+    S(D(1),'payload_size')
     c.alu('cmp',D(1),0)
     B(2,'img_gate_return')         # directory longer than payload
 
@@ -126,23 +135,51 @@ def emit_image_preflight() -> tuple[bytes,dict[str,int]]:
     B(0,'img_gate_scan')
 
     L('img_gate_found')
-    # Minimum geometry preflight; P0c full checked_stage is later
-    # still required for ALL entry offsets, planar padding and Chip.
-    for offset,limit in ((2,4096),(4,4096)):
+    # Fully validate each USED image's geometry and payload spans.
+    # P0c remains responsible for unused entries and planar padding.
+    for name,offset,limit in (('width',2,4096),('height',4,4096),
+                              ('depth',6,8),('stride',8,512)):
         G('entry',A(0))
-        c.move(I(0),D(0))
-        c.move(M(0,offset),D(0),'w')
+        c.move(I(0),D(0));c.move(M(0,offset),D(0),'w')
         c.imm('cmp',1,D(0));B(5,'img_gate_return')
         c.imm('cmp',limit,D(0));B(2,'img_gate_return')
+        S(D(0),name)
+
+    G('state',A(0));c.move(M(0,28),D(1))
+    G('depth',D(0));c.alu('cmp',D(1),0);B(6,'img_gate_return')
+    G('width',D(0));c.imm('add',15,D(0))
+    c.shift(0,4);c.shift(0,1,left=True)
+    G('stride',D(1));c.alu('cmp',D(1),0);B(6,'img_gate_return')
+    G('stride',D(0));G('height',D(1))
+    c.word(0xc0c1)               # MULU.W D1,D0
+    S(D(0),'plane_bytes')
+    S(I(0),'total');G('depth',D(7))
+    L('img_gate_depth_loop')
+    G('total',D(0));G('plane_bytes',D(1))
+    c.alu('add',D(1),0);B(5,'img_gate_return')
+    S(D(0),'total');c.quick(1,D(7),sub=True)
+    B(6,'img_gate_depth_loop')
+
     G('entry',A(0))
-    c.move(I(0),D(0))
-    c.move(M(0,6),D(0),'w')       # per-image depth
-    c.imm('cmp',1,D(0));B(5,'img_gate_return')
-    c.imm('cmp',8,D(0));B(2,'img_gate_return')
-    G('state',A(0))
-    c.move(M(0,28),D(1))        # actual AGA screen depth
-    c.alu('cmp',D(1),0)
-    B(6,'img_gate_return')
+    c.move(M(0,12),D(0));S(D(0),'pix_off')
+    c.move(M(0,16),D(0));S(D(0),'pix_len')
+    c.move(M(0,20),D(0));S(D(0),'mask_off')
+    c.move(M(0,24),D(0));S(D(0),'mask_len')
+    c.move(I(0),D(0));c.move(M(0,10),D(0),'w')
+    c.imm('cmp',1,D(0));B(2,'img_gate_return')
+    S(D(0),'flags')
+    G('pix_len',D(0));G('total',D(1))
+    c.alu('cmp',D(1),0);B(6,'img_gate_return')
+    checked_span('pix_off','pix_len')
+    G('flags',D(0));c.tst(D(0))
+    B(7,'img_gate_no_mask')
+    G('mask_len',D(0));G('plane_bytes',D(1))
+    c.alu('cmp',D(1),0);B(6,'img_gate_return')
+    checked_span('mask_off','mask_len')
+    B(0,'img_gate_advance')
+    L('img_gate_no_mask')
+    G('mask_off',D(0));c.tst(D(0));B(6,'img_gate_return')
+    G('mask_len',D(0));c.tst(D(0));B(6,'img_gate_return')
 
     L('img_gate_advance')
     G('ident',D(0));c.quick(1,D(0))
