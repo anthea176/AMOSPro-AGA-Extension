@@ -1,5 +1,10 @@
 # Roadmap — AMOSPro AGA Extension
 
+## M19 — CINQUIÈME unité AP20 V2 installée pour tests B/C (17/11/2026)
+
+**Candidate active unique sur `main` :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **138 044 octets / SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`**, 87 commandes dont **deux probes temporaires**, 181 entrées AP20 et cinq unités natives. Seul ASC [`tests/current/M19_AP20_UNIT5_01.asc`](../tests/current/M19_AP20_UNIT5_01.asc) : diagnostics sans parenthèses avant écran, puis quatre Bobs. [Instructions B/C](../tests/current/README.md). **Gate A MC68020 PASS ; nouvelles Gates B Runtime et C vrai Compiler V2 NON TESTÉES ; D non testée.** La source à quatre unités, 96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`, est reconstructible et conserve uniquement ses anciens résultats B/C. R84 `LAST_GOOD` et les archives sont protégées. Retirer les deux fonctions temporaires et le bloc de 40 Kio après les Gates B/C, avec nouvelle qualification.
+
+
 ## M19 — Preuve de croissance AP20 V2 : CINQUIÈME unité en Gate A (17/11/2026)
 
 **Fait, source-only sur `main` :** cinquième unité native 41 060 octets ajoutée **après** les quatre unités historiques sans changer leur code ni leur position relative. Deux fonctions expérimentales de diagnostic ; second offset natif `$A034` (41 012, supérieur à 32 Kio), maximum PC16 **854 octets** inchangé, 87 commandes/181 entrées AP20. Candidate **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`. **Gate A MC68020 PASS**, incluant la vraie exécution du checksum des 40 Kio et les deux modèles de relocation ([rapport](M19_AP20_V2_FIFTH_UNIT_GATE_A_2026-11-17.md) ; [CI SHA-pinnée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44135445819)).

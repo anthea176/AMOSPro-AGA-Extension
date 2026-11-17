@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## M19 AP20 V2 — CINQUIÈME UNITÉ ACTIVE POUR GATES B/C (17/11/2026)
+
+**Bascule explicitement autorisée, réalisée sur `main` :** l'unique bibliothèque installable [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est la candidate à **5 unités**, **138 044 octets**, SHA256 `967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`. **87 commandes (dont deux diagnostics TEMPORAIRES), 181 entrées AP20**, 178 anciennes sections et quatre unités natives conservées. L'ASC actif unique est [`tests/current/M19_AP20_UNIT5_01.asc`](../tests/current/M19_AP20_UNIT5_01.asc), qui teste d'abord `Aga Unit Five Sum` et `Aga Unit Five Tail` sans parenthèses, puis les quatre Bobs avec masques/clipping. [Protocole](../tests/current/README.md).
+
+**Gate A MC68020 : PASS** sur le binaire source reconstruit et les tests AP20/ABI, avec contrôles CI du dépôt. **Gates B Runtime et C véritable AMOS Compiler V2 : NON TESTÉES pour les 5 unités** ; Gate D non testée. WinUAE AGA PAL, 68030/JIT ON pour B/C. Vérifier le SHA de la copie installée en `APSystem`; attendre les journaux distincts `RAM:M19_AP20_UNIT5_RUNTIME.TXT` (`PRG_STATE 1`) et `RAM:M19_AP20_UNIT5_COMPILED.TXT` (`PRG_STATE -1`), ainsi qu'une capture compilée. **Aucun PASS B/C ne peut être déduit de la Gate A.**
+
+**Références protégées :** la version à 4 unités **96 908 octets / SHA256 `34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56`** conserve ses preuves historiques Gates B/C et reste reconstructible par son builder source ; aucune autre .Lib installable n'a été créée. `LAST_GOOD` R84 (67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`) et toutes les archives sont intacts ; aucune promotion. **Après B/C**, retirer les deux diagnostics et leur charge de 40 Kio de l'API publique, puis effectuer de nouvelles validations pour le binaire épuré. Les sections suivantes restent des checkpoints historiques.
+
+
 ## M19 AP20 V2 — CINQUIÈME UNITÉ NATIVE, GATE A MC68020 PASS (17/11/2026)
 
 **Nouvelle expérience source-only validée sur `main` :** l'unité n°5 est **ajoutée en fin de code AP20**, sans modifier les octets ni les offsets relatifs des **178 entrées existantes** et des quatre unités déjà validées en B/C. La candidate expérimentale fait **138 044 octets**, SHA256 **`967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1`**, avec **87 commandes (dont deux fonctions de diagnostic), 181 entrées AP20 et cinq unités**. Le nouveau bloc est de 41 060 octets, dont une table de **40 Kio effectivement lue** ; son second point d'entrée est à l'offset **41 012 octets (`$A034`)**, au-delà du PC16 signé. Toutes les liaisons PC16 existantes restent identiques, maximum **854 octets**.
