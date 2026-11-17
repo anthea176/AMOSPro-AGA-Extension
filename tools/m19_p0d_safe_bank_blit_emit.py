@@ -130,6 +130,9 @@ def emit_safe_bank_blit() -> tuple[bytes, dict[str,int]]:
     c.move(A(4),A(1))
     B(1,'bank_image_resolve_entry')
     c.tst(D(3)); B(7,'draw_reject')
+    # P0j-b4 joins the ORIGINAL Safe/Blitter after its own explicit
+    # image resolver. Label only: no change to P0d native bytes.
+    L('draw_live_image_resolved')
 
     G('depth',D(0))
     c.move(M(4,20),D(1))              # image depth in descriptor
