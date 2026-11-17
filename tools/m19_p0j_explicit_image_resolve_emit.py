@@ -20,6 +20,8 @@ from m68k_emit import Code,D,A,M,I
 from m19_p0d_bank_image_resolve_emit import F as RES_F
 from m19_p0j_explicit_bank_stage_emit import emit_explicit_bank_stage
 
+P0JB3_NATIVE_BYTES=19338
+P0JB3_NATIVE_SHA256='ac4252e15ec04467d6789869f0f247c49249c5799276bfc07099811529d51437'
 FRAME=192
 SCRATCH=128
 LOOKUP_DESCRIPTOR_BYTES=28
@@ -64,6 +66,8 @@ def emit_explicit_bank_image_resolve() -> tuple[bytes,dict[str,int]]:
             or c.labels['explicit_image_resolve_entry']!=len(previous)
             or len(native)&1 or len(native)>=32766):
         raise ValueError('P0j-b3 modified earlier P0c/P0d code or overran PC16')
+    if len(native)!=P0JB3_NATIVE_BYTES or sha256(native).hexdigest()!=P0JB3_NATIVE_SHA256:
+        raise ValueError('P0j-b3 emitted MC68020 source SHA/size drift')
     return native,c.labels
 
 if __name__=='__main__':

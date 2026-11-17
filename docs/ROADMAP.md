@@ -19,7 +19,7 @@ La **cinquième unité native** a été validée en Gates A/B/C pour son banc de
 
 **Objectif :** un rendu Blitter de **1 à 64 Bobs multi-banques**, dans le back buffer `Safe`, **sans projection temporaire de `bank_active_state`**, sans Swap implicite, sans mémoire Chip périmée et avec refus sûr d'une frame invalide.
 
-**Dernier jalon Gate A validé : M19 P0j-b2.** Préparation Chip explicitement indexée par banque et cache réutilisé sans allocation supplémentaire : **46 vérifications MC68020 PASS** ([preuve](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md)). **Étape en cours : P0j-b3**, valider la résolution d'image par banque, puis adapter le peintre P0d pour éliminer le shadow temporaire de P0i ; source-only, **Gates B/C/D non réalisées**. Le lookup indépendant P0j-b1 reste validé (68 vérifications).
+**Dernier jalon Gate A validé : M19 P0j-b2.** Préparation Chip explicitement indexée par banque et cache réutilisé sans allocation supplémentaire : **46 vérifications MC68020 PASS** ([preuve](M19_P0J_EXPLICIT_BANK_STAGE_GATE_A_2026-11-17.md)). **Dernier jalon Gate A validé : P0j-b3**, résolution des images/masques Chip par banque source **52 contrôles PASS** ([preuve](M19_P0J_EXPLICIT_IMAGE_RESOLVE_GATE_A_2026-11-17.md)). **Étape en cours : P0j-b4**, adapter le peintre Safe/Blitter et le parcours des 64 Bobs pour éliminer le shadow temporaire de P0i ; source-only, **Gates B/C/D non réalisées**. Le lookup indépendant P0j-b1 reste validé (68 vérifications).
 
 | Ordre | Travail à faire | Critère de réussite |
 | --- | --- | --- |

@@ -1,5 +1,14 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M19 P0j-b3 — résolveur Chip indépendant de la sélection
+
+L'entrée privée `explicit_image_resolve_entry` reçoit banque D3, image D0, sortie 36 octets A1, A5 propriétaire. La vérification du contexte Chip de P0j-b1 précède un branchement vers le **validateur de répertoire/masques/offsets P0d original** à une étiquette zéro octet. Le source P0d historique n'a pas changé de bytes, et aucune lecture ni écriture du shadow sélectionné n'intervient dans ce nouveau parcours.
+
+**Gate A MC68020 PASS — 52 contrôles**, [CI 44174319362](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44174319362), deux implantations AP20 V2, masques d'une banque 10 préparés en Chip tandis que 11 reste sélectionnée, descripteurs pixel et masque vérifiés en mémoire et refus des sources périmées. Source BOBS **19 338 octets** SHA256 `ac4252e15ec04467d6789869f0f247c49249c5799276bfc07099811529d51437`, AP20 en mémoire **99 832 octets** SHA256 `90b5d69743bb93c5de9f97039e802e9bedd6866302e7b655efdde4c4a2f5e585`, 85 commandes / 178 entrées / 4 groupes, PC16 max 854.
+
+**Reste P0j-b4** : mettre le peintre P0d Safe/WaitBlit sur cette nouvelle voie et parcourir les 64 objets sans shadow temporaire. Aucun changement Lib/ASC/R84 ni Gate B/C/D pour b3. [Rapport](M19_P0J_EXPLICIT_IMAGE_RESOLVE_GATE_A_2026-11-17.md).
+
+
 ## M19 P0j-b2 — staging Chip explicitement indexé par banque (17/11/2026)
 
 Les entrées privées `explicit_checked_stage_entry` et `explicit_registry_prepare_entry` prennent D3 = banque AGBO, A5 = propriétaire et A4 = GfxBase, réutilisent **les octets historiques du validateur P0c et la publication atomique du registre**, sans consulter `bank_active_state`. Deux labels de raccord zéro octet ont été insérés dans les emitters P0c sans modifier leur binaire. Le fast-path s'appuie sur P0j-b1 pour **réutiliser un contexte Chip valide sans CopyMem ni AllocVec**.

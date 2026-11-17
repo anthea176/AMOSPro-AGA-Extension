@@ -12,6 +12,8 @@ from m19_p0j_explicit_bank_stage_emit import emit_explicit_bank_stage
 from m19_p0j_explicit_image_resolve_emit import emit_explicit_bank_image_resolve
 
 P0JB2_SHA='8e1ef5daccde882aa78adb93c13108ee0d085063540920cbecfa80b4dddaad8d'
+P0JB3_BYTES=99832
+P0JB3_SHA256='90b5d69743bb93c5de9f97039e802e9bedd6866302e7b655efdde4c4a2f5e585'
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0j-b3 EXPLICIT BANK IMAGE RESOLVER SOURCE ONLY\0'
        b'$VER: AMOSPro_AGA P0j-b3 native private descriptor UNINSTALLED\0')
@@ -40,6 +42,9 @@ def build() -> tuple[bytes,dict]:
     links=pc16_displacements(new)
     if groups!=[142,153,156,177] or max(map(abs,links.values()))>=1000:
         raise ValueError('P0j-b3 PC16/dispatch island budget exceeded')
+    if (len(result)!=P0JB3_BYTES or sha256(result).hexdigest()!=P0JB3_SHA256
+            or len(suffix)!=130 or max(map(abs,links.values()))!=854):
+        raise ValueError('P0j-b3 AP20 canonical source SHA/size drift')
     return result,dict(
         sha256=sha256(result).hexdigest(),size=len(result),
         previous_sha=meta['sha256'],appended=len(suffix),
