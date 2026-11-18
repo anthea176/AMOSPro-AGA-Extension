@@ -173,7 +173,11 @@ def main() -> None:
     )
     islands = re.search(r"\$VER:\s*AGA\s+M19\s+AP20\s+islands\b", title, re.IGNORECASE)
     b7 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7)\b", title, re.IGNORECASE)
-    if b7:
+    b7m1 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7-m1)\b", title, re.IGNORECASE)
+    if b7m1:
+        assert sha256(LIB.read_bytes()).hexdigest() == "838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403", "B7-m1 release must be exact native-source candidate"
+        release = "M19 P0j-b7-m1"
+    elif b7:
         assert sha256(LIB.read_bytes()).hexdigest() == "f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b", "B7 release must be exact source-built canonical"
         release = "M19 P0j-b7"
     elif islands:
