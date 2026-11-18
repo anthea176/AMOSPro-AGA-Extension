@@ -1,4 +1,4 @@
-name: M19 R87 historical read-only regression and P0c ASC preflight
+name: M19 R87 historical regression and active B7 End ASC preflight
 
 on:
   push:
@@ -14,6 +14,8 @@ on:
       - "tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc"
       - "tools/amos_preflight.py"
       - "tools/test_amos_preflight.py"
+      - "tools/test_current_ram_log.py"
+      - "tools/test_m19_p0j_b7_end_asc_static.py"
       - "tests/current/*.asc"
       - "tests/design/M19_P24_BOBS_PIXELS_BENCH_01_UNVALIDATED.asc"
       - "tools/active_library.py"
@@ -50,13 +52,14 @@ jobs:
         run: |
           python -B tools/test_amos_preflight.py
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
-      - name: Verify archived P2.5/P2.6/P2.7 and unique current P2.8 ASC
+      - name: Verify archived P2.5/P2.6/P2.7 and the sole active B7 End ASC
         run: |
           python -B tools/test_current_ram_log.py
+          python -B tools/test_m19_p0j_b7_end_asc_static.py
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B tools/test_m19_p27_cache_bench_static.py
-      - name: Check R87 historical binary archived and P0c active candidate pinned
+      - name: Check R87 historical binary and current B7 candidate pinned
         run: |
           python -B tools/verify_fast.py
           python -B tools/test_m19_p25_r87_smoke_static.py
