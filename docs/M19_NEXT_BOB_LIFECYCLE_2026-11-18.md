@@ -8,14 +8,20 @@ L'exemple public [BOB_LOCAL_RESTORE.asc](../examples/bob_local_restore/BOB_LOCAL
 
 **Référence figée pour la suite :** `dist/AMOSPro_AGA.Lib`, **M19 P0j-b7-m1**, 102 360 octets, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, 86 commandes / 181 entrées AP20, quatre unités natives, cible **MC68020+** ; R84 `LAST_GOOD` protégée. B7-m1 possède déjà `Aga Bob Bank`, `Aga Bob _N,_X,_Y,_I`, `Aga Bob Off _N`, `_OK=Aga Bob Draw` et `_OK=Aga Swap`. [Contrats d'API](../README.fr.md) · [source des 64 Bobs](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md).
 
+## Gate A de reprise : PASS sur B7-m1
+
+**CI [44404123651](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44404123651) PASS** : le [nouveau banc MC68020](../tools/test_m19_b7m1_bob_lifecycle_gate_a.py) reconstruit les **102 360 octets exacts de la Lib B7-m1**, puis exécute **194 contrôles comptabilisés** sur deux implantations native AP20. Vérifications : Off puis Draw (1 Bob, puis zéro Bob), réactivation des IDs avec source banque et masque conservés, progression **1/4/8/16/64 Bobs** sur banques 10/11, réduction 64 → 16 par Off, identité périmée ignorée pour un Bob inactif mais refusée avant DMA pour un actif, Swap DIRTY verrouillé, Close/End sans double free dans le mock. [Compte rendu et limites](M19_B7M1_BOB_LIFECYCLE_GATE_A_2026-11-18.md).
+
+**Ce résultat valide le source natif en émulation MC68020, pas le comportement WinUAE des nouveaux cas Off/On ni un vrai Compiler.** Le prochain jalon **Gate B fonctionnel** est un unique ASC avec Off/On, sans FPS, à préparer dans `tests/current/` seulement au moment de lancer la campagne ; la démo publique et l'ancien test validé restent pour l'instant inchangés. Aucun nouvel émetteur ni changement de Lib n'a été nécessaire.
+
 ## Prochain jalon : cycle de vie des Bobs persistants
 
 L'objectif est de **qualifier les fonctions existantes**, sans créer prématurément une nouvelle commande ou modifier le format AGBO :
 
-1. **Activation/Off/réactivation :** Bob 1 actif → `Aga Bob Off 1` → Draw/Swap sans Bob 1 → réactivation sous le même ID, banque d'origine vérifiée ; pas de Bob fantôme sur la page visible.
-2. **Banques mixtes :** 1, 4, 8, 16 puis 64 Bobs issus de plusieurs banques, avec IDs stables, ordre croissant de rendu, masques et transparence cohérents. Les **scénarios 8/16/64** restent à tester sur cette Lib (les anciens modèles sources ne valent pas preuve B7-m1 en Runtime).
-3. **Échecs sûrs :** image absente, masque invalide, remplacement de banque, mutation tardive, Safe/Disp en attente : pas de Swap après Draw refusé, pas de présentation d'un back buffer partiel. Reconstruction du fond et récupération sûres avant nouvelle présentation.
-4. **Fermeture/relance :** Close/End, libérations au plus une fois, changement d'écran et second lancement sans `Erase All`. Vérifier séparément les paths Runtime, puis seulement après autorisation le vrai Compiler.
+1. **Activation/Off/réactivation : Gate A native PASS ; Gate B à faire.** Bob 1 actif → `Aga Bob Off 1` → Draw/Swap sans Bob 1 → réactivation sous le même ID, banque d'origine vérifiée ; pas de Bob fantôme sur la page visible.
+2. **Banques mixtes : Gate A native PASS pour 1/4/8/16/64 ; Gate B à faire.** 1, 4, 8, 16 puis 64 Bobs issus de plusieurs banques, avec IDs stables, ordre croissant de rendu, masques et transparence cohérents. Les **scénarios 8/16/64** restent à tester sur cette Lib (les anciens modèles sources ne valent pas preuve B7-m1 en Runtime).
+3. **Échecs sûrs : source active périmée et DIRTY Gate A PASS ; autres défauts et Gate B à faire.** image absente, masque invalide, remplacement de banque, mutation tardive, Safe/Disp en attente : pas de Swap après Draw refusé, pas de présentation d'un back buffer partiel. Reconstruction du fond et récupération sûres avant nouvelle présentation.
+4. **Fermeture/End : Gate A PASS dans le mock ; relance WinUAE à faire.** Close/End, libérations au plus une fois, changement d'écran et second lancement sans `Erase All`. Vérifier séparément les paths Runtime, puis seulement après autorisation le vrai Compiler.
 
 ## Exécution proposée
 
@@ -23,4 +29,4 @@ L'objectif est de **qualifier les fonctions existantes**, sans créer prématur�
 - **Ensuite un seul test fonctionnel** sous `tests/current/`, avec journaux d'état et de fermeture, **sans mesures FPS**. Remplacer le dernier benchmark actif seulement lorsque le nouveau test est effectivement préparé et statiquement vérifié.
 - **Gates distinctes :** A native / simulation ; B Runtime WinUAE (nouveau test) ; C vrai AMOS Compiler uniquement après décision spécifique ; D matériel physique. Aucune promotion de `LAST_GOOD` implicite.
 
-**Statut au 18/11/2026 :** plan technique préparé et ancré dans les contrats vérifiés. **Pas de correction native supplémentaire, pas de nouvelle Lib, pas de nouvelle Gate A/B/C pour ce prochain jalon.** Branche `main` exclusivement.
+**Statut au 18/11/2026 :** premier jalon fonctionnel **Gate A PASS**, nouvelle **Gate B Off/On non effectuée**, pas de nouvelle Lib ni Compiler. Branche `main` exclusivement.

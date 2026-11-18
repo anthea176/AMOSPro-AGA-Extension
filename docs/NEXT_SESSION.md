@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — M19 Bob Off/On : nouvelle Gate A native PASS
+
+**Décision en cours :** l'auteur souhaite poursuivre le développement de l'extension, **sans nouveau benchmark**, après publication de [l'exemple quatre Bobs](../examples/bob_local_restore/README.fr.md). Le prochain jalon technique porte sur `Aga Bob Off`, réactivation, multi-banques et cycle de vie MC68020.
+
+**Réalisé sur `main` :** nouveau [test source `tools/test_m19_b7m1_bob_lifecycle_gate_a.py`](../tools/test_m19_b7m1_bob_lifecycle_gate_a.py) et [workflow dédié](../.github/workflows/m19-bob-lifecycle-gate-a.yml), sans modification native ni nouvelle Lib. La source vérifie **octet pour octet** que `build_multiframe()` produit `dist/AMOSPro_AGA.Lib` B7-m1 (**102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`). **[Gate A CI 44404123651](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44404123651) PASS : 194 contrôles fonctionnels comptabilisés**, deux placements natifs MC68020 (émulation Unicorn ; AmigaOS, DMA et Safe/Disp simulés).
+
+**Scénarios PASS en Gate A :** Off Bob 1 puis Bob 2, Draw sans Bob actif, réactivation masquée/opaque dans les mêmes banques ; progressions **1/4/8/16/64** Bobs sur banques 10/11 ; réduction **64 → 16** par Off ; identité source périmée inactive ignorée et active refusée **avant Blitter** ; garde `DIRTY` empêchant `Aga Swap` ; Close/End et libérations au plus une fois. [Rapport précis](M19_B7M1_BOB_LIFECYCLE_GATE_A_2026-11-18.md). Un premier essai CI a refusé une coordonnée de banc **320** alors que le framebuffer simulé fait **65 pixels** ; la correction a ensuite PASS (ce n'était pas une anomalie du moteur).
+
+**Suivant :** **Gate B fonctionnelle** sur un **seul ASC** (Off/On + persistance + masques, aucune mesure FPS), à préparer avant tout test WinUAE. La démo publique et l'ancien test validé dans `tests/current/` restent inchangés. **Gate B de ce nouveau jalon NON TESTÉE, Gate C vrai Compiler NON TESTÉE, Gate D matériel NON TESTÉE.** `LAST_GOOD` R84, archives, API et Lib B7-m1 inchangées ; uniquement `main`.
+
 ## 18 novembre 2026 — clôture des benchmarks, exemple Bob local et reprise M19
 
 **Consigne de l'auteur :** arrêter les benchmarks. La dernière démonstration (quatre Bobs sur décor multicolore) devient un **programme d'exemple interactif** : [`examples/bob_local_restore/BOB_LOCAL_RESTORE.asc`](../examples/bob_local_restore/BOB_LOCAL_RESTORE.asc), **8 001 octets**, SHA256 `08edb560c4ca5c409c7d6e7f74110d05018d4f522160ea799ff43b9f3a7d470e`. Écran PAL 320×256×256, titre fixe via `Aga Text` dans y=0..31, source de fond intacte y=32..63, restauration locale sur chacune des deux pages, quatre Bobs multi-banques 24/25. Sortie touche/clic et borne automatique 2 400 frames, retour à AMOS, sans IFF, nouveau Timer ni log de benchmark. [Notices FR/EN](../examples/bob_local_restore/README.fr.md).
