@@ -1,5 +1,9 @@
 # Outils Python — builder actif et historique versionné
 
+## Référence de travail actuelle — M19 B7-m1, Runtime uniquement (18/11/2026)
+
+La **seule** bibliothèque destinée aux tests est `dist/AMOSPro_AGA.Lib`, construite par `build_multiframe()` dans [build_m19_p0j_end_lifecycle_in_memory.py](build_m19_p0j_end_lifecycle_in_memory.py) : **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, quatre îlots MC68020, 86 commandes / 181 entrées AP20. La source B7 d'origine est figée ; son builder `build()` reste reproductible et ne doit pas remplacer cette candidate. La [Gate A multiframe](../docs/M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md) a PASS 793 contrôles et deux implantations, avec Safe/Disp simulés. Le [banc actif](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) (4 730 octets ; SHA256 `a5a263e38faa2dfba75bf94beac4915c6ddea85e8c345f9a2f7eb0316d8190dd`) attend **Gate B Runtime WinUAE**. **Aucun essai Compiler**, R84 LAST_GOOD et archives intacts. Les chapitres P0c et antérieurs ci-dessous sont historiques.
+
 ## État actif — M19 P0c distribué pour Gates WinUAE B/C (16/11/2026)
 
 Avec autorisation explicite, le candidat reconstruit par [`build_m19_p0c_screen_close_in_memory.py`](build_m19_p0c_screen_close_in_memory.py) est maintenant installé **uniquement** sous [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **87 020 octets**, SHA256 `277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a`, **82 commandes / 92 entrées AP20**. Le [seul ASC actif](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) passe le preflight statique de la Gate A ; Gates B Runtime WinUAE et C vrai Compiler encore NON TESTÉES. Le bloc ci-dessous décrit l'état **historique avant cette autorisation**. La Lib P0b est reproductible via son builder figé ; `LAST_GOOD` R84 et archives intacts. Aucun artefact CI alternatif.

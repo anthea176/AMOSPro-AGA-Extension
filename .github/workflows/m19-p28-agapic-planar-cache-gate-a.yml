@@ -40,7 +40,7 @@ jobs:
       - name: Verify active AP20 islands, historical R88/R87 and protected R84
         run: |
           python -B tools/verify_fast.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib')=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'; assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
           python -B tools/test_m16_agapic.py

@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 18 novembre 2026 — B7-m1 callback multiframe : Gate A PASS, non installé
+## 18 novembre 2026 — B7-m1 distribuée dans la Lib de travail, Gate B Runtime à effectuer
+
+**Bascule explicitement autorisée (« va y ») :** la candidate **M19 P0j-b7-m1** remplace la seule `dist/AMOSPro_AGA.Lib` sur `main`, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, reconstruite octet pour octet par `tools/build_m19_p0j_end_lifecycle_in_memory.py::build_multiframe()`. 86 commandes / 181 sections AP20 / quatre unités MC68020 ; End réarmé via B7 → P0c → B7. La B7 historique SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b` reste reconstituable par `build()`, pas une autre Lib distribuée. `LAST_GOOD` R84 protégée.
+
+**Seul ASC actuel :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) reste sous le même chemin pour garder le banc de campagne, mais porte désormais la provenance B7-m1, **4 730 octets**, SHA256 `a5a263e38faa2dfba75bf94beac4915c6ddea85e8c345f9a2f7eb0316d8190dd`. Four Bobs (banques 24/25), 120 frames, Clear → Draw → Swap ; Close explicite, effacement des banques et log `RAM:M19_B7_ANIM_RUNTIME.TXT`. Aucune seconde Lib ni second ASC.
+
+**Gates :** [Gate A MC68020 B7-m1](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44384533532) **PASS 793 contrôles multiframe**, deux placements natifs, services OS simulés ; R84 et sources B7 conservés. **Gate B WinUAE 68030/JIT ON NON TESTÉE** sur cette candidate, **Gate C non demandée/non testée**, D non testée. Le `ERR 14` précédemment observé concerne l'ancienne B7. Sous WinUAE, copier la nouvelle Lib depuis GitHub dans `APSystem`, lancer **seulement en Runtime**, sauvegarder le log avant reset puis relancer sans `Erase All`. [Protocole](../tests/current/README.md). Pas de promotion LAST_GOOD ni publication.
+
+## Historique du 18 novembre 2026 — B7-m1 Gate A avant la bascule
 
 **Correctif source-only :** le P0c d'origine refuse le callback B7 installé au premier Draw. Une nouvelle entrée b7_multiframe_draw_entry vérifie les pointeurs End, le contexte AMOS et la signature AGA, remplace temporairement B7/B7 par P0c/P0c, puis délègue au wrapper B7 qui réarme son callback. Refus des callbacks tiers et des paires incohérentes. [Rapport](M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
 

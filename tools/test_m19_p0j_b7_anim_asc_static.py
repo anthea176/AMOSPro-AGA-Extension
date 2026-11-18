@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Source-only safeguards for the single B7 Runtime animation program.
+"""Source-only safeguards for the single B7-m1 Runtime animation program.
 
 Does not prove correct AGA pixels, wait/Safe behavior, speed or WinUAE.
 """
@@ -11,9 +11,9 @@ import re
 import sys
 
 NAME = "M19_P0J_B7_ANIM_RUNTIME_03.asc"
-SIZE = 4718
-SHA = "0f92b7ee5e1d60b1c0ab78c0d96a7d1aaebb97f3db12696a62c9a73783ad7cb6"
-B7 = "f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b"
+SIZE = 4730
+SHA = "a5a263e38faa2dfba75bf94beac4915c6ddea85e8c345f9a2f7eb0316d8190dd"
+B7M1 = "838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"
 
 
 def verify(path: Path) -> None:
@@ -22,7 +22,7 @@ def verify(path: Path) -> None:
     src = data.decode("ascii")
     lines = src.splitlines()
     assert lines and max(map(len, lines)) <= 200
-    assert B7 in src and "NO COMPILER TEST" in src
+    assert B7M1 in src and "NO COMPILER TEST" in src
     for term, n in (("Aga Screen Open(", 1), ("Aga Double Buffer", 1),
                     ("Aga Screen Close", 1), ("Aga Bob Draw", 1),
                     ("Aga Swap", 1), ("Make AGA Bob Mask 1,0", 1),

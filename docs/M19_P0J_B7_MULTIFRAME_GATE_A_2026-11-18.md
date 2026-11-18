@@ -1,5 +1,11 @@
 # M19 B7-m1 — correction End multiframe, Gate A (18/11/2026)
 
+## Bascule de la bibliothèque de travail autorisée — 18/11/2026
+
+Après la Gate A validée, l'auteur a autorisé la bascule du **seul** fichier `dist/AMOSPro_AGA.Lib` vers B7-m1 : **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, builder `build_multiframe()`. Le banc ASC actif unique conserve le chemin `tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc` pour la continuité de campagne, mais porte maintenant la version B7-m1 (**4 730 octets**, SHA256 `a5a263e38faa2dfba75bf94beac4915c6ddea85e8c345f9a2f7eb0316d8190dd`). Le titre AP20 ne revendique plus « UNINSTALLED ».
+
+Cette section met à jour la disponibilité de la candidate ; les lignes « non installé » plus bas décrivent le **checkpoint historique de Gate A avant autorisation**. WinUAE Runtime **non exécuté**, vrai Compiler **non exécuté**, R84 LAST_GOOD, archives et autres dépôts inchangés.
+
 ## Diagnostic vérifié
 
 Dans tools/m19_p0j_explicit_safe_draw_emit.py, explicit_frame_draw_entry appelle program_end_arm_entry du pont P0c à chaque Draw. Celui-ci accepte les callbacks End AGA originel ou program_end_bridge_entry, mais refuse le b7_end_entry laissé par le premier Draw. Le refus provoque Draw=0 et le garde DIRTY bloque Swap.

@@ -15,7 +15,7 @@ from struct import pack, unpack_from
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "tools"), str(ROOT / "tools" / "experiments")]
-from active_library import R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA
+from active_library import R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -117,7 +117,7 @@ def build() -> tuple[bytes, dict]:
         raise ValueError("Compiler V2 unit exceeds 65,534 bytes")
     active = ACTIVE.read_bytes()
     current_sha = sha256(active).hexdigest()
-    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA):
+    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA):
         raise ValueError("Unknown dist/ candidate: refusing overwrite")
 
     return output, {
@@ -156,7 +156,7 @@ def main():
     if args.check_dist and ACTIVE.read_bytes() != candidate:
         raise SystemExit("dist/AMOSPro_AGA.Lib is not the deterministic R87 candidate")
     if args.write_dist:
-        if sha256(ACTIVE.read_bytes()).hexdigest() in (R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA):
+        if sha256(ACTIVE.read_bytes()).hexdigest() in (R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA):
             raise SystemExit("REFUSED: historical R87 builder must not replace newer R88/P0c/P0d/AP20/B7 active candidate")
         frozen = PROTECTED.read_bytes()
         if ACTIVE.resolve() == PROTECTED.resolve() or sha256(frozen).hexdigest() != R84_SHA:

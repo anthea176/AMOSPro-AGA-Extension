@@ -1,17 +1,17 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **Pilotage actif — 17 novembre 2026.** Cette page recense la référence installable, la priorité technique et les travaux suivants. **Ce n'est pas un journal de commits.** L'[ancien contenu intégral](ROADMAP_HISTORY_2026-11-17.md), les [preuves](NEXT_SESSION.md) et les [règles du projet](../EXTENSION_SOURCE_RULES.md) sont consultables séparément.
+> **Pilotage actif — 18 novembre 2026.** Cette page recense la référence installable, la priorité technique et les travaux suivants. **Ce n'est pas un journal de commits.** L'[ancien contenu intégral](ROADMAP_HISTORY_2026-11-17.md), les [preuves](NEXT_SESSION.md) et les [règles du projet](../EXTENSION_SOURCE_RULES.md) sont consultables séparément.
 
 ## 1. Référence actuelle
 
 | Élément | État vérifié |
 | --- | --- |
-| **Bibliothèque de travail** | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **M19 P0j-b7 — candidate de travail pour Gates B/C**, **102 072 octets**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, **86 commandes / 181 entrées AP20**, quatre unités natives. Source reproductible via `tools/build_m19_p0j_end_lifecycle_in_memory.py`. |
+| **Bibliothèque de travail** | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **M19 P0j-b7-m1 — candidate de travail pour Gate B Runtime**, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commandes / 181 entrées AP20**, quatre unités natives. Source reproductible via `tools/build_m19_p0j_end_lifecycle_in_memory.py::build_multiframe()`. |
 | **Test AMOS actif unique** | [`M19_P0J_B7_ANIM_RUNTIME_03.asc`](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) et [notice WinUAE](../tests/current/README.md). |
-| **Validation de cette bibliothèque** | **Gate A B7 MC68020 PASS (88 contrôles)**. Le scénario antérieur Draw/Swap/Close a été observé en compilé. **Nouveau banc : 120 frames avec 4 Bobs en Runtime uniquement ; Gate B animation NON TESTÉE. Aucun nouvel essai Compiler.** Gate D NON TESTÉE. |
+| **Validation de cette bibliothèque** | **Gate A B7-m1 MC68020 PASS (793 contrôles multiframe, 88 B7 historiques)**. Le scénario antérieur Draw/Swap/Close a été observé en compilé. **Banc actif : 120 frames avec 4 Bobs en Runtime uniquement ; Gate B animation NON TESTÉE. Aucun nouvel essai Compiler.** Gate D NON TESTÉE. |
 | **Référence protégée** | [R84 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, sans nouvelle promotion. |
 
-**API Bob :** `Aga Bob Blit` dessine immédiatement. `Aga Bob` et `Aga Bob Off` sont exposées, mais **leur cycle de vie persistant et leur utilisation complète ne sont pas qualifiés en Runtime/Compiler**. `Aga Bob Draw` est désormais **intégré dans B7 comme fonction numérique sans argument** ; ses retours, le rendu et le raccordement Compiler restent **à tester en B/C**.
+**API Bob :** `Aga Bob Blit` dessine immédiatement. `Aga Bob` et `Aga Bob Off` sont exposées, mais **leur cycle de vie persistant et leur utilisation complète ne sont pas qualifiés en Runtime/Compiler**. `Aga Bob Draw` est désormais **intégré dans B7-m1 comme fonction numérique sans argument** ; ses retours, le rendu et le raccordement Compiler restent **à tester en Runtime B ; Compiler C non demandé**.
 
 La **cinquième unité native** a été validée en Gates A/B/C pour son banc de sondes, puis ces sondes ont été retirées : la version installable reste à **quatre unités**. [Rapport de l'expérience](M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md).
 
