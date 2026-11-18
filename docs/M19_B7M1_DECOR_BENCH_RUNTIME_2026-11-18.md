@@ -1,5 +1,24 @@
 # M19 B7-m1 — comparaison décor non uniforme et Bobs (18/11/2026)
 
+## Résultat réel WinUAE — Gate B Runtime PASS (18/11/2026)
+
+**Preuve reçue :** journal utilisateur `M19_B7M1_DECOR_BENCH.TXT` (**1 216 octets**, SHA256 `d789cc71067795a801b17e2a455fa57f0db9db4468480877940056d20ec7b720`) issu du banc actif de **9 624 octets** ; `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, **`FRAMES_OK 720` / 720**, `DOUBLE_BUFFER 1`, `FILL_FAILS 0`, `COPY_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `CLOSE_CALLED 1`, `BANKS_ERASED 2`, `VERDICT PATH_OK`. L'auteur confirme explicitement : **« graphiquement pas de soucis »**. Cette observation couvre la restauration du décor, les quatre Bobs et les passages de clipping visibles, sans prouver automatiquement la parité de tous les pixels ou la libération interne de ressources après `Close`. Un second lancement de **ce banc précis** n'est pas documenté.
+
+| Run | Cas | Frames | Ticks | Retry VBL | Copy appels | Surface copiée (pixels logiques) | FPS depuis ticks |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 1 | A : décor complet + 4 Bobs | 120 | 239 | 119 | 360 | 7 372 800 | 25,10 |
+| 2 | B : décor complet, sans Bob | 120 | 240 | 120 | 360 | 7 372 800 | 25,00 |
+| 3 | C : décor local + 4 Bobs | 120 | 123 | 121 | 520 | 249 342 | 48,78 |
+| 4 | C : décor local + 4 Bobs | 120 | 122 | 120 | 520 | 249 342 | 49,18 |
+| 5 | B : décor complet, sans Bob | 120 | 239 | 119 | 360 | 7 372 800 | 25,10 |
+| 6 | A : décor complet + 4 Bobs | 120 | 240 | 120 | 360 | 7 372 800 | 25,00 |
+
+**Bilan des 240 frames par cas :** A = **479 ticks / 25,05 FPS**, B = **479 ticks / 25,05 FPS**, C = **245 ticks / 48,98 FPS**. C réduit la durée moyenne mesurée de **48,85 %** face à A et augmente la cadence de **95,51 %** (environ **1,96×**). La surface logique copiée baisse de **96,62 %** par série, soit **29,57× moins de pixels**, malgré **520 appels Copy** contre 360 dans A/B. Les séries comprennent les **deux frames d'initialisation** des pages en C.
+
+**Attention à l'interprétation :** `RETRY_VBL 719` au total (119/120/121/120/119/120 selon la série) : les durées incluent un nombre significatif d'attentes liées au cycle Safe/Disp et les appels AMOS/Swap. Le nombre de pixels copiés **n'est pas** un comptage de transactions Chip RAM et les mesures ne permettent pas d'isoler le coût du Blitter. Les durées et les attentes sont quasiment identiques au benchmark antérieur à fond uni ; le bénéfice de **restauration locale face à restauration plein écran** est confirmé sur ce parcours, sans généralisation à tous les décors, fréquences CPU ni matériels.
+
+**Validation : Gate A native B7-m1 PASS, Gate B Runtime de ce banc décor PASS (journal + retour visuel), Gate C Compiler NON TESTÉE, Gate D matériel NON TESTÉE.** Aucune nouvelle Lib, aucun changement de source natif, de `LAST_GOOD` ou de test archivé.
+
 ## Objectif, source et autorisation
 
 Le [premier benchmark Fill A/B/C](M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md) a passé WinUAE Runtime (720/720 frames, ERR 0) : Fill complet A/B **239–240 ticks** contre effacement local C **122–123 ticks**. Les **719 attentes VBL de retry** dans le journal interdisent d'imputer ce gain au seul matériel Blitter. L'auteur a confirmé « ça fonctionne nickel » et a autorisé le nouveau test avec un véritable décor en arrière-plan (« ok allons y »).
@@ -30,12 +49,12 @@ Les deux pages sont initialisées au démarrage (hors chronométrage), puis six 
 
 **Log :** `RAM:M19_B7M1_DECOR_BENCH.TXT`. Envoyer ce journal avec une observation visuelle de la série C. Calculer le FPS depuis les ticks bruts, sans attribuer le résultat à un composant isolé.
 
-## Préflight et preuve limitée
+## Préflight et preuve limitée (avant l'essai WinUAE)
 
 - **AMOS PREFLIGHT PASS** : `amos_preflight.py --strict-target --fail-on-warnings` sur les **9 624 octets ASCII exacts**. Les 21 tests de non-régression du préflight passent.
 - **STATIC PASS** : [`tools/test_m19_p0j_b7_anim_asc_static.py`](../tools/test_m19_p0j_b7_anim_asc_static.py) SHA-pinne l'ASC, vérifie la structure des boucles, les commandes de copie, la fermeture et le journal.
 - **Pixel oracle Python PASS : 720 compositions** sur deux pages virtuelles 320×256, **84 découpages de frontières y=64** et 2 480 opérations Copy simulées. Le modèle peint un décor non uniforme, restitue l'image masque/opaque et compare **chaque frame** à un rendu de référence complet, tout en garantissant la conservation du témoin.
-- **Gate B du nouveau scénario : NON TESTÉE. Gate C Compiler réelle : NON TESTÉE. Gate D matériel : NON TESTÉE.** Le modèle Python ne simule ni la vraie DMA AGA, ni Intuition, ni l'attente Safe/Disp, ni le comportement physique de BltBitMap.
+- **Avant réception du journal : Gate B NON TESTÉE** (désormais **PASS**, voir les résultats mesurés en tête de rapport) ; Gate C Compiler réelle **NON TESTÉE**, Gate D matériel **NON TESTÉE**. L'oracle Python reste indépendant et ne remplace pas la vraie DMA AGA, Intuition ou Safe/Disp.
 
 ## Critères de verdict
 

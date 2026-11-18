@@ -1,6 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 18 novembre 2026 — décor texturé B7-m1 : nouveau benchmark Runtime à exécuter
+## 18 novembre 2026 — B7-m1 décor texturé : Gate B Runtime PASS
+
+**Journal WinUAE reçu :** `M19_B7M1_DECOR_BENCH.TXT` (**1 216 octets**, SHA256 `d789cc71067795a801b17e2a455fa57f0db9db4468480877940056d20ec7b720`), `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, **`FRAMES_OK 720/720`**, `FILL_FAILS 0`, `COPY_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `CLOSE_CALLED 1`, `BANKS_ERASED 2`, `VERDICT PATH_OK`. Confirmation de l'auteur : **« graphiquement pas de soucis »** ; nouveau banc réel décor et quatre Bobs mobiles **Gate B PASS**. Un deuxième lancement de ce banc n'est pas documenté.
+
+**Résultats sur 2×120 frames par cas :** A décor complet + Bobs = **239/240 ticks, 25,05 FPS** ; B décor complet seul = **240/239 ticks, 25,05 FPS** ; C restauration locale + Bobs = **123/122 ticks, 48,98 FPS**. Durée C **−48,85 %**, cadence **+95,51 %** ; surface copiée **−96,62 %**, malgré 520 Copy contre 360 en A/B. **`RETRY_VBL 719`** : durées incluant Safe/Disp, ne mesurent pas la vitesse isolée du Blitter. [Rapport avec les six séries](M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md).
+
+**Référence inchangée :** seul ASC [`tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc`](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) **9 624 octets**, SHA256 `8a3aa82a637334558d918ea0626c9ca661d5f78a1e67ed40ad99ed5a3b1f1904` ; Lib [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) B7-m1 **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. **Gate A PASS, Gate B PASS sur ce scénario ; Gate C vrai Compiler et Gate D matériel NON TESTÉES**. Aucune promotion `LAST_GOOD`, changement de branche, source natif ou archive.
+
+## Historique du 18 novembre 2026 — préparation du benchmark décor avant la Gate B
 
 **Banc précédent à fond uni = Gate B PASS :** fichier de résultats WinUAE `M19_B7M1_CLEAR_BENCH.TXT` (SHA256 `91f272adb39713bef53359a3d75f210d5299c96d24abf0904b355fab5357258c`), `RESULT 1`, `ERR 0`, **720/720 frames**, zéro échec Fill/Draw/Swap, retour AMOS ; l'auteur confirme « ça fonctionne nickel ». Séries A **239/240 ticks**, B **240/239**, C **123/122** : C réduit le temps moyen mesuré de **48,85 %** (25,05→48,98 FPS moyens recalculés). `RETRY_VBL 719` : les résultats incluent la synchronisation Safe/Disp, **pas** le seul coût du Blitter. [Rapport détaillé](M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md). L'ASC exact de ce test reste [conservé en historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/2d019a555447ab3cd294d1c4b4e69928d7afd9db/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc).
 

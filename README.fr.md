@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Candidate de travail active : M19 P0j-b7-m1 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commandes / 181 entrées AP20**, quatre unités natives. **Gate A native MC68020 PASS (793 contrôles multiframe)** ; **Gate B WinUAE PASS** (animation Bobs 120 frames et benchmark A/B/C à fond uni 720 frames, temps réduit de **48,9 %** par effacement local) ; **nouveau benchmark A/B/C sur décor texturé NON TESTÉ** ; Compiler C et matériel D NON TESTÉS. [Rapport B7-m1](docs/M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
+**Candidate de travail active : M19 P0j-b7-m1 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commandes / 181 entrées AP20**, quatre unités natives. **Gate A native MC68020 PASS (793 contrôles multiframe)** ; **Gate B WinUAE PASS** (animation Bobs 120 frames et benchmark A/B/C à fond uni 720 frames, temps réduit de **48,9 %** par effacement local) ; **benchmark A/B/C sur décor texturé Gate B Runtime PASS** (720/720 frames, aucun problème graphique, 25,05 FPS plein décor contre 48,98 FPS restauration locale ; 719 attentes VBL comprises) ; Compiler C et matériel D NON TESTÉS. [Rapport B7-m1](docs/M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
 
 **Benchmark actif unique sur décor texturé A/B/C (720 frames, quatre Bobs mobiles dans A/C ; Runtime uniquement, sans Compiler) :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) · [consignes WinUAE](tests/current/README.md). L'ancienne B7 échouait dès la deuxième frame ; son ancien scénario compilé et les Gates B/C des îlots AP20 ne qualifient pas B7-m1. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
@@ -27,7 +27,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P0j-b7-m1** — **86 commandes / 181 entrées AP20** (MC68020 minimum). `Aga Bob Draw` est une fonction numérique 0/1 sans paramètre ; `Aga Swap` refuse une frame invalide et `End` contrôle la libération Safe/Disp. **Gate A native PASS ; Runtime sur fond uni 120 et 720 frames B PASS ; nouveau benchmark décor B en attente ; C/D NON TESTÉES.** [Bilan et test actif](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
+**API de la bibliothèque courante M19 P0j-b7-m1** — **86 commandes / 181 entrées AP20** (MC68020 minimum). `Aga Bob Draw` est une fonction numérique 0/1 sans paramètre ; `Aga Swap` refuse une frame invalide et `End` contrôle la libération Safe/Disp. **Gate A native PASS ; Runtime WinUAE B PASS pour les bancs 120 frames et 720 frames fond uni + décor texturé ; C/D NON TESTÉES.** [Bilan et test actif](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |

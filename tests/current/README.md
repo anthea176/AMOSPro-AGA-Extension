@@ -4,6 +4,8 @@
 
 **Bibliothèque B7-m1 inchangée :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. Cible native MC68020 minimum ; **WinUAE AGA PAL, 68030/JIT ON**, Runtime uniquement. `LAST_GOOD` R84 inchangée. **Aucun essai Compiler**.
 
+**Résultats WinUAE réels (18/11/2026) : Gate B PASS.** [Rapport détaillé](../../docs/M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md) : A 239/240 ticks (**25,05 FPS**), B 240/239 (**25,05 FPS**), C 123/122 (**48,98 FPS**), `RUN_WAITS` cumulé **719 VBL**, `COPY_FAILS 0`, `ERR 0`. Aucun défaut graphique signalé. **Le banc n'a pas été compilé.**
+
 ## Étapes
 
 1. Mettre à jour le clone local (branche `main`), laisser la Lib B7-m1 installée dans `APSystem`. Dans AMOS Professional : ouvrir un programme vide, puis **Project → Merge ASCII** du seul ASC actif (ne pas utiliser `Load` pour un ASC).
@@ -30,4 +32,4 @@ Chaque série écrit : `RUN n CASE c`, `RUN_FRAMES`, **`RUN_TICKS`**, **`RUN_WAI
 
 Critères de succès : `RESULT 1`, `ERR 0`, `FRAMES_OK 720`, six fois `RUN_FRAMES 120`, `FILL_FAILS 0`, `COPY_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `BANKS_ERASED 2`, `VERDICT PATH_OK`, écran et clipping corrects, **pas de traînées dans les deux séries C**, ni Guru/freeze, retour AMOS et relance possible.
 
-**Statut : PREFLIGHT PASS** (AMOS statique strict, 21 tests du préflight) et **oracle pixel de 720 frames PASS** sur deux pages, avec **84 découpages de tuiles**. **Gate B de ce nouveau banc NON TESTÉE**, Gate C/D non testées. [Rapport technique](../../docs/M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md).
+**Statut : Gate A/PREFLIGHT PASS** (AMOS statique strict, 21 tests du préflight, oracle pixel simulé de 720 frames et 84 découpages). **Gate B Runtime WinUAE PASS pour ce banc décor** : 720/720 frames, ERR 0, zéro erreur Fill/Copy/Draw/Swap, rendu graphique confirmé par l'auteur. **Gate C Compiler et Gate D matériel NON TESTÉES.** [Rapport technique](../../docs/M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md).
