@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -36,7 +36,7 @@ def main():
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD hash must be immutable"
-    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA), "Active candidate not pinned"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -64,11 +64,11 @@ def main():
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==B7_SHA:
-            from build_m19_p0j_end_lifecycle_in_memory import build as build_b7
-            candidate,actual_meta=build_b7()
-            assert cur==candidate and len(candidate)==102072
-            assert actual_meta["sha256"]==B7_SHA and actual_meta["public_commands"]==86
+        if digest in (B7_SHA,B7M1_SHA):
+            from build_m19_p0j_end_lifecycle_in_memory import build as build_b7, build_multiframe
+            candidate,actual_meta=(build_multiframe() if digest==B7M1_SHA else build_b7())
+            assert cur==candidate and len(candidate)==(102360 if digest==B7M1_SHA else 102072)
+            assert actual_meta["sha256"]==digest and actual_meta["public_commands"]==86
             assert actual_meta["ap20_entries"]==181 and actual_meta["native_groups"]==[142,153,156,177]
             assert label.startswith("M19 P0j-b7")
             _,parts,_=unpack_ap20(cur)
@@ -264,7 +264,7 @@ def main():
             assert len(parts)==71 and label.startswith("R74 0.13.19")
         # P0c uses relocated AP20 V2 stubs, with cross-unit routing
         # independently checked by its exact source builder above.
-        if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA):
+        if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA):
             assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
