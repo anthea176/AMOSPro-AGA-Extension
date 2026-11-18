@@ -69,6 +69,8 @@ def check_multiframe():
         # Reproduce the defect against immutable B7: second Draw returns 0.
         baseline = ready(layout, cls=LifecycleMachine, inject_failure=False)
         assert baseline.invoke_guard('swap') == 1
+        assert baseline.get(DB + 20) == 3
+        baseline.put(DB + 20, 0)  # OS notifications acknowledged by the mock
         assert baseline.frame() == 0 and baseline.status() == DIRTY
         assert baseline.callbacks() == (baseline.end_callback(), baseline.end_callback())
         checks += 3
@@ -84,6 +86,8 @@ def check_multiframe():
         assert m.public('bob', ident=4, x=22, y=24, image=1) == 1
         for frame in range(2, 121):
             assert m.invoke_guard('swap') == 1, (layout, frame, 'swap')
+            assert m.get(DB + 20) == 3
+            m.put(DB + 20, 0)  # simulated Safe/Disp completion before next Draw
             assert m.status() == 0
             if frame in (30, 60, 90, 120):
                 assert m.run_select(10) == 1
@@ -109,6 +113,7 @@ def check_multiframe():
         for first, second in ((0x123450, 0x123450), (0x123450, None)):
             m = ready(layout, cls=MultiframeMachine, inject_failure=False)
             assert m.invoke_guard('swap') == 1
+            m.put(DB + 20, 0)  # clear pending Safe/Disp in this mocked setup
             m.put(AMOS + 0x1cc, first)
             m.put(AMOS + 0x1d0, m.end_callback() if second is None else second)
             old_callbacks = m.callbacks()
@@ -122,6 +127,7 @@ def check_multiframe():
         # Refuse original End signature tampering without altering B7 hooks.
         m = ready(layout, cls=MultiframeMachine, inject_failure=False)
         assert m.invoke_guard('swap') == 1
+        m.put(DB + 20, 0)  # acknowledged Safe/Disp, isolate signature rejection
         original_bytes = bytes(m.uc.mem_read(m.old_end, 12))
         m.uc.mem_write(m.old_end, b'\x4e\x71\x4e\x71')
         assert m.frame() == 0 and m.status() == DIRTY
