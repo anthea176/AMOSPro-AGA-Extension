@@ -56,7 +56,8 @@ FRAMES_OK 0). La Gate B de premiere execution est PASS ; la validation
 du cycle de vie complet est **FAIL**. Le retour a AMOS et les banques
 effacees ne prouvent pas la reinitialisation de la table de Bobs native.
 
-Correctif B7-m2 source-only en cours de Gate A :
+Correctif B7-m2 source-only Gate A MC68020 PASS :
+[CI 44413813790](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44413813790), 75 controles. La candidate n'est PAS installee :
 [rapport de defaut et diagnostic](../../docs/M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
 Tant qu'aucune bascule de Lib n'est autorisee, ne pas interpreter un
 nouvel essai sous B7-m1 comme une validation du correctif.
