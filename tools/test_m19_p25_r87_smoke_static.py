@@ -26,7 +26,7 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active_candidate)==102360 and sha256(active_candidate).hexdigest()=="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"
+    assert len(active_candidate)==102400 and sha256(active_candidate).hexdigest()=="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
     assert len(files)==1, files  # historical R87 test must not pin the active B7 campaign name
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
@@ -52,7 +52,7 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7 active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7-m2 active ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
     print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 
