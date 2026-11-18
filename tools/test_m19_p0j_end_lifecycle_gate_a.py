@@ -154,6 +154,17 @@ def check_multiframe():
         assert len(m.free_screens) == 2 and len(m.free_ports) == 2
         checks += 5
 
+    # Byte-identical Git blob proof for a future authorized dist/ switch.
+    # This only prints hashes and the NEW native suffix, never a .Lib file.
+    from hashlib import sha1
+    blob_id = sha1(b'blob ' + str(len(candidate)).encode('ascii')
+                   + b'\0' + candidate).hexdigest()
+    print('B7M1_BINARY_PROOF', 'size='+str(len(candidate)),
+          'sha256='+meta['sha256'], 'git_blob='+blob_id,
+          'draw_offset='+str(meta['guarded_draw_native_offset']),
+          'append_bytes='+str(meta['appended_bytes']))
+    print('B7M1_NATIVE_APPEND_HEX', extended[len(original_native):].hex())
+
     print('M19 B7-m1 MULTIFRAME MC68020 GATE A PASS', checks,
           'checks; 120 Draw/Swap frames in two relocated layouts;',
           'canonical B7 stays byte-exact; P0c/B7 handoff;',

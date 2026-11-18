@@ -95,8 +95,8 @@ def build()->tuple[bytes,dict]:
 # This experiment intentionally does NOT change build() or the canonical
 # B7 bytes present in dist/AMOSPro_AGA.Lib.
 MULTIFRAME_TITLE = (
-    b'AMOSPro AGA M19 P0j-b7-m1 multiframe callback handoff SOURCE ONLY\0'
-    b'$VER: AGA M19 P0j-b7-m1 MC68020 GATE A ONLY UNINSTALLED\0'
+    b'AMOSPro AGA M19 P0j-b7-m1 multiframe callback handoff\0'
+    b'$VER: AGA M19 P0j-b7-m1 guarded Draw and End\0'
 )
 MULTIFRAME_TITLE += bytes(len(MULTIFRAME_TITLE) & 1)
 
@@ -152,7 +152,7 @@ def build_multiframe() -> tuple[bytes, dict]:
         guarded_draw_native_offset=target,
         guarded_draw_local_label=labels['b7_multiframe_draw_entry'],
         guarded_end_local_label=labels['b7_end_entry'],
-        installed_lib='UNCHANGED', active_asc='UNCHANGED',
+        installed_lib='NOT WRITTEN BY BUILDER', active_asc='NOT WRITTEN BY BUILDER',
         gate_a='NATIVE TEST REQUIRED', gate_b='NOT TESTED',
         gate_c='NOT TESTED', gate_d='NOT TESTED')
 
