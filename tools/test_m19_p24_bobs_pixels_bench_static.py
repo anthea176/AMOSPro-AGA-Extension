@@ -150,8 +150,12 @@ def main():
     current_b7, b7meta = build_b7()
     assert len(current_b7)==102072 and b7meta['sha256']=='f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b'
     active_m1, m1meta = build_multiframe()
-    assert active_islands==active_m1 and len(active_islands)==102360
-    assert m1meta['sha256']=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+    assert len(active_m1) == 102360
+    assert m1meta['sha256'] == '838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+    from build_m19_b7m2_close_reset_in_memory import build_close_reset
+    active_m2, m2meta = build_close_reset()
+    assert active_islands == active_m2 and len(active_islands) == 102400
+    assert m2meta['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6' and m2meta['predecessor_sha'] == m1meta['sha256']
     assert island_meta['sha256']=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
     candidate, meta=build_r87()

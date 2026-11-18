@@ -83,7 +83,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib')=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
@@ -211,7 +211,7 @@ jobs:
           python -B tools/m19_ap20_unit5_emit.py
           python -B tools/build_m19_ap20_unit5_in_memory.py
           python -B tools/test_m19_ap20_unit5_gate_a.py
-      - name: M19 B7-m1 canonical Lib source-built; P0d and AP20 islands remain reproducible
+      - name: M19 B7-m2 canonical Lib source-built; B7-m1/P0d/AP20 islands reproducible
         run: |
           python -B - <<'PY'
           import sys,hashlib,pathlib
@@ -219,17 +219,23 @@ jobs:
           from build_m19_p0d_bob_blit_in_memory import build as p0d
           from build_m19_ap20_islands_in_memory import build as islands
           from build_m19_p0j_end_lifecycle_in_memory import build_multiframe as b7m1
+          from build_m19_b7m2_close_reset_in_memory import build_close_reset as b7m2
           prev,old=p0d()
           assert len(prev)==91300 and old['sha256']=='bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
           hist,hmeta=islands()
           assert len(hist)==96908 and hmeta['sha256']=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
           active=pathlib.Path('dist/AMOSPro_AGA.Lib').read_bytes()
-          image,meta=b7m1()
-          assert image==active and len(image)==102360
-          assert hashlib.sha256(active).hexdigest()=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+          frozen,m1meta=b7m1()
+          assert len(frozen)==102360 and hashlib.sha256(frozen).hexdigest()=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+          assert m1meta['ap20_entries']==181 and m1meta['public_commands']==86
+          assert m1meta['native_groups']==[142,153,156,177] and m1meta['pc16_max']<32766 and m1meta['appended_bytes']==304
+          image,meta=b7m2()
+          assert image==active and len(image)==102400
+          assert hashlib.sha256(active).hexdigest()=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
+          assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
-          assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==304
-          print('PASS B7-m1 exact canonical source, P0d and AP20 islands historical reproducibility')
+          assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
+          print('PASS B7-m2 canonical; B7-m1, P0d and AP20 islands historical reproducibility')
           PY
       - name: M19 P0d design ASC static AMOS preflight (NOT WinUAE)
         run: python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
@@ -277,8 +283,8 @@ jobs:
           PY
       - name: M19 P0d active and historical design ASC static preflight
         run: |
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc
-          python -B tools/test_m19_p0j_b7_anim_asc_static.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc
+          python -B tools/test_m19_b7m1_lifecycle_asc_static.py
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
       - name: Ensure no binary, ASC or passed tests changed

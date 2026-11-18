@@ -1,4 +1,4 @@
-name: M19 B7-m1 - verify canonical MC68020 Lib (read only)
+name: M19 B7-m2 - verify canonical MC68020 Lib (read only)
 
 # Historical filename kept to avoid breaking external references.
 # This workflow MUST NOT publish artifacts, ZIPs, or commit to main.
@@ -40,8 +40,8 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc
-          python -B tools/test_m19_p0j_b7_anim_asc_static.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc
+          python -B tools/test_m19_b7m1_lifecycle_asc_static.py
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -50,7 +50,7 @@ jobs:
           from pathlib import Path
           expected = {
               'dist/AMOSPro_AGA.Lib':
-                  (102360, '838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'),
+                  (102400, '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'),
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
@@ -60,7 +60,7 @@ jobs:
               data = Path(path).read_bytes()
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
-          assert asc == ['M19_P0J_B7_ANIM_RUNTIME_03.asc'], asc
+          assert asc == ['M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc'], asc
           print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
@@ -82,7 +82,7 @@ jobs:
           python -B tools/test_m19_p0d_safe_bank_blit_native.py
           python -B tools/test_m19_p0d_public_blit_gate_a.py
           python -B tools/test_m19_p0j_end_lifecycle_gate_a.py
-      - name: Rebuild B7-m1 exact canonical; preserve old P0d and island sources
+      - name: Rebuild B7-m2 exact canonical and frozen B7-m1 P0d island source
         run: |
           python -B - <<'PY'
           from pathlib import Path
@@ -92,18 +92,24 @@ jobs:
           from build_m19_p0d_bob_blit_in_memory import build as p0d
           from build_m19_ap20_islands_in_memory import build as islands
           from build_m19_p0j_end_lifecycle_in_memory import build_multiframe as b7m1
+          from build_m19_b7m2_close_reset_in_memory import build_close_reset as b7m2
           old,oldmeta=p0d()
           assert (len(old),sha256(old).hexdigest())==(91300,'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be')
           assert oldmeta['commands']==83 and oldmeta['entries']==93
           hist,histmeta=islands()
           assert len(hist)==96908 and histmeta['sha256']=='34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56'
-          candidate,meta=b7m1()
+          frozen,m1meta=b7m1()
+          assert len(frozen)==102360 and sha256(frozen).hexdigest()=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+          assert m1meta['ap20_entries']==181 and m1meta['public_commands']==86
+          assert m1meta['native_groups']==[142,153,156,177] and m1meta['pc16_max']<32766 and m1meta['appended_bytes']==304
+          candidate,meta=b7m2()
           active=Path('dist/AMOSPro_AGA.Lib').read_bytes()
-          assert candidate==active and len(active)==102360
-          assert sha256(active).hexdigest()=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+          assert candidate==active and len(active)==102400
+          assert sha256(active).hexdigest()=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
+          assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
-          assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==304
-          print('PASS B7-m1 exact canonical, historical P0d and AP20 islands source intact')
+          assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
+          print('PASS B7-m2 exact canonical, B7-m1, P0d and AP20 islands source intact')
           print('WinUAE Runtime B and real AMOS Compiler C NOT tested by CI')
           PY
       - name: Fail if validation creates files or changes the repository

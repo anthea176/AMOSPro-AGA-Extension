@@ -58,11 +58,11 @@ jobs:
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B tools/test_m19_p27_cache_bench_static.py
-      - name: Check R87 historical binary and current B7-m1 candidate pinned
+      - name: Check R87 historical binary and current B7-m2 candidate pinned
         run: |
           python -B tools/verify_fast.py
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B tools/test_m19_p27_cache_bench_static.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA.Lib')=='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA.Lib')=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
           git diff --exit-code -- dist/ tests/current/ tests/passed/
