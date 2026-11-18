@@ -1,4 +1,4 @@
-name: M19 B7-m1 persistent Bob lifecycle - MC68020 Gate A
+name: M19 Bob lifecycle B7-m1 and B7-m2 Close reset - MC68020 Gate A
 
 on:
   push:
@@ -11,6 +11,9 @@ on:
       - 'tools/test_m19_p0j_swap_barrier_gate_a.py'
       - 'tools/m19_p0j_end_lifecycle_emit.py'
       - 'tools/build_m19_p0j_end_lifecycle_in_memory.py'
+      - 'tools/m19_b7m2_close_reset_emit.py'
+      - 'tools/build_m19_b7m2_close_reset_in_memory.py'
+      - 'tools/test_m19_b7m2_close_reset_gate_a.py'
       - 'dist/AMOSPro_AGA.Lib'
   workflow_dispatch:
 
@@ -31,8 +34,12 @@ jobs:
       - name: Install exact CPU020 instruction and emulator dependencies
         run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
       - name: Verify test Python syntax
-        run: python -B -m py_compile tools/test_m19_b7m1_bob_lifecycle_gate_a.py
+        run: |
+          python -B -m py_compile tools/test_m19_b7m1_bob_lifecycle_gate_a.py
+          python -B -m py_compile tools/m19_b7m2_close_reset_emit.py tools/build_m19_b7m2_close_reset_in_memory.py tools/test_m19_b7m2_close_reset_gate_a.py
       - name: Execute native MC68020 Bob Off, reactivation and 64-object lifecycle Gate A
         run: python -B tools/test_m19_b7m1_bob_lifecycle_gate_a.py
+      - name: Execute B7-m2 Close reset and second-run MC68020 Gate A
+        run: python -B tools/test_m19_b7m2_close_reset_gate_a.py
       - name: Verify distributed library and regression fixtures were not modified
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/

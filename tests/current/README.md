@@ -45,3 +45,18 @@ En cas d'échec : `ERR 3` = banques occupées ; `ERR 13` = Copy ; `ERR 14` = Dra
 - **Gate C vrai AMOS Compiler / Gate D Amiga physique : NON TESTÉES.**
 
 [Prochaine étape M19](../../docs/M19_NEXT_BOB_LIFECYCLE_2026-11-18.md)
+
+
+## Retour WinUAE du 18/11/2026 : relance FAIL
+
+Deux journaux du meme programme sur B7-m1 : premier lancement
+Runtime PASS 405/405, 9/9, ERR 0, rendu graphique confirme ; deuxieme
+lancement SANS Erase All FAIL des le premier Draw (ERR 14, DRAW_FAILS 1,
+FRAMES_OK 0). La Gate B de premiere execution est PASS ; la validation
+du cycle de vie complet est **FAIL**. Le retour a AMOS et les banques
+effacees ne prouvent pas la reinitialisation de la table de Bobs native.
+
+Correctif B7-m2 source-only en cours de Gate A :
+[rapport de defaut et diagnostic](../../docs/M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
+Tant qu'aucune bascule de Lib n'est autorisee, ne pas interpreter un
+nouvel essai sous B7-m1 comme une validation du correctif.

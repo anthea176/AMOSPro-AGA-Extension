@@ -1,5 +1,18 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — B7-m1 : relance FAIL, preparation B7-m2 Close-reset
+
+Deux journaux WinUAE Runtime confirment : premier lancement PASS (405/405,
+9/9, ERR 0, rendu visuel correct), deuxieme sans Erase All FAIL
+(ERR 14, DRAW_FAILS 1, 0 frame). La Gate B complete n'est pas acquise.
+La chaine B5 -> B7-m1 a contourne l'ancien reset des 64 slots Bob lors
+de Aga Screen Close. Un suffixe source-only B7-m2, un builder AP20 en
+memoire et un test CPU020 Close -> nouvelle ouverture -> Draw ont ete
+prepares pour Gate A. Bibliotheque B7-m1, ASC actif et LAST_GOOD inchanges.
+Aucune bascule binaire, aucun test Compiler. Voir le rapport
+[Close/reset B7-m2](M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
+
+
 ## 18 novembre 2026 — test Bob Off/On prêt pour Gate B Runtime
 
 **Livrable actif :** [`tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc), **10 866 octets**, SHA256 `faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d`, pour **B7-m1 installée strictement inchangée** (102 360 octets, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`). [Notice WinUAE](../tests/current/README.md). Programmé en neuf étapes de 45 frames (2/1/0/2/4/8/16/64/16) avec `Aga Bob Off` (50 commandes émises), réactivation, masques, 2 banques (24/25), restitution locale par back buffer et journal **`RAM:M19_B7M1_BOB_LIFECYCLE.TXT`**. Aucun `Timer`, aucun benchmark, aucun essai Compiler.
