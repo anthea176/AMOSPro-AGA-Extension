@@ -342,7 +342,32 @@ def main() -> None:
         text = (ROOT / p).read_text("utf-8")
         require("examples/README" in text and "INSTALL" in text,
                 f"Missing distribution links in root {p}")
-    print(f"Distribution examples PASS: {len(EXAMPLES)+6} distinct ASCII demos, "
+    # B7-m1 public sample: current candidate has Bob commands absent in LAST_GOOD.
+    from test_bob_local_restore_example import run as verify_local_restore
+    bob_pack = EXAMPLE_DIR / "bob_local_restore"
+    for language in ("README.md", "README.fr.md"):
+        require((bob_pack / language).is_file(), f"Missing Bob example guide: {language}")
+        guide = (bob_pack / language).read_text(encoding="utf-8")
+        require("BOB_LOCAL_RESTORE.asc" in guide and "838245ce1ad2a412" in guide,
+                f"Missing B7-m1 Bob instructions: {language}")
+    bob_demo = bob_pack / "BOB_LOCAL_RESTORE.asc"
+    verify_local_restore(bob_demo)
+    candidate = inspect(parse((ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()))
+    require(not candidate["issues"], "Current B7-m1 AP20 library is invalid")
+    current_commands = {t["name"].casefold() for t in candidate["tokens"]
+                        if t["name"].casefold().startswith("aga ")}
+    bob_lines = [line for line in bob_demo.read_text("ascii").splitlines()
+                 if line.strip() and not line.lstrip().startswith("'")]
+    bob_used = {m.group(0).casefold() for line in bob_lines
+                for m in AP20_NAME.finditer(line)}
+    require(bob_used <= current_commands and "aga bob draw" in bob_used,
+            f"B7-m1 demo references unknown AGA commands: {bob_used-current_commands}")
+    for lang in ("README.md", "README.fr.md"):
+        index = (EXAMPLE_DIR / lang).read_text(encoding="utf-8")
+        require(index.count("bob_local_restore/BOB_LOCAL_RESTORE.asc") == 1,
+                f"Public Bob example must appear once in examples/{lang}")
+
+    print(f"Distribution examples PASS: {len(EXAMPLES)+7} distinct ASCII demos, "
           "all AP20 calls recognized, cleanup checks and matching 320x256x256 ILBM. "
           "AMOS/WinUAE execution still required.")
 

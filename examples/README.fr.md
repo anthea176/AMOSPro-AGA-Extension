@@ -1,10 +1,10 @@
 # AMOSPro AGA — exemples et démonstrations
 
-## Bibliothèque active : M19 P0c (MC68020+)
+## Bibliothèque active : M19 P0j-b7-m1 (MC68020+)
 
-[`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est la **seule candidate installable** (87 020 octets ; Gate A native PASS ; [Gates B Runtime et C Compiler PASS selon les journaux fournis](../docs/M19_P0C_GATES_BC_2026-11-16.md)). Le [seul ASC actif](../tests/current/M19_P0C_SCREEN_CLOSE_BRIDGE_01.asc) teste le pont natif `Aga Screen Close`. La R84 `LAST_GOOD` reste protégée, sans promotion.
+[`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est la **seule bibliothèque installable actuelle**, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. Gate A native PASS ; **Gate B Runtime WinUAE PASS** pour les bancs Bob de 120 images et décor texturé de 720 images, sans défaut graphique rapporté. **Gates C Compiler et D matériel non testées sur cette candidate**. Le dernier [banc validé](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) reste conservé sous `tests/current/` comme référence de régression, sans continuer les benchmarks. R84 `LAST_GOOD` protégée.
 
-L'[ancien exemple de capture Bob M19 P0a](aga_bob_bank_get/README.fr.md) n'est **plus un test actif** et n'a pas été validé séparément sous P0c. Seuls son dossier et son nom public sont normalisés : les octets de l'ASC restent identiques.
+Le nouvel [exemple interactif de restauration locale](bob_local_restore/README.fr.md) est distinct des benchmarks. Il reprend le moteur validé, mais **le titre fixe, la sortie clavier et le nouveau motif source de 32 pixels doivent être vérifiés sous WinUAE sur ce nouvel ASC**. Les [anciens exemples Bob](aga_bob_bank_get/README.fr.md) restent historiques.
 
 ## Lancer un exemple
 
@@ -34,6 +34,7 @@ Les démonstrations simples sont contrôlées statiquement. Seuls les scénarios
 
 | Exemple | Fonctionnalités | Banques et validation |
 |---|---|---|
+| [**Quatre Bobs AGA / restauration locale**](bob_local_restore/README.fr.md) · [ASC](bob_local_restore/BOB_LOCAL_RESTORE.asc) | Animation titrée autonome, décor de tuiles multicolores, deux banques Bob, restauration des rectangles par page, sortie touche/clic | **Lib B7-m1**, banques **24/25 libres**, aucun fichier externe. **Nouvel ASC : préflight PASS ; WinUAE pas encore testé**. Le banc source avait passé Gate B Runtime | 
 | [**C2P — IFF direct en chunky (R80)**](../tests/current/README.md) · [ASC](../tests/current/C2P_R80_IFF_CHUNKY_01.asc) | Charge le vrai IFF dans deux banques DATA, puis C2P, trois Blit, sept Zoom, 14 pixels de référence et journal RAM, **sans fichier chunky annexe**. | **R80 Gate A CPU PASS, Gate B WinUAE à effectuer.** |
 | [**C2P — IFF de référence**](c2p_iff_showcase/README.fr.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) · [PNG attendu](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | Démo intégrée sur **la vraie image AGA fantasy 320×256×256c** : IFF/Palette → C2P Convert/Swap → 3 Blit et 7 Zoom (agrandissements, réductions, clipping) → Close/ReOpen ; 14 pixels et bilan RAM | **R79 ou ultérieure, dont R80** + `LIBS:c2p.library` ; image IFF et compagnon `.chk` dans `iff-TEST/` côte à côte ; **écrase banques 12 et 13** ; oracle statique PASS, **démonstration WinUAE PASS (14/14 pixels, ERR 0, deltas mémoire 0/0)** |
 | [**Convertisseur IFF → ABK**](iff_to_abk/README.fr.md) · [ASC](iff_to_abk/IFF_TO_ABK.asc) | Sélection IFF avec `Fsel$`, capture AGAPIC, sauvegarde **ABK + IFF de palette**, effacement, rechargement, message **CHARGEMENT ABK**, reconstruction et `Aga Wait Key` | **Erase 11** au démarrage : écrase la banque 11 existante ; sorties `RAM:IFF_TO_ABK.abk` + `.iff`. Exemple à valider sous WinUAE |

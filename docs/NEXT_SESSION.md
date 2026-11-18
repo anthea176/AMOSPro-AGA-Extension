@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — clôture des benchmarks, exemple Bob local et reprise M19
+
+**Consigne de l'auteur :** arrêter les benchmarks. La dernière démonstration (quatre Bobs sur décor multicolore) devient un **programme d'exemple interactif** : [`examples/bob_local_restore/BOB_LOCAL_RESTORE.asc`](../examples/bob_local_restore/BOB_LOCAL_RESTORE.asc), **8 001 octets**, SHA256 `08edb560c4ca5c409c7d6e7f74110d05018d4f522160ea799ff43b9f3a7d470e`. Écran PAL 320×256×256, titre fixe via `Aga Text` dans y=0..31, source de fond intacte y=32..63, restauration locale sur chacune des deux pages, quatre Bobs multi-banques 24/25. Sortie touche/clic et borne automatique 2 400 frames, retour à AMOS, sans IFF, nouveau Timer ni log de benchmark. [Notices FR/EN](../examples/bob_local_restore/README.fr.md).
+
+**Validation :** préflight AMOS strict **PASS**, 21 contrôles du préflight **PASS** ; oracle Python de **360 compositions pixel-exactes** sur deux pages, 1 696 copies simulées et 252 traversées de tuile **PASS**. C'est un **nouvel ASC** ; sa Gate B WinUAE **NON TESTÉE** malgré la Gate B PASS du banc source 720/720. Compiler C et matériel D NON TESTÉES. Dernier banc exact conservé intact dans `tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc` comme référence de régression, sans nouvelle mesure.
+
+**Poursuite de l'extension :** [`M19_NEXT_BOB_LIFECYCLE_2026-11-18.md`](M19_NEXT_BOB_LIFECYCLE_2026-11-18.md) : qualifier `Aga Bob Off`, réactivation, multi-banques 1..64, échecs DIRTY/Swap et Close/End. Débuter par inspection source et tests MC68020 Gate A, sans nouvelles API ni benchmark. **Lib B7-m1 inchangée** : 102 360 octets, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, R84 LAST_GOOD protégée, branche `main` uniquement.
+
 ## 18 novembre 2026 — B7-m1 décor texturé : Gate B Runtime PASS
 
 **Journal WinUAE reçu :** `M19_B7M1_DECOR_BENCH.TXT` (**1 216 octets**, SHA256 `d789cc71067795a801b17e2a455fa57f0db9db4468480877940056d20ec7b720`), `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, **`FRAMES_OK 720/720`**, `FILL_FAILS 0`, `COPY_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `CLOSE_CALLED 1`, `BANKS_ERASED 2`, `VERDICT PATH_OK`. Confirmation de l'auteur : **« graphiquement pas de soucis »** ; nouveau banc réel décor et quatre Bobs mobiles **Gate B PASS**. Un deuxième lancement de ce banc n'est pas documenté.

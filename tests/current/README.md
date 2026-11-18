@@ -1,5 +1,7 @@
 # M19 B7-m1 — benchmark décor texturé / quatre Bobs (Runtime)
 
+> **Campagne A/B/C terminée — aucune nouvelle mesure prévue.** Ce fichier reste le **dernier test Runtime de régression validé** (source exacte, SHA épinglé) jusqu'au remplacement par un test fonctionnel de cycle de vie des Bobs. L'[exemple public avec titre et sortie clavier/souris](../../examples/bob_local_restore/README.fr.md) est désormais dans `examples/` ; il ne remplace pas cette preuve Gate B et sa propre variante Runtime doit encore être vérifiée. [Suite M19](../../docs/M19_NEXT_BOB_LIFECYCLE_2026-11-18.md).
+
 **Seul ASC actif :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](M19_P0J_B7_ANIM_RUNTIME_03.asc), **9 624 octets**, SHA256 `8a3aa82a637334558d918ea0626c9ca661d5f78a1e67ed40ad99ed5a3b1f1904`. Même chemin qu'avant pour les workflows ; [l'ancien ASC A/B/C Fill 7 555 octets](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/2d019a555447ab3cd294d1c4b4e69928d7afd9db/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) est préservé dans l'historique Git. [Rapport du benchmark précédent](../../docs/M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md) : **Gate B PASS**, 720/720 frames et gain de temps de 48,9 % pour l'effacement local.
 
 **Bibliothèque B7-m1 inchangée :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. Cible native MC68020 minimum ; **WinUAE AGA PAL, 68030/JIT ON**, Runtime uniquement. `LAST_GOOD` R84 inchangée. **Aucun essai Compiler**.
