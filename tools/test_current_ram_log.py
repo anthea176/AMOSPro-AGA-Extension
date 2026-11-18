@@ -86,8 +86,8 @@ def main():
     if scripts[0].name == "M19_P0J_B7_ANIM_RUNTIME_03.asc":
         from test_m19_p0j_b7_anim_asc_static import verify as verify_anim
         verify_anim(scripts[0])
-        print("CURRENT RAM LOG ANIMATION STATIC PASS:",scripts[0],
-              "Runtime visual proof pending")
+        print("CURRENT RAM LOG A/B/C BENCH STATIC PASS:",scripts[0],
+              "New benchmark Runtime timing and pixels pending")
         return
     if scripts[0].name == "M19_P0J_B7_END_NO_CLOSE_BC_02.asc":
         # A successful End terminates the program: its journal can only

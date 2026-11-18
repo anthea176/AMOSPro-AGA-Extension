@@ -1,20 +1,32 @@
-# M19 B7-m1 — animation des Bobs, Runtime WinUAE uniquement
+# M19 B7-m1 — benchmark A/B/C de l'effacement en Runtime
 
-**Seul ASC actif :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](M19_P0J_B7_ANIM_RUNTIME_03.asc) — **4 730 octets**, SHA256 **a5a263e38faa2dfba75bf94beac4915c6ddea85e8c345f9a2f7eb0316d8190dd**.
+**Seul ASC actif (chemin conservé pour les workflows) :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](M19_P0J_B7_ANIM_RUNTIME_03.asc) — **7 555 octets**, SHA256 `0f18cb608f75cda0390f86d25169bd4312561efd4d2051435a6803ceff42f689`. L'ancien test de 120 frames reste consultable [dans l'historique Git avant ce banc](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/75caa3c8198aad612e434e1ae3d54ceb2249ca45/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc).
 
-**Nouvelle bibliothèque de travail autorisée :** [dist/AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), B7-m1, 102 360 octets, SHA256 **838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403**. R84 LAST_GOOD protégée. **Pas de test Compiler.** [Contrat du test](../../docs/M19_P0J_B7_ANIM_RUNTIME_2026-11-18.md).
+**Bibliothèque B7-m1 conservée sans modification :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), 102 360 octets, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. Gate A native MC68020 PASS (793 contrôles). R84 `LAST_GOOD` inchangée. **Benchmark Runtime WinUAE NON TESTÉ ; aucun test Compiler.**
 
-## Lancement
+## Exécution
 
-1. WinUAE AGA PAL, CPU 68030/JIT activé, copie B7-m1 de dist/AMOSPro_AGA.Lib installée dans APSystem. Dans AMOS Professional, ouvrir un programme vide puis **Project → Merge ASCII** (pas Load).
-2. Les banques AMOS **24 et 25** doivent être libres. Si d'anciens essais les ont laissées réservées, **Erase All** convient dans une session de test ne contenant aucune banque à préserver ; cette instruction efface **toutes** les banques.
-3. Lancer **uniquement en Runtime**. Pendant **120 frames**, un Bob masqué rouge et un Bob jaune opaque effectuent un aller-retour ; deux Bobs fixes testent le clipping aux bords. À chaque frame : effacement complet du back buffer, mise à jour des positions, Aga Bob Draw, puis Aga Swap **uniquement si Draw=1**. Une attente VBL rend l'animation observable : ce n'est pas un benchmark.
-4. Le programme appelle **Aga Screen Close** puis **Amos To Front**, efface les banques qu'il a créées et écrit **RAM:M19_B7_ANIM_RUNTIME.TXT**. Le relancer **une deuxième fois sans Erase All** pour contrôler que les banques 24/25 ont bien été libérées.
+1. Dans WinUAE : **AGA PAL, 68030/JIT ON**, Lib B7-m1 dans `APSystem`. AMOS Professional : programme vierge, **Project → Merge ASCII** du seul ASC actif (pas Load).
+2. Banques AMOS **24 et 25 libres** ; n'employer `Erase All` que dans une session de test sans autre banque à préserver.
+3. Exécuter **en Runtime uniquement**. Le programme prépare les deux pages puis réalise **six séries de 120 frames** (ordre **A, B, C, C, B, A**). Pour A/C, les **quatre Bobs sont mobiles**, rouges masqués et jaunes opaques, avec clipping dynamique. B est volontairement un écran vide.
+4. À la fin : `Aga Screen Close`, `Amos To Front`, effacement des deux banques, puis journal **`RAM:M19_B7M1_CLEAR_BENCH.TXT`**. Le conserver avant reset, observer d'éventuelles traînées dans C, puis relancer sans `Erase All`.
 
-## Résultat attendu
+## Comparaison
 
-Le journal indique RESULT 1, ERR 0, FRAMES_TARGET 120, FRAMES_OK 120, BOBS_PER_FRAME 4, DOUBLE_BUFFER 1, CLEAR_FAILS 0, DRAW_FAILS 0, SWAP_FAILS 0, CLOSE_CALLED 1, BANKS_ERASED 2 et VERDICT PATH_OK.
+| Cas | Travail mesuré (120 frames par série) | Utilité |
+|---|---|---|
+| A | `Aga Blit Fill(0,0,320,256,1)` + 4 Bobs + `Aga Swap` | Référence plein écran |
+| B | Même Fill plein écran + Swap, **sans** `Aga Bob Draw` | Coût de la boucle Fill/Swap |
+| C | Effacement des anciens rectangles sur la **bonne page arrière** + 4 Bobs + Swap | Mesurer le gain des dirty rectangles |
 
-**PATH_OK n'est pas une preuve visuelle.** Vérifier l'absence de traînées, de corruption et de scintillement anormal, le masque et les Bobs rognés, ainsi que le retour à l'éditeur. CLOSE_CALLED constate l'appel de la commande, pas une mesure OS de Chip RAM. Codes ERR : 1=Compiled exclu, 2=AGA absente, 3=banques occupées, 4=Open, 5=Double Buffer, 6–12=préparation, 13=Clear, 14=Draw, 15=Swap.
+En C, **les deux premières frames de chaque série effacent tout l'écran**, une fois par page. Les 118 suivantes effacent les quatre anciennes emprises de cette même page, avec clipping, puis redessinent les quatre objets. La page logique ne change **qu'après Swap réussi**. Un Fill ou Draw refusé interdit le Swap de cette frame.
 
-**Statut : Gate A MC68020 B7-m1 PASS (793 contrôles), préflight ASC à revérifier ; Gate B animation NON TESTÉE, Gate C non demandée.** L'ancien [banc End sans Close](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/0e7be49a079f75f0ac628625d567b86a3afa042d/tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc) reste intact dans l'historique Git. Son ERR 2 au second lancement concernait les banques AMOS, sans preuve de fuite Chip.
+Les fenêtres chronométrées vont du premier effacement au dernier Swap de chaque série ; **aucun VBL artificiel par frame**. `Aga Wait Vbl` est utilisé seulement **en cas de refus** de Fill/Swap (retries bornés à 40) ; une pause finale de 40 VBL est **hors mesure**.
+
+## Journal et critères
+
+Pour chaque série, relever les champs `RUN n CASE c`, `RUN_FRAMES`, `RUN_TICKS`, `RUN_FPS_X10`. `Timer` vaut **50 ticks/s** en AMOS : `FPS ≈ RUN_FPS_X10/10` ; conserver les ticks bruts, et comparer en priorité **A contre C** sur les deux passages. Les deux mesures d'un même cas ne constituent pas une médiane robuste ; ne pas annoncer de gain avant observation. `RETRY_VBL` signale les attentes induites par des refus, pouvant biaiser les durées. Le temps d'un `Swap` synchrone reste inclus.
+
+Attendu sur un parcours correct : `RESULT 1`, `ERR 0`, `FRAMES_OK 720`, six séries à `RUN_FRAMES 120`, `CLEAR_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `BANKS_ERASED 2`, `VERDICT PATH_OK` ; aucun freeze, résidu, masque incorrect ou scintillement anormal. **PATH_OK n'est pas une preuve pixel ni une mesure de Chip RAM.** Les FPS issus des ticks sont des moyennes incluant le BASIC, la synchronisation matérielle et les échanges OS, pas une vitesse brute du Blitter.
+
+**Statut : PREFLIGHT PASS (source AMOS + 240 vérifications géométriques de double buffer en simulation). Gate B de ce nouveau banc : NON TESTÉE ; Gate C/D : NON TESTÉES.** [Rapport détaillé](../../docs/M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md).

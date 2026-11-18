@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — benchmark B7-m1 A/B/C : ASC actif PREFLIGHT PASS, Runtime à mesurer
+
+**Retour WinUAE du banc précédent :** journal B7-m1 `FRAMES_OK 120`, `ERR 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `PATH_OK`. L'auteur indique **quatre exécutions réussies sans Erase All ni traînées** et un affichage correct de deux Bobs mobiles + deux fixes/clippés ; ralentissement perçu non mesuré. **Gate B PASS pour ce scénario uniquement**, ni pour le nouveau benchmark ni pour le Compiler. [Rapport historique](M19_P0J_B7_ANIM_RUNTIME_2026-11-18.md).
+
+**Nouveau banc sur `main` :** même chemin unique [`tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc`](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc), maintenant **7 555 octets**, SHA256 `0f18cb608f75cda0390f86d25169bd4312561efd4d2051435a6803ceff42f689`, variante A/B/C (A Fill+4 Bobs, B Fill seul, C anciennes zones+4 Bobs) ; **six séries de 120 frames** dans l'ordre A B C C B A. Tous les Bobs A/C sont maintenant mobiles. `Timer` mesure les ticks à 50 Hz, sans Wait Vbl artificiel en frame réussie. Pour C, première paire de frames réinitialise les deux pages ; anciennes positions mémorisées séparément pour chaque back buffer. **PREFLIGHT PASS**, oracle géométrique double buffer 240 frames PASS. [Protocole](M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md).
+
+**Résultat à fournir :** `RAM:M19_B7M1_CLEAR_BENCH.TXT` avec `RUN_TICKS`, `RUN_FPS_X10`, `RETRY_VBL` et `ERR`, plus observation graphique (traînées/clipping). **Gate B du benchmark NON TESTÉE.** B7-m1 `dist/AMOSPro_AGA.Lib` conserve 102 360 octets, SHA256 838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403. Aucun changement à R84 LAST_GOOD, Compiler, API, archives ou branche.
+
 ## 18 novembre 2026 — B7-m1 distribuée dans la Lib de travail, Gate B Runtime à effectuer
 
 **Bascule explicitement autorisée (« va y ») :** la candidate **M19 P0j-b7-m1** remplace la seule `dist/AMOSPro_AGA.Lib` sur `main`, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, reconstruite octet pour octet par `tools/build_m19_p0j_end_lifecycle_in_memory.py::build_multiframe()`. 86 commandes / 181 sections AP20 / quatre unités MC68020 ; End réarmé via B7 → P0c → B7. La B7 historique SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b` reste reconstituable par `build()`, pas une autre Lib distribuée. `LAST_GOOD` R84 protégée.
