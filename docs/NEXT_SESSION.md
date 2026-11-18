@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — Bascule B7-m2 autorisée, Gate B WinUAE à effectuer
+
+L'auteur a autorisé la bascule de l'unique `dist/AMOSPro_AGA.Lib` sur `main` vers **B7-m2**, 102 400 octets, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, builder `tools/build_m19_b7m2_close_reset_in_memory.py::build_close_reset()`. Gate A native MC68020 **PASS** ([CI 44413813790](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44413813790)), 75 groupes, quatre unités, 86 commandes / 181 entrées. Le test actif `tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc` conserve son chemin et son journal historiques, mais affiche le SHA B7-m2, 10 866 octets, SHA256 `92a8dd65f5768cceaeed1cf0226e1e0e23077ec3ea9e18c2a373e9aaeba17675`. Rejouer deux fois les 405 frames sous WinUAE AGA PAL 68030/JIT ON, sauver les journaux séparément. Ancien B7-m1 : premier lancement PASS, second FAIL ERR 14. **B7-m2 Gate B encore non exécutée**. `LAST_GOOD` R84 inchangée, aucun nouveau token, aucun Compiler Gate C ni matériel Gate D. [Notice de test](../tests/current/README.md).
+
+
 ## 18 novembre 2026 — B7-m1 : relance FAIL, preparation B7-m2 Close-reset
 
 Deux journaux WinUAE Runtime confirment : premier lancement PASS (405/405,

@@ -73,3 +73,17 @@ Gate C vrai Compiler et D materiel : NON TESTEES.
 
 Aucune promotion, compilation Amiga ou essai WinUAE n'a ete realise
 pendant ce travail source-only.
+
+## Autorisation et bascule de la candidate Gate B (18/11/2026)
+
+Après l'essai CPU020 (75 groupes PASS), l'auteur a expressément autorisé la
+bascule de l'unique `dist/AMOSPro_AGA.Lib` sur `main` vers B7-m2,
+**102 400 octets**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`.
+Le binaire provient du builder source `build_close_reset()` et conserve
+les 86 commandes / 181 entrées AP20, quatre groupes MC68020 ; `LAST_GOOD`
+R84 et les tests historiques restent inchangés. L'ASC conservé sous
+`tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc` identifie maintenant
+la Lib B7-m2 ; son journal garde le chemin historique.
+**Gate B de la nouvelle bibliothèque : en attente des deux lancements
+consécutifs WinUAE avec validation visuelle et journaux distincts.**
+Compiler C et matériel D non testés ; aucune promotion LAST_GOOD.

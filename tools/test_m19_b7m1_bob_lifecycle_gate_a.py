@@ -2,7 +2,7 @@
 # AGA_NATIVE_MIN_CPU: MC68020
 """M19 B7-m1: functional persistent-Bob lifecycle on real emitted CPU020.
 
-Execute installed B7-m1's exact source-derived native suffix in Unicorn,
+Execute frozen B7-m1's exact source-derived native suffix in Unicorn,
 on two disjoint AP20 placements ("compiled" means RELOCATION ONLY).
 OS, video pages, and DMA are mocked. No WinUAE/Compiler/Amiga claim.
 No benchmarking and no new AP20/Lib/ASC output.
@@ -14,6 +14,7 @@ from pathlib import Path
 from struct import unpack
 
 from build_m19_p0j_end_lifecycle_in_memory import build_multiframe
+from build_m19_b7m2_close_reset_in_memory import build_close_reset
 from test_m19_p0j_end_lifecycle_gate_a import MultiframeMachine
 from test_m19_p0j_pending_close_end_gate_a import ready, DB
 from test_m19_p0a_r88_get_gate_a import SCREEN_W
@@ -178,9 +179,12 @@ def source_identity_and_swap_barrier(layout: str):
 def main():
     candidate, meta = build_multiframe()
     installed = (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes()
-    assert len(candidate) == B7M1_SIZE == len(installed)
+    assert len(candidate) == B7M1_SIZE
     assert sha256(candidate).hexdigest() == meta['sha256'] == B7M1_SHA
-    assert installed == candidate  # exact installed work Lib, not older B7/B6
+    active, active_meta = build_close_reset()
+    assert installed == active and len(installed) == 102400
+    assert sha256(installed).hexdigest() == active_meta['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
+    # The regression runs exact historical B7-m1 code, not an installed B7-m1.
     assert meta['native_groups'] == [142,153,156,177]
     assert meta['public_commands'] == 86 and meta['ap20_entries'] == 181
     tests = 0

@@ -41,25 +41,5 @@ jobs:
         run: python -B tools/test_m19_b7m1_bob_lifecycle_gate_a.py
       - name: Execute B7-m2 Close reset and second-run MC68020 Gate A
         run: python -B tools/test_m19_b7m2_close_reset_gate_a.py
-      - name: Emit exact B7-m2 binary for authorized GitHub installation (CI log only)
-        if: "${{ contains(github.event.head_commit.message, '[b7m2-emit]') }}"
-        run: |
-          python -B - <<'PY'
-          import base64
-          import hashlib
-          import sys
-          sys.path.insert(0, 'tools')
-          from build_m19_b7m2_close_reset_in_memory import build_close_reset
-          binary, meta = build_close_reset()
-          expected = '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
-          assert len(binary) == 102400
-          assert meta['sha256'] == expected == hashlib.sha256(binary).hexdigest()
-          data = base64.b64encode(binary).decode('ascii')
-          chunks = [data[i:i+2048] for i in range(0, len(data), 2048)]
-          print('M19B7M2_BEGIN %d %s %d' % (len(binary), expected, len(chunks)), flush=True)
-          for i, chunk in enumerate(chunks):
-              print('M19B7M2_%03d_%03d=%s' % (i, len(chunks), chunk), flush=True)
-          print('M19B7M2_END', flush=True)
-          PY
       - name: Verify distributed library and regression fixtures were not modified
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/

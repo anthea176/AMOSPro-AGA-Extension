@@ -1,6 +1,11 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## Référence active B7-m1 (bascule de travail autorisée le 18/11/2026)
+## Référence active B7-m2 — Gate A PASS, Gate B relance en attente (18/11/2026)
+
+La seule candidate de travail est `dist/AMOSPro_AGA.Lib` **102 400 octets**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, reconstruite via `tools/build_m19_b7m2_close_reset_in_memory.py::build_close_reset()`. Après autorisation de l'auteur, seul le stub public existant `Aga Screen Close` est redirigé vers un suffixe MC68020 de 34 octets effectuant `relay_reset_entry` avant le `guarded_close_entry` B5. Les **86 commandes, 181 entrées AP20, quatre unités natives** et les octets B7-m1 précédents restent préservés. Gate A native MC68020 **PASS 75 groupes** sur deux implantations ; le vrai test WinUAE Gate B `Close → Open → Draw` est en attente. L'ancien B7-m1 a réussi visuellement 405/405 frames en première exécution, puis échoué au premier Draw de la relance (ERR 14). Le seul ASC actif garde son nom historique `tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`, mais sa provenance est mise à jour vers B7-m2, SHA256 `92a8dd65f5768cceaeed1cf0226e1e0e23077ec3ea9e18c2a373e9aaeba17675`. `LAST_GOOD` R84 protégée, Gate C Compiler et D matériel non testées. [Rapport](M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
+
+
+## Historique : B7-m1 (bascule de travail du 18/11/2026)
 
 **Campagne active actuelle :** [`M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc), **10 866 octets**, SHA256 `faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d`. Nouveau test fonctionnel Off/On → 1/4/8/16/64 → Off 17..64, sur fonds restaurés et deux buffers : **préflight + oracle pixel PASS, Gate B WinUAE NON TESTÉE**. [Consignes](../tests/current/README.md). L'ancien benchmark conserve sa preuve Gate B uniquement dans son [commit historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cb3d97aec357bc726ea26047b6d3cb2c90b82247/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) ; aucune nouvelle mesure FPS prévue.
 

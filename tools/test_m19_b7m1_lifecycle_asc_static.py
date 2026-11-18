@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict source pin + two-page pixel oracle for M19 B7-m1 Off/On Gate B ASC.
+"""Strict source pin + two-page pixel oracle for M19 B7-m2 Off/On Gate B ASC.
 
 Model reproduces local-copy geometry and Bob footprints only; it cannot
 verify real AGA DMA, OS callbacks, text glyphs or actual AMOS Runtime.
@@ -11,9 +11,9 @@ import re
 import sys
 
 NAME='M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc'
-LIB='838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403'
+LIB='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
 SIZE=10866
-SHA='faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d'
+SHA='92a8dd65f5768cceaeed1cf0226e1e0e23077ec3ea9e18c2a373e9aaeba17675'
 W,H=320,256
 STAGE_COUNTS=(2,1,0,2,4,8,16,64,16)
 
@@ -126,7 +126,7 @@ def verify(path:Path)->None:
     assert '_IDX=_PAGE*64+_ID' in src and '_PAGE=1-_PAGE' in src
     assert src.index('Gosub _DO_SWAP',src.index('For _STAGE=1 To 9'))<src.index('_PAGE=1-_PAGE')
     assert src.index('For _STAGE=1 To 9') < src.index('For _STEP=1 To 45')
-    assert 'Aga Text(12,15,7,"M19 B7M1 - BOB LIFECYCLE")' in src
+    assert 'Aga Text(12,15,7,"M19 B7M2 - BOB LIFECYCLE")' in src
     assert src.count('Aga Text(12,27,5,"')==10
     assert '_TXT=Aga Text(' in src
     assert 'For _ID=17 To 64' in src and '_OFF_SENT=_OFF_SENT+1' in src
@@ -147,7 +147,7 @@ def verify(path:Path)->None:
     assert len(re.findall(r'(?m)^\s*For\b',src))==len(re.findall(r'(?m)^\s*Next\b',src))
     assert len(re.findall(r'(?m)^\s*Repeat\b',src))==len(re.findall(r'(?m)^\s*Until\b',src))
     frames,copies,offs=oracle()
-    print(f'M19 B7-m1 BOB LIFECYCLE ASC STATIC PASS: {frames} dual-page scenes, '
+    print(f'M19 B7-m2 BOB LIFECYCLE ASC STATIC PASS: {frames} dual-page scenes, '
           f'{copies} local Copy slices, {offs} Off commands modelled; WinUAE pending')
 
 

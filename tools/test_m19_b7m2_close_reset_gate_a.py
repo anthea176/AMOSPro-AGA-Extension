@@ -77,10 +77,12 @@ def stage_sixty_four_then_sixteen(m):
 def main():
     base, previous = build_multiframe()
     installed = (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes()
-    assert len(installed) == len(base) == 102360 and installed == base
+    assert len(base) == 102360
     assert previous['sha256'] == sha256(base).hexdigest()
-
     candidate, report = build_close_reset()
+    assert len(installed) == len(candidate) == 102400
+    assert installed == candidate and sha256(installed).hexdigest() == report['sha256']
+    assert report['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
     assert candidate != base and report['predecessor_sha'] == previous['sha256']
     assert report['public_commands'] == 86 and report['ap20_entries'] == 181
     assert report['native_groups'] == [142, 153, 156, 177]
@@ -104,7 +106,7 @@ def main():
     assertions = 15
 
     for layout in ('interpreted', 'compiled'):
-        # Reproduce the exact structural defect in installed B7-m1.
+        # Reproduce the structural defect in frozen historical B7-m1.
         old = ready(layout, cls=MultiframeMachine, inject_failure=False)
         expected = stage_sixty_four_then_sixteen(old)
         old.invoke_guard('close')
@@ -195,7 +197,7 @@ def main():
           'assertion groups, two relocated placements; first/second run,',
           '64->16->0 Bobs, old B7-m1 failure reproduced,',
           'original Close, ABI, CPU reject, Safe/Disp pending, End; OS MOCKED')
-    print('B7M2_SOURCE_ONLY', report)
+    print('B7M2_ACTIVE_PROVENANCE', report)
 
 
 if __name__ == '__main__':
