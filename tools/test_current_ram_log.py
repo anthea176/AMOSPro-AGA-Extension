@@ -83,6 +83,13 @@ def main():
     if not scripts:
         print("CURRENT RAM LOG PASS (no active ASC)")
         return
+    if scripts[0].name == "M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc":
+        from test_m19_b7m1_lifecycle_asc_static import verify as verify_lifecycle
+        verify_lifecycle(scripts[0])
+        verify(scripts[0].read_bytes().decode("ascii"))
+        print("M19 B7-m1 CURRENT BOB LIFECYCLE STATIC PASS:", scripts[0],
+              "Gate B functional WinUAE PENDING; no Compiler or benchmark")
+        return
     if scripts[0].name == "M19_P0J_B7_ANIM_RUNTIME_03.asc":
         from test_m19_p0j_b7_anim_asc_static import verify as verify_anim
         verify_anim(scripts[0])

@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — test Bob Off/On prêt pour Gate B Runtime
+
+**Livrable actif :** [`tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc), **10 866 octets**, SHA256 `faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d`, pour **B7-m1 installée strictement inchangée** (102 360 octets, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`). [Notice WinUAE](../tests/current/README.md). Programmé en neuf étapes de 45 frames (2/1/0/2/4/8/16/64/16) avec `Aga Bob Off` (50 commandes émises), réactivation, masques, 2 banques (24/25), restitution locale par back buffer et journal **`RAM:M19_B7M1_BOB_LIFECYCLE.TXT`**. Aucun `Timer`, aucun benchmark, aucun essai Compiler.
+
+**Validation :** préflight AMOS strict PASS ; 21 tests du préflight PASS ; modèle graphique de **405 scènes sur deux buffers, 6 305 segments Copy et 50 Off modélisés PASS** ; [Gate A native B7-m1 194 contrôles PASS](M19_B7M1_BOB_LIFECYCLE_GATE_A_2026-11-18.md). **Gate B du nouveau test NON TESTÉE**, Gate C Compiler et Gate D matériel NON TESTÉES. L'ancien programme décor 720 images est [conservé au commit cb3d97a](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cb3d97aec357bc726ea26047b6d3cb2c90b82247/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) avec sa Gate B antérieure PASS. `LAST_GOOD` R84, l'exemple public et les sources natifs restent intacts. Branche **`main` uniquement**.
+
 ## 18 novembre 2026 — M19 Bob Off/On : nouvelle Gate A native PASS
 
 **Décision en cours :** l'auteur souhaite poursuivre le développement de l'extension, **sans nouveau benchmark**, après publication de [l'exemple quatre Bobs](../examples/bob_local_restore/README.fr.md). Le prochain jalon technique porte sur `Aga Bob Off`, réactivation, multi-banques et cycle de vie MC68020.

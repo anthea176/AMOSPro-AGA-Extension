@@ -12,7 +12,13 @@ L'exemple public [BOB_LOCAL_RESTORE.asc](../examples/bob_local_restore/BOB_LOCAL
 
 **CI [44404123651](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44404123651) PASS** : le [nouveau banc MC68020](../tools/test_m19_b7m1_bob_lifecycle_gate_a.py) reconstruit les **102 360 octets exacts de la Lib B7-m1**, puis exécute **194 contrôles comptabilisés** sur deux implantations native AP20. Vérifications : Off puis Draw (1 Bob, puis zéro Bob), réactivation des IDs avec source banque et masque conservés, progression **1/4/8/16/64 Bobs** sur banques 10/11, réduction 64 → 16 par Off, identité périmée ignorée pour un Bob inactif mais refusée avant DMA pour un actif, Swap DIRTY verrouillé, Close/End sans double free dans le mock. [Compte rendu et limites](M19_B7M1_BOB_LIFECYCLE_GATE_A_2026-11-18.md).
 
-**Ce résultat valide le source natif en émulation MC68020, pas le comportement WinUAE des nouveaux cas Off/On ni un vrai Compiler.** Le prochain jalon **Gate B fonctionnel** est un unique ASC avec Off/On, sans FPS, à préparer dans `tests/current/` seulement au moment de lancer la campagne ; la démo publique et l'ancien test validé restent pour l'instant inchangés. Aucun nouvel émetteur ni changement de Lib n'a été nécessaire.
+**Ce résultat valide le source natif en émulation MC68020, pas le comportement WinUAE des nouveaux cas Off/On ni un vrai Compiler.** Le jalon **Gate B fonctionnel** dispose maintenant d'un ASC Off/On dédié (préflight PASS, WinUAE en attente). La démo publique reste inchangée ; l'ancien ASC est conservé dans l'historique Git. Aucun nouvel émetteur ni changement de Lib n'a été nécessaire.
+
+## Test fonctionnel Gate B prêt — Runtime WinUAE encore nécessaire
+
+L'autorisation « ok go » du 18/11/2026 lance la campagne **Off/On fonctionnelle**. L'ASC actif unique est [`tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc), **10 866 octets**, SHA256 `faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d`. Il a PASS le préflight AMOS strict et **405 scènes pixel simulées sur deux back buffers**, mais **sa Gate B WinUAE n'est pas encore exécutée**. [Notice et verdicts attendus](../tests/current/README.md).
+
+Neuf étapes de **45 frames** : **2→1→0→2→4→8→16→64→16**, retour propre à AMOS et journal `RAM:M19_B7M1_BOB_LIFECYCLE.TXT`. Réactivation des mêmes IDs, masques + opaques de banques 24/25, retrait de 48 IDs par Off et restauration des anciens rectangles sur la page arrière utilisée. Zéro `Timer`, zéro FPS, pas de Compiler. Les **50 commandes Off** sont comptées comme **commandes émises**, pas comme une preuve du nombre de Bobs visibles. Le dernier benchmark exact [reste accessible dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cb3d97aec357bc726ea26047b6d3cb2c90b82247/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) ; la démo publique n'a pas été modifiée.
 
 ## Prochain jalon : cycle de vie des Bobs persistants
 

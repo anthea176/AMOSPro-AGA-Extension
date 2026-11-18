@@ -7,7 +7,7 @@
 | Élément | État vérifié |
 | --- | --- |
 | **Bibliothèque de travail** | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) : **M19 P0j-b7-m1 — candidate de travail validée en Runtime sur le scénario Bob**, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commandes / 181 entrées AP20**, quatre unités natives. Source reproductible via `tools/build_m19_p0j_end_lifecycle_in_memory.py::build_multiframe()`. |
-| **Dernier test actif, conservé pour régression** | [`M19_P0J_B7_ANIM_RUNTIME_03.asc`](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc), [notice WinUAE](../tests/current/README.md). Pas de nouveau benchmark prévu. |
+| **Test fonctionnel actif (Gate B à réaliser)** | [`M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc), **10 866 octets**, SHA256 `faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d`, [notice WinUAE](../tests/current/README.md). Off/On, 2→1→0→2→4→8→16→64→16, sans FPS ; [ancien benchmark](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cb3d97aec357bc726ea26047b6d3cb2c90b82247/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) conservé dans Git. |
 | **Validation** | **Gate A MC68020 PASS** (793 contrôles multiframe + **194 contrôles cycle de vie B7-m1**, [rapport](M19_B7M1_BOB_LIFECYCLE_GATE_A_2026-11-18.md)). **Gate B Runtime PASS** : Bobs 120 frames, puis A/B/C 720 frames sur fond uni et décor texturé. Décor : **A/B 25,05 FPS**, **C 48,98 FPS**, avec **719 retries VBL** (temps de synchronisation inclus). [Rapport décor](M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md) · [Fond uni](M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md). **Gate C Compiler / D matériel NON TESTÉES**. |
 | **Référence protégée** | [R84 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, sans nouvelle promotion. |
 
@@ -30,7 +30,7 @@ La **cinquième unité native** a été validée en Gates A/B/C pour son banc de
 | **3** | Erreurs de banque/masque et Safe/Disp — **Gate A partielle** | Source active périmée et verrou DIRTY prouvés ; rendre visibles les erreurs sans présenter de frame partielle |
 | **4** | Close/End — **Gate A PASS** ; réexécution à contrôler | Pas de libération double en modèle CPU ; retour AMOS et seconde exécution à qualifier en Gate B |
 
-**Procédure :** **Gate A MC68020 de ce jalon PASS** ([CI 44404123651](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44404123651)). Étape suivante : **un seul nouveau test fonctionnel Runtime**, sans benchmark. Aucun nouvel AP20, changement de Lib, test Compiler ni promotion `LAST_GOOD` sans décision distincte.
+**Procédure :** **Gate A MC68020 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44404123651)). **Nouveau test fonctionnel Runtime préparé et préflight PASS** ([source](../tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc)), **Gate B NON TESTÉE**, sans benchmark. Aucun nouvel AP20, changement de Lib, test Compiler ni promotion `LAST_GOOD` sans décision distincte.
 
 ## 3. Après M19 — pistes non engagées
 
