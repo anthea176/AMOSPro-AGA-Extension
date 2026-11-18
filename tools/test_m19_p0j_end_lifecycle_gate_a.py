@@ -90,7 +90,7 @@ def check_multiframe():
                 assert m.public('bob', ident=1, x=5 + frame // 4, y=7, image=1) == 1
                 assert m.run_select(11) == 1
                 assert m.public('bob', ident=2, x=9 + frame // 5, y=11, image=1) == 1
-            assert m.frame() == 1, (layout, frame, 'draw')
+            assert m.frame() == 1, (layout, frame, 'draw', 'status', m.status(), 'callback', m.callbacks(), 'state', hex(m.get(m.real_state)), 'db_flags', m.get(DB + 20), 'front', m.get(DB + 8), 'safe', m.safe, 'blits', m.paint_blits[-6:], 'getmsg', m.getmsg[-6:])
             assert m.status() == READY
             assert m.callbacks() == (m.end_callback(), m.end_callback())
         assert m.invoke_guard('swap') == 1
