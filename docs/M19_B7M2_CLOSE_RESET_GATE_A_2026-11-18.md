@@ -64,9 +64,11 @@ Le programme ASC reste le seul test actif (10 866 octets,
 SHA256 faed496a977a151850255f39f0ac134bd80014975b6dcd7942b27b351c05645d).
 R84 LAST_GOOD reste protegee.
 
-Gate A B7-m2 : execution CI a confirmer dans le workflow M19 ;
-Gate B de B7-m2 : NON TESTEE tant que la candidate n'a pas ete
-explicitement autorisee comme unique Lib de travail ;
+Gate A B7-m2 : **PASS** ([CI 44413813790](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44413813790)), 75 groupes de verifications sur deux implantations MC68020. La premiere CI a revele un defaut du mock : reutilisation des adresses ScreenBuffer apres liberation lors d'une deuxieme fermeture simulee ; le banc corrige n'affirme pas une nouvelle allocation OS complete et verifie la seconde ouverture, Draw/Swap. Les 194 controles B7-m1 precedents restent PASS. Binaire candidat construit en memoire : 102 400 octets, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, quatre ilots natifs, PC16 maximal 28 938 octets, suffixe natif 34 octets. Aucune .Lib de candidate publiee.
+
+Gate B B7-m2 : NON TESTEE ;
+La candidate B7-m2 n'est pas la Lib active tant qu'une bascule distincte
+n'a pas ete explicitement autorisee ;
 Gate C vrai Compiler et D materiel : NON TESTEES.
 
 Aucune promotion, compilation Amiga ou essai WinUAE n'a ete realise
