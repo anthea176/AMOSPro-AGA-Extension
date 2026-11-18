@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — B7-m1 callback multiframe : Gate A PASS, non installé
+
+**Correctif source-only :** le P0c d'origine refuse le callback B7 installé au premier Draw. Une nouvelle entrée b7_multiframe_draw_entry vérifie les pointeurs End, le contexte AMOS et la signature AGA, remplace temporairement B7/B7 par P0c/P0c, puis délègue au wrapper B7 qui réarme son callback. Refus des callbacks tiers et des paires incohérentes. [Rapport](M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
+
+**Preuve native :** [CI 44383118836](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44383118836) PASS : 793 contrôles multiframe, 120 Draw/Swap dans chacun des deux placements MC68020, quatre Bobs, callbacks étrangers, signature, Close/End et Safe/Disp. Les 88 contrôles B7 historiques passent aussi. [CI CPU/chemins 44383118843](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44383118843) PASS. Les notifications Safe/Disp entre Swap et Draw sont acquittées par le mock : pas une preuve WinUAE.
+
+**Protections :** unique Lib installable B7 strictement inchangée (102 072 octets, SHA256 f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b) ; R84 LAST_GOOD, ASC actif et archives inchangés. La candidate B7-m1 n'est construite qu'en mémoire, sans nouvelle Lib. Gate B/C de B7-m1 NON TESTÉES, aucun Compiler ni promotion. Le résultat ERR 14 reste celui de la B7 installée.
+
 ## 18 novembre 2026 — animation B7 Runtime uniquement
 
 **Un seul ASC actif :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc), 4 718 octets, SHA256 0f92b7ee5e1d60b1c0ab78c0d96a7d1aaebb97f3db12696a62c9a73783ad7cb6. Banc **120 frames**, quatre Bobs sur banques 24/25 : deux mobiles en aller-retour, deux fixes rognés, masque rouge et image opaque jaune, effacement du back buffer avant chaque Draw et Swap explicite. **Gate B animation NON TESTÉE ; pas de nouvel essai Compiler**. [Notice de campagne](M19_P0J_B7_ANIM_RUNTIME_2026-11-18.md).
