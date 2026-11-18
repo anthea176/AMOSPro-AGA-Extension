@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Active working candidate: M19 P0j-b7-m1 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102,360 bytes**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commands / 181 AP20 entries**, four native units. **Native MC68020 Gate A PASS (793 multiframe checks)**; **120-frame WinUAE Runtime B PASS (user log, visual review and four launches); new A/B/C benchmark Runtime B NOT TESTED; Compiler C and physical D NOT TESTED**. [B7-m1 report](docs/M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
+**Active working candidate: M19 P0j-b7-m1 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102,360 bytes**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`, **86 commands / 181 AP20 entries**, four native units. **Native MC68020 Gate A PASS (793 multiframe checks)**; **WinUAE Runtime B PASS** (120-frame Bob animation and 720-frame uniform-background A/B/C; the latter reduced measured time by **48.9%** using dirty rectangles). **New 720-frame textured-background A/B/C benchmark pending WinUAE Runtime B; Compiler C and physical D NOT TESTED**. [B7-m1 report](docs/M19_P0J_B7_MULTIFRAME_GATE_A_2026-11-18.md).
 
-**Single active A/B/C benchmark (720 frames, four moving Bobs in A/C; Runtime only, no Compiler run):** [M19_P0J_B7_ANIM_RUNTIME_03.asc](tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) · [WinUAE instructions](tests/current/README.md). The historical B7 failed on frame 2; its older compiled scenario and the AP20 islands B/C results do not qualify B7-m1. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Single active textured-background A/B/C benchmark (720 frames, four moving Bobs in A/C; Runtime only, no Compiler run):** [M19_P0J_B7_ANIM_RUNTIME_03.asc](tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) · [WinUAE instructions](tests/current/README.md). The historical B7 failed on frame 2; its older compiled scenario and the AP20 islands B/C results do not qualify B7-m1. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
 ## Main AMOS commands
 
-**Current library API M19 P0j-b7-m1** — **86 commands / 181 AP20 entries** (MC68020 minimum). `Aga Bob Draw` is a zero-argument numeric 0/1 function; `Aga Swap` refuses a dirty frame and `End` guards Safe/Disp cleanup. **Native Gate A PASS; previous 120-frame Runtime B PASS; current benchmark B pending; C/D NOT TESTED.** [B7 report and active test](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
+**Current library API M19 P0j-b7-m1** — **86 commands / 181 AP20 entries** (MC68020 minimum). `Aga Bob Draw` is a zero-argument numeric 0/1 function; `Aga Swap` refuses a dirty frame and `End` guards Safe/Disp cleanup. **Native Gate A PASS; 120-frame and 720-frame uniform-background Runtime B PASS; current textured benchmark B pending; C/D NOT TESTED.** [B7 report and active test](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |

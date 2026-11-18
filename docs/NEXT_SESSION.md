@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 18 novembre 2026 — décor texturé B7-m1 : nouveau benchmark Runtime à exécuter
+
+**Banc précédent à fond uni = Gate B PASS :** fichier de résultats WinUAE `M19_B7M1_CLEAR_BENCH.TXT` (SHA256 `91f272adb39713bef53359a3d75f210d5299c96d24abf0904b355fab5357258c`), `RESULT 1`, `ERR 0`, **720/720 frames**, zéro échec Fill/Draw/Swap, retour AMOS ; l'auteur confirme « ça fonctionne nickel ». Séries A **239/240 ticks**, B **240/239**, C **123/122** : C réduit le temps moyen mesuré de **48,85 %** (25,05→48,98 FPS moyens recalculés). `RETRY_VBL 719` : les résultats incluent la synchronisation Safe/Disp, **pas** le seul coût du Blitter. [Rapport détaillé](M19_B7M1_CLEAR_BENCH_RUNTIME_2026-11-18.md). L'ASC exact de ce test reste [conservé en historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/2d019a555447ab3cd294d1c4b4e69928d7afd9db/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc).
+
+**Nouvelle campagne autorisée :** même chemin actif unique [`tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc`](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc), **9 624 octets**, SHA256 `8a3aa82a637334558d918ea0626c9ca661d5f78a1e67ed40ad99ed5a3b1f1904`, décor non uniforme auto-généré par le Blitter (sans IFF) + quatre Bobs mobiles. A/B/C/C/B/A, 120 frames par série ; A et B copient trois fois la bande témoin 320×64, C restaure seulement les anciennes zones à partir de cette bande **sur chaque back buffer**, avec découpage y modulo 64. Journal `RAM:M19_B7M1_DECOR_BENCH.TXT` : `RUN_TICKS`, `RUN_WAITS`, `RUN_COPIES`, `RUN_COPY_PIXELS`. **PREFLIGHT PASS** et oracle exact de **720 scènes, 84 découpages de tuile, 2 480 copies simulées PASS**. [Protocole Runtime](M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md).
+
+**Gates :** nouveau banc décor **B NON TESTÉ**, vrai AMOS Compiler **C NON TESTÉ**, Amiga réel **D NON TESTÉ**. **Lib B7-m1 totalement inchangée** : `dist/AMOSPro_AGA.Lib` 102 360 octets SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. `LAST_GOOD` R84, archives et autres dépôts protégés ; uniquement `main`.
+
 ## 18 novembre 2026 — benchmark B7-m1 A/B/C : ASC actif PREFLIGHT PASS, Runtime à mesurer
 
 **Retour WinUAE du banc précédent :** journal B7-m1 `FRAMES_OK 120`, `ERR 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `PATH_OK`. L'auteur indique **quatre exécutions réussies sans Erase All ni traînées** et un affichage correct de deux Bobs mobiles + deux fixes/clippés ; ralentissement perçu non mesuré. **Gate B PASS pour ce scénario uniquement**, ni pour le nouveau benchmark ni pour le Compiler. [Rapport historique](M19_P0J_B7_ANIM_RUNTIME_2026-11-18.md).

@@ -1,5 +1,24 @@
 # M19 B7-m1 — benchmark Fill plein écran / dirty rectangles (18/11/2026)
 
+## Résultats WinUAE de l'ASC exact — Gate B PASS (18/11/2026)
+
+**Preuve :** journal utilisateur `M19_B7M1_CLEAR_BENCH.TXT` (SHA256 `91f272adb39713bef53359a3d75f210d5299c96d24abf0904b355fab5357258c`), `RUN_MODE RUNTIME`, `PRG_STATE 1`, **`RESULT 1`**, **`ERR 0`**, **`FRAMES_OK 720/720`**, `CLEAR_FAILS 0`, `DRAW_FAILS 0`, `SWAP_FAILS 0`, `BANKS_ERASED 2`, `CLOSE_CALLED 1`, `VERDICT PATH_OK`. L'auteur indique « ça fonctionne nickel » ; aucun défaut graphique signalé.
+
+| Série | Cas | Ticks Timer | FPS recalculés = 120×50 / ticks |
+|---|---|---:|---:|
+| 1 | A : Fill complet + 4 Bobs | 239 | 25,10 |
+| 2 | B : Fill complet sans Bob | 240 | 25,00 |
+| 3 | C : Fill partiel + 4 Bobs | 123 | 48,78 |
+| 4 | C : Fill partiel + 4 Bobs | 122 | 49,18 |
+| 5 | B : Fill complet sans Bob | 239 | 25,10 |
+| 6 | A : Fill complet + 4 Bobs | 240 | 25,00 |
+
+A et B ont tous deux **239,5 ticks en moyenne** (25,05 FPS). C a **122,5 ticks** (48,98 FPS). Le temps mesuré diminue de **48,85 %** et la cadence augmente de **95,51 %** pour C contre A, **sur ce scénario WinUAE**.
+
+**Limite méthodologique majeure :** `RETRY_VBL 719` dans le journal, soit presque une attente de synchronisation par frame. La cadence inclut les appels BASIC, les refus temporaires du buffer Safe, les attentes VBL et les Swaps. **Ce n'est pas une mesure pure du débit du Blitter ni une preuve que tous les coûts proviennent du Fill.** Par ailleurs les champs `RUN_FPS_X10` du journal (240 ou 480) sont discordants avec les ticks bruts ; le tableau utilise uniquement `RUN_TICKS`, qui font autorité pour les calculs.
+
+**Portée de Gate B :** ce banc A/B/C avec **fond uni** est validé en Runtime, non en AMOS Compiler. Le nouveau banc [à décor non uniforme](M19_B7M1_DECOR_BENCH_RUNTIME_2026-11-18.md) conserve la Lib B7-m1, mais constitue une **nouvelle campagne Gate B non testée**. Son ASC remplace l'unique programme actif ; le présent programme de 7 555 octets est [figé dans Git à son commit](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/2d019a555447ab3cd294d1c4b4e69928d7afd9db/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc).
+
 ## Point de départ et provenance
 
 Le [banc B7-m1 précédent (120 frames)](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/75caa3c8198aad612e434e1ae3d54ceb2249ca45/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) a fourni le journal utilisateur du 18/11/2026 : `RESULT 1`, `ERR 0`, `FRAMES_OK 120`, `DRAW_FAILS 0`, `SWAP_FAILS 0`. L'auteur rapporte quatre lancements réussis sans `Erase All`, sans traînée, avec une animation ressentie comme lente. La capture montre deux Bobs mobiles et deux Bobs fixes au bord ; cette dernière propriété était **volontaire** dans le vieux code. Aucune mesure de fréquence n'existait.
@@ -31,15 +50,15 @@ Quatre trajectoires distinctes, deux banques **24/25**, Bobs rouges masqués de 
 
 **Chemin de sortie :** retour `Amos To Front`, `Aga Screen Close`, effacement banques 24/25 et écriture du log `RAM:M19_B7M1_CLEAR_BENCH.TXT`. Exécution Runtime uniquement ; `PRG_STATE -1` refusé, aucun appel Compiler.
 
-## Validation et limitations
+## Validation statique avant la Gate B (historique)
 
 - **PREFLIGHT PASS** : `amos_preflight.py --strict-target --fail-on-warnings`, source ASCII, max 95 caractères par ligne.
 - **STATIC PASS** : `tools/test_m19_p0j_b7_anim_asc_static.py` contrôle le SHA exact, l'ordre Fill/Draw/Swap, les quatre coordonnées, deux pages, les attentes bornées, la fermeture et le journal.
 - **240 états de frame géométriques (2×120) PASS** sur une simulation Python d'occupation de pixels (empreintes pleines conservatrices ; ce n'est ni le masque réel ni le DMA). Vérification du clipping gauche/droite et des anciennes positions page par page.
-- **Gate B nouveau benchmark : NON TESTÉE. Gate C : NON TESTÉE. Gate D : NON TESTÉE.** Ne pas recycler la validation de l'ancien ASC ni annoncer un gain en pourcentage sans les six séries de `RUN_TICKS`.
+- **Statut au jour de la préparation : Gate B NON TESTÉE (désormais PASS, voir le résultat au début). Gate C : NON TESTÉE. Gate D : NON TESTÉE.** Ne pas recycler la validation de l'ancien ASC ni annoncer un gain en pourcentage sans les six séries de `RUN_TICKS`.
 
 ### Interprétation attendue
 
 Comparer les ticks **A/C** par paire (1 contre 3, 6 contre 4) : une baisse montre que, pour ce programme, des effacements partiels sont plus rapides. La série B mesure le coût « Fill plein écran + Swap » sans Draw, mais n'isole ni le temps DMA pur du Fill ni les synchronisations Safe/Disp. Un `RETRY_VBL` élevé ou une forte asymétrie entre répétitions rend la comparaison moins fiable. Toute traînée dans C impose de considérer C comme **FAIL visuel**, même si `VERDICT PATH_OK`.
 
-[Mode d'emploi](../tests/current/README.md). L'ASC historique reste accessible dans Git, sans second ASC actif ni modification de `tests/passed/`.
+[Mode d'emploi du nouveau test](../tests/current/README.md). L'ASC original reste accessible dans Git, sans second ASC actif ni modification de `tests/passed/`.
