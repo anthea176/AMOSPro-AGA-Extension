@@ -16,6 +16,7 @@ from struct import unpack
 from build_m19_p0j_end_lifecycle_in_memory import build_multiframe
 from test_m19_p0j_end_lifecycle_gate_a import MultiframeMachine
 from test_m19_p0j_pending_close_end_gate_a import ready, DB
+from test_m19_p0a_r88_get_gate_a import SCREEN_W
 from m19_p0j_swap_barrier_emit import DIRTY, READY
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,13 +88,13 @@ def off_and_reactivate(layout: str):
     assert status == 1 and unpack('>6I', record) == (
         10, 1, (-3)&0xffffffff, 21, 1, 0)
     assert m.run_select(11) == 1
-    assert m.public('bob', ident=2, x=320-5, y=19, image=1) == 1
+    assert m.public('bob', ident=2, x=SCREEN_W-5, y=19, image=1) == 1
     status, record = m.relay_call('read', ident=2)
-    assert status == 1 and unpack('>6I', record) == (11,1,315,19,1,0)
+    assert status == 1 and unpack('>6I', record) == (11,1,SCREEN_W-5,19,1,0)
     selected = m.selected_triple()
     first = len(painted(m))
     assert m.frame() == 1 and m.status() == READY
-    assert painted(m)[first:] == ['BltMask', 'BltOpaque']
+    assert painted(m)[first:] == ['BltMask', 'BltOpaque'], (layout, painted(m)[first:])
     assert m.selected_triple() == selected
     assert m.callbacks() == (m.end_callback(),m.end_callback())
     present_and_ack(m)
