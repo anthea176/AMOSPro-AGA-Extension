@@ -23,9 +23,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Dernier banc Runtime validé (720 frames, décor texturé ; conservé pour régression, sans nouveau benchmark) :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) · [consignes WinUAE](tests/current/README.md). L'ancienne B7 échouait dès la deuxième frame ; son ancien scénario compilé et les Gates B/C des îlots AP20 ne qualifient pas B7-m1. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
-**Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire.
-
-**Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
+**Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire. **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
 
 ## Commandes AMOS principales
 
