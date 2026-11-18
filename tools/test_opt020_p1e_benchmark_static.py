@@ -15,7 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
-from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA
+from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -55,12 +55,12 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
     # Post-R82 candidates inherit the historical Region contract; the
     # active P0d / AP20-islands images must not be compared to the R69 Lib.
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA):
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
@@ -71,7 +71,22 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha == AP20_ISLANDS_SHA:
+        if active_sha == B7_SHA:
+            from build_m19_p0j_end_lifecycle_in_memory import build as build_b7
+            from build_m19_ap20_islands_in_memory import build as build_islands
+            from compiler_relocation import unpack_ap20
+            image, image_meta = build_b7()
+            assert active == image and len(image) == 102072
+            assert image_meta["sha256"] == B7_SHA
+            assert (image_meta["public_commands"], image_meta["ap20_entries"],
+                    image_meta["native_groups"]) == (86,181,[142,153,156,177])
+            previous, previous_meta = build_islands()
+            assert previous_meta["sha256"] == AP20_ISLANDS_SHA
+            _, current_parts, _ = unpack_ap20(image)
+            _, old_parts, _ = unpack_ap20(previous)
+            assert all(current_parts[i] == old_parts[i] for i in (142,153,156)), (
+                "B7 changed the historical AGA/Region native islands")
+        elif active_sha == AP20_ISLANDS_SHA:
             from build_m19_ap20_islands_in_memory import build as build_islands
             from compiler_relocation import unpack_ap20
             candidate_current,meta_current=build_islands()
