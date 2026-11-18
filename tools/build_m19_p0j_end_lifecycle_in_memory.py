@@ -18,7 +18,7 @@ from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_p0j_public_draw_in_memory import build as build_b6
 from m19_p0j_swap_barrier_emit import emit_swap_barrier
-from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
+from m19_p0j_end_lifecycle_emit import emit_end_lifecycle, emit_end_lifecycle_multiframe
 
 B6_SHA='3843a3ea3fac05365d7773ed803ca4ab2c288db6fcecce0210b966151c6d2b91'
 B6_NATIVE_SHA='d02eb6c89863fbb769d699296a923dc2997e2b39184c2c7d51800c28c10c1b5e'
@@ -90,6 +90,71 @@ def build()->tuple[bytes,dict]:
         gate_a='NATIVE TEST REQUIRED',gate_b='NOT TESTED',
         gate_c='NOT TESTED',gate_d='NOT TESTED')
 
+
+
+# This experiment intentionally does NOT change build() or the canonical
+# B7 bytes present in dist/AMOSPro_AGA.Lib.
+MULTIFRAME_TITLE = (
+    b'AMOSPro AGA M19 P0j-b7-m1 multiframe callback handoff SOURCE ONLY\0'
+    b'$VER: AGA M19 P0j-b7-m1 MC68020 GATE A ONLY UNINSTALLED\0'
+)
+MULTIFRAME_TITLE += bytes(len(MULTIFRAME_TITLE) & 1)
+
+
+def build_multiframe() -> tuple[bytes, dict]:
+    """Make a transient AP20 candidate from immutable installed B7 source."""
+    canonical, oldmeta = build()
+    if (len(canonical) != 102072
+            or oldmeta['sha256'] !=
+            'f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b'):
+        raise ValueError('Original B7 base is no longer source-pinned')
+    tokens, parts, _ = unpack_ap20(canonical)
+    old, _ = emit_end_lifecycle()
+    if len(old) != 21544 or not parts[BOBS].endswith(old):
+        raise ValueError('B7 native suffix changed unexpectedly')
+    extended, labels = emit_end_lifecycle_multiframe()
+    if not extended.startswith(old):
+        raise ValueError('Multiframe implementation changed original B7 bytes')
+    suffix = extended[len(old):]
+    if not suffix or len(suffix) & 1 or len(parts[BOBS]) + len(suffix) > MAX_UNIT_BYTES:
+        raise ValueError('Multiframe source exceeds BOBS unit capacity')
+    if parts[DRAW] != (RBSR + pack('>HH', BOBS, oldmeta['guarded_draw_native_offset'])
+                       + b'\x4e\x75'):
+        raise ValueError('B7 Draw stub is no longer source-pinned')
+    target = (len(parts[BOBS]) - len(DISPATCH_V2)
+              + labels['b7_multiframe_draw_entry'] - len(old))
+    if target & 1 or not 0 <= target < MAX_UNIT_BYTES:
+        raise ValueError('Invalid multiframe Draw target')
+    outparts = list(parts)
+    outparts[BOBS] += suffix
+    outparts[DRAW] = RBSR + pack('>HH', BOBS, target) + b'\x4e\x75'
+    if outparts[:BOBS] != parts[:BOBS] or outparts[BOBS][:len(parts[BOBS])] != parts[BOBS]:
+        raise ValueError('Multiframe modified protected prefix')
+    candidate = repack_ap20(canonical, tokens, outparts, MULTIFRAME_TITLE)
+    if unpack_ap20(candidate) != (tokens, outparts, MULTIFRAME_TITLE):
+        raise ValueError('Multiframe AP20 roundtrip failed')
+    audit = inspect(parse(candidate))
+    reference = inspect(parse(canonical))
+    if audit['issues'] or reference['issues'] or audit['tokens'] != reference['tokens']:
+        raise ValueError('Multiframe AP20 token or ABI mismatch')
+    groups = [i for i, part in enumerate(outparts) if part.startswith(DISPATCH_V2)]
+    spans = pc16_displacements(outparts)
+    if groups != [142, 153, 156, 177] or max(map(abs, spans.values())) >= 32766:
+        raise ValueError('Multiframe PC16 or native group constraint failed')
+    return candidate, dict(
+        sha256=sha256(candidate).hexdigest(), size=len(candidate),
+        predecessor_sha=oldmeta['sha256'],
+        native_sha=sha256(extended).hexdigest(),
+        native_bytes=len(extended), appended_bytes=len(suffix),
+        public_commands=86, ap20_entries=181, native_groups=groups,
+        pc16_max=max(map(abs, spans.values())),
+        guarded_draw_stub=DRAW, guarded_draw_group=BOBS,
+        guarded_draw_native_offset=target,
+        guarded_draw_local_label=labels['b7_multiframe_draw_entry'],
+        guarded_end_local_label=labels['b7_end_entry'],
+        installed_lib='UNCHANGED', active_asc='UNCHANGED',
+        gate_a='NATIVE TEST REQUIRED', gate_b='NOT TESTED',
+        gate_c='NOT TESTED', gate_d='NOT TESTED')
 
 if __name__=='__main__':
     _,meta=build()

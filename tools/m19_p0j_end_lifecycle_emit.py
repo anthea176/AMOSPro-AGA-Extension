@@ -179,6 +179,91 @@ def emit_end_lifecycle() -> tuple[bytes, dict[str, int]]:
     return native,c.labels
 
 
+
+def emit_end_lifecycle_multiframe() -> tuple[bytes, dict[str, int]]:
+    """Append a checked P0c/B7 callback handoff, keeping installed B7 byte-exact.
+
+    A B7 End hook is swapped to the original P0c hook only during Draw.
+    The historical B7 Draw then validates and reinstalls B7 on return,
+    including when its inner Draw has failed. No foreign hook is changed.
+    """
+    original, labels = emit_end_lifecycle()
+    c = Code()
+    c.raw(original.hex())
+    c.labels.update(labels)
+    B, L = c.branch, c.label
+
+    def mapped(ptr, reject):
+        c.move(ptr, A(1))
+        c.raw('2c780004')  # MOVEA.L 4.W,A6: ExecBase
+        c.call_os(-534)    # TypeOfMem(pointer)
+        c.tst(D(0)); B(7, reject)
+
+    L('b7_multiframe_draw_entry')
+    c.raw('48e7efee')      # AMOS preserved set; D2/D3 are the integer result
+    B(1, 'registry_cpu_guard')
+    c.tst(D(0)); B(7, 'b7_multiframe_refuse')
+    c.move(A(5), D(0))
+    c.tst(D(0)); B(7, 'b7_multiframe_refuse')
+    c.imm('and', 1, D(0)); B(6, 'b7_multiframe_refuse')
+    mapped(A(5), 'b7_multiframe_refuse')
+    c.move(M(5, STATE_A5), D(0))
+    c.tst(D(0)); B(7, 'b7_multiframe_refuse')
+    c.move(D(0), D(1)); c.imm('and', 1, D(1))
+    B(6, 'b7_multiframe_refuse')
+    mapped(D(0), 'b7_multiframe_refuse')
+    c.move(M(5, STATE_A5), A(0))
+    c.tst(M(0, 0)); B(7, 'b7_multiframe_refuse')  # closed screen
+
+    # Check the actual relocated native AGA End before authorizing a swap.
+    c.move(M(5, STATE_A5), D(0))
+    c.imm('cmp', OLD_END_DELTA, D(0)); B(5, 'b7_multiframe_refuse')
+    c.imm('sub', OLD_END_DELTA, D(0))
+    c.move(D(0), D(1)); c.imm('and', 1, D(1))
+    B(6, 'b7_multiframe_refuse')
+    c.move(D(0), A(4))
+    mapped(A(4), 'b7_multiframe_refuse')
+    c.move(A(4), D(0))
+    c.imm('add', 11, D(0)); B(5, 'b7_multiframe_refuse')
+    mapped(D(0), 'b7_multiframe_refuse')
+    for offset, word in enumerate(END_SIGNATURE):
+        c.move(M(4, 4 * offset), D(0))
+        c.imm('cmp', word, D(0)); B(6, 'b7_multiframe_refuse')
+
+    # Both callback slots must agree and belong to native AGA, P0c or B7.
+    c.move(M(5, END1_A5), D(0))
+    c.move(M(5, END2_A5), D(1))
+    c.alu('cmp', D(1), 0); B(6, 'b7_multiframe_refuse')
+    c.move(A(4), D(1))
+    c.alu('cmp', D(1), 0); B(7, 'b7_multiframe_forward')
+    c.lea(1, 'program_end_bridge_entry')
+    c.move(A(1), D(1))
+    c.alu('cmp', D(1), 0); B(7, 'b7_multiframe_forward')
+    c.lea(1, 'b7_end_entry')
+    c.move(A(1), D(1))
+    c.alu('cmp', D(1), 0); B(6, 'b7_multiframe_refuse')
+
+    # Second and later frames: allow P0c to rearm its own callback.
+    c.lea(0, 'program_end_bridge_entry')
+    c.move(A(0), M(5, END1_A5))
+    c.move(A(0), M(5, END2_A5))
+    L('b7_multiframe_forward')
+    c.raw('4cdf77f7')      # restore preserved AMOS regs
+    B(0, 'b7_guarded_draw_entry')  # tail call, B7 restores its End hook
+
+    L('b7_multiframe_refuse')
+    c.lea(0, 'frame_guard_state')
+    c.move(I(DIRTY), M(0, G['status']))
+    c.move(I(0), D(3))
+    c.raw('4cdf77f7')
+    c.raw('74004e75')      # numeric failure D2=0/D3=0; RTS
+
+    native = c.out()
+    assert native.startswith(original)
+    assert c.labels['b7_multiframe_draw_entry'] == len(original)
+    assert len(native) % 2 == 0 and len(native) < 32766
+    return native, c.labels
+
 if __name__=='__main__':
     from hashlib import sha256
     native,labels=emit_end_lifecycle()

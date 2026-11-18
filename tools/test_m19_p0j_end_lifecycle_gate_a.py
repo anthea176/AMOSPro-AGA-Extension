@@ -15,8 +15,8 @@ from test_m19_p0j_pending_close_end_gate_a import (
 )
 from test_m19_p0j_swap_barrier_gate_a import DIRTY,READY
 from m19_p0j_swap_barrier_emit import emit_swap_barrier
-from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
-from build_m19_p0j_end_lifecycle_in_memory import build
+from m19_p0j_end_lifecycle_emit import emit_end_lifecycle, emit_end_lifecycle_multiframe
+from build_m19_p0j_end_lifecycle_in_memory import build, build_multiframe
 from compiler_relocation import unpack_ap20
 from amos_link_test_support import relocate
 
@@ -34,6 +34,123 @@ class LifecycleMachine(PendingMachine):
     def callbacks(self):
         return self.get(AMOS+0x1cc),self.get(AMOS+0x1d0)
 
+
+
+class MultiframeMachine(LifecycleMachine):
+    """B7-m1 source-only Draw stub; the original B7 End hook is unchanged."""
+    def __init__(self, source, layout):
+        super().__init__(source, layout)
+        self.native, self.labels = emit_end_lifecycle_multiframe()
+        self.uc.mem_write(self.entry, relocate(self.native, self.entry, {}, self.uc))
+        self.labels['routed_paint_all_entry'] = self.labels['b7_multiframe_draw_entry']
+
+
+def check_multiframe():
+    original, oldmeta = build()
+    candidate, meta = build_multiframe()
+    assert oldmeta['sha256'] == meta['predecessor_sha']
+    assert oldmeta['sha256'] == 'f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b'
+    assert candidate != original and meta['public_commands'] == 86
+    assert meta['ap20_entries'] == 181 and meta['native_groups'] == [142, 153, 156, 177]
+    assert meta['pc16_max'] < 32766 and meta['appended_bytes'] > 0
+    original_native, _ = emit_end_lifecycle()
+    extended, labels = emit_end_lifecycle_multiframe()
+    assert extended.startswith(original_native)
+    assert labels['b7_multiframe_draw_entry'] == len(original_native)
+    _, parts, _ = unpack_ap20(candidate)
+    assert parts[177].endswith(extended)
+    ins = list(Cs(CS_ARCH_M68K, CS_MODE_BIG_ENDIAN | CS_MODE_M68K_020).disasm(
+        extended[len(original_native):], 0x120000 + len(original_native)))
+    assert ins and sum(inst.size for inst in ins) == meta['appended_bytes']
+    assert all(not inst.mnemonic.startswith('dc.') for inst in ins)
+    checks = 9
+
+    for layout in ('interpreted', 'compiled'):
+        # Reproduce the defect against immutable B7: second Draw returns 0.
+        baseline = ready(layout, cls=LifecycleMachine, inject_failure=False)
+        assert baseline.invoke_guard('swap') == 1
+        assert baseline.frame() == 0 and baseline.status() == DIRTY
+        assert baseline.callbacks() == (baseline.end_callback(), baseline.end_callback())
+        checks += 3
+
+        # Same original P0c/B7 prefix, with a checked B7 -> P0c handoff.
+        m = ready(layout, cls=MultiframeMachine, inject_failure=False)
+        assert m.callbacks() == (m.end_callback(), m.end_callback())
+        assert m.status() == READY
+        # Add two more persistent Bobs for the subsequent 119 frames.
+        assert m.run_select(10) == 1
+        assert m.public('bob', ident=3, x=12, y=20, image=1) == 1
+        assert m.run_select(11) == 1
+        assert m.public('bob', ident=4, x=22, y=24, image=1) == 1
+        for frame in range(2, 121):
+            assert m.invoke_guard('swap') == 1, (layout, frame, 'swap')
+            assert m.status() == 0
+            if frame in (30, 60, 90, 120):
+                assert m.run_select(10) == 1
+                assert m.public('bob', ident=1, x=5 + frame // 4, y=7, image=1) == 1
+                assert m.run_select(11) == 1
+                assert m.public('bob', ident=2, x=9 + frame // 5, y=11, image=1) == 1
+            assert m.frame() == 1, (layout, frame, 'draw')
+            assert m.status() == READY
+            assert m.callbacks() == (m.end_callback(), m.end_callback())
+        assert m.invoke_guard('swap') == 1
+        assert m.swap_count == m.native_swap_visits == 120
+        assert m.status() == 0 and m.chip_live
+        assert m.invoke_guard('close') == 1
+        assert m.status() == 0 and not m.chip_live and not m.metadata
+        assert len(m.free_screens) == 2 and len(m.free_ports) == 2
+        m.invoke_callback(0x1cc)
+        assert m.callbacks() == (m.old_end, m.old_end)
+        m.invoke_callback(0x1d0)
+        assert len(m.free_screens) == 2 and len(m.free_ports) == 2
+        checks += 13 + 3 * 119
+
+        # A foreign callback and half-patched callback pair are never replaced.
+        for first, second in ((0x123450, 0x123450), (0x123450, None)):
+            m = ready(layout, cls=MultiframeMachine, inject_failure=False)
+            assert m.invoke_guard('swap') == 1
+            m.put(AMOS + 0x1cc, first)
+            m.put(AMOS + 0x1d0, m.end_callback() if second is None else second)
+            old_callbacks = m.callbacks()
+            before = len(m.paint_blits)
+            assert m.frame() == 0 and m.status() == DIRTY
+            assert m.callbacks() == old_callbacks
+            assert len(m.paint_blits) == before  # refused before DMA
+            assert m.invoke_guard('swap') == 0 and m.swap_count == 1
+            checks += 5
+
+        # Refuse original End signature tampering without altering B7 hooks.
+        m = ready(layout, cls=MultiframeMachine, inject_failure=False)
+        assert m.invoke_guard('swap') == 1
+        original_bytes = bytes(m.uc.mem_read(m.old_end, 12))
+        m.uc.mem_write(m.old_end, b'\x4e\x71\x4e\x71')
+        assert m.frame() == 0 and m.status() == DIRTY
+        assert m.callbacks() == (m.end_callback(), m.end_callback())
+        assert m.invoke_guard('swap') == 0
+        m.uc.mem_write(m.old_end, original_bytes)
+        m.invoke_callback(0x1cc)
+        assert m.status() == 0 and m.get(m.real_state) == 0
+        checks += 4
+
+        # Pending Safe/Disp remains protected by unchanged B7 End logic.
+        m = ready(layout, cls=MultiframeMachine, inject_failure=True)
+        assert m.status() == DIRTY
+        m.invoke_callback(0x1cc)
+        assert m.get(m.real_state) == m.screen
+        assert not m.free_ports and not m.free_screens
+        assert m.callbacks() == (m.end_callback(), m.end_callback())
+        m.safe_after = m.safe_count + 1
+        m.disp_after = m.disp_count + 2
+        m.invoke_callback(0x1d0)
+        assert m.get(m.real_state) == 0 and m.status() == 0
+        assert len(m.free_screens) == 2 and len(m.free_ports) == 2
+        checks += 5
+
+    print('M19 B7-m1 MULTIFRAME MC68020 GATE A PASS', checks,
+          'checks; 120 Draw/Swap frames in two relocated layouts;',
+          'canonical B7 stays byte-exact; P0c/B7 handoff;',
+          'foreign callback, partial pair, Close, End, Safe/Disp checked;',
+          'OS MOCKED; NO WinUAE/Compiler/installed Lib')
 
 def main():
     candidate,meta=build()
@@ -157,6 +274,7 @@ def main():
           'End timeout retains callback, success clears DIRTY;',
           'B6 native/tokens untouched except Draw stub;',
           'OS MOCKED; NO WinUAE/real Compiler/installed Lib')
+    check_multiframe()
 
 
 if __name__=='__main__':
