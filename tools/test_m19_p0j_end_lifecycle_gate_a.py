@@ -100,6 +100,8 @@ def check_multiframe():
         assert m.invoke_guard('swap') == 1
         assert m.swap_count == m.native_swap_visits == 120
         assert m.status() == 0 and m.chip_live
+        assert m.get(DB + 20) == 3
+        m.put(DB + 20, 0)  # the final Swap notifications have arrived
         assert m.invoke_guard('close') == 1
         assert m.status() == 0 and not m.chip_live and not m.metadata
         assert len(m.free_screens) == 2 and len(m.free_ports) == 2
