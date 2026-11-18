@@ -28,7 +28,7 @@ def main()->None:
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     assert len(active_candidate)==102072 and sha256(active_candidate).hexdigest()=="f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(files)==1 and files[0].name=="M19_P0J_B7_END_NO_CLOSE_BC_02.asc", files
+    assert len(files)==1 and files[0].name=="M19_P0J_B7_ANIM_RUNTIME_03.asc", files
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
     assert blob_sha(raw)==SMOKE_GIT, "Smoke changed without requalification"
     assert blob_sha((ROOT/"tests/passed/M19_P23_BOBS_BATCH_01.asc").read_bytes())==R86_PASSED_GIT

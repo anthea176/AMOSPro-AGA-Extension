@@ -50,6 +50,7 @@ on:
       - 'tools/build_m19_p0*.py'
       - 'tools/amos_preflight.py'
       - 'tools/test_m19_p0j_b7_end_asc_static.py'
+      - 'tools/test_m19_p0j_b7_anim_asc_static.py'
       - 'tools/audit_ap20.py'
       - 'tools/compiler_relocation.py'
       - 'tools/compiler_bridge_v2_probe.py'
@@ -276,8 +277,8 @@ jobs:
           PY
       - name: M19 P0d active and historical design ASC static preflight
         run: |
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
-          python -B tools/test_m19_p0j_b7_end_asc_static.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc
+          python -B tools/test_m19_p0j_b7_anim_asc_static.py
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0D_BOB_BLIT_01_UNVALIDATED.asc
           python -B tools/amos_preflight.py --strict-target tests/design/M19_P0C_SCREEN_CLOSE_BRIDGE_01_UNVALIDATED.asc
       - name: Ensure no binary, ASC or passed tests changed

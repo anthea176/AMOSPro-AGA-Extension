@@ -1,10 +1,19 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 18 novembre 2026 — B7 End sans Close : banc B/C préparé
+## 18 novembre 2026 — animation B7 Runtime uniquement
+
+**Un seul ASC actif :** [M19_P0J_B7_ANIM_RUNTIME_03.asc](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc), 4 718 octets, SHA256 0f92b7ee5e1d60b1c0ab78c0d96a7d1aaebb97f3db12696a62c9a73783ad7cb6. Banc **120 frames**, quatre Bobs sur banques 24/25 : deux mobiles en aller-retour, deux fixes rognés, masque rouge et image opaque jaune, effacement du back buffer avant chaque Draw et Swap explicite. **Gate B animation NON TESTÉE ; pas de nouvel essai Compiler**. [Notice de campagne](M19_P0J_B7_ANIM_RUNTIME_2026-11-18.md).
+
+**B7 inchangée :** dist/AMOSPro_AGA.Lib 102 072 octets, SHA256 f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b ; 86 commandes et 181 entrées AP20, Gate A MC68020 PASS 88 cas. R84 LAST_GOOD, archives et autres dépôts intacts. Le banc animation appelle **Aga Screen Close explicitement**, retourne à AMOS et efface ses seules banques 24/25. Pour la première exécution, Erase All dans une session ne contenant aucune banque utile est acceptable ; la deuxième exécution doit réussir **sans Erase All**. Journal RAM:M19_B7_ANIM_RUNTIME.TXT (FRAMES_OK 120, erreurs Fill/Draw/Swap nulles). PATH_OK seul n'est pas une preuve visuelle.
+
+**Banc précédent :** [End sans Close](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/0e7be49a079f75f0ac628625d567b86a3afa042d/tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc) reste inchangé dans l'historique Git. Le premier parcours rendait la main à l'éditeur ; la relance échouait avec ERR 2, expliqué par les banques AMOS encore réservées, et Erase All permettait de relancer. Cela n'établit pas une fuite de Chip RAM.
+
+
+## Historique du 18 novembre 2026 — banc End sans Close (remplacé)
 
 **Bibliothèque inchangée** : `dist/AMOSPro_AGA.Lib`, 102 072 octets, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, 86 commandes/181 entrées AP20/quatre unités. **Gate A native MC68020 PASS (88 contrôles).** Nouvelle priorité : vérifier sous WinUAE le callback automatique `End` **sans** instruction `Aga Screen Close` sur la voie nominale. [Procédure et critères](M19_P0J_B7_END_NO_CLOSE_BC_2026-11-18.md).
 
-**ASC actif unique** : [`tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc`](../tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc), 3 785 octets, SHA256 `35b2cfbfc7e2661bd5c7736811619547ca32127dc7e9d97794bc3403780118ae`. Réutilise quatre Bobs multi-banques masqués/opaques, Draw et Swap, puis écrit et ferme le journal **avant** `End`. Les logs `RAM:M19_B7_END_RUNTIME.TXT` et `RAM:M19_B7_END_COMPILED.TXT` portent `PRE_END_OK 1` mais **ne prouvent pas** une fermeture réussie. Il faut constater la sortie réelle vers AMOS (Runtime) ou le contexte appelant du binaire compilé, sans écran restant, Guru ni freeze, et tenter une relance. **Gates B/C de ce scénario : NON TESTÉES.**
+**Ancien ASC actif, conservé en historique** : [`tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/0e7be49a079f75f0ac628625d567b86a3afa042d/tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc), 3 785 octets, SHA256 `35b2cfbfc7e2661bd5c7736811619547ca32127dc7e9d97794bc3403780118ae`. Réutilise quatre Bobs multi-banques masqués/opaques, Draw et Swap, puis écrit et ferme le journal **avant** `End`. Les logs `RAM:M19_B7_END_RUNTIME.TXT` et `RAM:M19_B7_END_COMPILED.TXT` portent `PRE_END_OK 1` mais **ne prouvent pas** une fermeture réussie. Il faut constater la sortie réelle vers AMOS (Runtime) ou le contexte appelant du binaire compilé, sans écran restant, Guru ni freeze, et tenter une relance. **Gates B/C de ce scénario : NON TESTÉES.**
 
 Le [test B7 Draw + Swap + Close précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/a078ed085ae14352135cfe909c3c6f06e34befca/tests/current/M19_P0J_B7_DRAW_BC_01.asc) est conservé **octet pour octet dans l'historique Git** ; la capture compilée communiquée précédemment concerne uniquement ce scénario. Ne pas déplacer ni retoucher les archives protégées sans autorisation distincte. **R84 LAST_GOOD et `dist/AMOSPro_AGA.Lib` inchangées, aucune autre branche ni nouvelle API.**
 

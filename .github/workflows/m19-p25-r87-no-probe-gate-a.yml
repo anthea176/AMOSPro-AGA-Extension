@@ -51,11 +51,11 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
-      - name: Verify archived P2.5/P2.6/P2.7 and the sole active B7 End ASC
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc
+      - name: Verify archived P2.5/P2.6/P2.7 and the sole active B7 animation ASC
         run: |
           python -B tools/test_current_ram_log.py
-          python -B tools/test_m19_p0j_b7_end_asc_static.py
+          python -B tools/test_m19_p0j_b7_anim_asc_static.py
           python -B tools/test_m19_p25_r87_smoke_static.py
           python -B tools/test_m19_p26_r87_bobs_bench_static.py
           python -B tools/test_m19_p27_cache_bench_static.py
