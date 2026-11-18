@@ -137,7 +137,7 @@ def main() -> None:
     path = ROOT / 'tests/passed' / ACTIVE
     raw = path.read_bytes()
     assert len(list((ROOT/'tests/current').glob('*.asc'))) == 1
-    assert (ROOT/'tests/current'/'M19_P0J_B7_DRAW_BC_01.asc').exists()
+    assert (ROOT/'tests/current'/'M19_P0J_B7_END_NO_CLOSE_BC_02.asc').exists()
     assert git_blob(raw) == ACTIVE_BLOB, 'P2.7 ASC changed without source review'
     previous = (ROOT / 'tests/passed/M19_P26_R87_DRAW_BENCH_01.asc').read_bytes()
     assert git_blob(previous) == P26_BLOB, 'P2.6 PASS source was modified'

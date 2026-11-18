@@ -40,7 +40,8 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_DRAW_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
+          python -B tools/test_m19_p0j_b7_end_asc_static.py
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -59,7 +60,7 @@ jobs:
               data = Path(path).read_bytes()
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
-          assert asc == ['M19_P0J_B7_DRAW_BC_01.asc'], asc
+          assert asc == ['M19_P0J_B7_END_NO_CLOSE_BC_02.asc'], asc
           print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks

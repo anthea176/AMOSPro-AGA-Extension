@@ -49,7 +49,7 @@ jobs:
       - name: AMOS Pro source grammar preflight from amos-pro-aga-rules
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_DRAW_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
       - name: Verify archived P2.5/P2.6/P2.7 and unique current P2.8 ASC
         run: |
           python -B tools/test_current_ram_log.py

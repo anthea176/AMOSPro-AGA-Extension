@@ -21,7 +21,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **Candidate de travail active : M19 P0j-b7 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102 072 octets**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, **86 commandes / 181 entrées AP20**, quatre unités natives. **Gate A MC68020 PASS (88 contrôles)** ; **Runtime WinUAE B, véritable AMOS Compiler C et matériel D NON TESTÉS pour B7**. [Rapport B7](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 
-**Test actif unique :** [M19_P0J_B7_DRAW_BC_01.asc](tests/current/M19_P0J_B7_DRAW_BC_01.asc) · [consignes WinUAE et journaux attendus](tests/current/README.md). L'ancien banc AP20 islands avait **PASS B/C avec sa propre Lib**, sans prouver B7. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Test actif unique :** [M19_P0J_B7_END_NO_CLOSE_BC_02.asc](tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc) · [consignes WinUAE et journaux attendus](tests/current/README.md). L'ancien banc AP20 islands avait **PASS B/C avec sa propre Lib**, sans prouver B7. Le banc End sans Close actif exige de nouveaux essais Runtime et Compiler ; son journal avant End ne prouve pas la fermeture. **Référence protégée :** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md) · [preuve AP20 islands B/C](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 

@@ -21,7 +21,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 **Active working candidate: M19 P0j-b7 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102,072 bytes**, SHA256 `f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b`, **86 commands / 181 AP20 entries**, four native units. **MC68020 Gate A PASS (88 checks)**; **WinUAE Runtime B, real AMOS Compiler C and physical D NOT TESTED for B7**. [B7 report](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
 
-**Single active test:** [M19_P0J_B7_DRAW_BC_01.asc](tests/current/M19_P0J_B7_DRAW_BC_01.asc) · [WinUAE instructions and expected logs](tests/current/README.md). The earlier AP20 islands scenario **passed B/C on its own library** and is not evidence for B7. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Single active test:** [M19_P0J_B7_END_NO_CLOSE_BC_02.asc](tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc) · [WinUAE instructions and expected logs](tests/current/README.md). The earlier AP20 islands scenario **passed B/C on its own library** and is not evidence for B7. This active End-without-Close test still requires new Runtime and real Compiler observations; its pre-End log is not proof of successful cleanup. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md) · [AP20 islands B/C proof](docs/M19_AP20_V2_GATES_BC_2026-11-17.md).
 

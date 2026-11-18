@@ -56,7 +56,7 @@ jobs:
       - name: Strict AMOS Pro P0c active source preflight
         run: |
           python -B tools/test_amos_preflight.py
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_DRAW_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P0J_B7_END_NO_CLOSE_BC_02.asc
       - name: Verify P2.8 does NOT emit a new active library or change LAST_GOOD
         run: git diff --exit-code -- dist/AMOSPro_AGA.Lib dist/AMOSPro_AGA_LAST_GOOD.Lib tests/passed/
       - name: Verify permanent R88 experimental archive and ABK fixtures
