@@ -36,7 +36,7 @@ def main() -> None:
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(asc)==1 and asc[0].name=="M19_P0J_B7_ANIM_RUNTIME_03.asc"
+    assert len(asc)==1  # historical benchmark model independent of active ASC name
     data=(ROOT/"tests/passed"/TEST).read_bytes()
     assert git_blob(data)==ASC_BLOB, "Benchmark source changed without rechecking"
     smoke=(ROOT/"tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc").read_bytes()

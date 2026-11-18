@@ -28,7 +28,7 @@ def main()->None:
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     assert len(active_candidate)==102360 and sha256(active_candidate).hexdigest()=="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"
     files=sorted((ROOT/"tests/current").glob("*.asc"))
-    assert len(files)==1 and files[0].name=="M19_P0J_B7_ANIM_RUNTIME_03.asc", files
+    assert len(files)==1, files  # historical R87 test must not pin the active B7 campaign name
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
     assert blob_sha(raw)==SMOKE_GIT, "Smoke changed without requalification"
     assert blob_sha((ROOT/"tests/passed/M19_P23_BOBS_BATCH_01.asc").read_bytes())==R86_PASSED_GIT
