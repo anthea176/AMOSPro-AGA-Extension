@@ -83,6 +83,15 @@ def main():
     if not scripts:
         print("CURRENT RAM LOG PASS (no active ASC)")
         return
+    if scripts[0].name == "M19_P0J_B7_END_NO_CLOSE_BC_02.asc":
+        # A successful End terminates the program: its journal can only
+        # demonstrate entry into End, never post-End cleanup. Do NOT
+        # fabricate RESULT/PASS/CLOSE_RETURNED for this special case.
+        from test_m19_p0j_b7_end_asc_static import verify as verify_end
+        verify_end(scripts[0])
+        print("CURRENT RAM LOG PRE-END CONTRACT PASS:",scripts[0],
+              "post-End success requires WinUAE observation")
+        return
     verify(scripts[0].read_bytes().decode("latin-1"))
     print("CURRENT RAM LOG STATIC PASS:",scripts[0])
 
