@@ -8,7 +8,11 @@ Deux journaux WinUAE Runtime confirment : premier lancement PASS (405/405,
 La chaine B5 -> B7-m1 a contourne l'ancien reset des 64 slots Bob lors
 de Aga Screen Close. Un suffixe source-only B7-m2, un builder AP20 en
 memoire et un test CPU020 Close -> nouvelle ouverture -> Draw ont ete
-prepares pour Gate A. Bibliotheque B7-m1, ASC actif et LAST_GOOD inchanges.
+prepares et Gate A MC68020 PASS (75 groupes de controles,
+[CI 44413813790](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44413813790)).
+Candidate source-only B7-m2 : 102 400 octets,
+SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`.
+Bibliotheque B7-m1, ASC actif et LAST_GOOD inchanges.
 Aucune bascule binaire, aucun test Compiler. Voir le rapport
 [Close/reset B7-m2](M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
 
