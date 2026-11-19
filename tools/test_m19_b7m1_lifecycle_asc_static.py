@@ -114,92 +114,12 @@ def verify(path:Path)->None:
     src=data.decode('ascii');lines=src.splitlines()
     assert max(map(len,lines))<=200 and src.endswith('Return\n')
     assert LIB in src and 'NO TIMER OR BENCHMARK' in src
-    # Compiler (-1) must run through the same 405 frames as Runtime (1).
-    # ERR 1 is reserved for an unexpected Prg State, not the Compiler.
-    assert re.search(r'If _PRG=-1\n\s*_MODE\$="COMPILED"\nEnd If\nIf _MODE\$="UNKNOWN"\n\s*_ERR=1 : Goto _CLEANUP\nEnd If', src)
+    # -1 is the compiled mode and must NOT trigger the error 1 shortcut.
+    mode = r'If _PRG=-1\n\s*_MODE\$="COMPILED"\nEnd If\nIf _MODE\$="UNKNOWN"\n\s*_ERR=1 : Goto _CLEANUP\nEnd If'
+    assert re.search(mode,src), 'Compiler -1 branch must not abort the test'
     assert '_MODE$="RUNTIME"' in src and '_MODE$="INTERPRETED"' in src
-    assert 'Print #1,"TEST M19 B7-M2 BOB LIFECYCLE ";_MODE
-    assert src.count('Aga Bob Draw')==1 and src.count('Aga Swap')==1
-    assert src.count('Aga Bob Off 1')==1 and src.count('Aga Bob Off 2')==1
-    assert src.count('Aga Bob Off _ID')==1
-    for n in (2,3,9):
-        assert f'If _ERR=0 and _STAGE={n}' in src
-    assert src.count('Aga Blit Copy(_DX,_SY,_DX,_DY,_DW,_SLICE)')==1
-    assert 'Dim _OLDON(128),_OLDX(128),_OLDY(128)' in src
-    assert 'Dim _NEWX(64),_NEWY(64)' in src
-    assert 'If _ERR=0 and _EXPECT>0' in src
-    assert '_IDX=_PAGE*64+_ID' in src and '_PAGE=1-_PAGE' in src
-    assert src.index('Gosub _DO_SWAP',src.index('For _STAGE=1 To 9'))<src.index('_PAGE=1-_PAGE')
-    assert src.index('For _STAGE=1 To 9') < src.index('For _STEP=1 To 45')
-    assert 'Aga Text(12,15,7,"M19 B7M2 - BOB LIFECYCLE")' in src
-    assert src.count('Aga Text(12,27,5,"')==10
-    assert '_TXT=Aga Text(' in src
-    assert 'For _ID=17 To 64' in src and '_OFF_SENT=_OFF_SENT+1' in src
-    assert 'If _ERR=0 and _FR_OK=405 and _STAGES_OK=9 and _OFF_SENT=50' in src
-    assert 'If _CLOSE_CALLED=1 and _BANKS_ERASED=2 and _DB=1' in src
-    assert 'CLOSE_RETURNED' in src and 'OFF_COMMANDS_ISSUED' in src
-    assert 'FRAMES_OK' in src and 'STAGE_FRAMES_OK' in src and 'STAGE' in src
-    assert 'Trap Open Out 1,_LOG$' in src and 'Trap Close 1' in src
-    assert 'RAM:M19_B7M1_BOB_LIFECYCLE.TXT' in src
-    assert src.index('_CLEANUP:')<src.index('Aga Screen Close',src.index('_CLEANUP:'))
-    assert src.index('Aga Screen Close',src.index('_CLEANUP:'))<src.index('Erase _BANK1',src.index('_CLEANUP:'))
-    assert 'Aga Bob Bank _BANK1' in src and 'Aga Bob Bank _BANK2' in src
-    assert 'Make AGA Bob Mask 1,0' in src and 'No AGA Bob Mask 1' in src
-    executable='\n'.join(x.split("'",1)[0] for x in lines)
-    assert not re.search(r'\bTimer\b|\bFPS\b|\bRUN_TICKS\b|Erase All|\bThen\b|\bElseIf\b',executable,re.I)
-    assert src.count('For _STAGE=1 To 9')==1
-    assert len(re.findall(r'(?m)^\s*If\b',src))==len(re.findall(r'(?m)^\s*End If\b',src))
-    assert len(re.findall(r'(?m)^\s*For\b',src))==len(re.findall(r'(?m)^\s*Next\b',src))
-    assert len(re.findall(r'(?m)^\s*Repeat\b',src))==len(re.findall(r'(?m)^\s*Until\b',src))
-    frames,copies,offs=oracle()
-    print(f'M19 B7-m2 BOB LIFECYCLE ASC STATIC PASS: {frames} dual-page scenes, '
-          f'{copies} local Copy slices, {offs} Off commands modelled; WinUAE Compiler Gate C pending')
-
-
-if __name__=='__main__':
-    verify(Path(sys.argv[1]) if len(sys.argv)>1 else Path('tests/current')/NAME)
- in src
-    assert 'Print #1,"RUN_MODE ";_MODE
-    assert src.count('Aga Bob Draw')==1 and src.count('Aga Swap')==1
-    assert src.count('Aga Bob Off 1')==1 and src.count('Aga Bob Off 2')==1
-    assert src.count('Aga Bob Off _ID')==1
-    for n in (2,3,9):
-        assert f'If _ERR=0 and _STAGE={n}' in src
-    assert src.count('Aga Blit Copy(_DX,_SY,_DX,_DY,_DW,_SLICE)')==1
-    assert 'Dim _OLDON(128),_OLDX(128),_OLDY(128)' in src
-    assert 'Dim _NEWX(64),_NEWY(64)' in src
-    assert 'If _ERR=0 and _EXPECT>0' in src
-    assert '_IDX=_PAGE*64+_ID' in src and '_PAGE=1-_PAGE' in src
-    assert src.index('Gosub _DO_SWAP',src.index('For _STAGE=1 To 9'))<src.index('_PAGE=1-_PAGE')
-    assert src.index('For _STAGE=1 To 9') < src.index('For _STEP=1 To 45')
-    assert 'Aga Text(12,15,7,"M19 B7M2 - BOB LIFECYCLE")' in src
-    assert src.count('Aga Text(12,27,5,"')==10
-    assert '_TXT=Aga Text(' in src
-    assert 'For _ID=17 To 64' in src and '_OFF_SENT=_OFF_SENT+1' in src
-    assert 'If _ERR=0 and _FR_OK=405 and _STAGES_OK=9 and _OFF_SENT=50' in src
-    assert 'If _CLOSE_CALLED=1 and _BANKS_ERASED=2 and _DB=1' in src
-    assert 'CLOSE_RETURNED' in src and 'OFF_COMMANDS_ISSUED' in src
-    assert 'FRAMES_OK' in src and 'STAGE_FRAMES_OK' in src and 'STAGE' in src
-    assert 'Trap Open Out 1,_LOG$' in src and 'Trap Close 1' in src
-    assert 'RAM:M19_B7M1_BOB_LIFECYCLE.TXT' in src
-    assert src.index('_CLEANUP:')<src.index('Aga Screen Close',src.index('_CLEANUP:'))
-    assert src.index('Aga Screen Close',src.index('_CLEANUP:'))<src.index('Erase _BANK1',src.index('_CLEANUP:'))
-    assert 'Aga Bob Bank _BANK1' in src and 'Aga Bob Bank _BANK2' in src
-    assert 'Make AGA Bob Mask 1,0' in src and 'No AGA Bob Mask 1' in src
-    executable='\n'.join(x.split("'",1)[0] for x in lines)
-    assert not re.search(r'\bTimer\b|\bFPS\b|\bRUN_TICKS\b|Erase All|\bThen\b|\bElseIf\b',executable,re.I)
-    assert src.count('For _STAGE=1 To 9')==1
-    assert len(re.findall(r'(?m)^\s*If\b',src))==len(re.findall(r'(?m)^\s*End If\b',src))
-    assert len(re.findall(r'(?m)^\s*For\b',src))==len(re.findall(r'(?m)^\s*Next\b',src))
-    assert len(re.findall(r'(?m)^\s*Repeat\b',src))==len(re.findall(r'(?m)^\s*Until\b',src))
-    frames,copies,offs=oracle()
-    print(f'M19 B7-m2 BOB LIFECYCLE ASC STATIC PASS: {frames} dual-page scenes, '
-          f'{copies} local Copy slices, {offs} Off commands modelled; WinUAE pending')
-
-
-if __name__=='__main__':
-    verify(Path(sys.argv[1]) if len(sys.argv)>1 else Path('tests/current')/NAME)
- in src
+    assert 'Print #1,"TEST M19 B7-M2 BOB LIFECYCLE ";_MODE$' in src
+    assert 'Print #1,"RUN_MODE ";_MODE$' in src
     assert 'Print #1,"PRG_STATE ";_PRG' in src
     assert src.count('Aga Bob Draw')==1 and src.count('Aga Swap')==1
     assert src.count('Aga Bob Off 1')==1 and src.count('Aga Bob Off 2')==1
@@ -235,7 +155,7 @@ if __name__=='__main__':
     assert len(re.findall(r'(?m)^\s*Repeat\b',src))==len(re.findall(r'(?m)^\s*Until\b',src))
     frames,copies,offs=oracle()
     print(f'M19 B7-m2 BOB LIFECYCLE ASC STATIC PASS: {frames} dual-page scenes, '
-          f'{copies} local Copy slices, {offs} Off commands modelled; WinUAE pending')
+          f'{copies} local Copy slices, {offs} Off commands modelled; compiled WinUAE Gate C pending')
 
 
 if __name__=='__main__':
