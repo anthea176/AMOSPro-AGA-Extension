@@ -1,0 +1,53 @@
+name: M19 B8 private Safe and post-Close MC68020 Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-b8-safe-lifecycle-gate-a.yml'
+      - 'tools/m19_b8_safe_lifecycle_emit.py'
+      - 'tools/test_m19_b8_safe_lifecycle_gate_a.py'
+      - 'tools/build_m19_b8_safe_lifecycle_in_memory.py'
+      - 'tools/m19_b8_page_manager_emit.py'
+      - 'tools/m19_b8_snapshot_pool_emit.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m19-b8-safe-postclose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: MC68020 Unicorn, Capstone and AP20 source dependencies
+        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
+      - name: Python syntax and native CPU policy self-test
+        run: |
+          python -B -m py_compile tools/m19_b8_safe_lifecycle_emit.py tools/test_m19_b8_safe_lifecycle_gate_a.py tools/build_m19_b8_safe_lifecycle_in_memory.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: MC68020 Safe/GetMsg/WaitBlit and post-Close/End private Gate A
+        run: python -B tools/test_m19_b8_safe_lifecycle_gate_a.py
+      - name: Source-only fifth AP20 group, token/PC16 conservation
+        run: python -B tools/build_m19_b8_safe_lifecycle_in_memory.py
+      - name: Byte-exact active B7-m2 Lib, LAST_GOOD and validated ASC
+        run: |
+          python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          expected = {
+              'dist/AMOSPro_AGA.Lib': '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6',
+              'dist/AMOSPro_AGA_LAST_GOOD.Lib': '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d',
+              'tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc': 'a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec'
+          }
+          for path,expected_sha in expected.items():
+              assert sha256(Path(path).read_bytes()).hexdigest()==expected_sha, path
+          print('PASS: B7-m2, LAST_GOOD, and sole ASC intact')
+          PY
