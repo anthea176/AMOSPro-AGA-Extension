@@ -47,6 +47,21 @@ class Combined(CloseResetMachine):
                          begin=self.fifth+self.fifth_labels['b8_service_postclose_entry'],
                          end=self.fifth+self.fifth_labels['b8_service_postclose_entry'])
 
+    def frame(self):
+        outcome=super().frame()
+        if outcome!=1:
+            print('B8_DEBUG_FIRST_DRAW', {
+                'status':self.status(),
+                'callbacks':tuple(hex(x) for x in self.callbacks()),
+                'b7_end':hex(self.end_callback()),
+                'root':self.b7_root(),
+                'owner':hex(self.a(5)),
+                'screen':hex(self.get(self.real_state)),
+                'events':self.events[-14:],
+                'bobs':active_ids(self.table()),
+                'blits':self.paint_blits[-6:]})
+        return outcome
+
     def _count_post(self,uc,addr,size,unused):
         self.b8post_calls+=1
 
