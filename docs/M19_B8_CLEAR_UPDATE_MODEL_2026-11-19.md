@@ -2,6 +2,16 @@
 
 ## État réel
 
+
+### Checkpoint final source-only du 19/11 — premier Update complet en MC68020
+
+[**CI 44635843744 PASS**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44635843744), 59 contrôles sur deux implantations CPU020 : le vrai public setter B7 arme `End` **sans aucun Draw**, puis B8 exécute `Bind`, les deux `AllocMem`, enregistre son callback via l'adresse B7 vérifiée, réalise le préflight 64 images B7, copie le fond du back, appelle le vrai Draw B7 et confirme `READY`. `Clear` restitue le fond ; `Close` libère les deux snapshots une seule fois. Un premier Update sans setter/End B7 est refusé avec rollback des deux allocations et sans peinture. Le test a révélé une restauration indésirable de D2 dans le wrapper SET : corrigée pour rétablir D2=0 **après** MOVEM (commit `cb0885e`).
+
+**Builder source-only** : [`build_m19_b8_first_update_in_memory.py`](../tools/build_m19_b8_first_update_in_memory.py), [émetteur](../tools/m19_b8_first_update_emit.py), [banc intégré](../tools/test_m19_b8_first_update_gate_a.py). Candidate HUNK/AP20 **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` ; 88 commandes, 184 sections, cinq unités natives, portée PC16 maximale **29 962**. Deux fonctions numériques `Aga Bob Clear` et `Aga Bob Update` existent dans **cette candidate en mémoire seulement**, pas dans la Lib active. Tous les préfixes natifs B7/B8 antérieurs et les tokens historiques restent inchangés ; les seuls stubs préexistants modifiés dans la candidate sont ceux documentés par le builder, dont le setter Bob (174).
+
+**Limites bloquantes avant diffusion :** la première mise à jour exige actuellement un SET Bob réussi pour amorcer B7 ; le cas 0 Bob sans SET ne fonctionne pas. Les bibliothèques AmigaOS, Safe/Disp, Blitter/DMA sont encore **simulés** dans la Gate A. Réouverture d'un écran avec les mêmes adresses hors du hook Close/End (ABA), Gate B WinUAE Runtime et Gate C AMOS Compiler ne sont pas qualifiées. Le passage à `dist/AMOSPro_AGA.Lib` nécessite une autorisation distincte, sans `LAST_GOOD` ni ASC actif modifiés prématurément.
+
+
 **Développement en cours, SOURCE-ONLY.** Aucun token `Aga Bob Clear` ou `Aga Bob Update` n'est installé dans `dist/AMOSPro_AGA.Lib`. La bibliothèque active **B7-m2 reste 102 400 octets**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`. Son scénario Bob Lifecycle dispose de Gates A/B/C PASS ; aucun résultat n'est transféré aux nouvelles fonctions.
 
 Le modèle exécutable `tools/m19_bob_clear_update_model.py` et son test `tools/test_m19_bob_clear_update_model.py` servent d'**oracle de comportement**. Les primitives natives, leurs tests CPU020 et la candidate AP20 source-only sont documentés plus loin ; ils ne constituent **pas** encore les commandes utilisables dans AMOS.
