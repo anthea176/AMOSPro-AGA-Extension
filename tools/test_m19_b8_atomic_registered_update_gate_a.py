@@ -44,6 +44,9 @@ class AtomicMachine(TxMachine):
         # B8 Prepare must finish preflight and background capture BEFORE
         # B7 first obtains the CPU to modify a single destination plane.
         back=1 if self.get(DB+8)==0 else 0
+        assert self.uc.reg_read(AR[2])==0x210200, (
+            'B7 Draw received mutated AMOS A2 input',
+            hex(self.uc.reg_read(AR[2])))
         assert self.g('status')==0,'B7 Draw called while DIRTY'
         valid=self.root()[SROOT['valid']//4]
         bit=1 if back==0 else 2
