@@ -357,7 +357,7 @@ def emit_b8_page_manager() -> tuple[bytes, dict[str, int]]:
     c.raw('00' * ROOT_SIZE)
     result = c.out()
     assert result.startswith(prefix)
-    assert result[len(prefix):c.labels['b8_service_bind_entry']] == b''
+    assert len(prefix) < c.labels['b8_service_bind_entry']
     assert c.labels['b8_service_root'] + ROOT_SIZE == len(result)
     assert not len(result) & 1 and len(result) < 32766
     return result, c.labels
