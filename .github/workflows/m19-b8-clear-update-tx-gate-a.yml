@@ -37,6 +37,8 @@ jobs:
           python -B tools/check_aga_delivery_paths.py --self-test
       - name: Verify AP20 private fifth group candidate in RAM
         run: python -B tools/build_m19_b8_clear_update_tx_in_memory.py
+      - name: Verify original B7 full 64-image native preflight against real AGBO test fixture
+        run: python -B tools/test_m19_p0j_frame_image_preflight_gate_a.py
       - name: Execute real MC68020 private stages and all failure paths
         run: python -B tools/test_m19_b8_clear_update_tx_gate_a.py
       - name: Protect installed B7-m2 and the single validated campaign ASC
