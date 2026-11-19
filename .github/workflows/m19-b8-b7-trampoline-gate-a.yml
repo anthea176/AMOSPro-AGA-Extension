@@ -1,0 +1,52 @@
+name: M19 B8 B7 and fifth-unit trampoline MC68020 Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-b8-b7-trampoline-gate-a.yml'
+      - 'tools/m19_b8_b7_hook_emit.py'
+      - 'tools/m19_b8_cross_unit_arm_emit.py'
+      - 'tools/build_m19_b8_b7_trampoline_in_memory.py'
+      - 'tools/test_m19_b8_b7_trampoline_gate_a.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m19-b8-trampoline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install native MC68020 test dependencies
+        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
+      - name: Static syntax and CPU policy
+        run: |
+          python -B -m py_compile tools/m19_b8_b7_hook_emit.py tools/m19_b8_cross_unit_arm_emit.py tools/build_m19_b8_b7_trampoline_in_memory.py tools/test_m19_b8_b7_trampoline_gate_a.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Build source-only B7/5th AP20 candidate and check PC16
+        run: python -B tools/build_m19_b8_b7_trampoline_in_memory.py
+      - name: Run both real MC68020 native group trampolines with mocked OS
+        run: python -B tools/test_m19_b8_b7_trampoline_gate_a.py
+      - name: Verify protected B7-m2, LAST_GOOD and sole ASC are unchanged
+        run: |
+          python -B - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          expected = {
+            'dist/AMOSPro_AGA.Lib': '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6',
+            'dist/AMOSPro_AGA_LAST_GOOD.Lib': '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d',
+            'tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc': 'a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec'
+          }
+          for path,sha in expected.items():
+            assert sha256(Path(path).read_bytes()).hexdigest()==sha,path
+          print('PASS protected B7-m2, R84 and sole ASC unchanged')
+          PY
