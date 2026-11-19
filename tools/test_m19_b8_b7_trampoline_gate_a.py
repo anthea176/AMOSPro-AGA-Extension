@@ -48,40 +48,6 @@ class Combined(CloseResetMachine):
         self.uc.hook_add(UC_HOOK_CODE,self._count_post,
                          begin=self.fifth+self.fifth_labels['b8_service_postclose_entry'],
                          end=self.fifth+self.fifth_labels['b8_service_postclose_entry'])
-        self.native_trace=[]
-        for label in ('b8_b7_draw_trampoline_entry','b8_b7_draw_call',
-                      'b7_multiframe_draw_entry','b7_multiframe_refuse',
-                      'b7_guarded_draw_entry','guarded_frame_draw_entry',
-                      'guard_draw_arm','guard_draw_reject','guard_draw_return',
-                      'explicit_frame_draw_entry','b7_draw_arm',
-                      'b7_draw_fail','b7_draw_return','b8_b7_draw_return'):
-            if label in self.labels:
-                address=self.entry+self.labels[label]
-                self.uc.hook_add(UC_HOOK_CODE,self._trace_native,
-                                 user_data=label,begin=address,end=address)
-
-    def _trace_native(self,uc,address,size,name):
-        if len(self.native_trace)<120:
-            self.native_trace.append((
-                name,hex(self.uc.reg_read(UC_M68K_REG_PC)),
-                hex(self.d(3)),hex(self.a(2)),
-                self.status(),tuple(hex(x) for x in self.callbacks())))
-
-    def frame(self):
-        outcome=super().frame()
-        if outcome!=1:
-            print('B8_DEBUG_FIRST_DRAW', {
-                'status':self.status(),
-                'callbacks':tuple(hex(x) for x in self.callbacks()),
-                'b7_end':hex(self.end_callback()),
-                'root':self.b7_root(),
-                'owner':hex(self.a(5)),
-                'screen':hex(self.get(self.real_state)),
-                'events':self.events[-14:],
-                'bobs':active_ids(self.table()),
-                'blits':self.paint_blits[-6:],
-                'native_trace':self.native_trace[-35:]})
-        return outcome
 
     def _count_post(self,uc,addr,size,unused):
         self.b8post_calls+=1
@@ -225,6 +191,27 @@ def main():
         p.invoke_callback()
         assert p.get(p.real_state)==0 and len(p.b8_frees)==2;cases+=1
         assert p.b7_root()==(0,0) and p.callbacks()==(p.old_end,)*2;cases+=1
+
+        # A registered Close is refused while Safe/Disp is pending:
+        # B7's real Close must not free native ScreenBuffers, while B8
+        # must retain BOTH CPU snapshot allocations and its End hook.
+        c=ready(layout,cls=Combined,inject_failure=True)
+        c.setup_b8_pool()
+        assert c.arm()==1;cases+=1
+        c.invoke_guard('close')
+        assert c.get(c.real_state)==c.screen;cases+=1
+        assert not c.b8_frees and not c.free_screens and not c.free_ports;cases+=1
+        assert c.b7_root()[0]==AMOS
+        assert c.callbacks()==(c.entry+c.labels['b8_b7_end_trampoline_entry'],)*2
+        c.safe_after=c.safe_count+1
+        c.disp_after=c.disp_count+2
+        c.invoke_guard('close')
+        assert c.get(c.real_state)==0;cases+=1
+        assert len(c.b8_frees)==2 and not c.snapshot_allocs;cases+=1
+        assert c.b7_root()==(0,0)
+        assert c.callbacks()==(c.end_callback(),)*2
+        c.invoke_guard('close')
+        assert len(c.b8_frees)==2;cases+=1
 
         # Foreign or half-patched End callback cannot register B8.
         f=ready(layout,cls=Combined,inject_failure=False)
