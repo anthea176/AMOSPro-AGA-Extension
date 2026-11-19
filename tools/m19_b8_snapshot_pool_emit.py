@@ -42,6 +42,8 @@ def emit_b8_snapshot_pool() -> tuple[bytes,dict[str,int]]:
         c.raw('48e7cfee4fefffa0') # preserves all AMOS regs except D2/D3
         c.move(A(7),A(4))
         S(A(5),'owner');S(A(0),'screen')
+        # D0 is an input byte count; preserve it BEFORE CPU guard returns D0=1.
+        S(A(1),'bitmap0');S(A(2),'bitmap1');S(D(0),'bytes')
         S(I(0),'output');S(I(0),'status')
         B(1,'b8_pool_cpu_guard')
         c.tst(D(0));B(7,'b8_pool_return')
@@ -60,7 +62,6 @@ def emit_b8_snapshot_pool() -> tuple[bytes,dict[str,int]]:
 
     # Bind is transactional: both buffers are allocated or neither.
     prologue('b8_pool_bind_entry')
-    S(A(1),'bitmap0');S(A(2),'bitmap1');S(D(0),'bytes')
     G('bytes',D(0));c.imm('cmp',2,D(0));B(5,'b8_pool_return')
     c.imm('cmp',MAX_PAGE_BYTES,D(0));B(2,'b8_pool_return')
     c.imm('and',1,D(0));B(6,'b8_pool_return')
