@@ -344,6 +344,11 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     service()
     c.tst(M(0,B8ROOT['owner']));B(6,'b8_tx_return')
     txroot()
+    c.move(M(2,R['owner']),D(0))
+    c.tst(D(0));B(7,'b8_tx_reset_commit')
+    c.move(A(5),D(1))
+    c.alu('cmp',D(1),0);B(6,'b8_tx_return')  # Foreign owner cannot reset.
+    L('b8_tx_reset_commit')
     for off in range(0,ROOT_SIZE,4):c.move(I(0),M(2,off))
     successful()
 
