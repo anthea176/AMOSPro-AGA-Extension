@@ -1,0 +1,35 @@
+name: M19 B8 Bob snapshot core - MC68020 Gate A source only
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-b8-planar-snapshot-gate-a.yml'
+      - 'tools/m19_b8_planar_snapshot_emit.py'
+      - 'tools/test_m19_b8_planar_snapshot_gate_a.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m19-b8-private-snapshot-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install MC68020 emulator and disassembler
+        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4
+      - name: Validate source syntax and independent private byte emitter
+        run: |
+          python -B -m py_compile tools/m19_b8_planar_snapshot_emit.py tools/test_m19_b8_planar_snapshot_gate_a.py
+          python -B tools/m19_b8_planar_snapshot_emit.py
+      - name: Execute actual MC68020 snapshot/restore primitive Gate A
+        run: python -B tools/test_m19_b8_planar_snapshot_gate_a.py
+      - name: Guarantee no work Lib / ASC change
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
