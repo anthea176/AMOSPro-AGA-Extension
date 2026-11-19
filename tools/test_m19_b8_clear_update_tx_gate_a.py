@@ -139,7 +139,7 @@ def main():
         m.set_guard(READY)
         assert m.call('update_finish')==0;cases+=1
         assert m.g('status')==DIRTY
-        assert m.call('update_abort')==1;cases+=1
+        assert m.call('update_abort')==0;cases+=1 # Abort intentionally never reports frame success
         assert m.g('status')==DIRTY and m.tx('pending')==0
         assert m.call('clear_guard')==1;cases+=1
         assert m.g('status')==0
