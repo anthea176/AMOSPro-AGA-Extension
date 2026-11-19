@@ -42,7 +42,7 @@ class Combined(CloseResetMachine):
         self.uc.mem_write(self.fifth,self.fifth_source)
         self.b8post_calls=0
         self.snapshot_allocs={SNAP0:NBYTES,SNAP1:NBYTES}
-        self.frees=[]
+        self.b8_frees=[]
         self.uc.hook_add(UC_HOOK_CODE,self._count_post,
                          begin=self.fifth+self.fifth_labels['b8_service_postclose_entry'],
                          end=self.fifth+self.fifth_labels['b8_service_postclose_entry'])
@@ -55,7 +55,7 @@ class Combined(CloseResetMachine):
             pointer=self.a(1);n=self.d(0)
             assert self.snapshot_allocs.get(pointer)==n,('FreeMem',pointer,n)
             del self.snapshot_allocs[pointer]
-            self.frees.append((pointer,n))
+            self.b8_frees.append((pointer,n))
             return self._os_return(0)
         if address==EXEC-534 and self.fifth<=self.a(1)<self.fifth+len(self.fifth_source):
             return self._os_return(1) # TypeOfMem for separately relocated B8.
@@ -138,7 +138,7 @@ def main():
         assert m.frame()==1 and m.callbacks()==(m.end_callback(),)*2;cases+=1
         m.invoke_guard('close')
         assert m.get(m.real_state)==0 and m.status()==0;cases+=1
-        assert m.b8post_calls==0 and m.frees==[];cases+=1
+        assert m.b8post_calls==0 and m.b8_frees==[];cases+=1
 
         # Register only with exact B7 End callback and live pool owner.
         m=ready(layout,cls=Combined,inject_failure=False)
@@ -153,17 +153,17 @@ def main():
         m.put(DB+20,0)
         assert m.frame()==1;cases+=1
         assert m.callbacks()==(m.entry+m.labels['b8_b7_end_trampoline_entry'],)*2
-        assert m.b8post_calls==0 and m.frees==[]
+        assert m.b8post_calls==0 and m.b8_frees==[]
         m.invoke_guard('close')
         assert m.get(m.real_state)==0 and m.status()==0;cases+=1
-        assert len(m.frees)==2 and not m.snapshot_allocs;cases+=1
+        assert len(m.b8_frees)==2 and not m.snapshot_allocs;cases+=1
         assert m.b8post_calls==1 and m.b7_root()==(0,0);cases+=1
         assert m.callbacks()==(m.end_callback(),)*2
         m.invoke_guard('close')
-        assert m.b8post_calls==1 and len(m.frees)==2;cases+=1
+        assert m.b8post_calls==1 and len(m.b8_frees)==2;cases+=1
         m.invoke_callback()
         assert m.callbacks()==(m.old_end,)*2;cases+=1
-        assert len(m.frees)==2 and m.b8post_calls==1
+        assert len(m.b8_frees)==2 and m.b8post_calls==1
 
         # Direct End must retain B7 callback chain and call postclose once.
         n=ready(layout,cls=Combined,inject_failure=False)
@@ -171,10 +171,10 @@ def main():
         assert n.arm()==1;cases+=1
         n.invoke_callback()
         assert n.get(n.real_state)==0;cases+=1
-        assert n.status()==0 and len(n.frees)==2;cases+=1
+        assert n.status()==0 and len(n.b8_frees)==2;cases+=1
         assert n.callbacks()==(n.old_end,)*2 and n.b7_root()==(0,0)
         n.invoke_callback()
-        assert len(n.frees)==2 and n.b8post_calls==1;cases+=1
+        assert len(n.b8_frees)==2 and n.b8post_calls==1;cases+=1
 
         # Failed Safe/Disp End keeps both pages allocated and re-arms shim.
         p=ready(layout,cls=Combined,inject_failure=True)
@@ -182,12 +182,12 @@ def main():
         assert p.arm()==1;cases+=1
         p.invoke_callback()
         assert p.get(p.real_state)==p.screen;cases+=1
-        assert len(p.frees)==0 and p.b7_root()[0]==AMOS;cases+=1
+        assert len(p.b8_frees)==0 and p.b7_root()[0]==AMOS;cases+=1
         assert p.callbacks()==(p.entry+p.labels['b8_b7_end_trampoline_entry'],)*2
         p.safe_after=p.safe_count+1
         p.disp_after=p.disp_count+2
         p.invoke_callback()
-        assert p.get(p.real_state)==0 and len(p.frees)==2;cases+=1
+        assert p.get(p.real_state)==0 and len(p.b8_frees)==2;cases+=1
         assert p.b7_root()==(0,0) and p.callbacks()==(p.old_end,)*2;cases+=1
 
         # Foreign or half-patched End callback cannot register B8.
