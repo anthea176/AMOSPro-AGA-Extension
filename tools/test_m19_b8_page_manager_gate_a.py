@@ -227,6 +227,26 @@ def main():
         t=Machine(raw,labels,base)
         t.set_geometry(BMP1,(PLANE10,PLANE11),depth=3)
         assert t.call('bind')==0 and t.alloc_calls==[];cases+=1
+        # Different BitMap objects must not share even ONE physical plane.
+        t=Machine(raw,labels,base)
+        t.set_geometry(BMP1,(PLANE00,PLANE11))
+        before=(t.page(0),t.page(1))
+        assert t.call('bind')==0 and not t.alloc_calls;cases+=1
+        assert (t.page(0),t.page(1))==before
+        # Also reject PARTIALLY overlapping, not just identical pointers.
+        t=Machine(raw,labels,base)
+        t.set_geometry(BMP1,(PLANE00+2,PLANE11))
+        assert t.call('bind')==0 and not t.alloc_calls;cases+=1
+        # A failed capture makes an older snapshot unusable.
+        t=Machine(raw,labels,base)
+        assert t.call('bind')==1
+        assert t.call('capture')==1
+        assert t.root()[SROOT['valid']//4]==2
+        t.set_geometry(BMP1,(PLANE10+1,PLANE11))
+        assert t.call('capture')==0;cases+=1
+        assert t.root()[SROOT['valid']//4]==0
+        assert t.call('restore')==0;cases+=1
+        assert t.call('close')==1
         t=Machine(raw,labels,base)
         assert t.call('bind')==1
         t.set_geometry(BMP1,(PLANE10,PLANE11),rows=3)
