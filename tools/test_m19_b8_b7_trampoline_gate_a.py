@@ -46,6 +46,24 @@ class Combined(CloseResetMachine):
         self.uc.hook_add(UC_HOOK_CODE,self._count_post,
                          begin=self.fifth+self.fifth_labels['b8_service_postclose_entry'],
                          end=self.fifth+self.fifth_labels['b8_service_postclose_entry'])
+        self.native_trace=[]
+        for label in ('b8_b7_draw_trampoline_entry','b8_b7_draw_call',
+                      'b7_multiframe_draw_entry','b7_multiframe_refuse',
+                      'b7_guarded_draw_entry','guarded_frame_draw_entry',
+                      'guard_draw_arm','guard_draw_reject','guard_draw_return',
+                      'explicit_frame_draw_entry','b7_draw_arm',
+                      'b7_draw_fail','b7_draw_return','b8_b7_draw_return'):
+            if label in self.labels:
+                address=self.entry+self.labels[label]
+                self.uc.hook_add(UC_HOOK_CODE,self._trace_native,
+                                 user_data=label,begin=address,end=address)
+
+    def _trace_native(self,uc,address,size,name):
+        if len(self.native_trace)<120:
+            self.native_trace.append((
+                name,hex(self.uc.reg_read(UC_M68K_REG_PC)),
+                hex(self.d(3)),hex(self.a(2)),
+                self.status(),tuple(hex(x) for x in self.callbacks())))
 
     def frame(self):
         outcome=super().frame()
@@ -59,7 +77,8 @@ class Combined(CloseResetMachine):
                 'screen':hex(self.get(self.real_state)),
                 'events':self.events[-14:],
                 'bobs':active_ids(self.table()),
-                'blits':self.paint_blits[-6:]})
+                'blits':self.paint_blits[-6:],
+                'native_trace':self.native_trace[-35:]})
         return outcome
 
     def _count_post(self,uc,addr,size,unused):
