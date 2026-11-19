@@ -121,7 +121,7 @@ def emit_b8_b7_first_update() -> tuple[bytes, dict[str, int]]:
     L('b8_set_return')
     c.move(M(7, 0), D(3))
     c.move(I(0), D(2))
-    c.raw('4fef00204cdf77f74e75')
+    c.raw('4fef00204cdf77f774004e75')  # D2=0 AFTER MOVEM restore
 
     data = c.out()
     assert data.startswith(old)
