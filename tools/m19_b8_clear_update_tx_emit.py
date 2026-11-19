@@ -12,7 +12,7 @@ three-stage native protocol for an ALREADY-REGISTERED B7 End shim.
              background, then permit ONE B7 Draw.
     finish : verify actual B7 Draw reached READY on the same physical back.
     abort  : leave B7 DIRTY; explicit Clear or successful Close recovers.
-    reset  : clear transaction state ONLY after B8 service Close freed pool.
+    reset  : optional cleanup after pool release; re-bind also resets stale\n             transaction state on a NEW snapshot epoch with valid mask zero.
 
 The caller must execute prepare -> real B7 Draw -> finish atomically in its
 own AMOS task, with no Swap or arbitrary other call in between. This is
@@ -185,12 +185,27 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     c.tst(D(0));B(7,'b8_tx_new_epoch')
     c.move(A(5),D(1))
     c.alu('cmp',D(1),0);B(6,'b8_tx_validate_fail')
+    # An actual B8 pool Close clears service identity but keeps the
+    # monotonic epoch. The NEXT successful Bind has an incremented epoch
+    # with NO valid snapshots. In this one case a stale transaction root
+    # may be reset safely, even if Screen* has reused the same address.
+    # This does NOT replace a true AGA Open/Close generation hook: a
+    # destroy/reopen without the registered Close could still be ABA.
+    c.move(M(2,R['epoch']),D(0));G('epoch',D(1))
+    c.alu('cmp',D(1),0);B(6,'b8_tx_rebind_epoch')
     c.move(M(2,R['screen']),D(0));G('screen',D(1))
     c.alu('cmp',D(1),0);B(6,'b8_tx_validate_fail')
-    c.move(M(2,R['epoch']),D(0));G('epoch',D(1))
-    c.alu('cmp',D(1),0);B(6,'b8_tx_validate_fail')
     B(0,'b8_tx_valid')
+    L('b8_tx_rebind_epoch')
+    service()
+    c.tst(M(0,B8ROOT['valid']))
+    B(6,'b8_tx_validate_fail')  # Cannot drop a live physical snapshot.
+    txroot()
+    for field in ('cleared','pending','txepoch'):
+        c.move(I(0),M(2,R[field]))
+    # B7 callbacks and B8 owner/screen were already source-checked above.
     L('b8_tx_new_epoch')
+    txroot()
     c.move(A(5),M(2,R['owner']))
     G('screen',D(0));c.move(D(0),M(2,R['screen']))
     G('epoch',D(0));c.move(D(0),M(2,R['epoch']))
