@@ -179,7 +179,7 @@ def emit_b8_safe_lifecycle() -> tuple[bytes, dict[str, int]]:
 
     data = c.out()
     assert data.startswith(old) and len(data) < 32766 and not len(data) & 1
-    assert labels['b8_service_root'] < labels['b8_service_safe_acquire_entry']
+    assert c.labels['b8_service_root'] < c.labels['b8_service_safe_acquire_entry']
     return data, c.labels
 
 
