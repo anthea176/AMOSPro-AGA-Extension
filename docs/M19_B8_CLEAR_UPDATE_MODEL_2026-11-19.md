@@ -58,9 +58,21 @@ Le gestionnaire conserve les **3 572 octets des primitives B8 précédentes à l
 
 **Protections confirmées en CI :** `dist/AMOSPro_AGA.Lib` B7-m2 SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, `LAST_GOOD` R84 SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` et l'ASC validé SHA256 `a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec` inchangés. Pas de promotion ni d'installation.
 
-### Prochaine étape technique après coordination privée
+### B8 — Safe/GetMsg/WaitBlit et post-Close/End privés MC68020 : Gate A PASS (19/11/2026)
 
-1. **Raccorder le gestionnaire privé désormais testé** aux vrais événements Safe/Disp et au Blitter, puis au cycle de vie réel Screen/DBState ; vérifier la génération d'écran et les refus après destruction/recréation. Ne pas exposer la copie sans une page inactive et réellement Safe.
+**Livré sur `main`, source-only :** [émetteur `m19_b8_safe_lifecycle_emit.py`](../tools/m19_b8_safe_lifecycle_emit.py), [tests CPU](../tools/test_m19_b8_safe_lifecycle_gate_a.py), [builder cinquième unité AP20](../tools/build_m19_b8_safe_lifecycle_in_memory.py) et [CI **44614557930 PASS**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44614557930). **36 scénarios MC68020 sous Unicorn, deux implantations, avec Exec, graphics.library et retour Close/End simulés**. Les vérifications de politique CPU/livraison sont également [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44614557844).
+
+- `b8_service_safe_acquire_entry` contrôle le propriétaire A5, l'écran AGA vivant, le DBState et `GfxBase`. Si Safe est en attente, appelle **une seule fois `Exec/GetMsg(SafePort)`**, sans `ReplyMsg`, attente infinie ni `Swap`. Sans message, refuse en conservant les pixels et le drapeau Safe. Sur succès, efface uniquement le bit Safe, préserve **Disp**, appelle **`graphics.library/WaitBlit`**, puis resélectionne et valide la page arrière.
+- `b8_service_safe_capture_entry` et `b8_service_safe_restore_entry` réutilisent les primitives B8 validées, ne modifient jamais le front et conservent un indicateur de snapshot valide par BitMap.
+- `b8_service_postclose_entry` est **un adaptateur privé post-fermeture** : il refuse de libérer les deux sauvegardes si `State.Screen` n'est pas nul ou si A5 ne correspond pas. Après une fermeture réellement réussie et constatée (simulée en Gate A), la libération est idempotente, sans double `FreeMem`. **L'appel automatique depuis le véritable `Aga Screen Close` ou callback AMOS `End` n'est pas raccordé** ; le code B7-m2 reste byte-exact.
+
+**Candidate AP20 source-only, exclusivement en mémoire :** **112 276 octets**, SHA256 `8800e55f0ea0865a3b8042cb8457f27bfbf7684b84ca7d90874baec472c6a744`, **86 commandes / 182 entrées AP20**, groupes `[142,153,156,177,181]`, cinquième groupe **9 870 octets** (suffixe 870), portée PC16 max **28 938**, sans modifier les 181 sections antérieures ni les tokens publics. `dist/AMOSPro_AGA.Lib` B7-m2, `LAST_GOOD` R84 et l'unique ASC validé demeurent inchangés, confirmé par CI.
+
+**Limites explicites :** les services OS sont **simulés** dans la Gate A MC68020 ; ni la vraie file Safe/Disp, ni le Blitter matériel, ni la fermeture automatique B7, ni AMOS Compiler ne sont validés pour B8. Sans hook à l'ouverture/fermeture, la génération des écrans réutilisant les mêmes adresses (ABA) n'est pas protégée par le simple compteur privé. Le gestionnaire n'est pas une API publique, ne raccorde pas encore les commandes `Aga Bob Clear`/`Update` ni le garde `DIRTY/READY`.
+
+### Prochaine étape technique après Safe et post-Close privés
+
+1. **Raccorder effectivement les adaptateurs B8 à B7-m2** dans une candidate AP20 en mémoire : préserver l'ancien `Screen Close`/reset des 64 Bobs et la chaîne du callback `End`, prouver la compatibilité des stubs/relocations puis exécuter des tests MC68020 de fermeture réussie, refus Safe/Disp et réouverture. `Safe/GetMsg/WaitBlit` est désormais testé en privé, pas en exécution AmigaOS réelle.
 2. Raccorder le pool à **`Screen Close` et `End`** : chaque allocation doit être libérée une fois et le reset du Bob Lifecycle B7-m2 doit rester correct.
 3. Raccorder **`Clear`** (restauration de la page arrière) et **`Update`** (préflight de toutes les banques/images, Clear nécessaire, capture du fond, puis Draw), avec garde `DIRTY/READY`, **sans Swap implicite**, et tester fonds dynamiques et passages de page.
 4. Ajouter les deux **tokens AP20 publics avec stubs proches de la cinquième unité**, de véritables signatures AMOS/Compiler vérifiées et un banc ASC dédié ; réaliser la Gate A complète avant **une nouvelle autorisation distincte** de remplacement de la Lib active. Aucun PASS Runtime/Compiler n'est transférable.

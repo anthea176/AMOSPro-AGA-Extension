@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 19 novembre 2026 — M19 B8 : Safe/WaitBlit et post-Close/End privés, Gate A PASS
+
+**Sur `main` :** [`m19_b8_safe_lifecycle_emit.py`](../tools/m19_b8_safe_lifecycle_emit.py), [banc natif](../tools/test_m19_b8_safe_lifecycle_gate_a.py), [builder AP20](../tools/build_m19_b8_safe_lifecycle_in_memory.py) ; [**CI 44614557930 : PASS, 36 scénarios MC68020**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44614557930) sur deux implantations. `Exec/GetMsg` consommé une seule fois pour une notification Safe disponible (refus si absente), préservation du bit Disp, `graphics.library/WaitBlit`, revalidation de la page arrière et capture/restauration. Entrée privée post-Close/End : deux `FreeMem` au plus, seulement si le Screen réel est déjà nul ; propriétaire étranger, écran ouvert et double cleanup refusés/sûrs. **Les OS, notifications et succès Close/End sont modélisés ; aucun hook public B7-m2 n'est encore raccordé.**
+
+**Candidate AP20 SOURCE-ONLY : 112 276 octets**, SHA256 `8800e55f0ea0865a3b8042cb8457f27bfbf7684b84ca7d90874baec472c6a744`, **86 commandes / 182 entrées**, cinquième groupe 9 870 octets, PC16 maximal 28 938 inchangé ; les quatre anciens groupes/181 sections B7-m2 sont byte-exact. **Nouveau chantier : relier réellement Close/End B7-m2 au nettoyage B8 sans casser les callbacks/relocations, valider les échecs Safe/Disp et l'ABA, puis `Clear`/`Update` et `DIRTY/READY`.** Gates B/C/D B8 non établies, aucun `Aga Bob Clear/Update` public ni modification de `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` ou de l'ASC actif. [Rapport](M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
+
+
 ## 19 novembre 2026 — M19 B8 : gestionnaire natif privé de deux snapshots, Gate A PASS
 
 **Réalisé sur `main` :** nouveau [coordonnateur MC68020](../tools/m19_b8_page_manager_emit.py), [test natif](../tools/test_m19_b8_page_manager_gate_a.py) et [builder AP20 source-only](../tools/build_m19_b8_page_manager_in_memory.py). [**CI 44611440112 : PASS 58 cas MC68020**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44611440112), deux placements et appels système simulés. Le service coordonne les deux BitMap réels et leur géométrie, propriétaire A5, allocations transactionnelles, captures/restaurations sur le back uniquement, validité séparée par page, refus Safe pending, pages aliasées, propriétaire étranger, snapshots périmés et rollback. Le Close privé est idempotent et sans double FreeMem ; il n'est **pas encore relié** au vrai `Screen Close`/`End`.
