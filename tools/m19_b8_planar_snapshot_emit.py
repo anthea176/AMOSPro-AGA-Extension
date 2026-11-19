@@ -21,7 +21,7 @@ from __future__ import annotations
 from m68k_emit import Code, D, A, M, POST, I
 
 FRAME=64
-F=dict(bitmap=0,snapshot=4,capacity=8,mode=12,total=16,plane_bytes=20,depth=24,success=28)
+F=dict(bitmap=0,snapshot=4,capacity=8,mode=12,total=16,plane_bytes=20,depth=24,success=28,saved_a3=32)
 
 
 def emit_planar_snapshot_core() -> tuple[bytes,dict[str,int]]:
@@ -49,6 +49,7 @@ def emit_planar_snapshot_core() -> tuple[bytes,dict[str,int]]:
     c.raw('48e7efee4fefffc0')  # AMOS saved set, local 64-byte frame
     c.move(A(7),A(2))
     S(A(0),'bitmap');S(A(1),'snapshot');S(D(0),'capacity');S(D(1),'mode')
+    S(A(3),'saved_a3')
     S(I(0),'success')
     c.move(I(0),D(0))
     c.raw('20780004')     # ExecBase from 4.W: MC68020+ mandatory
@@ -120,6 +121,7 @@ def emit_planar_snapshot_core() -> tuple[bytes,dict[str,int]]:
     S(I(1),'success')
     L('b8_copy_return')
     G('success',D(3))
+    G('saved_a3',A(3))  # AMOS ABI: A3 omitted from MOVEM mask
     c.raw('4fef00404cdf77f774004e75')
     blob=c.out()
     assert len(blob)<32766 and len(blob)%2==0
