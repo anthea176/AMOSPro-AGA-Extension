@@ -51,7 +51,7 @@ def emit_b8_back_selector() -> tuple[bytes,dict[str,int]]:
             c.tst(D(0));B(7,'b8_select_return')
 
     L('b8_checked_back_selector_entry')
-    c.raw('48e7efee4fefffa0') # Save AMOS ABI, 96-byte frame.
+    c.raw('48e7cfee4fefffa0') # Save AMOS regs except D2/D3 private results.
     c.move(A(7),A(2))
     S(I(0),'result');S(I(0),'output')
     # Execute only if ExecBase and an actual 68020+ are present.
@@ -93,7 +93,7 @@ def emit_b8_back_selector() -> tuple[bytes,dict[str,int]]:
     L('b8_select_return')
     G('output',D(2))
     G('result',D(3))
-    c.raw('4fef00604cdf77f74e75') # D2/D3 private return, not public GetP.
+    c.raw('4fef00604cdf77f34e75') # D2/D3 private return, not public GetP.
     native=c.out()
     assert native.startswith(previous)
     assert c.labels['b8_checked_back_selector_entry']==len(previous)
