@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,7 +48,7 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA):
+    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
         # P0c redirects public Close to its BOBS unit, so only the real
         # multi-unit segment table and pinned builder may certify its identity.
@@ -70,19 +70,27 @@ def main():
             AP20_ISLANDS_SHA:(142,177,178),
             B7_SHA:(142,177,181),
             B7M1_SHA:(142,177,181),
+            B7M2_SHA:(142,177,181),
         }
         aga_index,bob_index,entry_count=group_indices[digest]
         assert len(units)==entry_count, "Unexpected modular segment count"
-        if digest in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA):
+        if digest in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA):
             assert units[aga_index].startswith(frozen_units[84]), "AP20 islands inherited R84 AGA/state prefix altered"
         else:
             assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
         assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
-        if digest in (B7_SHA,B7M1_SHA):
+        if digest in (B7_SHA,B7M1_SHA,B7M2_SHA):
             from build_m19_p0j_end_lifecycle_in_memory import build as build_b7, build_multiframe
-            rebuilt,meta=(build_multiframe() if digest==B7M1_SHA else build_b7())
+            if digest==B7M2_SHA:
+                from build_m19_b7m2_close_reset_in_memory import build_close_reset
+                rebuilt,meta=build_close_reset()
+                assert meta['predecessor_sha']==B7M1_SHA
+                assert meta['appended_bytes']==34 and len(rebuilt)==102400
+            else:
+                rebuilt,meta=(build_multiframe() if digest==B7M1_SHA else build_b7())
             assert image==rebuilt and meta['sha256']==digest
             assert meta['public_commands']==86 and meta['ap20_entries']==181
+            assert meta['native_groups']==[142,153,156,177]
             from build_m19_ap20_islands_in_memory import build as build_islands
             baseline, _=build_islands()
             _,earlier_groups,_=unpack_ap20(baseline)
@@ -144,7 +152,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; modular AGA input-state group byte-verified against R84 LAST_GOOD for R87/R88/P0c/P0d/AP20 islands")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7-m2 source-built and modular AGA group verified against R84 LAST_GOOD")
 
 if __name__=="__main__":
     main()
