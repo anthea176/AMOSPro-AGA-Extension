@@ -66,15 +66,19 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
         c.move(I(value),M(0,B7GUARD['status']))
     def mark_dirty():
         guard_status(DIRTY)
+    bit_sites=[0]
     def selected_bit():
-        # physical page 1 when front=0 and physical page 0 when front=1
+        # Emitted multiple times: every branch MUST have unique code labels.
+        bit_sites[0]+=1
+        page1=f'b8_tx_page1_{bit_sites[0]}'
+        ready=f'b8_tx_bit_ready_{bit_sites[0]}'
         G('front',D(0))
-        c.tst(D(0));B(7,'b8_tx_page1')
+        c.tst(D(0));B(7,page1)
         S(I(1),'bit')
-        B(0,'b8_tx_bit_ready')
-        L('b8_tx_page1')
+        B(0,ready)
+        L(page1)
         S(I(2),'bit')
-        L('b8_tx_bit_ready')
+        L(ready)
 
     # Verify ownership / real AGA Screen / registered original B7 shim.
     # The B7 guard lies in the SAME relocated BOBS native unit as shim.
