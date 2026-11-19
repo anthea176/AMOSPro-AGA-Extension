@@ -26,6 +26,7 @@ from m19_b8_clear_update_tx_emit import emit_b8_clear_update_tx, F
 from m19_b8_b7_hook_emit import emit_b8_b7_hooks
 
 DRAW_SLOT=44  # unused byte range of existing 96-byte B8 transaction frame
+AMOS_A2_SLOT=48  # B7 Draw expects the exact original AMOS A2 input
 FRAME=96
 
 
@@ -40,6 +41,7 @@ def emit_b8_atomic_registered_update() -> tuple[bytes, dict[str,int]]:
     L('b8_service_update_atomic_registered_entry')
     c.raw('48e7cfee4fefffa0')  # AMOS preserved set, 96-byte frame
     c.move(A(7),A(4))
+    c.move(A(2),M(4,AMOS_A2_SLOT)) # Save original before B8 scratch uses A2.
     c.move(I(0),M(4,F['result']))
 
     # Refuse unregistered/foreign owners before accessing any B7 code.
@@ -71,6 +73,7 @@ def emit_b8_atomic_registered_update() -> tuple[bytes, dict[str,int]]:
     # underlying B7 64-image preflight runs before the FIRST pixel copy.
     B(1,'b8_service_update_prepare_entry')
     c.tst(D(3));B(7,'b8_atomic_return')
+    c.move(M(4,AMOS_A2_SLOT),A(2)) # Critical B7 AMOS caller ABI.
     c.move(M(4,DRAW_SLOT),A(0))
     c.raw('4e90') # JSR (A0) exact B7 local Draw wrapper
     c.tst(D(3));B(7,'b8_atomic_abort')
