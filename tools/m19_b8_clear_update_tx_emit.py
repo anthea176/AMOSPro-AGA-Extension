@@ -65,7 +65,16 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
         G('guard',A(0))
         c.move(I(value),M(0,B7GUARD['status']))
     def mark_dirty():
-        guard_status(DIRTY)
+        # B7's guard identity MUST be committed with DIRTY. Otherwise
+        # a failed prepare after a clean guard becomes unrecoverable:
+        # Clear correctly refuses a DIRTY flag with an empty owner.
+        G('guard',A(0))
+        c.move(I(DIRTY),M(0,B7GUARD['status']))
+        c.move(A(5),M(0,B7GUARD['owner']))
+        for name in ('state','db','front','screen'):
+            G(name,D(0))
+            G('guard',A(0))
+            c.move(D(0),M(0,B7GUARD[name]))
     bit_sites=[0]
     def selected_bit():
         # Emitted multiple times: every branch MUST have unique code labels.
