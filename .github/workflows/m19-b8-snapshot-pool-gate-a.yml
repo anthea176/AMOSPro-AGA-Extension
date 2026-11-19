@@ -7,6 +7,8 @@ on:
       - '.github/workflows/m19-b8-snapshot-pool-gate-a.yml'
       - 'tools/m19_b8_snapshot_pool_emit.py'
       - 'tools/test_m19_b8_snapshot_pool_gate_a.py'
+      - 'tools/build_m19_b8_page_services_in_memory.py'
+      - 'tools/test_m19_b8_page_services_candidate_gate_a.py'
   workflow_dispatch:
 
 permissions:
@@ -24,13 +26,16 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install MC68020 emulator
-        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4
+        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
       - name: Verify syntax and source emitter
         run: |
           python -B -m py_compile tools/m19_b8_snapshot_pool_emit.py tools/test_m19_b8_snapshot_pool_gate_a.py
           python -B tools/m19_b8_snapshot_pool_emit.py
+          python -B -m py_compile tools/build_m19_b8_page_services_in_memory.py tools/test_m19_b8_page_services_candidate_gate_a.py
       - name: Test real MC68020 transactional memory lifetime
         run: python -B tools/test_m19_b8_snapshot_pool_gate_a.py
+      - name: Verify source-only AP20 4-unit size, token and relocation envelope
+        run: python -B tools/test_m19_b8_page_services_candidate_gate_a.py
       - name: Assert active B7-m2 binary unchanged
         run: |
           python -B - <<'PY'
