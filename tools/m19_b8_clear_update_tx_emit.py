@@ -250,8 +250,10 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     c.imm('cmp',0x48e7efee,D(0));B(6,'b8_prepare_preflight_fail')
     c.move(M(0,4),D(0))
     c.imm('cmp',0x4fefff60,D(0));B(6,'b8_prepare_preflight_fail')
-    G('preflight',A(4))
-    c.raw('4e94')  # JSR (A4) verified B7 image_frame_preflight_entry
+    # A4 is the 96-byte private frame pointer and must survive JSR.
+    # Use saved scratch A2 for the verified cross-unit callee.
+    G('preflight',A(2))
+    c.raw('4e92')  # JSR (A2) verified B7 image_frame_preflight_entry
     c.tst(D(3));B(7,'b8_prepare_preflight_fail')
     mark_dirty()
     # Preserve a background explicitly drawn after Clear on this page.
