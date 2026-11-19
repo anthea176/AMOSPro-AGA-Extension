@@ -46,8 +46,8 @@ def emit_b8_b7_hooks() -> tuple[bytes,dict[str,int]]:
     # Public numeric Draw wrapper. Default B7 behavior when B8 inactive.
     L('b8_b7_draw_trampoline_entry')
     c.raw('48e7efee4fefffe0') # AMOS numeric ABI, 32-byte local frame
-    c.move(A(7),A(2))
-    c.move(I(0),M(2,F['result']))
+    # Keep original A2 supplied by the AMOS caller untouched across Draw.
+    c.move(I(0),M(7,F['result']))
     Rptr()
     c.move(M(0,R['owner']),D(0))
     c.move(A(5),D(1))
@@ -65,7 +65,7 @@ def emit_b8_b7_hooks() -> tuple[bytes,dict[str,int]]:
     c.move(A(0),M(5,END2))
     L('b8_b7_draw_call')
     B(1,'b7_multiframe_draw_entry')
-    c.move(D(3),M(2,F['result']))
+    c.move(D(3),M(7,F['result']))
     # Only a registered owner may replace the B7 End callbacks; this
     # is the same exact pair emitted by the unchanged B7 draw routine.
     Rptr()
@@ -83,7 +83,7 @@ def emit_b8_b7_hooks() -> tuple[bytes,dict[str,int]]:
     c.move(A(0),M(5,END1))
     c.move(A(0),M(5,END2))
     L('b8_b7_draw_return')
-    c.move(M(2,F['result']),D(3))
+    c.move(M(7,F['result']),D(3))
     c.raw('4fef00204cdf77f774004e75')
 
     # Public Screen Close is an INSTRUCTION; preserve the entire ABI.
