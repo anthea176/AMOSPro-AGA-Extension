@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 19 novembre 2026 — M19 B8 : trampoline natif B7 Close/Draw/End ↔ B8, Gate A PASS
+
+**Livré sur `main`, source-only, rien à installer :** [émetteur B7 local](../tools/m19_b8_b7_hook_emit.py), [relais de B8 au callback B7](../tools/m19_b8_cross_unit_arm_emit.py), [builder AP20 en mémoire](../tools/build_m19_b8_b7_trampoline_in_memory.py), [tests MC68020](../tools/test_m19_b8_b7_trampoline_gate_a.py). [**CI 44619276851 PASS — 60 contrôles MC68020**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44619276851) sur deux implantations natives distinctes ; relai indirect sans `BSR` PC16 inter-unités, vérification callback End/marqueur `B8RG`/propriétaire A5, chaîne B7 `Draw`/`Close`/`End`, maintien des snapshots sur Safe/Disp pending et libération une seule fois après fermeture confirmée. L'échec intermédiaire dans le banc était un chevauchement entre le code de la cinquième unité et les allocations de la fixture ; test corrigé et relancé PASS.
+
+**Candidate AP20 strictement en mémoire : 113 192 octets**, SHA256 `40de1b32206de8d784249b60a43d7f5f047828a2657c6651d4cb73bfeef09750`, **86 commandes**, **182 AP20**, cinq unités `[142,153,156,177,181]`, PC16 max **29 558**. Seuls les anciens stubs Close 179 et Draw 180 sont redirigés, dans l'image non installée. Les natifs B7-m2 originaux restent préservés en préfixe et l'API publique est inchangée.
+
+**Prochaine étape :** rendre l'enregistrement B8 effectif dans un orchestrateur `Clear/Update` avec rollback et garde `DIRTY/READY`, traiter la génération `Open/Close` (ABA), puis préparer un seul banc ASC ; ne remplacer `dist/AMOSPro_AGA.Lib` **qu'après une autorisation distincte**. B7-m2 installée, ASC validé et R84 `LAST_GOOD` inchangés, confirmés par CI. Gates B/C/D pour B8 **NON TESTÉES**. [Rapport technique](M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
+
+
 ## 19 novembre 2026 — M19 B8 : Safe/WaitBlit et post-Close/End privés, Gate A PASS
 
 **Sur `main` :** [`m19_b8_safe_lifecycle_emit.py`](../tools/m19_b8_safe_lifecycle_emit.py), [banc natif](../tools/test_m19_b8_safe_lifecycle_gate_a.py), [builder AP20](../tools/build_m19_b8_safe_lifecycle_in_memory.py) ; [**CI 44614557930 : PASS, 36 scénarios MC68020**](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44614557930) sur deux implantations. `Exec/GetMsg` consommé une seule fois pour une notification Safe disponible (refus si absente), préservation du bit Disp, `graphics.library/WaitBlit`, revalidation de la page arrière et capture/restauration. Entrée privée post-Close/End : deux `FreeMem` au plus, seulement si le Screen réel est déjà nul ; propriétaire étranger, écran ouvert et double cleanup refusés/sûrs. **Les OS, notifications et succès Close/End sont modélisés ; aucun hook public B7-m2 n'est encore raccordé.**
