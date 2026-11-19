@@ -219,6 +219,19 @@ def main():
         assert bad.call('tx_reset')==1;cases+=1
         assert bad.tx('owner')==0
 
+        # Source-backed B7 preflight prologue must match byte-for-byte.
+        # A corrupted native entry is refused BEFORE the first planar copy
+        # and must never be called as executable code.
+        tampered=TxMachine(raw,labels,base,b7base)
+        assert tampered.call('bind')==1
+        before_back=tampered.page(1)
+        tampered.uc.mem_write(tampered.b7preflight+4,b'\x4e\x71\x4e\x71')
+        assert tampered.call('update_prepare')==0;cases+=1
+        assert tampered.preflight_calls==0;cases+=1
+        assert tampered.root()[SERVICE['valid']//4]==0;cases+=1
+        assert tampered.page(1)==before_back and tampered.g('status')==DIRTY;cases+=1
+        assert tampered.call('close')==1
+
         # Unexpected owner cannot mutate state or release snapshots.
         before=m.tx('pending')
         assert m.call('update_abort',owner=OTHER)==0;cases+=1
