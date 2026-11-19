@@ -87,3 +87,7 @@ la Lib B7-m2 ; son journal garde le chemin historique.
 **Gate B de la nouvelle bibliothèque : en attente des deux lancements
 consécutifs WinUAE avec validation visuelle et journaux distincts.**
 Compiler C et matériel D non testés ; aucune promotion LAST_GOOD.
+
+## Résultat ultérieur (19/11/2026) — consulter le rapport WinUAE B/C
+
+La section source-only ci-dessus décrit l'état historique **avant** la bascule autorisée. Depuis, B7-m2 est la Lib active de travail et a **PASS Gate B** (deux lancements Runtime sans `Erase All`) et **PASS Gate C fonctionnelle** (une exécution du vrai binaire AMOS Compiler, 405 frames). Détails, fichiers de journaux, checksums et limites : [M19_B7M2_GATES_BC_2026-11-19.md](M19_B7M2_GATES_BC_2026-11-19.md). `LAST_GOOD` R84 et toutes les archives restent protégées. Gate D physique NON TESTÉE.
