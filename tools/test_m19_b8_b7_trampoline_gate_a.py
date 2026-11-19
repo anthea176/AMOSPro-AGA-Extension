@@ -37,8 +37,10 @@ class Combined(CloseResetMachine):
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
         self.labels['routed_paint_all_entry']=self.labels['b8_b7_draw_trampoline_entry']
         self.labels['guarded_close_entry']=self.labels['b8_b7_close_trampoline_entry']
-        self.fifth=0xb00000 if layout=='interpreted' else 0xd00000
+        self.fifth=0x400000 if layout=='interpreted' else 0x480000
         self.fifth_source,self.fifth_labels=emit_b8_cross_unit_arm()
+        # Both placements avoid B7 AGBO heaps (0xb00000+) and Chip planes.
+        assert 0x300000 <= self.fifth < 0x600000
         self.uc.mem_write(self.fifth,self.fifth_source)
         self.b8post_calls=0
         self.snapshot_allocs={SNAP0:NBYTES,SNAP1:NBYTES}
