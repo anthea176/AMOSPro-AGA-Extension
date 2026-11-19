@@ -174,16 +174,33 @@ def main():
         assert m.call('clear_guard')==0;cases+=1
         assert m.page(0)==front
         m.put(OWNER+0x1d0,m.b7shim)
-        # Explicit close followed by transaction reset and new allocation.
+        # Real post-Close does not call a separate transaction reset
+        # (B7/5th hooks own only the CPU pool). Rebind to the SAME screen
+        # addresses MUST invalidate the old transaction epoch implicitly.
+        old_epoch=m.tx('epoch')
         assert m.call('close')==1;cases+=1
         assert len(m.free_calls)==2
-        assert m.call('tx_reset')==1;cases+=1
-        assert m.tx('owner')==0 and m.tx('epoch')==0
+        assert m.tx('owner')==OWNER and m.tx('epoch')==old_epoch
+        m.set_guard(0)  # already-validated B7 Close reset, then fresh Open
         m.next_alloc=0
         assert m.call('bind')==1;cases+=1
         assert m.root()[SERVICE['valid']//4]==0
+        assert m.root()[SERVICE['epoch']//4]!=old_epoch
         assert m.call('update_prepare')==1;cases+=1
         assert m.tx('epoch')==m.root()[SERVICE['epoch']//4]
+        assert m.tx('cleared')==0 and m.tx('pending')==2;cases+=1
+        # A forged/changing epoch is NEVER allowed to discard a LIVE
+        # snapshot, even when the prior owner and Screen still match.
+        fake=TxMachine(raw,labels,base,b7base)
+        assert fake.call('bind')==1
+        assert fake.call('update_prepare')==1
+        old_tx_epoch=fake.tx('epoch')
+        root_addr=fake.base+fake.labels['b8_service_root']
+        fake.put(root_addr+SERVICE['epoch'],old_tx_epoch+1)
+        assert fake.call('update_prepare')==0;cases+=1
+        assert fake.tx('epoch')==old_tx_epoch
+        assert fake.tx('pending')==2 and fake.root()[SERVICE['valid']//4]==2
+        assert fake.call('close')==1
         # A stale/missing AGBO image is refused by B7 preflight BEFORE
         # the first snapshot/copy. Here B7's preflight result is mocked;
         # its actual 64-object native implementation has an independent Gate A.
