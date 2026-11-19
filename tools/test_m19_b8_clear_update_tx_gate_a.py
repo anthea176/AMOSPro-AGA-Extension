@@ -5,12 +5,15 @@
 The actual stage/copy/pool/Safe machine code is executed under Unicorn
 in two relocated fifth-unit placements, with a byte-exact B7-m2 native
 shim and frame-guard DATA loaded at a disjoint mock address. The B7
-Draw and public Swap are modeled as atomic caller actions; these tests
-DO NOT validate a public AMOS token, hardware DMA or real Compiler.
+64-image preflight, Draw and public Swap are modeled as caller actions
+here; their native implementation is separately tested by B7 Gate A.
+These tests DO NOT validate public AMOS tokens, DMA or real Compiler.
 """
 from __future__ import annotations
 
 from struct import pack
+from unicorn import UC_HOOK_CODE
+from unicorn.m68k_const import UC_M68K_REG_PC
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 from m19_b8_clear_update_tx_emit import emit_b8_clear_update_tx,R as TX
 from m19_b8_cross_unit_arm_emit import emit_b8_cross_unit_arm
@@ -20,7 +23,7 @@ from m19_b8_page_manager_emit import R as SERVICE
 from build_m19_b8_clear_update_tx_in_memory import build_b8_clear_update_tx
 from test_m19_b8_safe_lifecycle_gate_a import SafeMachine
 from test_m19_b8_page_manager_gate_a import (
-    OWNER,OTHER,STATE,DB,SCREEN,SNAP0,SNAP1,PAGE_SIZE,
+    OWNER,OTHER,STATE,DB,SCREEN,SNAP0,SNAP1,PAGE_SIZE,AR,DR,
 )
 
 B7_A=0x300000
@@ -35,9 +38,30 @@ class TxMachine(SafeMachine):
         self.b7base=b7base
         self.b7guard=b7base+b7labels['frame_guard_state']
         self.b7shim=b7base+b7labels['b8_b7_end_trampoline_entry']
+        self.b7preflight=b7base+b7labels['image_frame_preflight_entry']
+        self.preflight_result=1
+        self.preflight_calls=0
+        self.preflight_states=[]
+        # Keep the EXACT compiled B7 native code/signature in memory.
+        # The B7 bank fixture is deliberately stubbed in this B8 test;
+        # the independently validated B7 native preflight tests supply
+        # its full AGBO/64-ID CPU coverage.
+        self.uc.hook_add(UC_HOOK_CODE,self.mock_b7_preflight,
+                         begin=self.b7preflight,end=self.b7preflight)
         self.put(OWNER+0x1cc,self.b7shim)
         self.put(OWNER+0x1d0,self.b7shim)
         self.uc.mem_write(self.b7guard,bytes(24))
+
+    def mock_b7_preflight(self,uc,addr,size,ctx):
+        self.preflight_calls+=1
+        self.preflight_states.append((
+            self.root()[SERVICE['valid']//4],self.g('status'),self.page(1)))
+        sp=uc.reg_read(AR[7])
+        ret=int.from_bytes(uc.mem_read(sp,4),'big')
+        uc.reg_write(AR[7],sp+4)
+        uc.reg_write(DR[2],0)
+        uc.reg_write(DR[3],self.preflight_result)
+        uc.reg_write(UC_M68K_REG_PC,ret)
 
     def g(self,field):
         return self.get(self.b7guard+GUARD[field])
@@ -84,6 +108,8 @@ def main():
         assert m.g('status')==DIRTY
         m.set_guard(0)  # model fresh screen initialization before first Update
         assert m.call('update_prepare')==1;cases+=1
+        assert m.preflight_calls==1
+        assert m.preflight_states[0][:2]==(0,0)
         assert m.g('status')==0 and m.tx('pending')==2
         assert bytes(m.uc.mem_read(SNAP1,PAGE_SIZE))==old_back
         assert m.call('update_prepare')==0;cases+=1
@@ -158,6 +184,20 @@ def main():
         assert m.root()[SERVICE['valid']//4]==0
         assert m.call('update_prepare')==1;cases+=1
         assert m.tx('epoch')==m.root()[SERVICE['epoch']//4]
+        # A stale/missing AGBO image is refused by B7 preflight BEFORE
+        # the first snapshot/copy. Here B7's preflight result is mocked;
+        # its actual 64-object native implementation has an independent Gate A.
+        bad=TxMachine(raw,labels,base,b7base)
+        assert bad.call('bind')==1
+        unchanged=bad.page(1)
+        bad.preflight_result=0
+        assert bad.call('update_prepare')==0;cases+=1
+        assert bad.preflight_calls==1;cases+=1
+        assert bad.root()[SERVICE['valid']//4]==0;cases+=1
+        assert bad.page(1)==unchanged and bad.g('status')==DIRTY;cases+=1
+        assert bad.call('close')==1
+        assert bad.call('tx_reset')==1
+
         # Unexpected owner cannot mutate state or release snapshots.
         before=m.tx('pending')
         assert m.call('update_abort',owner=OTHER)==0;cases+=1

@@ -7,8 +7,9 @@ It is NOT a usable AMOS Clear/Update public command: only a SERIALIZED
 three-stage native protocol for an ALREADY-REGISTERED B7 End shim.
 
     clear  : restore previous snapshot on Safe back; reset B7 frame guard.
-    prepare: restore old back (unless explicit Clear was already done),
-             snapshot fresh background, and permit ONE B7 Draw.
+    prepare: preflight all 64 real B7 bank/image stamps BEFORE any copy,
+             restore old back unless Clear was already done, capture fresh
+             background, then permit ONE B7 Draw.
     finish : verify actual B7 Draw reached READY on the same physical back.
     abort  : leave B7 DIRTY; explicit Clear or successful Close recovers.
     reset  : clear transaction state ONLY after B8 service Close freed pool.
@@ -16,7 +17,7 @@ three-stage native protocol for an ALREADY-REGISTERED B7 End shim.
 The caller must execute prepare -> real B7 Draw -> finish atomically in its
 own AMOS task, with no Swap or arbitrary other call in between. This is
 an internal integration contract; a public Update wrapper will have to
-guarantee that sequence. No implicit Swap or bank prevalidation is provided
+guarantee that sequence. No implicit Swap is provided
 by these stages; the existing B7 Draw still handles AGBO validation.
 
 Frame guard status is derived ONLY from a source-pinned registered B7 shim
@@ -35,7 +36,7 @@ from m19_b8_back_selector_emit import STATE_OFF
 
 FRAME=96
 F=dict(result=0,guard=4,bit=8,epoch=12,db=16,front=20,
-       screen=24,state=28,callback=32,valid=36)
+       screen=24,state=28,callback=32,valid=36,preflight=40)
 R=dict(owner=0,screen=4,epoch=8,cleared=12,pending=16,txepoch=20)
 ROOT_SIZE=24
 MAGIC=0x42385247
@@ -46,7 +47,10 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     end=b7['b8_b7_end_trampoline_entry']
     guard_delta=b7['frame_guard_state']-end
     magic_delta=b7['b8_b7_register_magic']-end
-    assert guard_delta<0 and -guard_delta<32766 and magic_delta>0
+    preflight_delta=b7['image_frame_preflight_entry']-end
+    assert (guard_delta<0 and -guard_delta<32766
+            and preflight_delta<0 and -preflight_delta<32766
+            and magic_delta>0)
     c=Code();c.raw(old.hex());c.labels.update(labels)
     B,L=c.branch,c.label
     def S(src,key):c.move(src,M(4,F[key]))
@@ -227,6 +231,28 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     G('guard',A(0))
     c.move(M(0,B7GUARD['status']),D(0))
     c.imm('cmp',DIRTY,D(0));B(7,'b8_tx_return')
+    # Reuse B7's exact 64-source/image native preflight BEFORE any copy.
+    # The entry is in the SAME relocated B7 unit as the checked End shim.
+    G('callback',D(0))
+    c.imm('sub',-preflight_delta,D(0))
+    B(5,'b8_prepare_preflight_fail')
+    S(D(0),'preflight')
+    c.move(D(0),A(1))
+    c.raw('2c780004');c.call_os(-534)
+    c.tst(D(0));B(7,'b8_prepare_preflight_fail')
+    G('preflight',D(0))
+    c.imm('add',7,D(0));B(5,'b8_prepare_preflight_fail')
+    c.move(D(0),A(1))
+    c.raw('2c780004');c.call_os(-534)
+    c.tst(D(0));B(7,'b8_prepare_preflight_fail')
+    G('preflight',A(0))
+    c.move(M(0,0),D(0))
+    c.imm('cmp',0x48e7efee,D(0));B(6,'b8_prepare_preflight_fail')
+    c.move(M(0,4),D(0))
+    c.imm('cmp',0x4fefff60,D(0));B(6,'b8_prepare_preflight_fail')
+    G('preflight',A(4))
+    c.raw('4e94')  # JSR (A4) verified B7 image_frame_preflight_entry
+    c.tst(D(3));B(7,'b8_prepare_preflight_fail')
     mark_dirty()
     # Preserve a background explicitly drawn after Clear on this page.
     txroot()
@@ -249,6 +275,9 @@ def emit_b8_clear_update_tx() -> tuple[bytes,dict[str,int]]:
     # expose this three-stage API as independent user-callable commands.
     guard_status(0)
     successful()
+    L('b8_prepare_preflight_fail')
+    mark_dirty()
+    B(0,'b8_tx_return')
 
     # FINISH only if B7's actual Draw set READY for same owner/front.
     # Any refusal (after an authenticated prepare) locks B7 DIRTY.
