@@ -17,7 +17,7 @@ from m19_b8_first_update_emit import emit_b8_b7_first_update, emit_b8_first_upda
 from test_m19_b8_atomic_integrated_b7_gate_a import AtomicIntegrated, SNAP0, SNAP1, PAGE
 from m19_b8_page_manager_emit import R as SROOT
 from test_m19_p0j_pending_close_end_gate_a import DB
-from test_m19_p0j_swap_barrier_emit import READY, DIRTY
+from m19_p0j_swap_barrier_emit import READY, DIRTY
 from test_m19_p0j_pending_close_end_gate_a import ready
 from test_m5_generic import AMOS, EXEC
 
