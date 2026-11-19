@@ -1,5 +1,8 @@
 # M19 — Contrat de conception des Bobs AGA multi-images
 
+> **Mise à jour B8 (19/11/2026) :** les sections historiques de conception ci-dessous décrivent les objectifs initiaux (certaines mentions R88/B4/B5 sont désormais dépassées). La Lib **B7-m2** a passé les Gates A/B/C pour les Bobs persistants/Off/Draw. `Clear` et `Update` ont maintenant un [modèle de référence fonctionnel](M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md) et **14 tests Python PASS**, mais **pas encore de tokens ni de code natif** ; ne pas confondre les propositions de syntaxe avec des commandes disponibles. `LAST_GOOD` R84 reste protégée.
+
+
 > **Suivi du développement P0a :** le [format `AGBO` v1 et le modèle hôte testé](M19_P0A_ABK_FORMAT_2026-11-15.md) sont disponibles dans `tools/m19_p0a_multi_bob_abk.py` (11 tests locaux). Les commandes et le moteur Bob **restent NON implémentés dans la bibliothèque AGA R88**. Aucun exemple ni source des builds post-R88 n'est réutilisé ; aucun nouveau binaire n'est produit.
 
 

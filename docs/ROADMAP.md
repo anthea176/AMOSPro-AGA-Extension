@@ -15,9 +15,11 @@
 
 La **cinquième unité native** a été validée en Gates A/B/C pour son banc de sondes, puis ces sondes ont été retirées : la version installable reste à **quatre unités**. [Rapport de l'expérience](M19_AP20_V2_UNIT5_GATES_BC_2026-11-17.md).
 
-## 2. Priorité — M19 : cycle de vie des Bobs persistants
+## 2. Priorité — M19 : Clear/Update P0 après validation du cycle de vie
 
 **Acquis :** B7-m2 a validé le scénario Off/On, réactivation, masques, banques mixtes et 64 Bobs en **Gate A native, Gate B Runtime (deux relances) et Gate C Compiler (une exécution)**. La correction Close élimine le refus `ERR 14` de B7-m1 dans ce scénario. Le retour `End` sans Close et la relance compilée demeurent à qualifier séparément. Les anciennes recherches B4/B5/B6 sont détaillées dans [les rapports techniques](M19_P0J_NO_SHADOW_DRAW_GATE_A_2026-11-17.md), sans confondre leur Gate A avec la candidate installée.
+
+**Nouveau développement B8 — modèle Clear/Update SOURCE-ONLY :** [contrat, mémoire et limites](M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md), [code](../tools/m19_bob_clear_update_model.py) et [14 tests de pixels](../tools/test_m19_bob_clear_update_model.py) **PASS** ([CI 44603406407](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44603406407)). Restauration d'un fond indépendant par page, `Clear` puis décor dynamique puis `Update`, 64 Bobs, 405 frames de référence, zéro Swap implicite et refus `DIRTY`. **AUCUN token ni code natif Clear/Update intégré, Gates A/B/C de ces nouvelles API NON TESTÉES.** B7-m2 et l'ASC actif restent inchangés. Le raccordement natif MC68020, le coût CPU/mémoire, Safe/Disp et le nettoyage End restent bloquants avant toute candidate.
 
 **Arrêt des benchmarks :** le dernier test de 720 frames sur décor texturé est documenté et conservé comme référence. L'[exemple public interactif](../examples/bob_local_restore/README.fr.md) en extrait le seul parcours **restauration locale + quatre Bobs** ; nouvel ASC autonome **PREFLIGHT PASS**, Runtime de cette variante encore à vérifier.
 
