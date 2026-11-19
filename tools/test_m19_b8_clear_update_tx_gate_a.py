@@ -213,7 +213,11 @@ def main():
         assert bad.root()[SERVICE['valid']//4]==0;cases+=1
         assert bad.page(1)==unchanged and bad.g('status')==DIRTY;cases+=1
         assert bad.call('close')==1
-        assert bad.call('tx_reset')==1
+        assert bad.tx('owner')==OWNER
+        assert bad.call('tx_reset',owner=OTHER)==0;cases+=1
+        assert bad.tx('owner')==OWNER and bad.tx('epoch')!=0;cases+=1
+        assert bad.call('tx_reset')==1;cases+=1
+        assert bad.tx('owner')==0
 
         # Unexpected owner cannot mutate state or release snapshots.
         before=m.tx('pending')
