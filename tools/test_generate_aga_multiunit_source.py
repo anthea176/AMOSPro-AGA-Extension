@@ -48,7 +48,7 @@ def run() -> None:
     active_before = current_file.read_bytes()
     good = good_file.read_bytes()
     assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA), "Active AP20 islands/B7 differs from pinned SHA"
-    assert digest(good) == R84_SHA, "Protected R84 LAST_GOOD changed"
+    assert digest(good) == P0_FREE_SHA and good == active_before, "Promoted P0 LAST_GOOD changed"
     active, frozen, _ = verify_active(ROOT)
     assert active == active_before and frozen == good
     before, meta = build_r88()
