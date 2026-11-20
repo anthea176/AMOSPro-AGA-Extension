@@ -1,0 +1,46 @@
+name: M20 P0 tilemap 2-page host oracle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m20-tilemap-p0-host.yml'
+      - 'tools/m20_tilemap_model.py'
+      - 'tools/test_m20_tilemap_model.py'
+      - 'docs/M20_TILEMAP_P0_HOST_MODEL.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m20-p0-host-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python source syntax and delivery rules
+        run: |
+          python -B -m py_compile tools/m20_tilemap_model.py tools/test_m20_tilemap_model.py
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Pixel exact scrolling and physical page regressions
+        run: python -B tools/test_m20_tilemap_model.py
+      - name: Preserve B8 S1, current ASC and R84 LAST_GOOD
+        run: |
+          python -B - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          for path,expected in {
+              'dist/AMOSPro_AGA.Lib':'3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a',
+              'dist/AMOSPro_AGA_LAST_GOOD.Lib':'46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+          }.items():
+              assert sha256(Path(path).read_bytes()).hexdigest()==expected,path
+          tests=list(Path('tests/current').glob('*.asc'))
+          assert len(tests)==1 and tests[0].name=='M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
+          print('PASS active S1, sole ASC and R84 unchanged')
+          PY
