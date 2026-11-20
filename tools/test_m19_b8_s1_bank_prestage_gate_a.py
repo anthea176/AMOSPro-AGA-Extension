@@ -162,6 +162,38 @@ def main():
                    for event in m.paint_blits)==2
         checks+=20
 
+        # A replacement AGBO image invalidates the old bank identity.
+        # Selection must re-stage in Chip atomically, never reuse stale DMA.
+        t=fresh(layout)
+        assert t.run_select(10)==1
+        oldnode,oldctx=t.nodes()[10]
+        oldchip=oldctx[0]
+        assert len(t.chip_live)==1 and t.chip_allocs==1
+        assert t.run_get(1,4,5,20,9)==1
+        t.pending_dma=True
+        assert t.run_select(10)==1
+        newnode,newctx=t.nodes()[10]
+        assert newnode==oldnode and newctx[0]!=oldchip
+        assert oldchip not in t.chip_live and newctx[0] in t.chip_live
+        assert t.chip_allocs==2 and t.chip_frees==1
+        assert not t.pending_dma # WaitBlit before releasing old Chip.
+        checks+=6
+
+        # A failed refresh must preserve the last allocated context and
+        # restore old selection, without falsely accepting a stale cache.
+        assert t.run_get(1,4,5,20,10)==1
+        retained=t.nodes()
+        retained_chip=dict(t.chip_live)
+        chosen=t.selected_triple()
+        t.chip_fail=True
+        assert t.run_select(10)==0
+        assert t.nodes()==retained and t.chip_live==retained_chip
+        assert t.selected_triple()==chosen
+        t.chip_fail=False
+        assert t.run_select(10)==1
+        assert t.nodes()[10][1][0]!=newctx[0]
+        checks+=5
+
         # First stage fails: selection rollback and no partial registry.
         n=fresh(layout)
         prior=n.selected_triple()
