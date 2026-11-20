@@ -83,7 +83,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Immutable R88 and R84 bases
         run: |
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib') in ('242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6','00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae','3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'); assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
+          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')=='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'; assert h('dist/AMOSPro_AGA.Lib') in ('242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6','00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae','3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a','f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'); assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'"
       - name: P0a host format, capture, and transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
@@ -237,7 +237,10 @@ jobs:
           from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
           s1,s1meta=build_b8_safe_retry()
           assert len(s1)==116104 and s1meta['sha256']=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
-          assert active in (image,b8,s1), 'Active source must match B7-m2, B8 or S1'
+          from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+          p0,p0meta=build_bank_free()
+          assert len(p0)==117896 and p0meta['sha256']=='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+          assert active in (image,b8,s1,p0), 'Active source must match B7-m2, B8, S1 or P0'
           assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
           assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
