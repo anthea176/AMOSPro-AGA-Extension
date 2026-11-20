@@ -1,5 +1,20 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1b Hot Spot intégrée à la Lib installable ; Gate B WinUAE à faire
+
+**Autorisation utilisateur :** « go jusqua la lib » = aller jusqu'à la **bascule du seul binaire actif** P1b et du banc WinUAE, pas une promotion de `LAST_GOOD`. Réalisation exclusivement sur `main`. [Commit de bascule `2af4844`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/2af4844d803430a550a825a309a2862b51f5e9d6).
+
+**Identité exacte :** `dist/AMOSPro_AGA.Lib` **P1b 119 176 octets**, SHA256 `2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4`, blob Git `8bc11d556971ea7a90bd57b00f231ca26cac0958`. 92 commandes / 188 AP20 entrées, unités MC68020 `[142,153,156,177,181]`, PC16 max31444, 352 octets natifs ajoutés. [Builder P1b déterministe](../tools/build_m19_p1b_hotspot_in_memory.py) reconstruit intégralement P1a puis modifie uniquement le BRA source-identifié dans BOBS et ajoute son pont hotspot après `explicit_image_resolve_entry`, vers le Safe Blitter d'origine. Getters P1a conservent X/Y logiques, aucun nouveau token. **`LAST_GOOD` P0 117 896 octets SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, blob `6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2`, inchangée.**
+
+**Gate A P1b : PASS intégrée** [CI 44836896149](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44836896149), **98 contrôles** du vrai code MC68020 avec Amiga/Blitter simulés et deux implantations ; 258 contrôles natifs supplémentaires du helper. Résolution AGBO/génération, cache Chip, masque, pixels, clipping, 64 Bobs, objet invisible no-op, background front inchangé. [Rapport](M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md).
+
+**Unique ASC actif modifié** : `tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, **17 566 octets ASCII LF**, neuf étapes et 405 frames P0 + trois Bank Free + 14×3 getters conservés, **quatre phases hotspot** supplémentaires, journal `RAM:M19_P1B_HOTSPOT.TXT` ; ressource `tests/current/M19_P1B_HOTSPOT_BANK26.abk`, **200 octets, hotspot (+4,+3)**, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`. Bank26 doit être libre et l'ABK copiée dans le répertoire courant AMOS AVANT d'exécuter ASC via `Project → Merge ASCII`. [Procédure et valeurs attendues](../tests/current/README.md). 405 frames + 4 phases, `HOTSPOT_FRAMES_OK 4`, `HOTSPOT_GETTERS_OK 12`, `BANKS_ERASED 3`, `VERDICT PATH_OK` attendu.
+
+**Gate B P1b Runtime : NON TESTÉE**, obtenir 2 journaux et observation de l'image à (106,97) pour Bob logique (110,100), image partiellement coupée à (-2,-1), disparition hors écran (32767,32767), réactivation à (136,87). **Gate C véritable Compiler et Gate D physique : NON TESTÉES.** Ne pas assimiler Gate A à WinUAE. Les résultats WinUAE P1a restent historiques et ne qualifient pas P1b. **Ne jamais promouvoir P1b en LAST_GOOD sans décision explicite.**
+
+**CI globale :** des régressions historiques verrouillées sur une ancienne SHA active étaient rouges après bascule ; les adaptateurs R82/R84 et README bilingues ont été mis à jour pour reconnaître l'empreinte P1b sans modifier les octets historiques. Ne déclarer que les CI effectivement PASS ; prochain chantier P1c priorités et P1d Limit Bob en attente des résultats P1b.
+
+
 ## 21 novembre 2026 — M19 P1b Hot Spot, premier jalon natif MC68020 PASS (source-only)
 
 **Référence actuelle :** P1a `dist/AMOSPro_AGA.Lib` **118 816 octets** SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a` ; P0 `dist/AMOSPro_AGA_LAST_GOOD.Lib` **117 896 octets** SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; **un seul ASC** sous `tests/current` (`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, 14 871 octets). **Aucune modification** de ces trois fichiers lors du travail P1b. Gate A P1a PASS, Gate B P1a PASS fonctionnel sur deux journaux, Gates C/D P1a non testées.

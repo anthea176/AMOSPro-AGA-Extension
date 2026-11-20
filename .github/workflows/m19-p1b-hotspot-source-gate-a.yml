@@ -1,4 +1,4 @@
-name: M19 P1b Hot Spot origin MC68020 Gate A - source only
+name: M19 P1b Hot Spot Safe Blitter MC68020 Gate A + canonical Lib
 on:
   push:
     branches: [main]
@@ -10,6 +10,10 @@ on:
       - 'tools/m19_p1b_hotspot_draw_emit.py'
       - 'tools/build_m19_p1b_hotspot_in_memory.py'
       - 'tools/build_m19_p1b_hotspot_fixture.py'
+      - 'tools/build_agapic_v2_r82_full_preview.py'
+      - 'tools/build_agapic_v2_r82_api_preview.py'
+      - 'tools/build_aga_r84_agapic.py'
+      - 'tools/test_m19_p1a_getters_gate_a.py'
       - 'dist/AMOSPro_AGA.Lib'
       - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
       - 'tests/current/M19_P1B_HOTSPOT_BANK26.abk'
@@ -20,7 +24,7 @@ on:
 permissions:
   contents: read
 jobs:
-  hotspot-source-only:
+  p1b-hotspot-native:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
