@@ -45,8 +45,13 @@ def build_bank_free():
     if (target&1 or target<0 or len(newparts[BOBS])>=MAX_UNIT_BYTES
             or target>=len(newparts[BOBS])-len(DISPATCH_V2)):
         raise ValueError('BOBS target or V2 island exceeds capacity')
-    # One-argument INSTRUCTION (D3=bank). AP20 GetP metadata is obligatory.
-    newparts.append(RBSR+pack('>HH',BOBS,target)+b'\x4e\x75'+GETP)
+    # AMOS +B.s inspects the FOUR bytes immediately BEFORE the NEW entry
+    # for GetP. It belongs after the previous zero-arg Update RTS, not in
+    # the end of the new stub. No executable byte of Update may be altered.
+    if len(parts[183])!=8 or parts[183][-2:]!=b'\x4e\x75':
+        raise ValueError('Cannot add GetP: previous Update stub not pinned')
+    newparts[183]=parts[183]+GETP
+    newparts.append(RBSR+pack('>HH',BOBS,target)+b'\x4e\x75')
     newtokens=toks[:-6]+token(*API)+toks[-6:]
     if len(newparts)!=185:
         raise ValueError('AP20 new instruction count wrong')
@@ -61,8 +66,10 @@ def build_bank_free():
     if len(found)!=1 or (found[0]['instruction'],found[0]['function'],
                           found[0]['signature'])!=(FREE,1,'I0'):
         raise ValueError('Public Aga Bob Bank Free token is not an instruction')
-    if any(newparts[i]!=parts[i] for i in range(len(parts)) if i!=BOBS):
+    if any(newparts[i]!=parts[i] for i in range(len(parts)) if i not in (BOBS,183)):
         raise ValueError('Historical stub changed')
+    if newparts[183]!=parts[183]+GETP:
+        raise ValueError('Only GetP data may be appended to Update')
     if not newparts[BOBS].startswith(parts[BOBS]):
         raise ValueError('Pre-stage native prefix changed')
     groups=[i for i,p in enumerate(newparts) if p.startswith(DISPATCH_V2)]
