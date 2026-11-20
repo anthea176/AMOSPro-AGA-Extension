@@ -22,15 +22,18 @@ from test_m19_p0e_object_table_native import (
 
 ROOT = Path(__file__).resolve().parents[1]
 P0_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+P1_SHA = '165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a'
 
 
 class P1Readiness(unittest.TestCase):
     def test_p0_binary_protection(self):
         current = (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes()
         good = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-        self.assertEqual(len(current), 117896)
-        self.assertEqual(sha256(current).hexdigest(), P0_SHA)
-        self.assertEqual(good, current)
+        self.assertEqual(len(good), 117896)
+        self.assertEqual(sha256(good).hexdigest(), P0_SHA)
+        self.assertEqual(len(current), 118816)
+        self.assertEqual(sha256(current).hexdigest(), P1_SHA)
+        self.assertNotEqual(good, current)
 
     def test_native_private_bob_read_fields_and_guards(self):
         native, labels = emit_object_table()

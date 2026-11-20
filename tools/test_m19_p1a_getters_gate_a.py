@@ -166,9 +166,10 @@ def main():
 
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert len(active)==117896 and active==good==p0
-    assert sha256(active).hexdigest()==info['p0_sha']
-    assert candidate!=active
+    assert len(good)==117896 and sha256(good).hexdigest()==info['p0_sha']
+    assert good==p0
+    assert len(active)==118816 and sha256(active).hexdigest()==info['sha256']
+    assert active==candidate and active!=good
     print('M19 P1a BOB X/Y/I PUBLIC NUMERIC GATE A PASS',checks,'checks;',
           '188 AP20 entries, 5 native units, 2 mocked placements;',
           'candidate',info['sha256'], 'SOURCE ONLY, NO AMOS/WinUAE Compiler')

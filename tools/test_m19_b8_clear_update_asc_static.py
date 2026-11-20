@@ -7,8 +7,8 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"
-SIZE=12837
+LIB="165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a"
+SIZE=14871
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -37,7 +37,7 @@ def verify(path:Path):
     assert len(data)==SIZE,("B8 ASC length",len(data),SIZE)
     s=data.decode("ascii")
     assert s.endswith("Return\n") and max(map(len,s.splitlines()))<=200
-    assert LIB in s and 'RAM:M19_P0_BANK_FREE.TXT' in s
+    assert LIB in s and 'RAM:M19_P1A_BOB_GETTERS.TXT' in s
     assert 'Dim _SEEN(1)' in s and '_SEEN(0)=0 : _SEEN(1)=0' in s
     assert 'NO TIMER OR BENCHMARK' in s
     assert s.count('_CLEAR=Aga Bob Clear')==1
@@ -47,6 +47,14 @@ def verify(path:Path):
     assert 'Aga Bob 1,124,88,1' in s
     assert s.count('_BFC=Aga Bob Clear')==1
     assert s.count('_BFU=Aga Bob Update')==1
+    assert s.count('Gosub _QUERY_CHECK')==14
+    assert 'QUERY_CASES' in s and 'QUERY_VALUES_OK' in s and 'QUERY_VALUES_BAD' in s
+    assert 'If _Q_CASES<>14 or _Q_OK<>42 or _Q_BAD<>0' in s
+    assert s.count('Aga X Bob(_QID)')==1
+    assert s.count('Aga Y Bob(_QID)')==1
+    assert s.count('Aga I Bob(_QID)')==1
+    assert s.index('_QX=Aga X Bob(_QID)') < s.index('_QY=Aga Y Bob(_QID)') < s.index('_QI=Aga I Bob(_QID)')
+    assert 'P1a CANDIDATE SHA256' in s
     assert 'Aga Bob Draw' not in s
     assert s.count('Aga Bob Off 1')==1 and s.count('Aga Bob Off 2')==1
     assert 'For _ID=17 To 64' in s

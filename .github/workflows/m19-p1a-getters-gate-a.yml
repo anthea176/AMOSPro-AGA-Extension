@@ -9,6 +9,9 @@ on:
       - 'tools/test_m19_p1a_getters_gate_a.py'
       - 'tools/m19_b8_s1_bank_free_emit.py'
       - 'tools/build_m19_b8_s1_bank_free_in_memory.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tools/test_m19_b8_clear_update_asc_static.py'
+      - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,20 +35,10 @@ jobs:
         run: python -B tools/build_m19_p1a_getters_in_memory.py
       - name: Three numeric getters, native ABI and two AP20 relocations
         run: python -B tools/test_m19_p1a_getters_gate_a.py
-      - name: Temporary verified P1a binary handoff for sole canonical Lib
+      - name: Validate sole P1a ASC and RAM log contract (static only)
         run: |
-          python -B - <<'PY'
-          import base64,hashlib,sys
-          sys.path.insert(0,'tools')
-          from build_m19_p1a_getters_in_memory import build_p1a
-          raw,meta=build_p1a()
-          expected='165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a'
-          assert len(raw)==118816 and hashlib.sha256(raw).hexdigest()==expected
-          encoded=base64.b64encode(raw).decode('ascii')
-          print('P1A_BLOB_BEGIN',len(raw),expected,len(encoded))
-          for i in range(0,len(encoded),1024):
-              print('P1A_BLOB_CHUNK',i//1024,encoded[i:i+1024])
-          print('P1A_BLOB_END',len(encoded))
-          PY
-      - name: Preserve active and promoted P0 binaries and all AMOS tests
+          python -B tools/test_m19_b8_clear_update_asc_static.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/test_current_ram_log.py
+      - name: Generators must not mutate the P1a canonical Lib or historic tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
