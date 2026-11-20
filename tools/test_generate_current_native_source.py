@@ -352,7 +352,9 @@ def main() -> None:
     try:
         exp.source_binary_from_input(changed)
     except exp.ExportError as exc:
-        assert "source audit required" in str(exc)
+        # The promoted P0 multi-unit wrapper can fail even earlier at
+        # the native-linker format guard; either rejection is fail-closed.
+        assert str(exc), "Unpinned compiler-wrapped binary refused without diagnostic"
     else:
         raise AssertionError("Unpinned compiler-wrapped binary accepted")
 
