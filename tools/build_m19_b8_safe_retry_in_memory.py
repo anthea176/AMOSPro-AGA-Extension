@@ -88,6 +88,8 @@ if __name__=='__main__':
     args=p.parse_args()
     image,report=build_b8_safe_retry()
     assert image==build_b8_safe_retry()[0], 'non-deterministic b8 s1'
+    assert len(image)==116104 and report['sha256']=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
+    assert report['pc16_max']==29962 and report['native_groups']==[142,153,156,177,181]
     print('M19 B8 S1 BOUNDED SAFE CLEAR AP20 candidate IN MEMORY',flush=True)
     pprint(report)
     if args.emit_base64:
