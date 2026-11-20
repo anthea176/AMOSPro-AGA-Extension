@@ -1,0 +1,48 @@
+name: M19 P0 Bank Select Chip pre-stage native Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p0-bank-prestage-gate-a.yml'
+      - 'tools/m19_b8_s1_bank_prestage_emit.py'
+      - 'tools/build_m19_b8_s1_bank_prestage_in_memory.py'
+      - 'tools/test_m19_b8_s1_bank_prestage_gate_a.py'
+      - 'docs/M19_P0_BANK_PRESTAGE_2026-11-20.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bank-chip-prestage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install exact native CPU test toolchain
+        run: python -m pip install --disable-pip-version-check capstone==5.0.9 unicorn==2.1.4 machine68k==0.4.0
+      - name: Source syntax and policy
+        run: |
+          python -B -m py_compile tools/m19_b8_s1_bank_prestage_emit.py tools/build_m19_b8_s1_bank_prestage_in_memory.py tools/test_m19_b8_s1_bank_prestage_gate_a.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Build exact predecessor and source-only AP20 candidate
+        run: python -B tools/build_m19_b8_s1_bank_prestage_in_memory.py
+      - name: Run physical instructions in Unicorn MC68020 with OS mock
+        run: python -B tools/test_m19_b8_s1_bank_prestage_gate_a.py
+      - name: Guard old B8 S1 runtime candidate and R84 LAST_GOOD
+        run: |
+          python -B - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          assert sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
+          assert sha256(Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+          assert len(list(Path('tests/current').glob('*.asc')))==1
+          print('PASS B8 S1, R84, one active ASC left intact')
+          PY
