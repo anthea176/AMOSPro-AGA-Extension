@@ -1,5 +1,19 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — M19 P1 engagée, première Gate A source-only PASS
+
+**Instruction de l'auteur :** poursuivre M19 avec **P1** après la promotion de P0. Première tranche réalisée **sur `main` uniquement** : [commit code `8fe77df`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/8fe77df60ecb807974b98e676a642a5c601dae07), [CI P1 source-only PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44827972362), [rapport et suites](M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md), [chantier mis à jour](../Chantier%20BOB.md). 
+
+**P1a Lecture X/Y/Image :** test de `object_read` sur le **vrai code natif privé P0e MC68020** dans Unicorn à deux adresses de relocation : 64 slots de 24 octets (banque, image, X/Y signés, activité), refus sans écriture en cas d'ID absent/off/propriétaire étranger, réactivation. **Aucune nouvelle fonction publique n'existe** ; noms possibles `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` sous réserve de validation de syntaxe et d'une politique de refus non ambiguë (X/Y peuvent valoir -1 et 0).
+
+**P1b Hot Spot :** le format **AGBO v1 existant** porte déjà `hotspot_x/y` signés dans les 40 octets par image. Ajout de `set_hotspot(payload,image_id,x,y)` dans [modèle hôte](../tools/m19_p0a_multi_bob_abk.py), sans modifier le format : copie transactionnelle, conservation des pixels/masques/autres images, incrémentation de génération seulement si valeur changée, Save/Load ABK vérifié. **Le dessin natif n'utilise pas encore ces champs** ; aucune commande `Hot Spot` AGA installée.
+
+**Protections :** la Lib active P0 et `LAST_GOOD` restent byte-identiques, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; `tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, tests passés et archives inchangés. **P1 Gate B/C/D NON TESTÉES**. La CI `Artifact integrity` du HEAD P0 antérieur restait rouge sur une assertion SHA R84 du test historique R71, indépendamment des tests P1 PASS ; ne pas l'attribuer au P1.
+
+**Prochaine étape :** décider des signatures et des erreurs de lecture X/Y/I, puis builder **AP20 uniquement en mémoire** avec shims MC68020 et test ABI/relocation, sans installer une autre `.Lib` ni toucher à `LAST_GOOD`. Enchaîner ensuite hotspot natif + application au rendu, puis priorités, `Limit Bob` et `Del/Ins Bob` ; Sprites et M20 toujours en attente.
+
+
+
 ## 20 novembre 2026 — M19 P0 terminée, LAST_GOOD promue avant P1
 
 **Décision de l'auteur :** P0 est terminée et sa bibliothèque de travail est promue LAST_GOOD avant d'engager **M19 P1**. Sur `main`, [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) et [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) sont désormais **byte-identiques**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, 89 commandes/185 entrées AP20, MC68020 minimum. [Commit de promotion `71ff386`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/71ff3862929b729bb44db20294aec9b048775cbf). **R84**, ancienne LAST_GOOD, reste source-reproductible en **67 904 octets** SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` et consultable dans le Git précédent. Aucun artefact secondaire et aucune archive modifiée.
