@@ -15,7 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
-from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA
+from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -55,12 +55,12 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
     # Post-R82 candidates inherit the historical Region contract; the
     # active P0d / AP20-islands images must not be compared to the R69 Lib.
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA):
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
@@ -71,26 +71,45 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha in (B8_SHA,B8S1_SHA):
-            from build_m19_b8_first_update_in_memory import build_b8_first_update
+        if active_sha in (B8_SHA,B8S1_SHA,P0_FREE_SHA):
             from compiler_relocation import unpack_ap20
             from build_m19_ap20_islands_in_memory import build as build_islands
-            if active_sha==B8S1_SHA:
+            if active_sha==P0_FREE_SHA:
+                # Keep historical R69/R82 region checks, and verify the
+                # installed M19 Bank Free image against its exact builder.
+                from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+                tested,details=build_bank_free()
+                assert len(tested)==117896
+                assert details['public_commands']==89 and details['ap20_entries']==185
+                assert details['native_groups']==[142,153,156,177,181]
+                assert details['pc16_max']==31092 and details['bank_free_index']==184
+            elif active_sha==B8S1_SHA:
                 from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
                 tested,details=build_b8_safe_retry()
                 assert len(tested)==116104 and details['predecessor_sha']==B8_SHA
             else:
+                from build_m19_b8_first_update_in_memory import build_b8_first_update
                 tested,details=build_b8_first_update()
                 assert len(tested)==115744
             assert active==tested and details['sha256']==active_sha
-            assert details['public_commands']==88 and details['ap20_entries']==184
-            assert details['native_groups']==[142,153,156,177,181] and details['pc16_max']==29962
+            if active_sha!=P0_FREE_SHA:
+                assert details['public_commands']==88 and details['ap20_entries']==184
+                assert details['native_groups']==[142,153,156,177,181]
+                assert details['pc16_max']==29962
             _,native_units,_=unpack_ap20(tested)
             older,oldermeta=build_islands()
             assert oldermeta['sha256']==AP20_ISLANDS_SHA
             _,frozen_units,_=unpack_ap20(older)
             assert all(native_units[n]==frozen_units[n] for n in (142,153,156)), (
-                'B8/S1 modified R84-inherited AGAPIC/Region unit')
+                'B8/S1/P0 modified R84-inherited AGAPIC/Region unit')
+            if active_sha==P0_FREE_SHA:
+                # Appended Bank Free must preserve both B8 S1 Bob units.
+                from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+                s1,s1meta=build_b8_safe_retry()
+                assert s1meta['sha256']==B8S1_SHA
+                _,s1_units,_=unpack_ap20(s1)
+                assert native_units[177].startswith(s1_units[177])
+                assert native_units[181].startswith(s1_units[181])
         elif active_sha in (B7_SHA,B7M1_SHA,B7M2_SHA):
             from build_m19_p0j_end_lifecycle_in_memory import build as build_b7, build_multiframe
             from build_m19_b7m2_close_reset_in_memory import build_close_reset
