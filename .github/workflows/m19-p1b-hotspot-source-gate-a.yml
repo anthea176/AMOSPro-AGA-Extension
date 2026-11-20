@@ -1,0 +1,35 @@
+name: M19 P1b Hot Spot origin MC68020 Gate A - source only
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p1b-hotspot-source-gate-a.yml'
+      - 'tools/m19_p1b_hotspot_origin_emit.py'
+      - 'tools/m19_p1b_hotspot_draw_model.py'
+      - 'tools/test_m19_p1b_hotspot_source_gate_a.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hotspot-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Python syntax and native CPU / delivery policy
+        run: |
+          python -B -m py_compile tools/m19_p1b_hotspot_origin_emit.py tools/m19_p1b_hotspot_draw_model.py tools/test_m19_p1b_hotspot_source_gate_a.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Preserve old AGBO, Clear Update and P1a sources
+        run: |
+          python -B tools/test_m19_p0a_multi_bob_abk.py
+          python -B tools/test_m19_bob_clear_update_model.py
+      - name: Native hotspot MC68020 origin, masking and double buffering
+        run: python -B tools/test_m19_p1b_hotspot_source_gate_a.py
+      - name: Never write P1b into the active P1a Lib, P0 LAST_GOOD, or ASC
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
