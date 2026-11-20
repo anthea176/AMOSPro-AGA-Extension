@@ -26,7 +26,16 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    assert len(active_candidate)==102400 and sha256(active_candidate).hexdigest()=="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"
+    from active_library import B7M2_SHA,B8_SHA,verify_active
+    active_digest=sha256(active_candidate).hexdigest()
+    assert active_digest in (B7M2_SHA,B8_SHA), 'Unknown active canonical library'
+    from build_m19_b8_first_update_in_memory import build_b8_first_update
+    b8,report=build_b8_first_update()
+    assert len(b8)==115744 and report['sha256']==B8_SHA
+    if active_digest==B8_SHA:
+        assert active_candidate==b8
+    else:
+        assert len(active_candidate)==102400 and active_digest==B7M2_SHA
     files=sorted((ROOT/"tests/current").glob("*.asc"))
     assert len(files)==1, files  # historical R87 test must not pin the active B7 campaign name
     raw=(ROOT/"tests/passed"/SMOKE).read_bytes()
@@ -52,7 +61,7 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7-m2 active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7/B8 active ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
     print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 
