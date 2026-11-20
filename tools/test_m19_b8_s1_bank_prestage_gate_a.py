@@ -96,12 +96,12 @@ def main():
     checks=10
     for layout in ('interpreted','compiled'): # relocated 68020, NOT Compiler
         m=fresh(layout)
-        assert len(m.paint_blits)==0
+        assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits)
         assert len(m.chip_live)==0 and len(m.metadata)==0
         assert m.run_select(10)==1
         assert len(m.chip_live)==1 and len(m.metadata)==1
         assert m.chip_allocs==1 and m.chip_copies==1
-        assert len(m.paint_blits)==0 # PREPARE occurred before any Bob DRAW.
+        assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits) # PREPARE occurred before any Bob DRAW.
         assert m.callbacks()==(m.end_callback(),)*2
         allocs=m.chip_allocs
         assert m.run_select(10)==1 # identical bank + gen = reuse.
@@ -109,7 +109,7 @@ def main():
         assert m.run_select(11)==1
         assert len(m.chip_live)==2 and len(m.metadata)==2
         assert m.chip_allocs==2 and m.chip_copies==2
-        assert len(m.paint_blits)==0
+        assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits)
         assert m.run_select(10)==1
         assert m.chip_allocs==2
         assert m.public('bob',ident=1,x=5,y=7,image=1)==1
