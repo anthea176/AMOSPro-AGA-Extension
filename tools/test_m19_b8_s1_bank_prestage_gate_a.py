@@ -91,11 +91,18 @@ def fresh(layout):
     assert m.run_select(11)==1
     assert m.run_get(1,7,8,16,15)==1
     assert not m.chip_live and not m.metadata
-    # An AGBO with images requires an open AGA screen to be pre-staged.
+    # Isolate the missing-AgaState case explicitly. The shared legacy
+    # fixture pre-populates an AGA state pointer for some tests, so merely
+    # skipping activate_aga_state() does NOT simulate an unopened screen.
+    saved=m.get(AMOS+0x1c8)
+    m.put(AMOS+0x1c8,0)
     before=m.selected_triple()
+    allocs=m.chip_allocs
     assert m.run_select(10)==0
     assert m.selected_triple()==before
-    assert not m.chip_live
+    assert not m.chip_live and not m.metadata
+    assert m.chip_allocs==allocs, 'no Chip allocation without AGA State'
+    m.put(AMOS+0x1c8,saved)
     m.activate_aga_state()
     m.configure_real_state()
     return m
