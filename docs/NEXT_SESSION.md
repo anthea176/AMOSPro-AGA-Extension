@@ -1,5 +1,18 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — S1 ACTIF, SafePort borné, Gate A PASS ; Gates B/C WinUAE à réaliser
+
+**Bascule native S1 autorisée (« ok go ») et vérifiée sur `main`:** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, MC68020+, **88 commandes / 184 entrées AP20**, cinq unités natives `[142,153,156,177,181]`, PC16 maximal `29962`. [Émetteur append-only](../tools/m19_b8_safe_retry_emit.py) + [builder exact](../tools/build_m19_b8_safe_retry_in_memory.py) + [119 tests natifs](../tools/test_m19_b8_safe_retry_gate_a.py). L'ancien natif B8 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` reste byte-exact en préfixe et reconstruisible, les tokens publics inchangés. Seul le stub public `Aga Bob Clear` (index 182) appelle désormais `WaitTOF` **au maximum 3 VBL** si SafePort reste pending, puis retente le Clear natif exact ; autres refus toujours bloquants, pas de Swap implicite, jamais de succès simulé.
+
+**Gate A native S1 PASS** [CI 44780312459](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459) — 119 cas CPU020 sur deux relocations, latence 1/2/3 VBL, Safe jamais reçu, manque de snapshot, propriétaire inconnu, absence de graphics.library, callback non autorisé, et tests B7/B8 précédents. Les services OS/Gfx et notifications sont **simulés**. **Gates B Runtime WinUAE, C vrai AMOS Compiler, D matériel : NON TESTÉES sur S1.**
+
+**Preuve d'origine du défaut sous WinUAE sur l'ancienne B8 :** Runtime et Compiler sans VBL de diagnostic `ERR 18`, 316/405 frames, 314 Clear ; puis Runtime 317/405 avec VBL ponctuel stage8 frame2, 360/405 avec VBL stage8, enfin **Runtime `PATH_OK` 405/405, 403 Clear, 405 Update, 50 Off, 0 échec** avec VBL aux stages8/9. Cela démontre une dépendance au timing, pas une preuve définitive de l'origine interne du refus.
+
+**Seul ASC actif :** [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) **11 092 octets**, **aucun VBL ajouté à la boucle `For _STEP=1 To 45`**. Faire `git pull origin main` sur Windows, copier S1 dans le slot AGA `APSystem`, redémarrer AMOS, `Project → Merge ASCII` depuis **ce nouveau fichier** et non l'ancien ASC local modifié ; lancer deux fois Runtime puis compiler un nouvel exécutable, conserver les 3 logs `RAM:M19_B8_CLEAR_UPDATE.TXT`. Attendu `ERR 0 / PATH_OK / 405 FRAMES / 9 STAGES / 403 CLEAR / 405 UPDATE` ; ceci n'est **pas encore obtenu sur S1**. Le R84 `LAST_GOOD` 67 904 octets SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` reste protégé.
+
+**L'entrée B8 du 20 novembre qui suit est historique**, décrivant l'ancienne Lib avant S1.
+
+
 ## 20 novembre 2026 — M19 B8 LIVRÉE sur `main` pour Gates B/C
 
 **Bascule explicitement autorisée par « allons y » :** la bibliothèque active de travail [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est maintenant **M19 B8 — 115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, **88 commandes et 184 entrées AP20**, cinq unités natives MC68020 (groupes `[142,153,156,177,181]`), portée PC16 maximale **29 962**. La [candidate B8](../tools/build_m19_b8_first_update_in_memory.py) est source-reconstructible octet pour octet. La bascule initiale est enregistrée par le [commit 157a2cb](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/157a2cba27f731a9271f9e41b810dd5eb26cdae1). Les garde-fous et références historiques ont été adaptés pour accepter ce nouveau SHA sans changer les anciennes sources.

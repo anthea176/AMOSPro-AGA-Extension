@@ -1,5 +1,14 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## Référence active M19 B8 S1 — SafePort bounded Clear (20/11/2026)
+
+**Lib unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, 88 commandes, 184 entrées AP20, groupes natifs `[142,153,156,177,181]`, MC68020 minimum, PC16 maximal **29 962**. [Builder S1](../tools/build_m19_b8_safe_retry_in_memory.py), [émetteur natif](../tools/m19_b8_safe_retry_emit.py). B8 précédente `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` source byte-exacte comme préfixe : **+360 octets append-only** et seulement le stub de `Aga Bob Clear` redirigé (182). `Aga Bob Update`, Bob setter, B7 Draw/End/Close, tokens historiques, Safe/Disp et DIRTY invariants inchangés.
+
+**Séquence :** `Clear` original → si succès, retour immédiat ; sinon contrôle owner/pool/validité/Screen/DB et **pending Safe** → jusqu'à **3 graphics.library/WaitTOF** (LVO -270) avec retour au garde Clear original à chaque essai. Jamais de WaitPort infini, aucun Swap implicite, aucun pixel du front touché et aucun effacement du verrou DIRTY sur refus persistant. `WaitTOF` est borné mais induit une latence intentionnelle lorsque la notification n'arrive pas. [MC68020 Gate A 119 cas PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459) sur OS/Gfx simulés ; **WinUAE B/C S1 NON TESTÉES**. [ASC S1 sans VBL diagnostic](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), 405 frames. R84 LAST_GOOD intacte.
+
+**La section B8 sans S1 ci-dessous est un état historique de travail, pas la Lib active.**
+
+
 ## Référence active M19 B8 — livraison de travail du 20/11/2026
 
 **Bibliothèque unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, MC68020+, 88 commandes, 184 entrées AP20, cinq unités natives `[142,153,156,177,181]` et PC16 maximal 29 962. [Builder source](../tools/build_m19_b8_first_update_in_memory.py). L'ancienne B7-m2 reste un préfixe source vérifié, sans toucher à `LAST_GOOD`.
