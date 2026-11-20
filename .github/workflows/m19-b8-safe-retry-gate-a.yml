@@ -8,6 +8,9 @@ on:
       - 'tools/m19_b8_safe_retry_emit.py'
       - 'tools/build_m19_b8_safe_retry_in_memory.py'
       - 'tools/test_m19_b8_safe_retry_gate_a.py'
+      - 'tools/active_library.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/*.asc'
   workflow_dispatch:
 
 permissions:
