@@ -18,7 +18,8 @@ from test_m19_p0j_explicit_safe_draw_gate_a import NoShadowMachine
 from test_m19_p0d_safe_bank_blit_native import oracle,SIZE
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from m19_p0a_multi_bob_abk import parse_payload,set_hotspot
-from test_m19_p0a_r88_get_gate_a import SCREEN_W
+from test_m19_p0a_r88_get_gate_a import SCREEN_W, SCREEN_H
+from m19_p1b_hotspot_draw_model import clipped_origin
 from amos_link_test_support import relocate
 
 def machine(layout,hot10=(0,0),hot11=(0,0),all64=False):
@@ -122,9 +123,19 @@ def main():
             checks+=1
 
         m=machine(layout,(2,1),(-2,1),all64=True)
-        assert check_frame(m,(2,1),(-2,1),True)==64
+        images={n:parse_payload(m.bank_payload(n)).image(1) for n in (10,11)}
+        visible=0
+        for ident in range(1,65):
+            bank=10 if ident<=32 else 11
+            hot=(2,1) if bank==10 else (-2,1)
+            img=images[bank]
+            if clipped_origin((ident*7)%65,(ident*11)%45,*hot,
+                              img.width,img.height,SCREEN_W,SCREEN_H) is not None:
+                visible+=1
+        assert visible<64 and visible>=60,('expected clipped Bobs',visible)
+        assert check_frame(m,(2,1),(-2,1),True)==visible
         allocations,copies=m.chip_allocs,m.chip_copies
-        assert check_frame(m,(2,1),(-2,1),True)==128
+        assert check_frame(m,(2,1),(-2,1),True)==2*visible
         assert (m.chip_allocs,m.chip_copies)==(allocations,copies)
         checks+=4
 
