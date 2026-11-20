@@ -32,6 +32,11 @@ class FreeMachine(Prestaged):
         super().__init__(source,layout)
         self.native,self.labels=emit_b8_s1_bank_free()
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
+        # Restoring native labels must preserve Prestaged's verified B7
+        # Draw/Close routing: the unwrapped legacy multi-bank entry may
+        # temporarily project selected-bank state and is NOT the B8 path.
+        self.labels['routed_paint_all_entry']=self.labels['b8_b7_draw_trampoline_entry']
+        self.labels['guarded_close_entry']=self.labels['b8_b7_close_trampoline_entry']
         self.fifth_source,self.fifth_labels=emit_b8_s1_bank_free_bridge()
         self.uc.mem_write(self.fifth,self.fifth_source)
 
