@@ -80,13 +80,14 @@ def main():
             m=ready_snap(raw,labels,base,b7base)
             front=m.page(0)
             oldback=m.page(1)
+            initial_blits=m.waitblit_count
             m.rewrite_page(1,0xa5)
             m.put(DB+20,3)  # Pending Safe + unrelated Disp bit.
             m.deliver_at=latency
             assert m.call('clear_wait_safe')==1
             assert m.tof_count==latency
             assert m.getmsg_count==latency+1
-            assert m.waitblit_count==1
+            assert m.waitblit_count==initial_blits+1
             assert m.page(1)==oldback and m.page(0)==front
             assert m.g('status')==0 and m.get(DB+20)==2
             assert m.root()[SERVICE['valid']//4]==2
@@ -110,7 +111,7 @@ def main():
         t.put(DB+20,1)
         assert t.call('clear_wait_safe')==0
         assert t.tof_count==MAX_SAFE_VBLS and t.getmsg_count==MAX_SAFE_VBLS+1
-        assert t.waitblit_count==0
+        assert t.waitblit_count==1  # preflight's initial capture waited for Blitter
         assert t.page(0)==oldfront and t.page(1)==dirtyback
         assert t.g('status')==DIRTY and t.root()[SERVICE['valid']//4]==2
         t.safe_available=True
