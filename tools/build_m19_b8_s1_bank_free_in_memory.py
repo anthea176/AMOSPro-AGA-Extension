@@ -16,8 +16,11 @@ from build_m19_b8_s1_bank_prestage_in_memory import (
 )
 from m19_b8_s1_bank_prestage_emit import emit_b8_s1_bank_prestage
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
+from m19_b8_safe_retry_emit import emit_b8_safe_retry
+from m19_b8_s1_bank_free_bridge_emit import emit_b8_s1_bank_free_bridge
 
 BOBS=177
+B8=181
 FREE=184
 API=('aga bob bank free', FREE, 1, 'I0')
 TITLE=(b'AMOSPro AGA M19 P0 Bank Chip Select+Free MC68020 candidate\0'
@@ -39,19 +42,25 @@ def build_bank_free():
         raise ValueError('BOBS native suffix no longer byte exact')
     if any(t['name']==API[0] for t in walk_tokens(toks)):
         raise ValueError('Aga Bob Bank Free already tokenized')
-    target=len(parts[BOBS])-len(DISPATCH_V2) + (newlabs['b8s1_bank_free_entry']-len(prefix))
+    old8,_=emit_b8_safe_retry()
+    new8,bridge_labs=emit_b8_s1_bank_free_bridge()
+    if parts[B8]!=DISPATCH_V2+old8 or not new8.startswith(old8):
+        raise ValueError('Fifth B8 S1 native source was not byte exact')
+    target=bridge_labs['b8_bank_free_bridge_entry']
     newparts=list(parts)
     newparts[BOBS]+=native[len(prefix):]
+    newparts[B8]+=new8[len(old8):]
     if (target&1 or target<0 or len(newparts[BOBS])>=MAX_UNIT_BYTES
-            or target>=len(newparts[BOBS])-len(DISPATCH_V2)):
-        raise ValueError('BOBS target or V2 island exceeds capacity')
+            or len(newparts[B8])>=MAX_UNIT_BYTES
+            or target>=len(newparts[B8])-len(DISPATCH_V2)):
+        raise ValueError('BOBS/fifth native target or AP20 V2 size exceeded')
     # AMOS +B.s inspects the FOUR bytes immediately BEFORE the NEW entry
     # for GetP. It belongs after the previous zero-arg Update RTS, not in
     # the end of the new stub. No executable byte of Update may be altered.
     if len(parts[183])!=8 or parts[183][-2:]!=b'\x4e\x75':
         raise ValueError('Cannot add GetP: previous Update stub not pinned')
     newparts[183]=parts[183]+GETP
-    newparts.append(RBSR+pack('>HH',BOBS,target)+b'\x4e\x75')
+    newparts.append(RBSR+pack('>HH',B8,target)+b'\x4e\x75')
     newtokens=toks[:-6]+token(*API)+toks[-6:]
     if len(newparts)!=185:
         raise ValueError('AP20 new instruction count wrong')
@@ -66,10 +75,12 @@ def build_bank_free():
     if len(found)!=1 or (found[0]['instruction'],found[0]['function'],
                           found[0]['signature'])!=(FREE,1,'I0'):
         raise ValueError('Public Aga Bob Bank Free token is not an instruction')
-    if any(newparts[i]!=parts[i] for i in range(len(parts)) if i not in (BOBS,183)):
+    if any(newparts[i]!=parts[i] for i in range(len(parts)) if i not in (BOBS,B8,183)):
         raise ValueError('Historical stub changed')
     if newparts[183]!=parts[183]+GETP:
         raise ValueError('Only GetP data may be appended to Update')
+    if not newparts[B8].startswith(parts[B8]):
+        raise ValueError('B8 fifth-group native prefix changed')
     if not newparts[BOBS].startswith(parts[BOBS]):
         raise ValueError('Pre-stage native prefix changed')
     groups=[i for i,p in enumerate(newparts) if p.startswith(DISPATCH_V2)]
@@ -83,7 +94,8 @@ def build_bank_free():
        ap20_entries=185,native_groups=groups,pc16_max=pc16,
        bob_bank_index=164,bank_free_index=FREE,free_native_offset=target,
        appended_native_bytes=len(native)-len(prefix),
-       old_bobs_prefix_byte_exact=True,b8_fifth_byte_exact=True,
+       b8_bridge_bytes=len(new8)-len(old8),
+       old_bobs_prefix_byte_exact=True,b8_fifth_prefix_byte_exact=True,
        gate_a='TEST REQUIRED',gate_b='NOT TESTED',gate_c='NOT TESTED',
        installed=False,last_good='UNCHANGED')
 
