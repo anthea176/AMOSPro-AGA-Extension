@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — Gate B M19 P0 Bank Free PASS fonctionnel (journaux fournis)
+
+**État de référence :** M19 P0 Bank Select/Free demeure l'unique Lib de test sur `main` : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 attendu `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, builder [M19 P0 exact](../tools/build_m19_b8_s1_bank_free_in_memory.py). **Gate A : PASS 225 tests MC68020** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)).
+
+**Gate B Runtime WinUAE : PASS fonctionnel d'après les deux journaux transmis le 20/11/2026** (`M19_P0_BANK_FREE1.TXT`, `M19_P0_BANK_FREE2.TXT`). Chaque fichier a 1 043 octets, 48 lignes, SHA256 `5dd8d1c7e15fb13bb0ba1ad7aa083c8928fb5b5af1f459df0d03631308e411e8`. Ils sont **octet par octet identiques** : `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `FRAMES_OK 405`, `STAGES_OK 9`, `CLEAR_OK 403`, `UPDATE_OK 405`, `BANK_FREE_CALLS 3`, `BANK_FREE_REARM 1`, échecs 0, `CLOSE_RETURNED 1`, `BANKS_ERASED 2`, `VERDICT PATH_OK`. **Limites** : pas d'identifiant indépendant des lancements, pas de preuve visuelle dans le journal, `LIB_SHA256` est une étiquette ASC et non un hash de la Lib chargée. [Compte rendu précis Gate B](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md) et [protocole](../tests/current/README.md).
+
+**Gate C AMOS Compiler P0 : reportée, NON TESTÉE. Gate D Amiga physique : NON TESTÉE.** R84 `LAST_GOOD` reste protégée. La correction de compatibilité SHA des contrôles historiques CI se traite séparément : un échec de CI n'invalide pas un journal Runtime, et un PASS Runtime ne remplace pas la CI. **M19 reste en cours** (prochaines fonctions Bob) ; M20 reste en attente.
+
+
 ## 20 novembre 2026 — P0 Bank Free installée sur main, Gate A PASS
 
 **Lib active :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, **89 commandes / 185 entrées AP20**, cinq unités natives MC68020, PC16 maximum 31 092. Source [builder exact](../tools/build_m19_b8_s1_bank_free_in_memory.py). **Gate A : PASS 225 contrôles** (104 sélection Chip + 121 Bank Free), deux relocations et AmigaOS/Blitter simulés ; [CI 44801203756](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756). Le binaire est en `dist/` sur `main` depuis [`9fb051c`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9fb051c304c79d30259dd9ba86f0fe7566566925).
