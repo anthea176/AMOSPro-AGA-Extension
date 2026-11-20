@@ -127,6 +127,21 @@ def build_b8_first_update() -> tuple[bytes, dict]:
 
 if __name__ == '__main__':
     from pprint import pprint
+    import argparse
+    import base64
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--emit-base64', action='store_true',
+                    help='one-time audited binary handoff via read-only Gate A logs')
+    args = ap.parse_args()
     image, info = build_b8_first_update()
-    print('M19 B8 PUBLIC Clear/Update AP20 candidate IN MEMORY')
+    assert image == build_b8_first_update()[0], 'non-deterministic B8 candidate'
+    assert len(image) == 115744 and info['sha256'] == (
+        '00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae')
+    print('M19 B8 PUBLIC Clear/Update AP20 candidate IN MEMORY', flush=True)
     pprint(info)
+    if args.emit_base64:
+        print('B8_B64_BEGIN', flush=True)
+        binary64 = base64.b64encode(image).decode('ascii')
+        for at in range(0, len(binary64), 120):
+            print('B8_B64', binary64[at:at+120], flush=True)
+        print('B8_B64_END', flush=True)

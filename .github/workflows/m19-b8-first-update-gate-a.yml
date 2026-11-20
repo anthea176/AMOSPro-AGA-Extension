@@ -35,6 +35,9 @@ jobs:
         run: python -B tools/build_m19_b8_first_update_in_memory.py
       - name: Execute first Update MC68020 native B7 and B8
         run: python -B tools/test_m19_b8_first_update_gate_a.py
+      - name: Emit exact B8 for authorized canonical library installation
+        if: "${{ contains(github.event.head_commit.message, '[b8-emit]') }}"
+        run: python -B tools/build_m19_b8_first_update_in_memory.py --emit-base64
       - name: Preserve historical B7/B8 native Gate A
         run: |
           python -B tools/test_m19_b8_atomic_integrated_b7_gate_a.py
