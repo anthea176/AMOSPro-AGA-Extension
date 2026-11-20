@@ -23,6 +23,9 @@ P0_SHA='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 BOBS=177
 FIFTH=181
 BASE_ENTRIES=185
+P1A_SHA='165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a'
+P1A_BYTES=118816
+P1A_NATIVE_SHA='9e9785488bf7fcf5b9062e38439ebdf4e1e032ee226df0a97850df95a386512e'
 API=(('aga x bob','x'),('aga y bob','y'),('aga i bob','image'))
 TITLE=(b'AMOSPro AGA M19 P1a Bob X/Y/I getters MC68020 SOURCE ONLY\0'
        b'$VER: AMOSPro_AGA M19 P1a Gate A UNINSTALLED\0')
@@ -99,6 +102,9 @@ def build_p1a() -> tuple[bytes,dict]:
     pc16=max(map(abs,spans.values()))
     if groups!=[142,153,156,177,181] or pc16>=32766:
         raise ValueError('P1a Compiler/interpreter native group PC16 overflow')
+    if (len(image)!=P1A_BYTES or sha256(image).hexdigest()!=P1A_SHA
+            or sha256(native).hexdigest()!=P1A_NATIVE_SHA):
+        raise ValueError('Exact M19 P1a Gate A candidate/source hash drift')
     commands=[x for x in after['tokens']
               if x['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
     if len(commands)!=92:
