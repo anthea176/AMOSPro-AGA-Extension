@@ -20,11 +20,13 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     base,origin=build_close_reset()
     installed=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
-    current=(ROOT/'tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc').read_bytes()
-    assert installed==base
-    assert sha256(installed).hexdigest()=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
-    assert len(current)==10911
-    assert sha256(current).hexdigest()=='a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec'
+    current=(ROOT/'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc').read_bytes()
+    from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+    active,report=build_bank_free()
+    assert installed==active and report['sha256']=='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+    assert len(current)==12837
+    assert sha256(current).hexdigest()=='923f80ccf985e60a3952474fb63a3c8d19541f91f2adf9aecf6b8a14ad1c6fc8'
+    assert installed!=base
     candidate,meta=build_b8_fifth_group()
     assert candidate!=installed
     assert meta['base_sha']==origin['sha256']
@@ -44,7 +46,7 @@ def main():
     assert not any(t['name'] in ('aga bob clear','aga bob update')
                    for t in walk_tokens(tokens))
     print('M19 B8 fifth native group SOURCE-ONLY Gate A AP20 PASS',meta)
-    print('Active Lib/ASC and all old Compiler stubs EXACTLY preserved')
+    print('Promoted P0 Lib/ASC pinned; B7 ancestor and all old Compiler stubs retained')
 
 
 if __name__=='__main__':main()
