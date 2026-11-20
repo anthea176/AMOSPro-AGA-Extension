@@ -14,7 +14,7 @@ from test_m19_p0c_screen_close_real_gate_a import GFX
 from test_m19_p0j_pending_close_end_gate_a import DB,SAFE,DISP
 from test_m19_b8_s1_bank_prestage_gate_a import Prestaged
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
-from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+from build_m19_b8_s1_bank_free_in_memory import build_bank_free,P0_BANK_FREE_SHA,P0_BANK_FREE_BYTES
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_b8_s1_bank_prestage_emit import emit_b8_s1_bank_prestage
 from m19_b8_s1_bank_free_bridge_emit import emit_b8_s1_bank_free_bridge
@@ -98,6 +98,7 @@ def prepared(layout, *, with_bobs=True):
 def main():
     image,meta=build_bank_free()
     assert image==build_bank_free()[0]
+    assert len(image)==P0_BANK_FREE_BYTES and meta['sha256']==P0_BANK_FREE_SHA
     assert meta['predecessor_sha']=='577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf'
     assert meta['public_commands']==89 and meta['ap20_entries']==185
     assert meta['native_groups']==[142,153,156,177,181]

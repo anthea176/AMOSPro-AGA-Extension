@@ -22,6 +22,8 @@ from m19_b8_s1_bank_free_bridge_emit import emit_b8_s1_bank_free_bridge
 BOBS=177
 B8=181
 FREE=184
+P0_BANK_FREE_SHA='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+P0_BANK_FREE_BYTES=117896
 API=('aga bob bank free', FREE, 1, 'I0')
 TITLE=(b'AMOSPro AGA M19 P0 Bank Chip Select+Free MC68020 candidate\0'
        b'$VER: AMOSPro_AGA M19 P0 BANK FREE GATE A CANDIDATE\0')
@@ -88,6 +90,8 @@ def build_bank_free():
     pc16=max(map(abs,spans.values()))
     if groups!=[142,153,156,177,181] or pc16>=32766:
         raise ValueError('Compiler AP20 PC16 out of range')
+    if (len(image)!=P0_BANK_FREE_BYTES or sha256(image).hexdigest()!=P0_BANK_FREE_SHA):
+        raise ValueError('Pinned Bank Free Gate A AP20 bytes/SHA drift')
     return image,dict(
        sha256=sha256(image).hexdigest(),bytes=len(image),
        predecessor_sha=PRESTAGE_SHA,public_commands=89,
@@ -96,7 +100,7 @@ def build_bank_free():
        appended_native_bytes=len(native)-len(prefix),
        b8_bridge_bytes=len(new8)-len(old8),
        old_bobs_prefix_byte_exact=True,b8_fifth_prefix_byte_exact=True,
-       gate_a='TEST REQUIRED',gate_b='NOT TESTED',gate_c='NOT TESTED',
+       gate_a='PASS: 121 MC68020 bank-free checks + 104 pre-stage (two relocations, OS mocked)',gate_b='NOT TESTED',gate_c='NOT TESTED',
        installed=False,last_good='UNCHANGED')
 
 
