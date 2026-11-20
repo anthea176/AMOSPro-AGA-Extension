@@ -124,7 +124,7 @@ def main():
         assert n.call('bind')==1
         n.put(DB+20,1)
         assert n.call('clear_wait_safe')==0 and n.tof_count==0
-        assert n.getmsg_count==0 and n.waitblit_count==0
+        assert n.getmsg_count==1 and n.waitblit_count==0  # original Clear checks Safe once before rejecting missing snapshot
         checks+=3
 
         # Owner mismatch must never consume Safe or wait for VBL.
