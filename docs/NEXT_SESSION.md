@@ -1,5 +1,19 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — M19 P1a getters X/Y/I Gate A MC68020 PASS, candidate source-only
+
+**Ordre validé :** `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` sont des **fonctions numériques à un argument N**, avec `D3=-32769` en cas de refus (ID absent/off, propriétaire étranger, etc.), hors domaines de X/Y signés et d'image. L'auteur a confirmé « ok go » après la proposition explicite. **Le code natif et les 3 tokens AP20 sont développés, mais aucun binaire n'est installé.**
+
+**Preuve :** [rapport P1a complet](M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md), [Gate A MC68020 110 vérifications PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476430), [politique CPU/chemins PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476435). **Candidate générée uniquement en mémoire**, **118 816 octets**, SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a`, **92 commandes/188 entrées AP20**, groupes `[142,153,156,177,181]`, PC16 max `31092` ; source native ajoutée au cinquième groupe B8 (838 octets). Les signatures 1-argument `00` et `GetP` sont vérifiées. Les stubs sont 185, 186, 187 (B8 group181 offsets 13894,13942,13990). Builder [`build_m19_p1a_getters_in_memory.py`](../tools/build_m19_p1a_getters_in_memory.py), emitter [`m19_p1a_bob_getters_emit.py`](../tools/m19_p1a_bob_getters_emit.py), [test](../tools/test_m19_p1a_getters_gate_a.py).
+
+**Incident résolu dans P1a :** le point d'entrée de lecture en BOBS est `relay_read_entry` ; les nouveaux stubs de fin de table dépassaient PC16 vers le groupe BOBS (`-44510`) et le builder les a refusés. La solution sûre les route vers le **cinquième groupe B8**, déjà atteignable, avec un pont vérifiant callback A5+1CC/+1D0, marqueur source B8RG, TypeOfMem et signature native. **Les octets BOBS d'origine restent inchangés.** Deux placements CPU020 simulés pour l'interpréteur et le Compiler, **pas un vrai Compiler**.
+
+**Protections vérifiées :** `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` P0 restent 117 896 octets, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, **même blob Git**. Un seul ASC actif `tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc` (12 837 octets), ni tests passés ni archives modifiés. **P1a Gates B Runtime, C vrai Compiler et D réel NON TESTÉES.** L'audit global historique `Artifact integrity` reste indépendant et ne doit pas être déclaré PASS sans résultat complet.
+
+**Suite :** demander une décision **distincte de bascule** P1a de la seule Lib active et du test ASC pour une Gate B WinUAE ; **ne pas remplacer LAST_GOOD P0**. Ou avancer sur P1b Hot Spot en source-only avant bascule. P1c/P1d, Sprites et M20 en attente.
+
+
+
 ## 20 novembre 2026 — M19 P1 engagée, première Gate A source-only PASS
 
 **Instruction de l'auteur :** poursuivre M19 avec **P1** après la promotion de P0. Première tranche réalisée **sur `main` uniquement** : [commit code `8fe77df`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/8fe77df60ecb807974b98e676a642a5c601dae07), [CI P1 source-only PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44827972362), [rapport et suites](M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md), [chantier mis à jour](../Chantier%20BOB.md). 
