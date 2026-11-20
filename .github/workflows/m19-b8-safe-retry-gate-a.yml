@@ -40,14 +40,18 @@ jobs:
           python -B tools/test_m19_b8_safe_lifecycle_gate_a.py
           python -B tools/test_m19_b8_clear_update_tx_gate_a.py
           python -B tools/test_m19_b8_first_update_gate_a.py
-      - name: Protect currently installed old B8 and R84 until Gate A validated
+      - name: Protect exact active B8 or S1 and R84 LAST_GOOD
         run: |
           python -B - <<'PY'
           from pathlib import Path
           from hashlib import sha256
-          assert sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()=='00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae'
+          from sys import path
+          path.insert(0,'tools')
+          from active_library import verify_active,B8_SHA,B8S1_SHA,R84_SHA
+          active,good,label=verify_active(Path('.'))
+          assert sha256(active).hexdigest() in (B8_SHA,B8S1_SHA)
           assert sha256(Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
-          print('PASS old active B8 and R84 unchanged during source-only Gate A')
+          print('PASS SHA-pinned active B8/S1 and R84 unchanged')
           PY
       - name: Emit audited bytes for the authorized S1 installation
         if: "${{ contains(github.event.head_commit.message, '[b8safe-emit]') }}"
