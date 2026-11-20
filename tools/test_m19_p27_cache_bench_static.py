@@ -16,6 +16,7 @@ ACTIVE = "M19_P27_R87_CACHE_CPU_BLITTER_01.asc"
 ACTIVE_BLOB = "e1062818abdfeb2d7e699d8c1dc9e9696250af65"
 P26_BLOB = "c6c03b24bb273027492776ba24e53193ec52198b"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 
 
@@ -148,7 +149,7 @@ def main() -> None:
         assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA))
         lastgood = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         assert len(candidate) == 73184 and sha256(candidate).hexdigest() == R87_SHA
-        assert len(lastgood) == 67904 and sha256(lastgood).hexdigest() == R84_SHA
+        assert len(lastgood) == 117896 and sha256(lastgood).hexdigest() == P0_FREE_SHA
     s = raw.decode('latin-1')
     assert not any(x in s for x in ('Aga Bob Probe', 'ElseIf', 'Pop Proc'))
     assert 'Aga Bank Image Capture(12,0,0,16,16,0,1)' in s

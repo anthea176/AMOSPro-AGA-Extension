@@ -12,6 +12,7 @@ ASC_BLOB = "c6c03b24bb273027492776ba24e53193ec52198b"
 SMOKE_BLOB = "347e35d4e79b4afc331a732f33c448bbb61ddef9"
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 
 def git_blob(data: bytes) -> str:
     return sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
@@ -36,7 +37,7 @@ def main() -> None:
     digest=sha256(active).hexdigest()
     assert (len(active),digest) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA)), 'Unknown active B7/B8 candidate'
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
-    assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
+    assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1  # historical benchmark model independent of active ASC name
     data=(ROOT/"tests/passed"/TEST).read_bytes()

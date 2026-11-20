@@ -15,6 +15,7 @@ SMOKE_GIT="347e35d4e79b4afc331a732f33c448bbb61ddef9"
 R86_PASSED_GIT="19ad2044252783454f4082c118e53b34a6b83478"
 DRAFT_GIT="30c2e09f3b7b365aec8ef47fc741311ba1cb984a"
 R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"
 R87_SHA="02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 
 def blob_sha(b:bytes)->str:
@@ -23,7 +24,10 @@ def blob_sha(b:bytes)->str:
 def main()->None:
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
-    assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
+    assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA, "Promoted P0 LAST_GOOD changed"
+    from build_aga_r84_agapic import build as build_r84
+    historic,r84meta=build_r84()
+    assert len(historic)==67904 and r84meta['sha256']==R84_SHA
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,verify_active
