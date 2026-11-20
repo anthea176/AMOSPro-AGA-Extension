@@ -50,7 +50,17 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 B8 Clear/Update"):
+    if active.startswith("M19 B8 S1"):
+        from active_library import B8S1_SHA,R84_SHA
+        from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+        candidate,meta=build_b8_safe_retry()
+        assert current==candidate and meta["sha256"]==B8S1_SHA
+        assert len(candidate)==116104 and meta["public_commands"]==88
+        assert meta["ap20_entries"]==184 and meta["pc16_max"]==29962
+        assert meta["new_native_bytes"]==360 and meta["wait_tof_max"]==3
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R84_SHA
+        print("CURRENT M19 B8 S1 BOUNDED SAFE GATE A PASS; WINUAE B/COMPILER C NOT TESTED; R84 LAST_GOOD PROTECTED",meta)
+    elif active.startswith("M19 B8 Clear/Update"):
         from active_library import B8_SHA,R84_SHA
         from build_m19_b8_first_update_in_memory import build_b8_first_update
         candidate,meta=build_b8_first_update()

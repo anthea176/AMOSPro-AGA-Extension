@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,28 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==B8S1_SHA:
+            from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_b8_safe_retry()
+            assert wrapped==candidate and meta['sha256']==B8S1_SHA
+            assert meta['predecessor_sha']==B8_SHA and len(candidate)==116104
+            assert meta['public_commands']==88 and meta['ap20_entries']==184
+            assert meta['native_groups']==[142,153,156,177,181] and meta['pc16_max']==29962
+            _,parts,title=unpack_ap20(wrapped)
+            assert len(parts)==184 and b'M19 B8 S1' in title
+            assert not inspect(parse(wrapped))['issues']
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert ('Rbsr entry without audited compiler dispatcher' in str(exc)
+                        or 'Unsupported V2 compiler wrapper' in str(exc))
+            else:
+                raise AssertionError('B8 S1 V2 islands exported as fake monolith')
+            print('STRICT M19 B8 S1 SOURCE BUILDER AND OLD EXPORT REFUSAL PASS',B8S1_SHA)
+            continue
         if exp.sha(wrapped)==B8_SHA:
             from build_m19_b8_first_update_in_memory import build_b8_first_update
             from compiler_relocation import unpack_ap20
