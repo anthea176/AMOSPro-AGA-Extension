@@ -6,22 +6,22 @@
 
 | Élément | État |
 | --- | --- |
-| **Bibliothèque active** | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) — **M19 B8 S1 SafePort**, **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, 88 commandes / 184 entrées AP20, cinq groupes MC68020 `[142,153,156,177,181]`, PC16 max 29 962. [Builder S1 byte-exact](../tools/build_m19_b8_safe_retry_in_memory.py). B8 ancienne conservée dans Git. |
-| **ASC unique de campagne** | [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **11 092 octets**, provenance SHA S1 ; **aucun VBL artificiel dans la boucle**, [protocole WinUAE](../tests/current/README.md). |
-| **Validation S1** | **Gate A MC68020 PASS** (119 contrôles SafePort, [CI 44780312459](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459)). **Gate B WinUAE Runtime PASS sur deux journaux S1 fournis** : 405/405 frames, 9 étapes, 403 Clear, 405 Update, 50 Off, 0 échec et PATH_OK, sans VBL supplémentaire dans la boucle. **Gate C AMOS Compiler reportée** à la demande de l'auteur ; Gate D matériel non testée. |
-| **Référence protégée** | [R84 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` — intacte, aucune promotion B8. |
+| **Bibliothèque active** | [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) — **M19 P0 Bank Select/Free**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, **89 commandes / 185 entrées AP20**, cinq groupes MC68020 `[142,153,156,177,181]`, PC16 max **31 092**. [Builder source exact](../tools/build_m19_b8_s1_bank_free_in_memory.py). |
+| **ASC unique de campagne** | [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **12 837 octets**, reprend 405 frames B8 + trois phases P0 Free/réactivation ; journal `RAM:M19_P0_BANK_FREE.TXT`, **sans VBL artificiel dans la boucle**. [Protocole](../tests/current/README.md). |
+| **Qualification P0** | **Gate A native MC68020 PASS : 104 contrôles préparation Chip + 121 Bank Free** (OS/Blitter simulés, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)). **Gate B WinUAE Runtime / Gate C Compiler P0 NON TESTÉES** ; Gate D matériel non testée. |
+| **Référence protégée** | [R84 `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` — intacte, aucune promotion P0. |
 
-La B7-m2 (102 400 octets ; SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`) est la référence antérieure ; **ses Gates Runtime et Compiler PASS ne s'appliquent pas à B8**. [Preuves B7-m2](M19_B7M2_GATES_BC_2026-11-19.md).
+**Historique distinct :** B8 S1 SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a` a passé deux essais Runtime à 405/405 frames. Ce résultat ne qualifie pas la nouvelle P0. La B7-m2 (102 400 octets ; SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`) est la référence antérieure ; **ses Gates Runtime et Compiler PASS ne s'appliquent pas à B8**. [Preuves B7-m2](M19_B7M2_GATES_BC_2026-11-19.md).
 
-## 2. M19 EN COURS — préparation Chip des banques Bob
+## 2. M19 EN COURS — banques Chip et fonctions Bob
 
-**M19 n'est pas terminé.** B8 S1 conserve sa Gate A native et ses deux PASS Runtime ; Gate C Compiler reste reportée. Le chantier Bobs comprend encore `Aga Bob Bank Free N`, lectures X/Y/Image, hotspots, priorités, clipping, édition de banques, collisions et transformations ; la phase Sprites vient ensuite.
+**P0 livrée dans la Lib active :** `Aga Bob Bank N` prépare en Chip les images AGBO d'une banque peuplée (aucune allocation si vide) ; `Aga Bob Bank Free N` désactive les Bobs dépendants, attend `WaitBlit`, libère le cache privé **sans effacer la banque AMOS**. Opération idempotente, refus pendant `READY`/`DIRTY`, nouvelle sélection pour réactiver. [Rapport et limites](M19_P0_BANK_FREE_GATES_2026-11-20.md).
 
-**Sous-étape actuelle P0 :** [préparation Chip lors de `Aga Bob Bank N`](M19_P0_BANK_PRESTAGE_2026-11-20.md). Le wrapper MC68020 et le builder AP20 sont **expérimentaux, source-only** ; ils conservent 88 commandes et 184 entrées, et ne modifient pas la Lib S1. **Gate A CPU MC68020 PASS — 104 contrôles, deux relocations, [CI 44796391673](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44796391673)**. Candidate expérimentale **116 548 octets / SHA256 `577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf`**, non installée. La banque vide ne reçoit aucune allocation ; une banque peuplée doit être préparée avant le premier dessin, avec contrôles de sécurité et rollback.
+**État :** candidate active pour WinUAE, **Gate A 225 contrôles PASS**, Gates B/C/D P0 non validées. **M19 n'est pas terminé** : lectures X/Y/Image, hotspots, priorités, clipping, édition des banques, collisions, transformations, puis Sprites.
 
-**Étape suivante :** qualifier le cycle de cache Chip et le futur `Aga Bob Bank Free N` avec les objets actifs, avant tout ajout public ou installation. Aucun nouvel essai Compiler demandé.
+**Action suivante :** Gate B WinUAE sur la Lib P0, avec 405 frames de référence B8 + trois phases Free ; comparer les deux journaux Runtime successifs. Pas d'essai Compiler demandé.
 
-**M20 EN ATTENTE :** le prototype Python P0 (13 tests hôtes PASS) existe dans le dépôt, mais n'est pas la prochaine étape. Aucune poursuite de M20 P1 sans clôture et décision explicite sur M19.
+**M20 EN ATTENTE :** prototype Python P0 (13 tests hôtes PASS) conservé ; aucune poursuite avant décision sur M19.
 
 ## 3. Chantiers ultérieurs (non engagés)
 
