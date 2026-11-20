@@ -14,7 +14,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "tools"), str(ROOT / "tools" / "experiments")]
-from active_library import R84_SHA, R85_SHA, R87_SHA
+from active_library import R84_SHA, R85_SHA, R87_SHA, P0_FREE_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -37,9 +37,13 @@ APIS = (("aga bob probe", 1, FIRST_NEW, "0"),
 
 
 def build() -> tuple[bytes, dict]:
-    original = PROTECTED.read_bytes()
-    if len(original) != 67904 or sha256(original).hexdigest() != R84_SHA:
-        raise ValueError("R84 LAST_GOOD mismatch; refusing build")
+    live_good=PROTECTED.read_bytes()
+    if len(live_good)!=117896 or sha256(live_good).hexdigest()!=P0_FREE_SHA:
+        raise ValueError("Promoted P0 LAST_GOOD mismatch; refusing historical build")
+    from build_aga_r84_agapic import build as build_r84
+    original,r84_meta=build_r84()
+    if len(original)!=67904 or r84_meta['sha256']!=R84_SHA:
+        raise ValueError("Historical R84 source differs; refusing build")
     previous, old, _ = unpack_ap20(original)
     if len(old) != 85 or tuple(map(len, old[82:])) != (5558, 2508, 56580):
         raise ValueError("Pinned R84 three-unit layout changed")
@@ -111,7 +115,7 @@ def build() -> tuple[bytes, dict]:
     if any(len(parts[x]) > 65534 for x in (GROUP_C2P,GROUP_IFF,GROUP_BOBS,GROUP_AGA)):
         raise ValueError("16-bit module exceeds size")
     if ACTIVE.read_bytes() not in (original, output) and (
-            sha256(ACTIVE.read_bytes()).hexdigest() not in (R85_SHA, R87_SHA)):
+            sha256(ACTIVE.read_bytes()).hexdigest() not in (R85_SHA, R87_SHA, P0_FREE_SHA)):
         raise ValueError("Unknown active candidate: refusing overwrite")
     return output, {
         "version": "R86 v0.13.31 M19 P2.3",
@@ -148,9 +152,11 @@ def main():
     if args.check_dist and ACTIVE.read_bytes() != candidate:
         raise SystemExit("Active dist candidate differs from deterministic R86 builder")
     if args.write_dist:
+        if sha256(ACTIVE.read_bytes()).hexdigest()==P0_FREE_SHA:
+            raise SystemExit("REFUSED: historical R86 must not overwrite promoted P0")
         frozen = PROTECTED.read_bytes()
         if (ACTIVE.resolve() == PROTECTED.resolve()
-                or sha256(frozen).hexdigest() != R84_SHA):
+                or sha256(frozen).hexdigest() != P0_FREE_SHA):
             raise SystemExit("LAST_GOOD protection failure")
         ACTIVE.write_bytes(candidate)
         if ACTIVE.read_bytes() != candidate or PROTECTED.read_bytes() != frozen:

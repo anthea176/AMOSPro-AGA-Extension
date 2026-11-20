@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "experiments"))
 
-from active_library import R84_SHA
+from active_library import R84_SHA, P0_FREE_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -44,9 +44,13 @@ NEW_FUNCTION = ("aga bob probe", 1, BASE_PUBLIC, "0")
 
 
 def build() -> tuple[bytes, dict]:
-    protected = PROTECTED.read_bytes()
-    if len(protected) != 67904 or sha256(protected).hexdigest() != R84_SHA:
-        raise ValueError("R84 LAST_GOOD SHA/size mismatch; refusing candidate")
+    live_good=PROTECTED.read_bytes()
+    if len(live_good)!=117896 or sha256(live_good).hexdigest()!=P0_FREE_SHA:
+        raise ValueError("Promoted P0 LAST_GOOD SHA/size mismatch; refusing historical builder")
+    from build_aga_r84_agapic import build as build_r84
+    protected,r84_meta=build_r84()
+    if len(protected)!=67904 or r84_meta['sha256']!=R84_SHA:
+        raise ValueError("Historical R84 source SHA mismatch; refusing candidate")
     # Active may be R84 or this deterministic candidate; checked below.
     old_tokens, old, _ = unpack_ap20(protected)
     if len(old) != 85 or len(old_tokens) < 6 or old_tokens[-6:] != bytes(6):
@@ -113,10 +117,12 @@ def build() -> tuple[bytes, dict]:
     if len(segments[GROUP_BOBS]) != 40:
         raise AssertionError("Unexpected fourth dispatcher+probe length")
     active_sha=sha256(ACTIVE.read_bytes()).hexdigest()
-    if ACTIVE.read_bytes() not in (protected, built) and active_sha!="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc":
+    if ACTIVE.read_bytes() not in (protected, built) and active_sha not in (
+            "69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc",
+            P0_FREE_SHA):
         # Historical R85 builder is read-only on newer active candidates.
         raise ValueError("Unknown dist active library, refuse candidate overwrite")
-    if active_sha=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc" and sha256(PROTECTED.read_bytes()).hexdigest()!=R84_SHA:
+    if active_sha=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc" and sha256(PROTECTED.read_bytes()).hexdigest()!=P0_FREE_SHA:
         raise ValueError("R84 LAST_GOOD modified")
     return built, {
         "status": "EXPERIMENTAL ONLY; FOURTH BLOCK PROBE, NO BOB RENDER",
@@ -150,12 +156,14 @@ def main() -> None:
     data, report = build()
     print("M19 P2.2 FOURTH NATIVE UNIT STATIC GATE", report, flush=True)
     if args.write_dist:
-        if sha256(ACTIVE.read_bytes()).hexdigest()=="69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc":
+        if sha256(ACTIVE.read_bytes()).hexdigest() in (
+                "69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc",
+                P0_FREE_SHA):
             raise SystemExit("REFUSED: historical R85 probe must not overwrite active R88")
         if ACTIVE.resolve() == PROTECTED.resolve():
             raise SystemExit("Refusing to overwrite LAST_GOOD")
         original = PROTECTED.read_bytes()
-        if len(original) != 67904 or sha256(original).hexdigest() != R84_SHA:
+        if len(original) != 117896 or sha256(original).hexdigest() != P0_FREE_SHA:
             raise SystemExit("Refuse write: LAST_GOOD SHA mismatch")
         ACTIVE.write_bytes(data)
         if ACTIVE.read_bytes() != data or PROTECTED.read_bytes() != original:

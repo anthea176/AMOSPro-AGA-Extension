@@ -36,9 +36,13 @@ API = ("aga bob batch", 1, BATCH_ENTRY, "00,0")
 
 
 def build() -> tuple[bytes, dict]:
-    protected = PROTECTED.read_bytes()
-    if len(protected) != 67904 or sha256(protected).hexdigest() != R84_SHA:
-        raise ValueError("R84 LAST_GOOD SHA mismatch; refusing R87 build")
+    live_good=PROTECTED.read_bytes()
+    if len(live_good)!=117896 or sha256(live_good).hexdigest()!=P0_FREE_SHA:
+        raise ValueError("Promoted P0 LAST_GOOD SHA mismatch; refusing historical R87 build")
+    from build_aga_r84_agapic import build as build_r84
+    protected,r84_meta=build_r84()
+    if len(protected)!=67904 or r84_meta['sha256']!=R84_SHA:
+        raise ValueError("Historical R84 source SHA mismatch; refusing R87 build")
     previous, old, _ = unpack_ap20(protected)
     if len(old) != 85 or tuple(map(len, old[82:])) != (5558, 2508, 56580):
         raise ValueError("Pinned R84 unit layout changed")
@@ -159,7 +163,7 @@ def main():
         if sha256(ACTIVE.read_bytes()).hexdigest() in (R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
             raise SystemExit("REFUSED: historical R87 builder must not replace newer R88/P0c/P0d/AP20/B7 active candidate")
         frozen = PROTECTED.read_bytes()
-        if ACTIVE.resolve() == PROTECTED.resolve() or sha256(frozen).hexdigest() != R84_SHA:
+        if ACTIVE.resolve() == PROTECTED.resolve() or sha256(frozen).hexdigest() != P0_FREE_SHA:
             raise SystemExit("R84 LAST_GOOD protection failure")
         ACTIVE.write_bytes(candidate)
         if ACTIVE.read_bytes() != candidate or PROTECTED.read_bytes() != frozen:

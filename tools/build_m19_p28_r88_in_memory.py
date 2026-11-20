@@ -15,7 +15,7 @@ from struct import pack,unpack_from
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools/experiments'))
 
-from active_library import R84_SHA,R87_SHA
+from active_library import R84_SHA,R87_SHA,P0_FREE_SHA
 from audit_ap20 import inspect,parse,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -39,8 +39,12 @@ TITLE+=bytes(len(TITLE)&1)
 
 def build():
     good=R84.read_bytes();old=R87.read_bytes()
-    if len(good)!=67904 or sha256(good).hexdigest()!=R84_SHA:
-        raise ValueError('R84 LAST_GOOD differs from pinned binary')
+    if len(good)!=117896 or sha256(good).hexdigest()!=P0_FREE_SHA:
+        raise ValueError('Promoted P0 LAST_GOOD differs from pinned binary')
+    from build_aga_r84_agapic import build as build_r84
+    historical,r84_meta=build_r84()
+    if len(historical)!=67904 or r84_meta['sha256']!=R84_SHA:
+        raise ValueError('Historical R84 source drift')
     if len(old)!=73184 or sha256(old).hexdigest()!=R87_SHA:
         raise ValueError('R87 historical predecessor differs from pinned binary')
     tokens,parts,_=unpack_ap20(old)

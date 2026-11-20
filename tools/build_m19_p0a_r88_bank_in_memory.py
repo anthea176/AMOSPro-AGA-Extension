@@ -23,6 +23,7 @@ from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 from m19_p0a_bank_select_emit import emit_bank_select
+from active_library import P0_FREE_SHA
 
 ROOT=Path(__file__).resolve().parents[1]
 R88_SHA='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
@@ -45,8 +46,12 @@ def build():
     good=R84.read_bytes()
     if len(base)!=75040 or sha256(base).hexdigest()!=R88_SHA:
         raise ValueError('R88 frozen candidate differs: refuse to build')
-    if len(good)!=67904 or sha256(good).hexdigest()!=R84_SHA:
-        raise ValueError('R84 protected LAST_GOOD differs: refuse to build')
+    if len(good)!=117896 or sha256(good).hexdigest()!=P0_FREE_SHA:
+        raise ValueError('Promoted P0 LAST_GOOD differs: refuse to build')
+    from build_aga_r84_agapic import build as build_r84
+    historical,r84_meta=build_r84()
+    if len(historical)!=67904 or r84_meta['sha256']!=R84_SHA:
+        raise ValueError('Historical R84 source differs: refuse to build')
     tokens,parts,_=unpack_ap20(base)
     if len(parts)!=88 or not parts[86].startswith(DISPATCH_V2):
         raise ValueError('R88 V2 four-unit layout changed')
