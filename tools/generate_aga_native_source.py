@@ -498,8 +498,13 @@ def verified_current_compiler_seeds(parsed):
         # verify_active() has checked the exact source-built active candidate
         # and protected R84. Use the independent pinned R82 ancestor solely
         # to obtain historical CFG seeds; never export it as P0c source.
-        need(sha(last_good) == R84_SHA,
-             'Strict source: frozen R84 LAST_GOOD identity lost')
+        need(sha(last_good) == P0_FREE_SHA and current == last_good,
+             'Strict source: promoted P0 LAST_GOOD identity lost')
+        from build_aga_r84_agapic import build as build_r84
+        old_r84,r84_meta=build_r84()
+        need(len(old_r84)==67904 and sha(old_r84)==R84_SHA
+             and r84_meta['sha256']==R84_SHA,
+             'Strict source: historical R84 deterministic source drift')
         from build_agapic_v2_r82_full_preview import build as build_r82
         ancestor, _ = build_r82()
         need(sha(ancestor) == R82_SHA and len(ancestor) == 64112,
