@@ -37,6 +37,15 @@ class Prestaged(FirstUpdateIntegrated):
             self.uc.hook_add(UC_HOOK_CODE,self._trace_prestage,
                 user_data=name,begin=addr,end=addr)
 
+    def os_call(self,uc,address,size,user):
+        from test_m5_generic import EXEC,GFX
+        # The older P0a fixture mapped RAM only from 0x50000 upwards.
+        # Actual graphics.library base is at 0x24000 in this fixture and
+        # must be recognized as MEMF_PUBLIC by Exec TypeOfMem, as on Amiga.
+        if address==EXEC-534 and self.a(1)==GFX:
+            return self._os_return(1)
+        return super().os_call(uc,address,size,user)
+
     def _trace_prestage(self,uc,address,size,name):
         self.prestage_trace.append((name,hex(self.d(3)),hex(self.a(4))))
         if len(self.prestage_trace)>35:
