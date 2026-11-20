@@ -59,10 +59,10 @@ jobs:
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           import sys
           sys.path.insert(0,'tools')
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
           active,good,label=verify_active(Path('.'))
           sha=sha256(active).hexdigest()
-          assert sha in (B7M2_SHA,B8_SHA,B8S1_SHA)
+          assert sha in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
           asc=sorted(p.name for p in Path('tests/current').glob('*.asc'))
           expected_asc=('M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc'
                         if sha==B7M2_SHA else 'M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
@@ -117,11 +117,14 @@ jobs:
           from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
           b8s1,s1meta=build_b8_safe_retry()
           assert len(b8s1)==116104 and s1meta['sha256']=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
-          assert active in (candidate,b8,b8s1), 'Installed Lib is neither source-pinned B7, B8 nor S1'
+          from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+          p0,p0meta=build_bank_free()
+          assert (len(p0),p0meta['sha256'])==(117896,'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d')
+          assert active in (candidate,b8,b8s1,p0), 'Installed Lib differs from all source-pinned B7/B8/S1/P0 builds'
           assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
           assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
-          print('PASS B7-m2 immutable and B8 current source-built; B7-m1/P0d/AP20 islands frozen')
+          print('PASS B7-m2 immutable and B8/P0 source-built; B7-m1/P0d/AP20 islands frozen')
           print('WinUAE Runtime B and real AMOS Compiler C NOT tested by CI')
           PY
       - name: Fail if validation creates files or changes the repository
