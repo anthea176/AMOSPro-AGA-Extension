@@ -136,7 +136,12 @@ def main():
         assert m.free(11)==0  # READY frame: do not invalidate display.
         assert set(m.nodes())=={11} and m.status()==READY
         assert m.relay_call('read',ident=2)[0]==1
-        assert m.invoke_guard('swap')==1
+        _SW=m.invoke_guard('swap')
+        assert _SW==1, ('swap refused after Bank Free READY refusal',
+            'result',_SW,'status',m.status(),'dbflags',m.get(DB+20),
+            'swap_count',m.swap_count,'callbacks',m.callbacks(),
+            'selected',m.selected_triple(),'events',m.events[-20:],
+            'native_visits',m.native_swap_visits)
         m.put(DB+20,0)
         assert m.free(11)==1 and m.chip_frees==2
         assert not m.chip_live and not m.metadata
