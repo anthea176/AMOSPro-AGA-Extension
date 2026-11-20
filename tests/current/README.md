@@ -1,8 +1,8 @@
-# M19 B8 — Aga Bob Clear / Update : campagne unique WinUAE Runtime et AMOS Compiler
+# M19 B8 S1 — Clear/Update SafePort borné : campagne WinUAE Runtime et AMOS Compiler
 
-**BIBLIOTHÈQUE ACTIVE DE TEST** : [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, reconstruite **octet pour octet** par `tools/build_m19_b8_first_update_in_memory.py::build_b8_first_update()`. **88 commandes / 184 entrées AP20**, 5 unités MC68020, PC16 max 29 962. Nouveaux tokens numériques `Aga Bob Clear` (182) et `Aga Bob Update` (183), résultats 1/0, **pas de Swap implicite**. La B7-m2 antérieure reste dans l'historique Git, `LAST_GOOD` R84 est intacte.
+**BIBLIOTHÈQUE ACTIVE DE TEST** : [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, reconstruite **octet pour octet** par `tools/build_m19_b8_safe_retry_in_memory.py::build_b8_safe_retry()`. **88 commandes / 184 entrées AP20**, 5 unités MC68020, PC16 max 29 962. Nouveaux tokens numériques `Aga Bob Clear` (182) et `Aga Bob Update` (183), résultats 1/0, **pas de Swap implicite**. La B7-m2 antérieure reste dans l'historique Git, `LAST_GOOD` R84 est intacte.
 
-**SEUL ASC ACTIF** : [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **11 092 octets**, ASCII LF, sans asset externe ni banque présumée libre. Banque 24 et 25 doivent être libres. Le programme s'appuie sur le banc B7-m2 validé, mais **cette variante B8 est nouvelle : ses Gates B/C ne sont PAS encore validées**. Préflight et oracle statique : `python -B tools/test_m19_b8_clear_update_asc_static.py` et `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`.
+**SEUL ASC ACTIF S1** : [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **11 092 octets**, ASCII LF, sans asset externe ni banque présumée libre. Banque 24 et 25 doivent être libres. Le programme s'appuie sur le banc B7-m2 validé, mais **cette variante native S1 est nouvelle : ses Gates B/C ne sont PAS encore validées**. Préflight et oracle statique : `python -B tools/test_m19_b8_clear_update_asc_static.py` et `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`.
 
 ## Exécution Runtime — Gate B à qualifier
 
@@ -29,15 +29,15 @@ Dans le programme vierge, réimporter le même ASC après installation de la Lib
 | `OFF_COMMANDS_ISSUED` | `50` |
 | `CLOSE_RETURNED` / `BANKS_ERASED` | `1` / `2` |
 
-Le banc saute volontairement `Clear` sur les **deux premières frames**, car aucune sauvegarde physique de la page correspondante n'existe avant son premier `Update`. Au moins un `Aga Bob` est défini avant le premier `Update` pour amorcer le callback End B7 **sans dessin préalable**. Le cas d'un `Update` initial sans Bob retourne 0 dans la candidate actuelle et n'est pas présenté comme pris en charge.
+**IMPORTANT : ne rajouter aucun `Aga Wait Vbl` dans la boucle `For _STEP=1 To 45`.** Le correctif S1 attend au maximum 3 VBL *dans la Lib*, uniquement quand SafePort n'a pas encore livré son message ; pas de Swap implicite. Un autre échec reste bloquant (`DIRTY`). Réimporter le fichier GitHub plutôt que réutiliser la variante locale du test avec VBL. Le banc saute volontairement `Clear` sur les **deux premières frames**, car aucune sauvegarde physique de la page correspondante n'existe avant son premier `Update`. Au moins un `Aga Bob` est défini avant le premier `Update` pour amorcer le callback End B7 **sans dessin préalable**. Le cas d'un `Update` initial sans Bob retourne 0 dans la candidate actuelle et n'est pas présenté comme pris en charge.
 
 **Si échec :** `ERR 14` = Update, `ERR 18` = Clear, `ERR 15` = Swap, `ERR 13` = Copy warmup, `ERR 16` = Fill, `ERR 17` = texte ; aucune présentation après refus d'Update ou de Clear. Envoyer les journaux et la capture du moment d'échec. Un champ `LIB_SHA256` dans le journal est une étiquette de provenance de l'ASC, pas une lecture directe du binaire installé.
 
 ## Gates
 
-- **Gate A MC68020 : PASS** — [CI 44635843744](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44635843744), 59 contrôles premier Update, plus 36 intégration et 60 non-régression avec OS/Blitter simulés.
-- **Gate B Runtime WinUAE : NON TESTÉE sur B8.**
-- **Gate C AMOS Compiler : NON TESTÉE sur B8.**
+- **Gate A MC68020 : PASS** — [CI S1 44780312459](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459), **119 contrôles du Clear SafePort 1–3 VBL sur deux relocations**, plus non-régressions B7/B8 (OS/Blitter simulés).
+- **Gate B Runtime WinUAE : NON TESTÉE sur S1.** Ancienne B8 : 405/405 seulement après ajout de VBL artificiels aux étapes 8–9 ; échec ERR 18 sans eux.
+- **Gate C AMOS Compiler : NON TESTÉE sur S1.** Ancienne B8 : ERR 18 sans VBL de contournement.
 - **Gate D matériel physique : NON TESTÉE.**
 
 Documentation technique : [M19 B8](../../docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md) et [NEXT_SESSION](../../docs/NEXT_SESSION.md).

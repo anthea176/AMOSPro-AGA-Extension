@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Active working candidate: M19 B8 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **115,744 bytes**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, **88 commands / 184 AP20 entries**, five native units. **Gate A MC68020 PASS** (59 first-Update tests, plus 36 integrated B7/B8 and 60 trampoline regressions, mocked OS/graphics). **B8 Runtime WinUAE Gate B and AMOS Compiler Gate C NOT TESTED**. [B8 technical report](docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
+**Active working candidate: M19 B8 S1 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **116,104 bytes**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, **88 commands / 184 AP20 entries**, five native units. **MC68020 Gate A PASS: 119 bounded SafePort checks** ([S1 CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459)). **S1 WinUAE Runtime Gate B / AMOS Compiler Gate C NOT TESTED.** Earlier B8 reached 405/405 Runtime only with explicit extra VBL waits. [Report](docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
 
-**Current B8 Clear/Update test (WinUAE B/C pending):** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [instructions](tests/current/README.md). The validated historical B7-m2 Runtime/Compiler test remains in Git history. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Sole active S1 test without diagnostic VBL waits:** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [instructions](tests/current/README.md). R84 `LAST_GOOD` is protected; the previous B8 remains source-reproducible through Git history.
 
 **Interactive Bob example (no benchmark):** [Local restoration with four moving Bobs](examples/bob_local_restore/README.md) · [ASCII source](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — independent new version, PREFLIGHT PASS; WinUAE test pending. **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
 ## Main AMOS commands
 
-**Current library API M19 B8** — **88 commands / 184 AP20 entries** (MC68020 minimum). `Aga Bob Clear` restores a previously saved back page and `Aga Bob Update` atomically captures its current décor before drawing; both return 1/0 without implicit Swap. **Native Gate A PASS; WinUAE Runtime B and Compiler C NOT TESTED for B8.** [B8 report](docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
+**Current library API M19 B8 S1** — **88 commands / 184 AP20 entries** (MC68020 minimum). `Aga Bob Clear` retries only when SafePort is pending, with up to three internal VBL waits; `Aga Bob Update` is unchanged. Both return 1/0 without implicit Swap. **Gate A PASS; S1 Gates B/C require WinUAE and AMOS Compiler.**
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |

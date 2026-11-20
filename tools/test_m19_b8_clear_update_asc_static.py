@@ -7,7 +7,7 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"
+LIB="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"
 SIZE=11092
 STAGES=(2,1,0,2,4,8,16,64,16)
 
@@ -56,6 +56,7 @@ def verify(path:Path):
     assert f.index('Aga Bob _ID,_X,_Y,1')<f.index('_UPDATE=Aga Bob Update')
     assert f.index('_UPDATE=Aga Bob Update')<f.index('Gosub _DO_SWAP')
     assert '_SEEN(_PAGE)=1' in f and '_PAGE=1-_PAGE' in f
+    assert 'Aga Wait Vbl' not in f, 'Diagnostic VBL workaround must NOT be shipped as campaign'
     assert '_COPY_TILE_RECT' not in f
     assert 'If _ERR=0 and _SEEN(_PAGE)=1' in f
     assert '_CLEAR_BAD=_CLEAR_BAD+1 : _ERR=18' in f
