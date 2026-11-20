@@ -132,7 +132,7 @@ def main():
             'recent',m.events[-18:],
             'trace',m.prestage_trace[-22:])
         assert len(m.chip_live)==1 and len(m.metadata)==1
-        assert m.chip_allocs==1 and m.chip_copies==1
+        assert m.chip_allocs==1 and m.chip_copies==1, ('chip counts',m.chip_allocs,m.chip_copies,'owned',m.chip_live,'nodes',m.nodes(),'trace',m.prestage_trace[-15:])
         assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits) # PREPARE occurred before any Bob DRAW.
         assert m.callbacks()==(m.end_callback(),)*2
         allocs=m.chip_allocs
