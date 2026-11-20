@@ -17,6 +17,8 @@ from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from build_m19_b8_s1_bank_free_in_memory import build_bank_free
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_b8_s1_bank_prestage_emit import emit_b8_s1_bank_prestage
+from m19_b8_s1_bank_free_bridge_emit import emit_b8_s1_bank_free_bridge
+from m19_b8_safe_retry_emit import emit_b8_safe_retry
 from m19_p0e_object_table_emit import emit_object_table
 from m19_p0e_v2_object_bridge_emit import OBJ_RELATIVE
 from m19_p0j_swap_barrier_emit import READY,DIRTY
@@ -30,17 +32,38 @@ class FreeMachine(Prestaged):
         super().__init__(source,layout)
         self.native,self.labels=emit_b8_s1_bank_free()
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
+        self.fifth_source,self.fifth_labels=emit_b8_s1_bank_free_bridge()
+        self.uc.mem_write(self.fifth,self.fifth_source)
 
-    def free(self,bank):
-        # Call the native FREE AP20 target with exactly the public bank
-        # instruction register context; do not rebase the fixture.
-        key='b8s1_bank_prestage_entry'
-        original=self.labels[key]
-        self.labels[key]=self.labels['b8s1_bank_free_entry']
+    def free(self,bank,*,owner=AMOS):
+        # Invoke the actual AP20 target in fifth unit, then the checked
+        # callback-derived bridge into the relocated BOBS Bank Free entry.
+        from unicorn.m68k_const import UC_M68K_REG_SR,UC_M68K_REG_PC
+        from test_m5_generic import DR,AR,STACK,STOP
+        for i,reg in enumerate(DR):
+            self.uc.reg_write(reg,0x1200+i)
+        for i,reg in enumerate(AR[:7]):
+            self.uc.reg_write(reg,0x40000+i*256)
+        self.uc.reg_write(AR[5],owner)
+        self.uc.reg_write(AR[3],0x58000)
+        self.uc.reg_write(DR[3],bank & 0xffffffff)
+        original={reg:self.uc.reg_read(reg) for reg in DR+AR[:7]}
+        self.uc.reg_write(UC_M68K_REG_SR,0x2000)
+        self.uc.reg_write(AR[7],STACK)
+        self.put(STACK,STOP)
+        target=self.fifth+self.fifth_labels['b8_bank_free_bridge_entry']
         try:
-            return super().run_select(bank)
-        finally:
-            self.labels[key]=original
+            self.uc.emu_start(target,STOP,count=12000000)
+        except Exception as exc:
+            raise AssertionError(('Bank Free fifth->BOBS 020 fault',str(exc),
+               hex(self.uc.reg_read(UC_M68K_REG_PC)),bank)) from exc
+        assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
+        assert self.a(7)==STACK+4, 'Bank Free stack imbalance'
+        for reg,val in original.items():
+            if reg not in (DR[2],DR[3]):
+                assert self.uc.reg_read(reg)==val,('Bank Free ABI',reg)
+        assert self.d(2)==0 and self.d(3) in (0,1)
+        return self.d(3)
 
 def prepared(layout, *, with_bobs=True):
     src,_=build_p0c()
@@ -68,6 +91,7 @@ def main():
     assert meta['public_commands']==89 and meta['ap20_entries']==185
     assert meta['native_groups']==[142,153,156,177,181]
     assert meta['pc16_max']<32766 and meta['old_bobs_prefix_byte_exact']
+    assert meta['b8_fifth_prefix_byte_exact']
     toks,parts,_=unpack_ap20(image)
     assert parts[184][:2]==RBSR
     assert unpack_from('>HH',parts[184],2)==(177,meta['free_native_offset'])
@@ -78,7 +102,15 @@ def main():
              .disasm(raw[len(old):],0x10000+len(old)))
     assert dec and sum(x.size for x in dec)==len(raw)-len(old)
     assert not any(x.mnemonic.startswith('dc.') for x in dec)
-    checks=12
+    old8,_=emit_b8_safe_retry()
+    bridge,bridge_labs=emit_b8_s1_bank_free_bridge()
+    assert bridge.startswith(old8)
+    assert bridge_labs['b8_bank_free_bridge_entry']==len(old8)
+    decoded=list(Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
+                 .disasm(bridge[len(old8):],0x10000+len(old8)))
+    assert decoded and sum(x.size for x in decoded)==len(bridge)-len(old8)
+    assert all(not x.mnemonic.startswith('dc.') for x in decoded)
+    checks=17
 
     for layout in ('interpreted','compiled'):
         m=prepared(layout)
