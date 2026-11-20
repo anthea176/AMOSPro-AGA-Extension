@@ -8,7 +8,7 @@ from pprint import pprint
 from struct import pack,unpack_from
 
 from audit_ap20 import inspect,parse,token,walk_tokens
-from compiler_relocation import RBSR,unpack_ap20,repack_ap20
+from compiler_relocation import RBSR,GETP,unpack_ap20,repack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_b8_s1_bank_prestage_in_memory import (
@@ -45,8 +45,8 @@ def build_bank_free():
     if (target&1 or target<0 or len(newparts[BOBS])>=MAX_UNIT_BYTES
             or target>=len(newparts[BOBS])-len(DISPATCH_V2)):
         raise ValueError('BOBS target or V2 island exceeds capacity')
-    # One-argument INSTRUCTION (D3=bank); no new A3/GetP consumption.
-    newparts.append(RBSR+pack('>HH',BOBS,target)+b'\x4e\x75')
+    # One-argument INSTRUCTION (D3=bank). AP20 GetP metadata is obligatory.
+    newparts.append(RBSR+pack('>HH',BOBS,target)+b'\x4e\x75'+GETP)
     newtokens=toks[:-6]+token(*API)+toks[-6:]
     if len(newparts)!=185:
         raise ValueError('AP20 new instruction count wrong')
