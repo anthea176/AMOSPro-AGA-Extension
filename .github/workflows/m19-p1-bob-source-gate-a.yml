@@ -1,0 +1,36 @@
+name: M19 P1 Bob query and hotspot - source-only MC68020 regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p1-bob-source-gate-a.yml'
+      - 'tools/m19_p0a_multi_bob_abk.py'
+      - 'tools/test_m19_p1_bob_queries_hotspot.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p1-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install MC68020 emulator and disassembler
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Python syntax and CPU/delivery policy self tests
+        run: |
+          python -B -m py_compile tools/m19_p0a_multi_bob_abk.py tools/test_m19_p1_bob_queries_hotspot.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Run existing AGBO P0a host regression
+        run: python -B tools/test_m19_p0a_multi_bob_abk.py
+      - name: Read actual MC68020 private Bob slots and verify AGBO hotspot metadata
+        run: python -B tools/test_m19_p1_bob_queries_hotspot.py
+      - name: Never mutate current ASC, passed tests or promoted P0 Lib
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/

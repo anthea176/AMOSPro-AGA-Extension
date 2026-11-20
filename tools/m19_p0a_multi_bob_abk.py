@@ -7,7 +7,7 @@ A complete in-memory payload is constructed before any bank can be replaced.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from struct import Struct, pack_into, unpack_from
 
 MAGIC = b"AGBO"
@@ -268,6 +268,29 @@ def no_mask(payload: bytes, image_id: int) -> bytes:
                        img.stride, img.planes, None, img.hotspot_x, img.hotspot_y)
     return _build(tuple(new_img if item.image_id == image_id else item
                         for item in current.images), current.generation + 1)
+
+
+
+def set_hotspot(payload: bytes, image_id: int, x: int, y: int) -> bytes:
+    """Change existing AGBO v1 per-image anchor; copy-on-write and atomic.
+
+    HOST MODEL ONLY: not a public AMOS command or native rendering support.
+    The existing 40-byte directory entry already contains signed hot_x/y.
+    Changing metadata increments the generation to invalidate Chip staging.
+    """
+    _int_range(image_id, 1, MAX_IMAGE_ID, "image id")
+    _int_range(x, -32768, 32767, "hotspot x")
+    _int_range(y, -32768, 32767, "hotspot y")
+    current = parse_payload(payload)
+    selected = current.image(image_id)
+    if (selected.hotspot_x, selected.hotspot_y) == (x, y):
+        return payload
+    if current.generation == 0xffffffff:
+        raise ValueError("generation exhausted")
+    updated = tuple(replace(image, hotspot_x=x, hotspot_y=y)
+                    if image.image_id == image_id else image
+                    for image in current.images)
+    return _build(updated, current.generation + 1)
 
 
 def make_abk(bank_number: int, payload: bytes, *, chip_preferred: bool = False) -> bytes:
