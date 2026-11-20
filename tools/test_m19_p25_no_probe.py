@@ -324,7 +324,9 @@ class BatchGateA(unittest.TestCase):
                             __import__("active_library").B8_SHA,
                             __import__("active_library").B8S1_SHA,
                              __import__("active_library").P0_FREE_SHA))
-        self.assertEqual(PROTECTED.read_bytes(),self.old)
+        live=PROTECTED.read_bytes()
+        self.assertEqual(sha256(live).hexdigest(),P0_FREE_SHA)
+        self.assertNotEqual(live,self.old)
 
 
 if __name__=="__main__":

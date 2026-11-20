@@ -144,7 +144,10 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             # candidate and frozen R84 before testing the unchanged R57 bridge.
             verified, frozen, _ = verify_active(ROOT)
             assert verified == current_bytes and frozen == protected_bytes
-            assert current_bytes != protected_bytes
+            if active_hash==P0_FREE_SHA:
+                assert current_bytes==protected_bytes, "Promoted P0 must be byte-exact LAST_GOOD"
+            else:
+                assert current_bytes!=protected_bytes, "Unpromoted candidate must differ from LAST_GOOD"
             if active_hash == P0_FREE_SHA:
                 from build_m19_b8_s1_bank_free_in_memory import build_bank_free
                 rebuilt,meta=build_bank_free()
