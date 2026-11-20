@@ -23,7 +23,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"/"experiments"))
-from active_library import R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA
+from active_library import R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA
 from build_aga_r83_modular import build as build_r83
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -45,7 +45,7 @@ ACTIVE=ROOT/"dist"/"AMOSPro_AGA.Lib"
 
 # The moving working candidate is independent of frozen, promoted R84.
 # Admit only exact SHA-pinned identities; never weaken the LAST_GOOD check.
-KNOWN_ACTIVE_SHAS=(R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA)
+KNOWN_ACTIVE_SHAS=(R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA)
 
 def verify_known_active(path: Path) -> str:
     active_sha=sha256(path.read_bytes()).hexdigest()
