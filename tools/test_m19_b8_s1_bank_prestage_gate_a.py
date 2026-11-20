@@ -28,14 +28,34 @@ class Prestaged(FirstUpdateIntegrated):
         self.labels['guarded_close_entry']=self.labels['b8_b7_close_trampoline_entry']
 
     def run_select(self,bank):
-        # The test invokes the NEW entry exactly as the candidate AP20 stub
-        # would, while keeping every old native BSR destination unchanged.
-        original=self.entry
-        self.entry=original+self.labels['b8s1_bank_prestage_entry']
+        # Invoke the new AP20 native target without ever rebasing the object
+        # mapping: OS mocks, stage state and source labels use self.entry.
+        from unicorn.m68k_const import UC_M68K_REG_SR, UC_M68K_REG_PC
+        from test_m5_generic import DR, AR, STACK, STOP
+        for i,r in enumerate(DR):
+            self.uc.reg_write(r,0x1200+i)
+        for i,r in enumerate(AR[:7]):
+            self.uc.reg_write(r,0x40000+i*256)
+        self.uc.reg_write(AR[5],AMOS)
+        self.uc.reg_write(AR[3],0x58000)
+        self.uc.reg_write(DR[3],bank & 0xffffffff)
+        before={r:self.uc.reg_read(r) for r in DR+AR[:7]}
+        self.uc.reg_write(UC_M68K_REG_SR,0x2000)
+        self.uc.reg_write(AR[7],STACK)
+        self.put(STACK,STOP)
+        target=self.entry+self.labels['b8s1_bank_prestage_entry']
         try:
-            return super().run_select(bank)
-        finally:
-            self.entry=original
+            self.uc.emu_start(target,STOP,count=9000000)
+        except Exception as exc:
+            raise AssertionError(('M19 P0 Bank Chip MC68020 native fault',
+                str(exc),hex(self.uc.reg_read(UC_M68K_REG_PC)),bank)) from exc
+        assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
+        assert self.a(7)==STACK+4, 'AMOS stack mismatch'
+        for reg,value in before.items():
+            if reg not in (DR[2],DR[3]):
+                assert self.uc.reg_read(reg)==value,('AMOS ABI',reg)
+        assert self.d(2)==0 and self.d(3) in (0,1)
+        return self.d(3)
 
 
 def fresh(layout):
