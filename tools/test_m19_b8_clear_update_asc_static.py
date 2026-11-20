@@ -7,8 +7,8 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a"
-SIZE=14871
+LIB="2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4"
+SIZE=17566
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -37,7 +37,7 @@ def verify(path:Path):
     assert len(data)==SIZE,("B8 ASC length",len(data),SIZE)
     s=data.decode("ascii")
     assert s.endswith("Return\n") and max(map(len,s.splitlines()))<=200
-    assert LIB in s and 'RAM:M19_P1A_BOB_GETTERS.TXT' in s
+    assert LIB in s and 'RAM:M19_P1B_HOTSPOT.TXT' in s
     assert 'Dim _SEEN(1)' in s and '_SEEN(0)=0 : _SEEN(1)=0' in s
     assert 'NO TIMER OR BENCHMARK' in s
     assert s.count('_CLEAR=Aga Bob Clear')==1
@@ -54,8 +54,17 @@ def verify(path:Path):
     assert s.count('Aga Y Bob(_QID)')==1
     assert s.count('Aga I Bob(_QID)')==1
     assert s.index('_QX=Aga X Bob(_QID)') < s.index('_QY=Aga Y Bob(_QID)') < s.index('_QI=Aga I Bob(_QID)')
-    assert 'P1a CANDIDATE SHA256' in s
+    assert 'P1b CANDIDATE SHA256' in s
     assert 'Aga Bob Draw' not in s
+    assert 'Trap Load "M19_P1B_HOTSPOT_BANK26.abk",_HOTBANK' in s
+    assert 'Deek(_HOT_PTR+60)<>4 or Deek(_HOT_PTR+62)<>3' in s
+    assert 'For _HPHASE=1 To 4' in s
+    assert '_HX=32767 : _HY=32767' in s
+    assert 'If _HOT_STEPS<>4 or _HOT_CLEAR_OK<>4 or _HOT_UPD_OK<>4' in s
+    assert 'If _HOT_SWAP_OK<>4 or _HOT_Q_OK<>12' in s
+    assert 'If _CLOSE_CALLED=1 and _BANKS_ERASED=3' in s
+    assert 'HOTSPOT_FRAMES_OK' in s and 'HOTSPOT_GETTERS_OK' in s
+    assert 'HOTSPOT_LOAD_ERR' in s
     assert s.count('Aga Bob Off 1')==1 and s.count('Aga Bob Off 2')==1
     assert 'For _ID=17 To 64' in s
     assert 'Make AGA Bob Mask 1,0' in s and 'No AGA Bob Mask 1' in s

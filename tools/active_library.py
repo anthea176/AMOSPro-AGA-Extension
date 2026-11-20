@@ -32,6 +32,7 @@ B7M1_SHA="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"  # f
 B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # frozen historical B7-m2
 B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # frozen B8 (SafePort workaround 405 frames Runtime only)
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
+P1B_SHA="2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4"  # active M19 P1b native Safe-Blitter hotspot; Gate A MC68020 PASS, B/C/D pending
 P1A_SHA="165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a"  # M19 P1a active test candidate; exact source-built, Gate A 110 PASS, B/C/D pending
 P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"  # M19 P0 89 public commands; Gate A 225 PASS; Runtime B functional PASS, C deferred
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
@@ -102,6 +103,29 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P1B_SHA:
+        from build_m19_p1b_hotspot_in_memory import build_p1b
+        from compiler_relocation import unpack_ap20
+        expected,meta=build_p1b()
+        assert cur==expected and len(cur)==119176
+        assert meta['sha256']==P1B_SHA and meta['predecessor_sha']==P1A_SHA
+        assert (meta['public_commands'],meta['ap20_entries'],meta['native_groups'])==(
+            92,188,[142,153,156,177,181])
+        assert meta['pc16_max']==31444
+        assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA
+        assert cur!=good,'P1b must never overwrite promoted P0 LAST_GOOD'
+        _,parts,title=unpack_ap20(cur)
+        assert len(parts)==188 and b'M19 P1b Bob Hot Spot Safe Blitter' in title
+        audit=inspect(parse(cur))
+        assert not audit['issues']
+        named=[t for t in audit['tokens']
+               if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
+        assert len(named)==92
+        for field,index in (('x',185),('y',186),('i',187)):
+            row=named[-(188-index)]
+            assert (row['name'],row['instruction'],row['function'],row['signature'])==(
+                f'aga {field} bob',1,index,'00')
+        return cur,good,'M19 P1b HOTSPOT ACTIVE WINUAE CANDIDATE, 92 commands /188 AP20; native MC68020 Gate A PASS; Runtime B, Compiler C, physical D NOT TESTED; P0 LAST_GOOD protected'
     if current_sha == P1A_SHA:
         from build_m19_p1a_getters_in_memory import build_p1a
         from compiler_relocation import unpack_ap20

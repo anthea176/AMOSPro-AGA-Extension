@@ -22,7 +22,7 @@ from test_m19_p0e_object_table_native import (
 
 ROOT = Path(__file__).resolve().parents[1]
 P0_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
-P1_SHA = '165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a'
+P1_SHA = '2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4'
 
 
 class P1Readiness(unittest.TestCase):
@@ -31,7 +31,7 @@ class P1Readiness(unittest.TestCase):
         good = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         self.assertEqual(len(good), 117896)
         self.assertEqual(sha256(good).hexdigest(), P0_SHA)
-        self.assertEqual(len(current), 118816)
+        self.assertEqual(len(current), 119176)
         self.assertEqual(sha256(current).hexdigest(), P1_SHA)
         self.assertNotEqual(good, current)
 

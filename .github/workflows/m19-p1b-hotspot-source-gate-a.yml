@@ -10,6 +10,11 @@ on:
       - 'tools/m19_p1b_hotspot_draw_emit.py'
       - 'tools/build_m19_p1b_hotspot_in_memory.py'
       - 'tools/build_m19_p1b_hotspot_fixture.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
+      - 'tests/current/M19_P1B_HOTSPOT_BANK26.abk'
+      - 'tools/active_library.py'
+      - 'tools/test_m19_b8_clear_update_asc_static.py'
       - 'tools/test_m19_p1b_hotspot_draw_gate_a.py'
   workflow_dispatch:
 permissions:
@@ -59,19 +64,28 @@ jobs:
           PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_in_memory.py
       - name: Real MC68020 Safe Blitter integration after valid AGBO
         run: PYTHONPATH=tools python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
-      - name: Verified binary handoff for single authorized P1b Lib and ABK
+      - name: Verify installed single candidate P1b and protected P0
         run: |
           PYTHONPATH=tools python -B - <<'PY'
-          import base64,hashlib
+          import pathlib,hashlib
           from build_m19_p1b_hotspot_in_memory import build_p1b,P1B_SHA,P1B_BYTES
-          raw,meta=build_p1b()
-          assert len(raw)==P1B_BYTES and hashlib.sha256(raw).hexdigest()==P1B_SHA
-          b64=base64.b64encode(raw).decode('ascii')
-          print('P1B_BLOB_BEGIN',len(raw),P1B_SHA,len(b64),flush=True)
-          for i in range(0,len(b64),1024):
-              print('P1B_BLOB_CHUNK',i//1024,b64[i:i+1024],flush=True)
-          print('P1B_BLOB_END',len(b64),flush=True)
+          from build_m19_p1b_hotspot_fixture import fixture
+          from active_library import verify_active
+          root=pathlib.Path('.')
+          actual=(root/'dist/AMOSPro_AGA.Lib').read_bytes()
+          expected,meta=build_p1b()
+          assert actual==expected and len(actual)==P1B_BYTES
+          assert hashlib.sha256(actual).hexdigest()==P1B_SHA
+          assert (root/'tests/current/M19_P1B_HOTSPOT_BANK26.abk').read_bytes()==fixture()
+          cur,good,label=verify_active(root)
+          assert cur==actual and 'P1b' in label
+          assert len(good)==117896
+          print('P1B ACTIVE EXACT SHA',P1B_SHA,'FIXTURE EXACT 200 bytes',flush=True)
           PY
-          PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_fixture.py
-      - name: Never write P1b into the active P1a Lib, P0 LAST_GOOD, or ASC
+      - name: Sole campaign AMOS static preflight (not WinUAE)
+        run: |
+          PYTHONPATH=tools python -B tools/test_m19_b8_clear_update_asc_static.py
+          PYTHONPATH=tools python -B tools/test_current_ram_log.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+      - name: Generators must not mutate canonical binary, fixture, or preserved tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/

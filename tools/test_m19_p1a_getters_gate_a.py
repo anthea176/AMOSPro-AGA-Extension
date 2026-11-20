@@ -168,8 +168,11 @@ def main():
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert len(good)==117896 and sha256(good).hexdigest()==info['p0_sha']
     assert good==p0
-    assert len(active)==118816 and sha256(active).hexdigest()==info['sha256']
-    assert active==candidate and active!=good
+    assert len(candidate)==118816 and sha256(candidate).hexdigest()==info['sha256']
+    from build_m19_p1b_hotspot_in_memory import build_p1b,P1B_SHA
+    newer,_=build_p1b()
+    assert len(active)==119176 and sha256(active).hexdigest()==P1B_SHA
+    assert active==newer and active!=good and active!=candidate
     print('M19 P1a BOB X/Y/I PUBLIC NUMERIC GATE A PASS',checks,'checks;',
           '188 AP20 entries, 5 native units, 2 mocked placements;',
           'candidate',info['sha256'], 'SOURCE ONLY, NO AMOS/WinUAE Compiler')
