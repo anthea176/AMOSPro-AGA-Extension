@@ -8,7 +8,7 @@
 | P0 | `Aga Bob Update` — mise à jour sans Swap implicite | **Implémenté**, Gate A PASS et Runtime B P0 fonctionnel |
 | P0 | `Aga Bob Bank Free N` — libération cache Chip | **Implémenté**, Gate A PASS / Runtime B fonctionnel ; Compiler C P0 non testé |
 | **P1a** | `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` ; refus `-32769` | **Builder AP20 source-pinné + shims MC68020 Gate A PASS (110 contrôles)** ; **candidate active** 118 816 octets / 92 commandes / 188 entrées ; Gate B Runtime PASS fonctionnel ([2 journaux](docs/M19_P1A_RUNTIME_B_2026-11-21.md)), Gates C/D en attente |
-| **P1b** | Hot Spot, origine propre à chaque image | Champs AGBO v1 existants ; `set_hotspot` hôte + tests **PASS** ; non appliqué par le dessin natif |
+| **P1b** | Hot Spot, origine propre à chaque image | **Primitive MC68020 258 cas + modèle double buffer/masques/clipping PASS source-only** ([rapport](docs/M19_P1B_HOTSPOT_SOURCE_GATE_A_2026-11-21.md)) ; **raccord Safe Blitter non effectué**, aucune nouvelle Lib |
 | P1c | Priorités d'affichage ID / Y / ordre inverse | Non implémenté |
 | P1d | `Limit Bob` : clipping configurable au pixel | Non implémenté |
 | P1e | `Del Bob` / `Ins Bob` : édition des images de banque | Non implémenté |
@@ -19,4 +19,4 @@
 
 **Preuves P1 :** [socle et Hot Spot](docs/M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md) ; [rapport P1a AP20](docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md) ; [CI Gate A P1a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476430). **La syntaxe des tokens a été auditée en AP20 ; deux exécutions AMOS Runtime WinUAE P1a sont PASS fonctionnel. Le vrai Compiler P1a reste NON TESTÉ.**
 
-**Prochaine action :** **P1b — appliquer les Hot Spots AGBO à la chaîne native Safe Blit**, avec vérification du cache Chip, de l'ordre Clear/Update/Swap, des masques et du clipping. D'abord **source-only + tests CPU020**, sans remplacer la Lib P1a ni promouvoir LAST_GOOD P0.
+**Prochaine action :** raccorder le helper P1b `p1b_hotspot_origin_entry` au chemin privé de résolution d'image puis Safe Blit **sans toucher X/Y logiques**, tester le cas hors écran et le restaging Chip ; builder **en mémoire uniquement** jusqu'à Gate A complète, sans remplacer P1a ni `LAST_GOOD`.

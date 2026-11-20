@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1b Hot Spot, premier jalon natif MC68020 PASS (source-only)
+
+**Référence actuelle :** P1a `dist/AMOSPro_AGA.Lib` **118 816 octets** SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a` ; P0 `dist/AMOSPro_AGA_LAST_GOOD.Lib` **117 896 octets** SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; **un seul ASC** sous `tests/current` (`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, 14 871 octets). **Aucune modification** de ces trois fichiers lors du travail P1b. Gate A P1a PASS, Gate B P1a PASS fonctionnel sur deux journaux, Gates C/D P1a non testées.
+
+**Livraison P1b (source-only) :** [helper natif](../tools/m19_p1b_hotspot_origin_emit.py) qui lit les hotspots AGBO v1 signed16 offsets +28/+30, calcul `X_draw=X_Bob-hot_x`, `Y_draw=Y_Bob-hot_y`, et garde clipping/signed16 avant tout DMA ; [modèle de frame](../tools/m19_p1b_hotspot_draw_model.py) préservant bob X/Y, masque et double buffer ; [test](../tools/test_m19_p1b_hotspot_source_gate_a.py), [workflow dédié](../.github/workflows/m19-p1b-hotspot-source-gate-a.yml). **CI 44835297656 PASS**, cinq tests dont **258 cas natifs MC68020** sur deux implantations, tests de masques, stages, source/stack/ABI ; [politique CPU 44835297650 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44835297650). Rapport : [M19 P1b — Gate A partielle](M19_P1B_HOTSPOT_SOURCE_GATE_A_2026-11-21.md).
+
+**Limite explicite :** la primitive demande une entrée AGBO et des dimensions logiques **déjà validées** ; elle **n'est PAS encore branchée** dans le code installé. Le rendu natif actuel P1a ignore les hotspots non nuls. `D3=0` sur objet entièrement hors écran signifie **no-op réussi**, à traiter comme tel par le futur branchement. **Gate A complète du rendu P1b non acquise ; Gates B/C/D P1b non testées.**
+
+**Prochaine action :** relier le pointeur AGBO vérifié après `explicit_image_resolve_entry` au helper avant `private_bob_blit_entry`, sans altérer les X/Y logiques des 64 Bobs ni les bytes P0/P1a installés ; valider rendu réel MC68020/Blitter simulé et sécurité de `Clear → Update → Swap`, préparer builder P1b en mémoire puis seulement envisager la bascule après autorisation. **La CI globale historique `Artifact integrity` échoue encore sur un ancien allowlist P1a**, indépendamment de la Gate A source-only P1b, ne pas annoncer intégrité globale PASS.
+
+
 ## 21 novembre 2026 — P1a Gate B Runtime PASS ; lancement M19 P1b Hot Spot
 
 **P1a : Gate A MC68020 PASS (110 contrôles), Gate B Runtime WinUAE PASS fonctionnel** sur deux journaux distincts et une capture à l'étape 4/9. [Preuves détaillées et limites](M19_P1A_RUNTIME_B_2026-11-21.md) : chaque log **1 168 octets / 54 lignes**, `RESULT 1`, `ERR 0`, `FRAMES_OK 405`, `STAGES_OK 9`, `QUERY_CASES 14`, `QUERY_VALUES_OK 42`, `QUERY_VALUES_BAD 0`, trois appels Bank Free, `CLOSE_RETURNED 1`, `VERDICT PATH_OK`. Différence unique : `RETRY_VBL` 363 et 362. Le SHA étiqueté dans l'ASC ne prouve pas les octets chargés dans WinUAE.
