@@ -25,7 +25,7 @@ B8_SHA = '00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae'
 B8S1_SHA = '3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 UNIT5_SHA = '967a03f7a955f295f41b9391f8743d6e081305ca96084cd907b9d7603039dbe1'
-LAST_GOOD_SHA = '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+LAST_GOOD_SHA = P0_FREE_SHA
 TITLE = (b'AMOSPro AGA M19 AP20 V2 ISLAND DISPATCH MC68020 SOURCE ONLY\0'
          b'$VER: AGA M19 AP20 islands UNINSTALLED P0f foundation\0')
 TITLE += bytes(len(TITLE) & 1)
@@ -36,7 +36,8 @@ def build():
     current = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     if (sha256(current).hexdigest() not in (P0D_SHA,ISLAND_SHA,UNIT5_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
-            or sha256(good).hexdigest()!=LAST_GOOD_SHA):
+            or sha256(good).hexdigest()!=LAST_GOOD_SHA
+            or (sha256(current).hexdigest()==P0_FREE_SHA and current!=good)):
         raise ValueError('Unknown active P0d/AP20 islands/five-unit/B7 candidate or LAST_GOOD changed: refuse reconstruction')
     source, old_meta = build_p0f()
     if sha256(source).hexdigest()!=P0F_SHA or len(source)!=96744:

@@ -21,7 +21,7 @@ from compiler_relocation import unpack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements, assert_reaches_entry_on_mc68020
 from amos_link_test_support import relocate
-from active_library import R84_SHA
+from active_library import R84_SHA, P0_FREE_SHA
 from build_m19_p25_no_probe import (
     build, ACTIVE, PROTECTED, GROUP_C2P, GROUP_IFF, GROUP_BOBS, GROUP_AGA,
     BATCH_ENTRY, TITLE
@@ -160,7 +160,10 @@ class BatchGateA(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.candidate,cls.meta=build()
-        cls.old=PROTECTED.read_bytes()
+        from build_aga_r84_agapic import build as build_r84
+        cls.old,r84meta=build_r84()
+        assert r84meta['sha256']==R84_SHA
+        assert sha256(PROTECTED.read_bytes()).hexdigest()==P0_FREE_SHA
         cls.tokens,cls.parts,cls.title=unpack_ap20(cls.candidate)
         cls.old_tokens,cls.old_parts,_=unpack_ap20(cls.old)
 
