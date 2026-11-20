@@ -10,6 +10,7 @@ on:
       - 'tools/m19_b8_s1_bank_free_emit.py'
       - 'tools/build_m19_b8_s1_bank_free_in_memory.py'
       - 'tools/build_agapic_v2_r82_full_preview.py'
+      - 'tools/build_agapic_v2_r82_api_preview.py'
       - 'tools/active_library.py'
       - 'dist/AMOSPro_AGA.Lib'
       - 'tools/test_m19_b8_clear_update_asc_static.py'
