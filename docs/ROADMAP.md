@@ -13,15 +13,17 @@
 
 La B7-m2 (102 400 octets ; SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`) est la référence antérieure ; **ses Gates Runtime et Compiler PASS ne s'appliquent pas à B8**. [Preuves B7-m2](M19_B7M2_GATES_BC_2026-11-19.md).
 
-## 2. M19 stabilisée, début de M20
+## 2. M19 EN COURS — préparation Chip des banques Bob
 
-**B8 S1 est conservée comme candidate validée en Runtime** : deux journaux transmis, chacun 405/405 frames, ERR 0 et PATH_OK. Aucun nouveau cycle de test Compiler n'est demandé. La Gate C S1 reste reportée ; R84 LAST_GOOD n'est pas promue.
+**M19 n'est pas terminé.** B8 S1 conserve sa Gate A native et ses deux PASS Runtime ; Gate C Compiler reste reportée. Le chantier Bobs comprend encore `Aga Bob Bank Free N`, lectures X/Y/Image, hotspots, priorités, clipping, édition de banques, collisions et transformations ; la phase Sprites vient ensuite.
 
-**Démarrage M20 P0 :** [modèle hôte de tilemap/scrolling sur deux pages](M20_TILEMAP_P0_HOST_MODEL.md) et [13 tests pixel-exacts PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44789691639). Les tests vérifient le décalage de caméra **par page physique**, le redessin de zones exposées, les éditions dynamiques de carte, l'absence de fantômes Bob et un scénario de 405 frames **simulées en Python**, non WinUAE.
+**Sous-étape actuelle P0 :** [préparation Chip lors de `Aga Bob Bank N`](M19_P0_BANK_PRESTAGE_2026-11-20.md). Le wrapper MC68020 et le builder AP20 sont **expérimentaux, source-only** ; ils conservent 88 commandes et 184 entrées, et ne modifient pas la Lib S1. **Gate A en cours**. La banque vide ne reçoit aucune allocation ; une banque peuplée doit être préparée avant le premier dessin, avec contrôles de sécurité et rollback.
 
-**Verrous avant le moteur M20 natif :** choix du format de tuiles, des masques, des banques, des copies planaires non alignées, de la synchronisation Safe/Disp et du budget Fast/Chip. Aucun nouveau token AP20 n'est créé. La Lib S1 et l'ASC de campagne restent inchangés.
+**Étape suivante :** qualifier le cycle de cache Chip et le futur `Aga Bob Bank Free N` avec les objets actifs, avant tout ajout public ou installation. Aucun nouvel essai Compiler demandé.
 
-## 3. Travaux après M19
+**M20 EN ATTENTE :** le prototype Python P0 (13 tests hôtes PASS) existe dans le dépôt, mais n'est pas la prochaine étape. Aucune poursuite de M20 P1 sans clôture et décision explicite sur M19.
+
+## 3. Chantiers ultérieurs (non engagés)
 
 | Sujet | Objectif |
 | --- | --- |

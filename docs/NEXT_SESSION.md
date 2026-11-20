@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — M19 P0 repris : préparation Chip à la sélection de banque
+
+L'auteur a confirmé que **M19 est toujours en cours**, et a demandé de commencer par la préparation Chip de `Aga Bob Bank N` avant `Aga Bob Bank Free N`. Développement sur **`main` seulement** : [source MC68020 append-only](../tools/m19_b8_s1_bank_prestage_emit.py), [builder AP20 en mémoire](../tools/build_m19_b8_s1_bank_prestage_in_memory.py), [banc native](../tools/test_m19_b8_s1_bank_prestage_gate_a.py), [rapport](M19_P0_BANK_PRESTAGE_2026-11-20.md). **Gate A en cours** ; aucun nouveau token ou binaire installé, aucune intervention sur l'unique ASC actif ni `LAST_GOOD`.
+
+Base inchangée : B8 S1 **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, Gate A précédente PASS / Gate B Runtime PASS sur deux journaux / Gate C reportée. La candidate de préparation vérifie l'AGBO original, prépare en Chip les banques **non vides**, réutilise le cache si identité/génération inchangées et exige un End sécurisé ; aucune copie Chip au choix d'une banque vide. `Bank Free` et M20 attendent les résultats et les décisions étape par étape.
+
+**Attention historique :** la section « démarrage M20 P0 » suivante décrit un prototype déjà enregistré ; elle n'autorise pas la poursuite de M20 tant que les Bobs M19 ne sont pas terminés.
+
+
 ## 20 novembre 2026 — Runtime S1 confirmé, démarrage M20 P0
 
 **M19 B8 S1 : Gate A native PASS et Gate B Runtime WinUAE PASS sur deux journaux transmis.** Ils portent l'étiquette SHA256 S1 (ce champ est écrit par l'ASC et ne lit pas la Lib installée), RUN_MODE RUNTIME, PRG_STATE 1, RESULT 1, ERR 0, FRAMES_OK 405/405, STAGES_OK 9/9, CLEAR_OK 403, UPDATE_OK 405, 50 commandes Bob Off, aucun échec Fill/Copy/Clear/Update/Swap, CLOSE_RETURNED 1, BANKS_ERASED 2 et VERDICT PATH_OK. L'ASC du dépôt ne contient pas de VBL de diagnostic ajouté dans la boucle. **Gate C AMOS Compiler S1 : reportée par décision de l'auteur ; aucune validation revendiquée.** Gate D matériel non testée. R84 LAST_GOOD protégée.
