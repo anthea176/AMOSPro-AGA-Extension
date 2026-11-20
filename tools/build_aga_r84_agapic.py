@@ -8,7 +8,7 @@ The original Aga Image Capture(...,TransparentIndex) is unchanged.
 Uses the existing three native AP20 groups. Moves group IDs 80..82 to
 82..84 while preserving their original C2P/IFF/AGA bytecode, and appends
 only new native code to the AGA group (no fourth group and no padding).
-R84 LAST_GOOD is SHA-pinned independently of the newer active candidate.
+R84 historical source is SHA-pinned independently of the moving LAST_GOOD.
 The historical R83 source is rebuilt from its own frozen R82-based builder.
 No dist write is offered by this builder.
 """
@@ -58,8 +58,9 @@ def build()->tuple[bytes,dict]:
     if len(frozen)!=64188 or sha256(frozen).hexdigest()!=R83_SHA or info["sha256"]!=R83_SHA:
         raise AssertionError("Pinned deterministic historical R83 source changed")
     protected=PREVIOUS.read_bytes()
-    if len(protected)!=67904 or sha256(protected).hexdigest()!=R84_SHA:
-        raise AssertionError("Promoted R84 LAST_GOOD was modified")
+    protected_sha=sha256(protected).hexdigest()
+    if protected_sha not in (R84_SHA,P0_FREE_SHA):
+        raise AssertionError("LAST_GOOD must be exact historical R84 or authorized P0")
     original_tokens, old, _=unpack_ap20(frozen)
     if len(old)!=83 or tuple(len(v) for v in old[80:])!=(5558,2508,52974):
         raise AssertionError("Unexpected R83 three-unit layout")
@@ -119,9 +120,13 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("R84 must have exactly 80 live native stubs")
     if parts[82]!=old[80] or parts[83]!=old[81] or not parts[84].startswith(old[82]):
         raise AssertionError("R83 native C2P/IFF/AGA bytes not preserved")
-    # The frozen R84 is authoritative even when the active dist file is a
-    # newer SHA-pinned candidate. Never silently accept a changed LAST_GOOD.
-    assert candidate==protected, "Rebuilt R84 differs from frozen LAST_GOOD"
+    # R84 remains exact source-reproducible even after its LAST_GOOD slot is
+    # promoted to P0. In the R84 state require byte-for-byte identity.
+    assert len(candidate)==67904 and sha256(candidate).hexdigest()==R84_SHA
+    if protected_sha==R84_SHA:
+        assert candidate==protected, "Historical R84 LAST_GOOD changed"
+    else:
+        assert len(protected)==117896 and protected_sha==P0_FREE_SHA
     verify_known_active(ACTIVE)
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
@@ -142,8 +147,14 @@ class R84Layout(unittest.TestCase):
         cls.image,cls.meta=build()
     def test_historical_r83_and_promoted_r84(self):
         self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
-        self.assertEqual(sha256(PREVIOUS.read_bytes()).hexdigest(),R84_SHA)
-        self.assertEqual(PREVIOUS.read_bytes(),self.image)
+        good=PREVIOUS.read_bytes()
+        self.assertIn(sha256(good).hexdigest(),(R84_SHA,P0_FREE_SHA))
+        if sha256(good).hexdigest()==R84_SHA:
+            self.assertEqual(good,self.image)
+        else:
+            self.assertNotEqual(good,self.image)
+            self.assertEqual(len(good),117896)
+        self.assertEqual(sha256(self.image).hexdigest(),R84_SHA)
         self.assertEqual(verify_known_active(ACTIVE), sha256(ACTIVE.read_bytes()).hexdigest())
     def test_unknown_candidate_is_still_rejected(self):
         # Exercise the guard without writing to the real dist/ directory.

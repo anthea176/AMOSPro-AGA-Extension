@@ -2,8 +2,8 @@
 """Build R83 v0.13.28, three real AP20 native units, from pinned R82.
 
 This is a historical deterministic R83 source builder on main:
-  dist/AMOSPro_AGA.Lib           promoted R84 active library
-  dist/AMOSPro_AGA_LAST_GOOD.Lib byte-identical promoted R84
+  dist/AMOSPro_AGA.Lib           moving active candidate
+  dist/AMOSPro_AGA_LAST_GOOD.Lib R84 or exact authorized P0 promotion
   tests/current/*.asc            exactly one active AMOS test
 
 The builder checks native ABI, all 78 native RBSR stubs, palette links,
@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "experiments"))
 
-from active_library import R82_SHA, R83_SHA, R84_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, P0_FREE_SHA
 from build_agapic_v2_r82_full_preview import build as build_r82
 from audit_ap20 import inspect, parse
 from compiler_relocation import repack_ap20, unpack_ap20
@@ -130,7 +130,7 @@ class R83ModularGateA(unittest.TestCase):
         self.assertEqual(meta, self.meta)
         self.assertEqual(sha256(self.lib).hexdigest(), R83_SHA)
         self.assertNotEqual(self.lib, LAST_GOOD.read_bytes())
-        self.assertEqual(sha256(LAST_GOOD.read_bytes()).hexdigest(), R84_SHA)
+        self.assertIn(sha256(LAST_GOOD.read_bytes()).hexdigest(), (R84_SHA,P0_FREE_SHA))
         self.assertEqual(sha256(build_r82()[0]).hexdigest(), R82_SHA)
 
     def test_dispatcher_reachability_on_real_mc68020(self):
@@ -157,7 +157,7 @@ class R83ModularGateA(unittest.TestCase):
         original = LAST_GOOD.read_bytes()
         tampered = bytearray(original)
         tampered[20] ^= 1
-        self.assertNotEqual(sha256(tampered).hexdigest(), R84_SHA)
+        self.assertNotIn(sha256(tampered).hexdigest(), (R84_SHA,P0_FREE_SHA))
 
 
 def gate_a():

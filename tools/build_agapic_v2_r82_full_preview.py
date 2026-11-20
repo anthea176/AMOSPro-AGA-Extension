@@ -45,10 +45,10 @@ def native_starts(parts):
 def build():
     parent,_=build_r81()
     assert sha256(parent).hexdigest()==R81_SHA
-    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA,R84_SHA), 'unrecognized historical LAST_GOOD'
+    assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R81_SHA,R82_SHA,R83_SHA,R84_SHA,P0_FREE_SHA), 'unrecognized SHA-pinned LAST_GOOD'
     current_sha=sha256((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
     if current_sha in (R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
-        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA,R84_SHA), 'R83/R84 requires known LAST_GOOD'
+        assert sha256((ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest() in (R82_SHA,R83_SHA,R84_SHA,P0_FREE_SHA), 'R83/R84 requires known SHA-pinned LAST_GOOD'
     assert current_sha in (R81_SHA,R82_SHA,R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA),'unrecognized active historical/R84/R85/R86 binary'
     proto,proto_meta=build_api_preview()
     tokens,parts=unwrap_native_parts_v2(proto)

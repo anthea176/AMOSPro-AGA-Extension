@@ -17,10 +17,13 @@ import unittest
 ARCHIVES = ('dist/experimental/', 'tests/passed/', 'tests/historical/', 'tests/fixtures/')
 CANONICAL_LIB = 'dist/AMOSPro_AGA.Lib'
 PROTECTED_LIB = 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+# Only the exact author-approved R84 -> M19 P0 binary transition is exempt.
+PROMOTION_R84_BLOB = '9c6c52a1d857c89089b2540b438b76efbf80c77b'
+PROMOTION_P0_BLOB = '6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2'
 PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 
 
-def path_errors(path: str, *, deleted: bool = False) -> list[str]:
+def path_errors(path: str, *, deleted: bool = False, approved_p0: bool = False) -> list[str]:
     """Check destinations and protect histories, including removals.
 
     Public version-free examples/*.asc are not the single active test. Removing
@@ -28,9 +31,10 @@ def path_errors(path: str, *, deleted: bool = False) -> list[str]:
     """
     path = path.replace('\\', '/')
     errors = []
-    if path == PROTECTED_LIB or path.startswith(ARCHIVES):
+    if (path == PROTECTED_LIB and not approved_p0) or path.startswith(ARCHIVES):
         errors.append('protected historical asset: explicit separate authorization required')
-    if path.startswith('dist/') and path.lower().endswith('.lib') and path != CANONICAL_LIB:
+    if (path.startswith('dist/') and path.lower().endswith('.lib') and
+            path != CANONICAL_LIB and not (path == PROTECTED_LIB and approved_p0)):
         if not errors:
             errors.append('AGA Lib may only be delivered as dist/AMOSPro_AGA.Lib')
     if path.startswith('dist/') and path.lower().endswith('.zip'):
@@ -71,11 +75,30 @@ def changed_files(base: str, head: str) -> list[str]:
     return sorted(set(proc.stdout.splitlines()))
 
 
+def exact_p0_promotion(base: str, head: str) -> bool:
+    """Fail closed: only exact R84 -> P0 blobs with unchanged active P0."""
+    pins=(
+        (f'{base}:{PROTECTED_LIB}',PROMOTION_R84_BLOB),
+        (f'{base}:{CANONICAL_LIB}',PROMOTION_P0_BLOB),
+        (f'{head}:{PROTECTED_LIB}',PROMOTION_P0_BLOB),
+        (f'{head}:{CANONICAL_LIB}',PROMOTION_P0_BLOB),
+    )
+    for obj,expected in pins:
+        proc=subprocess.run(['git','rev-parse','--verify',obj],
+                            capture_output=True,text=True,check=False)
+        if proc.returncode or proc.stdout.strip()!=expected:
+            return False
+    return True
+
+
 def run_check(base: str, head: str) -> int:
     issues = []
-    for path in changed_files(base, head):
+    paths=changed_files(base, head)
+    approved=PROTECTED_LIB in paths and exact_p0_promotion(base, head)
+    for path in paths:
         issues.extend((path, msg) for msg in path_errors(
-            path, deleted=not Path(path).exists()))
+            path, deleted=not Path(path).exists(),
+            approved_p0=(path==PROTECTED_LIB and approved)))
         if path.startswith('.github/workflows/'):
             p = Path(path)
             if p.is_file():
@@ -89,7 +112,7 @@ def run_check(base: str, head: str) -> int:
     if issues:
         print(f'FAIL: {len(issues)} AGA delivery violation(s)')
         return 1
-    print('PASS delivery policy: canonical dist/ Lib, single tests/current ASC, protected archives')
+    print('PASS delivery policy: canonical dist/ Lib, single tests/current ASC, protected archives; exact P0 promotion:', approved)
     return 0
 
 
@@ -108,6 +131,8 @@ class DeliveryPolicyTests(unittest.TestCase):
 
     def test_protect_last_good(self):
         self.assertTrue(path_errors(PROTECTED_LIB))
+        self.assertEqual(path_errors(PROTECTED_LIB, approved_p0=True), [])
+        self.assertTrue(path_errors('dist/experimental/OLD.Lib', approved_p0=True))
 
     def test_protect_histories(self):
         for path in ('tests/passed/OLD.asc', 'tests/fixtures/test.abk',
