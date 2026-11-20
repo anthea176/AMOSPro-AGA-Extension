@@ -39,7 +39,23 @@ jobs:
           python -B -m py_compile tools/m19_b7m2_close_reset_emit.py tools/build_m19_b7m2_close_reset_in_memory.py tools/test_m19_b7m2_close_reset_gate_a.py
       - name: Execute native MC68020 Bob Off, reactivation and 64-object lifecycle Gate A
         run: python -B tools/test_m19_b7m1_bob_lifecycle_gate_a.py
-      - name: Execute B7-m2 Close reset and second-run MC68020 Gate A
-        run: python -B tools/test_m19_b7m2_close_reset_gate_a.py
+      - name: Execute historical B7-m2 test or current B8 integration, source-pinned
+        run: |
+          python -B - <<'PY'
+          import sys,subprocess
+          from hashlib import sha256
+          from pathlib import Path
+          sys.path.insert(0,'tools')
+          from active_library import B7M2_SHA,B8_SHA
+          digest=sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
+          if digest==B7M2_SHA:
+              name='tools/test_m19_b7m2_close_reset_gate_a.py'
+          elif digest==B8_SHA:
+              name='tools/test_m19_b8_first_update_gate_a.py'
+          else:
+              raise AssertionError('Unknown current B7/B8 binary')
+          subprocess.check_call([sys.executable,'-B',name])
+          print('PASS source-backed native lifecycle',name)
+          PY
       - name: Verify distributed library and regression fixtures were not modified
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
