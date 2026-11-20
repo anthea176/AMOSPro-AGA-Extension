@@ -11,6 +11,8 @@ on:
       - 'tools/m19_b8_s1_bank_prestage_emit.py'
       - 'tools/build_m19_b8_s1_bank_prestage_in_memory.py'
       - 'tools/test_m19_b8_s1_bank_prestage_gate_a.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/*.asc'
   workflow_dispatch:
 
 permissions:
