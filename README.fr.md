@@ -19,15 +19,15 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P1a — candidate de TEST WinUAE active, MC68020+.** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **118 816 octets**, SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a`, **92 commandes / 188 entrées AP20**, cinq unités natives. **Gate A MC68020 PASS : 110 contrôles** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829640179)). **Gate B Runtime P1a, Gate C véritable AMOS Compiler et Gate D physique NON TESTÉES**.
+**M19 P1b — candidate de TEST WinUAE active, MC68020+.** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **119 176 octets**, SHA256 `2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4`, **92 commandes / 188 entrées AP20**, 5 unités natives. **Gate A MC68020 intégrée PASS : 98 contrôles** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44836896149)). **Gate B P1b Runtime, Gate C Compiler et Gate D matériel NON TESTÉES.**
 
-**ASC actif unique P1a :** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), conservant les 405 frames et trois phases Bank Free P0 avec 42 valeurs X/Y/Image supplémentaires · [protocole WinUAE](tests/current/README.md). **[`LAST_GOOD` protégée](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste P0** : 117 896 octets, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, 89 commandes / 185 entrées AP20 ; Gate B Runtime P0 PASS fonctionnel seulement.
+**ASC actif unique P1b :** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), 405 frames de régression P0/P1a, 42 lectures et **4 phases hotspot** avec [banque AGBO 26](tests/current/M19_P1B_HOTSPOT_BANK26.abk) · [protocole WinUAE](tests/current/README.md). **[LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) reste P0**, 117 896 octets, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. [Historique](docs/LIBRARY_TEST_HISTORY.md).
 
 **Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire. **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P1a** — **92 commandes / 188 entrées AP20**, MC68020 minimum. Trois fonctions numériques ajoutées : **`Aga X Bob(N)`**, **`Aga Y Bob(N)`**, **`Aga I Bob(N)`**. Le retour de refus **-32769** concerne un Bob inactif, absent, invalide ou inaccessible ; -1 et 0 restent des coordonnées légales. Conservation des contrats P0 Bank Free, Clear/Update et Swap explicite. **P1a Gate A PASS ; B/C/D NON TESTÉES**. [Rapport](docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md).
+**API de la bibliothèque courante M19 P1b** — **92 commandes / 188 entrées AP20**, MC68020 minimum. Les fonctions numériques `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` conservent leurs valeurs logiques ; **le rendu natif des Bobs applique maintenant les hotspots AGBO v1 par image** (`Xdessin=XBob-hotX`, `Ydessin=YBob-hotY`), clipping au pixel et masque préservés. Aucune nouvelle commande publique. **Gate A intégrée PASS ; Gates B/C/D P1b NON TESTÉES**.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
