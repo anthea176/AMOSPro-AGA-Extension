@@ -2,20 +2,20 @@
 
 **BIBLIOTHÈQUE ACTIVE DE TEST** : [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, reconstruite **octet pour octet** par `tools/build_m19_b8_safe_retry_in_memory.py::build_b8_safe_retry()`. **88 commandes / 184 entrées AP20**, 5 unités MC68020, PC16 max 29 962. Nouveaux tokens numériques `Aga Bob Clear` (182) et `Aga Bob Update` (183), résultats 1/0, **pas de Swap implicite**. La B7-m2 antérieure reste dans l'historique Git, `LAST_GOOD` R84 est intacte.
 
-**SEUL ASC ACTIF S1** : [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **11 092 octets**, ASCII LF, sans asset externe ni banque présumée libre. Banque 24 et 25 doivent être libres. Le programme s'appuie sur le banc B7-m2 validé, mais **cette variante native S1 est nouvelle : ses Gates B/C ne sont PAS encore validées**. Préflight et oracle statique : `python -B tools/test_m19_b8_clear_update_asc_static.py` et `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`.
+**SEUL ASC ACTIF S1** : [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **11 092 octets**, ASCII LF, sans asset externe ni banque présumée libre. Banque 24 et 25 doivent être libres. Le programme s'appuie sur le banc B7-m2 validé, mais **Gate B Runtime S1 validée par deux journaux à 405/405 frames ; Gate C Compiler reportée**. Préflight et oracle statique : `python -B tools/test_m19_b8_clear_update_asc_static.py` et `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`.
 
-## Exécution Runtime — Gate B à qualifier
+## Exécution Runtime — Gate B déjà validée (protocole conservé pour référence)
 
 1. Sur le PC Windows : `git pull origin main`, puis copier **uniquement** le nouveau `dist/AMOSPro_AGA.Lib` dans le slot AGA existant de `APSystem` sous WinUAE, en remplaçant la bibliothèque de travail précédente. **Redémarrer AMOS**. Ne pas toucher à `AMOSPro_AGA_LAST_GOOD.Lib`.
 2. Configuration ciblée : **WinUAE AGA PAL, MC68030/JIT ON**, comme pour la dernière campagne B7-m2 (ne pas assimiler à une validation sur MC68020 réel). Dans un programme **vide**, `Project → Merge ASCII` du nouvel ASC : ne pas charger le fichier ASC par `Load`.
 3. Lancer le programme. Vérifier visuellement le décor mouvant, les Bobs masqués/opaques, les étapes **2, 1, 0, 2, 4, 8, 16, 64, 16** et la disparition des anciens Bobs sans traînée. Vérifier le retour à AMOS après `Aga Screen Close`.
 4. Récupérer `RAM:M19_B8_CLEAR_UPDATE.TXT` et en sauvegarder une copie **avant** le second lancement. Relancer dans la même session AMOS sans `Erase All` ni redémarrage, puis conserver un **deuxième** journal et une capture du rendu.
 
-## Exécution compilée — Gate C à qualifier séparément
+## Exécution compilée — Gate C reportée (aucun nouvel essai demandé)
 
-Dans le programme vierge, réimporter le même ASC après installation de la Lib B8 ; **compiler un nouvel exécutable avec AMOS Compiler**, puis lancer cet exécutable sous WinUAE AGA PAL 68030/JIT ON. Ne pas réutiliser l'ancien exécutable B7. Conserver le journal compilé distinct des deux journaux Runtime et relever tout freeze/Guru, notamment `Aga Screen Open`, `Aga Bob Update` et `Aga Screen Close`.
+Cette Gate n'est **pas validée pour S1** et est reportée à la demande de l'auteur. Ne pas relancer AMOS Compiler dans la campagne actuelle. Si une future distribution compilée exige une qualification, reprendre alors ce protocole dans une campagne distincte.
 
-## Journal attendu si tout fonctionne (aucun PASS WinUAE encore attribué)
+## Résultats Runtime S1 effectivement obtenus
 
 | Champ | Attendu |
 |---|---|
@@ -36,8 +36,8 @@ Dans le programme vierge, réimporter le même ASC après installation de la Lib
 ## Gates
 
 - **Gate A MC68020 : PASS** — [CI S1 44780312459](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44780312459), **119 contrôles du Clear SafePort 1–3 VBL sur deux relocations**, plus non-régressions B7/B8 (OS/Blitter simulés).
-- **Gate B Runtime WinUAE : NON TESTÉE sur S1.** Ancienne B8 : 405/405 seulement après ajout de VBL artificiels aux étapes 8–9 ; échec ERR 18 sans eux.
-- **Gate C AMOS Compiler : NON TESTÉE sur S1.** Ancienne B8 : ERR 18 sans VBL de contournement.
+- **Gate B Runtime WinUAE : PASS sur deux journaux S1.** 405/405 frames, 9/9 étapes, 403 Clear, 405 Update, 50 Off, ERR 0, PATH_OK. Aucun VBL artificiel dans la boucle de l'ASC du dépôt. Ce résultat ne constitue pas une Gate C.
+- **Gate C AMOS Compiler : NON TESTÉE sur S1 et reportée à la demande de l'auteur.** Ne plus la solliciter pour clôturer la validation Runtime.
 - **Gate D matériel physique : NON TESTÉE.**
 
 Documentation technique : [M19 B8](../../docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md) et [NEXT_SESSION](../../docs/NEXT_SESSION.md).

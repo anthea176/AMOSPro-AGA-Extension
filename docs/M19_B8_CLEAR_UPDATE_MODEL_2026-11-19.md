@@ -1,5 +1,12 @@
 # M19 B8 — Aga Bob Clear / Update : modèle, primitives CPU020 et architecture AP20 (19 novembre 2026)
 
+## Résultats Runtime S1 confirmés le 20 novembre 2026
+
+Deux journaux WinUAE Runtime S1 fournis : FRAMES_OK 405/405, STAGES_OK 9, CLEAR_OK 403, UPDATE_OK 405, CLEAR/UPDATE/SWAP_FAILS 0, 50 Bob Off, CLOSE_RETURNED 1, BANKS_ERASED 2, ERR 0 et VERDICT PATH_OK. L'ASC de campagne source ne rajoute aucun VBL à la boucle. Le compteur RETRY_VBL 360 concerne les attentes d'autres primitives dans l'ASC ; il ne compte pas les WaitTOF internes de Clear. La ligne LIB_SHA256 est une étiquette écrite par le programme et non une mesure du binaire installé.
+
+**Gate B Runtime S1 : PASS sur ces deux scénarios. Gate C Compiler S1 : non testée et reportée à la demande de l'auteur.** La Gate A native S1 antérieure reste PASS et R84 LAST_GOOD reste protégée. Travail M20 P0 documenté séparément : [modèle de scrolling](M20_TILEMAP_P0_HOST_MODEL.md).
+
+
 ## Mise à jour du 20 novembre 2026 — S1 corrige le refus SafePort en source native
 
 **Nouvelle bibliothèque de travail active :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **M19 B8 S1, 116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, reproductible octet par octet avec [`build_m19_b8_safe_retry_in_memory.py`](../tools/build_m19_b8_safe_retry_in_memory.py). Les **88 commandes, 184 entrées AP20, 5 unités MC68020 et PC16 29 962 sont conservées** ; suffixe de **360 octets natifs**, seule entrée publique Clear (182) redirigée. Le nouveau wrapper n'attend que si SafePort reste pending : **3 WaitTOF au maximum**, avec ré-exécution de l'ancien garde Clear à chaque tentative. Toujours 1/0, aucune modification du front, aucun Swap implicite et refus permanent en DIRTY si échec. [Émetteur](../tools/m19_b8_safe_retry_emit.py) ; [banc native CPU020](../tools/test_m19_b8_safe_retry_gate_a.py).

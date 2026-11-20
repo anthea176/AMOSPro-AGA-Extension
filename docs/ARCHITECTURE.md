@@ -1,5 +1,10 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+## M20 P0 — prototype hôte de scrolling, non natif
+
+Le [modèle indépendant M20 P0](M20_TILEMAP_P0_HOST_MODEL.md) a 13 tests Python PASS : tuiles 16×16 opaques, deux caméras de pages physiques distinctes, bandes exposées, mutations de carte, fond de Bobs et refus DIRTY. **Aucun code MC68020, aucune allocation Chip/Fast réelle, aucun appel AGA, aucune commande publique ni modification de la Lib S1**. Cette étude ne remplace pas les Gates A/B/C/D du futur moteur. B8 S1 conserve sa Gate B Runtime validée sur deux journaux ; Gate C reportée.
+
+
 ## Référence active M19 B8 S1 — SafePort bounded Clear (20/11/2026)
 
 **Lib unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, 88 commandes, 184 entrées AP20, groupes natifs `[142,153,156,177,181]`, MC68020 minimum, PC16 maximal **29 962**. [Builder S1](../tools/build_m19_b8_safe_retry_in_memory.py), [émetteur natif](../tools/m19_b8_safe_retry_emit.py). B8 précédente `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` source byte-exacte comme préfixe : **+360 octets append-only** et seulement le stub de `Aga Bob Clear` redirigé (182). `Aga Bob Update`, Bob setter, B7 Draw/End/Close, tokens historiques, Safe/Disp et DIRTY invariants inchangés.

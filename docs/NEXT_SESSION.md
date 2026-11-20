@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — Runtime S1 confirmé, démarrage M20 P0
+
+**M19 B8 S1 : Gate A native PASS et Gate B Runtime WinUAE PASS sur deux journaux transmis.** Ils portent l'étiquette SHA256 S1 (ce champ est écrit par l'ASC et ne lit pas la Lib installée), RUN_MODE RUNTIME, PRG_STATE 1, RESULT 1, ERR 0, FRAMES_OK 405/405, STAGES_OK 9/9, CLEAR_OK 403, UPDATE_OK 405, 50 commandes Bob Off, aucun échec Fill/Copy/Clear/Update/Swap, CLOSE_RETURNED 1, BANKS_ERASED 2 et VERDICT PATH_OK. L'ASC du dépôt ne contient pas de VBL de diagnostic ajouté dans la boucle. **Gate C AMOS Compiler S1 : reportée par décision de l'auteur ; aucune validation revendiquée.** Gate D matériel non testée. R84 LAST_GOOD protégée.
+
+**M20 P0 livré sur main en source host-only** : [modèle pixel](../tools/m20_tilemap_model.py), [banc](../tools/test_m20_tilemap_model.py), [protocole et réserves](M20_TILEMAP_P0_HOST_MODEL.md), [CI 44789691639 : 13 tests PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44789691639). Modélise tilemap 16×16, caméra indépendante pour chaque page physique, repaints des strips et des tuiles modifiées, Bobs opaques et DIRTY/READY avec Swap explicite. **N'est PAS une implémentation MC68020/AMOS ni une validation Gate A/B/C M20.** Aucune nouvelle API, Lib ou ASC ; S1 116 104 octets SHA256 3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a et R84 LAST_GOOD inchangées.
+
+**Prochain chantier sans test Compiler demandé :** étude du rendu planaire des tuiles 16×16, du clipping bitplane, des masques, de l'accès Fast/Chip et de la synchronisation avec B8 S1. Le contrat des nouvelles commandes nécessitera une décision explicite avant exposition publique.
+
+
 ## 20 novembre 2026 — S1 ACTIF, SafePort borné, Gate A PASS ; Gates B/C WinUAE à réaliser
 
 **Bascule native S1 autorisée (« ok go ») et vérifiée sur `main`:** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, MC68020+, **88 commandes / 184 entrées AP20**, cinq unités natives `[142,153,156,177,181]`, PC16 maximal `29962`. [Émetteur append-only](../tools/m19_b8_safe_retry_emit.py) + [builder exact](../tools/build_m19_b8_safe_retry_in_memory.py) + [119 tests natifs](../tools/test_m19_b8_safe_retry_gate_a.py). L'ancien natif B8 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` reste byte-exact en préfixe et reconstruisible, les tokens publics inchangés. Seul le stub public `Aga Bob Clear` (index 182) appelle désormais `WaitTOF` **au maximum 3 VBL** si SafePort reste pending, puis retente le Clear natif exact ; autres refus toujours bloquants, pas de Swap implicite, jamais de succès simulé.
