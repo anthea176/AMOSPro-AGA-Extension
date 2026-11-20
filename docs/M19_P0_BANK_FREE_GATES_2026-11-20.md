@@ -1,6 +1,6 @@
 # M19 P0 — livraison de la Lib Bank Chip Select / Bank Free
 
-**20 novembre 2026.** Candidate active de test sur `main`, Gate A native PASS ; **Runtime B / Compiler C / matériel D NON TESTÉS sur P0**. M19 continue.
+**20 novembre 2026.** Candidate active sur `main`, **Gate A native PASS** ; **Gate B Runtime PASS fonctionnel d'après les journaux reçus** ([preuves et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C AMOS Compiler reportée**, Gate D non testée. M19 continue.
 
 ## Bibliothèque exacte
 
@@ -33,14 +33,14 @@ Le comportement existant B8 `Aga Bob Clear`, `Aga Bob Update`, `Aga Swap` et les
 | Préparation Chip | **Gate A PASS, 104 contrôles MC68020**, deux relocations |
 | Bank Free | **Gate A PASS, 121 contrôles MC68020**, deux relocations, libération sélective, WaitBlit, propriétaire, refus READY, réactivation |
 | AP20 | **PASS** : audit tokens, stubs, 89 commandes/185 entrées, 5 îlots, PC16, reconstruction SHA |
-| Runtime WinUAE P0 | **NON TESTÉ** |
+| Runtime WinUAE P0 | **PASS fonctionnel sur deux journaux reçus, byte-identiques** ; [analyse et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md) |
 | Compilé AMOS P0 | **NON TESTÉ, reporté** |
 | Matériel physique | **NON TESTÉ** |
 
 [CI Gate A exécutée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756). Les 225 contrôles exécutent le code MC68020 réel **dans Unicorn avec services OS, Graphics et Blitter simulés**. Ils ne sont **pas** une preuve de lancement sous AMOS/WinUAE ou d'acceptation par AMOS Compiler.
 
-## Campagne Runtime proposée
+## Campagne Runtime exécutée — preuves des journaux
 
-L'unique [ASC actif](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **12 837 octets**, conserve les **405 frames** de base B8 S1 (9 étapes, 403 Clear / 405 Update / 50 Bob Off), puis ajoute **3 phases Bank Free + réactivation**. Le journal est `RAM:M19_P0_BANK_FREE.TXT` ; conserver deux journaux successifs en Runtime. [Instructions et résultats attendus](../tests/current/README.md). Le SHA affiché dans le journal est une étiquette ASC et ne valide pas le binaire réellement chargé. Aucun VBL artificiel ajouté dans la boucle de 45 frames.
+L'unique [ASC actif](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **12 837 octets**, conserve les **405 frames** de base B8 S1 (9 étapes, 403 Clear / 405 Update / 50 Bob Off), puis ajoute **3 phases Bank Free + réactivation**. Deux fichiers Runtime transmis le **20/11/2026** donnent tous deux `RESULT 1`, `ERR 0`, `FRAMES_OK 405`, `STAGES_OK 9`, `BANK_FREE_CALLS 3`, `BANK_FREE_REARM 1`, `CLOSE_RETURNED 1` et `VERDICT PATH_OK` ; tous les échecs sont à zéro. Les fichiers ont exactement le même SHA256 et aucun identifiant de lancement distinct. [Analyse détaillée et limites des preuves](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md). [Protocole reproductible](../tests/current/README.md). Le SHA indiqué dans le journal est une étiquette ASC, sans mesure du binaire installé. Aucun VBL artificiel ajouté dans la boucle de 45 frames.
 
-**Les deux PASS Runtime B8 S1 historiques (405/405) ne sont pas transférables à P0.** Le Compiler C reste reporté ; toute nouvelle qualification doit être enregistrée séparément. Les fonctions Bob avancées et Sprites de M19 restent ouvertes ; M20 est en attente.
+**Les deux PASS Runtime B8 S1 historiques (405/405) ne sont pas transférables à P0** ; la qualification P0 ci-dessus repose exclusivement sur ses propres journaux. Le Compiler C reste reporté ; les essais visuels et la mesure de Chip RAM ne sont pas établis par les fichiers. Les fonctions Bob avancées et Sprites de M19 restent ouvertes ; M20 est en attente.
