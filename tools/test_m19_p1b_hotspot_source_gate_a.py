@@ -60,8 +60,10 @@ def native_case(raw,base,image_payload,x,y,sw,sh,*,image_id=1):
     uc.reg_write(UC_M68K_REG_D4,y&0xffffffff)
     uc.reg_write(UC_M68K_REG_A0,entry)
     uc.reg_write(UC_M68K_REG_A3,DIMS)
-    uc.reg_write(UC_M68K_REG_A7,STACK)
+    # Enter MC68020 supervisor mode BEFORE writing A7; Unicorn switches
+    # between USP/SSP when SR.S changes and otherwise starts at unmapped 0.
     uc.reg_write(UC_M68K_REG_SR,0x2000)
+    uc.reg_write(UC_M68K_REG_A7,STACK)
     before={reg:uc.reg_read(reg) for reg in REG_D+REG_A[:7]}
     try:
         uc.emu_start(base,STOP,count=4000)
