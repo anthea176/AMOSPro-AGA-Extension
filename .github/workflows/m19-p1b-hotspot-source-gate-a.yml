@@ -9,6 +9,7 @@ on:
       - 'tools/test_m19_p1b_hotspot_source_gate_a.py'
       - 'tools/m19_p1b_hotspot_draw_emit.py'
       - 'tools/build_m19_p1b_hotspot_in_memory.py'
+      - 'tools/build_m19_p1b_hotspot_fixture.py'
       - 'tools/test_m19_p1b_hotspot_draw_gate_a.py'
   workflow_dispatch:
 permissions:
@@ -25,7 +26,7 @@ jobs:
       - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Python syntax and native CPU / delivery policy
         run: |
-          python -B -m py_compile tools/m19_p1b_hotspot_origin_emit.py tools/m19_p1b_hotspot_draw_model.py tools/test_m19_p1b_hotspot_source_gate_a.py tools/m19_p1b_hotspot_draw_emit.py tools/build_m19_p1b_hotspot_in_memory.py tools/test_m19_p1b_hotspot_draw_gate_a.py
+          python -B -m py_compile tools/m19_p1b_hotspot_origin_emit.py tools/m19_p1b_hotspot_draw_model.py tools/test_m19_p1b_hotspot_source_gate_a.py tools/m19_p1b_hotspot_draw_emit.py tools/build_m19_p1b_hotspot_in_memory.py tools/test_m19_p1b_hotspot_draw_gate_a.py tools/build_m19_p1b_hotspot_fixture.py
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
       - name: Preserve old AGBO, Clear Update and P1a sources
@@ -58,5 +59,19 @@ jobs:
           PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_in_memory.py
       - name: Real MC68020 Safe Blitter integration after valid AGBO
         run: PYTHONPATH=tools python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
+      - name: Verified binary handoff for single authorized P1b Lib and ABK
+        run: |
+          PYTHONPATH=tools python -B - <<'PY'
+          import base64,hashlib
+          from build_m19_p1b_hotspot_in_memory import build_p1b,P1B_SHA,P1B_BYTES
+          raw,meta=build_p1b()
+          assert len(raw)==P1B_BYTES and hashlib.sha256(raw).hexdigest()==P1B_SHA
+          b64=base64.b64encode(raw).decode('ascii')
+          print('P1B_BLOB_BEGIN',len(raw),P1B_SHA,len(b64),flush=True)
+          for i in range(0,len(b64),1024):
+              print('P1B_BLOB_CHUNK',i//1024,b64[i:i+1024],flush=True)
+          print('P1B_BLOB_END',len(b64),flush=True)
+          PY
+          PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_fixture.py
       - name: Never write P1b into the active P1a Lib, P0 LAST_GOOD, or ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/

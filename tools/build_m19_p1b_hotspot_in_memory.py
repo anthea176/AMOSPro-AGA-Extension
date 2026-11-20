@@ -19,6 +19,9 @@ from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_p1b_hotspot_draw_emit import emit_p1b_hotspot_draw
 
 BOBS=177
+P1B_SHA='2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4'
+P1B_BYTES=119176
+P1B_NATIVE_SHA='dde935fec04682989c90ea60fd12d40c75b77e8c1e307a93746f078123c1c7ab'
 TITLE=(b'AMOSPro AGA M19 P1b Bob Hot Spot Safe Blitter MC68020 CANDIDATE\0'
        b'$VER: AMOSPro_AGA M19 P1b HOTSPOT MC68020 GATE A\0')
 TITLE+=bytes(len(TITLE)&1)
@@ -55,6 +58,9 @@ def build_p1b()->tuple[bytes,dict]:
     bound=max(map(abs,spans.values()))
     if len(commands)!=92 or groups!=[142,153,156,177,181] or bound>=32766:
         raise ValueError('P1b wrong API group or Compiler PC16 overflow')
+    if (len(image)!=P1B_BYTES or sha256(image).hexdigest()!=P1B_SHA
+            or sha256(native).hexdigest()!=P1B_NATIVE_SHA or bound!=31444):
+        raise ValueError('Pinned P1b MC68020 full Safe-Blitter native/AP20 SHA drift')
     return image,dict(bytes=len(image),sha256=sha256(image).hexdigest(),
        predecessor_sha=P1A_SHA,public_commands=len(commands),
        ap20_entries=len(new_parts),native_groups=groups,pc16_max=bound,
