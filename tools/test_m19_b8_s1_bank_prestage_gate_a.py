@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 from amos_link_test_support import relocate
-from build_m19_b8_s1_bank_prestage_in_memory import build_bank_prestage
+from build_m19_b8_s1_bank_prestage_in_memory import build_bank_prestage, PRESTAGE_SHA, PRESTAGE_BYTES
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from m19_b8_first_update_emit import emit_b8_b7_first_update
 from m19_b8_s1_bank_prestage_emit import emit_b8_s1_bank_prestage
@@ -111,6 +111,7 @@ def fresh(layout):
 def main():
     image,meta=build_bank_prestage()
     assert image==build_bank_prestage()[0]
+    assert len(image)==PRESTAGE_BYTES and meta['sha256']==PRESTAGE_SHA
     assert meta['predecessor_sha']=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
     assert meta['public_commands']==88 and meta['ap20_entries']==184
     assert meta['native_groups']==[142,153,156,177,181]

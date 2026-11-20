@@ -17,7 +17,7 @@ La B7-m2 (102 400 octets ; SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911
 
 **M19 n'est pas terminé.** B8 S1 conserve sa Gate A native et ses deux PASS Runtime ; Gate C Compiler reste reportée. Le chantier Bobs comprend encore `Aga Bob Bank Free N`, lectures X/Y/Image, hotspots, priorités, clipping, édition de banques, collisions et transformations ; la phase Sprites vient ensuite.
 
-**Sous-étape actuelle P0 :** [préparation Chip lors de `Aga Bob Bank N`](M19_P0_BANK_PRESTAGE_2026-11-20.md). Le wrapper MC68020 et le builder AP20 sont **expérimentaux, source-only** ; ils conservent 88 commandes et 184 entrées, et ne modifient pas la Lib S1. **Gate A en cours**. La banque vide ne reçoit aucune allocation ; une banque peuplée doit être préparée avant le premier dessin, avec contrôles de sécurité et rollback.
+**Sous-étape actuelle P0 :** [préparation Chip lors de `Aga Bob Bank N`](M19_P0_BANK_PRESTAGE_2026-11-20.md). Le wrapper MC68020 et le builder AP20 sont **expérimentaux, source-only** ; ils conservent 88 commandes et 184 entrées, et ne modifient pas la Lib S1. **Gate A CPU MC68020 PASS — 82 contrôles, deux relocations, [CI 44796391673](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44796391673)**. Candidate expérimentale **116 548 octets / SHA256 `577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf`**, non installée. La banque vide ne reçoit aucune allocation ; une banque peuplée doit être préparée avant le premier dessin, avec contrôles de sécurité et rollback.
 
 **Étape suivante :** qualifier le cycle de cache Chip et le futur `Aga Bob Bank Free N` avec les objets actifs, avant tout ajout public ou installation. Aucun nouvel essai Compiler demandé.
 

@@ -21,6 +21,8 @@ from m19_b8_first_update_emit import emit_b8_b7_first_update
 from m19_b8_s1_bank_prestage_emit import emit_b8_s1_bank_prestage
 
 S1_SHA='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
+PRESTAGE_SHA='577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf'
+PRESTAGE_BYTES=116548
 BOBS=177
 TITLE=(b'AMOSPro AGA M19 P0 Bank Select Chip prestage SOURCE ONLY MC68020\0'
        b'$VER: AMOSPro_AGA M19 P0 Chip PRESTAGE GATE A ONLY\0')
@@ -78,7 +80,7 @@ def build_bank_prestage():
         bank_offset_old=oldoffset,bank_offset_new=newoffset,
         new_native_bytes=len(new7)-len(old7),
         old_bobs_prefix_byte_exact=True,b8_fifth_byte_exact=True,
-        gate_a='NOT YET TESTED',gate_b='NOT TESTED',gate_c='NOT TESTED',
+        gate_a='PASS: 82 MC68020 native checks (2 relocations, OS mocked)',gate_b='NOT TESTED',gate_c='NOT TESTED',
         installed=False,active_lib='UNCHANGED',current_asc='UNCHANGED',
         last_good='UNCHANGED')
 
@@ -87,5 +89,8 @@ if __name__=='__main__':
     image,info=build_bank_prestage()
     if build_bank_prestage()[0]!=image:
         raise ValueError('Non-reproducible AP20 candidate')
+    if (len(image)!=PRESTAGE_BYTES or info['sha256']!=PRESTAGE_SHA
+            or info['pc16_max']!=30394 or info['new_native_bytes']!=432):
+        raise ValueError('Gate A source-pinned Chip pre-stage candidate changed')
     print('M19 P0 BANK SELECT CHIP PRESTAGE AP20 SOURCE ONLY')
     pprint(info)
