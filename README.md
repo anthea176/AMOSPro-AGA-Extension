@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**Active working candidate: M19 B7-m2 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **102,400 bytes**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, **86 commands / 181 AP20 entries**, four native units. **Gate A MC68020 PASS** (75 Close-reset/second-run assertion groups; 194 historical B7-m1 lifecycle checks). **Gate B B7-m2 pending WinUAE**; C Compiler / D hardware NOT TESTED. B7-m1 completed 405 frames visually on the first run but failed Draw with ERR 14 on the second run. [B7-m2 report](docs/M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
+**Active working candidate: M19 B8 (MC68020+).** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **115,744 bytes**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, **88 commands / 184 AP20 entries**, five native units. **Gate A MC68020 PASS** (59 first-Update tests, plus 36 integrated B7/B8 and 60 trampoline regressions, mocked OS/graphics). **B8 Runtime WinUAE Gate B and AMOS Compiler Gate C NOT TESTED**. [B8 technical report](docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
 
-**Current functional Bob lifecycle Runtime Gate B (B7-m2 repeat-launch pending WinUAE):** [M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc](tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc) · [instructions](tests/current/README.md). The previous [720-frame textured benchmark](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/cb3d97aec357bc726ea26047b6d3cb2c90b82247/tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) remains validated as a historical reference. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**Current B8 Clear/Update test (WinUAE B/C pending):** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [instructions](tests/current/README.md). The validated historical B7-m2 Runtime/Compiler test remains in Git history. **Protected reference:** [R84 `LAST_GOOD`](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **Interactive Bob example (no benchmark):** [Local restoration with four moving Bobs](examples/bob_local_restore/README.md) · [ASCII source](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — independent new version, PREFLIGHT PASS; WinUAE test pending. **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
 ## Main AMOS commands
 
-**Current library API M19 B7-m2** — **86 commands / 181 AP20 entries** (MC68020 minimum). `Aga Bob Draw` is a zero-argument numeric 0/1 function; `Aga Swap` refuses a dirty frame and `End` guards Safe/Disp cleanup. **Native Gate A PASS; 120-frame Bob, 720-frame flat-background and 720-frame textured-background WinUAE Runtime B PASS; Compiler C and physical D NOT TESTED.** [B7 report and active test](docs/M19_P0J_END_LIFECYCLE_GATE_A_2026-11-17.md).
+**Current library API M19 B8** — **88 commands / 184 AP20 entries** (MC68020 minimum). `Aga Bob Clear` restores a previously saved back page and `Aga Bob Update` atomically captures its current décor before drawing; both return 1/0 without implicit Swap. **Native Gate A PASS; WinUAE Runtime B and Compiler C NOT TESTED for B8.** [B8 report](docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md).
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -99,6 +99,8 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob`** | `Aga Bob _N,_X,_Y,_I` | Defines a persistent Bob record (ID `1..64`, signed X/Y, image ID) with source-bank identity checking. **Available in B7 for B/C tests**, but does not draw immediately: call `Aga Bob Draw`, then explicit `Aga Swap` only after a successful result. Gate A PASS; B/C not tested. No implicit Swap or drawing. |
 | **`Aga Bob Off`** | `Aga Bob Off _N` | Deactivates persistent Bob ID `1..64`. Deactivates a persistent Bob without immediate drawing or Swap. **B7 Gate A PASS; Runtime/Compiler B/C not tested.** |
 | **`Aga Bob Draw`** | `_OK=Aga Bob Draw` | **Zero-argument numeric function returning 1/0.** Draws all active persistent Bobs (1..64) into the Safe AGA back buffer using original source banks, independent masks, clipping and synchronized Blitter. Never swaps implicitly. An error leaves DIRTY set and `Aga Swap` is refused until a real screen close. **MC68020 Gate A PASS; B7 Gates B/C/D not tested.** |
+| **`Aga Bob Clear`** | `_OK=Aga Bob Clear` | **Zero-argument numeric function returning 1/0.** Restores the previously captured background on the current Safe physical back page, without changing the front page or swapping. Refuses absent/unsafe snapshots. M19 B8 MC68020 Gate A PASS; WinUAE B/Compiler C pending. |
+| **`Aga Bob Update`** | `_OK=Aga Bob Update` | **Zero-argument numeric function returning 1/0.** Preflights all active Bob images, captures/restores the background for the correct physical back page and draws all active Bobs as one transaction, without implicit Swap. Requires at least one prior successful `Aga Bob` SET on the first call; failure blocks Swap with DIRTY. M19 B8 MC68020 Gate A PASS; WinUAE B/Compiler C pending. |
 
 ### C2P — chunky graphics and IFF import (6 commands)
 

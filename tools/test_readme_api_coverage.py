@@ -175,7 +175,11 @@ def main() -> None:
     b7 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7)\b", title, re.IGNORECASE)
     b7m1 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7-m1)\b", title, re.IGNORECASE)
     b7m2 = re.search(r"\$VER:\s*AGA\s+(M19\s+B7-m2)\b", title, re.IGNORECASE)
-    if b7m2:
+    b8 = re.search(r"\$VER:\s*AMOSPro_AGA\s+(M19\s+B8)\b", title, re.IGNORECASE)
+    if b8:
+        assert sha256(LIB.read_bytes()).hexdigest() == "00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae", "B8 release must match the exact source"
+        release = "M19 B8"
+    elif b7m2:
         assert sha256(LIB.read_bytes()).hexdigest() == "242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6", "B7-m2 release must match exact source"
         release = "M19 B7-m2"
     elif b7m1:
