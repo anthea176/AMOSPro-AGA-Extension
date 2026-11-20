@@ -16,10 +16,10 @@ from unicorn.m68k_const import UC_M68K_REG_PC, UC_M68K_REG_SR
 
 from test_m5_generic import DR, AR, AMOS, EXEC, STACK, STOP
 from test_m19_p0a_r88_get_gate_a import ARGS
-from test_m19_p0e_v2_object_bridge_native import BridgeMachine, OTHER
+from test_m19_b8_s1_bank_free_gate_a import prepared
+from test_m19_p0e_v2_object_bridge_native import OTHER
 from test_ap20_v2_island_dispatch import cpu, trace_entry
 from amos_link_test_support import relocate
-from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from build_m19_b8_s1_bank_free_in_memory import build_bank_free
 from build_m19_p1a_getters_in_memory import build_p1a, API, BOBS
 from m19_p1a_bob_getters_emit import emit_m19_p1a_getters, INVALID
@@ -30,40 +30,46 @@ ROOT = Path(__file__).resolve().parents[1]
 INVALID_WORD = INVALID & 0xffffffff
 
 
-class GetterMachine(BridgeMachine):
-    def __init__(self, source, layout='interpreted'):
-        super().__init__(source, layout, 8)
-        self.getter_source, self.labels = emit_m19_p1a_getters()
-        self.uc.mem_write(self.entry,
-                          relocate(self.getter_source, self.entry, {}, self.uc))
 
-    def query(self, field, ident, *, owner=AMOS, limit=3000000):
-        assert field in ('x', 'y', 'image')
-        for i, reg in enumerate(DR):
-            self.uc.reg_write(reg, 0x12340000+i)
-        for i, reg in enumerate(AR[:7]):
-            self.uc.reg_write(reg, 0x31000+i*256)
-        self.uc.reg_write(DR[3], ident & 0xffffffff)
-        self.uc.reg_write(AR[5], owner)
-        self.uc.reg_write(AR[3], ARGS)
-        initial = {reg:self.uc.reg_read(reg) for reg in DR+AR[:7]}
-        self.uc.reg_write(UC_M68K_REG_SR, 0x2000)
-        self.uc.reg_write(AR[7], STACK)
-        self.put(STACK, STOP)
-        try:
-            self.uc.emu_start(self.entry+self.labels['p1a_get_'+field+'_entry'],
-                              STOP, count=limit)
-        except Exception as exc:
-            raise AssertionError(('MC68020 getter fault',field,ident,owner,
-                                  hex(self.uc.reg_read(UC_M68K_REG_PC)))) from exc
-        assert self.uc.reg_read(UC_M68K_REG_PC)==STOP
-        assert self.a(7)==STACK+4 and self.d(2)==0
-        for reg, value in initial.items():
-            if reg not in (DR[2], DR[3]):
-                assert self.uc.reg_read(reg)==value,(
-                    'AMOS ABI register modified',field,reg)
-        value=self.d(3)
-        return value-0x100000000 if value&0x80000000 else value
+def prepare_with_getters(layout):
+    """Use exactly the current P0 Bank Free gate's native AGA fixture."""
+    m=prepared(layout,with_bobs=False)
+    native,labels=emit_m19_p1a_getters()
+    m.native,m.labels=native,labels
+    # Preserve the B8 routed Draw/Close guards that FreeMachine installed.
+    m.labels['routed_paint_all_entry']=m.labels['b8_b7_draw_trampoline_entry']
+    m.labels['guarded_close_entry']=m.labels['b8_b7_close_trampoline_entry']
+    m.uc.mem_write(m.entry,relocate(native,m.entry,{},m.uc))
+    return m
+
+
+def query(m, field, ident, *, owner=AMOS, limit=3000000):
+    assert field in ('x','y','image')
+    for i,reg in enumerate(DR):
+        m.uc.reg_write(reg,0x12340000+i)
+    for i,reg in enumerate(AR[:7]):
+        m.uc.reg_write(reg,0x31000+i*256)
+    m.uc.reg_write(DR[3],ident&0xffffffff)
+    m.uc.reg_write(AR[5],owner)
+    m.uc.reg_write(AR[3],ARGS)
+    initial={reg:m.uc.reg_read(reg) for reg in DR+AR[:7]}
+    m.uc.reg_write(UC_M68K_REG_SR,0x2000)
+    m.uc.reg_write(AR[7],STACK)
+    m.put(STACK,STOP)
+    try:
+        m.uc.emu_start(m.entry+m.labels['p1a_get_'+field+'_entry'],
+                       STOP,count=limit)
+    except Exception as exc:
+        raise AssertionError(('MC68020 getter fault',field,ident,owner,
+                              hex(m.uc.reg_read(UC_M68K_REG_PC)))) from exc
+    assert m.uc.reg_read(UC_M68K_REG_PC)==STOP
+    assert m.a(7)==STACK+4 and m.d(2)==0
+    for reg,value in initial.items():
+        if reg not in (DR[2],DR[3]):
+            assert m.uc.reg_read(reg)==value,(
+                'AMOS ABI register modified',field,reg)
+    value=m.d(3)
+    return value-0x100000000 if value&0x80000000 else value
 
 
 def dispatch_models(parts, group, offset, stub_index):
@@ -120,46 +126,46 @@ def main():
         assert parts[entry][6:8]==b'\x4e\x75'
         checks+=dispatch_models(parts,group,at,entry)
 
-    p0c, _=build_p0c()
     for layout in ('interpreted','compiled'):
-        m=GetterMachine(p0c,layout)
-        assert m.run_select(10)==1
-        assert m.run_get(1,4,5,20,8)==1
-        assert m.query('x',1)==INVALID
+        m=prepare_with_getters(layout)
+        assert query(m,'x',1)==INVALID    # never-created Bob
         checks+=1
-        m.activate_aga_state()
-        assert m.bridge_call('reset')[0]==1
+        assert m.relay_call('reset')[0]==1
         for ident,bank,image,x,y in (
             (1,10,1,-32768,32767),
             (32,10,2,-1,0),
             (64,11,4096,32767,-32768),
         ):
-            assert m.bridge_call('put',ident=ident,bank=bank,
-                                 image=image,x=x,y=y)[0]==1
+            assert m.relay_call('put',ident=ident,bank=bank,
+                                image=image,x=x,y=y)[0]==1
             snapshot=m.table()
             for field,value in (('x',x),('y',y),('image',image)):
-                assert m.query(field,ident)==value
+                assert query(m,field,ident)==value
                 assert m.table()==snapshot
                 checks+=1
             m.put(OTHER+0x1c8,m.real_state)
             for field in ('x','y','image'):
-                assert m.query(field,ident,owner=OTHER)==INVALID
+                assert query(m,field,ident,owner=OTHER)==INVALID
                 assert m.table()==snapshot
                 checks+=1
-            assert m.bridge_call('off',ident=ident)[0]==1
+            assert m.relay_call('off',ident=ident)[0]==1
             for field in ('x','y','image'):
-                assert m.query(field,ident)==INVALID
+                assert query(m,field,ident)==INVALID
                 checks+=1
+            assert m.relay_call('put',ident=ident,bank=bank,
+                                image=image,x=0,y=0)[0]==1
+            assert query(m,'x',ident)==0
+            checks+=1
         for ident in (0,65,0xffffffff):
             for field in ('x','y','image'):
-                assert m.query(field,ident)==INVALID
+                assert query(m,field,ident)==INVALID
                 checks+=1
         m.uc.mem_write(EXEC+0x128,pack('>H',0))
-        assert m.query('x',1)==INVALID
+        assert query(m,'x',1)==INVALID
         m.uc.mem_write(EXEC+0x128,pack('>H',2))
         checks+=1
         m.put(AMOS+0x1c8,0)
-        assert m.query('x',1)==INVALID
+        assert query(m,'x',1)==INVALID
         checks+=1
 
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()

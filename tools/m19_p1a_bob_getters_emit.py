@@ -3,7 +3,7 @@
 """M19 P1a: three public numeric Bob getters, source-only MC68020.
 
 Exact P0 Bank Free code is preserved as a binary prefix. The only new
-execution path calls the P0e checked/relocatable object_bridge_read_entry.
+execution path calls the P0e checked/relocatable relay_read_entry.
 A Bob's source bank remains stored in the existing 24-byte object slot.
 No graphics, DMA, bank mutation or Swap; no new installed .Lib.
 
@@ -23,7 +23,7 @@ assert INVALID < -32768
 
 def emit_m19_p1a_getters() -> tuple[bytes, dict[str, int]]:
     old, labels = emit_b8_s1_bank_free()
-    if 'object_bridge_read_entry' not in labels:
+    if 'relay_read_entry' not in labels:
         raise ValueError('P0 checked Bob read bridge missing')
     c = Code()
     c.raw(old.hex())
@@ -36,7 +36,7 @@ def emit_m19_p1a_getters() -> tuple[bytes, dict[str, int]]:
         c.raw('4fefffe0')           # 32-byte local read record on stack
         c.move(D(3), D(0))          # D3 is the sole numeric argument, Bob N
         c.move(A(7), A(1))          # 24-byte private output, aligned stack
-        B(1, 'object_bridge_read_entry')
+        B(1, 'relay_read_entry')
         c.tst(D(3))                 # bridge status 1=active, 0=invalid/off
         B(7, prefix + '_fail')
         c.move(M(7, offset), D(3))  # original 32-bit X/Y or image
