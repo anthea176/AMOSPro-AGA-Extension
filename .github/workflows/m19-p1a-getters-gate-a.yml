@@ -32,5 +32,19 @@ jobs:
         run: python -B tools/build_m19_p1a_getters_in_memory.py
       - name: Three numeric getters, native ABI and two AP20 relocations
         run: python -B tools/test_m19_p1a_getters_gate_a.py
+      - name: Temporary verified P1a binary handoff for sole canonical Lib
+        run: |
+          python -B - <<'PY'
+          import base64,hashlib
+          from tools.build_m19_p1a_getters_in_memory import build_p1a
+          raw,meta=build_p1a()
+          expected='165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a'
+          assert len(raw)==118816 and hashlib.sha256(raw).hexdigest()==expected
+          encoded=base64.b64encode(raw).decode('ascii')
+          print('P1A_BLOB_BEGIN',len(raw),expected,len(encoded))
+          for i in range(0,len(encoded),1024):
+              print('P1A_BLOB_CHUNK',i//1024,encoded[i:i+1024])
+          print('P1A_BLOB_END',len(encoded))
+          PY
       - name: Preserve active and promoted P0 binaries and all AMOS tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
