@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — P0 Bank Free installée sur main, Gate A PASS
+
+**Lib active :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, **89 commandes / 185 entrées AP20**, cinq unités natives MC68020, PC16 maximum 31 092. Source [builder exact](../tools/build_m19_b8_s1_bank_free_in_memory.py). **Gate A : PASS 225 contrôles** (104 sélection Chip + 121 Bank Free), deux relocations et AmigaOS/Blitter simulés ; [CI 44801203756](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756). Le binaire est en `dist/` sur `main` depuis [`9fb051c`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9fb051c304c79d30259dd9ba86f0fe7566566925).
+
+**Nouveau contrat :** `Aga Bob Bank N` prépare immédiatement en Chip une banque AGBO peuplée ; `Aga Bob Bank Free N` est une instruction publique sans retour qui désactive les Bobs de N, refuse pendant READY/DIRTY, attend `WaitBlit`, libère le cache Chip et garde la banque AMOS pour `Save`/`Load`. [Rapport P0](M19_P0_BANK_FREE_GATES_2026-11-20.md).
+
+**ASC de campagne unique :** [`tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **12 837 octets**, reprend les 405 frames de B8 S1, ajoute trois phases Free/réactivation et journalise dans `RAM:M19_P0_BANK_FREE.TXT`. [Protocole WinUAE](../tests/current/README.md). **Gate B Runtime et C Compiler NON TESTÉES sur P0** : les deux passes 405/405 de S1 sont historiques, sans transfert de qualification. R84 `LAST_GOOD` reste intacte : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. M19 continue, M20 attend.
+
+
 ## 20 novembre 2026 — M19 P0 repris : préparation Chip à la sélection de banque
 
 L'auteur a confirmé que **M19 est toujours en cours**, et a demandé de commencer par la préparation Chip de `Aga Bob Bank N` avant `Aga Bob Bank Free N`. Développement sur **`main` seulement** : [source MC68020 append-only](../tools/m19_b8_s1_bank_prestage_emit.py), [builder AP20 en mémoire](../tools/build_m19_b8_s1_bank_prestage_in_memory.py), [banc native](../tools/test_m19_b8_s1_bank_prestage_gate_a.py), [rapport](M19_P0_BANK_PRESTAGE_2026-11-20.md). **Gate A MC68020 PASS : 104 contrôles sur deux relocations ([CI 44796391673](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44796391673))**, candidate AP20 **116 548 octets**, SHA256 `577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf`, source-only ; aucun nouveau token ou binaire installé, aucune intervention sur l'unique ASC actif ni `LAST_GOOD`.

@@ -1,5 +1,8 @@
 # M19 P0 — préparation Chip lors de `Aga Bob Bank N`
 
+> **Historique :** ce document décrit la préparation Chip validée comme source-only avant son intégration. Depuis le 20 novembre 2026, elle figure dans la nouvelle **Lib active P0**, avec `Aga Bob Bank Free N`. Voir [rapport P0](M19_P0_BANK_FREE_GATES_2026-11-20.md). Les mentions ci-dessous « S1 active », « Free non implémenté » sont des constats **antérieurs à la livraison P0**.
+
+
 **Statut : candidate native expérimentale, SOURCE ONLY.** B8 S1 reste la seule Lib active (116 104 octets, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`). `LAST_GOOD` R84 n'est pas modifiée. Pas de nouvel ASC, pas de Compiler demandé. **Gate A candidate : PASS — 104 contrôles MC68020 sur deux relocations, OS/Chip/Blitter simulés ([CI 44796391673](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44796391673)).** Gates B/C/D non testées.
 
 ## Objectif de cette sous-étape, avant `Aga Bob Bank Free N`
