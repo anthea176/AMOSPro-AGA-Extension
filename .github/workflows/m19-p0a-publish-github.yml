@@ -1,4 +1,4 @@
-name: M19 B7-m2 - verify canonical MC68020 Lib (read only)
+name: M19 canonical active Lib and protected LAST_GOOD (read only)
 
 # Historical filename kept to avoid breaking external references.
 # This workflow MUST NOT publish artifacts, ZIPs, or commit to main.
@@ -11,6 +11,11 @@ on:
       - '.github/workflows/m19-p0a-publish-github.yml'
       - 'dist/AMOSPro_AGA.Lib'
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+      - 'tools/active_library.py'
+      - 'tools/build_agapic_v2_r82_api_preview.py'
+      - 'tools/build_agapic_v2_r82_full_preview.py'
+      - 'tools/build_aga_r84_agapic.py'
+      - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
 
   workflow_dispatch:
 
