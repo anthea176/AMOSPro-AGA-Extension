@@ -98,7 +98,14 @@ def main():
         m=fresh(layout)
         assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits)
         assert len(m.chip_live)==0 and len(m.metadata)==0
-        assert m.run_select(10)==1
+        _R=m.run_select(10)
+        assert _R==1, ('pre-stage rejected',
+            'selected',m.selected_triple(),
+            'chip',dict(m.chip_live),'metadata',dict(m.metadata),
+            'state',hex(m.real_state),hex(m.get(m.real_state)),
+            'gfx',hex(m.get(m.real_state+8)),
+            'callbacks',m.callbacks(),
+            'recent',m.events[-18:])
         assert len(m.chip_live)==1 and len(m.metadata)==1
         assert m.chip_allocs==1 and m.chip_copies==1
         assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits) # PREPARE occurred before any Bob DRAW.
