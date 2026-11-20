@@ -144,8 +144,8 @@ def main() -> None:
     if not args.source_only:
         candidate = (ROOT / 'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
         active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
-        from active_library import B7M2_SHA,B8_SHA,B8S1_SHA
-        assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA))
+        from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
+        assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA))
         lastgood = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         assert len(candidate) == 73184 and sha256(candidate).hexdigest() == R87_SHA
         assert len(lastgood) == 67904 and sha256(lastgood).hexdigest() == R84_SHA
