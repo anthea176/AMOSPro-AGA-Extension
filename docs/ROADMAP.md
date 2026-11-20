@@ -19,7 +19,7 @@
 
 **État :** candidate active, **Gate A 225 contrôles PASS**, **Gate B Runtime PASS fonctionnel sur journaux** (deux fichiers identiques ; visuel non contrôlé), Gates C/D P0 non validées. **M19 n'est pas terminé** : lectures X/Y/Image, hotspots, priorités, clipping, édition des banques, collisions, transformations, puis Sprites.
 
-**Action suivante :** terminer les régressions CI historiques de compatibilité SHA P0, puis poursuivre M19 (consultation X/Y/Image, hotspot, priorité, clipping). Garder la Gate C Compiler reportée ; ne pas ouvrir M20 par anticipation.
+**Régressions CI P0 : PASS** ([Artifact integrity](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44823490337) et [politique CPU/chemins](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44823490306), code au commit `05c283a6`). **Action suivante :** poursuivre M19 (consultation X/Y/Image, hotspot, priorité, clipping). Garder la Gate C Compiler reportée ; ne pas ouvrir M20 par anticipation.
 
 **M20 EN ATTENTE :** prototype Python P0 (13 tests hôtes PASS) conservé ; aucune poursuite avant décision sur M19.
 
