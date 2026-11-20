@@ -1,6 +1,6 @@
 # M19 P0 — livraison de la Lib Bank Chip Select / Bank Free
 
-**20 novembre 2026.** Candidate active sur `main`, **Gate A native PASS** ; **Gate B Runtime PASS fonctionnel d'après les journaux reçus** ([preuves et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C AMOS Compiler reportée**, Gate D non testée. M19 continue.
+**20 novembre 2026.** **P0 terminée et promue LAST_GOOD sur `main` par décision explicite**, **Gate A native PASS** ; **Gate B Runtime PASS fonctionnel d'après les journaux reçus** ([preuves et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C AMOS Compiler reportée**, Gate D non testée. M19 continue.
 
 ## Bibliothèque exacte
 
@@ -16,7 +16,7 @@
 
 La chaîne [builder exact](../tools/build_m19_b8_s1_bank_free_in_memory.py) reconstruit B8 S1, puis la préparation Chip puis Bank Free avec vérification SHA et préfixes natifs historiques. L'entrée Bank Free est dispatchée via un [pont natif de cinquième unité](../tools/m19_b8_s1_bank_free_bridge_emit.py) vers BOBS ; il vérifie le callback B7/B8 original et ses marqueurs connus, sans adresse Runtime ou Compiler codée en dur. Le marqueur `GetP` est placé après le stub historique Update (code exécutable inchangé), comme l'exige AMOS pour l'instruction suivante.
 
-**R84 `LAST_GOOD` protégée** : 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`. L'ancienne B8 S1 reste reconstruisible : 116 104 octets, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`.
+**LAST_GOOD actuelle : P0**, byte-identique à la Lib active, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ([commit](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/71ff3862929b729bb44db20294aec9b048775cbf)). **Ancienne R84 :** 67 904 octets, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, préservée par Git et reconstructible via le builder. L'ancienne B8 S1 reste reconstruisible : 116 104 octets, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`.
 
 ## Fonctionnement
 

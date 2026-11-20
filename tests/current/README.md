@@ -1,6 +1,6 @@
 # M19 P0 — test Runtime WinUAE de la Lib Bank Chip Select/Free
 
-**Bibliothèque active de test :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, [builder exact](../../tools/build_m19_b8_s1_bank_free_in_memory.py). **89 commandes / 185 entrées AP20**, cinq groupes MC68020, PC16 max 31 092. `Aga Bob Bank Free N` est une **instruction sans retour**. R84 `LAST_GOOD` n'a pas été remplacée.
+**Bibliothèque active de test :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, [builder exact](../../tools/build_m19_b8_s1_bank_free_in_memory.py). **89 commandes / 185 entrées AP20**, cinq groupes MC68020, PC16 max 31 092. `Aga Bob Bank Free N` est une **instruction sans retour**. **P0 a été promue LAST_GOOD** sur décision explicite du 20/11/2026 ; la Gate C P0 reste NON TESTÉE.
 
 **Seul ASC actif :** [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **12 837 octets**, ASCII LF. Il conserve la campagne B8 de **405 frames**, puis ajoute **3 phases** Bank Free/réactivation. Pas de VBL supplémentaire dans la boucle de 45 frames.
 

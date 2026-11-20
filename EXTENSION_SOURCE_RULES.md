@@ -1,5 +1,8 @@
 # Règles sources — AMOSPro AGA Extension
 
+> **Décision explicite du 20/11/2026 : promotion M19 P0 Bank Chip Select/Free en LAST_GOOD avant M19 P1.** L'auteur déclare P0 terminée et autorise sa promotion. La promotion est limitée à `main` et aux octets exacts de `dist/AMOSPro_AGA.Lib` copiés sous `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` (même blob Git `6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2`). L'ancien LAST_GOOD R84, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, reste dans l'historique Git et reconstructible depuis son builder figé. **Gate A : 225 contrôles MC68020 PASS ; Gate B : Runtime PASS fonctionnel selon deux journaux octet-identiques ; Gate C Compiler : NON TESTÉE ; Gate D matériel : NON TESTÉE.** Aucune promotion ne transfère une Gate C historique à P0. Pas de nouvelle branche, autre binaire installable, archive, release, ni modification de l'ASC. Seule la transition binaire exacte R84→P0 est exceptionnellement autorisée ; toute modification future de LAST_GOOD reste protégée.
+
+
 > **Contrat actif consolidé le 15/11/2026 — 33 corrections approuvées.** Ce fichier est normatif pour les nouvelles interventions. Le [texte antérieur intégral](docs/EXTENSION_SOURCE_RULES_HISTORIQUE_2026-11-15.md) conserve les 1 903 lignes d'origine, ses preuves, offsets et checkpoints, **en tant qu'archive non normative**. Ne jamais réactiver une ancienne instruction parce qu'elle figure dans cette archive.
 
 ## 1. Autorité, périmètre et interdictions

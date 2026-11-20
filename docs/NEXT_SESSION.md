@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — M19 P0 terminée, LAST_GOOD promue avant P1
+
+**Décision de l'auteur :** P0 est terminée et sa bibliothèque de travail est promue LAST_GOOD avant d'engager **M19 P1**. Sur `main`, [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) et [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) sont désormais **byte-identiques**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, 89 commandes/185 entrées AP20, MC68020 minimum. [Commit de promotion `71ff386`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/71ff3862929b729bb44db20294aec9b048775cbf). **R84**, ancienne LAST_GOOD, reste source-reproductible en **67 904 octets** SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d` et consultable dans le Git précédent. Aucun artefact secondaire et aucune archive modifiée.
+
+**Validation à la promotion :** Gate A **PASS** (225 contrôles MC68020), Gate B **PASS fonctionnel selon les deux journaux Runtime reçus** (405/405 frames, 9/9 étapes, 3 Bank Free, zéro échec, fermeture AMOS) ; **Gate C AMOS Compiler P0 NON TESTÉE et reportée** ; Gate D physique NON TESTÉE. Les deux journaux sont identiques et ne prouvent pas un second lancement distinct, ni une inspection visuelle ; leur champ SHA est une étiquette ASC. [Rapport Runtime](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md).
+
+**Sécurité :** les builders historiques R82/R83/R84 restent figés par SHA, et la politique n'admet que cette transition R84→P0 du fichier protégé. Le seul ASC `tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc` est inchangé ; ni test passé ni archive touché. **M19 P1 est la prochaine étape à concevoir, pas encore implémentée** : fonctions Bob X/Y/Image, hotspot, priorité et clipping. M20 attend.
+
+
 ## 20 novembre 2026 — Gate B M19 P0 Bank Free PASS fonctionnel (journaux fournis)
 
 **État de référence :** M19 P0 Bank Select/Free demeure l'unique Lib de test sur `main` : [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **117 896 octets**, SHA256 attendu `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, builder [M19 P0 exact](../tools/build_m19_b8_s1_bank_free_in_memory.py). **Gate A : PASS 225 tests MC68020** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)).

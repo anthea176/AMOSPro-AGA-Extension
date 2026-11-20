@@ -38,7 +38,7 @@
 2. Aucun horodatage/identifiant de passage ne distingue les deux fichiers byte-identiques ; la preuve d'un **second lancement autonome sans redémarrage AMOS** reste déclarative.
 3. Les fichiers ne mesurent pas directement la quantité de Chip RAM libérée et ne prouvent pas la **qualité visuelle** (absence de traînées), faute de capture/observation transmise.
 4. Aucun essai **Gate C AMOS Compiler** sur cette candidate P0 ; Gate D Amiga physique non testée.
-5. Le bon état de `dist/AMOSPro_AGA_LAST_GOOD.Lib` R84 est maintenu ; **aucune promotion** de P0.
+5. La promotion explicite de P0 a ensuite rendu `dist/AMOSPro_AGA_LAST_GOOD.Lib` byte-identique à la Lib P0. L'ancien binaire R84 reste reconstructible depuis son builder historique et son commit Git ; cette promotion ne valide pas la Gate C ni un test visuel.
 
 ## Qualification
 
