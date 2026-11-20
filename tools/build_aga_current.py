@@ -50,7 +50,16 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("R88 v0.13.33"):
+    if active.startswith("M19 B8 Clear/Update"):
+        from active_library import B8_SHA,R84_SHA
+        from build_m19_b8_first_update_in_memory import build_b8_first_update
+        candidate,meta=build_b8_first_update()
+        assert current==candidate and meta["sha256"]==B8_SHA
+        assert len(candidate)==115744 and meta["public_commands"]==88
+        assert meta["ap20_entries"]==184 and meta["pc16_max"]==29962
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R84_SHA
+        print("CURRENT M19 B8 NATIVE GATE A PASS; WINUAE B/COMPILER C NOT TESTED; R84 LAST_GOOD PROTECTED",meta)
+    elif active.startswith("R88 v0.13.33"):
         from active_library import R84_SHA,R88_SHA
         from build_m19_p28_r88_in_memory import build as build_r88
         candidate,meta=build_r88()

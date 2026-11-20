@@ -29,7 +29,8 @@ from pathlib import Path
 AP20_ISLANDS_SHA="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
 B7_SHA="f69e048b9478145e9dae2c5ebbdec39736ad7df5dfa0034a201feb863078ab0b"  # immutable historical B7 predecessor
 B7M1_SHA="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"  # frozen historical source
-B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # authorized B7-m2 Gate A PASS; WinUAE relaunch pending
+B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # frozen historical B7-m2
+B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # M19 B8 Clear/Update Gate A PASS, B/C pending
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
 P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
 # M19 P0c is frozen previous source-built candidate.
@@ -98,6 +99,25 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == B8_SHA:
+        from build_m19_b8_first_update_in_memory import build_b8_first_update
+        from compiler_relocation import unpack_ap20
+        expected,meta=build_b8_first_update()
+        assert cur==expected and len(cur)==115744, "B8 active differs from verified builder"
+        assert meta["sha256"]==B8_SHA
+        assert (meta["public_commands"],meta["ap20_entries"],meta["native_groups"]) == (
+            88,184,[142,153,156,177,181])
+        assert meta["pc16_max"]==29962
+        _,parts,title=unpack_ap20(cur)
+        assert len(parts)==184 and b"M19 B8 candidate first Clear Update" in title
+        audit=inspect(parse(cur))
+        named=[t for t in audit["tokens"]
+               if t["name"].startswith(("aga ","get aga ","make aga ","no aga "))]
+        assert not audit["issues"] and len(named)==88
+        assert [(t["name"],t["function"],t["signature"]) for t in named[-2:]] == [
+            ("aga bob clear",182,"0"),("aga bob update",183,"0")]
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur,good,"M19 B8 Clear/Update ACTIVE TEST CANDIDATE; Gate A MC68020 PASS; WinUAE Runtime B and Compiler C NOT TESTED; LAST_GOOD unchanged"
     if current_sha == B7M2_SHA:
         from build_m19_b7m2_close_reset_in_memory import build_close_reset
         from compiler_relocation import unpack_ap20

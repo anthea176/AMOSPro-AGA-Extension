@@ -83,6 +83,13 @@ def main():
     if not scripts:
         print("CURRENT RAM LOG PASS (no active ASC)")
         return
+    if scripts[0].name == "M19_B8_BOB_CLEAR_UPDATE_BC_01.asc":
+        from test_m19_b8_clear_update_asc_static import verify as verify_b8
+        verify_b8(scripts[0])
+        verify(scripts[0].read_bytes().decode("ascii"))
+        print("M19 B8 CURRENT CLEAR/UPDATE ASC STATIC PASS:",scripts[0],
+              "Runtime B and AMOS Compiler C pending")
+        return
     if scripts[0].name == "M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc":
         from test_m19_b7m1_lifecycle_asc_static import verify as verify_lifecycle
         verify_lifecycle(scripts[0])
