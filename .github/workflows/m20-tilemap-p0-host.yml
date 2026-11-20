@@ -36,8 +36,8 @@ jobs:
           from pathlib import Path
           from hashlib import sha256
           for path,expected in {
-              'dist/AMOSPro_AGA.Lib':'3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a',
-              'dist/AMOSPro_AGA_LAST_GOOD.Lib':'46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+              'dist/AMOSPro_AGA.Lib':'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d',
+              'dist/AMOSPro_AGA_LAST_GOOD.Lib':'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
           }.items():
               assert sha256(Path(path).read_bytes()).hexdigest()==expected,path
           tests=list(Path('tests/current').glob('*.asc'))

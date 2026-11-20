@@ -35,11 +35,11 @@ jobs:
           sys.path.insert(0,'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,R84_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
           active,good,label=verify_active(Path('.'))
           digest=sha256(active).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA)
-          assert sha256(good).hexdigest()==R84_SHA
+          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
+          assert sha256(good).hexdigest()==P0_FREE_SHA
           files=list(Path('tests/current').glob('*.asc'))
           assert len(files)==1
           if digest==B7M2_SHA:

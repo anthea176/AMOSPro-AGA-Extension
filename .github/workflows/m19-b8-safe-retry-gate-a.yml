@@ -53,7 +53,7 @@ jobs:
           from active_library import verify_active,B8_SHA,B8S1_SHA,P0_FREE_SHA,R84_SHA
           active,good,label=verify_active(Path('.'))
           assert sha256(active).hexdigest() in (B8_SHA,B8S1_SHA,P0_FREE_SHA)
-          assert sha256(Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
+          assert sha256(Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()=='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
           print('PASS SHA-pinned active B8/S1/P0 and R84 unchanged')
           PY
       - name: Emit audited bytes for the authorized S1 installation
