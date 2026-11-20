@@ -9,6 +9,8 @@ on:
       - 'tools/test_m19_p1a_getters_gate_a.py'
       - 'tools/m19_b8_s1_bank_free_emit.py'
       - 'tools/build_m19_b8_s1_bank_free_in_memory.py'
+      - 'tools/build_agapic_v2_r82_full_preview.py'
+      - 'tools/active_library.py'
       - 'dist/AMOSPro_AGA.Lib'
       - 'tools/test_m19_b8_clear_update_asc_static.py'
       - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'

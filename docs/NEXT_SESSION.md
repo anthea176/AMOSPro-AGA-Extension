@@ -1,5 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — Bascule autorisée M19 P1a dans la seule Lib active ; WinUAE Gate B à faire
+
+**Autorisation :** « va y » en réponse à la proposition explicite de bascule P1a pour Gate B WinUAE (ou poursuite de P1b) ; intervention **limitée** à l'unique `dist/AMOSPro_AGA.Lib` et à l'unique ASC de campagne, tests statiques et documents sur **`main`**. La Lib active P1a est reconstruite depuis les sources Gate A puis installée **118 816 octets**, SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a`, blob Git `21a8620ad56a94627eb211b2faa7c5bed3f5d334`. **`LAST_GOOD` P0 protégée, 117 896 octets, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; aucun changement**. [Commit bascule `d5fa6b1`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/d5fa6b1b4664817afe2419e5f7138a10e43f9405).
+
+**Nouveau test sur le même chemin actif** [`tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **14 871 octets**, programme ASCII unique. Il conserve la boucle P0 de 405 frames, 403 Clear, 405 Update, 50 Off, trois Bank Free et réactivation, en ajoutant **14 vérifications de chaque fonction X/Y/I = 42 valeurs**, erreurs **25**, journal `RAM:M19_P1A_BOB_GETTERS.TXT`. Pas de déplacement ou nouvelle archive ; ancien ASC P0 intact dans Git au commit parent.
+
+**Gate A P1a : 110 contrôles MC68020 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829640179)). **Gates B Runtime / C Compiler / D physique P1a NON TESTÉES** ; les anciens PASS de P0 et B7 ne sont pas transférables. [Protocole WinUAE détaillé](../tests/current/README.md) : AGA PAL, MC68030 JIT ON, `git pull origin main`, copier uniquement `dist/AMOSPro_AGA.Lib` dans APSystem, redémarrer AMOS, `Project → Merge ASCII` dans un programme vide, **deux Runtime successifs sans redémarrage ni `Erase All`**, sauvegarder les deux journaux et observer aucune traînée/freeze, retour AMOS après Close. Attendus `QUERY_CASES 14`, `QUERY_VALUES_OK 42`, `QUERY_VALUES_BAD 0`, `RESULT 1`, `ERR 0`, `VERDICT PATH_OK`.
+
+**CI :** les workflows historiques de l'ancienne P0 vérifient parfois une SHA active fixe et doivent être adaptés **sans modifier leurs sources ni résultats historiques**. Les nouveaux contrôles doivent conserver l'identité de P0 `LAST_GOOD`. Ne pas déclarer toutes les CI PASS sans preuves. **M19 P1b Hot Spot non engagé en natif**, M20/Sprites en attente.
+
+
+
 ## 20 novembre 2026 — M19 P1a getters X/Y/I Gate A MC68020 PASS, candidate source-only
 
 **Ordre validé :** `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` sont des **fonctions numériques à un argument N**, avec `D3=-32769` en cas de refus (ID absent/off, propriétaire étranger, etc.), hors domaines de X/Y signés et d'image. L'auteur a confirmé « ok go » après la proposition explicite. **Le code natif et les 3 tokens AP20 sont développés, mais aucun binaire n'est installé.**
