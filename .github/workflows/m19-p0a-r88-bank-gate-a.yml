@@ -48,7 +48,7 @@ jobs:
           from build_aga_r84_agapic import build as build_r84
           historical,meta=build_r84()
           assert len(historical)==67904 and meta['sha256']==R84
-          PY"
+          PY
       - name: P0a host format + capture + private transaction regression
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
