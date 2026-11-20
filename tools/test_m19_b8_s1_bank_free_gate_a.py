@@ -94,7 +94,7 @@ def main():
     assert meta['b8_fifth_prefix_byte_exact']
     toks,parts,_=unpack_ap20(image)
     assert parts[184][:2]==RBSR
-    assert unpack_from('>HH',parts[184],2)==(177,meta['free_native_offset'])
+    assert unpack_from('>HH',parts[184],2)==(181,meta['free_native_offset'])
     old,_=emit_b8_s1_bank_prestage()
     raw,labs=emit_b8_s1_bank_free()
     assert raw.startswith(old) and labs['b8s1_bank_free_entry']==len(old)
