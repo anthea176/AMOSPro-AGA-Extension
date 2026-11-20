@@ -29,6 +29,23 @@ jobs:
         run: |
           python -B tools/test_m19_p0a_multi_bob_abk.py
           python -B tools/test_m19_bob_clear_update_model.py
+      - name: Inspect exact P1a BOBS native group and verified safe join
+        run: |
+          PYTHONPATH=tools python -B - <<'PY'
+          from compiler_relocation import unpack_ap20
+          from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
+          from build_m19_p1a_getters_in_memory import build_p1a
+          from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
+          from m19_p0j_explicit_safe_draw_emit import emit_explicit_bob_draw
+          image,_=build_p1a()
+          _,parts,_=unpack_ap20(image)
+          old,labels=emit_b8_s1_bank_free()
+          draw,draw_labels=emit_explicit_bob_draw()
+          print('P1B_LAYOUT',len(parts[177]),len(DISPATCH_V2),len(old),MAX_UNIT_BYTES)
+          print('P1B_LABELS',{k:labels[k] for k in ('explicit_safe_blit_entry','draw_live_image_resolved','explicit_image_resolve_entry','explicit_bank_lookup_entry','explicit_frame_draw_entry','b8s1_bank_free_entry','b7_end_entry','b8_b7_end_trampoline_entry')})
+          assert parts[177]==DISPATCH_V2+old
+          print('P1B_SAFE_SIZE',len(draw),'B8 fifth',len(parts[181]))
+          PY
       - name: Native hotspot MC68020 origin, masking and double buffering
         run: python -B tools/test_m19_p1b_hotspot_source_gate_a.py
       - name: Never write P1b into the active P1a Lib, P0 LAST_GOOD, or ASC
