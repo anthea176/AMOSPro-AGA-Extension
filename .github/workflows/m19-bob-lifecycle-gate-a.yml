@@ -37,8 +37,24 @@ jobs:
         run: |
           python -B -m py_compile tools/test_m19_b7m1_bob_lifecycle_gate_a.py
           python -B -m py_compile tools/m19_b7m2_close_reset_emit.py tools/build_m19_b7m2_close_reset_in_memory.py tools/test_m19_b7m2_close_reset_gate_a.py
-      - name: Execute native MC68020 Bob Off, reactivation and 64-object lifecycle Gate A
-        run: python -B tools/test_m19_b7m1_bob_lifecycle_gate_a.py
+      - name: Execute source-pinned B7 lifecycle or current B8 integrated regression
+        run: |
+          python -B - <<'PY'
+          import sys,subprocess
+          from hashlib import sha256
+          from pathlib import Path
+          sys.path.insert(0,'tools')
+          from active_library import B7M2_SHA,B8_SHA
+          digest=sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
+          if digest==B7M2_SHA:
+              test='tools/test_m19_b7m1_bob_lifecycle_gate_a.py'
+          elif digest==B8_SHA:
+              test='tools/test_m19_b8_atomic_integrated_b7_gate_a.py'
+          else:
+              raise AssertionError('Unknown installed B7/B8 library')
+          subprocess.check_call([sys.executable,'-B',test])
+          print('PASS native lifecycle source test',test)
+          PY
       - name: Execute historical B7-m2 test or current B8 integration, source-pinned
         run: |
           python -B - <<'PY'
