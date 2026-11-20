@@ -30,7 +30,7 @@ def main()->None:
     assert len(historic)==67904 and r84meta['sha256']==R84_SHA
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,verify_active
+    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,verify_active
     active_digest=sha256(active_candidate).hexdigest()
     assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA), 'Unknown active canonical library'
     from build_m19_b8_first_update_in_memory import build_b8_first_update
