@@ -32,9 +32,9 @@ def main() -> None:
     current=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA
+    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
     digest=sha256(active).hexdigest()
-    assert (len(active),digest) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA)), 'Unknown active B7/B8 candidate'
+    assert (len(active),digest) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA)), 'Unknown active B7/B8 candidate'
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
