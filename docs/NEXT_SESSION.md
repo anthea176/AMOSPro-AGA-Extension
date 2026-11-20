@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 20 novembre 2026 — M19 B8 LIVRÉE sur `main` pour Gates B/C
+
+**Bascule explicitement autorisée par « allons y » :** la bibliothèque active de travail [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est maintenant **M19 B8 — 115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, **88 commandes et 184 entrées AP20**, cinq unités natives MC68020 (groupes `[142,153,156,177,181]`), portée PC16 maximale **29 962**. La [candidate B8](../tools/build_m19_b8_first_update_in_memory.py) est source-reconstructible octet pour octet. La bascule initiale est enregistrée par le [commit 157a2cb](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/157a2cba27f731a9271f9e41b810dd5eb26cdae1). Les garde-fous et références historiques ont été adaptés pour accepter ce nouveau SHA sans changer les anciennes sources.
+
+**Seul test actif :** [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), 11 092 octets, [protocole WinUAE/Compiler](../tests/current/README.md). Il teste 9 étapes × 45 frames, 403 `Clear` après initialisation de deux pages, 405 `Update`, 405 Swap et 50 désactivations, avec modification dynamique du décor après `Clear`. La création d'un Bob initial arme le callback B7 sans dessiner. **Les deux premiers appels `Update` ne sont pas précédés de `Clear`**, car aucun snapshot n'existe encore.
+
+**Preuves exactes :** [CI 44635843744](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44635843744) **Gate A native MC68020 PASS** (59 vérifications premier Update, 36 intégrations B7/B8, 60 régressions B7, OS/Blitter simulés). **Gates B Runtime WinUAE et C véritable AMOS Compiler : NON TESTÉES sur B8** ; rien n'est installé ni exécuté sur l'émulateur Windows par la CI. La B7-m2 précédente, elle, a ses propres Gates B/C PASS ; elles ne sont pas transférables. R84 `dist/AMOSPro_AGA_LAST_GOOD.Lib` **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, intacte.
+
+**Prochain contrôle réel :** `git pull origin main` sur Windows, copier la Lib active dans l'emplacement AGA d'`APSystem`, redémarrer AMOS, importer l'ASC par `Project → Merge ASCII`, deux exécutions Runtime consécutives + compilation d'un nouvel exécutable et récupération de trois journaux `RAM:M19_B8_CLEAR_UPDATE.TXT`. Attendus : `ERR 0`, `PATH_OK`, `FRAMES_OK 405`, `STAGES_OK 9`, `CLEAR_OK 403`, `UPDATE_OK 405`. Ne pas annoncer B/C sans ces logs et les captures/freeze diagnostics.
+
+
 
 ## 19 novembre 2026 — M19 B8 : premier Update sans Draw préalable, Gate A native intégrée PASS
 

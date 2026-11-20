@@ -1,6 +1,12 @@
 # M19 B8 — Aga Bob Clear / Update : modèle, primitives CPU020 et architecture AP20 (19 novembre 2026)
 
-## État réel
+## État actuel de la bibliothèque et provenance
+
+**Mise à jour du 20 novembre 2026 — B8 INSTALLÉE DANS LE DÉPÔT, PAS ENCORE QUALIFIÉE WINUAE :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est désormais la candidate de travail B8 **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, 88 commandes, 184 entrées AP20, 5 groupes MC68020. Candidate construite exactement par [le builder B8](../tools/build_m19_b8_first_update_in_memory.py). Les deux fonctions publiques `Aga Bob Clear` et `Aga Bob Update` (retour numérique 1/0, zéro argument) sont dans cette Lib ; **la CI native Gate A PASS n'est pas une validation WinUAE/AMOS Compiler**. Les Gates B Runtime et C Compiler sont **NON TESTÉES sur B8**. Un seul ASC, [`M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), a remplacé l'ASC de campagne B7 dans `tests/current/`. [Protocole](../tests/current/README.md). `LAST_GOOD` R84 inchangée. Bascule explicitement autorisée ; commit [157a2cb](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/157a2cba27f731a9271f9e41b810dd5eb26cdae1).
+
+**Les paragraphes et rapports antérieurs ci-dessous reflètent la phase source-only du 19 novembre et sont conservés comme HISTORIQUE :** ils ne décrivent plus l'état installé actuel.
+
+## Historique de la validation et du modèle au 19 novembre 2026
 
 
 ### Checkpoint final source-only du 19/11 — premier Update complet en MC68020

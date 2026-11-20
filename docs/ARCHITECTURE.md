@@ -1,6 +1,13 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-## Référence active B7-m2 — Gate A PASS, Gate B relance en attente (18/11/2026)
+## Référence active M19 B8 — livraison de travail du 20/11/2026
+
+**Bibliothèque unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, MC68020+, 88 commandes, 184 entrées AP20, cinq unités natives `[142,153,156,177,181]` et PC16 maximal 29 962. [Builder source](../tools/build_m19_b8_first_update_in_memory.py). L'ancienne B7-m2 reste un préfixe source vérifié, sans toucher à `LAST_GOOD`.
+
+Le **setter Bob B7** arme le callback `End` **sans dessin préalable** ; B8 alloue deux sauvegardes de fonds physiques, les enregistre, puis effectue atomiquement `Preflight 64 → Restore/Capture → Draw B7 → Finish READY`, avec `Abort DIRTY` en cas d'échec. `Aga Bob Clear` restaure le snapshot du back, sans Swap implicite. Le premier `Update` avant tout SET Bob reste refusé. Les appels Exec/graphics et le Blitter sont simulés en Gate A ; **Gates B WinUAE et C AMOS Compiler NON TESTÉES sur B8**. Le seul [ASC actif](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) et ses [instructions](../tests/current/README.md) visent ces deux validations.
+
+
+## Historique : B7-m2 — référence active jusqu'au 20/11/2026
 
 La seule candidate de travail est `dist/AMOSPro_AGA.Lib` **102 400 octets**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, reconstruite via `tools/build_m19_b7m2_close_reset_in_memory.py::build_close_reset()`. Après autorisation de l'auteur, seul le stub public existant `Aga Screen Close` est redirigé vers un suffixe MC68020 de 34 octets effectuant `relay_reset_entry` avant le `guarded_close_entry` B5. Les **86 commandes, 181 entrées AP20, quatre unités natives** et les octets B7-m1 précédents restent préservés. Gate A native MC68020 **PASS 75 groupes** sur deux implantations ; le vrai test WinUAE Gate B `Close → Open → Draw` est en attente. L'ancien B7-m1 a réussi visuellement 405/405 frames en première exécution, puis échoué au premier Draw de la relance (ERR 14). Le seul ASC actif garde son nom historique `tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc`, mais sa provenance est mise à jour vers B7-m2, SHA256 `92a8dd65f5768cceaeed1cf0226e1e0e23077ec3ea9e18c2a373e9aaeba17675`. `LAST_GOOD` R84 protégée, Gate C Compiler et D matériel non testées. [Rapport](M19_B7M2_CLOSE_RESET_GATE_A_2026-11-18.md).
 
