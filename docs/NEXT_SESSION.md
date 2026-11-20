@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P1a Gate B Runtime PASS ; lancement M19 P1b Hot Spot
+
+**P1a : Gate A MC68020 PASS (110 contrôles), Gate B Runtime WinUAE PASS fonctionnel** sur deux journaux distincts et une capture à l'étape 4/9. [Preuves détaillées et limites](M19_P1A_RUNTIME_B_2026-11-21.md) : chaque log **1 168 octets / 54 lignes**, `RESULT 1`, `ERR 0`, `FRAMES_OK 405`, `STAGES_OK 9`, `QUERY_CASES 14`, `QUERY_VALUES_OK 42`, `QUERY_VALUES_BAD 0`, trois appels Bank Free, `CLOSE_RETURNED 1`, `VERDICT PATH_OK`. Différence unique : `RETRY_VBL` 363 et 362. Le SHA étiqueté dans l'ASC ne prouve pas les octets chargés dans WinUAE.
+
+**Cible active et protection inchangées :** `dist/AMOSPro_AGA.Lib` **P1a 118 816 octets**, SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a` ; `dist/AMOSPro_AGA_LAST_GOOD.Lib` **P0 117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; seul ASC sous `tests/current` : `M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, 14 871 octets. **Gate C vrai Compiler P1a NON TESTÉE, D Amiga physique NON TESTÉE.** Aucune promotion P1a autorisée.
+
+**Décision auteur :** « oui allons y » après proposition d'enregistrer la Gate B P1a puis d'engager **M19 P1b application des hotspots au rendu Bob**. Procéder d'abord **en source-only** après inspection du véritable trajet `AGBO → staging Chip → renderer Safe Blit` et de l'ABI, avec tests MC68020/masques/clipping. Ne pas éditer la Lib active, `LAST_GOOD`, les ASC actuels/passés ni les archives pour cette première phase. Les priorités, `Limit Bob`, Sprites et M20 restent en attente.
+
+
 ## 20 novembre 2026 — Bascule autorisée M19 P1a dans la seule Lib active ; WinUAE Gate B à faire
 
 **Autorisation :** « va y » en réponse à la proposition explicite de bascule P1a pour Gate B WinUAE (ou poursuite de P1b) ; intervention **limitée** à l'unique `dist/AMOSPro_AGA.Lib` et à l'unique ASC de campagne, tests statiques et documents sur **`main`**. La Lib active P1a est reconstruite depuis les sources Gate A puis installée **118 816 octets**, SHA256 `165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a`, blob Git `21a8620ad56a94627eb211b2faa7c5bed3f5d334`. **`LAST_GOOD` P0 protégée, 117 896 octets, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` ; aucun changement**. [Commit bascule `d5fa6b1`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/d5fa6b1b4664817afe2419e5f7138a10e43f9405).

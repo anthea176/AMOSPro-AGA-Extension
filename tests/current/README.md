@@ -34,10 +34,12 @@ Les dernières positions exactes vérifiées sont les Bobs actifs n°1 `(0,66,im
 ## Statuts
 
 - **P1a Gate A : PASS** — 110 contrôles natifs MC68020, ABI, AP20 et modèles de relocalisation ; AmigaOS/Blitter simulés, **pas** WinUAE ni un vrai AMOS Compiler.
-- **P1a Gate B Runtime : NON TESTÉE**, à réaliser avec les **deux journaux distincts** et une observation visuelle.
+- **P1a Gate B Runtime : PASS fonctionnel sur deux journaux WinUAE** (405/405 frames, 14 cas, 42/42 valeurs X/Y/I, zéro erreur, `RETRY_VBL` 363 puis 362, fermeture OK) et capture de l'étape 4/9. [Rapport et limites](../../docs/M19_P1A_RUNTIME_B_2026-11-21.md).
 - **Gate C Compiler : NON TESTÉE** ; n'exécuter aucun `Compiler` pour qualifier P1a avec l'ancienne Gate C P0/B7.
 - **Gate D Amiga physique : NON TESTÉE.**
 
 Préflight statique : `python -B tools/test_m19_b8_clear_update_asc_static.py`, `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, `python -B tools/test_current_ram_log.py`. La qualification Runtime réelle ne peut pas être obtenue via la CI.
 
 [Rapport source P1a](../../docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md) · [historique P0](../../docs/M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md).
+
+> **Statut du 21/11/2026 :** les étapes ci-dessus restent un protocole de reproduction ; **les deux journaux Runtime ont été reçus et vérifiés**, voir le [rapport Gate B P1a](../../docs/M19_P1A_RUNTIME_B_2026-11-21.md). Aucun test Compiler P1a réalisé.
