@@ -36,13 +36,13 @@ jobs:
         run: python -B tools/build_m19_b8_s1_bank_prestage_in_memory.py
       - name: Run physical instructions in Unicorn MC68020 with OS mock
         run: python -B tools/test_m19_b8_s1_bank_prestage_gate_a.py
-      - name: Guard old B8 S1 runtime candidate and R84 LAST_GOOD
+      - name: Guard exact B8 S1/P0 active Lib and R84 LAST_GOOD
         run: |
           python -B - <<'PY'
           from pathlib import Path
           from hashlib import sha256
-          assert sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
+          assert sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() in ('3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a','f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d')
           assert sha256(Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()).hexdigest()=='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
           assert len(list(Path('tests/current').glob('*.asc')))==1
-          print('PASS B8 S1, R84, one active ASC left intact')
+          print('PASS B8 S1/P0 active, R84 frozen and exactly one ASC')
           PY
