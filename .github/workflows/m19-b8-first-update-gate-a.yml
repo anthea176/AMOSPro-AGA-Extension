@@ -8,6 +8,10 @@ on:
       - 'tools/m19_b8_first_update_emit.py'
       - 'tools/build_m19_b8_first_update_in_memory.py'
       - 'tools/test_m19_b8_first_update_gate_a.py'
+      - 'tools/test_m19_b8_clear_update_asc_static.py'
+      - 'tools/active_library.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/*.asc'
   workflow_dispatch:
 
 permissions:

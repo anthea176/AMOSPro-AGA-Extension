@@ -40,8 +40,8 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc
-          python -B tools/test_m19_b7m1_lifecycle_asc_static.py
+          python -B tools/amos_preflight.py --strict-target tests/current/*.asc
+          python -B tools/test_current_ram_log.py
           python -B tools/test_amos_preflight.py
       - name: Verify active and preserved binary signatures
         run: |
@@ -49,8 +49,6 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           expected = {
-              'dist/AMOSPro_AGA.Lib':
-                  (102400, '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'),
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
@@ -59,8 +57,16 @@ jobs:
           for path, (size, digest) in expected.items():
               data = Path(path).read_bytes()
               assert len(data) == size and sha256(data).hexdigest() == digest, path
-          asc = sorted(p.name for p in Path('tests/current').glob('*.asc'))
-          assert asc == ['M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc'], asc
+          import sys
+          sys.path.insert(0,'tools')
+          from active_library import verify_active,B7M2_SHA,B8_SHA
+          active,good,label=verify_active(Path('.'))
+          sha=sha256(active).hexdigest()
+          assert sha in (B7M2_SHA,B8_SHA)
+          asc=sorted(p.name for p in Path('tests/current').glob('*.asc'))
+          expected_asc=('M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc'
+                        if sha==B7M2_SHA else 'M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
+          assert asc==[expected_asc],asc
           print('PASS: one canonical Lib, one active ASC, R88 archive and R84 LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
@@ -104,12 +110,15 @@ jobs:
           assert m1meta['native_groups']==[142,153,156,177] and m1meta['pc16_max']<32766 and m1meta['appended_bytes']==304
           candidate,meta=b7m2()
           active=Path('dist/AMOSPro_AGA.Lib').read_bytes()
-          assert candidate==active and len(active)==102400
-          assert sha256(active).hexdigest()=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
+          assert len(candidate)==102400 and sha256(candidate).hexdigest()=='242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6'
+          from build_m19_b8_first_update_in_memory import build_b8_first_update
+          b8,b8meta=build_b8_first_update()
+          assert len(b8)==115744 and sha256(b8).hexdigest()=='00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae'
+          assert active in (candidate,b8), 'Installed Lib is neither pinned B7 nor B8'
           assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
           assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
-          print('PASS B7-m2 exact canonical, B7-m1, P0d and AP20 islands source intact')
+          print('PASS B7-m2 immutable and B8 current source-built; B7-m1/P0d/AP20 islands frozen')
           print('WinUAE Runtime B and real AMOS Compiler C NOT tested by CI')
           PY
       - name: Fail if validation creates files or changes the repository
