@@ -26,6 +26,21 @@ class Prestaged(FirstUpdateIntegrated):
         self.uc.mem_write(self.entry,relocate(self.native,self.entry,{},self.uc))
         self.labels['routed_paint_all_entry']=self.labels['b8_b7_draw_trampoline_entry']
         self.labels['guarded_close_entry']=self.labels['b8_b7_close_trampoline_entry']
+        from unicorn import UC_HOOK_CODE
+        self.prestage_trace=[]
+        for name in ('b8s1_bank_prestage_entry','bank_bank_select',
+                     'registry_lookup_entry','explicit_registry_prepare_entry',
+                     'explicit_checked_stage_entry','b8_b7_arm_end_nodraw_entry',
+                     'registry_free_entry','b8s1_bank_rollback',
+                     'b8s1_bank_success','b8s1_bank_return'):
+            addr=self.entry+self.labels[name]
+            self.uc.hook_add(UC_HOOK_CODE,self._trace_prestage,
+                user_data=name,begin=addr,end=addr)
+
+    def _trace_prestage(self,uc,address,size,name):
+        self.prestage_trace.append((name,hex(self.d(3)),hex(self.a(4))))
+        if len(self.prestage_trace)>35:
+            del self.prestage_trace[:-35]
 
     def run_select(self,bank):
         # Invoke the new AP20 native target without ever rebasing the object
@@ -105,7 +120,8 @@ def main():
             'state',hex(m.real_state),hex(m.get(m.real_state)),
             'gfx',hex(m.get(m.real_state+8)),
             'callbacks',m.callbacks(),
-            'recent',m.events[-18:])
+            'recent',m.events[-18:],
+            'trace',m.prestage_trace[-22:])
         assert len(m.chip_live)==1 and len(m.metadata)==1
         assert m.chip_allocs==1 and m.chip_copies==1
         assert not any(e[0] in ('BltMask','BltOpaque') for e in m.paint_blits) # PREPARE occurred before any Bob DRAW.
