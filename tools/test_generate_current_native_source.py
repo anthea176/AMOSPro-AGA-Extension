@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,28 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==P0_FREE_SHA:
+            from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_bank_free()
+            assert wrapped==candidate and len(candidate)==117896
+            assert meta['sha256']==P0_FREE_SHA
+            assert meta['public_commands']==89 and meta['ap20_entries']==185
+            assert meta['native_groups']==[142,153,156,177,181] and meta['pc16_max']==31092
+            _,parts,title=unpack_ap20(wrapped)
+            assert len(parts)==185 and b'M19 P0 Bank Chip Select+Free' in title
+            assert not inspect(parse(wrapped))['issues']
+            assert sha256(original[1]).hexdigest()==R84_SHA
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert ('Rbsr entry without audited compiler dispatcher' in str(exc)
+                        or 'Unsupported V2 compiler wrapper' in str(exc))
+            else:
+                raise AssertionError('P0 5-unit V2 AP20 exported as fake monolithic ASM')
+            print('STRICT M19 P0 BANK FREE SOURCE BUILDER / V2 EXPORT REFUSAL PASS',P0_FREE_SHA)
+            continue
         if exp.sha(wrapped)==B8S1_SHA:
             from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
             from compiler_relocation import unpack_ap20

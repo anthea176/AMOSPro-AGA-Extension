@@ -32,6 +32,7 @@ B7M1_SHA="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"  # f
 B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # frozen historical B7-m2
 B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # frozen B8 (SafePort workaround 405 frames Runtime only)
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
+P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"  # M19 P0 89 public commands; native A 104+121 checks; Runtime/Compiler pending
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
 P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
 # M19 P0c is frozen previous source-built candidate.
@@ -100,6 +101,25 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P0_FREE_SHA:
+        from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+        from compiler_relocation import unpack_ap20
+        expected,meta=build_bank_free()
+        assert cur==expected and len(cur)==117896, "M19 P0 Bank Free differs from SHA-pinned builder"
+        assert meta['sha256']==P0_FREE_SHA and meta['predecessor_sha']=='577fe698f040a13ea0a12c88fc80f31fd316eed011a305955eb5be635c8613bf'
+        assert (meta['public_commands'],meta['ap20_entries'],meta['native_groups'])==(
+            89,185,[142,153,156,177,181])
+        assert meta['pc16_max']==31092 and meta['bank_free_index']==184
+        _,parts,title=unpack_ap20(cur)
+        assert len(parts)==185 and b"M19 P0 Bank Chip Select+Free" in title
+        audit=inspect(parse(cur))
+        named=[t for t in audit['tokens']
+               if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
+        assert not audit['issues'] and len(named)==89
+        assert named[-1]['name']=='aga bob bank free' and named[-1]['instruction']==184
+        assert named[-1]['signature']=='I0'
+        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
+        return cur,good,"M19 P0 Bank Free ACTIVE TEST CANDIDATE; native Gate A PASS 225 checks; WinUAE Runtime B / Compiler C NOT TESTED; R84 LAST_GOOD unchanged"
     if current_sha == B8S1_SHA:
         from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
         from compiler_relocation import unpack_ap20

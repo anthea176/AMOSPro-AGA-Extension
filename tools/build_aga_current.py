@@ -50,7 +50,16 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 B8 S1"):
+    if active.startswith("M19 P0 Bank Free"):
+        from active_library import P0_FREE_SHA,R84_SHA
+        from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+        candidate,meta=build_bank_free()
+        assert current==candidate and meta['sha256']==P0_FREE_SHA
+        assert len(candidate)==117896 and meta['public_commands']==89
+        assert meta['ap20_entries']==185 and meta['pc16_max']==31092
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==R84_SHA
+        print('CURRENT M19 P0 BANK FREE: native Gate A 225 checks PASS; WinUAE B and Compiler C pending; R84 protected',meta)
+    elif active.startswith("M19 B8 S1"):
         from active_library import B8S1_SHA,R84_SHA
         from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
         candidate,meta=build_b8_safe_retry()
