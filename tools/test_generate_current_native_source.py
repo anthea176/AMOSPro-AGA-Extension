@@ -38,7 +38,7 @@ def main() -> None:
             _,parts,title=unpack_ap20(wrapped)
             assert len(parts)==185 and b'M19 P0 Bank Chip Select+Free' in title
             assert not inspect(parse(wrapped))['issues']
-            assert sha256(original[1]).hexdigest()==R84_SHA
+            assert sha256(original[1]).hexdigest()==P0_FREE_SHA and original[0]==original[1]
             try:
                 exp.source_binary_from_input(wrapped)
             except exp.ExportError as exc:

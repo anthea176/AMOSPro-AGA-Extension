@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, LAST_GOOD_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -59,9 +59,14 @@ def main():
         assert sha256(ancestor).hexdigest()==R82_SHA
         _,original=unwrap_native_parts_v2(ancestor)
         last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-        assert sha256(last_good).hexdigest()==R84_SHA
+        assert sha256(last_good).hexdigest()==LAST_GOOD_SHA==P0_FREE_SHA
+        if digest==P0_FREE_SHA:
+            assert last_good==image, "Promoted P0 LAST_GOOD differs from active"
+        from build_aga_r84_agapic import build as build_r84
+        frozen_r84,r84meta=build_r84()
+        assert len(frozen_r84)==67904 and r84meta['sha256']==R84_SHA
         _,units,_=unpack_ap20(image)
-        _,frozen_units,_=unpack_ap20(last_good)
+        _,frozen_units,_=unpack_ap20(frozen_r84)
         group_indices={
             R87_SHA:(86,85,87),
             R88_SHA:(87,86,88),
@@ -156,7 +161,10 @@ def main():
         frozen, _ = build_r82()
         assert sha256(frozen).hexdigest()==R82_SHA
         last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-        assert sha256(last_good).hexdigest()==R84_SHA
+        assert sha256(last_good).hexdigest()==LAST_GOOD_SHA
+        from build_aga_r84_agapic import build as build_r84
+        frozen_r84,_=build_r84()
+        assert sha256(frozen_r84).hexdigest()==R84_SHA
         from build_aga_r83_modular import build as build_r83
         historical_r83,_=build_r83()
         assert sha256(historical_r83).hexdigest()==R83_SHA
@@ -171,7 +179,7 @@ def main():
         else:
             assert image==historical_r83
         if idx==86:
-            last_tokens,last_parts,_=unpack_ap20(last_good)
+            last_tokens,last_parts,_=unpack_ap20(frozen_r84)
             assert units[86]==last_parts[84], "R85 altered protected AGA native bytes"
             assert units[85].startswith(DISPATCH_V2), "R85 BOBS group missing"
         core=units[idx][len(DISPATCH_V2):]
@@ -182,7 +190,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7/B8/P0 source-built modular AGA group verified against R84 LAST_GOOD")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7/B8/P0 source-built modular AGA group verified against independently rebuilt R84")
 
 if __name__=="__main__":
     main()

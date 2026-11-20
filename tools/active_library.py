@@ -1,4 +1,4 @@
-"""One current working binary in dist/ and independently frozen LAST_GOOD.
+"""One working Lib in dist/ with promoted M19 P0 LAST_GOOD.
 
 M19 B7-m2 is the authorized active TEST candidate (Gate A PASS; Runtime repeat-launch B pending). Historical B7-m1 remains source-built.
 P0d remains source-reproducible by its frozen builder and Git history.
@@ -32,7 +32,7 @@ B7M1_SHA="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"  # f
 B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # frozen historical B7-m2
 B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # frozen B8 (SafePort workaround 405 frames Runtime only)
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
-P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"  # M19 P0 89 public commands; native A 104+121 checks; Runtime/Compiler pending
+P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"  # M19 P0 89 public commands; Gate A 225 PASS; Runtime B functional PASS, C deferred
 # The single canonical dist/AMOSPro_AGA.Lib is now authorized for AP20 V2 island tests.
 P0D_SHA="bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be"
 # M19 P0c is frozen previous source-built candidate.
@@ -40,7 +40,7 @@ P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"  # R84 v0.13.29 promoted by explicit author approval; A/C PASS, B not separately revalidated
+LAST_GOOD_SHA=P0_FREE_SHA  # Author-approved M19 P0 promotion, 20/11/2026; R84_SHA remains frozen
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -118,8 +118,8 @@ def verify_active(root: Path):
         assert not audit['issues'] and len(named)==89
         assert named[-1]['name']=='aga bob bank free' and named[-1]['instruction']==184
         assert named[-1]['signature']=='I0'
-        assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA and cur!=good
-        return cur,good,"M19 P0 Bank Free ACTIVE TEST CANDIDATE; native Gate A PASS 225 checks; WinUAE Runtime B / Compiler C NOT TESTED; R84 LAST_GOOD unchanged"
+        assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA and cur==good, "Promoted P0 LAST_GOOD differs from active source-built Lib"
+        return cur,good,"M19 P0 Bank Free PROMOTED LAST_GOOD; native Gate A PASS 225 checks; WinUAE Runtime B functional PASS on author logs; AMOS Compiler C NOT TESTED; Amiga physical D NOT TESTED"
     if current_sha == B8S1_SHA:
         from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
         from compiler_relocation import unpack_ap20
