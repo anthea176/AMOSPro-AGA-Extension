@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,7 +48,7 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA):
+    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
         # P0c redirects public Close to its BOBS unit, so only the real
         # multi-unit segment table and pinned builder may certify its identity.
@@ -72,6 +72,7 @@ def main():
             B7M1_SHA:(142,177,181),
             B7M2_SHA:(142,177,181),
             B8_SHA:(142,177,184),
+            B8S1_SHA:(142,177,184),
         }
         aga_index,bob_index,entry_count=group_indices[digest]
         assert len(units)==entry_count, "Unexpected modular segment count"
@@ -80,10 +81,14 @@ def main():
         else:
             assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
         assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
-        if digest==B8_SHA:
+        if digest in (B8_SHA,B8S1_SHA):
             from build_m19_b8_first_update_in_memory import build_b8_first_update
-            candidate,meta=build_b8_first_update()
-            assert image==candidate and meta['sha256']==B8_SHA
+            if digest==B8S1_SHA:
+                from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+                candidate,meta=build_b8_safe_retry()
+            else:
+                candidate,meta=build_b8_first_update()
+            assert image==candidate and meta['sha256']==digest
             assert meta['public_commands']==88 and meta['ap20_entries']==184
             assert meta['native_groups']==[142,153,156,177,181]
             assert meta['pc16_max']==29962

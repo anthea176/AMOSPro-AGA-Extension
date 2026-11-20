@@ -52,7 +52,6 @@ def main() -> None:
             if filename != R88_NAME:
                 verify(root / 'tests/fixtures/m19_p28' / filename, filename)
     for filename, length, digest in [
-        ('dist/AMOSPro_AGA.Lib', 115744, '00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae'),
         ('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib', 73184, R87_SHA),
         ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 67904, R84_SHA),
     ]:
@@ -60,7 +59,11 @@ def main() -> None:
         if path.exists():
             raw = path.read_bytes()
             assert len(raw) == length and sha256(raw).hexdigest() == digest, path
-    print('P2.8 ARCHIVE INTEGRITY PASS: 5 byte-exact artifacts; R88 unpromoted, B/C NOT TESTED')
+    from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA
+    current,good,label=verify_active(root)
+    assert sha256(current).hexdigest() in (B7M2_SHA,B8_SHA,B8S1_SHA)
+    assert sha256(good).hexdigest()==R84_SHA
+    print('P2.8 ARCHIVE INTEGRITY PASS: historical assets + active source-pinned B7/B8/S1; R88 unpromoted')
 
 
 if __name__ == '__main__':

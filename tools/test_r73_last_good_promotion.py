@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -36,7 +36,7 @@ def main():
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "Promoted R84 LAST_GOOD hash must be immutable"
-    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA), "Active candidate not pinned"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -60,11 +60,26 @@ def main():
     report=inspect(parse(good))
     assert not report["issues"]
     assert len([x for x in report["tokens"] if x["name"].startswith("aga ")])==76
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update"))
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==B8_SHA:
+        if digest==B8S1_SHA:
+            from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+            candidate,actual_meta=build_b8_safe_retry()
+            assert cur==candidate and len(cur)==116104 and actual_meta['sha256']==B8S1_SHA
+            assert actual_meta['public_commands']==88 and actual_meta['ap20_entries']==184
+            assert actual_meta['native_groups']==[142,153,156,177,181] and actual_meta['pc16_max']==29962
+            assert actual_meta['wait_tof_max']==3 and actual_meta['new_native_bytes']==360
+            assert label.startswith('M19 B8 S1')
+            _,current_parts,_=unpack_ap20(cur)
+            from build_m19_ap20_islands_in_memory import build as build_islands
+            islands,islands_meta=build_islands()
+            assert islands_meta['sha256']==AP20_ISLANDS_SHA
+            _,frozen_parts,_=unpack_ap20(islands)
+            assert all(current_parts[i]==frozen_parts[i] for i in (142,153,156))
+            assert sha256(good).hexdigest()==R84_SHA
+        elif digest==B8_SHA:
             from build_m19_b8_first_update_in_memory import build_b8_first_update
             candidate,actual_meta=build_b8_first_update()
             assert cur==candidate and len(cur)==115744 and actual_meta['sha256']==B8_SHA

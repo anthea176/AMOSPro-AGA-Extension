@@ -158,7 +158,10 @@ def main():
     from build_m19_b8_first_update_in_memory import build_b8_first_update
     active_b8,b8meta=build_b8_first_update()
     assert len(active_b8)==115744 and sha256(active_b8).hexdigest() == '00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae'
-    assert active_islands in (active_m2,active_b8), 'Unknown active B7/B8 candidate'
+    from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
+    active_s1,s1meta=build_b8_safe_retry()
+    assert len(active_s1)==116104 and s1meta['sha256']=='3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a'
+    assert active_islands in (active_m2,active_b8,active_s1), 'Unknown active B7/B8/S1 candidate'
     assert m2meta['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6' and m2meta['predecessor_sha'] == m1meta['sha256']
     assert island_meta['sha256']=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
     assert len(last_good) == 67904 and sha256(last_good).hexdigest() == R84_SHA
