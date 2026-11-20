@@ -7,6 +7,8 @@ on:
       - 'tools/m19_p1b_hotspot_origin_emit.py'
       - 'tools/m19_p1b_hotspot_draw_model.py'
       - 'tools/test_m19_p1b_hotspot_source_gate_a.py'
+      - 'tools/m19_p1b_hotspot_draw_emit.py'
+      - 'tools/build_m19_p1b_hotspot_in_memory.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -49,5 +51,9 @@ jobs:
           PY
       - name: Native hotspot MC68020 origin, masking and double buffering
         run: python -B tools/test_m19_p1b_hotspot_source_gate_a.py
+      - name: Prove full P1b BOBS Safe-Blitter splice and AP20 build in memory
+        run: |
+          PYTHONPATH=tools python -B tools/m19_p1b_hotspot_draw_emit.py
+          PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_in_memory.py
       - name: Never write P1b into the active P1a Lib, P0 LAST_GOOD, or ASC
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
