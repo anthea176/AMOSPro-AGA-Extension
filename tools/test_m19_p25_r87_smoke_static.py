@@ -26,13 +26,17 @@ def main()->None:
     assert len(good)==67904 and sha256(good).hexdigest()==R84_SHA, "LAST_GOOD changed"
     assert len(active)==73184 and sha256(active).hexdigest()==R87_SHA, "R87 archived predecessor changed"
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
-    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,verify_active
+    from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,verify_active
     active_digest=sha256(active_candidate).hexdigest()
-    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA), 'Unknown active canonical library'
+    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA), 'Unknown active canonical library'
     from build_m19_b8_first_update_in_memory import build_b8_first_update
     b8,report=build_b8_first_update()
     assert len(b8)==115744 and report['sha256']==B8_SHA
-    if active_digest==B8S1_SHA:
+    if active_digest==P0_FREE_SHA:
+        from build_m19_b8_s1_bank_free_in_memory import build_bank_free
+        p0,meta=build_bank_free()
+        assert active_candidate==p0 and len(p0)==117896 and meta['sha256']==P0_FREE_SHA
+    elif active_digest==B8S1_SHA:
         from build_m19_b8_safe_retry_in_memory import build_b8_safe_retry
         s1,s1meta=build_b8_safe_retry()
         assert active_candidate==s1 and len(s1)==116104 and s1meta['sha256']==B8S1_SHA
