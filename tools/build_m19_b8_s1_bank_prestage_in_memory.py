@@ -80,7 +80,7 @@ def build_bank_prestage():
         bank_offset_old=oldoffset,bank_offset_new=newoffset,
         new_native_bytes=len(new7)-len(old7),
         old_bobs_prefix_byte_exact=True,b8_fifth_byte_exact=True,
-        gate_a='PASS: 82 MC68020 native checks (2 relocations, OS mocked)',gate_b='NOT TESTED',gate_c='NOT TESTED',
+        gate_a='PASS: 104 MC68020 native checks (2 relocations, OS mocked)',gate_b='NOT TESTED',gate_c='NOT TESTED',
         installed=False,active_lib='UNCHANGED',current_asc='UNCHANGED',
         last_good='UNCHANGED')
 
