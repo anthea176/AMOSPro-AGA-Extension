@@ -11,7 +11,7 @@ from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_020
 from amos_link_test_support import relocate
 from test_m5_generic import AMOS
 from test_m19_p0c_screen_close_real_gate_a import GFX
-from test_m19_p0j_pending_close_end_gate_a import DB
+from test_m19_p0j_pending_close_end_gate_a import DB,SAFE,DISP
 from test_m19_b8_s1_bank_prestage_gate_a import Prestaged
 from build_m19_p0c_screen_close_in_memory import build as build_p0c
 from build_m19_b8_s1_bank_free_in_memory import build_bank_free
@@ -79,6 +79,12 @@ def prepared(layout, *, with_bobs=True):
     assert m.run_get(1,7,8,16,15)==1
     m.activate_aga_state()
     m.configure_real_state()
+    # A real double-buffer swap requires the OS Safe/Disp MsgPorts.
+    # The legacy pre-stage-only fixture never called Swap and omitted them.
+    m.put(DB+12,SAFE)
+    m.put(DB+16,DISP)
+    m.put(DB+20,0)
+    m.safe=True
     assert m.run_select(10)==1
     assert m.run_select(11)==1
     assert set(m.nodes())=={10,11}
