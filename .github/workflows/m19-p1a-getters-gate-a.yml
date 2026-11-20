@@ -1,0 +1,36 @@
+name: M19 P1a - Bob X Y I numeric getters MC68020 Gate A (source only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p1a-getters-gate-a.yml'
+      - 'tools/m19_p1a_bob_getters_emit.py'
+      - 'tools/build_m19_p1a_getters_in_memory.py'
+      - 'tools/test_m19_p1a_getters_gate_a.py'
+      - 'tools/m19_b8_s1_bank_free_emit.py'
+      - 'tools/build_m19_b8_s1_bank_free_in_memory.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  p1a-mc68020-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install MC68020 emulator and disassembler
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Syntax, native CPU and delivery self-tests
+        run: |
+          python -B -m py_compile tools/m19_p1a_bob_getters_emit.py tools/build_m19_p1a_getters_in_memory.py tools/test_m19_p1a_getters_gate_a.py
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Deterministic source only AP20 candidate
+        run: python -B tools/build_m19_p1a_getters_in_memory.py
+      - name: Three numeric getters, native ABI and two AP20 relocations
+        run: python -B tools/test_m19_p1a_getters_gate_a.py
+      - name: Preserve active and promoted P0 binaries and all AMOS tests
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
