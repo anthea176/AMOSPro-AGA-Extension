@@ -29,6 +29,7 @@ from audit_ap20 import inspect, parse
 from m19_p2d_bob_auto_update_emit import emit_bob_auto_update
 from m19_p2b_bob_flip_emit import emit_bob_flip
 from m19_p2b_planar_orientation020_emit import emit_planar_orientation020
+from m19_p2a_collision020_emit import emit_collision020
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
@@ -39,6 +40,7 @@ PAINT_GEO_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PAINT_GEOMETRY_M
 CLEANUP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_CLEANUP_MC68020.s'
 PUBLIC_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PUBLIC_COL_MC68020.s'
 QUERY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_QUERY_MC68020.s'
+KERNEL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_KERNEL_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -67,6 +69,9 @@ PUBLIC_COL_END = 0x9E36
 QUERY_SOURCE_NAME = 'M19_P2A_COLLISION_QUERY_MC68020.s'
 QUERY_START = 0x9B54
 QUERY_END = 0x9D38
+KERNEL_SOURCE_NAME = 'M19_P2A_COLLISION_KERNEL_MC68020.s'
+KERNEL_START = 0x9858
+KERNEL_END = 0x9B54
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -455,6 +460,60 @@ def replace_raw_p2a_query(text: str) -> str:
             text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_p2a_kernel_provenance() -> tuple[int, int, int, bytes]:
+    """Compare native P2a mask kernel to its original dedicated Python emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    full, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    kernel, kernel_labels = emit_collision020()
+    _, parts, _ = unpack_ap20(original)
+    base = len(parts[group]) - len(full)
+    begin = base + labels['p2a_pair_entry']
+    end = base + labels['p2a_collision_query_entry']
+    invalid = begin + kernel_labels['p2a_invalid']
+    require((begin, end, invalid) == (KERNEL_START, KERNEL_END, 0x9B42),
+            'P2a collision kernel source offsets changed')
+    require(len(kernel) == end-begin and
+            full[labels['p2a_pair_entry']:labels['p2a_collision_query_entry']]
+            == kernel and parts[group][begin:end] == kernel,
+            'P2a collision kernel differs from dedicated source emitter')
+    return begin, end, invalid, kernel
+
+
+def replace_raw_p2a_kernel(text: str) -> str:
+    """Replace P2a kernel, preserving its preceding 10-byte geometry tail."""
+    anchor = ('    dc.b $01,$00,$4C,$DF,$77,$F7,$74,$00,$4E,$75,$48,$E7'
+              '  ; +$0984E: 01004CDF77F774004E7548E7\n')
+    tail = ('    dc.b $77,$F7,$74,$00,$4E,$75'
+            '  ; +$09B4E: 77F774004E75\n')
+    start = text.find(anchor)
+    stop = text.find(tail,start)
+    require(start >= 0 and stop > start and
+            text[stop+len(tail):].startswith(
+                '    include "'+QUERY_SOURCE_NAME+'"'),
+            'P2a kernel source/already-converted query boundary missing')
+    evidence = text[start:stop+len(tail)]
+    annotations = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                              evidence)
+    pos, blob = 0x984E, bytearray()
+    for off, code in annotations:
+        require(int(off,16) == pos,
+                'P2a kernel source byte annotations not contiguous')
+        data = bytes.fromhex(code)
+        blob.extend(data)
+        pos += len(data)
+    require(pos == KERNEL_END and
+            blob[:10] == bytes.fromhex('01004cdf77f774004e75') and
+            blob[10:] == prove_p2a_kernel_provenance()[3],
+            'P2a kernel audit region not equal to source emitter')
+    return (text[:start] +
+            '    dc.b $01,$00,$4C,$DF,$77,$F7,$74,$00,$4E,$75'
+            '  ; +$0984E: 01004CDF77F774004E75\n' +
+            '    include "' + KERNEL_SOURCE_NAME + '"\n' +
+            text[stop+len(tail):])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -512,7 +571,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    paint_geo_text: str | None = None,
                    cleanup_text: str | None = None,
                    public_col_text: str | None = None,
-                   query_text: str | None = None) -> None:
+                   query_text: str | None = None,
+                   kernel_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -524,6 +584,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(CLEANUP_FILE.is_file(), f'missing authored module: {CLEANUP_FILE}')
     require(PUBLIC_COL_FILE.is_file(), f'missing authored module: {PUBLIC_COL_FILE}')
     require(QUERY_FILE.is_file(), f'missing authored module: {QUERY_FILE}')
+    require(KERNEL_FILE.is_file(), f'missing authored module: {KERNEL_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -533,6 +594,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_p2a_query(text)
+    text = replace_raw_p2a_kernel(text)
     text = replace_raw_p2a_public(text)
     text = replace_raw_flip_public(text)
     text = replace_raw_p2b_variant(text)
@@ -680,6 +742,17 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P2a collision query native source contains incomplete/raw code')
     (folder / QUERY_SOURCE_NAME).write_text(query_source,
                                              encoding='ascii', newline='\n')
+    kernel_source = (kernel_text if kernel_text is not None
+                     else KERNEL_FILE.read_text('ascii'))
+    for name in ('p2a_pair_entry:', 'p2a_v0_validated:',
+                 'p2a_v1_validated:', 'p2a_pixel:', 'p2a_invalid:',
+                 'p2a_return:'):
+        require(kernel_source.count(name) == 1,
+                'P2a collision kernel label missing: '+name)
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', kernel_source),
+            'P2a collision kernel contains unclassified machine code')
+    (folder / KERNEL_SOURCE_NAME).write_text(kernel_source,
+                                            encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -754,6 +827,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     cleanup_start, cleanup_end, _, _ = prove_p2b_cleanup_provenance()
     public_start, public_end, _, _ = prove_p2a_public_provenance()
     query_start, query_end, _, _ = prove_p2a_query_provenance()
+    kernel_start, kernel_end, _, _ = prove_p2a_kernel_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -761,7 +835,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (paint_start <= i < paint_end) or
                 (cleanup_start <= i < cleanup_end) or
                 (public_start <= i < public_end) or
-                (query_start <= i < query_end) for i in differences),
+                (query_start <= i < query_end) or
+                (kernel_start <= i < kernel_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -780,14 +855,15 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           paint_geo_text: str | None = None,
           cleanup_text: str | None = None,
           public_col_text: str | None = None,
-          query_text: str | None = None) -> tuple[bytes, list[int]]:
+          query_text: str | None = None,
+          kernel_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
                    planar_text=planar_text, flip_text=flip_text,
                    variant_text=variant_text, paint_geo_text=paint_geo_text,
                    cleanup_text=cleanup_text, public_col_text=public_col_text,
-                   query_text=query_text)
+                   query_text=query_text, kernel_text=kernel_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -950,6 +1026,22 @@ def test_editability(assembler: Path) -> None:
                 == b'\x74\x01', 'P2a query modified MOVEQ did not encode')
         require(query_start <= query_moveq < query_end,
                 'P2a query edit escaped owned region')
+        kernel_start, kernel_end, invalid, _ = prove_p2a_kernel_provenance()
+        kernel_source = KERNEL_FILE.read_text('ascii')
+        needle = 'p2a_invalid:\n    move.l #-1,d3'
+        require(kernel_source.count(needle) == 1,
+                'P2a invalid result opcode not uniquely editable')
+        edited = kernel_source.replace(needle, 'p2a_invalid:\n    move.l #-2,d3')
+        changed_kernel, kernel_diffs = build(
+            assembler, root/'modified_kernel', allow_edited=True,
+            kernel_text=edited)
+        require(kernel_diffs == [invalid+5],
+                f'P2a kernel edit changed {kernel_diffs}, expected {[invalid+5]}')
+        require(unpack_ap20(changed_kernel)[1][group][invalid:invalid+6]
+                == bytes.fromhex('263cfffffffe'),
+                'P2a invalid result edit not assembled')
+        require(kernel_start <= invalid < kernel_end,
+                'P2a kernel edit escaped source-owned region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -959,6 +1051,7 @@ def test_editability(assembler: Path) -> None:
     print('P2B_CLEANUP_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_PUBLIC_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_QUERY_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
+    print('P2A_KERNEL_EDITABILITY_TEST PASS: MOVE.L #-1,D3 -> #-2,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
