@@ -186,7 +186,10 @@ p2b_planar_measure:
     lsl.l #1,d2
     move.l d2,d3
     mulu.w d1,d3
-    mulu.l d4,d3
+    ; MULU.L D4,D3 (32-bit): original emitter uses extension $3000.
+    ; VASM canonicalizes the unused Dh bits to 3 ($3003). Both execute
+    ; identically on 68020, but the pinned P2d byte image requires $3000.
+    dc.w $4C04,$3000   ; exact MULU.L D4,D3; documented encoder exception
     rts
 p2b_planar_measure_invalid:
     moveq #0,d3
