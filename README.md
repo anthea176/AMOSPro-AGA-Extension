@@ -21,7 +21,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 **M19 P2d — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **136,020 bytes**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**. Gate A passed. WinUAE Runtime and AMOS Compiler pending.
 
-**WinUAE Bob Auto Update test** — [Setup](tests/current/README.md) · [P2d campaign ASC](tests/current/M19_P2D_BOB_AUTO_UPDATE.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
+**Current WinUAE AMAL → AGA Bob probe (P2e.0; Runtime pending)** — [Setup](tests/current/README.md) · [Active P2e.0 ASC](tests/current/M19_P2E0_AMAL_BRIDGE.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
 
 **Interactive Bob example (no benchmark):** [Local restoration with four moving Bobs](examples/bob_local_restore/README.md) · [ASCII source](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — independent new version, PREFLIGHT PASS; WinUAE test pending. **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
