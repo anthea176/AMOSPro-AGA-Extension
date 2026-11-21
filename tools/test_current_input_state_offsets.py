@@ -127,10 +127,18 @@ def main():
             else:
                 assert units[aga_index]==earlier_groups[aga_index], "B8/P0 altered frozen AGA/state unit"
             if digest==P1E_SHA:
-                # The P1e extra BOBS stubs shifted group 181 -> 188.
-                # The source-pinned P0 prefix still descends from AP20
-                # Islands group 177, NOT from the shifted new group number.
-                assert units[bob_index].startswith(earlier_groups[177]), "P1e altered inherited Bob prefix"
+                # P1b/P1c/P1d deliberately source-patched the old renderer.
+                # Compare against the immediate P1d source-built ancestor,
+                # not the pre-P1b AP20 Islands group at index 177.
+                from build_m19_p1d_limit_bob_in_memory import build_p1d
+                from m19_p1d_limit_bob_emit import emit_limit_bobs
+                previous,p1d=build_p1d()
+                _,p1d_parts,_=unpack_ap20(previous)
+                p1d_native,_=emit_limit_bobs(p1d['context_delta'])
+                assert p1d_parts[181].endswith(p1d_native)
+                assert units[bob_index].startswith(
+                    p1d_parts[181][:-len(p1d_native)]
+                ), "P1e altered source-built P1d Bob prefix"
             else:
                 assert units[bob_index].startswith(earlier_groups[bob_index]), "B8/P0 altered frozen Bob prefix"
         elif digest in (B7_SHA,B7M1_SHA,B7M2_SHA):
