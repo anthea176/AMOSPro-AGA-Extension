@@ -33,7 +33,7 @@ jobs:
           python-version: '3.12'
       - name: Prepare MC68000 test runner
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
-      - name: Assert R88 archive, source-built R84 and P0 promoted LAST_GOOD
+      - name: Assert R88 archive, source-built R84 and P1e promoted LAST_GOOD
         run: |
           python -B - <<'PY'
           import hashlib,pathlib,sys
@@ -43,8 +43,8 @@ jobs:
           P0='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
           R84='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
           assert digest('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')==R88
-          assert digest('dist/AMOSPro_AGA.Lib')==P0
-          assert digest('dist/AMOSPro_AGA_LAST_GOOD.Lib')==P0
+          assert digest('dist/AMOSPro_AGA.Lib')=='7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'
+          assert digest('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'
           from build_aga_r84_agapic import build as build_r84
           historical,meta=build_r84()
           assert len(historical)==67904 and meta['sha256']==R84

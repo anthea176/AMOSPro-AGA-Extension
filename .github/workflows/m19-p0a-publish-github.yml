@@ -57,7 +57,7 @@ jobs:
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
-                  (117896, 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'),
+                  (124444, '7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'),
           }
           for path, (size, digest) in expected.items():
               data = Path(path).read_bytes()
@@ -75,7 +75,7 @@ jobs:
           if sha==P1A_SHA:
               assert len(active)==118816 and active!=good
               assert sha256(good).hexdigest()==P0_FREE_SHA
-          print('PASS: one canonical Lib, one active ASC, R88 archive and promoted P0 LAST_GOOD verified')
+          print('PASS: one canonical Lib, one active ASC, R88 archive and promoted P1e LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
         run: |
@@ -128,7 +128,7 @@ jobs:
           from build_m19_b8_s1_bank_free_in_memory import build_bank_free
           p0,p0meta=build_bank_free()
           assert (len(p0),p0meta['sha256'])==(117896,'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d')
-          assert active in (candidate,b8,b8s1,p0), 'Installed Lib differs from all source-pinned B7/B8/S1/P0 builds'
+          assert active == verify_active(Path('.'))[0], 'Active Lib must match its authoritative deterministic builder'
           assert meta['predecessor_sha']==m1meta['sha256']
           assert meta['ap20_entries']==181 and meta['public_commands']==86
           assert meta['native_groups']==[142,153,156,177] and meta['pc16_max']<32766 and meta['appended_bytes']==34
