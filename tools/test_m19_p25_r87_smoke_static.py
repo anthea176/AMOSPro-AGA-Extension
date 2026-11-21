@@ -17,6 +17,7 @@ DRAFT_GIT="30c2e09f3b7b365aec8ef47fc741311ba1cb984a"
 R84_SHA="46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 P0_FREE_SHA="f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d"
 R87_SHA="02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
+P1E_SHA="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
 
 def blob_sha(b:bytes)->str:
     return sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
@@ -24,7 +25,7 @@ def blob_sha(b:bytes)->str:
 def main()->None:
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
-    assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA, "Promoted P0 LAST_GOOD changed"
+    assert len(good)==124444 and sha256(good).hexdigest()==P1E_SHA, "Promoted P1e LAST_GOOD changed"
     from build_aga_r84_agapic import build as build_r84
     historic,r84meta=build_r84()
     assert len(historic)==67904 and r84meta['sha256']==R84_SHA
@@ -32,11 +33,15 @@ def main()->None:
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,verify_active
     active_digest=sha256(active_candidate).hexdigest()
-    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA), 'Unknown active canonical library'
+    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA), 'Unknown active canonical library'
     from build_m19_b8_first_update_in_memory import build_b8_first_update
     b8,report=build_b8_first_update()
     assert len(b8)==115744 and report['sha256']==B8_SHA
-    if active_digest==P0_FREE_SHA:
+    if active_digest==P1E_SHA:
+        from build_m19_p1e_bank_edit_in_memory import build_p1e
+        candidate,info=build_p1e()
+        assert active_candidate==good==candidate and info["sha256"]==P1E_SHA
+    elif active_digest==P0_FREE_SHA:
         from build_m19_b8_s1_bank_free_in_memory import build_bank_free
         p0,meta=build_bank_free()
         assert active_candidate==p0 and len(p0)==117896 and meta['sha256']==P0_FREE_SHA
@@ -73,7 +78,7 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7/B8 active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7/B8/P1e active ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
     print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 
