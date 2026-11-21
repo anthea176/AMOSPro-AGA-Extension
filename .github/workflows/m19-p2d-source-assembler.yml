@@ -65,5 +65,9 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Publish byte-exact M19 P2d MC68020 ASM migration source"
+            git fetch origin main
+            git rebase origin/main
+            git diff --name-only origin/main HEAD | grep -v '^src/asm_migration/m19_p2d/' > "$RUNNER_TEMP/unrelated_paths.txt" || true
+            test ! -s "$RUNNER_TEMP/unrelated_paths.txt"
             git push origin HEAD:main
           fi
