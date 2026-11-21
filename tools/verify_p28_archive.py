@@ -12,6 +12,7 @@ from pathlib import Path
 
 R84_SHA = '46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+P1E_SHA = '7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'
 R87_SHA = '02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'
 R88_SHA = '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
 R88_NAME = 'AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib'
@@ -54,7 +55,7 @@ def main() -> None:
                 verify(root / 'tests/fixtures/m19_p28' / filename, filename)
     for filename, length, digest in [
         ('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib', 73184, R87_SHA),
-        ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 117896, P0_FREE_SHA),
+        ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 124444, P1E_SHA),
     ]:
         path = root / filename
         if path.exists():
@@ -62,12 +63,12 @@ def main() -> None:
             assert len(raw) == length and sha256(raw).hexdigest() == digest, path
     from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA
     current,good,label=verify_active(root)
-    assert sha256(current).hexdigest() in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
-    assert sha256(good).hexdigest()==P0_FREE_SHA
+    assert sha256(current).hexdigest() in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA)
+    assert sha256(good).hexdigest()==P1E_SHA
     from build_aga_r84_agapic import build as build_r84
     historical,r84meta=build_r84()
     assert len(historical)==67904 and r84meta['sha256']==R84_SHA
-    print('P2.8 ARCHIVE INTEGRITY PASS: R84 rebuilt, promoted P0 pinned; R88 unpromoted')
+    print('P2.8 ARCHIVE INTEGRITY PASS: R84 rebuilt, promoted P1e pinned; R88 unpromoted')
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ from compiler_relocation import unpack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements, assert_reaches_entry_on_mc68020
 from amos_link_test_support import relocate
-from active_library import R84_SHA, P0_FREE_SHA
+from active_library import R84_SHA, P0_FREE_SHA, P1E_SHA
 from build_m19_p25_no_probe import (
     build, ACTIVE, PROTECTED, GROUP_C2P, GROUP_IFF, GROUP_BOBS, GROUP_AGA,
     BATCH_ENTRY, TITLE
@@ -163,7 +163,7 @@ class BatchGateA(unittest.TestCase):
         from build_aga_r84_agapic import build as build_r84
         cls.old,r84meta=build_r84()
         assert r84meta['sha256']==R84_SHA
-        assert sha256(PROTECTED.read_bytes()).hexdigest()==P0_FREE_SHA
+        assert sha256(PROTECTED.read_bytes()).hexdigest()==P1E_SHA
         cls.tokens,cls.parts,cls.title=unpack_ap20(cls.candidate)
         cls.old_tokens,cls.old_parts,_=unpack_ap20(cls.old)
 
@@ -323,9 +323,10 @@ class BatchGateA(unittest.TestCase):
                             __import__("active_library").B7M2_SHA,
                             __import__("active_library").B8_SHA,
                             __import__("active_library").B8S1_SHA,
-                             __import__("active_library").P0_FREE_SHA))
+                             __import__("active_library").P0_FREE_SHA,
+                             P1E_SHA))
         live=PROTECTED.read_bytes()
-        self.assertEqual(sha256(live).hexdigest(),P0_FREE_SHA)
+        self.assertEqual(sha256(live).hexdigest(),P1E_SHA)
         self.assertNotEqual(live,self.old)
 
 
