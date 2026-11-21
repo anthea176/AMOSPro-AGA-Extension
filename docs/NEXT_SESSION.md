@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2d Runtime PASS, P2e.0 AMAL expérimental
+
+Le journal original reçu pour P2d rapporte `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CHECKS 43`, `CLOSE_RETURNED 1`, `VERDICT PASS` (SHA256 `28f7ebfff3d77e7cc65469df3c246f23487eb1696376d2e078be5543eb13ee7b`). **Gate B Runtime PASS 43/43** sur ce banc. Pas de Gate C individuelle : l'auteur souhaite un futur exemple intégrant toutes les fonctions P2, à tester en interprété et avec AMOS Compiler.
+
+[P2e.0 AMAL](M19_P2E0_AMAL_BRIDGE_2026-11-21.md) : pont AMAL original via 8 octets (flags, X, Y, image) vers un Bob AGA, sans token ni nouveau binaire. [ASC expérimental](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.asc) source-only : **aucune validation Runtime ni Compiler P2e.0**. L'unique ASC actif P2d, sa Lib et LAST_GOOD P1e sont inchangés. Reste : preflight officiel sur l'ASC P2e.0 et WinUAE ciblé avant P2e.1 multi-canaux.
+
 ## 21 novembre 2026 — P2d installable, Bob Auto Update
 
 [Lib P2d active](../dist/AMOSPro_AGA.Lib), 136 020 octets, 100 commandes, 203 entrées AP20, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. [Campagne WinUAE](../tests/current/README.md) de 43 contrôles, Runtime et AMOS Compiler à qualifier. Gate A MC68020 PASS. LAST_GOOD P1e.
