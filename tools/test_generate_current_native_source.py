@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,28 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped)==P1E_SHA:
+            # P1e is a five-native-unit V2 Lib. Rebuild exactly from source;
+            # the historical single-dispatcher ASM audit must reject it.
+            from build_m19_p1e_bank_edit_in_memory import build_p1e
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect,parse
+            candidate,meta=build_p1e()
+            assert wrapped==candidate and len(candidate)==124444
+            assert meta['sha256']==P1E_SHA and meta['commands']==96
+            assert meta['entries']==196 and meta['pc16_max']==14130
+            _,parts,title=unpack_ap20(wrapped)
+            assert len(parts)==196 and not inspect(parse(wrapped))['issues']
+            assert original[0]==original[1], "Promoted P1e must be byte-identical"
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert ('Rbsr entry without audited compiler dispatcher' in str(exc)
+                        or 'Unsupported V2 compiler wrapper' in str(exc))
+            else:
+                raise AssertionError('P1e five-unit V2 AP20 exported as fake monolithic ASM')
+            print('STRICT M19 P1e SOURCE BUILDER / V2 EXPORT REFUSAL PASS',P1E_SHA)
+            continue
         if exp.sha(wrapped)==P0_FREE_SHA:
             from build_m19_b8_s1_bank_free_in_memory import build_bank_free
             from compiler_relocation import unpack_ap20

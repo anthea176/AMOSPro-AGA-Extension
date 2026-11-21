@@ -107,6 +107,7 @@ jobs:
           from build_m19_ap20_islands_in_memory import build as islands
           from build_m19_p0j_end_lifecycle_in_memory import build_multiframe as b7m1
           from build_m19_b7m2_close_reset_in_memory import build_close_reset as b7m2
+          from active_library import verify_active
           old,oldmeta=p0d()
           assert (len(old),sha256(old).hexdigest())==(91300,'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be')
           assert oldmeta['commands']==83 and oldmeta['entries']==93
