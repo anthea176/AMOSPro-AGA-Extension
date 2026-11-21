@@ -291,7 +291,8 @@ def prove_p2b_cleanup_provenance() -> tuple[int, int, int, bytes]:
     """Verify close/bank-free/purge 188 bytes against original P2b source."""
     original, group, *_ = prove_source_provenance()
     _, p1e = build_p1e()
-    native, labels = emit_bob_flip(p1e['context_delta'])
+    original_flip, labels = emit_bob_flip(p1e['context_delta'])
+    native, _, _ = emit_bob_auto_update(p1e['context_delta'])
     planar, _ = emit_planar_orientation020()
     base = PLANAR_END - labels['p2b_owner']
     begin = base + labels['p2b_close_return']
@@ -301,6 +302,18 @@ def prove_p2b_cleanup_provenance() -> tuple[int, int, int, bytes]:
             'P2b cleanup emitter offsets changed')
     original_bytes = native[labels['p2b_close_return']:
                             labels['p2b_owner']-len(planar)]
+    # P2d replaces the old P2b close epilogue with BRA.W p2d_close; NOP.
+    old = original_flip[labels['p2b_close_return']:
+                        labels['p2b_owner']-len(planar)]
+    relative_hook = labels['p2b_close_restore']-labels['p2b_close_return']
+    require(old[relative_hook:relative_hook+6] ==
+            bytes.fromhex('4cdf7fff4e75'),
+            'P2b original close-register epilogue changed')
+    require(original_bytes[:relative_hook] == old[:relative_hook] and
+            original_bytes[relative_hook+6:] == old[relative_hook+6:] and
+            original_bytes[relative_hook:relative_hook+2] == b'\x60\x00' and
+            original_bytes[relative_hook+4:relative_hook+6] == b'\x4e\x71',
+            'P2d close hook differs from source-authored P2b epilogue patch')
     _, parts, _ = unpack_ap20(original)
     require(len(original_bytes) == end-begin and
             parts[group][begin:end] == original_bytes,

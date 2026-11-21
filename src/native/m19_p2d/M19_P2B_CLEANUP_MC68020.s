@@ -27,8 +27,8 @@ p2b_closed:
     dc.l p2b_owner-(*-2)
     move.l #0,(a0)
 p2b_close_restore:
-    movem.l (a7)+,d0-d7/a0-a6
-    rts
+    bra.w p2d_close       ; P2d source emitter hook; exact 6 bytes incl NOP
+    nop
 
 p2b_bank_free:
     movem.l d0-d1/d4-d7/a0-a6,-(a7)
