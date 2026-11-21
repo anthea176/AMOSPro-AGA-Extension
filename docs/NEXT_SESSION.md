@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2 ALL IN ONE validé B/C et publié dans examples
+
+**Autorisation explicite de l'auteur :** après remise des deux logs PASS, publier le dernier banc P2 complet dans `examples/` et le présenter dans les **README anglais et français des exemples**. Publication réalisée **à octets identiques** : [source publique](../examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc), 25 056 octets, Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`. [Copie gelée](../tests/passed/M19_P2_ALL_IN_ONE.asc) identique. **Aucun ASC actuellement actif sous `tests/current/`** ; sa prochaine campagne reste à définir, sans fichier factice.
+
+**Preuves fournies :** [Runtime](evidence/M19_P2_ALL_IN_ONE_RUNTIME_PASS_2026-11-21.TXT), **1 632 octets CRLF**, SHA256 `864f6b17652033b99f06ec34df3ce85f3a1579bbb52c033d67d62e178852c627`, `PRG_STATE 1` et [Compiler](evidence/M19_P2_ALL_IN_ONE_COMPILED_PASS_2026-11-21.TXT), **1 633 octets CRLF**, SHA256 `296f562f73a83d91f419d60a4538e35ef05d55f0c159012949fc5482ce88bf41`, `PRG_STATE -1`. Les deux journaux ont `SOURCE_TAG P2_FULL_V1_20261121`, `RESULT 1`, `ERR 0`, `VERDICT PASS`, `PHASE_LAST 4`, `VALID_SAMPLES 240`, `SWAPS 252`, `COL_CHECKS 8`, `FLIP_PIX0/1 8/12`, `PLANES_PIX0/1 5/5`, `AUTO_ENABLE/AUTO_DISABLE 1/1`, `CLOSE_RETURNED 1`. **121 refus initiaux de Swap tous récupérés après un seul VBL** dans chacun des deux modes. **Gates B/C PASS pour ce scénario**, strict interprété et matériel D non testés.
+
+**Index à jour :** [examples/README.fr.md](../examples/README.fr.md) · [examples/README.md](../examples/README.md) et [notices détaillées](../examples/bob_p2_all_in_one/README.fr.md) / [EN](../examples/bob_p2_all_in_one/README.md). [Rapport P2](M19_P2_ALL_IN_ONE_2026-11-21.md), historique EN/FR, README racine actualisés. **P2d installable, 136 020 octets SHA256 `ce5f...`, inchangée** ; `LAST_GOOD P1e` inchangée. Aucun nouveau token, builder, binaire ou branche. La note historique « ne pas promouvoir avant tests » ci-dessous était valable avant la présente autorisation.
+
+
 ## 21 novembre 2026 — P2a à P2e : test ALL IN ONE avant promotion exemple
 
 Demande auteur : « dernier test intègre toutes les fonctions du P2 ; si cela fonctionne et lui convient, le basculer ultérieurement dans `examples/` ». **NE PAS PROMOUVOIR avant l'essai et l'autorisation suivante.**

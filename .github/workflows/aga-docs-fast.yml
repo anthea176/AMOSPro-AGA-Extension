@@ -49,7 +49,12 @@ jobs:
           python3 -B tools/test_examples.py
           python3 -B tools/test_amos_log_modes.py
           python3 -B tools/test_m19_p2_all_in_one_source.py
-          python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/*.asc examples/aga_bob_flip/FLIP_VISUAL.asc
+          python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc examples/aga_bob_flip/FLIP_VISUAL.asc
+          for asc in tests/current/*.asc; do
+            if [ -f "$asc" ]; then
+              python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings "$asc"
+            fi
+          done
       - name: Keep the active roadmap short and synchronized
         run: |
           python3 -B tools/test_roadmap_focus.py --self-test

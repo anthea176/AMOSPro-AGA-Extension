@@ -5,9 +5,13 @@ Does not run AMOS or emulate the native P2d library. WinUAE Gate B and real
 AMOS Compiler Gate C require separate evidence.
 """
 from pathlib import Path
+from hashlib import sha1, sha256
 
 ROOT = Path(__file__).resolve().parents[1]
-ASC = ROOT / "tests/current/M19_P2_ALL_IN_ONE.asc"
+ASC = ROOT / "examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc"
+PASSED = ROOT / "tests/passed/M19_P2_ALL_IN_ONE.asc"
+EVIDENCE = ROOT / "docs/evidence"
+SOURCE_BLOB = "c48d334fd4508d402d28399bffdfec08d4cb4acb"
 
 
 def pixels_f32():
@@ -58,6 +62,9 @@ def reference_geometry():
 def verify_source():
     raw = ASC.read_bytes()
     assert raw.isascii() and b"\r" not in raw
+    assert PASSED.read_bytes() == raw, "Frozen test and public example differ"
+    git_header = b"blob " + str(len(raw)).encode() + b"\x00"
+    assert sha1(git_header + raw).hexdigest() == SOURCE_BLOB, "Validated ASC changed"
     source = raw.decode("ascii")
     assert source.startswith("' M19 P2 P2a/P2b/P2c/P2d/P2e")
     assert source.endswith("\nEnd\n")
@@ -99,13 +106,54 @@ def verify_source():
     return len(raw)
 
 
+def verify_evidence() -> None:
+    cases = (
+        ("RUNTIME", 1632, "864f6b17652033b99f06ec34df3ce85f3a1579bbb52c033d67d62e178852c627", "1"),
+        ("COMPILED", 1633, "296f562f73a83d91f419d60a4538e35ef05d55f0c159012949fc5482ce88bf41", "-1"),
+    )
+    entries = {}
+    for mode, expected_size, digest, expected_state in cases:
+        path = EVIDENCE / f"M19_P2_ALL_IN_ONE_{mode}_PASS_2026-11-21.TXT"
+        raw = path.read_bytes()
+        assert len(raw) == expected_size and sha256(raw).hexdigest() == digest
+        assert raw.count(b"\r\n") == 97, f"{mode}: original CRLF log corrupted"
+        fields = {}
+        for line in raw.decode("ascii").splitlines():
+            pair = line.strip().split(None, 1)
+            if len(pair) == 2:
+                fields[pair[0]] = pair[1]
+        expected = {
+            "TEST": "M19 P2 ALL IN ONE",
+            "SOURCE_TAG": "P2_FULL_V1_20261121",
+            "PRG_STATE": expected_state, "RUN_MODE": mode,
+            "RESULT": "1", "ERR": "0", "VERDICT": "PASS",
+            "PHASE_LAST": "4", "VALID_SAMPLES": "240", "SWAPS": "252",
+            "SWAP_REFUSALS": "121", "SWAP_RECOVERED": "121",
+            "RETRY_VBLS": "121", "COL_CHECKS": "8",
+            "FLIP_PIX0": "8", "FLIP_PIX1": "12",
+            "PLANES_PIX0": "5", "PLANES_PIX1": "5",
+            "AUTO_ENABLE": "1", "AUTO_DISABLE": "1",
+            "CLOSE_RETURNED": "1",
+        }
+        for name, val in expected.items():
+            assert fields[name] == val, (mode, name, fields.get(name), val)
+        entries[mode] = fields
+    rt, comp = entries["RUNTIME"].copy(), entries["COMPILED"].copy()
+    for key in ("PRG_STATE", "RUN_MODE"):
+        del rt[key]
+        del comp[key]
+    assert rt == comp, "Runtime and compiled logs differ outside mode identifiers"
+
+
 def main():
+    verify_evidence()
     n = verify_source()
     flip, planes = reference_geometry()
     print(f"P2 ALL IN ONE STATIC PASS: {n} ASCII bytes; "
           f"8 collision checks, {flip} Flip pixel predictions, "
           f"{planes} Planes pixel predictions; "
-          "WinUAE/Compiler not run")
+          "WinUAE/Compiler runs evidenced by byte-exact user logs; "
+          "static reference test only")
 
 
 if __name__ == "__main__":

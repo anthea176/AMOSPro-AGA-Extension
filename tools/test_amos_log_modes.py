@@ -10,6 +10,8 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 CURRENT = ROOT / "tests/current"
 FLIP = ROOT / "examples/aga_bob_flip/FLIP_VISUAL.asc"
+PROMOTED = ROOT / "examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc"
+FROZEN = ROOT / "tests/passed/M19_P2_ALL_IN_ONE.asc"
 MODES = ((0, "INTERPRETED"), (1, "RUNTIME"), (-1, "COMPILED"))
 
 
@@ -46,8 +48,11 @@ def verify(path: Path) -> list[str]:
 
 def main() -> None:
     active = sorted(CURRENT.glob("*.asc"))
-    assert len(active) == 1, f"Expected exactly one active ASC, found {active}"
-    paths = [active[0], FLIP]
+    assert len(active) <= 1, f"Expected at most one active ASC, found {active}"
+    assert PROMOTED.is_file() and FROZEN.read_bytes() == PROMOTED.read_bytes(), (
+        "The B/C-validated example and its frozen regression must match"
+    )
+    paths = [PROMOTED, FLIP, *active]
     for path in paths:
         filenames = verify(path)
         print(f"MODE_LOG_NAMING PASS: {path.relative_to(ROOT)} : {', '.join(filenames)}")

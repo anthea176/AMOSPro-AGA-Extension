@@ -1,10 +1,10 @@
 # AMOSPro AGA — exemples et démonstrations
 
-## Bibliothèque active : M19 P0j-b7-m1 (MC68020+)
+## Bibliothèque actuelle et exemple Bob vedette — M19 P2d (MC68020+)
 
-[`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) est la **seule bibliothèque installable actuelle**, **102 360 octets**, SHA256 `838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403`. Gate A native PASS ; **Gate B Runtime WinUAE PASS** pour les bancs Bob de 120 images et décor texturé de 720 images, sans défaut graphique rapporté. **Gates C Compiler et D matériel non testées sur cette candidate**. Le dernier [banc validé](../tests/current/M19_P0J_B7_ANIM_RUNTIME_03.asc) reste conservé sous `tests/current/` comme référence de régression, sans continuer les benchmarks. R84 `LAST_GOOD` protégée.
+La [`AMOSPro_AGA.Lib` active](../dist/AMOSPro_AGA.Lib) est **M19 P2d**, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. La bibliothèque protégée `LAST_GOOD` reste **P1e**, inchangée. L'exemple **P2 ALL IN ONE** a passé les **Gates B Runtime et C vrai AMOS Compiler** sous WinUAE avec le **même ASC octet-identique**, d'après les journaux fournis ; Gate D sur Amiga physique non testée.
 
-Le nouvel [exemple interactif de restauration locale](bob_local_restore/README.fr.md) est distinct des benchmarks. Il reprend le moteur validé, mais **le titre fixe, la sortie clavier et le nouveau motif source de 32 pixels doivent être vérifiés sous WinUAE sur ce nouvel ASC**. Les [anciens exemples Bob](aga_bob_bank_get/README.fr.md) restent historiques.
+**Exemple vedette :** [**P2 ALL IN ONE — toute la suite Bob AGA**](bob_p2_all_in_one/README.fr.md) · [source ASC](bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc) · [English](bob_p2_all_in_one/README.md). Aucune image externe : 240 cycles AMAL, collisions, retournements H/V/HV, masques de plans et mise à jour automatique. L'ancien [exemple de restauration locale](bob_local_restore/README.fr.md) et les [exemples Bob historiques](aga_bob_bank_get/README.fr.md) ont leurs propres preuves ; le PASS P2 ne les requalifie pas.
 
 ## Lancer un exemple
 
@@ -34,6 +34,7 @@ Les démonstrations simples sont contrôlées statiquement. Seuls les scénarios
 
 | Exemple | Fonctionnalités | Banques et validation |
 |---|---|---|
+| [**P2 ALL IN ONE — toutes les fonctions Bob AGA**](bob_p2_all_in_one/README.fr.md) · [ASC](bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc) · [English](bob_p2_all_in_one/README.md) | Collisions P2a, retournements H/V/HV P2b, plans P2c, mise à jour automatique P2d, AMAL deux canaux P2e ; F/L masqués 16×16 et 32×32, 252 Swaps, fermeture propre | **M19 P2d, MC68020+**, banques **24/27/28 libres**, **aucune ressource externe**. **Gate B Runtime PASS + Gate C Compiler PASS** sur la source identique ; 121 premiers refus de Swap tous récupérés après un VBL. |
 | [**Quatre Bobs AGA / restauration locale**](bob_local_restore/README.fr.md) · [ASC](bob_local_restore/BOB_LOCAL_RESTORE.asc) | Animation titrée autonome, décor de tuiles multicolores, deux banques Bob, restauration des rectangles par page, sortie touche/clic | **Lib B7-m1**, banques **24/25 libres**, aucun fichier externe. **Nouvel ASC : préflight PASS ; WinUAE pas encore testé**. Le banc source avait passé Gate B Runtime | 
 | [**C2P — IFF direct en chunky (R80)**](../tests/current/README.md) · [ASC](../tests/current/C2P_R80_IFF_CHUNKY_01.asc) | Charge le vrai IFF dans deux banques DATA, puis C2P, trois Blit, sept Zoom, 14 pixels de référence et journal RAM, **sans fichier chunky annexe**. | **R80 Gate A CPU PASS, Gate B WinUAE à effectuer.** |
 | [**C2P — IFF de référence**](c2p_iff_showcase/README.fr.md) · [ASC](c2p_iff_showcase/C2P_IFF_SHOWCASE.asc) · [PNG attendu](c2p_iff_showcase/EXPECTED_C2P_SHOWCASE.png) | Démo intégrée sur **la vraie image AGA fantasy 320×256×256c** : IFF/Palette → C2P Convert/Swap → 3 Blit et 7 Zoom (agrandissements, réductions, clipping) → Close/ReOpen ; 14 pixels et bilan RAM | **R79 ou ultérieure, dont R80** + `LIBS:c2p.library` ; image IFF et compagnon `.chk` dans `iff-TEST/` côte à côte ; **écrase banques 12 et 13** ; oracle statique PASS, **démonstration WinUAE PASS (14/14 pixels, ERR 0, deltas mémoire 0/0)** |
