@@ -8,7 +8,7 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-ASC = ROOT / 'tests/sprite_s0/M19_S0_VIEWPORT_PROBE.asc'
+ASC = ROOT / 'examples/sprite_s0_viewport/VIEWPORT_PROBE.asc'
 
 
 def inspect_source(raw: bytes) -> list[str]:

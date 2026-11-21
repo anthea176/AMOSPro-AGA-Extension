@@ -1,12 +1,12 @@
 # S0 — Sonde du ViewPort AGA, sans nouvelle bibliothèque
 
-**Préparée pour M19 P2d — WinUAE Runtime/Compiler non encore exécutés.** Cette sonde AMOS est un test exploratoire distinct de `tests/current/` ; elle n'ajoute aucune API `Aga Sprite`, ne réserve aucun canal DMA et ne modifie aucun registre matériel.
+**Diagnostic expérimental pour M19 P2d — WinUAE Runtime/Compiler non encore exécutés.** Cette sonde AMOS est un exemple diagnostique non validé, distinct de `tests/current/` ; elle n'ajoute aucune API `Aga Sprite`, ne réserve aucun canal DMA et ne modifie aucun registre matériel.
 
 ## Démarrage sous WinUAE
 
 1. **Faire un snapshot WinUAE avant l'essai** : `AREG(5)`, `LEEK` et `DEEK` lisent des structures privées du moteur AMOS et d'Intuition. Un mauvais pointeur peut provoquer un Guru malgré les gardes du banc. **Ne pas utiliser sur Amiga physique avant le premier Runtime validé.**
 2. Utiliser l'environnement **AMOS Professional + AGA, CPU MC68020/68EC020 ou supérieur, Kickstart 3.0+**, avec exactement la Lib **M19 P2d promue** déjà installée dans `APSystem` : `dist/AMOSPro_AGA.Lib`, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`.
-3. Dans un **programme AMOS vierge**, faire **Project → Merge ASCII**, sélectionner [**M19_S0_VIEWPORT_PROBE.asc**](M19_S0_VIEWPORT_PROBE.asc). Ne pas charger l'ASC comme un programme AMOS tokenisé.
+3. Dans un **programme AMOS vierge**, faire **Project → Merge ASCII**, sélectionner [**VIEWPORT_PROBE.asc**](VIEWPORT_PROBE.asc). Ne pas charger l'ASC comme un programme AMOS tokenisé.
 4. Exécuter d'abord **en Runtime**, relever le retour AMOS et conserver le fichier `RAM:M19_S0_VP_RUNTIME.TXT`. Ne compiler ce même ASC qu'après avoir vérifié son premier résultat.
 
 ## Opérations réalisées
