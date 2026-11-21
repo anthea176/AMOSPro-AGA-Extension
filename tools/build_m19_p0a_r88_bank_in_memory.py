@@ -23,7 +23,7 @@ from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements
 from m19_p0a_bank_select_emit import emit_bank_select
-from active_library import P0_FREE_SHA, P1E_SHA
+from active_library import P0_FREE_SHA, P1E_SHA, P2D_SHA
 
 ROOT=Path(__file__).resolve().parents[1]
 R88_SHA='69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'
@@ -46,8 +46,10 @@ def build():
     good=R84.read_bytes()
     if len(base)!=75040 or sha256(base).hexdigest()!=R88_SHA:
         raise ValueError('R88 frozen candidate differs: refuse to build')
-    # Historical R88 / P0 builder remains byte-identical after authorized P1e promotion.
-    if (len(good),sha256(good).hexdigest()) not in ((117896,P0_FREE_SHA),(124444,P1E_SHA)):
+    # Historical R88/P0 builder uses the frozen R88 base, NOT LAST_GOOD.
+    # Accept the exact author-promoted P2d LAST_GOOD identity as an additional
+    # guard value. No source, token, native code or output differs.
+    if (len(good),sha256(good).hexdigest()) not in ((117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA)):
         raise ValueError('Unrecognized author-promoted LAST_GOOD: refuse to build')
     from build_aga_r84_agapic import build as build_r84
     historical,r84_meta=build_r84()
