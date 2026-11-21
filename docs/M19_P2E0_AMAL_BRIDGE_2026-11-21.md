@@ -23,7 +23,7 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 
 ## Banc P2e.0
 
-Fichier : [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt).
+Fichier source de conception : [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt). Ce `.txt` contient le code ASCII AMOS sans être un nouvel `.asc` de campagne active.
 
 - Cible : Lib P2d existante, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 AP20, CPU MC68020 minimum.
 - Banc autonome, **sans IFF/ABK externe** : deux images AGBO opaques 1×1 aux couleurs 165 et 90 dans la banque 24 ; buffer de lecture 8 octets dans la banque 28 ; banque 27 préallouée pour le pixel oracle.
@@ -34,8 +34,8 @@ Fichier : [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/
 ## Exécution et verdict
 
 1. Copier **uniquement** `dist/AMOSPro_AGA.Lib` P2d dans `APSystem`, redémarrer AMOS Pro dans WinUAE AGA.
-2. Laisser libres les banques AMOS **24, 27, 28**. Dans un programme vierge, utiliser **Project → Merge ASCII** sur l'ASC expérimental précité.
-3. **Test Runtime uniquement à ce stade**, pas de compilation individuelle. Sauvegarder `RAM:M19_P2E0_AMAL_BRIDGE.TXT` avant tout nouveau lancement.
+2. **Pour l'instant : source de conception non active.** Le fichier `.txt` ne remplace pas `tests/current/M19_P2D_BOB_AUTO_UPDATE.asc`. Ne pas modifier l'unique ASC de campagne sans autorisation de bascule.
+3. Lorsqu'une campagne P2e.0 sera autorisée : réserver les banques **24, 27, 28**, activer exactement ce source comme l'unique ASC dans `tests/current/`, exécuter via **Project → Merge ASCII**, puis sauvegarder `RAM:M19_P2E0_AMAL_BRIDGE.TXT` après le Runtime. **Ne pas compiler individuellement**.
 
 Attendu : `ERR 0`, `MOVE_X 1`, `MOVE_Y 1`, `IMAGE1 1`, `IMAGE2 1`, `FLAG_X/Y/A > 0`, `VALID_SAMPLES >= 32`, `PIX_SAMPLES >= 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
 
