@@ -1,0 +1,43 @@
+name: M19 P2d native editable ASM source - source-backed Gate A
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/native/m19_p2d/**'
+      - 'tools/build_m19_p2d_editable_asm.py'
+      - '.github/workflows/m19-p2d-editable-asm.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mc68020-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify CPU policy source markers and Python syntax
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -m py_compile tools/build_m19_p2d_editable_asm.py
+      - name: Build vasm Motorola MC68020
+        run: |
+          git clone --depth 1 https://github.com/rhargreaves/vasm.git "$RUNNER_TEMP/vasm"
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+          test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Compile the handwritten P2d module and prove the exact AP20 image
+        run: |
+          python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --out "$RUNNER_TEMP/p2d_asm_baseline"
+          sha256sum "$RUNNER_TEMP/p2d_asm_baseline/M19_P2D_ASM_REBUILT_CHECK.Lib"
+      - name: Edit one real ASM instruction, reassemble, verify a one-byte AP20 delta
+        run: |
+          python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-edit
+      - name: Confirm source-only delivery, no official binary or tests changes
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
