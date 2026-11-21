@@ -87,7 +87,9 @@ jobs:
           PY
       - name: Sole campaign AMOS static preflight (not WinUAE)
         run: |
-          PYTHONPATH=tools python -B tools/test_m19_b8_clear_update_asc_static.py
+          # The old B8 test ASC is archived and is no longer the sole active test.
+          # Check the actual active P2 all-in-one test and its frozen evidence.
+          PYTHONPATH=tools python -B tools/test_m19_p2_all_in_one_source.py
           PYTHONPATH=tools python -B tools/test_current_ram_log.py
           python -B tools/amos_preflight.py --strict-target tests/current/*.asc
       - name: Generators must not mutate canonical binary, fixture, or preserved tests

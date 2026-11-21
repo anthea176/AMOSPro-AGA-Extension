@@ -167,6 +167,7 @@ def main():
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert len(p0)==117896 and sha256(p0).hexdigest()==info['p0_sha'], "Historical P0 fixture must remain unchanged"
+    from active_library import P2D_SHA
     assert len(good)==136020 and sha256(good).hexdigest()==P2D_SHA, "Promoted P2d LAST_GOOD must be exact"
     assert len(candidate)==118816 and sha256(candidate).hexdigest()==info['sha256']
     from active_library import P1B_SHA, P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, verify_active
