@@ -153,6 +153,7 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     c.move(I(0), D(0))
     c.move(M(4, 8), D(0), 'w')
     # Staging needs at least one actual image; empty banks are valid but empty.
+    L('checked_stage_min_count')
     c.imm('cmp', 1, D(0)); B(5, 'checked_fail')
     c.imm('cmp', 4096, D(0)); B(2, 'checked_fail')
     S(D(0), 'count')
@@ -320,6 +321,7 @@ def emit_checked_bank_stage() -> tuple[bytes, dict[str, int]]:
     G('bankptr', D(1))
     G('generation', D(4))
     G('gfx', A(4))
+    L('checked_stage_copy_call')
     B(1, 'checked_chip_stage')
     c.tst(D(3)); B(7, 'checked_fail')
     S(I(1), 'result')

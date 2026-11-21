@@ -1,10 +1,12 @@
-name: M19 P1e private AGBO repacker MC68020
+name: M19 P1e AGBO bank editing MC68020
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/m19-p1e-bank-repack-gate-a.yml'
       - 'tools/*m19*p1e*bank_repack*.py'
+      - 'tools/*m19*p1e*bank_edit*.py'
+      - 'tools/m19_p0c_checked_bank_stage_emit.py'
       - 'tools/m19_p0a_multi_bob_abk.py'
       - 'tools/m19_p0a_capture_transaction.py'
   workflow_dispatch:
@@ -13,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  repack-native:
+  edit-native:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -28,5 +30,7 @@ jobs:
           python -B tools/test_m19_p0a_capture_transaction.py
       - name: Execute the private native repacker
         run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
+      - name: Execute Del Bob and Ins Bob with AMOS bank service fixtures
+        run: python -B tools/test_m19_p1e_bank_edit_gate_a.py
       - name: Preserve the active test and both library binaries
         run: git diff --exit-code -- dist/ tests/current/

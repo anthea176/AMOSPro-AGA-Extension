@@ -11,7 +11,7 @@
 | **P1b** | Hot Spot, origine propre à chaque image | Intégré au Safe Blitter. Gate A et Gate B Runtime PASS sur P1b. [Rapport](docs/M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md) |
 | **P1c** | `Aga Bob Priority(Mode)` | Gate A PASS, B Runtime et C Compiler PASS sur les mesures. [Résultats](docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md). |
 | **P1d** | `Aga Limit Bob(N,X,Y,W,H)` | Lib active. Gates A et B Runtime PASS sur le banc. [Résultats](docs/M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md). |
-| P1e | `Del Bob` / `Ins Bob` : édition des images de banque | [Contrat approuvé](docs/M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) · repackeur privé MC68020 testé, raccord AMOS à faire |
+| P1e | `Del Bob` / `Ins Bob` : édition des images de banque | [Contrat approuvé](docs/M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) · repackeur et transaction AMOS testés sur MC68020 |
 | P2 | Collisions Bob–Bob rectangles puis masques | Non implémenté |
 | P2 | Retournements H/V sans altérer les sources partagées | Non implémenté |
 | P2 | Modes avancés et animation automatique / AMAL | Non implémenté |
@@ -19,4 +19,4 @@
 
 **Preuves P1 :** [socle et Hot Spot](docs/M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md) ; [rapport P1a AP20](docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md) ; [CI Gate A P1a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476430). **La syntaxe des tokens a été auditée en AP20 ; deux exécutions AMOS Runtime WinUAE P1a sont PASS fonctionnel. Le vrai Compiler P1a reste NON TESTÉ.**
 
-**Prochaine action** — Raccorder la transaction de banque P1e, le cache Chip et les stamps.
+**Prochaine action** — Qualifier la candidate P1e sous WinUAE après bascule de la Lib de travail.
