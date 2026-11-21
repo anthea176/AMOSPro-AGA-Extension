@@ -1,6 +1,6 @@
 # M19 P1b — Hot Spot Bob : banc WinUAE Runtime / Compiler
 
-**Bibliothèque installable active de TEST :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **119 176 octets**, SHA256 `2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4`. **92 commandes / 188 entrées AP20**, cinq groupes MC68020. [Builder déterministe](../../tools/build_m19_p1b_hotspot_in_memory.py), [rapport P1b](../../docs/M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md). **Gate A MC68020 intégrée PASS (98 contrôles)** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44836896149)) ; **Gates B WinUAE, C vrai Compiler, D matériel P1b NON TESTÉES**.
+**Bibliothèque installable active de TEST :** [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **119 176 octets**, SHA256 `2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4`. **92 commandes / 188 entrées AP20**, cinq groupes MC68020. [Builder déterministe](../../tools/build_m19_p1b_hotspot_in_memory.py), [rapport P1b](../../docs/M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md). **Gate A MC68020 intégrée PASS (98 contrôles)** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44836896149)) ; **Gate B Runtime WinUAE PASS** ([résultats](../../docs/M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md#résultats-runtime-winue)) ; **Gates C vrai Compiler et D matériel à tester**.
 
 **`LAST_GOOD` protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **P0**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. Ne pas remplacer, promouvoir ni utiliser ce binaire à la place de la candidate de test.
 
@@ -45,7 +45,7 @@ Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque
 | Gate | P1b |
 | --- | --- |
 | A — vrai MC68020 sous Unicorn + OS/Blitter simulés | **PASS (98 contrôles intégrés)**, + 258 contrôles natifs du helper |
-| B — vrai AMOS Runtime WinUAE, deux essais + visuel | **À effectuer** |
+| B — vrai AMOS Runtime WinUAE, deux essais + visuel | **PASS fonctionnel** |
 | C — véritable exécutable AMOS Compiler | **NON TESTÉ** |
 | D — Amiga physique | **NON TESTÉ** |
 

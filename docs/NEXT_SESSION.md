@@ -1,6 +1,6 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 21 novembre 2026 — M19 P1b Hot Spot intégrée à la Lib installable ; Gate B WinUAE à faire
+## 21 novembre 2026 — M19 P1b Hot Spot — Gate B Runtime WinUAE PASS
 
 **Autorisation utilisateur :** « go jusqua la lib » = aller jusqu'à la **bascule du seul binaire actif** P1b et du banc WinUAE, pas une promotion de `LAST_GOOD`. Réalisation exclusivement sur `main`. [Commit de bascule `2af4844`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/2af4844d803430a550a825a309a2862b51f5e9d6).
 
@@ -10,9 +10,9 @@
 
 **Unique ASC actif modifié** : `tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`, **17 566 octets ASCII LF**, neuf étapes et 405 frames P0 + trois Bank Free + 14×3 getters conservés, **quatre phases hotspot** supplémentaires, journal `RAM:M19_P1B_HOTSPOT.TXT` ; ressource `tests/current/M19_P1B_HOTSPOT_BANK26.abk`, **200 octets, hotspot (+4,+3)**, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`. Bank26 doit être libre et l'ABK copiée dans le répertoire courant AMOS AVANT d'exécuter ASC via `Project → Merge ASCII`. [Procédure et valeurs attendues](../tests/current/README.md). 405 frames + 4 phases, `HOTSPOT_FRAMES_OK 4`, `HOTSPOT_GETTERS_OK 12`, `BANKS_ERASED 3`, `VERDICT PATH_OK` attendu.
 
-**Gate B P1b Runtime : NON TESTÉE**, obtenir 2 journaux et observation de l'image à (106,97) pour Bob logique (110,100), image partiellement coupée à (-2,-1), disparition hors écran (32767,32767), réactivation à (136,87). **Gate C véritable Compiler et Gate D physique : NON TESTÉES.** Ne pas assimiler Gate A à WinUAE. Les résultats WinUAE P1a restent historiques et ne qualifient pas P1b. **Ne jamais promouvoir P1b en LAST_GOOD sans décision explicite.**
+**Gate B P1b Runtime WinUAE : PASS fonctionnel.** Deux lancements dans la même session AMOS et quatre observations visuelles confirmés par l'auteur. Les deux journaux donnent `PRG_STATE 1`, 405/405 frames, 42/42 getters P1a, 4/4 phases hotspot, 12/12 getters hotspot, trois banques effacées et `PATH_OK`. [Rapport Gate B](M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md#résultats-runtime-winue). **Gates C véritable Compiler et D Amiga physique à tester.**
 
-**CI globale :** des régressions historiques verrouillées sur une ancienne SHA active étaient rouges après bascule ; les adaptateurs R82/R84 et README bilingues ont été mis à jour pour reconnaître l'empreinte P1b sans modifier les octets historiques. Ne déclarer que les CI effectivement PASS ; prochain chantier P1c priorités et P1d Limit Bob en attente des résultats P1b.
+**CI globale :** des régressions historiques verrouillées sur une ancienne SHA active étaient rouges après bascule ; les adaptateurs R82/R84 et README bilingues ont été mis à jour pour reconnaître l'empreinte P1b sans modifier les octets historiques. Ne déclarer que les CI effectivement PASS ; P1c (priorités) et P1d (`Limit Bob`) restent à décider.
 
 
 ## 21 novembre 2026 — M19 P1b Hot Spot, premier jalon natif MC68020 PASS (source-only)

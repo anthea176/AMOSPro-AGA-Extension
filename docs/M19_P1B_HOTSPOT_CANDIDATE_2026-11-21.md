@@ -32,12 +32,42 @@ Le chemin `explicit_frame_draw_entry` continue de parcourir les Bobs 1..64 et de
 - [Gate A isolée — PASS, 258 cas](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44835297656) pour l'origine hotspot, accompagnée du modèle écran double buffer/masques.
 - [Action builder et ABK SHA exacts — PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44837269625) ; produit le binaire 119176 et l'ABK 200 depuis les sources.
 - Le chemin canonique `dist/AMOSPro_AGA.Lib` et le `LAST_GOOD` sont ensuite vérifiés byte-identiques dans Git. Les historiques R82/R84 sont reconstruction-source et non un remplacement de `LAST_GOOD`.
-- **Gate B P1b Runtime WinUAE : NON TESTÉE**, demander deux logs et observations des décalages. **Gate C vrai Compiler : NON TESTÉE. Gate D matériel : NON TESTÉE.** Gate B P1a déjà PASS fonctionnel sur la *précédente* bibliothèque, sans transfert de preuve à P1b.
+- **Gate B P1b Runtime WinUAE : PASS fonctionnel.** Voir les résultats ci-dessous. **Gate C vrai Compiler : NON TESTÉE. Gate D matériel : NON TESTÉE.** Gate B P1a déjà PASS fonctionnel sur la *précédente* bibliothèque, sans transfert de preuve à P1b.
 - Le champ `LIB_SHA256` du journal ASC est une **étiquette littérale** et **ne prouve pas** le binaire physiquement chargé dans WinUAE.
 - La suite CI `Artifact integrity` historique n'est **pas** globalement PASS lors de la première bascule P1b : certains anciens bancs ont des listes de SHA active autorisées à moderniser en conservant leurs sources historiques.
 
-## Prochaine étape — WinUAE
+## Protocole WinUAE utilisé
 
 [**Consignes exactes du seul ASC de campagne**](../tests/current/README.md). Après `git pull origin main`, installer la nouvelle Lib, placer l'ABK dans le répertoire courant AMOS, avoir banques 24/25/26 libres, `Project → Merge ASCII`, puis deux Runtime sans redémarrer entre les deux et sauvegarder deux journaux.
 
 Attendus : **405 frames de régression + 4 phases hotspot**, `QUERY_VALUES_OK 42`, `HOTSPOT_GETTERS_OK 12`, `HOTSPOT_FRAMES_OK 4`, `HOTSPOT_LOAD_ERR 0`, `BANKS_ERASED 3`, `ERR 0`, `RESULT 1`, `VERDICT PATH_OK`. Contrôle visuel indispensable du Bob à l'origine `(106,97)` pour X/Y logiques `(110,100)`.
+
+## Résultats Runtime WinUAE
+
+**Gate B P1b PASS pour le banc Hot Spot.** L'auteur confirme deux lancements dans la même session AMOS, sans redémarrage ni `Erase All`, et les observations visuelles suivantes.
+
+| Position logique | Rendu confirmé |
+| --- | --- |
+| (110,100) | Origine du dessin (106,97) |
+| (2,2) | Bob partiellement visible en haut à gauche, origine (-2,-1) |
+| (32767,32767) | Bob entièrement invisible |
+| (140,90) | Bob réactivé et dessiné à (136,87) |
+
+Les fichiers fournis `M19_P1B_HOTSPOT1(2).TXT` et `M19_P1B_HOTSPOT2(2).TXT` sont identiques octet pour octet (1 363 octets CRLF chacun, SHA256 brut `de8fefb214615ca21e48bda82b0a39d1cf8748555399451dcb1d3ba252f05d40`). La confirmation de la relance vient de l'auteur.
+
+| Vérification | Valeur dans chaque journal |
+| --- | --- |
+| Mode / état AMOS | `RUNTIME` / `PRG_STATE 1` |
+| Résultat / erreur / verdict | `1` / `0` / `PATH_OK` |
+| Régression | 405/405 frames, 9/9 étapes, 64 Bobs à l'étape 8 |
+| Fill / Copy / Clear / Update / Swap | Zéro échec, 403 Clear et 405 Update réussis |
+| Bank Free | 3 Clear, 3 Update, 3 Swap et une réactivation |
+| Getters P1a | 42/42 valeurs |
+| Banque hotspot | 26, métadonnées (4,3), erreur de chargement 0 |
+| Phases hotspot | 4/4 Clear, Update et Swap, 12/12 valeurs de getters |
+| Fermeture | `CLOSE_RETURNED 1`, `BANKS_ERASED 3` |
+| Relances VBL | 364 |
+
+Le rendu est documenté par l'observation de l'auteur sous WinUAE. Le SHA de la Lib P1b a été vérifié sur `main`. Le SHA inscrit dans le journal est une constante de l'ASC. Les journaux ne contiennent aucune mesure mémoire Chip/Fast ni mesure de performance.
+
+**Gates C (véritable AMOS Compiler) et D (Amiga physique) à tester.**
