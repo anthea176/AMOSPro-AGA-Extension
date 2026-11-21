@@ -1,4 +1,4 @@
-name: M19 P2a Bob collision, real P1b hotspots, P1d and MC68020 Gate A
+name: M19 P2a Bob native ONE-CALL 020 collision query Gate A
 on:
   push:
     branches: [main]
@@ -17,6 +17,8 @@ on:
       - 'tools/test_m19_p2a_pair_geometry020_gate_a.py'
       - 'tools/m19_p2a_pair_hotspot020_emit.py'
       - 'tools/test_m19_p2a_pair_hotspot020_gate_a.py'
+      - 'tools/m19_p2a_collision_query020_emit.py'
+      - 'tools/test_m19_p2a_collision_query020_gate_a.py'
       - 'tools/m19_p0j_explicit_image_resolve_emit.py'
       - 'tools/m19_p0j_explicit_bank_stage_emit.py'
       - 'tools/m19_p0f_object_identity_emit.py'
@@ -36,7 +38,7 @@ permissions:
 jobs:
   collision-reference:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,7 +59,8 @@ jobs:
                        'm19_p2a_pair_checked_read_emit.py', 'test_m19_p2a_pair_checked_read_gate_a.py',
                        'm19_p2a_pair_chip_resolve_emit.py', 'test_m19_p2a_pair_chip_resolve_gate_a.py',
                        'm19_p2a_pair_geometry020_emit.py', 'test_m19_p2a_pair_geometry020_gate_a.py',
-                       'm19_p2a_pair_hotspot020_emit.py', 'test_m19_p2a_pair_hotspot020_gate_a.py'):
+                       'm19_p2a_pair_hotspot020_emit.py', 'test_m19_p2a_pair_hotspot020_gate_a.py',
+                       'm19_p2a_collision_query020_emit.py', 'test_m19_p2a_collision_query020_gate_a.py'):
               ast.parse((Path('tools')/name).read_text(encoding='utf-8'), filename=name)
           print('P2a HOST SYNTAX PASS')
           PY
@@ -79,5 +82,7 @@ jobs:
         run: python -B tools/test_m19_p2a_pair_geometry020_gate_a.py
       - name: Execute real AGBO/P1b signed hotspot bank lookup and P1d native collision chain
         run: python -B tools/test_m19_p2a_pair_hotspot020_gate_a.py
+      - name: Execute one-call source-backed P2a full native collision query on MC68020
+        run: python -B tools/test_m19_p2a_collision_query020_gate_a.py
       - name: Guard binary, active ASC and archives
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
