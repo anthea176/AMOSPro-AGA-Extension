@@ -1,4 +1,4 @@
-"""One working Lib in dist/ with promoted M19 P0 LAST_GOOD.
+"""One working Lib in dist/ with author-promoted M19 P1e LAST_GOOD.
 
 M19 B7-m2 is the authorized active TEST candidate (Gate A PASS; Runtime repeat-launch B pending). Historical B7-m1 remains source-built.
 P0d remains source-reproducible by its frozen builder and Git history.
@@ -45,7 +45,7 @@ P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA=P0_FREE_SHA  # Author-approved M19 P0 promotion, 20/11/2026; R84_SHA remains frozen
+LAST_GOOD_SHA=P1E_SHA  # Author-approved M19 P1e promotion 21/11/2026; Gates A/B PASS, C/D not tested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -111,8 +111,8 @@ def verify_active(root: Path):
         expected, meta = build_p1e()
         assert cur == expected and len(cur) == 124444 and meta['sha256'] == P1E_SHA
         assert (meta['commands'], meta['entries'], meta['pc16_max']) == (96, 196, 14130)
-        assert len(good) == 117896 and cur != good
-        return cur, good, "M19 P1e Bob Bank Edit WinUAE candidate, MC68020 Gate A PASS"
+        assert len(good) == 124444 and cur == good and sha256(good).hexdigest() == P1E_SHA
+        return cur, good, "M19 P1e PROMOTED LAST_GOOD; native Gate A PASS, WinUAE Runtime B PASS x2; AMOS Compiler C and physical D NOT TESTED"
     if current_sha == P1D_SHA:
         from build_m19_p1d_limit_bob_in_memory import build_p1d
         expected, meta = build_p1d()

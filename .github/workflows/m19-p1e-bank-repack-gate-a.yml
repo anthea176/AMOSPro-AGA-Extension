@@ -37,9 +37,9 @@ jobs:
         run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
       - name: Execute Del Bob and Ins Bob with AMOS bank service fixtures
         run: python -B tools/test_m19_p1e_bank_edit_gate_a.py
-      - name: Verify installed P1e, protected P0 and AMOS campaign
+      - name: Verify installed promoted P1e, exact LAST_GOOD and AMOS campaign
         run: |
-          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active, P1E_SHA; from hashlib import sha256; current, _, _ = verify_active(Path(".")); assert sha256(current).hexdigest() == P1E_SHA'
+          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active, P1E_SHA; from hashlib import sha256; current, good, _ = verify_active(Path(".")); assert current == good and sha256(current).hexdigest() == P1E_SHA'
           python -B tools/test_m19_b8_clear_update_asc_static.py
           python -B tools/test_current_ram_log.py
           python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
