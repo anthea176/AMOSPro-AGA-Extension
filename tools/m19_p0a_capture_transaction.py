@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from m19_p0a_multi_bob_abk import (
-    MAX_IMAGE_ID, MAX_SIDE, empty_bank, make_abk, make_mask,
+    MAX_IMAGE_ID, MAX_SIDE, delete_images, empty_bank, insert_blank_image, make_abk, make_mask,
     no_mask, parse_abk, parse_payload, put_image,
 )
 
@@ -158,7 +158,8 @@ class HostBobBanks:
             raise RuntimeError("bank changed during preparation")
         fresh = _BankRecord(candidate, self._identity())
         self._banks[number] = fresh
-        self._selected = (number, fresh.identity)
+        if self._selected == (number, old.identity):
+            self._selected = (number, fresh.identity)
 
     def capture(self, image_id: int, bitmap: BackBitmap,
                 x1: int, y1: int, x2: int, y2: int) -> None:
@@ -179,6 +180,23 @@ class HostBobBanks:
         candidate = no_mask(old.payload, image_id)
         if candidate != old.payload:
             self._commit(number, old, candidate)
+
+    def _edit_record(self, number: int) -> _BankRecord:
+        self._number(number)
+        record = self._banks.get(number)
+        if record is None:
+            raise ValueError("no existing AGBO bank")
+        return record
+
+    def delete_images(self, number: int, first: int, last: int) -> None:
+        old = self._edit_record(number)
+        self._commit(number, old, delete_images(old.payload, first, last))
+
+    def insert_blank_image(self, number: int, image_id: int, width: int,
+                           height: int, depth: int) -> None:
+        old = self._edit_record(number)
+        self._commit(number, old,
+                     insert_blank_image(old.payload, image_id, width, height, depth))
 
     def save(self, number: int) -> bytes:
         return make_abk(number, self.payload(number))

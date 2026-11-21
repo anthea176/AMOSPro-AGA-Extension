@@ -8,7 +8,7 @@ Signature approuvée par l’auteur. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESI
 
 P1d est livrée sur `main` avec le [banc WinUAE](../tests/current/README.md). P0 reste `LAST_GOOD`. **Gate B Runtime PASS sur les mesures des deux passages**, 24/24 pixels de clipping sur chaque passage. [Résultats et portée](M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md). Gates C et D à tester.
 
-**P1e** — [Contrat Del Bob / Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) à valider.
+**P1e** — [Contrat Del Bob / Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) approuvé. Les opérations AGBO et le repackeur privé MC68020 sont testés sur 132 scénarios natifs. Le raccord au remplacement de banque AMOS, aux stamps et au cache Chip reste à faire. P1d reste la Lib active.
 
 ## 21 novembre 2026 — M19 P1c Bob Priority installée dans la Lib de travail
 

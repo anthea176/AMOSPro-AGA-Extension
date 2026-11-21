@@ -185,9 +185,9 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 
 #### P1e — Del Bob et Ins Bob
 
-**Signatures à valider**
+**Signatures approuvées**
 
-| Fonction | Contrat proposé |
+| Fonction | Contrat approuvé |
 | --- | --- |
 | `_OK=Aga Del Bob(Bank,First,Last)` | Supprime les images présentes dans l’intervalle inclusif `First..Last`. Utiliser `First=Last` pour une image. Retour 0 si l’intervalle est vide d’images. La suppression de la dernière image laisse une banque AGBO vide de 32 octets. |
 | `_OK=Aga Ins Bob(Bank,Image,W,H,Depth)` | Crée une image vide et entièrement transparente, hotspot (0,0), à un ID libre. Largeur et hauteur en pixels, profondeur de 1 à 8 plans. `Get AGA Bob` peut ensuite remplacer cet emplacement. Un ID occupé est refusé. |
@@ -201,6 +201,10 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 **Tests.** Suppression de début, milieu, fin et dernière image, intervalle troué, insertion à un ID libre et refus d’un ID occupé, masque et hotspot des images survivantes, deux Bobs sur une image supprimée, un Bob survivant et une banque tierce, réutilisation d’un ancien ID, Save/Load, refus READY/DIRTY et échecs d’allocation avec comparaison octet pour octet. Tester la première frame après édition et les deux pages. Vérifier le cas d’une banque devenue vide puis repeuplée.
 
 [Référence AMOS Professional](https://amospromanual.dev/07-02-blitter-objects.html#del-bob).
+
+**Repackeur privé MC68020.** [Source](../tools/m19_p1e_bank_repack_emit.py) · [Banc](../tools/test_m19_p1e_bank_repack_gate_a.py). Pour une charge AGBO v1 intégralement validée par l'appelant, la routine calcule la taille de sortie, puis peut réécrire les plans et le répertoire dans une allocation disjointe. La source reste intacte. Les 132 scénarios natifs comparent la sortie au modèle Python, contrôlent les gardes mémoire et vérifient les refus avec une destination trop courte ou chevauchante.
+
+**Intégration AMOS à faire.** Le repackeur ne remplace aucune banque. Le chemin historique `bank_commit` publie le nouveau nœud avant `Bnk.Change` et libère ensuite l’ancien. La lecture de frame vérifie l’adresse, la génération, la liste et la taille des stamps. Une simple invocation de `bank_commit` laisserait donc les Bobs survivants avec des stamps obsolètes. Le raccord P1e doit préparer le cache sur la charge candidate et valider les slots/stamps avant de publier, puis installer le cache et les stamps et désactiver les seuls Bobs supprimés avant que des callbacks puissent observer le changement. Le traitement de la banque vide suit le chemin sans cache Chip. Les tokens AP20 seront câblés après validation de ce commit natif et des échecs injectés.
 
 ### P2 — Fonctions avancées / compatibilité progressive
 

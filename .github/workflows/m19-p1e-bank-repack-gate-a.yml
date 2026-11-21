@@ -1,0 +1,32 @@
+name: M19 P1e private AGBO repacker MC68020
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p1e-bank-repack-gate-a.yml'
+      - 'tools/*m19*p1e*bank_repack*.py'
+      - 'tools/m19_p0a_multi_bob_abk.py'
+      - 'tools/m19_p0a_capture_transaction.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repack-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: AGBO host and transaction regressions
+        run: |
+          python -B tools/test_m19_p0a_multi_bob_abk.py
+          python -B tools/test_m19_p0a_capture_transaction.py
+      - name: Execute the private native repacker
+        run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
+      - name: Preserve the active test and both library binaries
+        run: git diff --exit-code -- dist/ tests/current/

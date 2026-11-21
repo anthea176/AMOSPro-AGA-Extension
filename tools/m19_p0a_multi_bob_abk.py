@@ -238,6 +238,34 @@ def put_image(payload: bytes, image_id: int, width: int, height: int,
     return _build(tuple(images[k] for k in sorted(images)), current.generation + 1)
 
 
+def delete_images(payload: bytes, first: int, last: int) -> bytes:
+    """Repack an inclusive ID range without renumbering remaining images."""
+    _int_range(first, 1, MAX_IMAGE_ID, "first image id")
+    _int_range(last, first, MAX_IMAGE_ID, "last image id")
+    bank = parse_payload(payload)
+    remaining = tuple(image for image in bank.images
+                      if not first <= image.image_id <= last)
+    if len(remaining) == len(bank.images):
+        raise ValueError("no image in interval")
+    return _build(remaining, bank.generation + 1)
+
+
+def insert_blank_image(payload: bytes, image_id: int, width: int,
+                       height: int, depth: int) -> bytes:
+    """Create a drawable, transparent placeholder at an unoccupied ID."""
+    _int_range(image_id, 1, MAX_IMAGE_ID, "image id")
+    stride, plane_size = _geometry(width, height, depth)
+    bank = parse_payload(payload)
+    if any(image.image_id == image_id for image in bank.images):
+        raise ValueError("image id is already occupied")
+    if len(payload) + ENTRY.size + plane_size * (depth + 1) > MAX_BANK_BYTES:
+        raise ValueError("AMOS bank exceeds 16 MiB")
+    image = BobImage(image_id, width, height, depth, stride,
+                     bytes(plane_size * depth), bytes(plane_size))
+    updated = tuple(sorted((*bank.images, image), key=lambda item: item.image_id))
+    return _build(updated, bank.generation + 1)
+
+
 def make_mask(payload: bytes, image_id: int, transparent_index: int) -> bytes:
     current = parse_payload(payload)
     img = current.image(image_id)
