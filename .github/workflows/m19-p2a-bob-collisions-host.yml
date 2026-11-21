@@ -1,4 +1,4 @@
-name: M19 P2a Bob collisions - P0f checked pair and MC68020
+name: M19 P2a Bob collision and P0f-P0j Chip pair Gate A
 on:
   push:
     branches: [main]
@@ -11,6 +11,10 @@ on:
       - 'tools/test_m19_p2a_collision020_gate_a.py'
       - 'tools/m19_p2a_pair_checked_read_emit.py'
       - 'tools/test_m19_p2a_pair_checked_read_gate_a.py'
+      - 'tools/m19_p2a_pair_chip_resolve_emit.py'
+      - 'tools/test_m19_p2a_pair_chip_resolve_gate_a.py'
+      - 'tools/m19_p0j_explicit_image_resolve_emit.py'
+      - 'tools/m19_p0j_explicit_bank_stage_emit.py'
       - 'tools/m19_p0f_object_identity_emit.py'
       - 'tools/m19_p0f_bank_stamp_emit.py'
       - 'tools/m68k_emit.py'
@@ -28,7 +32,7 @@ permissions:
 jobs:
   collision-reference:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,7 +50,8 @@ jobs:
           for name in ('m19_p2a_bob_collision_model.py', 'test_m19_p2a_bob_collision_model.py',
                        'm19_p2a_agbo_bridge.py', 'test_m19_p2a_agbo_bridge.py',
                        'm19_p2a_collision020_emit.py', 'test_m19_p2a_collision020_gate_a.py',
-                       'm19_p2a_pair_checked_read_emit.py', 'test_m19_p2a_pair_checked_read_gate_a.py'):
+                       'm19_p2a_pair_checked_read_emit.py', 'test_m19_p2a_pair_checked_read_gate_a.py',
+                       'm19_p2a_pair_chip_resolve_emit.py', 'test_m19_p2a_pair_chip_resolve_gate_a.py'):
               ast.parse((Path('tools')/name).read_text(encoding='utf-8'), filename=name)
           print('P2a HOST SYNTAX PASS')
           PY
@@ -62,5 +67,7 @@ jobs:
         run: python -B tools/test_m19_p2a_collision020_gate_a.py
       - name: Execute P2a source-only native paired P0f identity checks (real MC68020)
         run: python -B tools/test_m19_p2a_pair_checked_read_gate_a.py
+      - name: Execute paired real P0f and P0j-b3 Chip image resolution on MC68020
+        run: python -B tools/test_m19_p2a_pair_chip_resolve_gate_a.py
       - name: Guard binary, active ASC and archives
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
