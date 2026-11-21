@@ -259,8 +259,15 @@ def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
         for report in reports:
             result=_assemble(assembler,destination/report['file'],
                              destination/(Path(report['file']).stem+'.bin'))
-            need(result==parts[report['ap20_entry']],
-                 'native unit %s differs from promoted P2d bytes' % report['file'])
+            reference=parts[report['ap20_entry']]
+            if result!=reference:
+                at=next((i for i,(a,b) in enumerate(zip(reference,result))
+                         if a!=b),min(len(reference),len(result)))
+                raise ValueError(
+                    'native unit %s mismatch at $%05X: original=%s vasm=%s '
+                    'sizes=%d/%d' % (report['file'],at,
+                    reference[at:at+12].hex(),result[at:at+12].hex(),
+                    len(reference),len(result)))
             report['native_assembler_verified']=True
         result=_assemble(assembler,destination/mainfile,
                          destination/'M19_P2D_ASSEMBLED_TEST.Lib')
