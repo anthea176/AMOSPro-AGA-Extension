@@ -6,7 +6,7 @@ on:
       - 'tools/m19_p2a_public_bob_col_emit.py'
       - 'tools/build_m19_p2a_public_in_memory.py'
       - 'tools/test_m19_p2a_public_gate_a.py'
-      - 'examples/M19_P2A_BOB_COLLISION.asc'
+      - 'examples/bob_collision.asc'
       - 'dist/AMOSPro_AGA.Lib'
       - '.github/workflows/m19-p2a-public-lib-gate-a.yml'
   workflow_dispatch:
@@ -30,33 +30,24 @@ jobs:
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
       - name: AMOS syntax static preflight of actual test example
-        run: python -B tools/amos_preflight.py --strict-target examples/M19_P2A_BOB_COLLISION.asc
+        run: python -B tools/amos_preflight.py --strict-target examples/bob_collision.asc
       - name: Test P2a AP20 source and real native public function
         run: python -B tools/test_m19_p2a_public_gate_a.py
       - name: Build P2a candidate entirely in memory
         run: python -B tools/build_m19_p2a_public_in_memory.py
-      - name: Publish exact candidate to Actions artifacts and audit log
+      - name: Verify installed canonical binary equals deterministic P2a builder
         run: |
           python -B - <<'PY'
           from pathlib import Path
           from hashlib import sha256
-          import sys, os, base64
+          import sys
           sys.path.insert(0, 'tools')
           from build_m19_p2a_public_in_memory import build_p2a
-          binary,meta=build_p2a()
-          target=Path(os.environ['RUNNER_TEMP'])/'AMOSPro_AGA.Lib'
-          target.write_bytes(binary)
-          print('P2A_BUILT_LIB_SHA256', sha256(binary).hexdigest(),
-                'BYTES', len(binary), 'AP20', meta['entries'], flush=True)
-          encoded=base64.b64encode(binary).decode('ascii')
-          for pos in range(0,len(encoded),2048):
-              print('P2A_BIN:%04d:%s'%(pos//2048,encoded[pos:pos+2048]),flush=True)
+          actual=Path('dist/AMOSPro_AGA.Lib').read_bytes()
+          expected,meta=build_p2a()
+          assert actual==expected and sha256(actual).hexdigest()==meta['sha256']
+          assert len(actual)==129544 and meta['entries']==198
+          print('P2A_CANONICAL_LIB_GATE_A_PASS',len(actual),sha256(actual).hexdigest(),flush=True)
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M19-P2a-AMOSPro-AGA-candidate
-          path: ${{ runner.temp }}/AMOSPro_AGA.Lib
-          if-no-files-found: error
-          retention-days: 14
       - name: No accidental tracked binary or LAST_GOOD changes from CI
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
