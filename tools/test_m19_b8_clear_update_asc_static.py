@@ -7,8 +7,8 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c"
-SIZE=20821
+LIB="47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785"
+SIZE=23601
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -37,7 +37,7 @@ def verify(path:Path):
     assert len(data)==SIZE,("B8 ASC length",len(data),SIZE)
     s=data.decode("ascii")
     assert s.endswith("Return\n") and max(map(len,s.splitlines()))<=200
-    assert LIB in s and 'RAM:M19_P1C_PRIORITY.TXT' in s
+    assert LIB in s and 'RAM:M19_P1D_LIMIT_BOB.TXT' in s
     assert 'Dim _SEEN(1)' in s and '_SEEN(0)=0 : _SEEN(1)=0' in s
     assert 'NO TIMER OR BENCHMARK' in s
     assert len(re.findall(r'\b_CLEAR=Aga Bob Clear',s))==1
@@ -54,7 +54,7 @@ def verify(path:Path):
     assert s.count('Aga Y Bob(_QID)')==1
     assert s.count('Aga I Bob(_QID)')==1
     assert s.index('_QX=Aga X Bob(_QID)') < s.index('_QY=Aga Y Bob(_QID)') < s.index('_QI=Aga I Bob(_QID)')
-    assert 'P1c CANDIDATE SHA256' in s
+    assert 'P1d CANDIDATE SHA256' in s
     assert 'Aga Bob Draw' not in s
     assert 'Trap Load "M19_P1B_HOTSPOT_BANK26.abk",_HOTBANK' in s
     assert 'Deek(_HOT_PTR+60)<>4 or Deek(_HOT_PTR+62)<>3' in s
@@ -67,6 +67,29 @@ def verify(path:Path):
     assert 'HOTSPOT_LOAD_ERR' in s
     assert 'If _ERR=0 and _PR_STEP>0' in s  # Probe the real default on first frame.
     assert 'For _PR_STEP=0 To 7' in s and '_PR_MODE=Int(_PR_STEP/2)' in s
+    assert 'For _LIMIT_STEP=0 To 7' in s and '_LIMIT_CASE=Int(_LIMIT_STEP/2)' in s
+    for call in ('Aga Limit Bob(0,113,103,1,1)', 'Aga Limit Bob(1,114,103,1,1)',
+                 'Aga Limit Bob(0,0,0,1,1)', 'Aga Limit Bob(0,0,0,0,0)',
+                 'Aga Limit Bob(0,113,103,0,1)'):
+        assert call in s
+    phases = s[s.index('For _LIMIT_STEP=0 To 7'):s.index('Next _LIMIT_STEP')]
+    assert phases.index('_LIMIT_CL=Aga Bob Clear') < phases.index('_LIMIT_UP=Aga Bob Update')
+    assert phases.index('_LIMIT_UP=Aga Bob Update') < phases.index('Gosub _LIMIT_PROBE') < phases.index('Gosub _DO_SWAP')
+    assert '_LIMIT_FRAMES<>8 or _LIMIT_PIXELS<>24 or _LIMIT_REJECTS<>8' in s
+    assert '_LIMIT_MASK=128' in s and '_LIMIT_MASK=_LIMIT_MASK/2' in s
+    from build_m19_p1b_hotspot_fixture import ROWS
+    # P1c mode 1 draws opaque Bob 2 before masked Bob 1, using logical Y.
+    # Bob 1 origins and mask match the established priority phases.
+    actual = []
+    for case in range(4):
+        colors = []
+        for x in (112, 113, 114):
+            global_ok = case == 3 or (case in (0, 1) and x == 113)
+            bob1_ok = global_ok and (case != 1 or x == 114)
+            colors.append((ROWS[2][x-112] or 5) if bob1_ok else (5 if global_ok else 1))
+        actual.append(tuple(colors))
+    assert actual == [(1, 4, 1), (1, 5, 1), (1, 1, 1), (5, 4, 5)]
+
     assert '_PR_SET=Aga Bob Priority(_PR_MODE)' in s
     assert '_PR_NEG=Aga Bob Priority(-1)' in s and '_PR_HIGH=Aga Bob Priority(4)' in s
     assert 'Aga Bob 1,116,104,1' in s and 'Aga Bob 2,112,102,1' in s

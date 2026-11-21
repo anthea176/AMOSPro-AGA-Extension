@@ -1,12 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 21 novembre 2026 — M19 P1d Limit Bob, candidate en mémoire
+## 21 novembre 2026 — M19 P1d Limit Bob, Lib de travail pour WinUAE
 
 Signature approuvée par l’auteur. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob) · [Builder](../tools/build_m19_p1d_limit_bob_in_memory.py) · [Banc MC68020](../tools/test_m19_p1d_limit_bob_gate_a.py).
 
-**P1d en mémoire** — 121 432 octets, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, 94 commandes, 192 entrées AP20, cinq groupes et PC16 maximal 32 530. Gate A locale PASS sur 76 scénarios natifs et deux placements. Le banc vérifie les pixels et les masques, les quatre modes de tri, les refus avant DMA, l’ouverture et la restauration du décor des deux pages via Update/Clear. Services Amiga simulés.
+**P1d active** — 121 432 octets, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, 94 commandes, 192 entrées AP20, cinq groupes et PC16 maximal 32 530. Gate A locale PASS sur 76 scénarios natifs et deux placements. Le banc vérifie les pixels et les masques, les quatre modes de tri, les refus avant DMA, l’ouverture et la restauration du décor des deux pages via Update/Clear. Services Amiga simulés.
 
-P1c reste la Lib installable avec son banc WinUAE. P0 reste `LAST_GOOD`. Les essais WinUAE P1d attendent une décision de bascule.
+P1d est livrée sur `main` avec le [banc WinUAE](../tests/current/README.md). P0 reste `LAST_GOOD`. Les Gates B/C/D P1d restent à tester.
 
 ## 21 novembre 2026 — M19 P1c Bob Priority installée dans la Lib de travail
 

@@ -6,7 +6,6 @@ from pathlib import Path
 from unicorn.m68k_const import UC_M68K_REG_PC, UC_M68K_REG_SR
 
 from amos_link_test_support import relocate
-from build_m19_p1c_bob_priority_in_memory import build_p1c
 from build_m19_p1d_limit_bob_in_memory import build_p1d
 from compiler_bridge_v2_probe import DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
@@ -216,7 +215,7 @@ def check_public_pages(layout, parts, meta):
 def main():
     binary, meta = build_p1d()
     assert binary == build_p1d()[0]
-    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == build_p1c()[0]
+    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == binary
     _, parts, _ = unpack_ap20(binary)
     assert parts[179] == GETP
     dispatch_models(parts, 181, meta['limit_offset'], 180)

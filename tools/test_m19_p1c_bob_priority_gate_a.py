@@ -143,7 +143,10 @@ def main():
     binary, meta = build_p1c()
     _, parts, _ = unpack_ap20(binary)
     assert binary == build_p1c()[0]
-    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == binary
+    from active_library import P1C_SHA, P1D_SHA, verify_active
+    from hashlib import sha256
+    active, _, _ = verify_active(ROOT)
+    assert sha256(active).hexdigest() in (P1C_SHA, P1D_SHA)
     assert parts[177] == GETP
     dispatch_models(parts, 179, meta['priority_offset'], 178)
     dispatch_models(parts, 142, meta['open_offset'], 12)

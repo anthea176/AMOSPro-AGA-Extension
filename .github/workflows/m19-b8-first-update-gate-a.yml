@@ -53,10 +53,10 @@ jobs:
           sys.path.insert(0, 'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA
           current,good,label=verify_active(Path('.'))
           digest=sha256(current).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA)
+          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA)
           assert sha256(good).hexdigest()==P0_FREE_SHA
           if digest==B7M2_SHA:
               asc=Path('tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc')

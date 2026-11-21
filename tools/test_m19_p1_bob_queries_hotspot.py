@@ -30,10 +30,10 @@ class P1Readiness(unittest.TestCase):
         good = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         self.assertEqual(len(good), 117896)
         self.assertEqual(sha256(good).hexdigest(), P0_SHA)
-        from active_library import P1B_SHA, P1C_SHA, verify_active
+        from active_library import P1B_SHA, P1C_SHA, P1D_SHA, verify_active
         verified, _, _ = verify_active(ROOT)
         self.assertEqual(current, verified)
-        self.assertIn(sha256(current).hexdigest(), (P1B_SHA, P1C_SHA))
+        self.assertIn(sha256(current).hexdigest(), (P1B_SHA, P1C_SHA, P1D_SHA))
         self.assertNotEqual(good, current)
 
     def test_native_private_bob_read_fields_and_guards(self):

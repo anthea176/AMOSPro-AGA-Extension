@@ -19,15 +19,15 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P1c — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **119 916 octets**, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`, **93 commandes / 190 entrées AP20**.
+**M19 P1d — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **121 432 octets**, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, **94 commandes / 192 entrées AP20**.
 
-**Banc WinUAE** — 405 frames de régression, quatre phases hotspot et huit lectures de pixel en chevauchement. [Installation, ASC et banque 26](tests/current/README.md) · [ASC](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [LAST_GOOD P0](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
+**Banc WinUAE** — 405 frames de régression, quatre phases hotspot et huit mesures de priorité et 24 sondes de clipping. [Installation, ASC et banque 26](tests/current/README.md) · [ASC](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [LAST_GOOD P0](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
 
 **Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire. **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P1c** — **93 commandes / 190 entrées AP20**, MC68020 minimum. `Aga Bob Priority(Mode)` règle l'ordre de dessin lors de `Aga Bob Update`.
+**API de la bibliothèque courante M19 P1d** — **94 commandes / 192 entrées AP20**, MC68020 minimum. `Aga Limit Bob` découpe le rendu des Bobs au pixel près.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -103,6 +103,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Clear`** | `_OK=Aga Bob Clear` | **Fonction numérique sans paramètre, retour 1/0.** Restaure le décor précédemment sauvegardé sur la page arrière physique Safe, sans toucher à la page affichée ni provoquer de Swap. Refuse une sauvegarde absente ou une page non sûre. P0 Runtime : CLEAR_OK 403, CLEAR_FAILS 0 ; Compiler P0 non testé. |
 | **`Aga Bob Update`** | `_OK=Aga Bob Update` | **Fonction numérique sans paramètre, retour 1/0.** Prévalide les images des Bobs actifs, sauvegarde/restaure le décor de la page arrière physique puis dessine les Bobs en une transaction, sans Swap implicite. Exige au moins un premier `Aga Bob` SET réussi pour amorcer `End` ; un échec conserve DIRTY et bloque Swap. P0 Runtime : UPDATE_OK 405, UPDATE_FAILS 0 ; Compiler P0 non testé. |
 | **`Aga Bob Priority`** | `_OK=Aga Bob Priority(Mode)` | 0 = ID croissant, 1 = Y logique puis ID croissants, 2 = ID décroissant, 3 = Y logique puis ID décroissants. Dessin du fond vers le premier plan. Le mode vaut 0 après ouverture réussie. Retour 1 si accepté, 0 si mode invalide ou écran AGA actif non détenu. Le réglage seul ne dessine rien. |
+| **`Aga Limit Bob`** | `_OK=Aga Limit Bob(N,X,Y,W,H)` | Limite globale (N=0) ou par Bob (1..64). Origine signée, largeur et hauteur positives. Le rectangle [X,X+W) × [Y,Y+H) est intersecté avec l’écran et les autres limites applicables au prochain Update. Quatre zéros effacent la limite ciblée. Retour 1 si accepté, 0 en cas de refus. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Fonction numérique de lecture du Y d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Fonction numérique de lecture du numéro d'image 1..4096 d'un Bob actif `N` (1..64), ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |

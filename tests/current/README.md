@@ -1,10 +1,10 @@
-# M19 P1c — Priorité des Bobs sous WinUAE
+# M19 P1d — Limit Bob sous WinUAE
 
-**P1c active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **119 916 octets**, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`. 93 commandes, 190 entrées AP20, cinq groupes MC68020. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44886543740).
+**P1d active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **121 432 octets**, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`. 94 commandes, 192 entrées AP20, cinq groupes MC68020. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44888685052).
 
 **`LAST_GOOD` protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **P0**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. Ne pas remplacer, promouvoir ni utiliser ce binaire à la place de la candidate de test.
 
-**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **20 821 octets ASCII LF**, SHA256 `47dd0e205ccaac793aef6103008ee9fe1e9d01771326a14d4b491ae9e952b7ae`. Il exécute 405 frames, trois phases Bank Free, 42 lectures X/Y/image, quatre phases hotspot et huit mesures de priorité. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
+**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **23 601 octets ASCII LF**, SHA256 `86b251b1deb8c115693697ea76b290b75696a324f5268b257b02fb82fdffc01f`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité et 24 lectures de clipping. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
 
 ## Installation sous WinUAE
 
@@ -16,7 +16,7 @@
    - position logique (2,2) : **image partiellement coupée en haut à gauche**, origine (-2,-1) ;
    - position logique (32767,32767) : **image totalement hors écran**, réussite de l'Update **sans dessiner** ;
    - position logique (140,90) : **image dessinée à (136,87)**, correctement réactivée.
-5. Après le hotspot, vérifier le chevauchement des deux Bobs. L’ASC capture le pixel (113,103) sur la page arrière avant chaque Swap. Les deux Bobs utilisent des couleurs distinctes à ce point. La hauteur logique de l’ancre du Bob 1 est supérieure à celle du Bob 2, et leurs origines de dessin sont dans l’ordre inverse. Exécuter deux Runtime dans la même session AMOS, sauvegarder chaque `RAM:M19_P1C_PRIORITY.TXT` sous un nom distinct avant de relancer et noter le rendu des phases hotspot.
+5. Après les mesures de priorité, le banc lit les pixels (112,103), (113,103) et (114,103) sur chaque page arrière avant le Swap. Fais deux Runtime dans la même session AMOS. Sauvegarde `RAM:M19_P1D_LIMIT_BOB.TXT` sous un nom distinct après chaque lancement.
 
 Le champ `LIB_SHA256` reprend l’empreinte attendue dans l’ASC. Vérifier l’empreinte de la Lib installée. Les quatre phases hotspot gardent leur contrôle visuel. Les huit mesures P1c comparent un pixel lu dans la page arrière à sa couleur attendue.
 
@@ -39,17 +39,29 @@ Le champ `LIB_SHA256` reprend l’empreinte attendue dans l’ASC. Vérifier l�
 | `PRIORITY_DEFAULT_OK` / `PRIORITY_SET_OK` / `PRIORITY_REJECT_OK` | `1` / `7` / `16` |
 | `PRIORITY_CAPTURE_OK` / `PRIORITY_PIXELS_OK` / `PRIORITY_SWAP_OK` | `8` / `8` / `8` |
 | Couleurs, deux lectures par mode (0, 1, 2, 3) | `5,5,4,4,4,4,5,5` |
+| `LIMIT_FRAMES_OK` / `LIMIT_PIXELS_OK` / `LIMIT_REJECT_OK` | `8` / `24` / `8` |
 | `CLOSE_RETURNED` / `BANKS_ERASED` | `1` / `4` |
 
 Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque 26 libre). Si ses métadonnées hotspot ne correspondent pas : `ERR 27`. Des erreurs **28 à 33** concernent les phases supplémentaires Clear/Update/Swap/getters/comptage. Les codes P1c vont de 34 à 42. `39` signale un échec de capture ou un en-tête inattendu. `40` signale une mauvaise couleur. Le champ `PRIORITY_SAMPLE` enregistre les couleurs lues.
 
+## Sondes P1d
+
+| Réglage, deux pages par cas | Gauche / centre / droite |
+| --- | --- |
+| Limite globale d’un pixel | `1 / 4 / 1` |
+| Limite locale du Bob 1 disjointe de la limite globale | `1 / 5 / 1` |
+| Les deux Bobs entièrement coupés | `1 / 1 / 1` |
+| Limites effacées | `5 / 4 / 5` |
+
+`ERR 43–46` concerne Clear, réglage ou Update. `47` indique un échec de capture, `48` une couleur inattendue, `49` un total incorrect. Les lignes `LIMIT_SAMPLE` détaillent les couleurs mesurées.
+
 ## Gates
 
-| Gate | P1c |
+| Gate | P1d |
 | --- | --- |
-| A — MC68020 sous Unicorn, services simulés | **PASS**, 36 scénarios P1c et 98 contrôles intégrés P1b |
-| B — AMOS Runtime WinUAE | **PASS sur les mesures, deux journaux** |
-| C — véritable exécutable AMOS Compiler | **PASS sur les mesures, un journal** |
+| A — MC68020 sous Unicorn, services simulés | **PASS**, 76 scénarios P1d et 36 scénarios de régression P1c |
+| B — AMOS Runtime WinUAE | **À tester** |
+| C — véritable exécutable AMOS Compiler | **À tester** |
 | D — Amiga physique | **NON TESTÉ** |
 
 [Résultats des trois passages et portée](../../docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md).

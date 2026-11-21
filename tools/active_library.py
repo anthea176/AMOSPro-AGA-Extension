@@ -32,6 +32,7 @@ B7M1_SHA="838245ce1ad2a4120bb2512df8b2147ae89dc6b3eebe2ba2a9f633f2e9a56403"  # f
 B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # frozen historical B7-m2
 B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # frozen B8 (SafePort workaround 405 frames Runtime only)
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
+P1D_SHA="47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785"
 P1C_SHA="658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c"
 P1B_SHA="2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4"  # active M19 P1b native Safe-Blitter hotspot; Gate A MC68020 PASS, B/C/D pending
 P1A_SHA="165a24edcd4c00074d6ddce4a98317f720ed3236d61ba006333574743b55063a"  # M19 P1a active test candidate; exact source-built, Gate A 110 PASS, B/C/D pending
@@ -104,6 +105,14 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P1D_SHA:
+        from build_m19_p1d_limit_bob_in_memory import build_p1d
+        expected, meta = build_p1d()
+        assert cur == expected and len(cur) == 121432 and meta['sha256'] == P1D_SHA
+        assert (meta['public_commands'], meta['ap20_entries'], meta['pc16_max']) == (94, 192, 32530)
+        assert meta['native_groups'] == [142, 153, 156, 181, 185]
+        assert len(good) == 117896 and cur != good
+        return cur, good, "M19 P1d Limit Bob test candidate, MC68020 Gate A PASS"
     if current_sha == P1C_SHA:
         from build_m19_p1c_bob_priority_in_memory import build_p1c
         expected, meta = build_p1c()

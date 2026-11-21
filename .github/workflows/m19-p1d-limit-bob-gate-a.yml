@@ -8,6 +8,8 @@ on:
       - 'tools/m19_p0d_private_blit_emit.py'
       - 'tools/m19_p0d_safe_bank_blit_emit.py'
       - 'tools/m19_p0j_explicit_safe_draw_emit.py'
+      - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
+      - 'tools/test_m19_b8_clear_update_asc_static.py'
       - 'dist/AMOSPro_AGA.Lib'
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
   workflow_dispatch:
@@ -33,7 +35,12 @@ jobs:
         run: |
           python -B tools/test_m19_p1d_limit_bob_gate_a.py
           python -B tools/test_m19_p1c_bob_priority_gate_a.py
-      - name: Verify protected P0 and the source-only build
+      - name: Preflight the sole WinUAE campaign and API manuals
+        run: |
+          python -B tools/test_current_ram_log.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/test_readme_api_coverage.py
+      - name: Verify protected P0 and the installed build
         run: |
           printf '%s  %s\n' f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d dist/AMOSPro_AGA_LAST_GOOD.Lib | sha256sum -c
           git diff --exit-code -- dist/ tests/current/ tests/passed/
