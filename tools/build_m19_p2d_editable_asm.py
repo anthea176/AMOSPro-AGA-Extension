@@ -232,10 +232,22 @@ def verify_link(original: bytes, image: bytes, group: int,
             _, np, _ = unpack_ap20(image)
             first = next((i for i, (a, b) in enumerate(zip(op[group], np[group]))
                           if a != b), min(len(op[group]), len(np[group])))
+            import difflib
+            old_frag = op[group][PLANAR_START:PLANAR_END]
+            delta = len(np[group]) - len(op[group])
+            new_frag = np[group][PLANAR_START:PLANAR_END+delta]
+            matcher = difflib.SequenceMatcher(None, old_frag, new_frag,
+                                              autojunk=False)
+            changes = []
+            for tag, a, b, c, d in matcher.get_opcodes():
+                if tag != 'equal':
+                    changes.append((tag, f'{PLANAR_START+a:05X}',
+                                    old_frag[a:b].hex(), new_frag[c:d].hex()))
             context = (f'BOBS original={len(op[group])} compiled={len(np[group])}; '
                        f'first_diff=${first:05X}; '
                        f'orig={op[group][first:first+24].hex()}; '
-                       f'new={np[group][first:first+24].hex()}')
+                       f'new={np[group][first:first+24].hex()}; '
+                       f'PLANAR changes={changes[:16]}')
         except Exception as exc:
             context = f'AP20 parse failed: {exc}'
         raise SourceError(f'changed binary length {len(image)}, expected '
