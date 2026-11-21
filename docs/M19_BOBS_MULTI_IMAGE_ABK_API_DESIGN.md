@@ -202,9 +202,11 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 
 **Repackeur privé MC68020.** [Source](../tools/m19_p1e_bank_repack_emit.py) · [Banc](../tools/test_m19_p1e_bank_repack_gate_a.py). Pour une charge AGBO v1 intégralement validée par l'appelant, la routine calcule la taille de sortie, puis peut réécrire les plans et le répertoire dans une allocation disjointe. La source reste intacte. Les 132 scénarios natifs comparent la sortie au modèle Python, contrôlent les gardes mémoire et vérifient les refus avec une destination trop courte ou chevauchante.
 
-**Candidate native.** Le [builder P1e](../tools/build_m19_p1e_bank_edit_in_memory.py) reconstruit 124 444 octets, 96 commandes et 196 entrées AP20, avec une portée PC16 maximale de 14 130 octets. Les deux commandes requièrent un écran AGA ouvert appartenant au programme appelant. Le cache Chip et les stamps des Bobs survivants sont actualisés avant la notification `Bnk.Change`. La banque vide conserve son en-tête AGBO sans cache Chip. Le [banc intégré](../tools/test_m19_p1e_bank_edit_gate_a.py) exécute les octets MC68020 avec services Amiga simulés sur deux placements, vérifie les refus d’allocation et de frame, puis exerce Update, Clear et Swap après édition. La qualification WinUAE reste à faire.
+**Candidate native.** Le [builder P1e](../tools/build_m19_p1e_bank_edit_in_memory.py) reconstruit 124 444 octets, 96 commandes et 196 entrées AP20, avec une portée PC16 maximale de 14 130 octets. Les deux commandes requièrent un écran AGA ouvert appartenant au programme appelant. Le cache Chip et les stamps des Bobs survivants sont actualisés avant la notification `Bnk.Change`. La banque vide conserve son en-tête AGBO sans cache Chip. Le [banc intégré](../tools/test_m19_p1e_bank_edit_gate_a.py) exécute les octets MC68020 avec services Amiga simulés sur deux placements, vérifie les refus d’allocation et de frame, puis exerce Update, Clear et Swap après édition. Gate B WinUAE Runtime PASS sur deux journaux octet-identiques (405/405 frames, 9/9 pixels P1e, ERR 0) ; P1e promue LAST_GOOD. Gate C Compiler et D physique non testées. [Preuves](M19_P1E_PROMOTION_2026-11-21.md).
 
 ### P2 — Fonctions avancées / compatibilité progressive
+
+**21/11/2026 : P2a démarré en source-only.** [Modèle hôte rectangulaire puis masqué, 17 tests et CI](M19_P2A_COLLISIONS_HOST_2026-11-21.md). Signatures AP20, sémantique exacte de visibilité et intégration AGBO restent à établir avant tout code natif.
 
 | Fonction AMOS | Adaptation AGA envisagée |
 | --- | --- |

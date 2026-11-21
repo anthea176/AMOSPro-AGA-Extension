@@ -27,7 +27,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 | Sujet | Objectif |
 | --- | --- |
-| **P2a — collisions Bob–Bob** | D’abord intersections rectangulaires déterministes, puis masque pixel-exact ; ne pas ajouter de token avant contrat/API/AP20 vérifiés. [Contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive). |
+| **P2a — collisions Bob–Bob** | D’abord intersections rectangulaires déterministes, puis masque pixel-exact ; ne pas ajouter de token avant contrat/API/AP20 vérifiés. [Modèle hôte P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive). |
 | **P2b — retournements H/V** | Transformations non destructives par objet, image et hotspot partagés préservés. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |

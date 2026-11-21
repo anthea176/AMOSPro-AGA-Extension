@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P2a collisions Bob–Bob (modèle hôte)
+
+[Contrat P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [Modèle Python](../tools/m19_p2a_bob_collision_model.py) · [17 tests](../tools/test_m19_p2a_bob_collision_model.py) · [CI dédiée](../.github/workflows/m19-p2a-bob-collisions-host.yml). Rectangles puis masques, hotspots et clipping global/local. Tests Python source-only ; aucune modification P1e LAST_GOOD ni ASC, aucun token AP20, aucune Gate native P2a / Runtime / Compiler / physique revendiquée. Raccord aux données AGBO P1e à préparer après vérification des champs source.
+
 ## 21 novembre 2026 — M19 P1e LAST_GOOD, ouverture P2
 
 **Autorisation expresse de l’auteur :** « non pas de compile promot la lib, met a jour les CI et on continu sur le chantier P2 ». Promotion sur `main` de la Lib active P1e en `LAST_GOOD` par copie Git blob strictement identique (**124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, blob `5bb0c476c2b286495a1d0cf7d4415dbbc4eec369`). L’ancienne P0 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` est conservée dans l’historique Git.
