@@ -30,6 +30,7 @@ from m19_p2d_bob_auto_update_emit import emit_bob_auto_update
 from m19_p2b_bob_flip_emit import emit_bob_flip
 from m19_p2b_planar_orientation020_emit import emit_planar_orientation020
 from m19_p2a_collision020_emit import emit_collision020
+from m19_p2a_pair_chip_resolve_emit import emit_p2a_pair_chip_resolve
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
@@ -41,6 +42,7 @@ CLEANUP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_CLEANUP_MC68020.s'
 PUBLIC_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PUBLIC_COL_MC68020.s'
 QUERY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_QUERY_MC68020.s'
 KERNEL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_KERNEL_MC68020.s'
+CHIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_CHIP_RESOLVE_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -72,6 +74,9 @@ QUERY_END = 0x9D38
 KERNEL_SOURCE_NAME = 'M19_P2A_COLLISION_KERNEL_MC68020.s'
 KERNEL_START = 0x9858
 KERNEL_END = 0x9B54
+CHIP_NAME = 'M19_P2A_CHIP_RESOLVE_MC68020.s'
+CHIP_START = 0x8BB6
+CHIP_END = 0x8E20
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -514,6 +519,63 @@ def replace_raw_p2a_kernel(text: str) -> str:
             text[stop+len(tail):])
 
 
+@lru_cache(maxsize=1)
+def prove_p2a_chip_provenance() -> tuple[int, int, int, bytes]:
+    """Pin original P2a pair/Chip resolver to verified source emitter bytes."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    full, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    chip, chip_labels = emit_p2a_pair_chip_resolve()
+    _, parts, _ = unpack_ap20(original)
+    base = len(parts[group]) - len(full)
+    begin = base + labels['p2a_pair_chip_resolve_entry']
+    end = base + labels['p2a_pair_hotspot_entry']
+    epilogue = end - 4
+    require((begin, end, epilogue) ==
+            (CHIP_START, CHIP_END, 0x8E1C),
+            'P2a Chip resolver source offsets differ from P2d')
+    fragment = chip[chip_labels['p2a_pair_chip_resolve_entry']:]
+    require(len(fragment) == end-begin and
+            full[labels['p2a_pair_chip_resolve_entry']:
+                 labels['p2a_pair_hotspot_entry']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[-4:] == bytes.fromhex('74004e75'),
+            'P2a Chip resolver cannot be reproduced from source')
+    return begin, end, epilogue, fragment
+
+
+def replace_raw_p2a_chip(text: str) -> str:
+    """Replace P2a Chip resolver, preserving two mixed audit boundary rows."""
+    head = ('    dc.b $74,$00,$4E,$75,$48,$E7,$EF,$EE,$4F,$EF,$FF,$00'
+            '  ; +$08BB2: 74004E7548E7EFEE4FEFFF00\n')
+    tail = ('    dc.b $01,$00,$4C,$DF,$77,$F7,$74,$00,$4E,$75,$48,$E7'
+            '  ; +$08E16: 01004CDF77F774004E7548E7\n')
+    first = text.find(head)
+    last = text.find(tail, first)
+    require(first >= 0 and last > first,
+            'P2a Chip resolver source audit boundaries missing')
+    original = text[first:last + len(tail)]
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                         original)
+    pos, collected = 0x8BB2, bytearray()
+    for at, data in matches:
+        require(int(at,16) == pos,
+                f'P2a Chip source offsets not contiguous at {at}')
+        b = bytes.fromhex(data)
+        collected.extend(b)
+        pos += len(b)
+    require(pos == CHIP_END + 2 and
+            collected[:4] == bytes.fromhex('74004e75') and
+            collected[-2:] == bytes.fromhex('48e7') and
+            collected[4:-2] == prove_p2a_chip_provenance()[3],
+            'P2a Chip audit bytes do not match source emitter')
+    return (text[:first] +
+            '    dc.b $74,$00,$4E,$75  ; +$08BB2: 74004E75\n' +
+            '    include "' + CHIP_NAME + '"\n' +
+            '    dc.b $48,$E7  ; +$08E20: 48E7\n' +
+            text[last+len(tail):])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -572,7 +634,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    cleanup_text: str | None = None,
                    public_col_text: str | None = None,
                    query_text: str | None = None,
-                   kernel_text: str | None = None) -> None:
+                   kernel_text: str | None = None,
+                   chip_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -585,6 +648,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(PUBLIC_COL_FILE.is_file(), f'missing authored module: {PUBLIC_COL_FILE}')
     require(QUERY_FILE.is_file(), f'missing authored module: {QUERY_FILE}')
     require(KERNEL_FILE.is_file(), f'missing authored module: {KERNEL_FILE}')
+    require(CHIP_FILE.is_file(), f'missing authored module: {CHIP_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -593,6 +657,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
+    text = replace_raw_p2a_chip(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
     text = replace_raw_p2a_public(text)
@@ -753,6 +818,14 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P2a collision kernel contains unclassified machine code')
     (folder / KERNEL_SOURCE_NAME).write_text(kernel_source,
                                             encoding='ascii', newline='\n')
+    chip_source = (chip_text if chip_text is not None
+                   else CHIP_FILE.read_text('ascii'))
+    require(chip_source.count('p2a_pair_chip_resolve_entry:') == 1 and
+            chip_source.count('p2a_pair_chip_return:') == 1 and
+            not re.search(r'(?im)^\s*dc\.[bwll]\b', chip_source),
+            'P2a Chip pair source missing entry/return or has raw bytes')
+    (folder / CHIP_NAME).write_text(chip_source,
+                                    encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -828,6 +901,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     public_start, public_end, _, _ = prove_p2a_public_provenance()
     query_start, query_end, _, _ = prove_p2a_query_provenance()
     kernel_start, kernel_end, _, _ = prove_p2a_kernel_provenance()
+    chip_start, chip_end, _, _ = prove_p2a_chip_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -836,7 +910,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (cleanup_start <= i < cleanup_end) or
                 (public_start <= i < public_end) or
                 (query_start <= i < query_end) or
-                (kernel_start <= i < kernel_end) for i in differences),
+                (kernel_start <= i < kernel_end) or
+                (chip_start <= i < chip_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -856,14 +931,16 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           cleanup_text: str | None = None,
           public_col_text: str | None = None,
           query_text: str | None = None,
-          kernel_text: str | None = None) -> tuple[bytes, list[int]]:
+          kernel_text: str | None = None,
+          chip_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
                    planar_text=planar_text, flip_text=flip_text,
                    variant_text=variant_text, paint_geo_text=paint_geo_text,
                    cleanup_text=cleanup_text, public_col_text=public_col_text,
-                   query_text=query_text, kernel_text=kernel_text)
+                   query_text=query_text, kernel_text=kernel_text,
+                   chip_text=chip_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1042,6 +1119,26 @@ def test_editability(assembler: Path) -> None:
                 'P2a invalid result edit not assembled')
         require(kernel_start <= invalid < kernel_end,
                 'P2a kernel edit escaped source-owned region')
+        chip_start, chip_end, chip_ret, _ = prove_p2a_chip_provenance()
+        chip_source = CHIP_FILE.read_text('ascii')
+        needle = 'p2a_pair_chip_return:\n    move.l 20(a2),d3'
+        require(chip_source.count(needle) == 1,
+                'P2a Chip result path not uniquely identified')
+        # Editing a one-byte immediate while preserving AP20 topology.
+        end_needle = '    moveq #0,d2\n    rts'
+        require(chip_source.count(end_needle) == 1,
+                'P2a Chip result MOVEQ not uniquely editable')
+        revised = chip_source.replace(end_needle,'    moveq #1,d2\n    rts')
+        edited_chip, chip_diffs = build(
+            assembler, root/'modified_chip_resolve',
+            allow_edited=True, chip_text=revised)
+        require(chip_diffs == [chip_ret+1],
+                f'P2a Chip edit affected {chip_diffs}, '
+                f'expected {[chip_ret+1]}')
+        require(unpack_ap20(edited_chip)[1][group][chip_ret:chip_ret+2]
+                == b'\x74\x01', 'P2a Chip modified MOVEQ was not encoded')
+        require(chip_start <= chip_ret < chip_end,
+                'P2a Chip edit escaped source-owned region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1052,6 +1149,7 @@ def test_editability(assembler: Path) -> None:
     print('P2A_PUBLIC_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_QUERY_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_KERNEL_EDITABILITY_TEST PASS: MOVE.L #-1,D3 -> #-2,D3, one byte changed')
+    print('P2A_CHIP_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
