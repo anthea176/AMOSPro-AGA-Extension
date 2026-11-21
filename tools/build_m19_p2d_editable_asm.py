@@ -226,8 +226,20 @@ def verify_link(original: bytes, image: bytes, group: int,
                 planes_start: int, control_start: int, control_end: int,
                 *, allow_edited: bool) -> list[int]:
     """Reject AP20 topology/geometry changes and changes outside the owned code."""
-    require(len(image) == len(original),
-            f'changed binary length {len(image)}, expected {len(original)}')
+    if len(image) != len(original):
+        try:
+            _, op, _ = unpack_ap20(original)
+            _, np, _ = unpack_ap20(image)
+            first = next((i for i, (a, b) in enumerate(zip(op[group], np[group]))
+                          if a != b), min(len(op[group]), len(np[group])))
+            context = (f'BOBS original={len(op[group])} compiled={len(np[group])}; '
+                       f'first_diff=${first:05X}; '
+                       f'orig={op[group][first:first+24].hex()}; '
+                       f'new={np[group][first:first+24].hex()}')
+        except Exception as exc:
+            context = f'AP20 parse failed: {exc}'
+        raise SourceError(f'changed binary length {len(image)}, expected '
+                          f'{len(original)}; {context}')
     old_tokens, old_parts, old_title = unpack_ap20(original)
     tokens, parts, title = unpack_ap20(image)
     require((tokens, title, len(parts)) == (old_tokens, old_title, len(old_parts)),
