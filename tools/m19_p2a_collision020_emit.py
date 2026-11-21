@@ -108,10 +108,10 @@ def emit_collision020():
         c.word(0xccc7)   # MULU.W D7,D6: local_y * native AGBO stride
         c.move(D(5),D(7));c.shift(7,3,left=False) # local_x // 8
         c.alu('add',D(7),6)
-        c.move(D(4),A(3));c.word(0xd7c6)  # ADDA.L D6,A3
+        c.move(D(4),A(6));c.word(0xddc6)  # ADDA.L D6,A6 (MOVEM-preserved)
         c.imm('and',7,D(5))
         c.move(I(7),D(7));c.alu('sub',D(5),7)
-        c.word(0x0f13)             # BTST D7,(A3): MSB-first mask bit
+        c.word(0x0f16)             # BTST D7,(A6): MSB-first mask bit
         B(7,'p2a_next_pixel')     # clear bit in either image => no hit
         L(f'p2a_opaque_{index}')
     B(0,'p2a_hit')
