@@ -154,9 +154,9 @@ Objectif : plusieurs images 256 couleurs dans une banque ABK, masques et Bobs pe
 
 La priorité P1 **n'autorise pas** une modification silencieuse du format ABK P0 : prévoir dès P0 champs de hotspot et métadonnées extensibles, réservés/ignorés avant implémentation.
 
-#### P1c — Priorité d'affichage des Bobs (proposition à valider)
+#### P1c — Priorité d'affichage des Bobs
 
-**Signature proposée** — `_OK=Aga Bob Priority(Mode)`, fonction numérique à un argument entier. Retour `1` si le mode est accepté, `0` pour une valeur hors 0–3 ou en l'absence d'écran AGA actif appartenant au programme. Un refus conserve le mode courant. Le mode appartient à l'écran AGA actif. Il est initialisé à 0 à chaque ouverture et s'applique au prochain `Aga Bob Update`. L'appel de réglage seul ne déclenche ni dessin, ni DMA, ni Swap.
+**Signature approuvée** — `_OK=Aga Bob Priority(Mode)`, fonction numérique à un argument entier. Retour `1` si le mode est accepté, `0` pour une valeur hors 0–3 ou en l'absence d'écran AGA actif appartenant au programme. Un refus conserve le mode courant. Le mode appartient à l'écran AGA actif. Il est initialisé à 0 à chaque ouverture et s'applique au prochain `Aga Bob Update`. L'appel de réglage seul ne déclenche ni dessin, ni DMA, ni Swap.
 
 | Mode | Ordre de dessin, du fond vers le premier plan | Règle en cas d'égalité |
 | --- | --- | --- |
@@ -165,9 +165,9 @@ La priorité P1 **n'autorise pas** une modification silencieuse du format ABK P0
 | 2 | ID décroissant | ID unique |
 | 3 | Y logique signé décroissant | ID décroissant |
 
-En mode Y, la clé est l'ancre renvoyée par `Aga Y Bob(N)`. Un changement d'image ou de hotspot peut déplacer son origine de dessin et modifier le clipping. L'ordre relatif des Bobs garde la même clé Y. Le départage par ID est proposé pour rendre l'ordre reproductible, y compris après OFF/réactivation. Les quatre ordres reprennent la logique de [Priority et Priority Reverse d'AMOS](https://amospromanual.dev/07-02-blitter-objects.html#bob-priority).
+En mode Y, la clé est l'ancre renvoyée par `Aga Y Bob(N)`. Un changement d'image ou de hotspot peut déplacer son origine de dessin et modifier le clipping. L'ordre relatif des Bobs garde la même clé Y. Le départage par ID rend l'ordre reproductible, y compris après OFF/réactivation. Les quatre ordres reprennent la logique de [Priority et Priority Reverse d'AMOS](https://amospromanual.dev/07-02-blitter-objects.html#bob-priority).
 
-**Raccord prévu.** La base P1b MC68020 parcourt les IDs actifs 1 à 64 dans `explicit_frame_draw_entry` après `image_frame_preflight_entry`. Conserver cette prévalidation avant tout DMA et prévoir le tri dans le parcours de dessin, à partir des IDs et Y logiques des Bobs actifs. Comparer des Y signés directement. Conserver la restauration et la sauvegarde du fond sur la page arrière, les masques, le clipping et le Swap explicite. Le format AGBO reste identique. Le builder P1b rapporte un déplacement PC16 maximal de 31 444, pour un seuil exclusif de 32 766. Le placement des routines et les nouvelles entrées AP20 doivent être contrôlés sur la construction P1c.
+**Raccord source P1c.** La base P1b MC68020 parcourt les IDs actifs 1 à 64 dans `explicit_frame_draw_entry` après `image_frame_preflight_entry`. P1c conserve cette prévalidation et trie les IDs actifs à partir des Y logiques signés. Le réglage est remis à zéro par le chemin de succès de `Aga Screen Open`. Conserver la restauration et la sauvegarde du fond sur la page arrière, les masques, le clipping et le Swap explicite. Le format AGBO reste identique. Le builder P1b rapporte un déplacement PC16 maximal de 31 444, pour un seuil exclusif de 32 766. La construction P1c en mémoire donne un PC16 maximal de 32 144 et 190 entrées AP20 pour 93 commandes. La Lib distribuée reste P1b.
 
 **Banc discriminant.** Superposer Bob 1 à Y=100 et Bob 2 à Y=98 avec des pixels opaques distincts et des hotspots qui inversent leur ordre vertical apparent (par exemple un décalage Y de 4 pour Bob 1 et de 0 pour Bob 2). Mesurer le pixel commun. Le Bob visible au-dessus doit être respectivement 2, 1, 1 et 2 dans les modes 0 à 3. Refaire le test à Y identique, avec Y négatif et clipping, pendant un croisement, et après changement de mode sur les deux pages avec décor non uniforme. Couvrir OFF/réactivation, 64 Bobs, banque invalide avant DMA, mode invalide, ouverture après fermeture, et ABI/relocations Compiler dans la Gate A. Vérifier ensuite le rendu réel dans WinUAE.
 

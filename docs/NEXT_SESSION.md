@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1c Bob Priority construite en mémoire
+
+L'auteur a approuvé `_OK=Aga Bob Priority(Mode)` à quatre modes. Implémentation MC68020 dans le [builder P1c](../tools/build_m19_p1c_bob_priority_in_memory.py) à partir de P1b reconstruite octet pour octet. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1c--priorité-daffichage-des-bobs). Le mode 0 conserve le parcours historique. Les autres modes utilisent les coordonnées Y logiques et les ID des Bobs actifs. Le réglage revient à 0 à l'ouverture réussie d'un écran.
+
+**Candidate en mémoire** — 119 916 octets, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`, 93 commandes et 190 entrées AP20, groupes [142,153,156,179,183], PC16 maximal 32 144. [Banc Gate A](../tools/test_m19_p1c_bob_priority_gate_a.py). **Gate A locale PASS** sur 36 scénarios natifs répartis sur deux placements, avec l’ABI et le dispatch AP20 modélisés, les quatre modes, les hotspots, les refus avant DMA et les deux pages via Update/Clear. Régression P1b intégrée : 98 contrôles PASS. Les Gates B Runtime, C Compiler et D matériel restent à tester sur P1c.
+
+**Candidate installable** — P1b reste la Lib de travail avec sa Gate B Runtime validée. P0 reste `LAST_GOOD`. L'ASC et l'ABK P1b sont toujours le banc actif. La campagne P1c sous WinUAE suit une décision de bascule distincte.
+
 ## 21 novembre 2026 — M19 P1b Hot Spot — Gate B Runtime WinUAE PASS
 
 **Autorisation utilisateur :** « go jusqua la lib » = aller jusqu'à la **bascule du seul binaire actif** P1b et du banc WinUAE, pas une promotion de `LAST_GOOD`. Réalisation exclusivement sur `main`. [Commit de bascule `2af4844`](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/2af4844d803430a550a825a309a2862b51f5e9d6).

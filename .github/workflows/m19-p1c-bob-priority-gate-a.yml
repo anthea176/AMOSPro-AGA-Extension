@@ -1,0 +1,37 @@
+name: M19 P1c Bob Priority MC68020 Gate A
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p1c-bob-priority-gate-a.yml'
+      - 'tools/*m19*p1c*bob_priority*.py'
+      - 'tools/m19_p0j_explicit_safe_draw_emit.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  priority-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Verify native CPU and delivery policy
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Execute P1c native priority, AP20 and P1b regressions
+        run: |
+          python -B tools/test_m19_p1c_bob_priority_gate_a.py
+          python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
+      - name: Verify the protected P0 and source-only build
+        run: |
+          printf '%s  %s\n' f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d dist/AMOSPro_AGA_LAST_GOOD.Lib | sha256sum -c
+          git diff --exit-code -- dist/ tests/current/ tests/passed/

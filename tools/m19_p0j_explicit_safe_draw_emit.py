@@ -105,6 +105,20 @@ def emit_explicit_bob_draw() -> tuple[bytes,dict[str,int]]:
     # The ORIGINAL P0d SafePort/Blitter/WaitBlit function finishes us.
     B(0,'draw_live_image_resolved')
 
+    emit_frame_draw(c)
+
+    native=c.out()
+    if (not native.startswith(previous)
+            or c.labels['explicit_safe_blit_entry']!=len(previous)
+            or c.labels['explicit_frame_draw_entry']<=c.labels['explicit_safe_blit_entry']
+            or len(native)&1 or len(native)>=32766):
+        raise ValueError('P0j-b4 changed P0d bytes / invalid source PC16')
+    return native,c.labels
+
+
+def emit_frame_draw(c: Code, *, traversal=None, frame_bytes=FRAME):
+    """Emit the checked frame renderer with its default or supplied traversal."""
+    B,L=c.branch,c.label
     def FS(src,key):c.move(src,M(2,F[key]))
     def FG(key,dst):c.move(M(2,F[key]),dst)
     def output_record():
@@ -112,7 +126,8 @@ def emit_explicit_bob_draw() -> tuple[bytes,dict[str,int]]:
         c.move(D(0),A(1))
 
     L('explicit_frame_draw_entry')
-    c.raw('48e7efee4fefff60')   # P0i ABI + 160-byte frame
+    c.raw('48e7efee')          # preserve AMOS ABI
+    c.word(0x4fef);c.word(-frame_bytes)
     c.move(A(7),A(2))
     FS(I(0),'result')
     # Full P0h bank stamps + P0j-a image preflight: NO DMA before this.
@@ -123,10 +138,15 @@ def emit_explicit_bob_draw() -> tuple[bytes,dict[str,int]]:
     FG('state',A(0));c.move(M(0,8),D(0));FS(D(0),'gfx')
     c.tst(D(0));B(7,'explicit_frame_return')
     c.imm('and',1,D(0));B(6,'explicit_frame_return')
-    FS(I(1),'ident')
-    L('explicit_frame_next')
-    FG('ident',D(0))
-    c.imm('cmp',MAX_BOBS,D(0));B(2,'explicit_frame_done')
+    if traversal is None:
+        FS(I(1),'ident')
+        L('explicit_frame_next')
+        FG('ident',D(0))
+        c.imm('cmp',MAX_BOBS,D(0));B(2,'explicit_frame_done')
+    else:
+        traversal.begin(c)
+        L('explicit_frame_next')
+        traversal.next(c)
 
     output_record();FG('ident',D(0))
     B(1,'relay_read_entry')
@@ -150,7 +170,8 @@ def emit_explicit_bob_draw() -> tuple[bytes,dict[str,int]]:
     c.tst(D(3));B(7,'explicit_frame_return')
 
     L('explicit_frame_advance')
-    FG('ident',D(0));c.quick(1,D(0));FS(D(0),'ident')
+    if traversal is None:
+        FG('ident',D(0));c.quick(1,D(0));FS(D(0),'ident')
     B(0,'explicit_frame_next')
     L('explicit_frame_unwind')
     FG('bank',D(3));FG('gfx',A(4))
@@ -160,17 +181,10 @@ def emit_explicit_bob_draw() -> tuple[bytes,dict[str,int]]:
     FS(I(1),'result')
     L('explicit_frame_return')
     FG('result',D(3))
-    c.raw('4fef00a0')           # private 160-byte frame
+    c.word(0x4fef);c.word(frame_bytes)
     c.raw('4cdf77f7')           # restore AMOS preserved
     c.raw('74004e75')           # D2=0; RTS
 
-    native=c.out()
-    if (not native.startswith(previous)
-            or c.labels['explicit_safe_blit_entry']!=len(previous)
-            or c.labels['explicit_frame_draw_entry']<=c.labels['explicit_safe_blit_entry']
-            or len(native)&1 or len(native)>=32766):
-        raise ValueError('P0j-b4 changed P0d bytes / invalid source PC16')
-    return native,c.labels
 
 if __name__=='__main__':
     data,labels=emit_explicit_bob_draw()
