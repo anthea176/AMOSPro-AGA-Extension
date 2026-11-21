@@ -296,15 +296,17 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                   'p2b_public_flip:', 'p2b_flip_fail:'):
         require(flip_source.count(label) == 1,
                 f'P2b public Flip module missing {label}')
-    # Four source-proven 68020 full-format PC-relative LEAs have extension
-    # word $0170. Canonical vasm .l(pc)/(pc) chooses 10/6 bytes instead of
-    # the emitter's exact 8-byte form. Preserve these four encodings only.
+    # Vasm chooses 6/10-byte LEA variants, whereas the source emitter
+    # uses exactly 8 bytes: 41FB 0170 + PC-relative full displacement.
+    # These are the four explicitly classified instruction exceptions.
+    cleaned = flip_source
     for symbol, count in (('p2b_slots', 1), ('p2b_owner', 3)):
-        pair = ('dc.w $41FB,$0170\\n    dc.l ' + symbol + '-(*-2)')
+        pair = ('    dc.w $41FB,$0170\n    dc.l ' + symbol + '-(*-2)')
         require(flip_source.count(pair) == count,
                 f'P2b exact PC32 LEA mismatch: {symbol}')
-    cleaned = re.sub(r'(?im)^\\s*dc\\.w \\$41FB,\\$0170\\n'
-                     r'\\s*dc\\.l (?:p2b_slots|p2b_owner)-\\(\\*-2\\)\\s*
+        cleaned = cleaned.replace(pair, '')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', cleaned),
+            'unclassified opcode/data directive inside P2b public Flip')
     (folder / FLIP_SOURCE_NAME).write_text(flip_source, encoding='ascii',
                                            newline='\n')
     planar_source = (planar_text if planar_text is not None
