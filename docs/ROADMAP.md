@@ -6,7 +6,7 @@
 
 | Élément | État |
 | --- | --- |
-| **Bibliothèque active** | **[M19 P2c WinUAE](../dist/AMOSPro_AGA.Lib)**, 135 596 octets, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, 99 commandes et 202 entrées AP20. Gate A PASS. Runtime et Compiler à vérifier. |
+| **Bibliothèque active** | **[M19 P2c WinUAE](../dist/AMOSPro_AGA.Lib)**, 135 596 octets, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, 99 commandes et 202 entrées AP20. Gate A PASS, Runtime PASS 34/34. Compiler non testé. |
 | **ASC unique de campagne** | [M19_P2C_BOB_PLANES.asc](../tests/current/M19_P2C_BOB_PLANES.asc), 34 contrôles. Journal `RAM:M19_P2C_BOB_PLANES.TXT`. |
 | **Qualification P0** | **Gate A native MC68020 PASS : 104 contrôles préparation Chip + 121 Bank Free** (OS/Blitter simulés, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)). **Gate B WinUAE Runtime P0 : PASS fonctionnel sur les journaux fournis** ([rapport et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C Compiler reportée**, Gate D matériel non testée. |
 | **LAST_GOOD promue P1e** | [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, référence protégée de P1e. Promotion autorisée après Gate A native et deux Runtime PASS. Gates C/D NON TESTÉES. Ancienne LAST_GOOD P0 SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` conservée dans Git. [Rapport](M19_P1E_PROMOTION_2026-11-21.md). |
@@ -29,7 +29,8 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 | --- | --- |
 | **P2a — collisions Bob–Bob** | `Aga Bob Col(A,B,Mode)` compare les rectangles ou les masques AGBO. Runtime WinUAE PASS 8/8 sur le premier ASC P2a. [Preuves](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). |
 | **P2b — retournements H/V** | `Aga Bob Flip(N,Mode)` livré. Rendu et collisions utilisent la même variante Chip. Gate A native et banc WinUAE Runtime/Compiler PASS. [Banc WinUAE P2b](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc). |
-| **P2c — SET BOB / AMAL** | Sélection des plans livrée via `Aga Bob Planes(N,Masque)`. [Contrat et Gate A](M19_P2C_BOB_PLANES_MODEL.md). Qualification WinUAE à faire avant l’update automatique et AMAL. |
+| **P2c — Sélection des plans** | `Aga Bob Planes(N,Masque)` livré. [Contrat, Gate A et preuve Runtime](M19_P2C_BOB_PLANES_MODEL.md). |
+| **P2d — Update automatique** | [Modèle hôte de mise à jour à l’appel de Swap](M19_P2D_BOB_AUTO_UPDATE_MODEL.md), neuf tests. Raccordement natif à développer avant AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
 | **Sprites AGA / AMAL** | Évaluer slots matériels, DMA, collisions et intégration éventuelle avec AMAL. |
 | **Tilemaps / scrolling (M20)** | **P0 modèle hôte et 13 tests PASS**, caméra, bandes exposées et deux pages indépendantes ; [spécification et limites](M20_TILEMAP_P0_HOST_MODEL.md). Implémentation native à concevoir, pas de nouveau token. |

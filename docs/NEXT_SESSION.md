@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2c Runtime PASS, lancement de P2d
+
+P2c passe 34/34 en Runtime WinUAE, `PRG_STATE 1`, `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. [Preuve Runtime](M19_P2C_BOB_PLANES_MODEL.md). Gate C Compiler non testée.
+
+[P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md) définit un mode facultatif qui prépare la page arrière à l’appel explicite de Swap. Les neuf tests hôtes vérifient le rendu, la conservation d’une page prête après refus de présentation et la récupération après échec. P2c reste la candidate installable et P1e la référence LAST_GOOD.
+
 ## 21 novembre 2026 — P2c installable, Bob Planes
 
 **Lib active** [M19 P2c](../dist/AMOSPro_AGA.Lib), 135 596 octets, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, 99 commandes et 202 entrées AP20. `Aga Bob Planes(N,Masque)` sélectionne les plans de destination par Bob sans modifier le masque AGBO. Gate A passe à deux implantations avec restauration de fond et Flip. [Banc WinUAE de 34 contrôles](../tests/current/README.md). Runtime et AMOS Compiler P2c à qualifier. LAST_GOOD P1e.

@@ -16,6 +16,8 @@ Le modèle hôte passe **7 tests**, avec **1 024 compositions comparées bit par
 
 `Aga Bob Planes(N,Masque)` renvoie 1 après écriture du réglage du Bob actif, ou 0 si le Bob ou le masque est refusé. Le réglage est stocké dans le slot P2b et effacé à la fermeture effective. Le [point de raccordement natif](../tools/m19_p2c_bob_planes_emit.py) règle le byte `Mask` du RastPort privé, après InitRastPort et avant le rendu opaque ou masqué. Il utilise l’[interface classique du RastPort](https://www.theflatnet.de/pub/cbm/amiga/AmigaDevDocs/lib_27.html) et [sa structure](https://github.com/aros-development-team/AROS/blob/master/compiler/include/graphics/rastport.h). Le choix des plans reste distinct du masque AGBO et du minterm.
 
-Le [banc natif](../tools/test_m19_p2c_bob_planes_gate_a.py) couvre le dispatch AP20, les deux implantations, les pixels en opaque et masqué, Flip, la restauration par page, les refus et la réinitialisation à Close. La [campagne WinUAE](../tests/current/README.md) vise 34 contrôles et doit vérifier la vraie `graphics.library`. L’update automatique et AMAL restent à définir.
+Le [banc natif](../tools/test_m19_p2c_bob_planes_gate_a.py) couvre le dispatch AP20, les deux implantations, les pixels en opaque et masqué, Flip, la restauration par page, les refus et la réinitialisation à Close.
+
+La [campagne WinUAE](../tests/current/README.md) passe **34/34 en Runtime**. Le journal fourni indique `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CHECKS 34`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Son SHA256 est `9c395425ebee144bc57c34857a0556b2414fd9221a48a4740dafc40fcf5b77df`. AMOS Compiler n’a pas été testé. L’update automatique se poursuit dans [P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md).
 
 [Modèle Python](../tools/m19_p2c_bob_planes_model.py) · [Tests](../tools/test_m19_p2c_bob_planes_model.py)

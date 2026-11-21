@@ -1,4 +1,4 @@
-name: M19 Bob Clear, Update and plane selection models
+name: M19 Bob frame reference models
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
       - 'tools/m19_bob_clear_update_model.py'
       - 'tools/test_m19_bob_clear_update_model.py'
       - 'tools/*m19_p2c_bob_planes_model.py'
+      - 'tools/*m19_p2d_bob_auto_update_model.py'
       - 'tools/*m19_p2b_bob_orientation_model.py'
       - 'docs/M19_B8_CLEAR_UPDATE_MODEL_2026-11-19.md'
   workflow_dispatch:
@@ -33,6 +34,7 @@ jobs:
           python -B tools/test_m19_bob_clear_update_model.py
           python -B tools/test_m19_p2c_bob_planes_model.py
           python -B tools/test_m19_p2b_bob_orientation_model.py
+          python -B tools/test_m19_p2d_bob_auto_update_model.py
       - name: Verify active Lib, unique ASC and protected LAST_GOOD
         run: |
           python -B - <<'PY'
