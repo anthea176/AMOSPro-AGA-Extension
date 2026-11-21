@@ -11,9 +11,20 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
 from active_library import P2D_SHA
 from export_m19_p2d_native_source import generate
+from decoder68k import Decoder
 
 
 class P2dNativeSourceTest(unittest.TestCase):
+    def test_mc68020_direct_register_bitfield_decodes_exactly(self):
+        # Source emitter opcode $E9C5, extension $17C1, then TST.L D1.
+        raw=bytes.fromhex('e9c517c14a81')
+        dec=Decoder(raw,allow_scaled_index=True)
+        first=dec.decode(0)
+        self.assertIsNotNone(first)
+        self.assertEqual(first.size,4)
+        self.assertEqual(first.text,'bfextu d5{31:1},d1')
+        self.assertEqual(dec.decode(4).text,'tst.l d1')
+
     def test_lossless_builder_and_real_mnemonics(self):
         with tempfile.TemporaryDirectory(prefix='p2d_asm_') as directory:
             before=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
