@@ -1,4 +1,4 @@
-name: M19 P1e AGBO bank editing MC68020
+name: M19 P1e promoted LAST_GOOD - MC68020 native Gate A
 on:
   push:
     branches: [main]
@@ -13,6 +13,10 @@ on:
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
       - 'tests/current/**'
       - 'tools/active_library.py'
+      - 'tools/build_m19_p0a_r88_bank_in_memory.py'
+      - 'tools/build_aga_r84_agapic.py'
+      - 'tools/build_agapic_v2_r82_api_preview.py'
+      - 'tools/build_agapic_v2_r82_full_preview.py'
       - 'tools/test_m19_b8_clear_update_asc_static.py'
   workflow_dispatch:
 
@@ -37,7 +41,7 @@ jobs:
         run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
       - name: Execute Del Bob and Ins Bob with AMOS bank service fixtures
         run: python -B tools/test_m19_p1e_bank_edit_gate_a.py
-      - name: Verify installed promoted P1e, exact LAST_GOOD and AMOS campaign
+      - name: Verify source-pinned P1e and protected identical LAST_GOOD (Runtime/Compiler not executed here)
         run: |
           PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active, P1E_SHA; from hashlib import sha256; current, good, _ = verify_active(Path(".")); assert current == good and sha256(current).hexdigest() == P1E_SHA'
           python -B tools/test_m19_b8_clear_update_asc_static.py
