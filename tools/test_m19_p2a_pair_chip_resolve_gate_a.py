@@ -27,7 +27,9 @@ from m19_p0f_object_identity_emit import emit_object_identity
 OUT=0x5cb00
 CANARY=b'K'*OUTPUT_BYTES
 GUARD=b'Q'*16
-BASES={'interpreted':0x300000,'compiled':0x350000}
+# Keep both private units DISJOINT from the real AGA native at
+# 0x300000 (interpreted) or 0x400000 (compiled) and from BOBS code.
+BASES={'interpreted':0x380000,'compiled':0x480000}
 
 
 class PairChipMachine(ResolverMachine):
