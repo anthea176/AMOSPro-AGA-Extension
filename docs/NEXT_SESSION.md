@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.0 premier Runtime FAIL ; banc diagnostique corrigé
+
+Le journal utilisateur **P2e.0 initial** (300 octets SHA256 `f2f6914bd719c0409346c0bebdba451775b1d9491c293f442e8a8334a8c5b650`) apporte `PRG_STATE 1`, `ERR 15`, `FRAME 1`, `SWAPS 1`, `LAST_X 97`, `LAST_Y 101`, `LAST_IMAGE 1`, `CLOSE_RETURNED 1`, `VERDICT FAIL`. Le premier `Aga Swap` après placement du Bob échoue. Les trois valeurs AMAL sont correctes ; le rendu n'a pas été présenté. La cause du refus n'est **pas** démontrée.
+
+**ASC de campagne corrigé** [`M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), **6 089 octets**, SHA256 `27e8a13215b9d286ce7d43b52fa7f11c1238f277e9300b8fd7256998c61a4e12`. Il initialise le fond sur chacune des deux pages physiques via `Aga Blit Fill(96,100,48,32,0)`, comme dans P2d Runtime PASS. Les sorties `BG0`, `BG1`, `SWAP_RESULT` discriminent refus de préparation / refus du Swap. **Gate B du correctif en attente** ; CI préflight à confirmer. La source AMAL, la Lib P2d `ce5fb614...` et LAST_GOOD P1e `7922f558...` ne changent pas. Aucun Compiler individuel.
+
 ## 21 novembre 2026 — P2e.0 activé pour Runtime WinUAE
 
 **Bascule explicitement demandée par l'auteur** : unique ASC actif [`M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), 5 632 octets, SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4`. Script source local vérifié octet-identique au Git blob après écriture, préflight officiel strict PASS ; **Gate B Runtime P2e.0 NON TESTÉE**, Gate C individuelle non demandée. [Protocole WinUAE](../tests/current/README.md).

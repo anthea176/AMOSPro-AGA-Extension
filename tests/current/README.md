@@ -1,13 +1,21 @@
 # M19 P2e.0 — AMAL original vers Bob AGA (WinUAE Runtime)
 
-**ASC actif unique** : [M19_P2E0_AMAL_BRIDGE.asc](M19_P2E0_AMAL_BRIDGE.asc) — 5 632 octets, SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4`.
+**ASC actif unique** : [M19_P2E0_AMAL_BRIDGE.asc](M19_P2E0_AMAL_BRIDGE.asc) — 6 089 octets, SHA256 `27e8a13215b9d286ce7d43b52fa7f11c1238f277e9300b8fd7256998c61a4e12`.
 **Bibliothèque de travail inchangée** : [`dist/AMOSPro_AGA.Lib`](../../dist/AMOSPro_AGA.Lib) **P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 entrées AP20. **LAST_GOOD P1e protégée**, non promue.
+
+## Résultat du premier Runtime et correction de diagnostic
+
+**Premier essai WinUAE P2e.0 : FAIL** sur l'ancien ASC de 5 632 octets, SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4`. Journal reçu : `PRG_STATE 1`, `FRAME 1`, `SWAPS 1`, `LAST_X 97`, `LAST_Y 101`, `LAST_IMAGE 1`, `ERR 15` (premier `Aga Swap` avec Bob refusé), `CLOSE_RETURNED 1`, `VERDICT FAIL`. Les coordonnées/image AMAL atteignent les getters Bob ; **la cause précise du refus n'est pas prouvée**.
+
+**ASC révisé** : ajoute `Aga Blit Fill(96,100,48,32,0)` sur les **deux back buffers physiques** avant le premier Bob, conformément au scénario initial P2d validé. Le backend B8 refuse une page encore en attente de Safe ; ce refus est une **hypothèse causale**, pas un diagnostic établi. Le nouveau journal expose `BG0`, `BG1` et `SWAP_RESULT` ; `ERR 22/23` indique que l'initialisation de la première/seconde page a été refusée. Le test révisé **n'a pas encore été relancé sur WinUAE**.
 
 ## Exécuter le test
 
 1. Vérifier que l'unique `AMOSPro_AGA.Lib` P2d est installée dans `APSystem`, redémarrer AMOS Professional sous WinUAE AGA (68020 minimum ; la configuration P2d testée était 68030 / JIT activé).
 2. Dans un programme vierge : **Project → Merge ASCII** et sélectionner [`M19_P2E0_AMAL_BRIDGE.asc`](M19_P2E0_AMAL_BRIDGE.asc). Les banques **24, 27 et 28** doivent être libres.
 3. **Exécuter uniquement en Runtime** (pas d'AMOS Compiler pour ce test individuel). Observer la position et le changement de couleur du Bob. À la sortie, récupérer **`RAM:M19_P2E0_AMAL_BRIDGE.TXT`** avant un nouvel essai.
+
+Les valeurs de vérification supplémentaires attendues sont `BG0 1` et `BG1 1` ; elles ne garantissent pas à elles seules que le Swap des Bobs réussira.
 
 Le test utilise 240 cycles `Synchro` en mode `Synchro Off` ; les huit octets AMAL (flags, X, Y, image) pilotent un Bob AGA via `Aga Bob` et `Aga Swap`. Il contrôle les getters de Bob, le déplacement X/Y, l'alternance des deux images et des pixels capturés **sur l'ancienne page visible devenue arrière après Swap**. Il arrête AMAL avant d'effacer la banque 28 et ferme l'écran AGA.
 

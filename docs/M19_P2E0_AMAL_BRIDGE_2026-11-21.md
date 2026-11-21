@@ -4,7 +4,19 @@
 
 Après **P2d Runtime PASS 43/43** (journal utilisateur du 21/11/2026, `PRG_STATE 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CLOSE_RETURNED 1`, `VERDICT PASS` ; SHA256 du journal original `28f7ebfff3d77e7cc65469df3c246f23487eb1696376d2e078be5543eb13ee7b`), l'auteur reporte le Compiler individuel. Un **exemple global P2a–P2e**, à faire plus tard, sera testé **en interprété et compilé**.
 
-Cette étape P2e.0 utilise **AMAL original en mode mémoire**, sans hook AMOS privé, sans nouveau token, sans changement du moteur Bob ni de la bibliothèque installable. Le banc **est activé comme unique ASC dans `tests/current/`** après préflight statique, mais **aucun lancement WinUAE ni Compiler n'a été effectué** sur P2e.0. Le test P2d validé a quitté la campagne active, sans archivage et sans modification de son contenu historique (réf. Git `7f78e93b`).
+Cette étape P2e.0 utilise **AMAL original en mode mémoire**, sans hook AMOS privé, sans nouveau token, sans changement du moteur Bob ni de la bibliothèque installable. Le banc **est activé comme unique ASC dans `tests/current/`** après préflight statique, et un **premier lancement WinUAE Runtime a échoué à la première présentation d'un Bob**. La correction de diagnostic n'a pas encore été testée sous WinUAE et aucun Compiler n'a été lancé. Le test P2d validé a quitté la campagne active, sans archivage et sans modification de son contenu historique (réf. Git `7f78e93b`).
+
+## Premier essai Runtime : FAIL, correction limitée au banc
+
+Journal utilisateur `M19_P2E0_AMAL_BRIDGE.TXT` de **300 octets**, SHA256 `f2f6914bd719c0409346c0bebdba451775b1d9491c293f442e8a8334a8c5b650`, correspondant au banc initial 5 632 octets SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4` :
+
+- `PRG_STATE 1`, `RESULT 0`, `ERR 15`, `FRAME 1`, `SWAPS 1`, `VALID_SAMPLES 0`, `PIX_SAMPLES 0` et `VERDICT FAIL`.
+- `LAST_X 97`, `LAST_Y 101`, `LAST_IMAGE 1`, `IMAGE1 1` : le canal AMAL fournit une première position/image et les getters Bob correspondent ; le rendu n'est pas encore validé.
+- `CLOSE_RETURNED 1` : nettoyage AGA sans plantage observé sur ce scénario.
+
+Les sources natives `tools/m19_b8_back_selector_emit.py` établissent que le sélecteur de back buffer refusera une page où le bit `Safe pending` reste actif. L'ancien banc P2e.0 ne reproduisait pas l'initialisation **de la seconde page** effectuée dans le banc P2d validé. **Le journal ne mesure pas directement le bit Safe** : il serait abusif d'affirmer que cette condition a déclenché l'erreur 15.
+
+Le banc est corrigé en initialisant la zone 96,100,48×32 des deux pages physiques avec `Aga Blit Fill`, sans changer la Lib, AMAL ou l'API. Nouvelles sorties `BG0` / `BG1` / `SWAP_RESULT` et nouveaux codes `ERR 22` / `ERR 23` si les fills sont refusés. **Nouveau Runtime en attente**.
 
 ## Contrat AMAL d'origine vérifié dans le manuel
 
@@ -23,7 +35,7 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 
 ## Banc P2e.0
 
-**Banc actif :** [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), 5 632 octets, SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4`. **Origine de conception :** [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt), non exécutable et inchangée. Le banc actif corrige l'oracle pixel : après un Swap, la capture lit l'ancienne page visible devenue arrière ; elle doit comparer le pixel et la couleur de la **frame précédente**, et non ceux du Bob courant.
+**Banc actif :** [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), 6 089 octets, SHA256 `27e8a13215b9d286ce7d43b52fa7f11c1238f277e9300b8fd7256998c61a4e12`. **Origine de conception :** [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt), non exécutable et inchangée. Le banc actif corrige l'oracle pixel : après un Swap, la capture lit l'ancienne page visible devenue arrière ; elle doit comparer le pixel et la couleur de la **frame précédente**, et non ceux du Bob courant.
 
 - Cible : Lib P2d existante, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 AP20, CPU MC68020 minimum.
 - Banc autonome, **sans IFF/ABK externe** : deux images AGBO opaques 1×1 aux couleurs 165 et 90 dans la banque 24 ; buffer de lecture 8 octets dans la banque 28 ; banque 27 préallouée pour le pixel oracle.
@@ -39,12 +51,12 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 
 Attendu : `ERR 0`, `MOVE_X 1`, `MOVE_Y 1`, `IMAGE1 1`, `IMAGE2 1`, `FLAG_X/Y/A > 0`, `VALID_SAMPLES >= 32`, `PIX_SAMPLES >= 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
 
-La première erreur entraîne `ERR 1..21` et un journal diagnostique lorsqu'un retour normal est possible ; le pixel fautif expose `PIXEL_VALUE` et `PIXEL_EXPECTED`. Un problème de grammaire AMOS, de canal ou un Guru peut empêcher ce journal : dans ce cas noter le message exact et l'étape. Le test **n'a pas été exécuté par AMOS ou WinUAE**, la présence des appels dans le manuel n'en est pas une preuve.
+La première erreur entraîne `ERR 1..23` et un journal diagnostique lorsqu'un retour normal est possible ; le pixel fautif expose `PIXEL_VALUE` et `PIXEL_EXPECTED`. Un problème de grammaire AMOS, de canal ou un Guru peut empêcher ce journal : dans ce cas noter le message exact et l'étape. Le **premier test** a été exécuté en Runtime WinUAE et a échoué (`ERR 15`). La **révision ci-dessus** n'a pas encore de nouveau résultat WinUAE ; la présence des appels dans le manuel ne les valide pas.
 
 ## Validation et suites
 
-- **Préflight officiel : PASS sur l'ASC actif exact**, script octet-identique à `tools/amos_preflight.py` (Git blob `9f45b4088bb95a5d604b0548ba79a85a1da6a72e`), avec `--strict-target` ; 21 auto-tests du preflight PASS et garde-fous complémentaires locaux PASS (225 lignes ASCII, maximum 75 caractères, blocs et Goto cohérents). Le préflight **ne compile pas AMOS**. Les CI du commit seront qualifiées séparément.
-- **Gates B Runtime / interprété strict / C Compiler / D physique : NON TESTÉES sur P2e.0.** Le Compiler individuel reste reporté à l'exemple global P2.
+- **Ancien ASC** : préflight officiel strict et contrat de journal PASS en CI avant la première Gate B FAIL. **ASC corrigé** : structure AMOS statique contrôlée (41+4 blocs If et End If équilibrés, lignes ≤220) ; préflight GitHub CI à vérifier sur le commit corrigé. Le préflight **ne compile pas AMOS**.
+- **Gate B Runtime WinUAE P2e.0** : premier banc **FAIL**, `ERR 15` ; banc corrigé **NON TESTÉ**. Interprété strict / Gate C Compiler / Gate D physique **NON TESTÉS** sur P2e.0. Le Compiler individuel reste reporté à l'exemple global P2.
 - **P2e.1** : plusieurs canaux et plusieurs Bobs, après un premier résultat WinUAE.
 - **P2e.2** : collisions/Flip/Planes/auto-update combinés et tests de limites.
 - **P2e.3** : audit d'un raccordement AMAL natif plus transparent uniquement si la passerelle mémoire devient insuffisante.
