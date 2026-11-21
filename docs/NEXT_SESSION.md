@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — Logs séparés automatiquement par Prg State (P2e.1 et Flip)
+
+La convention historiquement vérifiée dans `tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc` et `tests/passed/M19_P2_OBJECTS_01.asc` avait été perdue dans les deux derniers exemples. Le journal unique écrasait une éventuelle preuve Runtime/Compiler. **Correctif limité aux sources AMOS et documentations** : le nouvel ASC P2e.1 de 9 134 octets (Git blob `ac151e107eda820594d16c7821f9e02592fa1b72`) et la démo Flip de 3 114 octets (Git blob `ba9321d035c1ba5278517c22d251eb569c37898d`) choisissent désormais `_INTERPRETED` / `_RUNTIME` / `_COMPILED` selon `Prg State=0/1/-1`, ou `_UNKNOWN` en secours. Noms RAM <=30 caractères ; `RUN_MODE` et `PRG_STATE` sont journalisés, chemin `RAM LOG` affiché en sortie. Nouveau contrôle statique `tools/test_amos_log_modes.py` relié à la CI documentation, sans toucher aux témoins historiques ni aux Lib.
+
+**P2e.1 Gate B Runtime et Gate C Compiler restent NON TESTÉES sur cette version**. Fichier Runtime : `RAM:M19_P2E1_AMAL_RUNTIME.TXT`, fichier Compiler : `RAM:M19_P2E1_AMAL_COMPILED.TXT`. Démo Flip : `RAM:AGA_BOB_FLIP_RUNTIME.TXT` / `RAM:AGA_BOB_FLIP_COMPILED.TXT`.
+
+
 ## 21 novembre 2026 — Retour visuel P2e.1 : écran AGA masqué et Bobs carrés
 
 Retour utilisateur : l'écran AGA n'apparaît pas sans raccourci **Amiga+A** ; les carrés ne sont pas adaptés à une vérification visuelle du retournement Bob. L'ASC actif P2e.1 est corrigé **uniquement au niveau du banc** : ajout de `Amos To Back` après initialisation des deux back buffers, remplacement des images carrées par des **F/L masqués 16×16**. ASC actif : 8800 octets, Git blob `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf`. **Ancien préflight du banc 8430 octets ne qualifie plus le nouvel ASC** ; nouveau préflight CI et Runtime à réaliser. **Aucun PASS WinUAE P2e.1 acquis** par ce changement.

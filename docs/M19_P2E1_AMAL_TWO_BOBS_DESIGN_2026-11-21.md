@@ -14,6 +14,10 @@
 - **Nouvelle source :** [M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt](../tests/design/M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt), **8 420 octets**, SHA256 `f0054af6f44ec6cfbbb1dcc233322c516e3e026954f3149d3e60149177a35537`, encodage ASCII.
 - **Statut de la source de conception avant bascule : PREPARE / controle structurel local PASS**. Le nouvel ASC actif a depuis un preflight officiel strict PASS ; **Gate B WinUAE / Gate C Compiler / Gate D physique NON TESTEES**. Ne pas utiliser cette source comme preuve de fonctionnement.
 
+## Nommage des journaux restauré (21/11/2026)
+
+Le nouvel ASC actif contient une sélection de journal par `Prg State`, conforme aux anciens témoins `M19_P25` et `M19_P2_OBJECTS` : `RAM:M19_P2E1_AMAL_INTERPRETED.TXT` en interprété strict, `RAM:M19_P2E1_AMAL_RUNTIME.TXT` en Runtime, `RAM:M19_P2E1_AMAL_COMPILED.TXT` en Compiler, `RAM:M19_P2E1_AMAL_UNKNOWN.TXT` si le mode est inconnu. Le fichier choisi est affiché au retour à AMOS et `RUN_MODE` est journalisé. **Source : 9 134 octets**, Git blob `ac151e107eda820594d16c7821f9e02592fa1b72`. Cette correction **n'est pas une validation Compiler** ; préflight sur l'ASC exact et essais WinUAE restent nécessaires.
+
 ## Correction du banc actif après retour utilisateur (21/11/2026)
 
 Les rectangles 16×16 opaques sont remplacés par une **forme F (index 165) et une forme L (index 90)**, masquées par `Make AGA Bob Mask I,0`. La logique de capture et l'oracle du **pixel en haut à gauche** sont inchangés : ce pixel appartient à la barre verticale pleine de chaque lettre. Le retour utilisateur mentionne aussi l'écran AGA invisible sans **Amiga+A** : le banc appelle désormais `Amos To Back` après initialisation des deux pages physiques, puis toujours `Amos To Front` après fermeture. **Nouveau Git blob ASC : `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf` (8800 octets), non encore exécuté sur WinUAE.** Ne pas attribuer le PASS P2e.0 à cette nouvelle version.
@@ -46,7 +50,7 @@ La banque 28 contient 16 octets initialises par `Doke` ; `Synchro Off` precede l
 
 ## Prochaine porte : Gate B Runtime WinUAE (campagne active)
 
-L'ASC est actif sous `tests/current/` après préflight strict PASS. Ne pas charger le `.txt` de conception. **Project → Merge ASCII** de l'ASC puis **Runtime WinUAE** avec la Lib P2d inchangée ; récupérer `RAM:M19_P2E1_AMAL_TWO_BOBS.TXT` et comparer le résultat. Le vrai Compiler est reporté au futur programme global P2.
+L'ASC est actif sous `tests/current/` après préflight strict PASS. Ne pas charger le `.txt` de conception. **Project → Merge ASCII** de l'ASC puis **Runtime WinUAE** avec la Lib P2d inchangée ; récupérer `RAM:M19_P2E1_AMAL_RUNTIME.TXT` et comparer le résultat. Le vrai Compiler est reporté au futur programme global P2.
 
 Sortie attendue *si le test fonctionne* : `RESULT 1`, `ERR 0`, `BG0/BG1 1/1`, `PIX0/PIX1 >= 2`, six deltas `CHG*` > 0, `CLOSE_RETURNED 1`, `VERDICT PASS`. **Ce n'est pas un resultat observe.**
 

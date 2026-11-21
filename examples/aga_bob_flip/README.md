@@ -17,11 +17,21 @@ Le hotspot 0 de l'image est inversé avec la géométrie par `Aga Bob Flip` : le
 
 L'écran AGA est placé automatiquement devant l'écran AMOS par **`Amos To Back`**, après initialisation des deux pages et le premier affichage. Une touche ferme l'écran et restaure **`Amos To Front`**.
 
+## Journaux selon le mode
+
+| Mode | `Prg State` | Fichier RAM |
+| --- | ---: | --- |
+| Interprété strict | `0` | `RAM:AGA_BOB_FLIP_INTERPRETED.TXT` |
+| Runtime | `1` | `RAM:AGA_BOB_FLIP_RUNTIME.TXT` |
+| Compiler | `-1` | `RAM:AGA_BOB_FLIP_COMPILED.TXT` |
+
+Autre état : `RAM:AGA_BOB_FLIP_UNKNOWN.TXT`. Le programme affiche le chemin réellement choisi après fermeture et ajoute `RUN_MODE` dans le journal. Le fonctionnement en Compiler **n'est pas encore validé**.
+
 ## Exécution
 
 1. Installer l'unique `dist/AMOSPro_AGA.Lib` P2d sous `APSystem`, redémarrer AMOS Pro/WinUAE AGA 68020+.
 2. Dans un programme vierge : **Project → Merge ASCII** sur [FLIP_VISUAL.asc](FLIP_VISUAL.asc). La banque 24 doit être libre.
 3. Exécuter en Runtime, comparer les quatre orientations visibles et appuyer sur une touche pour revenir sous AMOS.
-4. Récupérer `RAM:AGA_BOB_FLIP_VISUAL.TXT` : les quatre champs `FLIP0..3` doivent valoir 1, `RESULT 1`, `ERR 0`, `SWAPS 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
+4. Récupérer `RAM:AGA_BOB_FLIP_RUNTIME.TXT` : les quatre champs `FLIP0..3` doivent valoir 1, `RESULT 1`, `ERR 0`, `SWAPS 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
 
 **Statut au dépôt :** structure source contrôlée localement, **Runtime et vrai Compiler NON TESTÉS**. Le journal `VERDICT PASS` du programme vérifie les appels et le nettoyage, **pas la correction visuelle de tous les pixels** : l'utilisateur doit contrôler les quatre orientations à l'écran.
