@@ -1,0 +1,62 @@
+name: M19 P2a installable Lib candidate and AMOS example Gate A
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/m19_p2a_public_bob_col_emit.py'
+      - 'tools/build_m19_p2a_public_in_memory.py'
+      - 'tools/test_m19_p2a_public_gate_a.py'
+      - 'examples/M19_P2A_BOB_COLLISION.asc'
+      - 'dist/AMOSPro_AGA.Lib'
+      - '.github/workflows/m19-p2a-public-lib-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install native MC68020 emulator
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: CPU source and delivery self-tests
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: AMOS syntax static preflight of actual test example
+        run: python -B tools/amos_preflight.py --strict-target examples/M19_P2A_BOB_COLLISION.asc
+      - name: Test P2a AP20 source and real native public function
+        run: python -B tools/test_m19_p2a_public_gate_a.py
+      - name: Build P2a candidate entirely in memory
+        run: python -B tools/build_m19_p2a_public_in_memory.py
+      - name: Publish exact candidate to Actions artifacts and audit log
+        run: |
+          python -B - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          import sys, os, base64
+          sys.path.insert(0, 'tools')
+          from build_m19_p2a_public_in_memory import build_p2a
+          binary,meta=build_p2a()
+          target=Path(os.environ['RUNNER_TEMP'])/'AMOSPro_AGA.Lib'
+          target.write_bytes(binary)
+          print('P2A_BUILT_LIB_SHA256', sha256(binary).hexdigest(),
+                'BYTES', len(binary), 'AP20', meta['entries'], flush=True)
+          encoded=base64.b64encode(binary).decode('ascii')
+          for pos in range(0,len(encoded),2048):
+              print('P2A_BIN:%04d:%s'%(pos//2048,encoded[pos:pos+2048]),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: M19-P2a-AMOSPro-AGA-candidate
+          path: ${{ runner.temp }}/AMOSPro_AGA.Lib
+          if-no-files-found: error
+          retention-days: 14
+      - name: No accidental tracked binary or LAST_GOOD changes from CI
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
