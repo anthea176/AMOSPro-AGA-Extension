@@ -206,7 +206,7 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 
 ### P2 — Fonctions avancées / compatibilité progressive
 
-**21/11/2026 : P2a démarré en source-only.** [Modèle hôte rectangulaire puis masqué, 17 tests et CI](M19_P2A_COLLISIONS_HOST_2026-11-21.md). Signatures AP20, sémantique exacte de visibilité et intégration AGBO restent à établir avant tout code natif.
+**21/11/2026 : P2a démarré en source-only.** [Modèle hôte et pont aux structures P1e/AGBO, 40 tests et CI PASS](M19_P2A_COLLISIONS_HOST_2026-11-21.md). Une première fonction numérique de collision par paire est proposée, **non approuvée et non implémentée**. Signatures AP20, sémantique exacte de visibilité et intégration AGBO restent à établir avant tout code natif.
 
 | Fonction AMOS | Adaptation AGA envisagée |
 | --- | --- |

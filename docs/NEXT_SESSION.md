@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2a : raccord source réel PASS (sans API native)
+
+[Modèle raccord AGBO/P1e](../tools/m19_p2a_agbo_bridge.py) · [23 tests supplémentaires](../tools/test_m19_p2a_agbo_bridge.py) · [CI 40/40 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44899748782) · [contrat source et API proposée](M19_P2A_COLLISIONS_HOST_2026-11-21.md).
+
+Formats vérifiés par les sources : **64 enregistrements P0e de 24 octets**, stamps P0f de 16 octets (pointeur/génération/tête de liste/taille), AGBO v1 (32 octets en-tête, 40 octets entrée image, masque MSB à pas 16 pixels), table P1d de **65 × 16 octets**. Les 23 tests supplémentaires couvrent les refus sur génération/stamp périmés, OFF, suppression d'image, plusieurs banques, hotspots et limites, plus la banque ABK 26 réelle source-pinnée. Vérification sur données **hôtes de référence**, pas lecture mémoire WinUAE. Lien à l'ABI de `Aga Bob Col(A,B,Mode)` **proposé uniquement**, non approuvé ni intégré : 0 rectangle/1 masque, retour 1/0/-1 à auditer.
+
+**P1e LAST_GOOD et campagne ASC strictement inchangées.** P2a Gate A native/B Runtime/C Compiler/D physique : non testées. Prochaine tâche : noyau MC68020 source-only et preuves contre le modèle avant tout token AP20.
+
+
 ## 21 novembre 2026 — M19 P2a collisions Bob–Bob (modèle hôte)
 
 [Contrat P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [Modèle Python](../tools/m19_p2a_bob_collision_model.py) · [17 tests](../tools/test_m19_p2a_bob_collision_model.py) · [CI dédiée](../.github/workflows/m19-p2a-bob-collisions-host.yml). Rectangles puis masques, hotspots et clipping global/local. Tests Python source-only ; aucune modification P1e LAST_GOOD ni ASC, aucun token AP20, aucune Gate native P2a / Runtime / Compiler / physique revendiquée. Raccord aux données AGBO P1e à préparer après vérification des champs source.
