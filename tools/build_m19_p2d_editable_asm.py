@@ -34,6 +34,7 @@ AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
 PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
 FLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_FLIP_PUBLIC_MC68020.s'
+VARIANT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_VARIANT_ANCHOR_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -47,6 +48,9 @@ P2C_SOURCE_NAME = 'M19_P2C_PLANES_MC68020.s'
 FLIP_SOURCE_NAME = 'M19_P2B_FLIP_PUBLIC_MC68020.s'
 FLIP_START = 0x9E36
 FLIP_END = 0x9F26
+VARIANT_SOURCE_NAME = 'M19_P2B_VARIANT_ANCHOR_MC68020.s'
+VARIANT_START = 0x9F26
+VARIANT_END = 0xA0AA
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -182,6 +186,51 @@ def replace_raw_flip_public(text: str) -> str:
             FLIP_SOURCE_NAME + '"\n' + text[last:])
 
 
+@lru_cache(maxsize=1)
+def prove_p2b_variant_provenance() -> tuple[int, int, int, bytes]:
+    """Resolve variant/anchor bytes from the original P2b Python emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels = emit_bob_flip(p1e['context_delta'])
+    base = PLANAR_END - labels['p2b_owner']
+    begin = base + labels['p2b_variant']
+    end = base + labels['p2b_paint']
+    failure = base + labels['p2b_variant_fail']
+    require((begin, end, failure) == (VARIANT_START, VARIANT_END, 0xA06C),
+            'P2b variant/anchor emitter positions differ from P2d')
+    fragment = native[labels['p2b_variant']:labels['p2b_paint']]
+    _, parts, _ = unpack_ap20(original)
+    require(len(fragment) == end - begin and
+            parts[group][begin:end] == fragment,
+            'P2b variant/anchor differs from authoritative emitter')
+    return begin, end, failure, fragment
+
+
+def replace_raw_p2b_variant(text: str) -> str:
+    """Remove only the complete, source-verified variant/anchor raw region."""
+    begin = text.find('p2b_variant:\n')
+    end = text.find('L_BOBS_0A0AA:\np2b_paint:\n', begin)
+    require(begin >= 0 and end > begin and
+            text.find('p2b_variant:\n', begin+12) < 0,
+            'P2b variant raw slice missing or duplicated')
+    raw = text[begin:end]
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', raw)
+    require(matches and 'p2b_variant_publish:' in raw,
+            'P2b variant original audit evidence missing')
+    offset, evidence = VARIANT_START, bytearray()
+    for pos, hex_bytes in matches:
+        require(int(pos, 16) == offset,
+                f'P2b variant annotation not contiguous: {pos}')
+        value = bytes.fromhex(hex_bytes)
+        evidence.extend(value)
+        offset += len(value)
+    require(offset == VARIANT_END and
+            bytes(evidence) == prove_p2b_variant_provenance()[3],
+            'P2b variant region does not match original source emitter')
+    return (text[:begin] + '    include "' + VARIANT_SOURCE_NAME +
+            '"\n' + text[end:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -234,13 +283,15 @@ def replace_raw_p2b_slot_data(text: str) -> str:
 def staged_sources(folder: Path, *, module_text: str | None = None,
                    planes_text: str | None = None,
                    planar_text: str | None = None,
-                   flip_text: str | None = None) -> None:
+                   flip_text: str | None = None,
+                   variant_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
     require(PLANES_FILE.is_file(), f'missing authored module: {PLANES_FILE}')
     require(PLANAR_FILE.is_file(), f'missing authored module: {PLANAR_FILE}')
     require(FLIP_FILE.is_file(), f'missing authored module: {FLIP_FILE}')
+    require(VARIANT_FILE.is_file(), f'missing authored module: {VARIANT_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -250,6 +301,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_flip_public(text)
+    text = replace_raw_p2b_variant(text)
     text = replace_raw_planar_block(text)
     text = replace_raw_p2b_slot_data(text)
     require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
@@ -309,6 +361,24 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'unclassified opcode/data directive inside P2b public Flip')
     (folder / FLIP_SOURCE_NAME).write_text(flip_source, encoding='ascii',
                                            newline='\n')
+    variant_source = (variant_text if variant_text is not None
+                      else VARIANT_FILE.read_text('ascii'))
+    for label in ('p2b_variant:', 'p2b_variant_miss:',
+                  'p2b_variant_prepare:', 'p2b_variant_publish:',
+                  'p2b_variant_fail:', 'p2b_adjust_anchor:'):
+        require(variant_source.count(label) == 1,
+                'P2b variant/anchor source missing ' + label)
+    exceptions = ('    dc.w $4C04,$6000', '    dc.w $4C01,$2000')
+    for exc in exceptions:
+        require(variant_source.count(exc) == 1,
+                'P2b variant missing source-backed MULU.L encoding: ' + exc)
+    variant_clean = variant_source
+    for exc in exceptions:
+        variant_clean = variant_clean.replace(exc, '')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', variant_clean),
+            'unexpected raw opcode in P2b variant/anchor source')
+    (folder / VARIANT_SOURCE_NAME).write_text(variant_source,
+                                             encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -378,9 +448,11 @@ def verify_link(original: bytes, image: bytes, group: int,
     differences = [i for i, (a, b) in enumerate(zip(old_parts[group], parts[group])) if a != b]
     planar_start, planar_end, _, _ = prove_planar_provenance()
     flip_start, flip_end, _, _ = prove_flip_public_provenance()
+    variant_start, variant_end, _, _ = prove_p2b_variant_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
-                (flip_start <= i < flip_end) for i in differences),
+                (flip_start <= i < flip_end) or
+                (variant_start <= i < variant_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -394,11 +466,13 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           module_text: str | None = None,
           planes_text: str | None = None,
           planar_text: str | None = None,
-          flip_text: str | None = None) -> tuple[bytes, list[int]]:
+          flip_text: str | None = None,
+          variant_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
-                   planar_text=planar_text, flip_text=flip_text)
+                   planar_text=planar_text, flip_text=flip_text,
+                   variant_text=variant_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -479,10 +553,27 @@ def test_editability(assembler: Path) -> None:
                 == b'\x76\x01', 'P2b Flip failure instruction was not encoded')
         require(flip_start <= flip_fail < flip_end,
                 'P2b public Flip edit escaped authored region')
+        variant_start, variant_end, variant_fail, _ = prove_p2b_variant_provenance()
+        variant_source = VARIANT_FILE.read_text('ascii')
+        variant_needle = 'p2b_variant_fail:\n    moveq #0,d3'
+        require(variant_source.count(variant_needle) == 1,
+                'P2b variant fail instruction not uniquely editable')
+        variant_edited = variant_source.replace(
+            variant_needle, 'p2b_variant_fail:\n    moveq #1,d3')
+        changed_variant, variant_diffs = build(
+            assembler, root/'modified_variant', allow_edited=True,
+            variant_text=variant_edited)
+        require(variant_diffs == [variant_fail+1],
+                f'P2b variant edit affected {variant_diffs}, expected {[variant_fail+1]}')
+        require(unpack_ap20(changed_variant)[1][group][variant_fail:variant_fail+2]
+                == b'\x76\x01', 'P2b variant failure MOVEQ did not assemble')
+        require(variant_start <= variant_fail < variant_end,
+                'P2b variant source edit escaped authored module')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_FLIP_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
+    print('P2B_VARIANT_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
