@@ -1,0 +1,505 @@
+{
+  "release": "M19 P2d",
+  "cpu": "MC68020",
+  "origin": "verified Python emitters",
+  "input_bytes": 136020,
+  "input_sha256": "ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f",
+  "builder": "tools/build_m19_p2d_in_memory.py",
+  "ap20_entries": 203,
+  "commands": 100,
+  "native_groups": [
+    {
+      "unit": "UNIT142",
+      "sha256": "8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7",
+      "bytes": 62740,
+      "public_entrypoints": [
+        {
+          "ap20_index": 0,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 4,
+          "unit_offset": 674
+        },
+        {
+          "ap20_index": 6,
+          "unit_offset": 690
+        },
+        {
+          "ap20_index": 8,
+          "unit_offset": 706
+        },
+        {
+          "ap20_index": 10,
+          "unit_offset": 802
+        },
+        {
+          "ap20_index": 12,
+          "unit_offset": 62690
+        },
+        {
+          "ap20_index": 14,
+          "unit_offset": 1892
+        },
+        {
+          "ap20_index": 16,
+          "unit_offset": 2658
+        },
+        {
+          "ap20_index": 18,
+          "unit_offset": 2688
+        },
+        {
+          "ap20_index": 20,
+          "unit_offset": 2978
+        },
+        {
+          "ap20_index": 22,
+          "unit_offset": 3230
+        },
+        {
+          "ap20_index": 24,
+          "unit_offset": 3388
+        },
+        {
+          "ap20_index": 26,
+          "unit_offset": 5592
+        },
+        {
+          "ap20_index": 27,
+          "unit_offset": 7134
+        },
+        {
+          "ap20_index": 28,
+          "unit_offset": 7192
+        },
+        {
+          "ap20_index": 29,
+          "unit_offset": 7876
+        },
+        {
+          "ap20_index": 31,
+          "unit_offset": 8604
+        },
+        {
+          "ap20_index": 33,
+          "unit_offset": 9056
+        },
+        {
+          "ap20_index": 35,
+          "unit_offset": 9604
+        },
+        {
+          "ap20_index": 36,
+          "unit_offset": 9642
+        },
+        {
+          "ap20_index": 38,
+          "unit_offset": 9872
+        },
+        {
+          "ap20_index": 40,
+          "unit_offset": 10044
+        },
+        {
+          "ap20_index": 42,
+          "unit_offset": 10284
+        },
+        {
+          "ap20_index": 44,
+          "unit_offset": 10650
+        },
+        {
+          "ap20_index": 45,
+          "unit_offset": 10978
+        },
+        {
+          "ap20_index": 47,
+          "unit_offset": 11194
+        },
+        {
+          "ap20_index": 49,
+          "unit_offset": 11306
+        },
+        {
+          "ap20_index": 51,
+          "unit_offset": 11418
+        },
+        {
+          "ap20_index": 53,
+          "unit_offset": 11664
+        },
+        {
+          "ap20_index": 55,
+          "unit_offset": 11770
+        },
+        {
+          "ap20_index": 57,
+          "unit_offset": 11876
+        },
+        {
+          "ap20_index": 59,
+          "unit_offset": 12668
+        },
+        {
+          "ap20_index": 61,
+          "unit_offset": 12772
+        },
+        {
+          "ap20_index": 63,
+          "unit_offset": 12912
+        },
+        {
+          "ap20_index": 65,
+          "unit_offset": 13556
+        },
+        {
+          "ap20_index": 67,
+          "unit_offset": 14884
+        },
+        {
+          "ap20_index": 69,
+          "unit_offset": 15186
+        },
+        {
+          "ap20_index": 71,
+          "unit_offset": 15430
+        },
+        {
+          "ap20_index": 73,
+          "unit_offset": 16666
+        },
+        {
+          "ap20_index": 75,
+          "unit_offset": 16982
+        },
+        {
+          "ap20_index": 77,
+          "unit_offset": 17642
+        },
+        {
+          "ap20_index": 79,
+          "unit_offset": 18334
+        },
+        {
+          "ap20_index": 81,
+          "unit_offset": 19264
+        },
+        {
+          "ap20_index": 83,
+          "unit_offset": 19788
+        },
+        {
+          "ap20_index": 85,
+          "unit_offset": 20312
+        },
+        {
+          "ap20_index": 87,
+          "unit_offset": 20816
+        },
+        {
+          "ap20_index": 89,
+          "unit_offset": 21262
+        },
+        {
+          "ap20_index": 91,
+          "unit_offset": 22278
+        },
+        {
+          "ap20_index": 93,
+          "unit_offset": 22726
+        },
+        {
+          "ap20_index": 95,
+          "unit_offset": 23674
+        },
+        {
+          "ap20_index": 97,
+          "unit_offset": 24734
+        },
+        {
+          "ap20_index": 99,
+          "unit_offset": 25900
+        },
+        {
+          "ap20_index": 101,
+          "unit_offset": 26232
+        },
+        {
+          "ap20_index": 103,
+          "unit_offset": 28682
+        },
+        {
+          "ap20_index": 105,
+          "unit_offset": 30684
+        },
+        {
+          "ap20_index": 107,
+          "unit_offset": 30840
+        },
+        {
+          "ap20_index": 109,
+          "unit_offset": 31574
+        },
+        {
+          "ap20_index": 111,
+          "unit_offset": 34152
+        },
+        {
+          "ap20_index": 113,
+          "unit_offset": 36058
+        },
+        {
+          "ap20_index": 115,
+          "unit_offset": 37928
+        },
+        {
+          "ap20_index": 117,
+          "unit_offset": 38244
+        },
+        {
+          "ap20_index": 119,
+          "unit_offset": 39216
+        },
+        {
+          "ap20_index": 121,
+          "unit_offset": 39582
+        },
+        {
+          "ap20_index": 123,
+          "unit_offset": 40810
+        },
+        {
+          "ap20_index": 125,
+          "unit_offset": 42102
+        },
+        {
+          "ap20_index": 127,
+          "unit_offset": 44858
+        },
+        {
+          "ap20_index": 129,
+          "unit_offset": 47358
+        },
+        {
+          "ap20_index": 131,
+          "unit_offset": 49862
+        },
+        {
+          "ap20_index": 133,
+          "unit_offset": 49988
+        },
+        {
+          "ap20_index": 135,
+          "unit_offset": 50114
+        },
+        {
+          "ap20_index": 137,
+          "unit_offset": 51416
+        },
+        {
+          "ap20_index": 139,
+          "unit_offset": 52978
+        },
+        {
+          "ap20_index": 141,
+          "unit_offset": 54070
+        }
+      ],
+      "mnemonic_instructions": 13602,
+      "mnemonic_bytes": 50442,
+      "raw_dc_bytes": 12298,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [
+        62690
+      ],
+      "native_assembler_verified": true,
+      "file": "M19_P2D_UNIT142_MC68020.s",
+      "ap20_entry": 142
+    },
+    {
+      "unit": "UNIT153",
+      "sha256": "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700",
+      "bytes": 5558,
+      "public_entrypoints": [
+        {
+          "ap20_index": 144,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 146,
+          "unit_offset": 882
+        },
+        {
+          "ap20_index": 148,
+          "unit_offset": 2378
+        },
+        {
+          "ap20_index": 150,
+          "unit_offset": 2562
+        },
+        {
+          "ap20_index": 152,
+          "unit_offset": 4000
+        }
+      ],
+      "mnemonic_instructions": 1445,
+      "mnemonic_bytes": 5414,
+      "raw_dc_bytes": 144,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": true,
+      "file": "M19_P2D_UNIT153_MC68020.s",
+      "ap20_entry": 153
+    },
+    {
+      "unit": "UNIT156",
+      "sha256": "4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b",
+      "bytes": 2508,
+      "public_entrypoints": [
+        {
+          "ap20_index": 155,
+          "unit_offset": 34
+        }
+      ],
+      "mnemonic_instructions": 539,
+      "mnemonic_bytes": 2318,
+      "raw_dc_bytes": 190,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": true,
+      "file": "M19_P2D_UNIT156_MC68020.s",
+      "ap20_entry": 156
+    },
+    {
+      "unit": "BOBS",
+      "sha256": "cc37518ac3407c7d03352c02bb3aeb88cb2b4d15ad3b9414c31cb43e404ea62d",
+      "bytes": 60928,
+      "public_entrypoints": [
+        {
+          "ap20_index": 158,
+          "unit_offset": 23444
+        },
+        {
+          "ap20_index": 160,
+          "unit_offset": 34
+        },
+        {
+          "ap20_index": 162,
+          "unit_offset": 5220
+        },
+        {
+          "ap20_index": 164,
+          "unit_offset": 29944
+        },
+        {
+          "ap20_index": 166,
+          "unit_offset": 8398
+        },
+        {
+          "ap20_index": 168,
+          "unit_offset": 11588
+        },
+        {
+          "ap20_index": 170,
+          "unit_offset": 11602
+        },
+        {
+          "ap20_index": 172,
+          "unit_offset": 22722
+        },
+        {
+          "ap20_index": 174,
+          "unit_offset": 29894
+        },
+        {
+          "ap20_index": 176,
+          "unit_offset": 23430
+        },
+        {
+          "ap20_index": 178,
+          "unit_offset": 31620
+        },
+        {
+          "ap20_index": 180,
+          "unit_offset": 32126
+        },
+        {
+          "ap20_index": 181,
+          "unit_offset": 46598
+        },
+        {
+          "ap20_index": 182,
+          "unit_offset": 29070
+        },
+        {
+          "ap20_index": 183,
+          "unit_offset": 28920
+        },
+        {
+          "ap20_index": 185,
+          "unit_offset": 32512
+        },
+        {
+          "ap20_index": 187,
+          "unit_offset": 32558
+        },
+        {
+          "ap20_index": 189,
+          "unit_offset": 40248
+        },
+        {
+          "ap20_index": 191,
+          "unit_offset": 40598
+        },
+        {
+          "ap20_index": 193,
+          "unit_offset": 46276
+        },
+        {
+          "ap20_index": 195,
+          "unit_offset": 46476
+        },
+        {
+          "ap20_index": 196,
+          "unit_offset": 59116
+        },
+        {
+          "ap20_index": 197,
+          "unit_offset": 59016
+        },
+        {
+          "ap20_index": 198,
+          "unit_offset": 59476
+        },
+        {
+          "ap20_index": 199,
+          "unit_offset": 60784
+        },
+        {
+          "ap20_index": 200,
+          "unit_offset": 60832
+        },
+        {
+          "ap20_index": 201,
+          "unit_offset": 60880
+        }
+      ],
+      "mnemonic_instructions": 12442,
+      "mnemonic_bytes": 47090,
+      "raw_dc_bytes": 13838,
+      "unresolved_instruction_encodings": 0,
+      "undecoded_public_entry_offsets": [],
+      "native_assembler_verified": true,
+      "source_labels_provided_by_python_emitters": 499,
+      "source_labels_annotated": 499,
+      "file": "M19_P2D_BOBS_MC68020.s",
+      "ap20_entry": 202
+    }
+  ],
+  "linked_file": "M19_P2D_AP20_SOURCE.s",
+  "no_output_in_dist": true,
+  "builder_exact_match": true,
+  "verified_native_asm": true,
+  "warning": "Source mnemonic restoration: unclassified instructions remain DC.B. Assembly may not be bit-exact until --vasm is successful."
+}
