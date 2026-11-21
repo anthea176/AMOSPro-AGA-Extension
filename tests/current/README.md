@@ -15,6 +15,6 @@ Le banc alloue d’abord la banque CBlock 27, prépare les deux banques AGBO en 
 | V | (101,99) |
 | HV | (99,99) |
 
-Les contrôles CPU, ABI, pixels et gestion Chip passent sous émulation MC68020 avec services Exec et Blitter simulés. Le passage sous WinUAE Runtime et le vrai Compiler restent à établir. Le [banc P2a précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/8b8830fb4d4308deeed8ec58d79d2a5baf2db226/tests/current/M19_P2A_BOB_COL.asc) est conservé dans l’historique Git.
+Les contrôles CPU, ABI, pixels et gestion Chip passent sous émulation MC68020 avec services Exec et Blitter simulés. Le banc corrigé du commit `562f243` passe **21/21** sous WinUAE en Runtime (`PRG_STATE 1`) et avec AMOS Compiler (`PRG_STATE -1`). Les deux journaux indiquent `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Le [banc P2a précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/8b8830fb4d4308deeed8ec58d79d2a5baf2db226/tests/current/M19_P2A_BOB_COL.asc) est conservé dans l’historique Git.
 
-Premier essai Runtime au commit `900afe2` — pixel correct en mode 0, puis `ERR 10`, `RECT -1`, `MASK -1`. Le banc révisé reste à vérifier sous WinUAE.
+Premier essai Runtime au commit `900afe2` — pixel correct en mode 0, puis `ERR 10`, `RECT -1`, `MASK -1`. Le banc révisé passe après préallocation de la banque de capture et préparation des deux banques AGBO.

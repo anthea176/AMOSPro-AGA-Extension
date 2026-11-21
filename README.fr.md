@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P2b — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **135 352 octets**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commandes / 200 entrées AP20**. Gate A validée ; Runtime WinUAE et Compiler non testés.
+**M19 P2b — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **135 352 octets**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commandes / 200 entrées AP20**. Gate A validée. Le banc WinUAE corrigé passe les 21 contrôles en Runtime et avec AMOS Compiler.
 
 **Banc WinUAE de retournement et de collision** — [Installation](tests/current/README.md) · [ASC de campagne P2b](tests/current/M19_P2B_BOB_FLIP.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
 

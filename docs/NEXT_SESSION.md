@@ -1,8 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2b validée sous WinUAE, poursuite P2c
+
+Les deux journaux fournis pour le banc P2b corrigé indiquent `CHECKS 21`, `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Empreintes SHA256 des journaux d'origine :
+
+- Runtime `PRG_STATE 1` — `748bf3b6aba0dfa700f70921db9938465c6d9b53d8e725f6a27e9ae23907aa70`.
+- AMOS Compiler `PRG_STATE -1` — `91997cdea916bae6ed93f1028333e76517beb2d126cddb244192c0fffd8caf38`.
+
+P2c commence par le [modèle hôte de sélection des plans par Bob](M19_P2C_BOB_PLANES_MODEL.md), 7 tests PASS. Le raccordement natif au peintre AGA doit être qualifié en opaque et masqué avant l’update automatique et AMAL.
+
 ## 21 novembre 2026 — P2b installable, Bob Flip
 
-**Lib active** [M19 P2b](../dist/AMOSPro_AGA.Lib), 135 352 octets, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, 98 commandes et 200 entrées AP20. `Aga Bob Flip(N,Mode)` sélectionne normal, H, V ou HV pour un Bob actif. Cache Chip par slot, partagé par le rendu et les collisions, revalidé par identité de banque et génération. Gate A native PASS à deux implantations. [Banc et journal attendus](../tests/current/README.md). Runtime et Compiler P2b à valider. LAST_GOOD P1e.
+**Lib active** [M19 P2b](../dist/AMOSPro_AGA.Lib), 135 352 octets, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, 98 commandes et 200 entrées AP20. `Aga Bob Flip(N,Mode)` sélectionne normal, H, V ou HV pour un Bob actif. Cache Chip par slot, partagé par le rendu et les collisions, revalidé par identité de banque et génération. Gate A native PASS à deux implantations. [Banc et journal attendus](../tests/current/README.md). Runtime et Compiler P2b PASS 21/21 sur le banc corrigé `562f243`. LAST_GOOD P1e.
 
 ## 21 novembre 2026 — P2b noyau planaire privé et préparation Chip
 

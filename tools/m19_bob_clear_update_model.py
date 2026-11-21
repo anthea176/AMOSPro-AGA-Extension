@@ -183,6 +183,9 @@ class BobFrameModel:
             result.append((obj, image))
         return result
 
+    def _compose_pixel(self, bob: Bob, source: int, background: int) -> int:
+        return source
+
     def update(self, *, inject_fault_after_pixels: int | None = None) -> bool:
         if not self.screen_open or self.status != CLEAN:
             return self._deny('screen closed or frame not CLEAN')
@@ -214,7 +217,8 @@ class BobFrameModel:
                         continue
                     if inject_fault_after_pixels is not None and painted >= inject_fault_after_pixels:
                         return self._deny('injected mid-paint fault', dirty=True)
-                    self.pages[self.back][y][x] = image.pixels[sy][sx]
+                    row = self.pages[self.back][y]
+                    row[x] = self._compose_pixel(bob, image.pixels[sy][sx], row[x])
                     painted += 1
         self.status = READY
         self.last_error = ''

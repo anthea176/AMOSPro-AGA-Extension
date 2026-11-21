@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P2b — active MC68020+ WinUAE test candidate.** [Library](dist/AMOSPro_AGA.Lib), **135,352 bytes**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commands / 200 AP20 entries**. Gate A passed; WinUAE Runtime and Compiler not tested.
+**M19 P2b — active MC68020+ WinUAE test candidate.** [Library](dist/AMOSPro_AGA.Lib), **135,352 bytes**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commands / 200 AP20 entries**. Gate A passed. The corrected WinUAE benchmark passed all 21 checks in Runtime and with AMOS Compiler.
 
 **WinUAE flip and collision test** — [Setup](tests/current/README.md) · [P2b campaign ASC](tests/current/M19_P2B_BOB_FLIP.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
 
