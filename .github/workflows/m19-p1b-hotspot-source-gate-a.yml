@@ -68,21 +68,21 @@ jobs:
           PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_in_memory.py
       - name: Real MC68020 Safe Blitter integration after valid AGBO
         run: PYTHONPATH=tools python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
-      - name: Verify installed P1e and author-promoted LAST_GOOD, retaining historical P1b build
+      - name: Verify promoted P2d LAST_GOOD while retaining historical P1b source fixture
         run: |
           PYTHONPATH=tools python -B - <<'PY'
           import pathlib,hashlib
           from build_m19_p1b_hotspot_in_memory import build_p1b,P1B_SHA,P1B_BYTES
           from build_m19_p1b_hotspot_fixture import fixture
-          from active_library import P1C_SHA, P1D_SHA, P1E_SHA, verify_active
+          from active_library import P2D_SHA, verify_active
           root=pathlib.Path('.')
           actual=(root/'dist/AMOSPro_AGA.Lib').read_bytes()
           expected,meta=build_p1b()
           assert len(expected)==P1B_BYTES and hashlib.sha256(expected).hexdigest()==P1B_SHA
           assert (root/'tests/current/M19_P1B_HOTSPOT_BANK26.abk').read_bytes()==fixture()
           cur,good,label=verify_active(root)
-          assert cur==actual and hashlib.sha256(cur).hexdigest() in (P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA)
-          assert len(good)==124444 and hashlib.sha256(good).hexdigest()==P1E_SHA
+          assert cur==actual==good and hashlib.sha256(cur).hexdigest()==P2D_SHA
+          assert len(good)==136020
           print('P1B SOURCE EXACT SHA',P1B_SHA,'FIXTURE EXACT 200 bytes',flush=True)
           PY
       - name: Sole campaign AMOS static preflight (not WinUAE)
