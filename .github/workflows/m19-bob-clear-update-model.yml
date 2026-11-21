@@ -28,17 +28,17 @@ jobs:
         run: python -B -m py_compile tools/m19_bob_clear_update_model.py tools/test_m19_bob_clear_update_model.py
       - name: Check pixel-exact page lifecycle reference behaviour
         run: python -B tools/test_m19_bob_clear_update_model.py
-      - name: Preserve exact active B7/B8 Lib, unique ASC and R84 LAST_GOOD
+      - name: Preserve exact active B7/B8 Lib, unique ASC and P0 LAST_GOOD
         run: |
           python -B - <<'PY'
           import sys
           sys.path.insert(0,'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA
           active,good,label=verify_active(Path('.'))
           digest=sha256(active).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
+          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA)
           assert sha256(good).hexdigest()==P0_FREE_SHA
           files=list(Path('tests/current').glob('*.asc'))
           assert len(files)==1
@@ -49,5 +49,5 @@ jobs:
               assert files[0].name=='M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
               from test_m19_b8_clear_update_asc_static import verify
               verify(files[0])
-          print('PASS exact source-backed B7/B8 Lib, unique ASC and R84 LAST_GOOD')
+          print('PASS exact source-backed B7/B8 Lib, unique ASC and P0 LAST_GOOD')
           PY

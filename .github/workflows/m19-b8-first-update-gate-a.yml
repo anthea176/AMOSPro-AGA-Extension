@@ -46,17 +46,17 @@ jobs:
         run: |
           python -B tools/test_m19_b8_atomic_integrated_b7_gate_a.py
           python -B tools/test_m19_b8_b7_trampoline_gate_a.py
-      - name: Confirm exact B7-m2 or authorized B8 active and R84 protected
+      - name: Confirm exact B7-m2 or authorized B8 active and P0 protected
         run: |
           python -B - <<'PY'
           import sys
           sys.path.insert(0, 'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA
           current,good,label=verify_active(Path('.'))
           digest=sha256(current).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA)
+          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA)
           assert sha256(good).hexdigest()==P0_FREE_SHA
           if digest==B7M2_SHA:
               asc=Path('tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc')
@@ -65,7 +65,7 @@ jobs:
               asc=Path('tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
               from test_m19_b8_clear_update_asc_static import verify
               verify(asc)
-          print('PASS active verified B7/B8 candidate + sole ASC + R84 protected')
+          print('PASS active verified B7/B8 candidate + sole ASC + P0 protected')
           PY
       - name: Static AMOS Professional preflight when B8 is active
         run: |

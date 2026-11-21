@@ -7,6 +7,8 @@ on:
       - 'tools/*m19*p1c*bob_priority*.py'
       - 'tools/m19_p0j_explicit_safe_draw_emit.py'
       - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
+      - 'tools/test_m19_b8_clear_update_asc_static.py'
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
   workflow_dispatch:
 
@@ -31,6 +33,11 @@ jobs:
         run: |
           python -B tools/test_m19_p1c_bob_priority_gate_a.py
           python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
+      - name: Preflight the sole WinUAE ASC and pixel probe
+        run: |
+          python -B tools/test_current_ram_log.py
+          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/test_readme_api_coverage.py
       - name: Verify the protected P0 and source-only build
         run: |
           printf '%s  %s\n' f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d dist/AMOSPro_AGA_LAST_GOOD.Lib | sha256sum -c

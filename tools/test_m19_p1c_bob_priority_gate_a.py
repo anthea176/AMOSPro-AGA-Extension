@@ -7,7 +7,6 @@ from capstone import Cs, CS_ARCH_M68K, CS_MODE_BIG_ENDIAN, CS_MODE_M68K_020
 from unicorn.m68k_const import UC_M68K_REG_PC, UC_M68K_REG_SR
 
 from amos_link_test_support import relocate
-from build_m19_p1b_hotspot_in_memory import build_p1b
 from build_m19_p1c_bob_priority_in_memory import build_p1c
 from compiler_bridge_v2_probe import DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
@@ -144,7 +143,7 @@ def main():
     binary, meta = build_p1c()
     _, parts, _ = unpack_ap20(binary)
     assert binary == build_p1c()[0]
-    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == build_p1b()[0]
+    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == binary
     assert parts[177] == GETP
     dispatch_models(parts, 179, meta['priority_offset'], 178)
     dispatch_models(parts, 142, meta['open_offset'], 12)

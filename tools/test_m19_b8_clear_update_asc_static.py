@@ -7,8 +7,8 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4"
-SIZE=17566
+LIB="658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c"
+SIZE=20821
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -37,10 +37,10 @@ def verify(path:Path):
     assert len(data)==SIZE,("B8 ASC length",len(data),SIZE)
     s=data.decode("ascii")
     assert s.endswith("Return\n") and max(map(len,s.splitlines()))<=200
-    assert LIB in s and 'RAM:M19_P1B_HOTSPOT.TXT' in s
+    assert LIB in s and 'RAM:M19_P1C_PRIORITY.TXT' in s
     assert 'Dim _SEEN(1)' in s and '_SEEN(0)=0 : _SEEN(1)=0' in s
     assert 'NO TIMER OR BENCHMARK' in s
-    assert s.count('_CLEAR=Aga Bob Clear')==1
+    assert len(re.findall(r'\b_CLEAR=Aga Bob Clear',s))==1
     assert s.count('_UPDATE=Aga Bob Update')==1
     assert s.count('Aga Bob Bank Free _BANK1')==2
     assert s.count('Aga Bob Bank Free _BANK2')==1
@@ -54,7 +54,7 @@ def verify(path:Path):
     assert s.count('Aga Y Bob(_QID)')==1
     assert s.count('Aga I Bob(_QID)')==1
     assert s.index('_QX=Aga X Bob(_QID)') < s.index('_QY=Aga Y Bob(_QID)') < s.index('_QI=Aga I Bob(_QID)')
-    assert 'P1b CANDIDATE SHA256' in s
+    assert 'P1c CANDIDATE SHA256' in s
     assert 'Aga Bob Draw' not in s
     assert 'Trap Load "M19_P1B_HOTSPOT_BANK26.abk",_HOTBANK' in s
     assert 'Deek(_HOT_PTR+60)<>4 or Deek(_HOT_PTR+62)<>3' in s
@@ -62,9 +62,26 @@ def verify(path:Path):
     assert '_HX=32767 : _HY=32767' in s
     assert 'If _HOT_STEPS<>4 or _HOT_CLEAR_OK<>4 or _HOT_UPD_OK<>4' in s
     assert 'If _HOT_SWAP_OK<>4 or _HOT_Q_OK<>12' in s
-    assert 'If _CLOSE_CALLED=1 and _BANKS_ERASED=3' in s
+    assert 'If _CLOSE_CALLED=1 and _BANKS_ERASED=4' in s
     assert 'HOTSPOT_FRAMES_OK' in s and 'HOTSPOT_GETTERS_OK' in s
     assert 'HOTSPOT_LOAD_ERR' in s
+    assert 'If _ERR=0 and _PR_STEP>0' in s  # Probe the real default on first frame.
+    assert 'For _PR_STEP=0 To 7' in s and '_PR_MODE=Int(_PR_STEP/2)' in s
+    assert '_PR_SET=Aga Bob Priority(_PR_MODE)' in s
+    assert '_PR_NEG=Aga Bob Priority(-1)' in s and '_PR_HIGH=Aga Bob Priority(4)' in s
+    assert 'Aga Bob 1,116,104,1' in s and 'Aga Bob 2,112,102,1' in s
+    assert 'Aga C Block Capture(_PROBE_BANK,112,103,8,1,0)' in s
+    assert '(_PR_BYTE and 64)<>0' in s and 'Peek(_PR_PTR+40+2*_PR_PLANE)' in s
+    assert '_PR_EXPECT=5' in s and '_PR_EXPECT=4' in s
+    assert '_PR_CAPTURE_OK<>8 or _PR_PIXELS_OK<>8 or _PR_SWAP_OK<>8' in s
+    assert '_PR_SET_OK<>7 or _PR_REJECT_OK<>16 or _PR_DEFAULT_OK<>1' in s
+    from build_m19_p1b_hotspot_fixture import PIXELS, VISIBLE
+    assert VISIBLE[2*8+1] and PIXELS[2*8+1] == 4  # Visible pixel at (113,103).
+    assert 'Aga Blit Fill(62,16,37,8,5)' in s and 'No AGA Bob Mask 1' in s
+    phases=s[s.index('For _PR_STEP=0 To 7'):s.index('Next _PR_STEP')]
+    assert phases.index('_PR_CLEAR=Aga Bob Clear') < phases.index('_PR_UP=Aga Bob Update')
+    assert phases.index('_PR_UP=Aga Bob Update') < phases.index('Gosub _PRIORITY_PIXEL') < phases.index('Gosub _DO_SWAP')
+
     assert s.count('Aga Bob Off 1')==1 and s.count('Aga Bob Off 2')==1
     assert 'For _ID=17 To 64' in s
     assert 'Make AGA Bob Mask 1,0' in s and 'No AGA Bob Mask 1' in s

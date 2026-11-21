@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P1b — active MC68020+ WinUAE TEST candidate.** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) — **119,176 bytes**, SHA256 `2bf9a3bb46725c8cd3a65042fec06b35e71b5e4a0876201b1e7e874388fe48d4`, **92 commands / 188 AP20 entries**, five native units. **Integrated MC68020 Gate A PASS: 98 checks** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44836896149)). **P1b Runtime Gate B, real Compiler Gate C, physical Gate D NOT TESTED.**
+**M19 P1c — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **119,916 bytes**, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`, **93 commands / 190 AP20 entries**.
 
-**Sole active P1b ASC:** [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) keeps the 405-frame P0/P1a regression and 42 getters, adding **four hotspot phases** with [AGBO bank 26](tests/current/M19_P1B_HOTSPOT_BANK26.abk) · [WinUAE instructions](tests/current/README.md). **Protected [LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib) remains P0**, 117,896 bytes, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. [History](docs/LIBRARY_TEST_HISTORY.md).
+**WinUAE test** — 405 regression frames, four hotspot phases and eight overlap pixel samples. [Installation, ASC and bank 26](tests/current/README.md) · [ASC](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [LAST_GOOD P0](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
 
 **Interactive Bob example (no benchmark):** [Local restoration with four moving Bobs](examples/bob_local_restore/README.md) · [ASCII source](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — independent new version, PREFLIGHT PASS; WinUAE test pending. **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
 ## Main AMOS commands
 
-**Current library API M19 P1b** — **92 commands / 188 AP20 entries**, MC68020 minimum. Numeric `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` keep the logical Bob coordinates; **native Bob rendering now subtracts per-image AGBO v1 hotspots** (`drawX=BobX-hotX`, `drawY=BobY-hotY`), preserving clipping and masking. No new public API. **Integrated Gate A PASS; P1b Gates B/C/D NOT TESTED**.
+**Current library API M19 P1c** — **93 commands / 190 AP20 entries**, MC68020 minimum. `Aga Bob Priority(Mode)` sets the drawing order used by `Aga Bob Update`.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -102,6 +102,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Draw`** | `_OK=Aga Bob Draw` | **Zero-argument numeric function returning 1/0.** Draws all active persistent Bobs (1..64) into the Safe AGA back buffer using original source banks, independent masks, clipping and synchronized Blitter. Never swaps implicitly. An error leaves DIRTY set and `Aga Swap` is refused until a real screen close. **B7-m2 historical B/C PASS for its 64-Bob lifecycle; P0 Runtime rendering via Update PASS; P0 Compiler not tested.** |
 | **`Aga Bob Clear`** | `_OK=Aga Bob Clear` | **Zero-argument numeric function returning 1/0.** Restores the previously captured background on the current Safe physical back page, without changing the front page or swapping. Refuses absent/unsafe snapshots. P0 Runtime: CLEAR_OK 403, CLEAR_FAILS 0; P0 Compiler not tested. |
 | **`Aga Bob Update`** | `_OK=Aga Bob Update` | **Zero-argument numeric function returning 1/0.** Preflights all active Bob images, captures/restores the background for the correct physical back page and draws all active Bobs as one transaction, without implicit Swap. Requires at least one prior successful `Aga Bob` SET on the first call; failure blocks Swap with DIRTY. P0 Runtime: UPDATE_OK 405, UPDATE_FAILS 0; P0 Compiler not tested. |
+| **`Aga Bob Priority`** | `_OK=Aga Bob Priority(Mode)` | 0 = ascending ID, 1 = ascending logical Y then ID, 2 = descending ID, 3 = descending logical Y then ID. Draw order is back to front. A successful screen open resets to mode 0. Returns 1 on acceptance or 0 for an invalid mode or missing owned AGA screen. Setting the mode does not draw. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed Y in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns image ID 1..4096 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
