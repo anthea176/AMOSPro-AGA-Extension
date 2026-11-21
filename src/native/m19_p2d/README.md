@@ -82,6 +82,12 @@ vérifie que **seul l'octet de cet opcode a changé**, puis recommence avec
 `p2c_set_fail` (`moveq #0,d3` → `#1,d3`). La structure AP20 reste valide.
 Les candidats modifiés sont effacés avec le dossier temporaire.
 
+## Données P2b identifiées depuis l'émetteur source
+
+Le bloc BOBS `+$0A4C0..+$0B4C3` représente **4 100 octets de données**, et non des instructions absentes : `p2b_owner` (4 octets) et `p2b_slots` (64 slots de 64 octets). Les centaines de lignes `DC.B` sont remplacées par [`M19_P2B_SLOTS_DATA_MC68020.s`](M19_P2B_SLOTS_DATA_MC68020.s) avec `DC.L 0` et `DCB.B` à taille déclarée. Les positions et les octets sont vérifiés contre `m19_p2b_bob_flip_emit.py` et par vasm dans la reconstruction complète.
+
+**Distinction :** 1 176 octets de code P2b/P2c/P2d en source maintenable (une exception non canonique `MULU.L` documentée) **et** 4 100 octets de données P2b identifiées. Le reste du moteur demeure partiellement issu de l'audit.
+
 ## Troisième module : P2b retournement planaire
 
 `M19_P2B_PLANAR_MC68020.s` remplace **562 octets** (`BOBS +$0A28E..$0A4BF`) de code précédemment en `DC.B` : retournement horizontal et vertical, mesure/limites de géométrie, traitement ligne/plan et allocation Chip via Exec. Il est reconstruit depuis `m19_p2b_planar_orientation020_emit.py`, pas depuis les heuristiques du désassembleur. Le constructeur vérifie l'identité du fragment émis, la reconstruction P2d complète et une modification ciblée du `MOVEQ` de refus.
