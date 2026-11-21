@@ -18,6 +18,6 @@ Le modèle hôte passe **7 tests**, avec **1 024 compositions comparées bit par
 
 Le [banc natif](../tools/test_m19_p2c_bob_planes_gate_a.py) couvre le dispatch AP20, les deux implantations, les pixels en opaque et masqué, Flip, la restauration par page, les refus et la réinitialisation à Close.
 
-La [campagne WinUAE](../tests/current/README.md) passe **34/34 en Runtime**. Le journal fourni indique `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CHECKS 34`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Son SHA256 est `9c395425ebee144bc57c34857a0556b2414fd9221a48a4740dafc40fcf5b77df`. AMOS Compiler n’a pas été testé. L’update automatique se poursuit dans [P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md).
+La [campagne WinUAE](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/ee0fce258a917d9ee0af015029af8dc285bfe4f7/tests/current/README.md) passe **34/34 en Runtime**. Le journal fourni indique `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CHECKS 34`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Son SHA256 est `9c395425ebee144bc57c34857a0556b2414fd9221a48a4740dafc40fcf5b77df`. AMOS Compiler n’a pas été testé. L’update automatique se poursuit dans [P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md).
 
 [Modèle Python](../tools/m19_p2c_bob_planes_model.py) · [Tests](../tools/test_m19_p2c_bob_planes_model.py)

@@ -19,15 +19,15 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P2c — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **135,596 bytes**, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, **99 commands / 202 AP20 entries**. Gate A passed. WinUAE Runtime and AMOS Compiler pending.
+**M19 P2d — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **136,020 bytes**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**. Gate A passed. WinUAE Runtime and AMOS Compiler pending.
 
-**WinUAE Bob plane mask test** — [Setup](tests/current/README.md) · [P2c campaign ASC](tests/current/M19_P2C_BOB_PLANES.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
+**WinUAE Bob Auto Update test** — [Setup](tests/current/README.md) · [P2d campaign ASC](tests/current/M19_P2D_BOB_AUTO_UPDATE.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
 
 **Interactive Bob example (no benchmark):** [Local restoration with four moving Bobs](examples/bob_local_restore/README.md) · [ASCII source](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — independent new version, PREFLIGHT PASS; WinUAE test pending. **Installation:** [INSTALL.md](INSTALL.md), then verify the `APSystem` copy's SHA. **History:** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [M19 progress](docs/NEXT_SESSION.md).
 
 ## Main AMOS commands
 
-**Current library API M19 P2c** — **99 commands / 202 AP20 entries**, MC68020 minimum. `Aga Bob Col` tests visible Bob collisions, with rectangles or masks.
+**Current library API M19 P2d** — **100 commands / 203 AP20 entries**, MC68020 minimum. `Aga Bob Col` tests visible Bob collisions, with rectangles or masks.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -109,6 +109,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Col`** | `_C=Aga Bob Col(_A,_B,_MODE)` | Native MC68020 Bob–Bob collision; IDs 1..64 must be distinct and active on the owned AGA screen. Mode 0 compares clipped bounding rectangles; mode 1 compares AGBO mask bits pixel-exactly. Returns 1 hit, 0 no hit, -1 invalid/stale source. No drawing or Swap. With P2b orientations, a variant may be staged in Chip. [Test ASC](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc). |
 | **`Aga Bob Flip`** | `_OK=Aga Bob Flip(_N,_MODE)` | Set orientation of active Bob N (1..64). Mode 0 normal, 1 horizontal, 2 vertical, 3 both. Returns 1 on success, 0 on refusal. Preserves logical X/Y and transforms the hotspot. The slot orientation lasts until reset to 0 or screen close. Rendering and collision share the Chip variant, staged on first use. |
 | **`Aga Bob Planes`** | `_OK=Aga Bob Planes(_N,_MASK)` | Selects destination planes for active Bob N (1–64). Bits 0–7 select planes of the same index. Mask 255 is the default and 0 preserves every plane. The AGBO opacity mask and collisions are independent of this setting. Returns 1 on success and 0 on refusal. |
+| **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | In AGA double buffering, 1 prepares Bobs at each `Aga Swap` and 0 restores manual mode (default). Configuration requires a CLEAN page. A READY page is reused on the next Swap. Returns 1 on success and 0 on refusal. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed Y in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns image ID 1..4096 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |

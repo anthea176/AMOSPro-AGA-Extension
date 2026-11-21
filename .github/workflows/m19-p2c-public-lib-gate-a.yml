@@ -1,4 +1,4 @@
-name: M19 P2c installable Bob Planes Gate A
+name: M19 P2c Bob Planes regression Gate A
 on:
   push:
     branches: [main]
@@ -28,7 +28,7 @@ jobs:
       - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Check the active campaign and documented API
         run: |
-          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P2C_BOB_PLANES.asc
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/*.asc
           python -B tools/test_current_ram_log.py
           python -B tools/test_readme_api_coverage.py
       - name: Run the host reference and native pixel tests
@@ -41,8 +41,9 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           from active_library import verify_active, P1E_SHA, P2C_SHA
-          active, protected, label = verify_active(Path('.'))
-          assert sha256(active).hexdigest() == P2C_SHA
+          from build_m19_p2c_in_memory import build_p2c
+          _, protected, label = verify_active(Path('.'))
+          assert sha256(build_p2c()[0]).hexdigest() == P2C_SHA
           assert sha256(protected).hexdigest() == P1E_SHA
           print(label)
           PY

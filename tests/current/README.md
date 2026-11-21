@@ -1,13 +1,13 @@
-# M19 P2c — Banc WinUAE de sélection des plans AGA
+# M19 P2d — Banc WinUAE de mise à jour automatique des Bobs
 
-[AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) M19 P2c, **135 596 octets**, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`. La version protégée [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est P1e.
+[AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) M19 P2d, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. La référence protégée [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est P1e.
 
-1. Copier la Lib active sous `APSystem`, puis redémarrer AMOS Pro en AGA avec un MC68020 ou supérieur.
-2. Dans un programme vierge, importer [M19_P2C_BOB_PLANES.asc](M19_P2C_BOB_PLANES.asc) via **Project → Merge ASCII**. Laisser libres les banques 24, 25 et 27.
-3. Lancer en Runtime puis avec AMOS Compiler. Chaque exécution écrit `RAM:M19_P2C_BOB_PLANES.TXT`. Conserver séparément les deux journaux.
+1. Copier la Lib dans `APSystem`, puis redémarrer AMOS Pro dans WinUAE en AGA, 68030 avec JIT activé.
+2. Dans un programme vierge, importer [M19_P2D_BOB_AUTO_UPDATE.asc](M19_P2D_BOB_AUTO_UPDATE.asc) via **Project → Merge ASCII**. Laisser libres les banques 24, 25 et 27.
+3. Lancer en Runtime puis avec AMOS Compiler. Chaque exécution écrit `RAM:M19_P2D_BOB_AUTO_UPDATE.TXT`. Conserver les deux journaux séparément.
 
-Le banc lit les huit pixels d’une ligne sur le buffer arrière. Il compare le mode par défaut, des masques non contigus, le masque nul et le retournement H. Il vérifie aussi les refus de -1 et 256. Attendu `PROBE_PREALLOC 1`, `CHECKS 34`, `ERR 0`, `CLOSE_RETURNED 1`, `VERDICT PASS`. `PRG_STATE 1` identifie le Runtime et `PRG_STATE -1` le compilé.
+Le banc contrôle la présence du Bob produit par Swap seul, la restauration de chaque page après Bob Off et le retour au mode manuel. Il vérifie 40 pixels, le refus de deux modes invalides et le refus de changer de mode avec une page prête. Attendu `PROBE_PREALLOC 1`, `CHECKS 43`, `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. `PRG_STATE 1` identifie le Runtime et `PRG_STATE -1` le compilé.
 
-En cas de `ERR 10`, `MODE`, `PIXEL`, `VALUE` et `EXPECTED` localisent la première différence. `PIXEL` est l’indice de 0 à 7 dans la capture qui commence à X=96. Gate A passe sous émulation MC68020 avec services Exec et Blitter simulés. Le banc est [validé en Runtime WinUAE](../../docs/M19_P2C_BOB_PLANES_MODEL.md#raccordement-natif-livré), 34/34. AMOS Compiler n’a pas été testé.
+En cas d’échec, `STEP` indique la phase (1 auto, 2 restauration, 3 Swap manuel, 4 Update manuel). `ERR 15` signale un Swap refusé et `ERR 16` une capture refusée. Pour `ERR 17`, `PIXEL`, `VALUE` et `EXPECTED` identifient la première différence. Voir le [contrat P2d](../../docs/M19_P2D_BOB_AUTO_UPDATE_MODEL.md) pour les contrôles MC68020 et AP20.
 
-Le [banc P2b validé](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc) est dans l’historique Git. Il a passé 21/21 en Runtime et avec AMOS Compiler.
+Le [banc P2c](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/ee0fce258a917d9ee0af015029af8dc285bfe4f7/tests/current/M19_P2C_BOB_PLANES.asc) a passé 34/34 en Runtime avec sa propre Lib.

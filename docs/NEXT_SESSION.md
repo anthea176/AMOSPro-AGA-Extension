@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2d installable, Bob Auto Update
+
+[Lib P2d active](../dist/AMOSPro_AGA.Lib), 136 020 octets, 100 commandes, 203 entrées AP20, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. [Campagne WinUAE](../tests/current/README.md) de 43 contrôles, Runtime et AMOS Compiler à qualifier. Gate A MC68020 PASS. LAST_GOOD P1e.
+
 ## 21 novembre 2026 — P2d Auto Update, raccordement natif en mémoire
 
 La [candidate MC68020 P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md) ajoute `Aga Bob Auto Update(Mode)` et raccorde Update au Swap explicite. Elle se reconstruit à 136 020 octets, 100 commandes et 203 entrées AP20, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le banc natif couvre les deux implantations et les refus de rendu ou de présentation. Lib installable P2c, ASC actif P2c et LAST_GOOD P1e.

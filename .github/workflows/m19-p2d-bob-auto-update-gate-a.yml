@@ -1,4 +1,4 @@
-name: M19 P2d Bob Auto Update in-memory Gate A
+name: M19 P2d Bob Auto Update installable Gate A
 on:
   push:
     branches: [main]
@@ -7,6 +7,8 @@ on:
       - 'tools/*m19_p2c*.py'
       - 'tools/build_m19_p2b_in_memory.py'
       - 'tools/active_library.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/*.asc'
       - '.github/workflows/m19-p2d-bob-auto-update-gate-a.yml'
   workflow_dispatch:
 permissions:
@@ -23,6 +25,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Check the active campaign and documented API
+        run: |
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/*.asc
+          python -B tools/test_current_ram_log.py
+          python -B tools/test_readme_api_coverage.py
       - name: Build and execute both AP20 layouts
         run: |
           python -B tools/test_m19_p2d_bob_auto_update_model.py
@@ -33,14 +40,15 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P1E_SHA, P2C_SHA
+          from active_library import verify_active, P1E_SHA, P2D_SHA
           from build_m19_p2d_in_memory import build_p2d
           raw, info = build_p2d()
-          assert sha256(raw).hexdigest() == 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f'
+          assert sha256(raw).hexdigest() == P2D_SHA
           active, protected, label = verify_active(Path('.'))
-          assert (sha256(active).hexdigest(), sha256(protected).hexdigest()) == (P2C_SHA, P1E_SHA)
+          assert (sha256(active).hexdigest(), sha256(protected).hexdigest()) == (P2D_SHA, P1E_SHA)
+          assert active == raw
           current = list(Path('tests/current').glob('*.asc'))
-          assert len(current) == 1 and current[0].name == 'M19_P2C_BOB_PLANES.asc'
+          assert len(current) == 1 and current[0].name == 'M19_P2D_BOB_AUTO_UPDATE.asc'
           print(info, label)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/

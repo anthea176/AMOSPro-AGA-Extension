@@ -10,7 +10,7 @@ Le mode automatique est facultatif et désactivé par défaut. Quand il est acti
 
 Le réglage change sur une frame `CLEAN` et se réinitialise à la fermeture de l’écran. Le programme qui modifie le décor garde la séquence Clear → dessin du décor → Swap pour préserver le décor neuf. La restauration utilise le fond de chaque page physique. Un Bob masqué conserve les pixels transparents, avec sélection P2c des plans sur les pixels opaques.
 
-## Candidate native MC68020 construite en mémoire
+## Candidate native MC68020 pour WinUAE
 
 La candidate expose la fonction numérique `Aga Bob Auto Update(Mode)`. Après ouverture AGA et activation du double buffer, `Mode=1` active l’update au Swap et `Mode=0` revient au fonctionnement manuel. Retour 1 si le réglage est accepté, 0 si le contexte, le mode ou l’état de la frame est refusé. Le réglage appartient au programme et à l’écran courants. Close et End le réinitialisent après fermeture effective.
 
@@ -20,4 +20,4 @@ Le premier Swap avec un Bob actif peut réserver les deux fonds. Le premier Swap
 
 **Identité de la candidate** · 136 020 octets, 100 commandes, 203 entrées AP20, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`.
 
-Les [cinq tests natifs](../tools/test_m19_p2d_bob_auto_update_gate_a.py) utilisent deux implantations MC68020 et simulent Exec, graphics.library et Intuition. Ils vérifient le dispatch de huit entrées, y compris les six entrées B8 déplacées, le rendu avec Flip et sélection des plans, les deux fonds physiques, le refus de Swap et la reprise, l’échec d’Update et la fermeture. Les [neuf tests hôtes](../tools/test_m19_p2d_bob_auto_update_model.py) vérifient le contrat de présentation. WinUAE Runtime et AMOS Compiler restent à qualifier sur P2d. La Lib installable sur `main` est P2c et AMAL reste à développer.
+Les [cinq tests natifs](../tools/test_m19_p2d_bob_auto_update_gate_a.py) utilisent deux implantations MC68020 et simulent Exec, graphics.library et Intuition. Ils vérifient le dispatch de huit entrées, y compris les six entrées B8 déplacées, le rendu avec Flip et sélection des plans, les deux fonds physiques, le refus de Swap et la reprise, l’échec d’Update et la fermeture. Les [neuf tests hôtes](../tools/test_m19_p2d_bob_auto_update_model.py) vérifient le contrat de présentation. WinUAE Runtime et AMOS Compiler restent à qualifier sur P2d. La Lib P2d active et son [banc WinUAE de 43 contrôles](../tests/current/README.md) sont disponibles sur `main`. La référence LAST_GOOD est P1e.

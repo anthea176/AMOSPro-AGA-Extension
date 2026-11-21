@@ -19,15 +19,15 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P2c — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **135 596 octets**, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, **99 commandes / 202 entrées AP20**. Gate A validée. Runtime WinUAE et AMOS Compiler à vérifier.
+**M19 P2d — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. Gate A réussie. Runtime WinUAE et AMOS Compiler à qualifier.
 
-**Banc WinUAE de sélection des plans par Bob** — [Installation](tests/current/README.md) · [ASC de campagne P2c](tests/current/M19_P2C_BOB_PLANES.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
+**Banc WinUAE de mise à jour automatique des Bobs** — [Installation](tests/current/README.md) · [ASC de campagne P2d](tests/current/M19_P2D_BOB_AUTO_UPDATE.asc) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
 
 **Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire. **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P2c** — **99 commandes / 202 entrées AP20**, MC68020 minimum. `Aga Bob Col` teste les collisions visibles des Bobs par rectangles ou masques.
+**API de la bibliothèque courante M19 P2d** — **100 commandes / 203 entrées AP20**, MC68020 minimum. `Aga Bob Col` teste les collisions visibles des Bobs par rectangles ou masques.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -109,6 +109,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Col`** | `_C=Aga Bob Col(_A,_B,_MODE)` | Collision Bob–Bob native MC68020. ID 1..64 distincts et actifs sur un écran AGA détenu. Mode 0 : rectangles visibles clippés ; mode 1 : masques AGBO au pixel. Retour 1 contact, 0 aucun, -1 données/banque invalides. Aucun dessin ni Swap. Avec une orientation P2b, une variante peut être préparée en Chip. [ASC d’essai](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc). |
 | **`Aga Bob Flip`** | `_OK=Aga Bob Flip(_N,_MODE)` | Oriente le Bob actif N (1..64). Mode 0 normal, 1 horizontal, 2 vertical, 3 combiné. Retour 1 sur succès, 0 sur refus. Le point X/Y reste fixe et le hotspot est transformé. Le mode du slot reste actif jusqu’au mode 0 ou à la fermeture. Le rendu et la collision utilisent la même variante Chip, préparée au premier usage. |
 | **`Aga Bob Planes`** | `_OK=Aga Bob Planes(_N,_MASK)` | Sélectionne les plans de destination écrits par le Bob actif N (1–64). Les bits 0 à 7 sélectionnent les plans de même indice. 255 est la valeur par défaut, 0 préserve tous les plans. Le masque AGBO et les collisions sont indépendants. Retour 1 sur succès, 0 sur refus. |
+| **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | En double buffer AGA, 1 prépare les Bobs à chaque `Aga Swap` et 0 rétablit le mode manuel (défaut). Le réglage exige une page CLEAN. Une page READY est réutilisée au prochain Swap. Retour 1 sur succès, 0 sur refus. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Fonction numérique de lecture du Y d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Fonction numérique de lecture du numéro d'image 1..4096 d'un Bob actif `N` (1..64), ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
