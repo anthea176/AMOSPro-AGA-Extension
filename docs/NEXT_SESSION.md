@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.1 Runtime FAIL ERR 15, diagnostic ciblé Swap
+
+Nouveau log utilisateur [M19_P2E1_AMAL_RUNTIME_FAIL_ERR15_2026-11-21.TXT](evidence/M19_P2E1_AMAL_RUNTIME_FAIL_ERR15_2026-11-21.TXT) conservé **567 octets CRLF**, SHA256 `aa9dc89dcd0790e6ca68c25754dd39968d1318d74621a0bd911d275331f7330f`. `PRG_STATE 1`, `RUN_MODE RUNTIME`, `FRAME 2`, `VALID_SAMPLES 1`, `SWAPS 2`, `BG0/BG1 1/1`, **`ERR 15`**, `RESULT 0`, `VERDICT FAIL`, `CLOSE_RETURNED 1`. Échec sur **l'appel `Aga Swap` de la deuxième frame**, avant vérification pixel ; les deux AMAL ont des positions plausibles et la fermeture fonctionne. **[Analyse exacte](M19_P2E1_RUNTIME_ERR15_DIAG_2026-11-21.md)**.
+
+Dans P2d, le Swap auto peut refuser un `Safe` pending, une transaction d'Update en échec/DIRTY ou le Swap matériel. **Cause non discriminée.** Un banc diagnostique minimal reprend le même AMAL, les mêmes masques F/L et le même protocole de nom de log, et **journalise un maximum de quatre retries VBL** après un premier refus ; échec toujours bloquant s'il persiste. Nouvel ASC unique : [M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), 10 421 octets, Git blob `a150f85f952b20c1292b143b5ae9c1b8d016d3e0`. **Gate B du nouveau banc NON TESTÉE**, Compiler NON TESTÉ, Lib P2d / LAST_GOOD P1e inchangées. Prochain log : `RAM:M19_P2E1_AMAL_RUNTIME.TXT` ; conserver explicitement les compteurs `SWAP_REFUSALS`, `SWAP_RECOVERED` et `RETRY_VBLS`.
+
+
 ## 21 novembre 2026 — Logs séparés automatiquement par Prg State (P2e.1 et Flip)
 
 La convention historiquement vérifiée dans `tests/passed/M19_P25_R87_BOBS_SMOKE_01.asc` et `tests/passed/M19_P2_OBJECTS_01.asc` avait été perdue dans les deux derniers exemples. Le journal unique écrasait une éventuelle preuve Runtime/Compiler. **Correctif limité aux sources AMOS et documentations** : le nouvel ASC P2e.1 de 9 134 octets (Git blob `ac151e107eda820594d16c7821f9e02592fa1b72`) et la démo Flip de 3 114 octets (Git blob `ba9321d035c1ba5278517c22d251eb569c37898d`) choisissent désormais `_INTERPRETED` / `_RUNTIME` / `_COMPILED` selon `Prg State=0/1/-1`, ou `_UNKNOWN` en secours. Noms RAM <=30 caractères ; `RUN_MODE` et `PRG_STATE` sont journalisés, chemin `RAM LOG` affiché en sortie. Nouveau contrôle statique `tools/test_amos_log_modes.py` relié à la CI documentation, sans toucher aux témoins historiques ni aux Lib.
