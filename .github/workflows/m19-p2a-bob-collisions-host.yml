@@ -5,6 +5,13 @@ on:
     paths:
       - 'tools/m19_p2a_bob_collision_model.py'
       - 'tools/test_m19_p2a_bob_collision_model.py'
+      - 'tools/m19_p2a_agbo_bridge.py'
+      - 'tools/test_m19_p2a_agbo_bridge.py'
+      - 'tools/m19_p0a_multi_bob_abk.py'
+      - 'tools/m19_p0e_object_table_emit.py'
+      - 'tools/m19_p0f_bank_stamp_emit.py'
+      - 'tools/m19_p0f_object_identity_emit.py'
+      - 'tools/m19_p1d_limit_bob_emit.py'
       - '.github/workflows/m19-p2a-bob-collisions-host.yml'
   workflow_dispatch:
 permissions:
@@ -25,11 +32,14 @@ jobs:
           python -B - <<'PY'
           import ast
           from pathlib import Path
-          for name in ('m19_p2a_bob_collision_model.py', 'test_m19_p2a_bob_collision_model.py'):
+          for name in ('m19_p2a_bob_collision_model.py', 'test_m19_p2a_bob_collision_model.py',
+                       'm19_p2a_agbo_bridge.py', 'test_m19_p2a_agbo_bridge.py'):
               ast.parse((Path('tools')/name).read_text(encoding='utf-8'), filename=name)
           print('P2a HOST SYNTAX PASS')
           PY
       - name: Run 17 deterministic host collision regressions
         run: python -B tools/test_m19_p2a_bob_collision_model.py
+      - name: Run 22 source-backed AGBO v1 / P0e / P0f / P1d collision regressions
+        run: python -B tools/test_m19_p2a_agbo_bridge.py
       - name: Guard binary, active ASC and archives
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
