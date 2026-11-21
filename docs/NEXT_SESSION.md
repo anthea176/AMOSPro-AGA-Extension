@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2a : UNE requête native MC68020 de collision, Gate A privée PASS
+
+**[Rapport P2a intégral](M19_P2A_FULL_QUERY_NATIVE_2026-11-21.md) · [Émetteur de l'unique appel MC68020](../tools/m19_p2a_collision_query020_emit.py) · [9 tests d'intégration](../tools/test_m19_p2a_collision_query020_gate_a.py) · [CI native 91/91 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44905618103).** L'entrée privée de **484 octets**, SHA256 `c7bc01b85932eaa98bf9143733382e8c40f736f3989c12633775d63605609cb9`, pilote en **un seul appel 68020** les contrôles réels P0f/P0j-b3, l'extraction des hotspots signés par P0j-b1/P1b (874 octets), le clipping écran et les zones P1d (packer 1 742 octets), puis le noyau de collision rectangle/masque (764 octets). D3=1 hit, 0 no hit, -1 refus, D2=0. Le banc a détecté puis corrigé la préservation d'A3 ; ABI, sélection de banque, source Chip et pile sont testées sous Unicorn MC68020.
+
+**Tests : 91/91 PASS** = 17 géométrie hôte, 23 AGBO hôte, 9 noyau collision, 9 P0f apparié, 8 paire Chip P0j, 8 packer P1d, 8 hotspots P1b natifs, 9 requête en appel unique. **Statut source-only : pas de token AP20, pas de nouvelle Lib, pas de changement à l'ASC ni à la P1e LAST_GOOD.** Gate A de la chaîne native privée PASS ; **Gate A d'intégration dans la Lib et Gates B Runtime WinUAE / C vrai Compiler / D physique NON TESTÉES.** Prochain verrou : rattacher les dimensions écran / la table P1d à la **vraie AGA State propriétaire**, puis audit ABI/AP20 avant éventuelle API publique.
+
+
 ## 21 novembre 2026 — M19 P2a : deux images Chip résolues par les vrais P0f et P0j-b3
 
 [Émetteur 946 octets](../tools/m19_p2a_pair_chip_resolve_emit.py) · [8 nouveaux tests natifs](../tools/test_m19_p2a_pair_chip_resolve_gate_a.py) · [rapport](M19_P2A_PAIR_CHIP_RESOLVE_2026-11-21.md) · [CI P2a 66/66 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44903500981). Noyau source-only MC68020 SHA256 7ee9fa70673b8827bde31d12e1023982a7439f80c77c34e84d9c73438e678548. Le nouveau pont assemble les deux lectures natives P0f, la résolution de leurs deux images/masques Chip via P0j-b3 et une seconde vérification P0f, puis publie **120 octets** atomiquement. Deux implantations testées, tampon inchangé sur tout refus, sélection de banque et ABI préservées.

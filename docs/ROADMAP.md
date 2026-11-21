@@ -27,7 +27,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 | Sujet | Objectif |
 | --- | --- |
-| **P2a — collisions Bob–Bob** | **66 tests PASS** : 17 géométrie + 23 AGBO hôte + 9 collision MC68020 (764 octets) + 9 contrôles P0f (328 octets) + **8 résolutions P0f/P0j-b3** (946 octets, 120 octets de sortie). [CI 66/66](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44903500981) · [rapport du raccord Chip](M19_P2A_PAIR_CHIP_RESOLVE_2026-11-21.md). Suite : hotspots P1b, clipping P1d, descripteurs 40 octets, raccord noyau. Pas de nouvelle Lib ni token AP20. |
+| **P2a — collisions Bob–Bob** | **91/91 tests PASS ; entrée unique MC68020 privée de 484 octets** enchaînant P0f/P0j-b3, hotspots AGBO/P1b natifs, clipping P1d et noyau masqué de 764 octets. [CI source-only intégrée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44905618103) · [rapport](M19_P2A_FULL_QUERY_NATIVE_2026-11-21.md) · [émetteur](../tools/m19_p2a_collision_query020_emit.py). **Sans Lib, sans token AP20, sans WinUAE P2a**. Prochain verrou : contexte écran/P1d récupéré et validé depuis l'AGA State réelle. |
 | **P2b — retournements H/V** | Transformations non destructives par objet, image et hotspot partagés préservés. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
