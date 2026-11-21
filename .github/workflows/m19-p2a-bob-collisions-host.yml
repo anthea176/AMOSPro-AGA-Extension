@@ -1,4 +1,4 @@
-name: M19 P2a Bob collisions - host model only
+name: M19 P2a Bob collisions - host model and private MC68020
 on:
   push:
     branches: [main]
@@ -7,6 +7,9 @@ on:
       - 'tools/test_m19_p2a_bob_collision_model.py'
       - 'tools/m19_p2a_agbo_bridge.py'
       - 'tools/test_m19_p2a_agbo_bridge.py'
+      - 'tools/m19_p2a_collision020_emit.py'
+      - 'tools/test_m19_p2a_collision020_gate_a.py'
+      - 'tools/m68k_emit.py'
       - 'tools/build_m19_p1b_hotspot_fixture.py'
       - 'tests/current/M19_P1B_HOTSPOT_BANK26.abk'
       - 'tools/m19_p0a_multi_bob_abk.py'
@@ -29,13 +32,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install real M68K CPU emulator and decoder
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Python syntax validation (no bytecode files)
         run: |
           python -B - <<'PY'
           import ast
           from pathlib import Path
           for name in ('m19_p2a_bob_collision_model.py', 'test_m19_p2a_bob_collision_model.py',
-                       'm19_p2a_agbo_bridge.py', 'test_m19_p2a_agbo_bridge.py'):
+                       'm19_p2a_agbo_bridge.py', 'test_m19_p2a_agbo_bridge.py',
+                       'm19_p2a_collision020_emit.py', 'test_m19_p2a_collision020_gate_a.py'):
               ast.parse((Path('tools')/name).read_text(encoding='utf-8'), filename=name)
           print('P2a HOST SYNTAX PASS')
           PY
@@ -43,5 +49,11 @@ jobs:
         run: python -B tools/test_m19_p2a_bob_collision_model.py
       - name: Run 23 source-backed AGBO/P0e/P0f/P1d collision regressions including real bank26 fixture
         run: python -B tools/test_m19_p2a_agbo_bridge.py
+      - name: Check native MC68020 target and delivery policy syntax
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+      - name: Execute real private MC68020 collision bytes vs independent host oracle
+        run: python -B tools/test_m19_p2a_collision020_gate_a.py
       - name: Guard binary, active ASC and archives
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
