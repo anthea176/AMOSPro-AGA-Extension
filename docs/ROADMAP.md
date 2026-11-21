@@ -30,7 +30,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 | **P2a — collisions Bob–Bob** | `Aga Bob Col(A,B,Mode)` compare les rectangles ou les masques AGBO. Runtime WinUAE PASS 8/8 sur le premier ASC P2a. [Preuves](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). |
 | **P2b — retournements H/V** | `Aga Bob Flip(N,Mode)` livré. Rendu et collisions utilisent la même variante Chip. Gate A native et banc WinUAE Runtime/Compiler PASS. [Banc WinUAE P2b](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc). |
 | **P2c — Sélection des plans** | `Aga Bob Planes(N,Masque)` livré. [Contrat, Gate A et preuve Runtime](M19_P2C_BOB_PLANES_MODEL.md). |
-| **P2d — Update automatique** | [Modèle hôte de mise à jour à l’appel de Swap](M19_P2D_BOB_AUTO_UPDATE_MODEL.md), neuf tests. Raccordement natif à développer avant AMAL. |
+| **P2d — Update automatique** | [Candidate native construite en mémoire](M19_P2D_BOB_AUTO_UPDATE_MODEL.md), `Aga Bob Auto Update(Mode)`, 5 tests MC68020 et 9 tests hôtes. Qualification WinUAE avant AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
 | **Sprites AGA / AMAL** | Évaluer slots matériels, DMA, collisions et intégration éventuelle avec AMAL. |
 | **Tilemaps / scrolling (M20)** | **P0 modèle hôte et 13 tests PASS**, caméra, bandes exposées et deux pages indépendantes ; [spécification et limites](M20_TILEMAP_P0_HOST_MODEL.md). Implémentation native à concevoir, pas de nouveau token. |
