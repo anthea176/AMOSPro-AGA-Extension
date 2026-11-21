@@ -27,7 +27,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 | Sujet | Objectif |
 | --- | --- |
-| **P2a — collisions Bob–Bob** | **58 tests PASS** : 40 Python, 9 noyau de collision MC68020 (764 octets), 9 lectures appariées P0f MC68020 (328 octets) ; [noyau](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) · [pont privé P0f](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md). Signature AP20 proposée uniquement, aucune Lib P2a. [Modèle hôte P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive). |
+| **P2a — collisions Bob–Bob** | **66 tests PASS** : 17 géométrie + 23 AGBO hôte + 9 collision MC68020 (764 octets) + 9 contrôles P0f (328 octets) + **8 résolutions P0f/P0j-b3** (946 octets, 120 octets de sortie). [CI 66/66](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44903500981) · [rapport du raccord Chip](M19_P2A_PAIR_CHIP_RESOLVE_2026-11-21.md). Suite : hotspots P1b, clipping P1d, descripteurs 40 octets, raccord noyau. Pas de nouvelle Lib ni token AP20. |
 | **P2b — retournements H/V** | Transformations non destructives par objet, image et hotspot partagés préservés. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |

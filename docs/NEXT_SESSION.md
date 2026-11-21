@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P2a : deux images Chip résolues par les vrais P0f et P0j-b3
+
+[Émetteur 946 octets](../tools/m19_p2a_pair_chip_resolve_emit.py) · [8 nouveaux tests natifs](../tools/test_m19_p2a_pair_chip_resolve_gate_a.py) · [rapport](M19_P2A_PAIR_CHIP_RESOLVE_2026-11-21.md) · [CI P2a 66/66 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44903500981). Noyau source-only MC68020 SHA256 7ee9fa70673b8827bde31d12e1023982a7439f80c77c34e84d9c73438e678548. Le nouveau pont assemble les deux lectures natives P0f, la résolution de leurs deux images/masques Chip via P0j-b3 et une seconde vérification P0f, puis publie **120 octets** atomiquement. Deux implantations testées, tampon inchangé sur tout refus, sélection de banque et ABI préservées.
+
+**66 tests PASS** : 40 hôtes, 9 noyau collision MC68020, 9 pont P0f apparié MC68020 et 8 pont P0f+P0j-b3 MC68020. **Cache Chip préexistant obligatoire.** Reste : hotspots signés P1b, clipping écran et limites P1d, deux descripteurs de collision de 40 octets, puis appel du noyau 764 octets. Gate A privée P0f/P0j PASS, chaîne collision intégrée non testée ; WinUAE B / Compiler C / matériel D non testés. Pas de Lib, LAST_GOOD ou ASC modifiés.
+
+
 ## 21 novembre 2026 — M19 P2a : paire de Bobs contrôlée par le vrai P0f, 328 octets natifs
 
 [Émetteur](../tools/m19_p2a_pair_checked_read_emit.py) · [Banc de validation](../tools/test_m19_p2a_pair_checked_read_gate_a.py) · [Rapport privé](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md) · [CI P2a PASS (58 tests)](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44901815788). **MC68020 source-only, 328 octets**, SHA256 `3e2cdedb603fb090f0bfd4b46cf3ecc1e3684ace2ddf922b7b3076c6efa6d5dd`. Le pont appelle deux fois le **vrai `identity_check` P0f** avec `A5` propriétaire et `Bnk.GetAdr` simulé ; il publie atomiquement deux enregistrements natifs P0e de 24 octets après validation des deux banques, générations et stamps. Deux placements, 9/9 tests MC68020 PASS ; le noyau antérieur de collisions 764 octets reste validé indépendamment (9/9). Registres et sélection de banque préservés.
