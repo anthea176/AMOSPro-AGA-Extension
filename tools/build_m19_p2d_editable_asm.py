@@ -38,6 +38,7 @@ VARIANT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_VARIANT_ANCHOR_MC6
 PAINT_GEO_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PAINT_GEOMETRY_MC68020.s'
 CLEANUP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_CLEANUP_MC68020.s'
 PUBLIC_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PUBLIC_COL_MC68020.s'
+QUERY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_QUERY_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -63,6 +64,9 @@ CLEANUP_END = 0xA28E
 PUBLIC_COL_NAME = 'M19_P2A_PUBLIC_COL_MC68020.s'
 PUBLIC_COL_START = 0x9D38
 PUBLIC_COL_END = 0x9E36
+QUERY_SOURCE_NAME = 'M19_P2A_COLLISION_QUERY_MC68020.s'
+QUERY_START = 0x9B54
+QUERY_END = 0x9D38
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -402,6 +406,55 @@ def replace_raw_p2a_public(text: str) -> str:
             PUBLIC_COL_NAME + '"\n' + text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_p2a_query_provenance() -> tuple[int, int, int, bytes]:
+    """Resolve collision orchestration from original P2a source emitters."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(original)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['p2a_collision_query_entry']
+    end = base + labels['p2a_public_bob_col']
+    result_moveq = 0x9D34
+    require((begin, end) == (QUERY_START, QUERY_END),
+            'P2a collision query emitter positions differ from P2d')
+    fragment = native[labels['p2a_collision_query_entry']:
+                      labels['p2a_public_bob_col']]
+    require(len(fragment) == end-begin and
+            parts[group][begin:end] == fragment and
+            parts[group][result_moveq:result_moveq+2] == b'\x74\x00',
+            'P2a collision query differs from source-emitter contract')
+    return begin, end, result_moveq, fragment
+
+
+def replace_raw_p2a_query(text: str) -> str:
+    """Replace exact source-proven query bytes after kernel's six-byte tail."""
+    first_line = ('    dc.b $77,$F7,$74,$00,$4E,$75,$2F,$0B,$48,$E7,$EF,$EE'
+                  '  ; +$09B4E: 77F774004E752F0B48E7EFEE\n')
+    begin = text.find(first_line)
+    end = text.find('ENTRY_BOBS_09D38:\np2a_public_bob_col:\n',begin)
+    require(begin >= 0 and end > begin,
+            'P2a query original raw source boundary missing')
+    region = text[begin:end]
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', region)
+    pos, data = 0x9B4E, bytearray()
+    for offset, words in matches:
+        require(int(offset,16) == pos,
+                f'P2a collision query original bytes missing at {pos:05X}')
+        chunk = bytes.fromhex(words)
+        data.extend(chunk)
+        pos += len(chunk)
+    require(pos == QUERY_END and
+            data[:6] == bytes.fromhex('77f774004e75') and
+            data[6:] == prove_p2a_query_provenance()[3],
+            'P2a query audit bytes do not match the native source emitter')
+    return (text[:begin] +
+            '    dc.b $77,$F7,$74,$00,$4E,$75  ; +$09B4E: 77F774004E75\n'
+            '    include "' + QUERY_SOURCE_NAME + '"\n' +
+            text[end:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -458,7 +511,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    variant_text: str | None = None,
                    paint_geo_text: str | None = None,
                    cleanup_text: str | None = None,
-                   public_col_text: str | None = None) -> None:
+                   public_col_text: str | None = None,
+                   query_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -469,6 +523,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(PAINT_GEO_FILE.is_file(), f'missing authored module: {PAINT_GEO_FILE}')
     require(CLEANUP_FILE.is_file(), f'missing authored module: {CLEANUP_FILE}')
     require(PUBLIC_COL_FILE.is_file(), f'missing authored module: {PUBLIC_COL_FILE}')
+    require(QUERY_FILE.is_file(), f'missing authored module: {QUERY_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -477,6 +532,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
+    text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_public(text)
     text = replace_raw_flip_public(text)
     text = replace_raw_p2b_variant(text)
@@ -616,6 +672,14 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'unclassified opcode/data inside P2a public Bob Col')
     (folder / PUBLIC_COL_NAME).write_text(public_source,
                                           encoding='ascii', newline='\n')
+    query_source = (query_text if query_text is not None
+                    else QUERY_FILE.read_text('ascii'))
+    require(query_source.count('p2a_collision_query_entry:') == 1 and
+            query_source.count('p2a_query_return:') == 1 and
+            not re.search(r'(?im)^\s*dc\.[bwll]\b', query_source),
+            'P2a collision query native source contains incomplete/raw code')
+    (folder / QUERY_SOURCE_NAME).write_text(query_source,
+                                             encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -689,13 +753,15 @@ def verify_link(original: bytes, image: bytes, group: int,
     paint_start, paint_end, _, _ = prove_p2b_paint_geo_provenance()
     cleanup_start, cleanup_end, _, _ = prove_p2b_cleanup_provenance()
     public_start, public_end, _, _ = prove_p2a_public_provenance()
+    query_start, query_end, _, _ = prove_p2a_query_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
                 (variant_start <= i < variant_end) or
                 (paint_start <= i < paint_end) or
                 (cleanup_start <= i < cleanup_end) or
-                (public_start <= i < public_end) for i in differences),
+                (public_start <= i < public_end) or
+                (query_start <= i < query_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -713,13 +779,15 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           variant_text: str | None = None,
           paint_geo_text: str | None = None,
           cleanup_text: str | None = None,
-          public_col_text: str | None = None) -> tuple[bytes, list[int]]:
+          public_col_text: str | None = None,
+          query_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
                    planar_text=planar_text, flip_text=flip_text,
                    variant_text=variant_text, paint_geo_text=paint_geo_text,
-                   cleanup_text=cleanup_text, public_col_text=public_col_text)
+                   cleanup_text=cleanup_text, public_col_text=public_col_text,
+                   query_text=query_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -867,6 +935,21 @@ def test_editability(assembler: Path) -> None:
                 'P2a public MOVEQ did not assemble')
         require(public_start <= public_moveq < public_end,
                 'P2a public source edit outside owned region')
+        query_start, query_end, query_moveq, _ = prove_p2a_query_provenance()
+        query_source = QUERY_FILE.read_text('ascii')
+        needle = '    moveq #0,d2\n    rts'
+        require(query_source.count(needle) == 1,
+                'P2a query epilogue MOVEQ not uniquely editable')
+        modified_source = query_source.replace(needle, '    moveq #1,d2\n    rts')
+        edited_query, query_diffs = build(
+            assembler, root/'modified_query', allow_edited=True,
+            query_text=modified_source)
+        require(query_diffs == [query_moveq+1],
+                f'P2a query edit changed {query_diffs}, expected {[query_moveq+1]}')
+        require(unpack_ap20(edited_query)[1][group][query_moveq:query_moveq+2]
+                == b'\x74\x01', 'P2a query modified MOVEQ did not encode')
+        require(query_start <= query_moveq < query_end,
+                'P2a query edit escaped owned region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -875,6 +958,7 @@ def test_editability(assembler: Path) -> None:
     print('P2B_PAINT_GEOMETRY_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_CLEANUP_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_PUBLIC_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
+    print('P2A_QUERY_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
