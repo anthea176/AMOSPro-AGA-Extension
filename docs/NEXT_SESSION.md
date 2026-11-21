@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P2a noyau MC68020 isolé PASS
+
+[Source du noyau MC68020](../tools/m19_p2a_collision020_emit.py) · [Banc natif](../tools/test_m19_p2a_collision020_gate_a.py) · [Rapport de validation](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) · [CI PASS 44901130823](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44901130823). Noyau privé **764 octets**, SHA256 `2546b269cad753c6b401c5d3cf3330e0f96545e64506a023d381b60c154450b7`, deux modes : 0 rectangle, 1 masque AGBO. ABI D2=0 et D3=1/0/-1, registres AMOS et mémoire source préservés. **9 tests natifs MC68020 PASS sur 2 implantations, dont 720 comparaisons aléatoires et 240 cas de masques non alignés**, ajoutés aux 40 tests hôtes préexistants. Contrôle CPU / livraison PASS (CI 44901130811). Une première CI a trouvé A3 clobber ; corrigé via A6 préservé, puis relancé PASS.
+
+**Portée stricte :** CPU 68020 émulé et **descripteurs déjà validés par le banc**, pas de capture réelle des objets/banks à partir d'AMOS, pas de token AP20, pas de `.Lib` P2a, pas de WinUAE ni Compiler. **P1e LAST_GOOD demeure inchangée** (124 444 octets SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`) et ASC de campagne inchangé. **Gate A du noyau isolé PASS ; Gate A intégration AP20 non testée, Gate B/C/D P2a non testées.** Suite : pont natif contrôlé entre objets actifs/stamps/banques P1e et ces 40 octets de descripteur.
+
+
 ## 21 novembre 2026 — P2a : raccord source réel PASS (sans API native)
 
 [Modèle raccord AGBO/P1e](../tools/m19_p2a_agbo_bridge.py) · [23 tests supplémentaires](../tools/test_m19_p2a_agbo_bridge.py) · [CI 40/40 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44899748782) · [contrat source et API proposée](M19_P2A_COLLISIONS_HOST_2026-11-21.md).

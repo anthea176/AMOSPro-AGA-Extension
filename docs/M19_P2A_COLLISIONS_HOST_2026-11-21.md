@@ -1,6 +1,6 @@
 # M19 P2a — Collisions Bob–Bob (modèle hôte)
 
-**21 novembre 2026.** P2a est engagé après la promotion de P1e. Ce document formalise un **modèle de référence Python, source-only**, pas une nouvelle API AMOS ni une implémentation native.
+**21 novembre 2026.** P2a est engagé après la promotion de P1e. Ce document formalise le **modèle de référence Python et son raccord P1e**, indépendants du [noyau MC68020 source-only déjà exécuté](M19_P2A_COLLISION020_NATIVE_2026-11-21.md). Aucune nouvelle API publique AMOS ni Lib P2a.
 
 ## Portée et comportement envisagé
 
@@ -20,15 +20,16 @@ Le modèle utilise la position logique moins les coordonnées du hotspot pour d�
 - [Pont réel AGBO/P1e](../tools/m19_p2a_agbo_bridge.py) : décodage hôte des objets, stamps et zones P1d, validation de la banque, conversion du masque AGBO et calcul des paires.
 - [23 tests de raccord](../tools/test_m19_p2a_agbo_bridge.py) : formats source, coordonnées, refus sur références périmées, banque ABK 26 source-pinnée, bordures 16 bits et limites.
 - [CI P2a dédiée](../.github/workflows/m19-p2a-bob-collisions-host.yml) : **40 tests hôtes PASS** ([exécution GitHub 44899748782](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44899748782)), syntaxe et absence de modification de la Lib et de l'ASC.
+- [Noyau privé MC68020](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) : code source de 764 octets, 9 tests natifs PASS et comparaison au modèle sur 2 placements, sans token AP20.
 - [Conception générale P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md) : collisions, retournements H/V, modes avancés et AMAL ultérieurement.
 
 ## Décisions à prendre avant développement natif
 
-Signatures publiques exactes, retour par paire ou liste de contacts, politique de collisions hors écran et limites de clipping, effets des états READY/DIRTY, consommation CPU MC68020, gestion du masque AGBO réel, lecture de l'objet Bob sans modifier la frame. **Aucune compatibilité OCS, aucun token AP20 et aucun résultat Compiler ne sont revendiqués.**
+Signatures publiques exactes, retour par paire ou liste de contacts, politique de collisions hors écran et limites de clipping, effets des états READY/DIRTY, coût CPU MC68020, accès sûr au masque AGBO réel et adaptation des Bobs actifs. **Le noyau natif isolé existe et passe ses tests, mais l'API publique / l'intégration AMOS / WinUAE / Compiler ne sont pas validés.**
 
 ## Validation
 
-**40 tests hôtes PASS** dans la CI du 21/11/2026 : 17 modèles géométriques + 23 cas de raccord au code source réel P1e/AGBO. La banque `M19_P1B_HOTSPOT_BANK26.abk` (200 octets) est comparée au générateur déterministe et à son SHA256 source-pinné. **Ces tests Python ne sont pas des essais de collision dans WinUAE ou du code 68020 P2a.** **Gate A P2a native : NON TESTÉE**, **Gate B WinUAE : NON TESTÉE**, **Gate C Compiler : NON TESTÉE**, **Gate D physique : NON TESTÉE**. La bibliothèque P1e LAST_GOOD reste inchangée.
+**40 tests hôtes PASS** dans la CI du 21/11/2026 : 17 modèles géométriques + 23 cas de raccord au code source réel P1e/AGBO. La banque `M19_P1B_HOTSPOT_BANK26.abk` (200 octets) est comparée au générateur déterministe et à son SHA256 source-pinné. **Ces 40 tests Python sont distincts des 9 tests du noyau natif MC68020 réellement exécuté sous Unicorn : Gate A du noyau isolé PASS** ([CI 44901130823](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44901130823)). **Gate A intégration AMOS/AP20 non testée ; B WinUAE, C Compiler, D physique NON TESTÉES.** La bibliothèque P1e LAST_GOOD reste inchangée.
 
 ## Raccord vérifié aux structures natives P1e
 
@@ -51,4 +52,4 @@ Une seule interrogation **par paire** suffit pour un premier jalon et évite de 
 
 ## Étape suivante
 
-Construire le **petit noyau natif MC68020** de collision **en source seulement**, en réutilisant les ponts de lecture et d'identité P1e, puis le confronter au modèle hôte. Pour une livraison de nouvelle `.Lib`, un nouvel ASC ou une promotion de LAST_GOOD, une autorisation distincte restera nécessaire.
+Le **noyau privé MC68020 est livré en source et confronté au modèle**. Préparer maintenant son adaptateur de lecture natif à partir des ponts de lecture et d'identité P1e, avec validation des pointeurs avant toute utilisation. Pour une livraison de nouvelle `.Lib`, un nouvel ASC ou une promotion de LAST_GOOD, une autorisation distincte restera nécessaire.
