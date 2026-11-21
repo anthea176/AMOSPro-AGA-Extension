@@ -21,7 +21,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 **M19 P2d — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. Gate A réussie. Le scénario intégré **P2a–P2e** passe Runtime WinUAE (Gate B) et vrai AMOS Compiler (Gate C) ; les autres API ne sont pas globalement requalifiées.
 
-**P2 ALL IN ONE — exemple Bobs AGA validé Runtime + Compiler** — [Notice de l'exemple](examples/bob_p2_all_in_one/README.fr.md) · [Source ASCII identique](examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc) · [Validation P2](docs/M19_P2_ALL_IN_ONE_2026-11-21.md) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
+**P2 ALL IN ONE — exemple Bobs AGA validé Runtime + Compiler** — [Notice de l'exemple](examples/bob_p2_all_in_one/README.fr.md) · [Active regression ASC](tests/current/M19_P2_ALL_IN_ONE.asc) · [Source ASCII identique](examples/bob_p2_all_in_one/BOB_ALL_IN_ONE.asc) · [Validation P2](docs/M19_P2_ALL_IN_ONE_2026-11-21.md) · [LAST_GOOD P1e](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
 
 **Nouvel exemple interactif (sans benchmark) :** [restauration locale avec quatre Bobs mobiles](examples/bob_local_restore/README.fr.md) · [source ASCII](examples/bob_local_restore/BOB_LOCAL_RESTORE.asc) — variante nouvelle, PREFLIGHT PASS ; essai WinUAE encore nécessaire. **Installation :** [INSTALL.fr.md](INSTALL.fr.md), puis contrôle du SHA de la copie dans `APSystem`. **Historique :** [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [suivi M19](docs/NEXT_SESSION.md).
 

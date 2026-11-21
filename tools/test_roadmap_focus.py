@@ -17,9 +17,6 @@ ROADMAP = ROOT / "docs/ROADMAP.md"
 ARCHIVE = ROOT / "docs/ROADMAP_HISTORY_2026-11-17.md"
 LIB = ROOT / "dist/AMOSPro_AGA.Lib"
 ASC_DIR = ROOT / "tests/current"
-PROMOTED = ROOT / "examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc"
-FROZEN = ROOT / "tests/passed/M19_P2_ALL_IN_ONE.asc"
-NO_ACTIVE = "Aucun ASC actif"
 MAX_CHARS = 9000
 MAX_LINES = 110
 
@@ -94,17 +91,11 @@ def main() -> int:
         print("FAIL: historical roadmap not marked non-normative")
         return 1
     asc = sorted(ASC_DIR.glob("*.asc"))
-    if len(asc) > 1:
-        print(f"FAIL: at most one ASC can be active, found {[p.name for p in asc]}")
+    if len(asc) != 1:
+        print(f"FAIL: exactly one ASC must be active, found {[p.name for p in asc]}")
         return 1
-    if not asc and (not PROMOTED.is_file() or
-                    not FROZEN.is_file() or
-                    PROMOTED.read_bytes() != FROZEN.read_bytes()):
-        print("FAIL: no active ASC without preserved validated P2 example/test")
-        return 1
-    identity = asc[0].name if asc else NO_ACTIVE
     text = ROADMAP.read_text(encoding="utf-8")
-    errors = check_roadmap(text, sha256(LIB.read_bytes()).hexdigest(), identity)
+    errors = check_roadmap(text, sha256(LIB.read_bytes()).hexdigest(), asc[0].name)
     if errors:
         for error in errors:
             print("FAIL roadmap:", error)
@@ -112,7 +103,7 @@ def main() -> int:
     print(
         f"PASS: {ROADMAP.relative_to(ROOT)} is focused "
         f"({len(text)} chars, {len(text.splitlines())} lines), "
-        f"active ASC {identity}, current Lib SHA256."
+        f"active ASC {asc[0].name}, current Lib SHA256."
     )
     return 0
 

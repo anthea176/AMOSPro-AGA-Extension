@@ -8,8 +8,9 @@ from pathlib import Path
 from hashlib import sha1, sha256
 
 ROOT = Path(__file__).resolve().parents[1]
-ASC = ROOT / "examples/bob_p2_all_in_one/M19_P2_ALL_IN_ONE.asc"
+ASC = ROOT / "examples/bob_p2_all_in_one/BOB_ALL_IN_ONE.asc"
 PASSED = ROOT / "tests/passed/M19_P2_ALL_IN_ONE.asc"
+ACTIVE = ROOT / "tests/current/M19_P2_ALL_IN_ONE.asc"
 EVIDENCE = ROOT / "docs/evidence"
 SOURCE_BLOB = "c48d334fd4508d402d28399bffdfec08d4cb4acb"
 
@@ -63,6 +64,7 @@ def verify_source():
     raw = ASC.read_bytes()
     assert raw.isascii() and b"\r" not in raw
     assert PASSED.read_bytes() == raw, "Frozen test and public example differ"
+    assert ACTIVE.read_bytes() == raw, "Active regression and public example differ"
     git_header = b"blob " + str(len(raw)).encode() + b"\x00"
     assert sha1(git_header + raw).hexdigest() == SOURCE_BLOB, "Validated ASC changed"
     source = raw.decode("ascii")

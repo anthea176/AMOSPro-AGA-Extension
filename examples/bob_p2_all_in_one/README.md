@@ -6,7 +6,7 @@
 
 ## Files and requirements
 
-- [**M19_P2_ALL_IN_ONE.asc**](M19_P2_ALL_IN_ONE.asc): **byte-identical original ASCII source**, 25,056 bytes; Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`, tag `P2_FULL_V1_20261121`.
+- [**BOB_ALL_IN_ONE.asc**](BOB_ALL_IN_ONE.asc): **byte-identical original ASCII source**, 25,056 bytes; Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`, tag `P2_FULL_V1_20261121`.
 - Requires [`dist/AMOSPro_AGA.Lib` M19 P2d](../../dist/AMOSPro_AGA.Lib), **136,020 bytes**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**, **MC68020/68EC020 minimum**.
 - [Frozen test copy](../../tests/passed/M19_P2_ALL_IN_ONE.asc): **exact same bytes** as this example. Protected P1e `LAST_GOOD` is unchanged.
 
@@ -25,7 +25,7 @@ The AGA display comes forward automatically via `Amos To Back`, then closes and 
 
 1. Install the exact **P2d library** into the AGA slot in `APSystem`; restart AMOS Professional, running WinUAE with AGA and a 68020+ CPU.
 2. In a **new, empty AMOS program**, make sure banks **24, 27 and 28** are unused.
-3. Use **Project → Merge ASCII** to import `M19_P2_ALL_IN_ONE.asc`. Run in Runtime mode or compile **the same unchanged source** using AMOS Compiler.
+3. Use **Project → Merge ASCII** to import `BOB_ALL_IN_ONE.asc`. Run in Runtime mode or compile **the same unchanged source** using AMOS Compiler.
 4. Preserve the resulting `RAM:` log before resetting WinUAE or running again.
 
 | Mode | Output log |
