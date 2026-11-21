@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2c installable, Bob Planes
+
+**Lib active** [M19 P2c](../dist/AMOSPro_AGA.Lib), 135 596 octets, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`, 99 commandes et 202 entrées AP20. `Aga Bob Planes(N,Masque)` sélectionne les plans de destination par Bob sans modifier le masque AGBO. Gate A passe à deux implantations avec restauration de fond et Flip. [Banc WinUAE de 34 contrôles](../tests/current/README.md). Runtime et AMOS Compiler P2c à qualifier. LAST_GOOD P1e.
+
 ## 21 novembre 2026 — P2b validée sous WinUAE, poursuite P2c
 
 Les deux journaux fournis pour le banc P2b corrigé indiquent `CHECKS 21`, `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Empreintes SHA256 des journaux d'origine :

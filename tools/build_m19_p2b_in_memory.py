@@ -23,17 +23,22 @@ def build_p2b():
     baseline, meta = build_p2a()
     assert meta['sha256'] == P2A_SHA and sha256(baseline).hexdigest() == P2A_SHA
     _, p1e = build_p1e()
-    tokens, original, _ = unpack_ap20(baseline)
-    group = meta['bob_group']
     old, _ = emit_p2a_public_col(p1e['context_delta'])
     native, labels = emit_bob_flip(p1e['context_delta'])
+    return extend_bob_api(baseline, meta['bob_group'], meta['public_commands'],
+                          old, native, labels['p2b_public_flip'], NAME, SIGNATURE, TITLE)
+
+
+def extend_bob_api(baseline, group, commands, old, native, entry, name, signature, title):
+    """Extend the checked BOBS group and remap AP20 indices around two new stubs."""
+    tokens, original, _ = unpack_ap20(baseline)
     assert original[group].endswith(old) and original[group].startswith(DISPATCH_V2)
     prefix = len(original[group]) - len(old)
     expanded = original[group][:prefix] + native
     assert len(expanded) <= MAX_UNIT_BYTES
     function = group+1
     new_group = group+2
-    offset = prefix - len(DISPATCH_V2) + labels['p2b_public_flip']
+    offset = prefix - len(DISPATCH_V2) + entry
     parts = []
     for index, part in enumerate(original):
         if index == group:
@@ -49,17 +54,17 @@ def build_p2b():
         a, b = (row[role]+2*(row[role]>=group) for role in ('instruction', 'function'))
         pack_into('>HH', updated, row['offset'], a, b)
         expected.append((row['name'], a, b, row['signature']))
-    updated.extend(token(NAME, 1, function, SIGNATURE))
+    updated.extend(token(name, 1, function, signature))
     updated.extend(tokens[-6:])
-    expected.append((NAME, 1, function, SIGNATURE))
-    result = repack_ap20(baseline, bytes(updated), parts, TITLE)
-    assert unpack_ap20(result) == (bytes(updated), parts, TITLE)
+    expected.append((name, 1, function, signature))
+    result = repack_ap20(baseline, bytes(updated), parts, title)
+    assert unpack_ap20(result) == (bytes(updated), parts, title)
     checked = inspect(parse(result))
     assert not checked['issues'], checked['issues']
     assert [(r['name'],r['instruction'],r['function'],r['signature'])
             for r in checked['tokens']] == expected
     return result, dict(sha256=sha256(result).hexdigest(), bytes=len(result),
-                        entries=len(parts), commands=meta['public_commands']+1, bob_group=new_group,
+                        entries=len(parts), commands=commands+1, bob_group=new_group,
                         group_bytes=len(expanded), function=function,
                         pc16_max=max(map(abs, pc16_displacements(parts).values())))
 

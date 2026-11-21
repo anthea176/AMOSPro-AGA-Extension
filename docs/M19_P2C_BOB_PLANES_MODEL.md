@@ -12,6 +12,10 @@ Cette première étape de SET BOB définit la sélection des plans de destinatio
 
 Le modèle hôte passe **7 tests**, avec **1 024 compositions comparées bit par bit**, des masques non contigus et des essais de restauration sur les deux pages. Les 14 régressions Clear/Update et les 6 régressions hôtes P2b passent aussi.
 
-Le [peintre natif actuel](../tools/m19_p0d_private_blit_emit.py) initialise un RastPort privé avant les appels de rendu opaque et masqué. Le raccordement devra qualifier la sélection des plans sur les deux chemins et comparer les pixels avec Flip, clipping et restauration du fond. L’API publique, l’update automatique et AMAL restent à définir. Les résultats de ce jalon portent sur le modèle hôte.
+## Raccordement natif livré
+
+`Aga Bob Planes(N,Masque)` renvoie 1 après écriture du réglage du Bob actif, ou 0 si le Bob ou le masque est refusé. Le réglage est stocké dans le slot P2b et effacé à la fermeture effective. Le [point de raccordement natif](../tools/m19_p2c_bob_planes_emit.py) règle le byte `Mask` du RastPort privé, après InitRastPort et avant le rendu opaque ou masqué. Il utilise l’[interface classique du RastPort](https://www.theflatnet.de/pub/cbm/amiga/AmigaDevDocs/lib_27.html) et [sa structure](https://github.com/aros-development-team/AROS/blob/master/compiler/include/graphics/rastport.h). Le choix des plans reste distinct du masque AGBO et du minterm.
+
+Le [banc natif](../tools/test_m19_p2c_bob_planes_gate_a.py) couvre le dispatch AP20, les deux implantations, les pixels en opaque et masqué, Flip, la restauration par page, les refus et la réinitialisation à Close. La [campagne WinUAE](../tests/current/README.md) vise 34 contrôles et doit vérifier la vraie `graphics.library`. L’update automatique et AMAL restent à définir.
 
 [Modèle Python](../tools/m19_p2c_bob_planes_model.py) · [Tests](../tools/test_m19_p2c_bob_planes_model.py)

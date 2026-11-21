@@ -1,20 +1,13 @@
-# M19 P2b — Banc WinUAE de retournement des Bobs
+# M19 P2c — Banc WinUAE de sélection des plans AGA
 
-[AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) M19 P2b, **135 352 octets**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commandes et 200 entrées AP20**. La version protégée [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est P1e.
+[AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) M19 P2c, **135 596 octets**, SHA256 `eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d`. La version protégée [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est P1e.
 
-1. Copier la Lib active dans l'emplacement habituel sous `APSystem`, puis redémarrer AMOS Pro en AGA avec un MC68020 ou supérieur.
-2. Dans un programme vierge, importer [M19_P2B_BOB_FLIP.asc](M19_P2B_BOB_FLIP.asc) via **Project → Merge ASCII**. Les banques 24, 25 et 27 doivent être libres. Le banc crée ses images lui-même.
-3. Lancer en Runtime et ouvrir `RAM:M19_P2B_BOB_FLIP.TXT`.
+1. Copier la Lib active sous `APSystem`, puis redémarrer AMOS Pro en AGA avec un MC68020 ou supérieur.
+2. Dans un programme vierge, importer [M19_P2C_BOB_PLANES.asc](M19_P2C_BOB_PLANES.asc) via **Project → Merge ASCII**. Laisser libres les banques 24, 25 et 27.
+3. Lancer en Runtime puis avec AMOS Compiler. Chaque exécution écrit `RAM:M19_P2C_BOB_PLANES.TXT`. Conserver séparément les deux journaux.
 
-Le banc alloue d’abord la banque CBlock 27, prépare les deux banques AGBO en Chip et lie les Bobs. Les captures suivantes réutilisent la banque 27 de même taille. Le banc capture un pixel du buffer arrière avec `Aga C Block Capture` pour chaque orientation et vérifie deux positions de collision. Attendu en Runtime `PRG_STATE 1`, `RESULT 1`, `PROBE_PREALLOC 1`, `CHECKS 21`, `ERR 0`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
+Le banc lit les huit pixels d’une ligne sur le buffer arrière. Il compare le mode par défaut, des masques non contigus, le masque nul et le retournement H. Il vérifie aussi les refus de -1 et 256. Attendu `PROBE_PREALLOC 1`, `CHECKS 34`, `ERR 0`, `CLOSE_RETURNED 1`, `VERDICT PASS`. `PRG_STATE 1` identifie le Runtime et `PRG_STATE -1` le compilé.
 
-| Mode | Pixel attendu |
-| --- | --- |
-| Normal | (101,101) |
-| H | (99,101) |
-| V | (101,99) |
-| HV | (99,99) |
+En cas de `ERR 10`, `MODE`, `PIXEL`, `VALUE` et `EXPECTED` localisent la première différence. `PIXEL` est l’indice de 0 à 7 dans la capture qui commence à X=96. Gate A passe sous émulation MC68020 avec services Exec et Blitter simulés. L’essai WinUAE doit qualifier le rendu avec la vraie `graphics.library`.
 
-Les contrôles CPU, ABI, pixels et gestion Chip passent sous émulation MC68020 avec services Exec et Blitter simulés. Le banc corrigé du commit `562f243` passe **21/21** sous WinUAE en Runtime (`PRG_STATE 1`) et avec AMOS Compiler (`PRG_STATE -1`). Les deux journaux indiquent `ERR 0`, `CLOSE_RETURNED 1` et `VERDICT PASS`. Le [banc P2a précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/8b8830fb4d4308deeed8ec58d79d2a5baf2db226/tests/current/M19_P2A_BOB_COL.asc) est conservé dans l’historique Git.
-
-Premier essai Runtime au commit `900afe2` — pixel correct en mode 0, puis `ERR 10`, `RECT -1`, `MASK -1`. Le banc révisé passe après préallocation de la banque de capture et préparation des deux banques AGBO.
+Le [banc P2b validé](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/562f24343a379aa4fd69c28edb63219581f4d7c6/tests/current/M19_P2B_BOB_FLIP.asc) est dans l’historique Git. Il a passé 21/21 en Runtime et avec AMOS Compiler.

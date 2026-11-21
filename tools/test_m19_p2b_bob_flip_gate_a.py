@@ -91,11 +91,11 @@ class FlipMachine(PublicMachine):
         return self.token('p2a_public_bob_col', mode, (2,1))
 
 
-def machine(layout, p1d_binary, p1d):
+def machine(layout, p1d_binary, p1d, *, emitter=emit_bob_flip):
     _, parts, _ = unpack_ap20(p1d_binary)
     m = ready(layout, cls=FlipMachine, inject_failure=False)
     _, _, _, reset = load_native(m, parts, p1d)
-    native, labels = emit_bob_flip(p1d['context_delta'])
+    native, labels = emitter(p1d['context_delta'])
     baseline, _ = emit_limit_bobs(p1d['context_delta'])
     previous = relocate(baseline, m.entry, {}, m.uc)
     patched = relocate(native, m.entry, {}, m.uc)
@@ -115,15 +115,17 @@ def machine(layout, p1d_binary, p1d):
     return m
 
 
-def expected(m, a, b):
+def expected(m, a, b, masks=(255, 255)):
     images = [parse_payload(m.bank_payload(bank)).image(1) for bank in (10,11)]
     views = [OrientedImage(image, bool(mode&1), bool(mode&2))
              for image,mode in zip(images,(a,b))]
     bobs = [view.collision_bob(i,bank,x,y)
             for view,(i,bank,x,y) in zip(views, ((1,10,5,7),(2,11,9,11)))]
     result = m.read_back()
-    for bob, image, mode in zip(bobs, images, (a,b)):
-        result = paint(result, oracle(image,mode), bob.origin_x, bob.origin_y)
+    for bob, image, mode, mask in zip(bobs, images, (a,b), masks):
+        painted = paint(result, oracle(image,mode), bob.origin_x, bob.origin_y)
+        result = [new if mask & (1 << plane) else old
+                  for plane, (old, new) in enumerate(zip(result, painted))]
     return result, bobs
 
 

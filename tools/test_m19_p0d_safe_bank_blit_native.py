@@ -81,7 +81,8 @@ class DrawMachine(ResolverMachine):
 
         if address==GFX-198:
             rp=self.a(1)
-            self.uc.mem_write(rp,bytes(RP_SIZE))
+            self.uc.mem_write(rp, bytes(RP_SIZE))
+            self.uc.mem_write(rp+24, b'\xff')  # InitRastPort enables all destination planes.
             self.paint_blits.append(('InitRastPort',rp))
             return self._os_return(0)
 
@@ -106,6 +107,7 @@ class DrawMachine(ResolverMachine):
             if masked:
                 assert any(c<=maskptr<c+n for c,n in self.chip_live.items())
             dst=self.active_back_planes()
+            write_mask=self.uc.mem_read(rp+24,1)[0]
             for y in range(h):
                 for x in range(w):
                     ix,iy,ox,oy=sx+x,sy+y,dx+x,dy+y
@@ -115,6 +117,8 @@ class DrawMachine(ResolverMachine):
                         if not (mask_byte&source_bit):
                             continue
                     for p in range(self.depth):
+                        if not write_mask & (1 << p):
+                            continue
                         at=plane_ptrs[p]+iy*stride+ix//8
                         source_byte=self.uc.mem_read(at,1)[0]
                         dst_at=dst[p]+oy*STRIDE+ox//8

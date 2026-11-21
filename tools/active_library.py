@@ -33,6 +33,7 @@ B7M2_SHA="242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6"  # f
 B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # frozen B8 (SafePort workaround 405 frames Runtime only)
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
 P1E_SHA="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
+P2C_SHA="eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d"
 P2B_SHA="96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448"
 P2A_SHA="e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe"  # M19 P2a test candidate; Gate A PASS, WinUAE B pending; LAST_GOOD P1e
 P1D_SHA="47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785"
@@ -108,13 +109,20 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P2C_SHA:
+        from build_m19_p2c_in_memory import build_p2c
+        expected, meta = build_p2c()
+        assert cur == expected and len(cur) == 135596 and meta['sha256'] == P2C_SHA
+        assert (meta['commands'], meta['entries'], meta['bob_group']) == (99, 202, 194)
+        assert len(good) == 124444 and sha256(good).hexdigest() == P1E_SHA
+        return cur, good, "M19 P2c Aga Bob Planes TEST CANDIDATE; WinUAE Runtime/Compiler pending; P1e LAST_GOOD"
     if current_sha == P2B_SHA:
         from build_m19_p2b_in_memory import build_p2b
         expected, meta = build_p2b()
         assert cur == expected and len(cur) == 135352 and meta['sha256'] == P2B_SHA
         assert (meta['commands'], meta['entries'], meta['bob_group']) == (98, 200, 192)
         assert len(good) == 124444 and sha256(good).hexdigest() == P1E_SHA
-        return cur, good, "M19 P2b Aga Bob Flip TEST CANDIDATE; WinUAE Runtime/Compiler pending; P1e LAST_GOOD"
+        return cur, good, "M19 P2b Aga Bob Flip TEST CANDIDATE; WinUAE Runtime/Compiler PASS; P1e LAST_GOOD"
     if current_sha == P2A_SHA:
         from build_m19_p2a_public_in_memory import build_p2a
         expected, meta = build_p2a()

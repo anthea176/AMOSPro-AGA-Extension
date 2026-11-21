@@ -40,14 +40,16 @@ jobs:
           sys.path.insert(0,'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA, P2C_SHA
           active,good,label=verify_active(Path('.'))
           digest=sha256(active).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA)
+          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA, P2C_SHA)
           assert sha256(good).hexdigest()==P1E_SHA
           files=list(Path('tests/current').glob('*.asc'))
           assert len(files)==1
-          if digest == P2B_SHA:
+          if digest == P2C_SHA:
+              assert files[0].name == 'M19_P2C_BOB_PLANES.asc'
+          elif digest == P2B_SHA:
               assert files[0].name == 'M19_P2B_BOB_FLIP.asc'
           elif digest == P2A_SHA:
               assert files[0].name == 'M19_P2A_BOB_COL.asc'
