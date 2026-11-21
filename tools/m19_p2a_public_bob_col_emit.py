@@ -19,6 +19,8 @@ from struct import pack
 from hashlib import sha256
 from m68k_emit import A, D, I, M, POST, Code
 from m19_p1e_bank_edit_emit import emit_bank_edit
+from m19_p0e_v2_object_bridge_emit import OBJ_RELATIVE
+from m19_p0f_object_identity_emit import OBJ,AGA_CORE,emit_object_identity
 from m19_p1c_bob_priority_emit import STATE_A5
 from m19_p1d_limit_bob_emit import TABLE_FROM_CONTEXT
 from m19_p2a_pair_chip_resolve_emit import emit_p2a_pair_chip_resolve
@@ -27,6 +29,8 @@ from m19_p2a_pair_geometry020_emit import emit_p2a_pair_geometry020
 from m19_p2a_collision020_emit import emit_collision020
 from m19_p2a_collision_query020_emit import emit_p2a_collision_query020
 
+IDENTITY_DELTA=(OBJ_RELATIVE+len(OBJ)+len(AGA_CORE)+
+                emit_object_identity()[1]['identity_check_entry'])
 FRAME=256
 F=dict(mode=0,bob_b=4,bob_a=8,result=12,context=16)
 SCREEN=64
@@ -94,7 +98,16 @@ def emit_p2a_public_col(context_delta: int) -> tuple[bytes,dict[str,int]]:
     # Runtime addresses are PC-relative in ONE relocatable V2 BOBS unit;
     # never store addresses captured before relocation or supplied by AMOS.
     for i,label in enumerate(ENTRIES):
-        lea_pc_long(0,label)
+        if label=='identity_check_entry':
+            # P0f lives in the OTHER, AGA core V2 unit. Resolve it
+            # from the actual A5->State pointer (the source-pinned
+            # P0e/P0f code places this entry at State+IDENTITY_DELTA).
+            c.move(M(5,STATE_A5),D(5))
+            c.imm('add',IDENTITY_DELTA,D(5))
+            B(5,'p2a_public_col_done')
+            c.move(D(5),A(0))
+        else:
+            lea_pc_long(0,label)
         c.move(A(0),M(2,CALLBACKS+4*i))
     G('bob_a',D(0));G('bob_b',D(1));G('mode',D(4))
     frame_ptr(PRIVATE_CONTEXT,1)
@@ -107,7 +120,7 @@ def emit_p2a_public_col(context_delta: int) -> tuple[bytes,dict[str,int]]:
     native=c.out()
     if (native[:len(old)]!=old or len(native)%2 or len(native)>65500
         or c.labels['p2a_public_bob_col']<len(old)
-        or any(label not in c.labels for label in ENTRIES)):
+        or any(label not in c.labels for label in ENTRIES if label!='identity_check_entry')):
         raise ValueError('P2a source ancestry/group length ABI drift')
     return native,c.labels
 

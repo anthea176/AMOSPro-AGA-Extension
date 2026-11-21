@@ -127,7 +127,7 @@ class P2aCandidateNative(unittest.TestCase):
     def test_02_private_native_source_embeds_exact_ancestry(self):
         _,p1e=build_p1e()
         _,old=emit_p2a_public_col(p1e['context_delta'])
-        self.assertTrue(all(key in old for key in ENTRIES))
+        self.assertTrue(all(key in old for key in ENTRIES if key!='identity_check_entry'))
         native,labels=emit_p2a_public_col(p1e['context_delta'])
         cap=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_020)
         fragment=native[labels['p2a_public_bob_col']:]
