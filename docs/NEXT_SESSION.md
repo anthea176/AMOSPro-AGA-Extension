@@ -1,6 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## 21 novembre 2026 — P2a Livrée : nouvelle Lib testable, Gate A PASS
+## 21 novembre 2026 — P2a Runtime PASS sur le premier ASC, P2b modèle hôte
+
+**P2a :** le journal utilisateur `M19_P2A_BOB_COL.TXT` indique `PRG_STATE 1`, `ERR 0`, `CHECKS 8`, `VERDICT PASS`. Le format correspond au premier ASC de collision, qui écrit le verdict après le retour de `Aga Screen Close`. La ligne `CLOSE_RETURNED` est propre au banc republié sous `tests/current/`. Gate C Compiler et Gate D matérielle non testées.
+
+**P2b :** [modèle et contrat](M19_P2B_BOB_ORIENTATION_HOST.md), **6 tests hôtes P2b et 40 régressions hôtes P2a PASS**. Orientation par Bob, couleurs et visibilité transformées ensemble, hotspot signé effectif, limites P1d et collisions. Suite : qualifier le noyau privé MC68020 et le cycle des variantes Chip avant de fixer une API publique. La Lib active P2a, LAST_GOOD P1e et l'ASC de campagne gardent leurs empreintes.
+
+## 21 novembre 2026 — Livraison initiale P2a, Gate A PASS
 
 **Lib active** : [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **129 544 octets**, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes/198 AP20 ; [exemple](../tests/current/M19_P2A_BOB_COL.asc), [guide](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). API `Aga Bob Col(A,B,Mode)` : collisions rectangle (0) et masque (1). Gate A publique source-native sur deux relocations PASS (5 tests), préflight ASC PASS. **Suivant : lancer le test sous WinUAE**, récupérer `RAM:M19_P2A_BOB_COL.TXT` (attendu `VERDICT PASS`, `CHECKS 8`). Gate B WinUAE / C Compiler / D physique NON TESTÉES. **LAST_GOOD P1e protégée** 124 444 octets, inchangée, aucune promotion.
 

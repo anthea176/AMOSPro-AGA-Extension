@@ -1,0 +1,34 @@
+name: M19 P2b Bob orientation host model
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-p2b-bob-orientation-host.yml'
+      - 'tools/*m19_p2b_bob_orientation_model.py'
+      - 'tools/*m19_p2a_bob_collision_model.py'
+      - 'tools/*m19_p2a_agbo_bridge.py'
+      - 'tools/m19_p0a_multi_bob_abk.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  orientation-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify AGBO colour, visibility, hotspots and P2a collisions
+        run: |
+          python -B tools/test_m19_p2b_bob_orientation_model.py
+          python -B tools/test_m19_p2a_bob_collision_model.py
+          python -B tools/test_m19_p2a_agbo_bridge.py
+      - name: Verify the campaign and protected files were not modified
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/ archive/
