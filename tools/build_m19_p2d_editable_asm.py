@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from hashlib import sha256
+from functools import lru_cache
 from pathlib import Path
 import re
 import shutil
@@ -29,11 +30,15 @@ from m19_p2d_bob_auto_update_emit import emit_bob_auto_update
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
+PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
 MASTER_FILE = 'M19_P2D_AP20_SOURCE.s'
 SOURCE_NAME = 'M19_P2D_CONTROLS_MC68020.s'
 START_LABEL = 'p2d_public_auto_update:'
 END_LABEL = 'L_BOBS_0B72A:'
+P2C_START_LABEL = 'p2c_public_planes:'
+P2C_END_LABEL = 'ENTRY_BOBS_0B58C:'
+P2C_SOURCE_NAME = 'M19_P2C_PLANES_MC68020.s'
 
 
 class SourceError(RuntimeError):
@@ -59,7 +64,8 @@ def checked_vasm(assembler: Path, source: Path, output: Path) -> bytes:
     return output.read_bytes()
 
 
-def prove_source_provenance() -> tuple[bytes, int, int, int, int]:
+@lru_cache(maxsize=1)
+def prove_source_provenance() -> tuple[bytes, int, int, int, int, int, int]:
     """Require exact P2d native builder and exact source-region boundaries."""
     lib = (ROOT / 'dist' / 'AMOSPro_AGA.Lib').read_bytes()
     good = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -78,17 +84,23 @@ def prove_source_provenance() -> tuple[bytes, int, int, int, int]:
     start = prefix + labels['p2d_public_auto_update']
     end = prefix + service_off
     done = prefix + labels['p2d_set_done']
+    planes = prefix + labels['p2c_public_planes']
+    planes_fail = prefix + labels['p2c_set_fail']
+    require((planes, planes_fail, start - planes) == (0xB4C4, 0xB52E, 200),
+            'P2c planes native module boundaries changed')
     require((start, end, end-start) == (0xB58C, 0xB72A, 414),
             f'P2d handwritten module boundaries changed: {start:x}:{end:x}')
     require(parts[group][done:done+2] == bytes.fromhex('7601'),
             'expected two-byte moveq #1,d3 at p2d_set_done missing')
-    return lib, group, start, end, done
+    return lib, group, planes, start, end, done, planes_fail
 
 
-def staged_sources(folder: Path, *, module_text: str | None = None) -> None:
+def staged_sources(folder: Path, *, module_text: str | None = None,
+                   planes_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
+    require(PLANES_FILE.is_file(), f'missing authored module: {PLANES_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
                  'M19_P2D_UNIT156_MC68020.s'):
@@ -96,6 +108,15 @@ def staged_sources(folder: Path, *, module_text: str | None = None) -> None:
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
+    require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
+            'audited P2c assembly has ambiguous module boundaries')
+    p2c_first = text.index(P2C_START_LABEL)
+    p2c_last = text.index(P2C_END_LABEL, p2c_first)
+    require(text[p2c_first:p2c_last].count('p2c_reset_slot:') == 1 and
+            'dc.b ' in text[p2c_first:p2c_last],
+            'P2c reset slot missing from raw audit baseline')
+    text = (text[:p2c_first] + '    include "' + P2C_SOURCE_NAME + '"\n' +
+            text[p2c_last:])
     require(text.count(START_LABEL) == 1 and text.count(END_LABEL) == 1,
             'audited P2d assembly has ambiguous module boundaries')
     first = text.index(START_LABEL)
@@ -116,10 +137,20 @@ def staged_sources(folder: Path, *, module_text: str | None = None) -> None:
     require(not re.search(r'(?im)^\s*dc\.[bwll]\b', source),
             'unclassified data directive inside handwritten routine')
     (folder / SOURCE_NAME).write_text(source, encoding='ascii', newline='\n')
+    planes_source = (planes_text if planes_text is not None
+                     else PLANES_FILE.read_text('ascii'))
+    require(planes_source.count('p2c_public_planes:') == 1 and
+            planes_source.count('p2c_apply_planes:') == 1 and
+            planes_source.count('p2c_reset_slot:') == 1,
+            'handwritten P2c module incomplete')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', planes_source),
+            'unclassified opcode/data directive inside P2c module')
+    (folder / P2C_SOURCE_NAME).write_text(planes_source, encoding='ascii', newline='\n')
 
 
 def verify_link(original: bytes, image: bytes, group: int,
-                start: int, end: int, *, allow_edited: bool) -> list[int]:
+                planes_start: int, control_start: int, control_end: int,
+                *, allow_edited: bool) -> list[int]:
     """Reject AP20 topology/geometry changes and changes outside the owned code."""
     require(len(image) == len(original),
             f'changed binary length {len(image)}, expected {len(original)}')
@@ -132,8 +163,8 @@ def verify_link(original: bytes, image: bytes, group: int,
     require(len(parts[group]) == len(old_parts[group]),
             'BOBS size/entry offsets changed; variable-length relocation NOT supported')
     differences = [i for i, (a, b) in enumerate(zip(old_parts[group], parts[group])) if a != b]
-    require(all(start <= i < end for i in differences),
-            'a byte outside the authored P2d module differs from the reference')
+    require(all(planes_start <= i < control_end for i in differences),
+            'a byte outside the authored P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
                 f'baseline assembly differs in BOBS at {differences[:8]}')
@@ -143,15 +174,16 @@ def verify_link(original: bytes, image: bytes, group: int,
 
 
 def build(assembler: Path, target: Path, *, allow_edited: bool = False,
-          module_text: str | None = None) -> tuple[bytes, list[int]]:
-    original, group, start, end, _ = prove_source_provenance()
+          module_text: str | None = None,
+          planes_text: str | None = None) -> tuple[bytes, list[int]]:
+    original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
-    staged_sources(target, module_text=module_text)
+    staged_sources(target, module_text=module_text, planes_text=planes_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
-    differences = verify_link(original, result, group, start, end,
-                              allow_edited=allow_edited)
+    differences = verify_link(original, result, group, planes_start,
+                              control_start, control_end, allow_edited=allow_edited)
     print('P2D ASM', 'EDITED UNTESTED' if allow_edited else 'BASELINE EXACT',
           'BYTES', len(result), 'DIFF', len(differences),
           'SHA256', sha256(result).hexdigest())
@@ -160,7 +192,7 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
 
 def test_editability(assembler: Path) -> None:
     """Prove a REAL one-instruction edit changes only its own machine-code byte."""
-    _, group, start, end, done = prove_source_provenance()
+    _, group, planes_start, start, end, done, planes_fail = prove_source_provenance()
     with TemporaryDirectory(prefix='p2d_native_edit_') as d:
         root = Path(d)
         original, baseline_diff = build(assembler, root/'baseline')
@@ -177,7 +209,24 @@ def test_editability(assembler: Path) -> None:
         require(unpack_ap20(modified)[1][group][done:done+2] == b'\x76\x02',
                 'modified instruction did not encode MOVEQ #2,D3')
         require(start <= done < end, 'edit escaped the authored module')
+
+        planes_source = PLANES_FILE.read_text('ascii')
+        needle = 'p2c_set_fail:\n    moveq #0,d3'
+        require(planes_source.count(needle) == 1,
+                'missing uniquely modifiable P2c failure instruction')
+        planes_edited = planes_source.replace(needle,
+                        'p2c_set_fail:\n    moveq #1,d3')
+        modified_planes, plane_diffs = build(
+            assembler, root/'modified_planes', allow_edited=True,
+            planes_text=planes_edited)
+        require(plane_diffs == [planes_fail+1],
+                f'P2c wrong edited byte: {plane_diffs}, expected {planes_fail+1}')
+        require(unpack_ap20(modified_planes)[1][group][planes_fail:planes_fail+2]
+                == b'\x76\x01', 'P2c modified opcode did not assemble')
+        require(planes_start <= planes_fail < start,
+                'P2c modified opcode escaped the authored module')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
+    print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 

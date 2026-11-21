@@ -3,7 +3,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 echo.
 echo AMOSPro AGA M19 P2d - REBUILD depuis ASM editable MC68020
-echo Source : src\native\m19_p2d\M19_P2D_CONTROLS_MC68020.s
+echo Sources : src\native\m19_p2d\M19_P2C_PLANES_MC68020.s + M19_P2D_CONTROLS_MC68020.s
 echo Sortie : src\generated\p2d_editable\
 echo.
 set "VASM="
