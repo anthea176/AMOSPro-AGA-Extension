@@ -6,6 +6,7 @@
 ; Four PC-index full-extension forms are explicitly encoded to preserve
 ; emitter word $0170 (32-bit base displacement, suppressed index).
 ; At the DC.L site, the architectural PC base is current location minus 2.
+; Offset-zero frame/slot fields use (An), not 0(An), to preserve 2-byte EA.
 
 P2B_FLIP_SLOT_BYTES   equ 64
 P2B_FLIP_MAX_OBJECTS  equ 64
@@ -41,7 +42,7 @@ p2b_mode:
     cmpi.l #P2B_FLIP_MAX_OBJECTS,d0
     bhi.w p2b_mode_normal
     bsr.w p2b_slot
-    move.l P2B_FLIP_SLOT_MODE(a0),d3
+    move.l (a0),d3
     rts
 p2b_mode_normal:
     moveq #0,d3
@@ -66,7 +67,7 @@ p2b_public_flip:
     movem.l d0-d1/d4-d7/a0-a6,-(a7)
     lea -P2B_FLIP_FRAME_SIZE(a7),a7
     movea.l a7,a2
-    move.l d3,P2B_FLIP_FRAME_MODE(a2)
+    move.l d3,(a2)
     move.l (a3)+,P2B_FLIP_FRAME_ID(a2)
     move.l a3,P2B_FLIP_FRAME_NEXT(a2)
     cmpi.l #3,d3
@@ -94,8 +95,8 @@ p2b_flip_read:
     move.l a5,(a0)
     move.l P2B_FLIP_FRAME_ID(a2),d0
     bsr.w p2b_slot
-    move.l P2B_FLIP_FRAME_MODE(a2),d3
-    move.l d3,P2B_FLIP_SLOT_MODE(a0)
+    move.l (a2),d3
+    move.l d3,(a0)
     tst.l d3
     bne.w p2b_flip_ok
     movea.l a0,a3
