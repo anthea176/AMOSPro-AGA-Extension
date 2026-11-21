@@ -4,7 +4,7 @@
 
 **`LAST_GOOD` protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **P0**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. Ne pas remplacer, promouvoir ni utiliser ce binaire à la place de la candidate de test.
 
-**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **27 351 octets ASCII LF**, SHA256 `7737a6f93445613525a7a515acbe2a4715e975690c464b9a1c6b28d6995f154b`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité 24 lectures de clipping et trois frames d’édition AGBO. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
+**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **27 589 octets ASCII LF**, SHA256 `5172de5ef2c0e3e44d5566f47170ae8a9692bcc30d04490c9d972e1a3ae62e1f`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité 24 lectures de clipping et trois frames d’édition AGBO. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
 
 ## Installation sous WinUAE
 
@@ -58,7 +58,9 @@ Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque
 
 ## Sondes P1e
 
-Après insertion de l’ID 3 et capture d’une image de couleur 6, le banc supprime l’intervalle 1–2. Deux Bobs partageant l’ID 1 doivent disparaître. Le Bob utilisant l’ID 3 doit garder sa position et son image. Les sondes aux coordonnées (112,103), (116,103) et (120,103) doivent renvoyer `1 / 6 / 1` sur chacune des deux pages. Après la suppression de la dernière image, la banque doit mesurer 32 octets. La réinsertion de l’ID 3 crée une image transparente et ne réactive pas le Bob. Après réactivation explicite, la troisième sonde doit renvoyer `1 / 1 / 1`.
+Après insertion de l’ID 3 et capture d’une image de couleur 6, le banc supprime l’intervalle 1–2. Deux Bobs partageant l’ID 1 doivent disparaître. Le Bob utilisant l’ID 3 doit garder sa position et son image. Les sondes aux coordonnées (112,103), (116,103) et (124,103) doivent renvoyer `1 / 6 / 1` sur chacune des deux pages. Après la suppression de la dernière image, la banque doit mesurer 32 octets. La réinsertion de l’ID 3 crée une image transparente et ne réactive pas le Bob. Après réactivation explicite, la troisième sonde doit renvoyer `1 / 1 / 1`.
+
+Pour éviter les faux FAIL, la banque CBlock 27 est effacée entre les captures 8×1 (priorité/clipping) et 16×1 (édition), puis recréée. Le Bob supprimé n°3 est positionné à X=124, hors de l’emprise X=116..123 du Bob conservé. Les journaux WinUAE antérieurs ont relevé `ERR 60` (format CBlock incompatible) puis `ERR 61` (sonde X=120 chevauchant le Bob conservé) ; ces deux échecs concernent l’ancien banc et ne qualifient pas P1e.
 
 Les deux refus mesurés couvrent l’insertion sur un ID occupé et la suppression pendant une frame prête. La génération de la banque conserve sa valeur lors de chaque refus. Les codes 50–62 et les lignes `EDIT_SAMPLE` localisent une éventuelle divergence.
 

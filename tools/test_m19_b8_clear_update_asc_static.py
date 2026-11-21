@@ -8,7 +8,7 @@ import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
 LIB="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
-SIZE=27351
+SIZE=27589
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -59,6 +59,21 @@ def verify(path:Path):
     assert edit.index('Aga Del Bob(_BANK2,1,2)') < edit.index('_ED_UP=Aga Bob Update')
     assert edit.index('_ED_UP=Aga Bob Update') < edit.index('Gosub _EDIT_PROBE') < edit.index('Gosub _DO_SWAP')
     assert 'Length(_BANK2)<>32' in edit and edit.count('Aga Ins Bob(_BANK2,3,8,2,8)') == 3
+    assert 'Aga Bob 3,124,103,1' in edit and 'Aga Bob 3,120,103,1' not in edit
+    transition=s[s.index('Next _LIMIT_STEP'):s.index("' P1e: delete image")]
+    assert 'Erase _PROBE_BANK\n   _PROBE_OWN=0' in transition
+    probe=s[s.index('_EDIT_PROBE:'):]
+    assert '_ED_CAP=Aga C Block Capture(_PROBE_BANK,112,103,16,1,0)' in probe
+    assert 'If Length(_PROBE_BANK)>0\n   _PROBE_OWN=1\nEnd If' in probe
+    assert '_ED_BYTE_OFFSET=Int(_ED_COL/2)' in probe
+    assert 'If _ED_COL>0' in probe and '_ED_MASK=8' in probe
+    # The right probe must be outside the surviving 8-pixel Bob's X=116..123.
+    assert 116+8==124
+    for col,x in enumerate((112,116,124)):
+        mask=128 if col==0 else 8
+        byte_offset=col//2
+        sampled_x=112+8*byte_offset+(7-(mask.bit_length()-1))
+        assert sampled_x==x,(col,sampled_x,x)
     assert '_ED_FRAMES<>3 or _ED_PIXELS<>9 or _ED_REJECTS<>2' in s
     assert 'Aga Bob Draw' not in s
     assert 'Trap Load "M19_P1B_HOTSPOT_BANK26.abk",_HOTBANK' in s
