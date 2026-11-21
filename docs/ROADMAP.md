@@ -28,7 +28,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 | Sujet | Objectif |
 | --- | --- |
 | **P2a — collisions Bob–Bob** | **Lib candidate livrée !** Fonction `Aga Bob Col(A,B,Mode)` : 0 rectangles, 1 masques AGBO. [Lib](../dist/AMOSPro_AGA.Lib) et [ASC d'essai](../tests/current/M19_P2A_BOB_COL.asc), [rapport P2a public](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). 91 tests privés + 5 tests publics MC68020 Gate A PASS. **Runtime WinUAE PASS 8/8 sur le premier ASC** ; campagne republiée à confirmer, sans promotion LAST_GOOD. |
-| **P2b — retournements H/V** | [Modèle hôte](M19_P2B_BOB_ORIENTATION_HOST.md) PASS 6/6, dont pixels, masque indépendant, hotspot signé et collision P2a. Étape suivante : noyau privé MC68020 et préparation Chip. |
+| **P2b — retournements H/V** | [Modèle hôte](M19_P2B_BOB_ORIENTATION_HOST.md) PASS 6/6, dont pixels, masque indépendant, hotspot signé et collision P2a. Gate A privée MC68020 PASS pour le matérialiseur et la préparation Chip avec Exec simulé. Suite : cache par image et génération, état par Bob et intégration au rendu et aux collisions. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
 | **Sprites AGA / AMAL** | Évaluer slots matériels, DMA, collisions et intégration éventuelle avec AMAL. |

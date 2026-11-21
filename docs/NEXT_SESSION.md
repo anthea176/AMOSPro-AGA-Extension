@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2b noyau planaire privé et préparation Chip
+
+**Gate A privée MC68020 PASS.** [Contrat et preuve](M19_P2B_BOB_ORIENTATION_HOST.md) · [émetteur](../tools/m19_p2b_planar_orientation020_emit.py) · [banc natif](../tools/test_m19_p2b_planar_orientation020_gate_a.py). Deux entrées privées, 562 octets, SHA256 `c4632d93c8af5c856dafd5e27d2003bc805830ff29c3644c412a94735acace69`. Plans et masque retournés dans une destination séparée, préparation par Exec simulé et libération sur refus. 216 sorties comparées octet pour octet sur deux implantations MC68020. Le noyau natif P2a accepte le masque produit et respecte le clipping du banc. **Suite** : cache par identité de banque, génération, image et orientation, état par Bob et validation des cycles Update, Bank Free, Close et End. Lib active P2a, LAST_GOOD P1e et ASC de campagne préservés.
+
 ## 21 novembre 2026 — P2a Runtime PASS sur le premier ASC, P2b modèle hôte
 
 **P2a :** le journal utilisateur `M19_P2A_BOB_COL.TXT` indique `PRG_STATE 1`, `ERR 0`, `CHECKS 8`, `VERDICT PASS`. Le format correspond au premier ASC de collision, qui écrit le verdict après le retour de `Aga Screen Close`. La ligne `CLOSE_RETURNED` est propre au banc republié sous `tests/current/`. Gate C Compiler et Gate D matérielle non testées.

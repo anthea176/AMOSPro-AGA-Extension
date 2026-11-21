@@ -1,4 +1,4 @@
-name: M19 P2b Bob orientation host model
+name: M19 P2b Bob orientation host and native Gate A
 
 on:
   push:
@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/m19-p2b-bob-orientation-host.yml'
       - 'tools/*m19_p2b_bob_orientation_model.py'
+      - 'tools/*m19_p2b_planar_orientation020*.py'
+      - 'tools/*m19_p2a_collision020*.py'
+      - 'tools/m68k_emit.py'
       - 'tools/*m19_p2a_bob_collision_model.py'
       - 'tools/*m19_p2a_agbo_bridge.py'
       - 'tools/m19_p0a_multi_bob_abk.py'
@@ -15,9 +18,9 @@ permissions:
   contents: read
 
 jobs:
-  orientation-host:
+  orientation:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,5 +33,11 @@ jobs:
           python -B tools/test_m19_p2b_bob_orientation_model.py
           python -B tools/test_m19_p2a_bob_collision_model.py
           python -B tools/test_m19_p2a_agbo_bridge.py
+      - name: Install the pinned MC68020 emulator and decoder
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Execute the planar materializer, Chip preparation and collision regressions
+        run: |
+          python -B tools/test_m19_p2b_planar_orientation020_gate_a.py
+          python -B tools/test_m19_p2a_collision020_gate_a.py
       - name: Verify the campaign and protected files were not modified
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/ archive/
