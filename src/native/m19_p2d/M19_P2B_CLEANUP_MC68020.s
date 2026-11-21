@@ -60,7 +60,8 @@ p2b_purge_loop:
     bne.w p2b_purge_next
     bra.w p2b_purge_slot
 p2b_clear_mode:
-    move.l #0,(a3)
+    bsr.w p2c_reset_slot    ; P2c patch resets mode + plane mask
+    nop
 p2b_purge_slot:
     bsr.w p2b_free_slot
 p2b_purge_next:

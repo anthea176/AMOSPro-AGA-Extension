@@ -309,15 +309,22 @@ def prove_p2b_cleanup_provenance() -> tuple[int, int, int, bytes]:
     # P2d replaces the old P2b close epilogue with BRA.W p2d_close; NOP.
     old = original_flip[labels['p2b_close_return']:
                         labels['p2b_owner']-len(planar)]
-    relative_hook = labels['p2b_close_restore']-labels['p2b_close_return']
-    require(old[relative_hook:relative_hook+6] ==
-            bytes.fromhex('4cdf7fff4e75'),
-            'P2b original close-register epilogue changed')
-    require(original_bytes[:relative_hook] == old[:relative_hook] and
-            original_bytes[relative_hook+6:] == old[relative_hook+6:] and
-            original_bytes[relative_hook:relative_hook+2] == b'\x60\x00' and
-            original_bytes[relative_hook+4:relative_hook+6] == b'\x4e\x71',
-            'P2d close hook differs from source-authored P2b epilogue patch')
+    close_hook = labels['p2b_close_restore']-labels['p2b_close_return']
+    clear_hook = labels['p2b_clear_mode']-labels['p2b_close_return']
+    require(old[close_hook:close_hook+6] == bytes.fromhex('4cdf7fff4e75') and
+            old[clear_hook:clear_hook+6] == bytes.fromhex('26bc00000000'),
+            'P2b original close/clear opcodes differ from source emitter')
+    # P2c patches all-slot clear to reset slot + planes (BSR/NOP);
+    # P2d patches full-register close to guarded close (BRA/NOP).
+    require(len(original_bytes) == len(old) and
+            original_bytes[close_hook:close_hook+2] == b'\x60\x00' and
+            original_bytes[clear_hook:clear_hook+2] == b'\x61\x00' and
+            original_bytes[close_hook+4:close_hook+6] == b'\x4e\x71' and
+            original_bytes[clear_hook+4:clear_hook+6] == b'\x4e\x71' and
+            all(x == y for i,(x,y) in enumerate(zip(old,original_bytes))
+                if not (close_hook <= i < close_hook+6 or
+                        clear_hook <= i < clear_hook+6)),
+            'P2b lifecycle differs beyond the two classified P2c/P2d hooks')
     _, parts, _ = unpack_ap20(original)
     require(len(original_bytes) == end-begin and
             parts[group][begin:end] == original_bytes,
