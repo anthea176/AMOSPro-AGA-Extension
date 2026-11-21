@@ -1,4 +1,10 @@
-# M19 P2e.1 — Deux canaux AMAL vers deux Bobs AGA (source-only)
+# M19 P2e.1 — Deux canaux AMAL vers deux Bobs AGA (campagne Runtime)
+
+## Activation de la campagne le 21 novembre 2026
+
+**Unique ASC actif :** [tests/current/M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), **8 430 octets**, SHA256 `3ecef4545829e0a705a1a4b09178ec53f981d29ab290d5ecdca579c895d4336a`. Identique à la source de conception P2e.1, hors commentaire d'état de validation. L'ASC P2e.0 a quitté `tests/current` dans la même transition ; il reste dans [l'historique Git au commit 55ca846e](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc). Son log Runtime PASS original [est conservé](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), sans déplacer de test validé vers `tests/passed/`.
+
+**PREFLIGHT PASS :** `tools/amos_preflight.py --strict-target` exécuté sur la source ASC exacte, sans erreur ni avertissement ; contrôle structurel complémentaire PASS. Les changements sont uniquement ASC et documentation ; **aucune nouvelle bibliothèque ni commande AGA**. Gate B Runtime de P2e.1 **NON TESTÉE**, Gate C et D NON TESTÉES.
 
 ## Situation au 21 novembre 2026
 
@@ -6,7 +12,7 @@
 - **Lib de travail inchangée :** `dist/AMOSPro_AGA.Lib` **P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes et 203 AP20.
 - **LAST_GOOD :** P1e, 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, protegee et non promue.
 - **Nouvelle source :** [M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt](../tests/design/M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt), **8 420 octets**, SHA256 `f0054af6f44ec6cfbbb1dcc233322c516e3e026954f3149d3e60149177a35537`, encodage ASCII.
-- **Statut : PREPARE / controle structurel local PASS**, pas le preflight officiel ; **Gate B WinUAE / Gate C Compiler / Gate D physique NON TESTEES**. Ne pas utiliser cette source comme preuve de fonctionnement.
+- **Statut de la source de conception avant bascule : PREPARE / controle structurel local PASS**. Le nouvel ASC actif a depuis un preflight officiel strict PASS ; **Gate B WinUAE / Gate C Compiler / Gate D physique NON TESTEES**. Ne pas utiliser cette source comme preuve de fonctionnement.
 
 ## Objectif discriminant
 
@@ -32,9 +38,9 @@ La banque 28 contient 16 octets initialises par `Doke` ; `Synchro Off` precede l
 - Les pixels des deux Bobs sont controles par capture de l'ancien front devenu back apres Swap, avec X aligne sur 8. En cas `ERR 17`, `PIXEL_ID`, `PIXEL_VALUE` et `PIXEL_EXPECTED` identifient la divergence.
 - Nettoyage : `Amal Off 1`, `Amal Off 0`, `Synchro On`, fermeture AGA, `Amos To Front`, puis liberation des banques 24/27/28.
 
-## Prochaine porte : activation WinUAE apres decision explicite
+## Prochaine porte : Gate B Runtime WinUAE (campagne active)
 
-**Ne pas executer directement la source .txt comme une campagne officielle.** L'unique ASC actif [P2e.0](../tests/current/M19_P2E0_AMAL_BRIDGE.asc) reste intact avec sa preuve PASS ; aucune archive ni mouvement automatique. Avant bascule : executer le `tools/amos_preflight.py --strict-target` **sur l'ASC exact**, confirmer qu'une seule campagne ASC sera active, puis tester avec WinUAE Runtime et conserver `RAM:M19_P2E1_AMAL_TWO_BOBS.TXT`.
+L'ASC est actif sous `tests/current/` après préflight strict PASS. Ne pas charger le `.txt` de conception. **Project → Merge ASCII** de l'ASC puis **Runtime WinUAE** avec la Lib P2d inchangée ; récupérer `RAM:M19_P2E1_AMAL_TWO_BOBS.TXT` et comparer le résultat. Le vrai Compiler est reporté au futur programme global P2.
 
 Sortie attendue *si le test fonctionne* : `RESULT 1`, `ERR 0`, `BG0/BG1 1/1`, `PIX0/PIX1 >= 2`, six deltas `CHG*` > 0, `CLOSE_RETURNED 1`, `VERDICT PASS`. **Ce n'est pas un resultat observe.**
 

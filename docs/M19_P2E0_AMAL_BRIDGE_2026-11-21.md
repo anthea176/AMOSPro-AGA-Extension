@@ -1,5 +1,7 @@
 # M19 P2e.0 — Passerelle AMAL mémoire vers Bob AGA (expérimental)
 
+**Clôture campagne P2e.0 :** Gate B Runtime PASS, [log original conservé](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), [ASC exact au dernier commit P2e.0](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc). L'unique ASC actif est désormais P2e.1 ; aucun changement de Lib ni de LAST_GOOD.
+
 ## Troisieme essai Runtime du 21/11/2026 — PASS confirme
 
 Journal utilisateur exact **M19_P2E0_AMAL_BRIDGE(2).TXT**, 397 octets, SHA256 `5ea95d1335fa35f3a2fe743b84febf210b2b2d10fb481ff5fa76f4d0bf13e0fc`, associe a l'ASC P2e.0 courant de 6 795 octets (SHA256 `62c94e9560134c0602b6e79b8cb2c78bf5adf207364d85d5a8953201ba61125f`).
@@ -56,7 +58,7 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 
 ## Banc P2e.0
 
-**Banc actif :** [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), 6 795 octets, SHA256 `62c94e9560134c0602b6e79b8cb2c78bf5adf207364d85d5a8953201ba61125f`. **Origine de conception :** [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt), non exécutable et inchangée. Le banc actif corrige l'oracle pixel : après un Swap, la capture lit l'ancienne page visible devenue arrière ; elle doit comparer le pixel et la couleur de la **frame précédente**, et non ceux du Bob courant.
+**Banc P2e.0 historique :** [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc), 6 795 octets, SHA256 `62c94e9560134c0602b6e79b8cb2c78bf5adf207364d85d5a8953201ba61125f`. **Origine de conception :** [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt), non exécutable et inchangée. Le dernier banc P2e.0 corrige l'oracle pixel : après un Swap, la capture lit l'ancienne page visible devenue arrière ; elle doit comparer le pixel et la couleur de la **frame précédente**, et non ceux du Bob courant.
 
 - Cible : Lib P2d existante, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 AP20, CPU MC68020 minimum.
 - Banc autonome, **sans IFF/ABK externe** : deux images AGBO opaques 1×1 aux couleurs 165 et 90 dans la banque 24 ; buffer de lecture 8 octets dans la banque 28 ; banque 27 préallouée pour le pixel oracle.
@@ -67,7 +69,7 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 ## Exécution et verdict
 
 1. Copier **uniquement** `dist/AMOSPro_AGA.Lib` P2d dans `APSystem`, redémarrer AMOS Pro dans WinUAE AGA.
-2. Laisser libres les banques **24, 27, 28**. Dans un programme vierge, importer l'ASC actif [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc) via **Project → Merge ASCII**.
+2. Laisser libres les banques **24, 27, 28**. Dans un programme vierge, importer l'ASC actif [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc) via **Project → Merge ASCII**.
 3. **Lancer en Runtime uniquement**, sans compilation individuelle. Contrôler l'animation, puis sauvegarder `RAM:M19_P2E0_AMAL_BRIDGE.TXT` avant un autre lancement. Relever toute erreur AMOS, affichage incorrect, Guru ou freeze et le point atteint.
 
 Attendu : `ERR 0`, `CHG_X/Y/A > 0`, `MOVE_X 1`, `MOVE_Y 1`, `IMAGE1 1`, `IMAGE2 1`, `FLAG_X/Y/A` non bloquants, `VALID_SAMPLES >= 32`, `PIX_SAMPLES >= 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.

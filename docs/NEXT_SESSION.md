@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.1 actif pour Gate B Runtime WinUAE
+
+L'auteur a demandé de poursuivre et de **basculer la campagne**. Le nouvel unique ASC [M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), 8 430 octets, SHA256 `3ecef4545829e0a705a1a4b09178ec53f981d29ab290d5ecdca579c895d4336a`, pilote deux canaux AMAL 0/1 et deux Bobs AGA 16×16 avec une banque AGBO commune et 16 octets de tampon AMAL. **Préflight officiel strict PASS** sur la source exacte, sans erreur/avertissement ; deux canaux, un Synchro et un seul Swap explicite par frame. **Gate B P2e.1 NON TESTÉE**, Gate C réservée au futur exemple global P2.
+
+**P2e.0 Gate B PASS** conservée, ASC exact dans l'[historique Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc), log original [docs/evidence](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), 397 octets CRLF, SHA256 `5ea95d1335fa35f3a2fe743b84febf210b2b2d10fb481ff5fa76f4d0bf13e0fc`. Pas de copie dans `tests/passed/`, aucun autre ASC sous `tests/current/`.
+
+La Lib **P2d inchangée** (136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`) et LAST_GOOD **P1e protégée** (`7922f558...`). Lire [la notice P2e.1](../tests/current/README.md), récupérer `RAM:M19_P2E1_AMAL_TWO_BOBS.TXT` après Runtime. Ne pas annoncer un PASS WinUAE sans nouveau journal.
+
+
 ## 21 novembre 2026 — P2e.0 Runtime PASS ; P2e.1 source de conception preparee
 
 Le journal exact utilisateur `M19_P2E0_AMAL_BRIDGE(2).TXT` (397 octets, SHA256 `5ea95d1335fa35f3a2fe743b84febf210b2b2d10fb481ff5fa76f4d0bf13e0fc`) confirme **Gate B Runtime PASS** de l'ASC P2e.0 courant : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `VALID_SAMPLES 240`, `SWAPS 241`, `PIX_SAMPLES 29`, `CHG_X/Y/A 239/119/7`, `CLOSE_RETURNED 1`, `VERDICT PASS`. Le mot de flags `1792=$0700` impose un suivi diagnostique de l'octet fort (`Peek(_ADDR)` propose), pas de validation des flags a cette date. Gate C finale reportee, Gate D non testee.
