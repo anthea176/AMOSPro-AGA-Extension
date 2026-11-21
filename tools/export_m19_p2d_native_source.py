@@ -99,6 +99,35 @@ def p2d_symbolic_labels(parts, info):
     return unit_id, symbols
 
 
+def sanitize_illegal_pc_dest(text: str, report: dict) -> str:
+    """Do not invent a MOVE to a PC-relative destination (illegal on 68020).
+
+    The generic decoder accepts destination EA reg=2/3, mode=7, which is
+    legal as a source but NOT as MOVE's destination. Literal source-backed
+    bytes remain intact until a real instruction/data source can be proven.
+    """
+    import re
+    out=[]
+    rejected=[]
+    for line in text.splitlines():
+        if re.search(r"^\s*move\.[bwl]\s+[^;]*,\s*[-+]?\d+\(pc(?:,[^)]*)?\)",line):
+            m=re.search(r";\s*\+\$([0-9A-F]{5}):\s*([0-9A-F]+)$",line)
+            need(m is not None, 'unrecoverable source-backed illegal MOVE encoding')
+            raw=bytes.fromhex(m.group(2))
+            out.append('    dc.b '+','.join('$%02X'%b for b in raw)+
+                       '  ; +$'+m.group(1)+': invalid MOVE destination; audit')
+            rejected.append((m.group(1),len(raw)))
+        else:
+            out.append(line)
+    if rejected:
+        report['illegal_move_dest_bytes_preserved']=sum(s for _,s in rejected)
+        report['illegal_move_dest_source_offsets']=[x for x,_ in rejected]
+        report['mnemonic_bytes']-=sum(s for _,s in rejected)
+        report['raw_dc_bytes']+=sum(s for _,s in rejected)
+        report['unresolved_instruction_encodings']+=len(rejected)
+    return '\n'.join(out)+'\n'
+
+
 def enrich_labels(text: str, name: str, symbols: dict[int, list[str]]) -> tuple[str, int]:
     """Publish Python emitter labels as ASSEMBLER labels, not binary offsets.
 
@@ -194,6 +223,7 @@ def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
     for index in groups:
         name=names[index]
         source, report = native_unit_source(name,parts[index],refs[index])
+        source = sanitize_illegal_pc_dest(source,report)
         if index==bobs_group:
             source,symbol_count = enrich_labels(source,name,labels)
             report['source_labels_provided_by_python_emitters'] = sum(map(len,labels.values()))
