@@ -79,7 +79,7 @@ def main():
             B8_SHA:(142,177,184),
             B8S1_SHA:(142,177,184),
             P0_FREE_SHA:(142,177,185),
-            P1E_SHA:(142,189,196),
+            P1E_SHA:(142,188,196),
         }
         aga_index,bob_index,entry_count=group_indices[digest]
         assert len(units)==entry_count, "Unexpected modular segment count"
@@ -97,7 +97,7 @@ def main():
                 assert image==candidate and meta['sha256']==P1E_SHA
                 assert len(image)==124444 and meta['bytes']==124444
                 assert meta['commands']==96 and meta['entries']==196
-                assert meta['group']==189 and meta['pc16_max']==14130
+                assert meta['group']==188 and meta['pc16_max']==14130
             elif digest==P0_FREE_SHA:
                 # P0 extends B8 S1 with Chip pre-stage and public Bank Free.
                 # Verify the exact complete builder, not a V2 monolith export.
