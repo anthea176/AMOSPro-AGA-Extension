@@ -1,0 +1,35 @@
+name: M19 P2a Bob collisions - host model only
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/m19_p2a_bob_collision_model.py'
+      - 'tools/test_m19_p2a_bob_collision_model.py'
+      - '.github/workflows/m19-p2a-bob-collisions-host.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  collision-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python syntax validation (no bytecode files)
+        run: |
+          python -B - <<'PY'
+          import ast
+          from pathlib import Path
+          for name in ('m19_p2a_bob_collision_model.py', 'test_m19_p2a_bob_collision_model.py'):
+              ast.parse((Path('tools')/name).read_text(encoding='utf-8'), filename=name)
+          print('P2a HOST SYNTAX PASS')
+          PY
+      - name: Run 17 deterministic host collision regressions
+        run: python -B tools/test_m19_p2a_bob_collision_model.py
+      - name: Guard binary, active ASC and archives
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
