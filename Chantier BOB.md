@@ -10,8 +10,8 @@
 | **P1a** | `Aga X Bob(N)`, `Aga Y Bob(N)`, `Aga I Bob(N)` ; refus `-32769` | **Builder AP20 source-pinné + shims MC68020 Gate A PASS (110 contrôles)** ; **fonctionnalités conservées dans P1b**, 92 commandes / 188 entrées ; Gate B Runtime PASS fonctionnel ([2 journaux](docs/M19_P1A_RUNTIME_B_2026-11-21.md)), Gates C/D en attente |
 | **P1b** | Hot Spot, origine propre à chaque image | Intégré au Safe Blitter. Gate A et Gate B Runtime PASS sur P1b. [Rapport](docs/M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md) |
 | **P1c** | `Aga Bob Priority(Mode)` | Gate A PASS, B Runtime et C Compiler PASS sur les mesures. [Résultats](docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md). |
-| **P1d** | `Aga Limit Bob(N,X,Y,W,H)` | Lib active et Gate A PASS. [Banc WinUAE](tests/current/README.md). |
-| P1e | `Del Bob` / `Ins Bob` : édition des images de banque | Non implémenté |
+| **P1d** | `Aga Limit Bob(N,X,Y,W,H)` | Lib active. Gates A et B Runtime PASS sur le banc. [Résultats](docs/M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md). |
+| P1e | `Del Bob` / `Ins Bob` : édition des images de banque | [Contrat à valider](docs/M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) |
 | P2 | Collisions Bob–Bob rectangles puis masques | Non implémenté |
 | P2 | Retournements H/V sans altérer les sources partagées | Non implémenté |
 | P2 | Modes avancés et animation automatique / AMAL | Non implémenté |
@@ -19,4 +19,4 @@
 
 **Preuves P1 :** [socle et Hot Spot](docs/M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md) ; [rapport P1a AP20](docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md) ; [CI Gate A P1a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476430). **La syntaxe des tokens a été auditée en AP20 ; deux exécutions AMOS Runtime WinUAE P1a sont PASS fonctionnel. Le vrai Compiler P1a reste NON TESTÉ.**
 
-**Prochaine action** — Exécuter P1d sous WinUAE et sauvegarder les deux journaux Runtime.
+**Prochaine action** — Valider les signatures et la règle d’identifiants P1e.

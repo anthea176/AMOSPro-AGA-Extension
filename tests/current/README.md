@@ -60,11 +60,11 @@ Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque
 | Gate | P1d |
 | --- | --- |
 | A — MC68020 sous Unicorn, services simulés | **PASS**, 76 scénarios P1d et 36 scénarios de régression P1c |
-| B — AMOS Runtime WinUAE | **À tester** |
+| B — AMOS Runtime WinUAE | **PASS sur les mesures, deux journaux** |
 | C — véritable exécutable AMOS Compiler | **À tester** |
 | D — Amiga physique | **NON TESTÉ** |
 
-[Résultats des trois passages et portée](../../docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md).
+[Résultats des deux passages P1d](../../docs/M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md) · [Résultats des trois passages P1c](../../docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md).
 
 Préflight de la campagne : `python -B tools/test_m19_b8_clear_update_asc_static.py`, `python -B tools/test_current_ram_log.py`, `python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc`. Ces contrôles ne remplacent pas WinUAE.
 

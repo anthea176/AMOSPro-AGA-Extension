@@ -183,6 +183,25 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 
 [Référence AMOS Professional](https://amospromanual.dev/07-02-blitter-objects.html#limit-bob).
 
+#### P1e — Del Bob et Ins Bob
+
+**Signatures à valider**
+
+| Fonction | Contrat proposé |
+| --- | --- |
+| `_OK=Aga Del Bob(Bank,First,Last)` | Supprime les images présentes dans l’intervalle inclusif `First..Last`. Utiliser `First=Last` pour une image. Retour 0 si l’intervalle est vide d’images. La suppression de la dernière image laisse une banque AGBO vide de 32 octets. |
+| `_OK=Aga Ins Bob(Bank,Image,W,H,Depth)` | Crée une image vide et entièrement transparente, hotspot (0,0), à un ID libre. Largeur et hauteur en pixels, profondeur de 1 à 8 plans. `Get AGA Bob` peut ensuite remplacer cet emplacement. Un ID occupé est refusé. |
+
+**Identifiants stables.** Les IDs d’images AGBO sont des clés comprises entre 1 et 4096. Les trous sont autorisés. Effacer ou créer un ID ne décale aucun autre ID. Les Bobs qui utilisaient une image supprimée sont désactivés à la validation de l’opération. Un nouveau `Aga Bob` est requis pour les réactiver. Les Bobs qui utilisent des images conservées restent actifs avec les mêmes X, Y, image et limite. Les banques et images non visées gardent leurs références. Ce choix adapte l’édition aux IDs AGBO, alors que le manuel AMOS décrit une renumérotation de la banque Object après insertion et suppression.
+
+**Validation et effets.** Les deux fonctions reçoivent un numéro explicite de banque DATA AGBO v1 existante (5..65535). Retour 1 après validation de la transaction, 0 pour un numéro, format ou intervalle invalide, une image occupée à l’insertion, un dépassement des limites AGBO ou un manque de mémoire. Le changement est refusé pendant une frame `READY` ou `DIRTY`. Construire la charge utile complète et valider les références et allocations avant publication. Incrémenter la génération une seule fois, synchroniser le cache Chip de la banque avec cette génération et actualiser les stamps des Bobs conservés. Un refus conserve la banque, les objets et le cache visibles par l’appelant. Aucun Swap implicite.
+
+**Points à vérifier avant raccord natif.** Le format AGBO impose des entrées compactes triées par ID et des plans contigus. Un ID libre n’équivaut pas à une entrée de taille nulle. Auditer le mécanisme de remplacement de banque AMOS ainsi que le commit des stamps des Bobs et du cache Chip. Mesurer la portée PC16 sur la candidate complète. Le build P1d a 236 octets de marge par rapport au seuil exclusif actuel.
+
+**Tests.** Suppression de début, milieu, fin et dernière image, intervalle troué, insertion à un ID libre et refus d’un ID occupé, masque et hotspot des images survivantes, deux Bobs sur une image supprimée, un Bob survivant et une banque tierce, réutilisation d’un ancien ID, Save/Load, refus READY/DIRTY et échecs d’allocation avec comparaison octet pour octet. Tester la première frame après édition et les deux pages. Vérifier le cas d’une banque devenue vide puis repeuplée.
+
+[Référence AMOS Professional](https://amospromanual.dev/07-02-blitter-objects.html#del-bob).
+
 ### P2 — Fonctions avancées / compatibilité progressive
 
 | Fonction AMOS | Adaptation AGA envisagée |
