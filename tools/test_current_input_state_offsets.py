@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, LAST_GOOD_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, LAST_GOOD_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,7 +48,7 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
+    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
         # P0c redirects public Close to its BOBS unit, so only the real
         # multi-unit segment table and pinned builder may certify its identity.
@@ -59,9 +59,9 @@ def main():
         assert sha256(ancestor).hexdigest()==R82_SHA
         _,original=unwrap_native_parts_v2(ancestor)
         last_good=Path("dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-        assert sha256(last_good).hexdigest()==LAST_GOOD_SHA==P0_FREE_SHA
-        if digest==P0_FREE_SHA:
-            assert last_good==image, "Promoted P0 LAST_GOOD differs from active"
+        assert sha256(last_good).hexdigest()==LAST_GOOD_SHA==P1E_SHA
+        if digest==P1E_SHA:
+            assert last_good==image, "Promoted P1e LAST_GOOD differs from active"
         from build_aga_r84_agapic import build as build_r84
         frozen_r84,r84meta=build_r84()
         assert len(frozen_r84)==67904 and r84meta['sha256']==R84_SHA
@@ -79,16 +79,26 @@ def main():
             B8_SHA:(142,177,184),
             B8S1_SHA:(142,177,184),
             P0_FREE_SHA:(142,177,185),
+            P1E_SHA:(142,189,196),
         }
         aga_index,bob_index,entry_count=group_indices[digest]
         assert len(units)==entry_count, "Unexpected modular segment count"
-        if digest in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
+        if digest in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA):
             assert units[aga_index].startswith(frozen_units[84]), "AP20 islands inherited R84 AGA/state prefix altered"
         else:
             assert units[aga_index]==frozen_units[84], "Inherited R84 AGA/state group altered"
         assert units[bob_index].startswith(DISPATCH_V2), "BOBS dispatch modified"
-        if digest in (B8_SHA,B8S1_SHA,P0_FREE_SHA):
-            if digest==P0_FREE_SHA:
+        if digest in (B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA):
+            if digest==P1E_SHA:
+                # Public P1e: source-pin five native V2 units and the
+                # exact expanded AP20 directory, not monolithic unwrap.
+                from build_m19_p1e_bank_edit_in_memory import build_p1e
+                candidate,meta=build_p1e()
+                assert image==candidate and meta['sha256']==P1E_SHA
+                assert len(image)==124444 and meta['bytes']==124444
+                assert meta['commands']==96 and meta['entries']==196
+                assert meta['group']==189 and meta['pc16_max']==14130
+            elif digest==P0_FREE_SHA:
                 # P0 extends B8 S1 with Chip pre-stage and public Bank Free.
                 # Verify the exact complete builder, not a V2 monolith export.
                 from build_m19_b8_s1_bank_free_in_memory import build_bank_free
@@ -112,7 +122,10 @@ def main():
             from build_m19_ap20_islands_in_memory import build as build_islands
             baseline,_=build_islands()
             _,earlier_groups,_=unpack_ap20(baseline)
-            assert units[aga_index]==earlier_groups[aga_index], "B8/P0 altered frozen AGA/state unit"
+            if digest==P1E_SHA:
+                assert units[aga_index].startswith(earlier_groups[aga_index]), "P1e altered inherited AGA/state prefix"
+            else:
+                assert units[aga_index]==earlier_groups[aga_index], "B8/P0 altered frozen AGA/state unit"
             assert units[bob_index].startswith(earlier_groups[bob_index]), "B8/P0 altered frozen Bob prefix"
         elif digest in (B7_SHA,B7M1_SHA,B7M2_SHA):
             from build_m19_p0j_end_lifecycle_in_memory import build as build_b7, build_multiframe
@@ -190,7 +203,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7/B8/P0 source-built modular AGA group verified against independently rebuilt R84")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7/B8/P0/P1e source-built modular AGA group verified against independently rebuilt R84")
 
 if __name__=="__main__":
     main()
