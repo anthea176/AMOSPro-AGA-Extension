@@ -7,8 +7,8 @@ import re
 import sys
 
 NAME="M19_B8_BOB_CLEAR_UPDATE_BC_01.asc"
-LIB="47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785"
-SIZE=23601
+LIB="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
+SIZE=27351
 STAGES=(2,1,0,2,4,8,16,64,16)
 
 
@@ -37,7 +37,7 @@ def verify(path:Path):
     assert len(data)==SIZE,("B8 ASC length",len(data),SIZE)
     s=data.decode("ascii")
     assert s.endswith("Return\n") and max(map(len,s.splitlines()))<=200
-    assert LIB in s and 'RAM:M19_P1D_LIMIT_BOB.TXT' in s
+    assert LIB in s and 'RAM:M19_P1E_BANK_EDIT.TXT' in s
     assert 'Dim _SEEN(1)' in s and '_SEEN(0)=0 : _SEEN(1)=0' in s
     assert 'NO TIMER OR BENCHMARK' in s
     assert len(re.findall(r'\b_CLEAR=Aga Bob Clear',s))==1
@@ -54,7 +54,12 @@ def verify(path:Path):
     assert s.count('Aga Y Bob(_QID)')==1
     assert s.count('Aga I Bob(_QID)')==1
     assert s.index('_QX=Aga X Bob(_QID)') < s.index('_QY=Aga Y Bob(_QID)') < s.index('_QI=Aga I Bob(_QID)')
-    assert 'P1d CANDIDATE SHA256' in s
+    assert 'P1e CANDIDATE SHA256' in s
+    edit=s[s.index("' P1e: delete image"):s.index('Next _ED_STEP')]
+    assert edit.index('Aga Del Bob(_BANK2,1,2)') < edit.index('_ED_UP=Aga Bob Update')
+    assert edit.index('_ED_UP=Aga Bob Update') < edit.index('Gosub _EDIT_PROBE') < edit.index('Gosub _DO_SWAP')
+    assert 'Length(_BANK2)<>32' in edit and edit.count('Aga Ins Bob(_BANK2,3,8,2,8)') == 3
+    assert '_ED_FRAMES<>3 or _ED_PIXELS<>9 or _ED_REJECTS<>2' in s
     assert 'Aga Bob Draw' not in s
     assert 'Trap Load "M19_P1B_HOTSPOT_BANK26.abk",_HOTBANK' in s
     assert 'Deek(_HOT_PTR+60)<>4 or Deek(_HOT_PTR+62)<>3' in s
@@ -105,7 +110,8 @@ def verify(path:Path):
     assert phases.index('_PR_CLEAR=Aga Bob Clear') < phases.index('_PR_UP=Aga Bob Update')
     assert phases.index('_PR_UP=Aga Bob Update') < phases.index('Gosub _PRIORITY_PIXEL') < phases.index('Gosub _DO_SWAP')
 
-    assert s.count('Aga Bob Off 1')==1 and s.count('Aga Bob Off 2')==1
+    regression = s[:s.index('Next _STAGE')]
+    assert regression.count('Aga Bob Off 1')==1 and regression.count('Aga Bob Off 2')==1
     assert 'For _ID=17 To 64' in s
     assert 'Make AGA Bob Mask 1,0' in s and 'No AGA Bob Mask 1' in s
     assert 'If _PRG=-1\n   _MODE$="COMPILED"\nEnd If' in s

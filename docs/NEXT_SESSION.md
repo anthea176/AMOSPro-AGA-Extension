@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1e Del Bob / Ins Bob pour WinUAE
+
+La bascule autorisée installe **P1e** dans `dist/AMOSPro_AGA.Lib` sur `main`. Taille 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, 96 commandes, 196 entrées AP20, cinq groupes MC68020, PC16 maximal 14 130. [Builder](../tools/build_m19_p1e_bank_edit_in_memory.py) · [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083) · [Campagne WinUAE](../tests/current/README.md). Gate B Runtime à exécuter sur deux passages. Gates C et D à tester. P0 reste `LAST_GOOD`.
+
 ## 21 novembre 2026 — M19 P1d Limit Bob, Lib de travail pour WinUAE
 
 Signature approuvée par l’auteur. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob) · [Builder](../tools/build_m19_p1d_limit_bob_in_memory.py) · [Banc MC68020](../tools/test_m19_p1d_limit_bob_gate_a.py).
@@ -8,7 +12,7 @@ Signature approuvée par l’auteur. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESI
 
 P1d est livrée sur `main` avec le [banc WinUAE](../tests/current/README.md). P0 reste `LAST_GOOD`. **Gate B Runtime PASS sur les mesures des deux passages**, 24/24 pixels de clipping sur chaque passage. [Résultats et portée](M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md). Gates C et D à tester.
 
-**P1e** — [Contrat Del Bob / Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) approuvé. Les opérations AGBO et le repackeur privé MC68020 sont testés sur 132 scénarios natifs. Les deux commandes passent le [banc intégré MC68020](../tools/test_m19_p1e_bank_edit_gate_a.py) avec services Amiga simulés sur deux placements. Candidate reconstruite en mémoire, 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. P1d reste la Lib active.
+**P1e** — [Contrat Del Bob / Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) approuvé. Les opérations AGBO et le repackeur privé MC68020 sont testés sur 132 scénarios natifs. Les deux commandes passent le [banc intégré MC68020](../tools/test_m19_p1e_bank_edit_gate_a.py) avec services Amiga simulés sur deux placements. Candidate reconstruite en mémoire, 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. P1d était la Lib active avant la bascule P1e.
 
 ## 21 novembre 2026 — M19 P1c Bob Priority installée dans la Lib de travail
 

@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P1d — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **121 432 octets**, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, **94 commandes / 192 entrées AP20**.
+**M19 P1e — candidate WinUAE active, MC68020+.** [Bibliothèque](dist/AMOSPro_AGA.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, **96 commandes / 196 entrées AP20**.
 
 **Banc WinUAE** — 405 frames de régression, quatre phases hotspot et huit mesures de priorité et 24 sondes de clipping. [Installation, ASC et banque 26](tests/current/README.md) · [ASC](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [LAST_GOOD P0](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Historique des validations](docs/LIBRARY_TEST_HISTORY.fr.md).
 
@@ -27,7 +27,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P1d** — **94 commandes / 192 entrées AP20**, MC68020 minimum. `Aga Limit Bob` découpe le rendu des Bobs au pixel près.
+**API de la bibliothèque courante M19 P1e** — **96 commandes / 196 entrées AP20**, MC68020 minimum. `Aga Del Bob` et `Aga Ins Bob` éditent les images AGBO.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -104,6 +104,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Update`** | `_OK=Aga Bob Update` | **Fonction numérique sans paramètre, retour 1/0.** Prévalide les images des Bobs actifs, sauvegarde/restaure le décor de la page arrière physique puis dessine les Bobs en une transaction, sans Swap implicite. Exige au moins un premier `Aga Bob` SET réussi pour amorcer `End` ; un échec conserve DIRTY et bloque Swap. P0 Runtime : UPDATE_OK 405, UPDATE_FAILS 0 ; Compiler P0 non testé. |
 | **`Aga Bob Priority`** | `_OK=Aga Bob Priority(Mode)` | 0 = ID croissant, 1 = Y logique puis ID croissants, 2 = ID décroissant, 3 = Y logique puis ID décroissants. Dessin du fond vers le premier plan. Le mode vaut 0 après ouverture réussie. Retour 1 si accepté, 0 si mode invalide ou écran AGA actif non détenu. Le réglage seul ne dessine rien. |
 | **`Aga Limit Bob`** | `_OK=Aga Limit Bob(N,X,Y,W,H)` | Limite globale (N=0) ou par Bob (1..64). Origine signée, largeur et hauteur positives. Le rectangle [X,X+W) × [Y,Y+H) est intersecté avec l’écran et les autres limites applicables au prochain Update. Quatre zéros effacent la limite ciblée. Retour 1 si accepté, 0 en cas de refus. |
+| **`Aga Del Bob`** | `_OK=Aga Del Bob(Bank,First,Last)` | Sur un écran AGA ouvert, supprime les images de la banque AGBO DATA dans l’intervalle inclusif. Les ID survivants restent stables. Les Bobs liés aux images supprimées sont désactivés. Renvoie 1 si l’édition aboutit, 0 en cas de refus. |
+| **`Aga Ins Bob`** | `_OK=Aga Ins Bob(Bank,Image,W,H,Depth)` | Sur un écran AGA ouvert, insère à un ID libre une image transparente aux dimensions W × H et à 1–8 plans. Un ID occupé ou une frame prête/à restaurer entraîne un refus. Renvoie 1 si l’édition aboutit, 0 en cas de refus. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Fonction numérique de lecture du Y d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Fonction numérique de lecture du numéro d'image 1..4096 d'un Bob actif `N` (1..64), ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |

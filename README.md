@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P1d — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **121,432 bytes**, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, **94 commands / 192 AP20 entries**.
+**M19 P1e — active MC68020+ WinUAE candidate.** [Library](dist/AMOSPro_AGA.Lib), **124,444 bytes**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, **96 commands / 196 AP20 entries**.
 
 **WinUAE test** — 405 regression frames, four hotspot phases and eight priority samples and 24 clipping samples. [Installation, ASC and bank 26](tests/current/README.md) · [ASC](tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) · [LAST_GOOD P0](dist/AMOSPro_AGA_LAST_GOOD.Lib) · [Validation history](docs/LIBRARY_TEST_HISTORY.md).
 
@@ -27,7 +27,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API M19 P1d** — **94 commands / 192 AP20 entries**, MC68020 minimum. `Aga Limit Bob` sets pixel-exact Bob clipping.
+**Current library API M19 P1e** — **96 commands / 196 AP20 entries**, MC68020 minimum. `Aga Del Bob` and `Aga Ins Bob` edit AGBO images.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -104,6 +104,8 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Update`** | `_OK=Aga Bob Update` | **Zero-argument numeric function returning 1/0.** Preflights all active Bob images, captures/restores the background for the correct physical back page and draws all active Bobs as one transaction, without implicit Swap. Requires at least one prior successful `Aga Bob` SET on the first call; failure blocks Swap with DIRTY. P0 Runtime: UPDATE_OK 405, UPDATE_FAILS 0; P0 Compiler not tested. |
 | **`Aga Bob Priority`** | `_OK=Aga Bob Priority(Mode)` | 0 = ascending ID, 1 = ascending logical Y then ID, 2 = descending ID, 3 = descending logical Y then ID. Draw order is back to front. A successful screen open resets to mode 0. Returns 1 on acceptance or 0 for an invalid mode or missing owned AGA screen. Setting the mode does not draw. |
 | **`Aga Limit Bob`** | `_OK=Aga Limit Bob(N,X,Y,W,H)` | Global (N=0) or per-Bob (1..64) clipping rectangle with signed origin and positive width and height. The half-open rectangle is intersected with the screen and other applicable limits on the next Update. Four zero coordinates and dimensions clear the selected limit. Returns 1 on success or 0 on refusal. |
+| **`Aga Del Bob`** | `_OK=Aga Del Bob(Bank,First,Last)` | On an open AGA screen, deletes images in the inclusive range from an AGBO DATA bank. Surviving IDs remain stable and Bobs bound to deleted images become inactive. Returns 1 when committed or 0 on refusal. |
+| **`Aga Ins Bob`** | `_OK=Aga Ins Bob(Bank,Image,W,H,Depth)` | On an open AGA screen, inserts a transparent W × H image with 1–8 bitplanes at a free ID. An occupied ID or a ready/dirty frame causes refusal. Returns 1 when committed or 0 on refusal. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed Y in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns image ID 1..4096 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |

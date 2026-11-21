@@ -215,7 +215,11 @@ def check_public_pages(layout, parts, meta):
 def main():
     binary, meta = build_p1d()
     assert binary == build_p1d()[0]
-    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == binary
+    from active_library import P1D_SHA, P1E_SHA, verify_active
+    from hashlib import sha256
+    active, _, _ = verify_active(ROOT)
+    assert sha256(binary).hexdigest() == P1D_SHA
+    assert sha256(active).hexdigest() in (P1D_SHA, P1E_SHA)
     _, parts, _ = unpack_ap20(binary)
     assert parts[179] == GETP
     dispatch_models(parts, 181, meta['limit_offset'], 180)

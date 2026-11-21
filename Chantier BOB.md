@@ -1,6 +1,6 @@
 # M19 — chantier BOB AGA
 
-**LAST_GOOD reste P0.** La Lib active est P1d (121 432 octets, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`), 94 commandes, 192 entrées AP20, MC68020 minimum. [Gate A P1d PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44888685052).
+**LAST_GOOD reste P0.** La Lib active est P1e (124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`), 96 commandes, 196 entrées AP20, MC68020 minimum. [Gate A P1e PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083).
 
 | Étape | Fonction | État exact |
 | --- | --- | --- |
@@ -19,4 +19,4 @@
 
 **Preuves P1 :** [socle et Hot Spot](docs/M19_P1_BOB_READ_HOTSPOT_SOURCE_2026-11-20.md) ; [rapport P1a AP20](docs/M19_P1A_BOB_GETTERS_GATE_A_2026-11-20.md) ; [CI Gate A P1a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44829476430). **La syntaxe des tokens a été auditée en AP20 ; deux exécutions AMOS Runtime WinUAE P1a sont PASS fonctionnel. Le vrai Compiler P1a reste NON TESTÉ.**
 
-**Prochaine action** — Qualifier la candidate P1e sous WinUAE après bascule de la Lib de travail.
+**Prochaine action** — Exécuter la [campagne P1e Runtime sous WinUAE](tests/current/README.md).

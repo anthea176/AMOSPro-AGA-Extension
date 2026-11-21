@@ -1,10 +1,10 @@
-# M19 P1d — Limit Bob sous WinUAE
+# M19 P1e — Édition des banques de Bobs sous WinUAE
 
-**P1d active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **121 432 octets**, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`. 94 commandes, 192 entrées AP20, cinq groupes MC68020. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44888685052).
+**P1e active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. 96 commandes, 196 entrées AP20, cinq groupes MC68020. [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083).
 
 **`LAST_GOOD` protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **P0**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. Ne pas remplacer, promouvoir ni utiliser ce binaire à la place de la candidate de test.
 
-**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **23 601 octets ASCII LF**, SHA256 `86b251b1deb8c115693697ea76b290b75696a324f5268b257b02fb82fdffc01f`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité et 24 lectures de clipping. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
+**ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **27 351 octets ASCII LF**, SHA256 `7737a6f93445613525a7a515acbe2a4715e975690c464b9a1c6b28d6995f154b`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité 24 lectures de clipping et trois frames d’édition AGBO. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
 
 ## Installation sous WinUAE
 
@@ -16,7 +16,7 @@
    - position logique (2,2) : **image partiellement coupée en haut à gauche**, origine (-2,-1) ;
    - position logique (32767,32767) : **image totalement hors écran**, réussite de l'Update **sans dessiner** ;
    - position logique (140,90) : **image dessinée à (136,87)**, correctement réactivée.
-5. Après les mesures de priorité, le banc lit les pixels (112,103), (113,103) et (114,103) sur chaque page arrière avant le Swap. Fais deux Runtime dans la même session AMOS. Sauvegarde `RAM:M19_P1D_LIMIT_BOB.TXT` sous un nom distinct après chaque lancement.
+5. Après les mesures de priorité, le banc lit les pixels (112,103), (113,103) et (114,103) sur chaque page arrière avant le Swap. Les trois frames d’édition AGBO suivent. Fais deux Runtime dans la même session AMOS. Sauvegarde `RAM:M19_P1E_BANK_EDIT.TXT` sous un nom distinct après chaque lancement.
 
 Le champ `LIB_SHA256` reprend l’empreinte attendue dans l’ASC. Vérifier l’empreinte de la Lib installée. Les quatre phases hotspot gardent leur contrôle visuel. Les huit mesures P1c comparent un pixel lu dans la page arrière à sa couleur attendue.
 
@@ -40,6 +40,7 @@ Le champ `LIB_SHA256` reprend l’empreinte attendue dans l’ASC. Vérifier l�
 | `PRIORITY_CAPTURE_OK` / `PRIORITY_PIXELS_OK` / `PRIORITY_SWAP_OK` | `8` / `8` / `8` |
 | Couleurs, deux lectures par mode (0, 1, 2, 3) | `5,5,4,4,4,4,5,5` |
 | `LIMIT_FRAMES_OK` / `LIMIT_PIXELS_OK` / `LIMIT_REJECT_OK` | `8` / `24` / `8` |
+| `EDIT_FRAMES_OK` / `EDIT_PIXELS_OK` / `EDIT_REJECT_OK` | `3` / `9` / `2` |
 | `CLOSE_RETURNED` / `BANKS_ERASED` | `1` / `4` |
 
 Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque 26 libre). Si ses métadonnées hotspot ne correspondent pas : `ERR 27`. Des erreurs **28 à 33** concernent les phases supplémentaires Clear/Update/Swap/getters/comptage. Les codes P1c vont de 34 à 42. `39` signale un échec de capture ou un en-tête inattendu. `40` signale une mauvaise couleur. Le champ `PRIORITY_SAMPLE` enregistre les couleurs lues.
@@ -55,12 +56,18 @@ Si le chargement de l'ABK échoue : `ERR 26` (vérifier répertoire, nom, banque
 
 `ERR 43–46` concerne Clear, réglage ou Update. `47` indique un échec de capture, `48` une couleur inattendue, `49` un total incorrect. Les lignes `LIMIT_SAMPLE` détaillent les couleurs mesurées.
 
+## Sondes P1e
+
+Après insertion de l’ID 3 et capture d’une image de couleur 6, le banc supprime l’intervalle 1–2. Deux Bobs partageant l’ID 1 doivent disparaître. Le Bob utilisant l’ID 3 doit garder sa position et son image. Les sondes aux coordonnées (112,103), (116,103) et (120,103) doivent renvoyer `1 / 6 / 1` sur chacune des deux pages. Après la suppression de la dernière image, la banque doit mesurer 32 octets. La réinsertion de l’ID 3 crée une image transparente et ne réactive pas le Bob. Après réactivation explicite, la troisième sonde doit renvoyer `1 / 1 / 1`.
+
+Les deux refus mesurés couvrent l’insertion sur un ID occupé et la suppression pendant une frame prête. La génération de la banque conserve sa valeur lors de chaque refus. Les codes 50–62 et les lignes `EDIT_SAMPLE` localisent une éventuelle divergence.
+
 ## Gates
 
-| Gate | P1d |
+| Gate | P1e |
 | --- | --- |
-| A — MC68020 sous Unicorn, services simulés | **PASS**, 76 scénarios P1d et 36 scénarios de régression P1c |
-| B — AMOS Runtime WinUAE | **PASS sur les mesures, deux journaux** |
+| A — MC68020 sous Unicorn, services simulés | **PASS**, commandes natives sur deux placements et préflight de l’ASC |
+| B — AMOS Runtime WinUAE | **À tester avec la Lib P1e** |
 | C — véritable exécutable AMOS Compiler | **À tester** |
 | D — Amiga physique | **NON TESTÉ** |
 
