@@ -1,5 +1,17 @@
 # M19 P2e.0 — Passerelle AMAL mémoire vers Bob AGA (expérimental)
 
+## Troisieme essai Runtime du 21/11/2026 — PASS confirme
+
+Journal utilisateur exact **M19_P2E0_AMAL_BRIDGE(2).TXT**, 397 octets, SHA256 `5ea95d1335fa35f3a2fe743b84febf210b2b2d10fb481ff5fa76f4d0bf13e0fc`, associe a l'ASC P2e.0 courant de 6 795 octets (SHA256 `62c94e9560134c0602b6e79b8cb2c78bf5adf207364d85d5a8953201ba61125f`).
+
+- **Gate B Runtime WinUAE PASS** pour ce banc : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `VERDICT PASS`, `CLOSE_RETURNED 1`.
+- **240 echantillons valides**, **241 Swaps reussis**, `BG0/BG1 1/1`, **29 pixels compares**, `PIXEL_VALUE 90` = `PIXEL_EXPECTED 90`.
+- Mouvements et animation observes : `CHG_X 239`, `CHG_Y 119`, `CHG_A 7`, deux images observees.
+- `FLAG_X/Y/A 0` avec `FLAG_WORD_LAST 1792` = `$0700`. Sur 680x0 big-endian, la lecture `Peek(_ADDR)` de l'octet de poids fort est une **hypothese testable** pour retrouver les bits 0/1/2 ; la correspondance de ces bits a chaque frame reste non qualifiee. Les deltas X/Y/A reels constituent l'oracle valide ici.
+
+**Perimetre : Gate B Runtime seulement**, pas `Prg State=0` interpreteur strict, pas Gate C AMOS Compiler, pas Gate D physique. Le test P2e.0 reste l'unique ASC actif ; la Lib P2d et LAST_GOOD P1e sont inchangees. **Suite P2e.1 source-only** : [contrat deux canaux](M19_P2E1_AMAL_TWO_BOBS_DESIGN_2026-11-21.md) et [source experimentale](../tests/design/M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt), non activee sous `tests/current/`.
+
+
 ## Décision et portée
 
 Après **P2d Runtime PASS 43/43** (journal utilisateur du 21/11/2026, `PRG_STATE 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CLOSE_RETURNED 1`, `VERDICT PASS` ; SHA256 du journal original `28f7ebfff3d77e7cc65469df3c246f23487eb1696376d2e078be5543eb13ee7b`), l'auteur reporte le Compiler individuel. Un **exemple global P2a–P2e**, à faire plus tard, sera testé **en interprété et compilé**.
@@ -25,7 +37,7 @@ Journal exact `M19_P2E0_AMAL_BRIDGE(1).TXT` de 342 octets, SHA256 `918f262be52ba
 - **VALIDATION FONCTIONNELLE PARTIELLE :** `PRG_STATE 1`, `FRAME 241`, `VALID_SAMPLES 240`, `SWAPS 241`, `BG0 1`, `BG1 1`, `SWAP_RESULT 1`, `PIX_SAMPLES 29`, `MOVE_X/Y 1`, `IMAGE1/2 1`, `PIXEL_VALUE 90`, `PIXEL_EXPECTED 90`, `CLOSE_RETURNED 1`. Plus aucun `ERR 15`.
 - **Verdict de l'ancien test : FAIL `ERR 21`** : `FLAG_X 0`, `FLAG_Y 0`, `FLAG_A 0`. Le manuel AMOS Professional décrit pourtant ces bits dans le mot à l'offset 0 de la zone `AMAL ... To address`. Les valeurs X/Y/A progressent normalement dans ce mode `Synchro Off` + `Synchro` ; la raison de l'absence des flags **n'a pas été établie**.
 - **Nouveau banc de 6 795 octets :** bits de changement conservés en diagnostic brut (`FLAG_X/Y/A`, `FLAG_WORD_LAST`), mais verdict `ERR 21` fondé sur **`CHG_X`, `CHG_Y`, `CHG_A`** calculés depuis les transitions effectives de X/Y/A sur les trames consécutives. Les autres exigences (pixels, Swap, pages physiques, propreté de la sortie) sont inchangées.
-- **Statut :** nouveau banc seulement livré et contrôlé statiquement ; **Runtime WinUAE de ce troisième ASC NON TESTÉ**, Compiler individuel reporté.
+- **Statut historique a la livraison du banc :** source controlee statiquement ; **la Gate B Runtime du troisieme ASC est depuis PASS**, Compiler individuel reporté.
 
 ## Contrat AMAL d'origine vérifié dans le manuel
 
@@ -58,14 +70,14 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 2. Laisser libres les banques **24, 27, 28**. Dans un programme vierge, importer l'ASC actif [`tests/current/M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc) via **Project → Merge ASCII**.
 3. **Lancer en Runtime uniquement**, sans compilation individuelle. Contrôler l'animation, puis sauvegarder `RAM:M19_P2E0_AMAL_BRIDGE.TXT` avant un autre lancement. Relever toute erreur AMOS, affichage incorrect, Guru ou freeze et le point atteint.
 
-Attendu : `ERR 0`, `CHG_X/Y/A > 0`, `MOVE_X 1`, `MOVE_Y 1`, `IMAGE1 1`, `IMAGE2 1`, `FLAG_X/Y/A > 0`, `VALID_SAMPLES >= 32`, `PIX_SAMPLES >= 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
+Attendu : `ERR 0`, `CHG_X/Y/A > 0`, `MOVE_X 1`, `MOVE_Y 1`, `IMAGE1 1`, `IMAGE2 1`, `FLAG_X/Y/A` non bloquants, `VALID_SAMPLES >= 32`, `PIX_SAMPLES >= 2`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
 
 La première erreur entraîne `ERR 1..23` et un journal diagnostique lorsqu'un retour normal est possible ; le pixel fautif expose `PIXEL_VALUE` et `PIXEL_EXPECTED`. Un problème de grammaire AMOS, de canal ou un Guru peut empêcher ce journal : dans ce cas noter le message exact et l'étape. Le **premier test** a été exécuté en Runtime WinUAE et a échoué (`ERR 15`). La **révision ci-dessus** n'a pas encore de nouveau résultat WinUAE ; la présence des appels dans le manuel ne les valide pas.
 
 ## Validation et suites
 
 - **Ancien ASC** : préflight officiel strict et contrat de journal PASS en CI avant la première Gate B FAIL. **ASC corrigé** : structure AMOS statique contrôlée (41+4 blocs If et End If équilibrés, lignes ≤220) ; préflight GitHub CI à vérifier sur le commit corrigé. Le préflight **ne compile pas AMOS**.
-- **Gate B Runtime WinUAE P2e.0** : premier banc **FAIL (`ERR 15`)**, second banc **FAIL (`ERR 21`) mais rendu/mouvements/pixels confirmés**, troisième ASC avec deltas observés **NON TESTÉ**. Interprété strict / Gate C Compiler / Gate D physique **NON TESTÉS** sur P2e.0. Le Compiler individuel reste reporté à l'exemple global P2.
+- **Gate B Runtime WinUAE P2e.0** : premier banc **FAIL (`ERR 15`)**, second banc **FAIL (`ERR 21`) mais rendu/mouvements/pixels confirmés**, troisième ASC avec deltas observés **PASS Gate B Runtime**. Interprété strict / Gate C Compiler / Gate D physique **NON TESTÉS** sur P2e.0. Le Compiler individuel reste reporté à l'exemple global P2.
 - **P2e.1** : plusieurs canaux et plusieurs Bobs, après un premier résultat WinUAE.
 - **P2e.2** : collisions/Flip/Planes/auto-update combinés et tests de limites.
 - **P2e.3** : audit d'un raccordement AMAL natif plus transparent uniquement si la passerelle mémoire devient insuffisante.

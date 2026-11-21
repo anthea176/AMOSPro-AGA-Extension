@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.0 Runtime PASS ; P2e.1 source de conception preparee
+
+Le journal exact utilisateur `M19_P2E0_AMAL_BRIDGE(2).TXT` (397 octets, SHA256 `5ea95d1335fa35f3a2fe743b84febf210b2b2d10fb481ff5fa76f4d0bf13e0fc`) confirme **Gate B Runtime PASS** de l'ASC P2e.0 courant : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `VALID_SAMPLES 240`, `SWAPS 241`, `PIX_SAMPLES 29`, `CHG_X/Y/A 239/119/7`, `CLOSE_RETURNED 1`, `VERDICT PASS`. Le mot de flags `1792=$0700` impose un suivi diagnostique de l'octet fort (`Peek(_ADDR)` propose), pas de validation des flags a cette date. Gate C finale reportee, Gate D non testee.
+
+**Suite source-only :** P2e.1 deux canaux AMAL et deux Bobs 16x16, tampons de 8 octets separes dans une banque de 16 octets, un seul `Synchro` et un seul `Aga Swap` par tick. [Plan](M19_P2E1_AMAL_TWO_BOBS_DESIGN_2026-11-21.md), [banc texte non active](../tests/design/M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt) de 8 420 octets, SHA256 `f0054af6f44ec6cfbbb1dcc233322c516e3e026954f3149d3e60149177a35537`. **Controle structurel local PASS uniquement** ; preflight officiel, WinUAE Runtime et Compiler P2e.1 NON TESTES. Ne pas deplacer ni remplacer l'ASC courant sans decision distincte. Bibliotheque P2d et LAST_GOOD P1e inchangees.
+
+
 ## 21 novembre 2026 — P2e.0 second Runtime : animation correcte, ERR 21 sur flags
 
 L'auteur fournit le second journal `M19_P2E0_AMAL_BRIDGE(1).TXT`, **342 octets** SHA256 `918f262be52ba0f12bc1435c8c129be9afc4f972997f4eb238822107c8f6be1d` : `PRG_STATE 1`, `FRAME 241`, `VALID_SAMPLES 240`, `SWAPS 241`, `BG0/BG1 1/1`, `SWAP_RESULT 1`, `PIX_SAMPLES 29`, `MOVE_X/Y 1`, `IMAGE1/2 1`, `CLOSE_RETURNED 1`. **Aucun refus du Swap ; 29 vérifications de pixels conformes.** Le verdict du programme est encore **FAIL, `ERR 21`**, uniquement parce que `FLAG_X/Y/A 0`. Le manuel indique ces bits à l'offset +0, mais leur absence sous `Synchro Off` / `Synchro` n'est pas élucidée.
