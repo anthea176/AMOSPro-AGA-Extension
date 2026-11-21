@@ -36,6 +36,7 @@ PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
 FLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_FLIP_PUBLIC_MC68020.s'
 VARIANT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_VARIANT_ANCHOR_MC68020.s'
 PAINT_GEO_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PAINT_GEOMETRY_MC68020.s'
+CLEANUP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_CLEANUP_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -55,6 +56,9 @@ VARIANT_END = 0xA0AA
 PAINT_GEO_SOURCE_NAME = 'M19_P2B_PAINT_GEOMETRY_MC68020.s'
 PAINT_GEO_START = 0xA0AA
 PAINT_GEO_END = 0xA1D2
+CLEANUP_SOURCE_NAME = 'M19_P2B_CLEANUP_MC68020.s'
+CLEANUP_START = 0xA1D2
+CLEANUP_END = 0xA28E
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -282,6 +286,53 @@ def replace_raw_p2b_paint_geo(text: str) -> str:
             PAINT_GEO_SOURCE_NAME + '"\n' + text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_p2b_cleanup_provenance() -> tuple[int, int, int, bytes]:
+    """Verify close/bank-free/purge 188 bytes against original P2b source."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels = emit_bob_flip(p1e['context_delta'])
+    planar, _ = emit_planar_orientation020()
+    base = PLANAR_END - labels['p2b_owner']
+    begin = base + labels['p2b_close_return']
+    end = base + labels['p2b_owner'] - len(planar)
+    bank_return = base + labels['p2b_bank_free_return']
+    require((begin, end, bank_return) == (CLEANUP_START, CLEANUP_END, 0xA24E),
+            'P2b cleanup emitter offsets changed')
+    original_bytes = native[labels['p2b_close_return']:
+                            labels['p2b_owner']-len(planar)]
+    _, parts, _ = unpack_ap20(original)
+    require(len(original_bytes) == end-begin and
+            parts[group][begin:end] == original_bytes,
+            'P2b cleanup source emitter differs from P2d reference')
+    return begin, end, bank_return, original_bytes
+
+
+def replace_raw_p2b_cleanup(text: str) -> str:
+    """Replace source-proven P2b close/bank-free/purge before planar include."""
+    anchor = 'L_BOBS_0A1D2:\np2b_close_return:\n'
+    terminator = '    include "' + PLANAR_SOURCE_NAME + '"\n'
+    begin = text.find(anchor)
+    end = text.find(terminator, begin)
+    require(begin >= 0 and end > begin and
+            'p2b_purge:' in text[begin:end], 'P2b cleanup audit missing')
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                         text[begin:end])
+    require(matches, 'P2b cleanup source bytes not annotated')
+    offset, collected = CLEANUP_START, bytearray()
+    for position, encoded in matches:
+        require(int(position,16) == offset,
+                f'P2b cleanup non-contiguous: {position}')
+        blob = bytes.fromhex(encoded)
+        collected.extend(blob)
+        offset += len(blob)
+    require(offset == CLEANUP_END and
+            bytes(collected) == prove_p2b_cleanup_provenance()[3],
+            'P2b cleanup raw region diverged from authoritative source')
+    return (text[:begin] + 'L_BOBS_0A1D2:\n    include "' +
+            CLEANUP_SOURCE_NAME + '"\n' + text[end:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -336,7 +387,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    planar_text: str | None = None,
                    flip_text: str | None = None,
                    variant_text: str | None = None,
-                   paint_geo_text: str | None = None) -> None:
+                   paint_geo_text: str | None = None,
+                   cleanup_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -345,6 +397,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(FLIP_FILE.is_file(), f'missing authored module: {FLIP_FILE}')
     require(VARIANT_FILE.is_file(), f'missing authored module: {VARIANT_FILE}')
     require(PAINT_GEO_FILE.is_file(), f'missing authored module: {PAINT_GEO_FILE}')
+    require(CLEANUP_FILE.is_file(), f'missing authored module: {CLEANUP_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -357,6 +410,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p2b_variant(text)
     text = replace_raw_p2b_paint_geo(text)
     text = replace_raw_planar_block(text)
+    text = replace_raw_p2b_cleanup(text)
     text = replace_raw_p2b_slot_data(text)
     require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
             'audited P2c assembly has ambiguous module boundaries')
@@ -449,6 +503,24 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'unexpected raw opcode in P2b painter/geometry')
     (folder / PAINT_GEO_SOURCE_NAME).write_text(paint_source,
                                                encoding='ascii', newline='\n')
+    cleanup_source = (cleanup_text if cleanup_text is not None
+                      else CLEANUP_FILE.read_text('ascii'))
+    for label in ('p2b_close_return:', 'p2b_closed:', 'p2b_bank_free:',
+                  'p2b_bank_free_return:', 'p2b_purge:', 'p2b_purge_loop:'):
+        require(cleanup_source.count(label) == 1,
+                'P2b cleanup source missing ' + label)
+    checked = cleanup_source
+    for symbol, opcode, count in (('p2b_owner', '41FB', 3),
+                                  ('p2b_slots', '47FB', 1)):
+        exact = ('    dc.w $' + opcode + ',$0170\n    dc.l ' +
+                 symbol + '-(*-2)')
+        require(cleanup_source.count(exact) == count,
+                'P2b cleanup missing source-owned PC32 LEA')
+        checked = checked.replace(exact, '')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', checked),
+            'unexpected raw opcode in P2b cleanup')
+    (folder / CLEANUP_SOURCE_NAME).write_text(cleanup_source,
+                                             encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -520,11 +592,13 @@ def verify_link(original: bytes, image: bytes, group: int,
     flip_start, flip_end, _, _ = prove_flip_public_provenance()
     variant_start, variant_end, _, _ = prove_p2b_variant_provenance()
     paint_start, paint_end, _, _ = prove_p2b_paint_geo_provenance()
+    cleanup_start, cleanup_end, _, _ = prove_p2b_cleanup_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
                 (variant_start <= i < variant_end) or
-                (paint_start <= i < paint_end) for i in differences),
+                (paint_start <= i < paint_end) or
+                (cleanup_start <= i < cleanup_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -540,12 +614,14 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           planar_text: str | None = None,
           flip_text: str | None = None,
           variant_text: str | None = None,
-          paint_geo_text: str | None = None) -> tuple[bytes, list[int]]:
+          paint_geo_text: str | None = None,
+          cleanup_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
                    planar_text=planar_text, flip_text=flip_text,
-                   variant_text=variant_text, paint_geo_text=paint_geo_text)
+                   variant_text=variant_text, paint_geo_text=paint_geo_text,
+                   cleanup_text=cleanup_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -658,12 +734,31 @@ def test_editability(assembler: Path) -> None:
                 == b'\x76\x01', 'P2b geometry failure MOVEQ did not assemble')
         require(paint_start <= paint_fail < paint_end,
                 'P2b paint/geometry edit escaped authored module')
+        cleanup_start, cleanup_end, bank_ret, _ = prove_p2b_cleanup_provenance()
+        cleanup_source = CLEANUP_FILE.read_text('ascii')
+        needle = ('p2b_bank_free_return:\n'
+                  '    movem.l (a7)+,d0-d1/d4-d7/a0-a6\n'
+                  '    moveq #0,d2')
+        require(cleanup_source.count(needle) == 1,
+                'P2b bank-free return opcode not uniquely editable')
+        altered = cleanup_source.replace(
+            needle, needle.replace('moveq #0,d2', 'moveq #1,d2'))
+        changed_cleanup, cleanup_diffs = build(
+            assembler, root/'modified_cleanup', allow_edited=True,
+            cleanup_text=altered)
+        require(cleanup_diffs == [bank_ret+5],
+                f'P2b cleanup edit affected {cleanup_diffs}, expected {[bank_ret+5]}')
+        require(unpack_ap20(changed_cleanup)[1][group][bank_ret+4:bank_ret+6]
+                == b'\x74\x01', 'P2b cleanup MOVEQ edit not assembled')
+        require(cleanup_start <= bank_ret+4 < cleanup_end,
+                'P2b cleanup edit escaped authored region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_FLIP_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_VARIANT_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PAINT_GEOMETRY_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
+    print('P2B_CLEANUP_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
