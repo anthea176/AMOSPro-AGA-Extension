@@ -13,6 +13,7 @@ SMOKE_BLOB = "347e35d4e79b4afc331a732f33c448bbb61ddef9"
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
+P1E_SHA = '7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'
 
 def git_blob(data: bytes) -> str:
     return sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
@@ -35,9 +36,9 @@ def main() -> None:
     active=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
     digest=sha256(active).hexdigest()
-    assert (len(active),digest) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA)), 'Unknown active B7/B8 candidate'
+    assert (len(active),digest) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA),(124444,P1E_SHA)), 'Unknown active B7/B8 candidate'
     assert len(current)==73184 and sha256(current).hexdigest()==R87_SHA
-    assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA
+    assert len(good)==124444 and sha256(good).hexdigest()==P1E_SHA
     asc=sorted((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1  # historical benchmark model independent of active ASC name
     data=(ROOT/"tests/passed"/TEST).read_bytes()
