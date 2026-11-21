@@ -1,5 +1,8 @@
 # Règles sources — AMOSPro AGA Extension
 
+> **Décision expresse du 21/11/2026 — promotion binaire P1e → P2d et clôture Bob.** L'auteur demande la promotion de **M19 P2d** après validation des deux logs WinUAE **Runtime B / vrai Compiler C**, puis souhaite préparer une release GitHub et une mise à jour Aminet. Transition autorisée **uniquement** si `dist/AMOSPro_AGA.Lib` conserve le Git blob `8a849b89aae57c2cda0b4db8771034a0978d3e78` et si `dist/AMOSPro_AGA_LAST_GOOD.Lib` passe du blob P1e `5bb0c476c2b286495a1d0cf7d4415dbbc4eec369` à **exactement ce même blob P2d**, 136 020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Ancienne P1e conservée dans Git. Aucune future promotion automatique, aucun tag/release/upload sans autorisation distincte. P0–P2 Bob clos ; **prochain chantier Sprite matériels AGA : audit S0 encore incomplet**. [Rapport](docs/M19_P2D_LAST_GOOD_PROMOTION_2026-11-21.md).
+
+
 > **Décision expresse du 21/11/2026 — M19 P2a Lib + exemple WinUAE.** L'auteur demande explicitement « je veux la nouvelle Lib et exemple à tester go ». Autorisation ponctuelle de remplacer uniquement `dist/AMOSPro_AGA.Lib` sur **`main`** par la candidate P2a, **129 544 octets** SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes / 198 entrées AP20, fonction numérique `Aga Bob Col(A,B,Mode)`. Test AMOS autonome : `tests/current/M19_P2A_BOB_COL.asc`. Gate A native sur deux implantations et préflight PASS ; **WinUAE Runtime B et Compiler C NON TESTÉES**. **LAST_GOOD P1e demeure strictement protégée** (124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`). Aucune promotion P2a ni autre branche/dépôt.
 
 

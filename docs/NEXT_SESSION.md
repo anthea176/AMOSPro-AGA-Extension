@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2d promue LAST_GOOD ; chantier Bob terminé, publication 0.14.0 préparée
+
+**Autorisation utilisateur explicite :** après deux journaux **Runtime B PASS / Compiler C PASS** sur la campagne P2 ALL IN ONE, promouvoir la Lib P2d en `LAST_GOOD` puis préparer **release GitHub et Aminet**. **Bibliothèque promue octet-identique** : `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **136 020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`**, Git blob `8a849b89aae57c2cda0b4db8771034a0978d3e78`. Ancienne P1e (SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`) récupérable dans Git. Gate A native PASS ; **B WinUAE Runtime PASS**, **C vrai Compiler PASS** sur le même test ; **D physique et interprété strict NON TESTÉS**. [Rapport détaillé](M19_P2D_LAST_GOOD_PROMOTION_2026-11-21.md).
+
+**Chantier Bob P0–P2 CLÔTURÉ** : [exemple public FR](../examples/bob_p2_all_in_one/README.fr.md) / [EN](../examples/bob_p2_all_in_one/README.md), [source ASCII](../examples/bob_p2_all_in_one/BOB_ALL_IN_ONE.asc), [test unique actif](../tests/current/M19_P2_ALL_IN_ONE.asc), [test figé](../tests/passed/M19_P2_ALL_IN_ONE.asc), preuves [Runtime](evidence/M19_P2_ALL_IN_ONE_RUNTIME_PASS_2026-11-21.TXT) / [Compiler](evidence/M19_P2_ALL_IN_ONE_COMPILED_PASS_2026-11-21.TXT). **121 premiers refus `Aga Swap` par mode, tous récupérés en 1 VBL** ; ne pas masquer dans les releases.
+
+**Version publique recommandée : 0.14.0**, identifiant interne de la Lib inchangé `$VER: AMOSPro_AGA M19 P2d` ; préparatifs [GitHub](releases/0.14.0_GITHUB_RELEASE.md), [Aminet](releases/AMOSProAGA.readme) et [checklist](releases/0.14.0_RELEASE_CHECKLIST.md). **Tag/release/envoi Aminet NON publiés** ; décision et opérations laissées à l'auteur.
+
+**PROCHAIN CHANTIER : Sprites DMA matériels AGA.** Reprendre la [feuille S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md) et l'[audit S0 commencé](AGA_HARDWARE_SPRITES_S0_AUDIT_2026-11-21.md). Lever verrous ABI/NDK, `ViewPort`, canaux Sprite et conflits Intuition/Copper/pointeur avant de coder S1 **un Sprite 16 pixels**. Aucun nouveau token ni Lib Sprite encore produit. **Travail exclusivement sur `main`**, sans toucher à Oracle ni Fer & Flamme.
+
+
 ## 21 novembre 2026 — P2 ALL IN ONE validé B/C et publié dans examples
 
 **Autorisation explicite de l'auteur :** après remise des deux logs PASS, publier le dernier banc P2 complet dans `examples/` et le présenter dans les **README anglais et français des exemples**. Publication réalisée **à octets identiques** : [source publique](../examples/bob_p2_all_in_one/BOB_ALL_IN_ONE.asc), 25 056 octets, Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`. [Copie gelée](../tests/passed/M19_P2_ALL_IN_ONE.asc) identique. **Un ASC de régression identique reste [actif sous `tests/current/`](../tests/current/M19_P2_ALL_IN_ONE.asc)** pour respecter les règles CI ; prochaine campagne non définie.

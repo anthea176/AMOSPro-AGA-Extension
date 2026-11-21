@@ -1,5 +1,8 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+> **Priorité actuelle après clôture P2d Bob (21/11/2026) : REPRENDRE S0.** Moteur Bob P0–P2 clos et P2d promue `LAST_GOOD` après Gates B/C WinUAE sur le banc intégré. Les mentions historiques « R84 LAST_GOOD » ci-dessous reflètent le contexte de conception du 15/11, **pas** la bibliothèque actuelle. Audit S0 NDK/ABI/Intuition/Copper à terminer avant tout prototype S1 (Sprite 16 pixels), et sans modification de P2d promue.
+
+
 **Décision auteur du 15 novembre 2026 : prévoir le chantier Sprites matériels AGA, séparément du moteur Bob AGA.**  
 **Statut : contrat d'intention et plan d'étude seulement ; aucune nouvelle API `Aga Sprite` implémentée, aucun nouveau test matériel ou Compiler exécuté.**  
 Dépôt : `anthea176/AMOSPro-AGA-Extension`, **branche `main` exclusivement**. Pas de modification de R84 `LAST_GOOD`, de la candidate R88, ni de promotion automatique.

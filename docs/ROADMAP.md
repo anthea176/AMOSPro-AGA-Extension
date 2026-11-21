@@ -6,16 +6,16 @@
 
 | Élément | État |
 | --- | --- |
-| **Bibliothèque active** | **[M19 P2d](../dist/AMOSPro_AGA.Lib)**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes et 203 AP20. **Gate A native PASS**, **scénario intégré P2a–P2e PASS Gate B Runtime et Gate C vrai Compiler** sur WinUAE ; pas de requalification générale des autres API. Lib et LAST_GOOD inchangées. |
+| **Bibliothèque active** | **[M19 P2d](../dist/AMOSPro_AGA.Lib)**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes et 203 AP20. **Gate A native PASS**, **scénario intégré P2a–P2e PASS Gate B Runtime et Gate C vrai Compiler** sur WinUAE ; pas de requalification générale des autres API. Lib P2d **promue LAST_GOOD à octets identiques** ; ancienne P1e préservée dans Git. |
 | **ASC unique de campagne** | **ASC actif de régression** : [M19_P2_ALL_IN_ONE.asc](../tests/current/M19_P2_ALL_IN_ONE.asc) conservé pour la CI ; P2a–P2e validés et publiés en [exemple ALL IN ONE](../examples/bob_p2_all_in_one/README.fr.md), **source 25 056 octets inchangée**, avec [test figé](../tests/passed/M19_P2_ALL_IN_ONE.asc). **Gates B Runtime et C Compiler PASS** sur les deux journaux WinUAE ([rapport](M19_P2_ALL_IN_ONE_2026-11-21.md)) ; Gate D non testée. Nouvelle campagne non définie ; la source de régression reste en place jusqu'à remplacement autorisé. |
 | **Qualification P0** | **Gate A native MC68020 PASS : 104 contrôles préparation Chip + 121 Bank Free** (OS/Blitter simulés, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)). **Gate B WinUAE Runtime P0 : PASS fonctionnel sur les journaux fournis** ([rapport et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C Compiler reportée**, Gate D matériel non testée. |
-| **LAST_GOOD promue P1e** | [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, référence protégée de P1e. Promotion autorisée après Gate A native et deux Runtime PASS. Gates C/D NON TESTÉES. Ancienne LAST_GOOD P0 SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` conservée dans Git. [Rapport](M19_P1E_PROMOTION_2026-11-21.md). |
+| **LAST_GOOD promue P2d** | [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) **identique à la Lib active** (136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`) ; autorisation auteur du 21/11/2026 après Gates A/B/C et [preuve](M19_P2D_LAST_GOOD_PROMOTION_2026-11-21.md). Ancienne LAST_GOOD P1e (124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`) préservée dans l'historique Git. |
 
 **Historique distinct :** B8 S1 SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a` a passé deux essais Runtime à 405/405 frames. Ce résultat ne qualifie pas la nouvelle P0. La B7-m2 (102 400 octets ; SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`) est la référence antérieure ; **ses Gates Runtime et Compiler PASS ne s'appliquent pas à B8**. [Preuves B7-m2](M19_B7M2_GATES_BC_2026-11-19.md).
 
-## 2. M19 — P1e promue, Gate B Runtime PASS
+## 2. M19 — P2d promue ; chantier Bob P0–P2 clos
 
-**P0 fonctionnelle conservée dans la Lib active P2d et dans LAST_GOOD P1e (P0 préservée dans Git) :** `Aga Bob Bank N` prépare en Chip les images AGBO d'une banque peuplée (aucune allocation si vide) ; `Aga Bob Bank Free N` désactive les Bobs dépendants, attend `WaitBlit`, libère le cache privé **sans effacer la banque AMOS**. Opération idempotente, refus pendant `READY`/`DIRTY`, nouvelle sélection pour réactiver. [Rapport et limites](M19_P0_BANK_FREE_GATES_2026-11-20.md).
+**P0 fonctionnelle conservée dans la Lib P2d et dans LAST_GOOD P2d (P0 et P1e préservées dans Git) :** `Aga Bob Bank N` prépare en Chip les images AGBO d'une banque peuplée (aucune allocation si vide) ; `Aga Bob Bank Free N` désactive les Bobs dépendants, attend `WaitBlit`, libère le cache privé **sans effacer la banque AMOS**. Opération idempotente, refus pendant `READY`/`DIRTY`, nouvelle sélection pour réactiver. [Rapport et limites](M19_P0_BANK_FREE_GATES_2026-11-20.md).
 
 P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga Bob Priority(Mode)` et conserve le tri initial par ID au mode 0. [Rapport P1b](M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md#résultats-runtime-winue).
 
@@ -23,7 +23,9 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 **M20 EN ATTENTE :** prototype Python P0 (13 tests hôtes PASS) conservé ; aucune poursuite avant décision sur M19.
 
-## 3. M19 P2 — chantier engagé ; suites ultérieures
+## 3. M19 P2 terminé — prochain chantier : sprites matériels AGA
+
+**Le moteur Bob P0–P2 est clos sur la P2d promue.** Prochain objectif : reprendre l'[audit S0 des Sprites matériels AGA](AGA_HARDWARE_SPRITES_S0_AUDIT_2026-11-21.md), vérifier les contrats NDK/Intuition/Copper puis préparer S1 (un Sprite matériel 16 pixels). **Aucun nouveau code Sprite, token ou binaire n'est inclus dans la release Bob.** [Plan S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md).
 
 | Sujet | Objectif |
 | --- | --- |

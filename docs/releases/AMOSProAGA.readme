@@ -1,0 +1,89 @@
+Short:        AGA graphics and Bob engine for AMOS Pro
+Author:       HWARF (Jerome)
+Uploader:     amethist rumor786 passinbox com (Jerome)
+Type:         dev/amos
+Version:      0.14.0 (M19 P2d, 21 Nov 2026)
+Requires:     AMOS Professional, AGA chipset, 68020+
+Architecture: m68k-amigaos
+Distribution: Aminet
+
+Description:
+  AMOSPro AGA Extension is an unofficial graphics extension for
+  AMOS Professional on AGA-equipped Commodore Amiga computers
+  (including A1200/A4000) and AGA-enabled WinUAE. It extends
+  the original AMOS editor and interpreter, without replacing them.
+
+  Version 0.14.0 / M19 P2d provides 100 native AMOS commands and
+  functions (203 AP20 entries). Motorola 68020 or better required.
+
+  Features carried forward from 0.13.27:
+    - Indexed AGA screens (2 to 256 colours), double buffering
+    - IFF/ILBM loading, AGAPIC banks, palettes, fades and cycling
+    - Safe Blitter graphics, Copper raster effects and 2D drawing
+    - Text, AMCAF font-bank selection, mouse and keyboard input
+    - Fast Icons, Chip RAM CBlock capture and restoration
+    - Chunky-to-planar C2P, including Blit and Zoom
+    - Direct IFF-to-chunky decoding into an AMOS DATA/WORK bank
+
+  New M19 software Bob engine, P0 to P2:
+    - Multi-image AGBO banks, transparency/masks, positioning,
+      hot spots, priority, per-page restoration and cleanup
+    - Bob image selection and safe bank cache release
+    - Aga Bob Col: rectangle or opaque-pixel mask collision
+    - Aga Bob Flip: normal, H, V and H+V orientations
+    - Aga Bob Planes: destination bitplane selection
+    - Aga Bob Auto Update: automatic draw before guarded Swap
+    - AMAL memory bridge: two synchronous AMAL channels driving
+      separate AGA Bobs without a new AMAL extension command
+
+  New demonstration: BOB_ALL_IN_ONE.asc
+    - Self-contained asymmetric F/L graphics in 16x16 and 32x32
+    - Animated Bobs, collisions, flips, bitplanes and auto update
+    - No external graphics files required; uses AMOS banks 24/27/28
+    - Separate RAM logs for Runtime, Compiler and interpreted mode
+
+  Validation (WinUAE, exact M19 P2d library and example):
+    - Runtime Gate B: PASS, RESULT 1, ERR 0
+    - Real AMOS Compiler Gate C: PASS, RESULT 1, ERR 0
+    - 240 valid AMAL cycles, 252 successful Swaps per run
+    - 8 collision checks, 20 Flip and 10 Planes pixel checks
+    - Screen cleanup/Close successful in both modes
+    - 121 initial Swap refusals per run, all recovered after
+      one additional VBL; not a zero-refusal or speed guarantee
+    - Physical AGA hardware and strict interpreted mode untested
+    - Not all historical extension APIs retested in these runs
+
+  IMPORTANT - external C2P dependency:
+    The five Aga C2P commands require c2p.library v1.9,
+    installed separately in LIBS: (usually SYS:Libs/).
+    It is NOT part of AMOSPro_AGA.Lib. Obtain it from Aminet:
+      https://aminet.net/package/dev/misc/c2plib
+    Aga Iff To Chunky and the Bob features do not require it.
+
+  Installation:
+    1. Back up your AMOS configuration and installed libraries.
+    2. Copy AMOSPro_AGA.Lib into your AMOS APSystem directory.
+    3. In AMOS Pro: Config / Set Interpreter /
+       Set Loaded Extensions, select an available slot.
+       Keep the existing slot when upgrading (historically 14).
+    4. Save the interpreter configuration and restart AMOS.
+    5. Install c2p.library v1.9 in LIBS: only for C2P commands.
+    6. Import .asc files with Project / Merge ASCII.
+
+  Exact release library:
+    M19 P2d, 136020 bytes, SHA256:
+    ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f
+    Internal binary ID remains "$VER: AMOSPro_AGA M19 P2d".
+
+  Documentation, sources and latest examples:
+    https://github.com/anthea176/AMOSPro-AGA-Extension
+
+  This release completes the software Bob milestone. Hardware AGA
+  Sprites are planned next, but are NOT included in this version.
+
+  Source code and technical documentation: MIT License.
+  Artwork, logos, IFF files and fonts may have separate terms;
+  see ASSETS_LICENSE.md in the project.
+
+  Designed and developed by HWARF, with assistance from
+  ChatGPT (OpenAI) for programming, testing and documentation.

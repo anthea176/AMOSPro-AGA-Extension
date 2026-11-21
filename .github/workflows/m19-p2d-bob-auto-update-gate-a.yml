@@ -8,6 +8,7 @@ on:
       - 'tools/build_m19_p2b_in_memory.py'
       - 'tools/active_library.py'
       - 'dist/AMOSPro_AGA.Lib'
+      - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
       - 'tests/current/*.asc'
       - '.github/workflows/m19-p2d-bob-auto-update-gate-a.yml'
   workflow_dispatch:
@@ -35,20 +36,20 @@ jobs:
           python -B tools/test_m19_p2d_bob_auto_update_model.py
           python -B tools/test_m19_p2d_bob_auto_update_gate_a.py
           python -B tools/test_m19_p2c_bob_planes_gate_a.py
-      - name: Check the P2d candidate and official delivery paths
+      - name: Check promoted P2d source identity and official delivery paths
         run: |
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P1E_SHA, P2D_SHA
+          from active_library import verify_active, P2D_SHA
           from build_m19_p2d_in_memory import build_p2d
           raw, info = build_p2d()
           assert sha256(raw).hexdigest() == P2D_SHA
           active, protected, label = verify_active(Path('.'))
-          assert (sha256(active).hexdigest(), sha256(protected).hexdigest()) == (P2D_SHA, P1E_SHA)
+          assert (sha256(active).hexdigest(), sha256(protected).hexdigest()) == (P2D_SHA, P2D_SHA)
           assert active == raw
           current = list(Path('tests/current').glob('*.asc'))
-          assert len(current) == 1 and current[0].name == 'M19_P2D_BOB_AUTO_UPDATE.asc'
+          assert len(current) == 1 and current[0].name == 'M19_P2_ALL_IN_ONE.asc'
           print(info, label)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/

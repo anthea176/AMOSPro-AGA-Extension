@@ -2,7 +2,7 @@
 
 ## Current library and featured Bob demonstration — M19 P2d (MC68020+)
 
-The active [`AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) is **M19 P2d**, **136,020 bytes**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**. The protected `LAST_GOOD` library is **P1e** and is unchanged. The **P2 ALL IN ONE** example below has **Runtime Gate B and genuine AMOS Compiler Gate C PASS** under WinUAE using the same byte-exact ASC, as shown by independent mode-specific logs; physical Amiga Gate D is untested.
+The active [`AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib) is **M19 P2d**, **136,020 bytes**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**. The protected [`LAST_GOOD` library](../dist/AMOSPro_AGA_LAST_GOOD.Lib) is now **promoted P2d**, byte-identical to the current installable Lib. The **P2 ALL IN ONE** example below has **Runtime Gate B and genuine AMOS Compiler Gate C PASS** under WinUAE using the same byte-exact ASC, as shown by independent mode-specific logs; physical Amiga Gate D is untested.
 
 **Featured:** [**P2 ALL IN ONE — complete AGA Bob suite**](bob_p2_all_in_one/README.md) · [source ASC](bob_p2_all_in_one/BOB_ALL_IN_ONE.asc) · [French instructions](bob_p2_all_in_one/README.fr.md). No external graphics; 240 AMAL animation frames, collision tests, H/V/HV flips, bitplane masks and auto-update. The older [local-restoration example](bob_local_restore/README.md) and [Bob-bank examples](aga_bob_bank_get/README.fr.md) have their own historical status; do not infer validation of those files from P2.
 

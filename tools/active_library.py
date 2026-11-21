@@ -1,4 +1,4 @@
-"""One active M19 P2d test Lib in dist/ with protected promoted M19 P1e LAST_GOOD.
+"""One active M19 P2d validated Lib in dist/ promoted as protected LAST_GOOD.
 
 M19 B7-m2 is the authorized active TEST candidate (Gate A PASS; Runtime repeat-launch B pending). Historical B7-m1 remains source-built.
 P0d remains source-reproducible by its frozen builder and Git history.
@@ -49,7 +49,7 @@ P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
-LAST_GOOD_SHA=P1E_SHA  # Author-approved M19 P1e promotion 21/11/2026; Gates A/B PASS, C/D not tested
+LAST_GOOD_SHA=P2D_SHA  # Author-approved M19 P2d promotion 21/11/2026; native A and integrated WinUAE B/C PASS, physical D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -115,8 +115,9 @@ def verify_active(root: Path):
         expected, meta = build_p2d()
         assert cur == expected and len(cur) == 136020 and meta['sha256'] == P2D_SHA
         assert (meta['commands'], meta['entries'], meta['pc16_max']) == (100, 203, 854)
-        assert len(good) == 124444
-        return cur, good, "M19 P2d Aga Bob Auto Update TEST CANDIDATE; WinUAE Runtime/Compiler pending; P1e LAST_GOOD"
+        assert good == cur and len(good) == 136020
+        assert sha256(good).hexdigest() == P2D_SHA
+        return cur, good, "M19 P2d PROMOTED LAST_GOOD; native Gate A PASS, integrated P2a-P2e WinUAE Runtime B and true AMOS Compiler C PASS; physical D NOT TESTED"
     if current_sha == P2C_SHA:
         from build_m19_p2c_in_memory import build_p2c
         expected, meta = build_p2c()

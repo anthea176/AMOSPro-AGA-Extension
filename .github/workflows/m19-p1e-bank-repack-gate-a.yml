@@ -1,4 +1,4 @@
-name: M19 P1e promoted LAST_GOOD - MC68020 native Gate A
+name: M19 P1e historical source and P2d promoted LAST_GOOD - MC68020 Gate A
 on:
   push:
     branches: [main]
@@ -41,9 +41,9 @@ jobs:
         run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
       - name: Execute Del Bob and Ins Bob with AMOS bank service fixtures
         run: python -B tools/test_m19_p1e_bank_edit_gate_a.py
-      - name: Verify source-pinned P1e LAST_GOOD and current campaign (Runtime/Compiler not executed here)
+      - name: Verify historical P1e source and promoted P2d LAST_GOOD (Runtime/Compiler not executed here)
         run: |
-          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active; from build_m19_p1e_bank_edit_in_memory import build_p1e; _, good, _ = verify_active(Path(".")); assert good == build_p1e()[0]'
+          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active; from build_m19_p1e_bank_edit_in_memory import build_p1e; _, good, _ = verify_active(Path(".")); assert good != build_p1e()[0]; from build_m19_p2d_in_memory import build_p2d; assert good == build_p2d()[0]'
           python -B tools/test_current_ram_log.py
           python -B tools/amos_preflight.py --strict-target tests/current/*.asc
       - name: Preserve the active test and both library binaries

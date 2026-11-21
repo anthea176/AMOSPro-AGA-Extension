@@ -1,5 +1,8 @@
 # Sprites matériels AGA — S0, audit d'intégration initial (21/11/2026)
 
+> **Suite après clôture M19 Bob P2d :** P2d promue `LAST_GOOD` (Gates A/B/C du scénario P2 PASS). **Prochain travail : reprendre S0 ici**, auditer NDK/ABI et la gestion native du `ViewPort`, des canaux Sprite, du pointeur Intuition et des listes Copper. S0 n'est **pas** terminé, S1 non implémenté. Ne pas développer les Sprites en modifiant la Lib P2d promue sans nouvelle autorisation de candidat.
+
+
 > **Statut : AUDIT DOCUMENTAIRE ET DE CONTRAT EN COURS, PAS S0 TERMINÉ.**
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, branche `main` uniquement.
 > Ce document n'autorise ni binaire, ni API, ni commande `Aga Sprite`, ni remplacement de l'ASC de P2e.1 actuellement actif.
@@ -13,7 +16,7 @@
 | Copper utilisateur | [M7/R18](M7_COPPER_R18.md) : `graphics.library/UCopList`, `ViewPort.UCopIns`, installation via `MakeScreen/RethinkDisplay` ; seuls `COLOR00..31` RGB4 autorisés | **Ne pas écraser** les listes du ViewPort ni `COP1LC/COP2LC`. Le moteur Sprite n'a pas le droit de réutiliser les deux bits privés de `Screen.UserData` affectés au Copper. |
 | Pointeur Intuition | [M15bis/R44](M15BIS_MOUSE_CURSOR_R44_DESIGN.md) : `Aga Mouse Cursor` appelle `SetPointer/ClearPointer`, avec un tampon transparent **72 octets Chip** possédé par la fenêtre | Cacher le pointeur **ne prouve pas** la disponibilité d'un canal DMA Sprite. Ne jamais modifier le pointeur global du Workbench. |
 | Bobs | [M19 P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md) : Bobs logiciels dans les bitplanes, fonds des deux pages, `Aga Swap` gardé, Chip caches privés | Le Sprite DMA est **distinct** du Blitter, ne dessine dans aucun back buffer et ne déclenche aucun `Aga Swap` implicite. |
-| AMAL | [P2e.0 Runtime PASS](M19_P2E0_AMAL_BRIDGE_2026-11-21.md) et [P2e.1 actif](../tests/current/README.md) | AMAL fournit des positions/images via des tampons mémoire 8 octets par canal. Une passerelle ultérieure vers Sprite reste facultative ; aucun code DMA en interruption. |
+| AMAL | [P2e.0 Runtime PASS](M19_P2E0_AMAL_BRIDGE_2026-11-21.md) et [banc intégré P2a–P2e VALIDÉ B/C](../examples/bob_p2_all_in_one/README.fr.md) | AMAL fournit des positions/images via des tampons mémoire 8 octets par canal. Une passerelle ultérieure vers Sprite reste facultative ; aucun code DMA en interruption. |
 
 La [feuille S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md) sépare déjà Bobs et Sprites. **L'audit des offsets, propriétaires, transitions d'écran et de la source native exacte de l'ouverture/fermeture P2d reste à faire avant S1 natif.** Les contrats historiques M3/M7/R44 ne démontrent pas à eux seuls l'état réel des ressources Sprite de la Lib P2d.
 

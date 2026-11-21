@@ -17,10 +17,11 @@ import unittest
 ARCHIVES = ('dist/experimental/', 'tests/passed/', 'tests/historical/', 'tests/fixtures/')
 CANONICAL_LIB = 'dist/AMOSPro_AGA.Lib'
 PROTECTED_LIB = 'dist/AMOSPro_AGA_LAST_GOOD.Lib'
-# Only author-approved, exact binary transitions are exempt (R84->P0, P0->P1e).
+# Only exact, author-approved promotions are exempt (R84->P0, P0->P1e, P1e->P2d).
 PROMOTION_R84_BLOB = '9c6c52a1d857c89089b2540b438b76efbf80c77b'
 PROMOTION_P0_BLOB = '6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2'
-PROMOTION_P1E_BLOB = '5bb0c476c2b286495a1d0cf7d4415dbbc4eec369'  # P1e native A PASS, WinUAE Runtime B PASS x2; C/D untested
+PROMOTION_P1E_BLOB = '5bb0c476c2b286495a1d0cf7d4415dbbc4eec369'  # P1e native A PASS, Runtime B PASS x2; C/D untested
+PROMOTION_P2D_BLOB = '8a849b89aae57c2cda0b4db8771034a0978d3e78'  # P2d 136020 bytes, B/C integrated PASS, exact existing active Lib
 PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 
 
@@ -108,10 +109,29 @@ def exact_p1e_promotion(base: str, head: str) -> bool:
     return True
 
 
+def exact_p2d_promotion(base: str, head: str) -> bool:
+    """Only P1e LAST_GOOD -> byte-identical active P2d with author approval.
+
+    This does not authorize other candidates, rebuilding, or future promotions.
+    """
+    pins = (
+        (f'{base}:{PROTECTED_LIB}', PROMOTION_P1E_BLOB),
+        (f'{base}:{CANONICAL_LIB}', PROMOTION_P2D_BLOB),
+        (f'{head}:{PROTECTED_LIB}', PROMOTION_P2D_BLOB),
+        (f'{head}:{CANONICAL_LIB}', PROMOTION_P2D_BLOB),
+    )
+    for obj, expected in pins:
+        proc = subprocess.run(['git', 'rev-parse', '--verify', obj],
+                              capture_output=True, text=True, check=False)
+        if proc.returncode or proc.stdout.strip() != expected:
+            return False
+    return True
+
+
 def run_check(base: str, head: str) -> int:
     issues = []
     paths=changed_files(base, head)
-    approved=PROTECTED_LIB in paths and (exact_p0_promotion(base, head) or exact_p1e_promotion(base, head))
+    approved=PROTECTED_LIB in paths and (exact_p0_promotion(base, head) or exact_p1e_promotion(base, head) or exact_p2d_promotion(base, head))
     for path in paths:
         issues.extend((path, msg) for msg in path_errors(
             path, deleted=not Path(path).exists(),
@@ -150,6 +170,9 @@ class DeliveryPolicyTests(unittest.TestCase):
         self.assertNotEqual(PROMOTION_R84_BLOB, PROMOTION_P0_BLOB)
         self.assertNotEqual(PROMOTION_P0_BLOB, PROMOTION_P1E_BLOB)
         self.assertEqual(len(PROMOTION_P1E_BLOB), 40)
+        self.assertEqual(len(PROMOTION_P2D_BLOB), 40)
+        self.assertNotEqual(PROMOTION_P1E_BLOB, PROMOTION_P2D_BLOB)
+        self.assertNotEqual(PROMOTION_P0_BLOB, PROMOTION_P2D_BLOB)
 
     def test_protect_last_good(self):
         self.assertTrue(path_errors(PROTECTED_LIB))

@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Active test candidate M19 B7-m2:** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib), **102,400 bytes**, SHA256 `242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6`, 86 commands / 181 AP20 entries. Native MC68020 Gate A PASS (75 groups); WinUAE repeat-launch Gate B PENDING, true Compiler C NOT TESTED. The R84 `LAST_GOOD` remains unchanged. [Current Runtime test](tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc).
+**Promoted release reference: M19 P2d (MC68020+)**, proposed public version **0.14.0**. [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) and [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](dist/AMOSPro_AGA_LAST_GOOD.Lib) are **byte-identical (136,020 bytes)**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commands / 203 AP20 entries**. The integrated Bob suite passed WinUAE Runtime and AMOS Compiler; Amiga physical hardware untested. [P2d validation](docs/M19_P2D_LAST_GOOD_PROMOTION_2026-11-21.md). **The 0.14.0 GitHub release/tag has not been published as part of this promotion.**
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -9,7 +9,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. For **M19 B7-m2 Runtime testing**, copy **the active candidate** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) to **APSystem** as `AMOSPro_AGA.Lib`, after backing up your previously installed library outside the repository. The `LAST_GOOD` R84 file is deliberately **different** and must not be renamed/replaced. Keep the same slot, check the installed SHA256 and restart AMOS.
+2. Copy the **promoted P2d** [`dist/AMOSPro_AGA.Lib`](dist/AMOSPro_AGA.Lib) into **APSystem** as `AMOSPro_AGA.Lib`, after backing up your installed library and interpreter configuration. The `LAST_GOOD` file in `dist/` is **byte-identical** to this promoted version. Keep the same extension slot, verify the SHA256 and restart AMOS.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -18,7 +18,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## 2. Requirements and C2P dependency
 
-**Requirements for the active B7-m2 Runtime candidate:** an **AGA** Amiga (e.g. A1200/A4000, or WinUAE configured for AGA), **Motorola 68020/68EC020 or later** (not a 68000-only machine), AMOS Professional installed, and sufficient **Chip RAM** for the private AGA screen and buffers.
+**Requirements for the promoted P2d library:** an **AGA** Amiga (e.g. A1200/A4000, or WinUAE configured for AGA), **Motorola 68020/68EC020 or later** (not a 68000-only machine), AMOS Professional installed, and sufficient **Chip RAM** for the private AGA screen and buffers.
 
 **Additional library for C2P:** [**c2p.library v1.9 by Alimede Informatica, on Aminet**](https://aminet.net/package/dev/misc/c2plib) ([upstream source](https://github.com/alimede/c2p.library)). This is a standard AmigaOS shared library, **not** an AMOS extension and **not** part of `AMOSPro_AGA.Lib`.
 

@@ -2,7 +2,7 @@
 
 ## Bibliothèque actuelle et exemple Bob vedette — M19 P2d (MC68020+)
 
-La [`AMOSPro_AGA.Lib` active](../dist/AMOSPro_AGA.Lib) est **M19 P2d**, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. La bibliothèque protégée `LAST_GOOD` reste **P1e**, inchangée. L'exemple **P2 ALL IN ONE** a passé les **Gates B Runtime et C vrai AMOS Compiler** sous WinUAE avec le **même ASC octet-identique**, d'après les journaux fournis ; Gate D sur Amiga physique non testée.
+La [`AMOSPro_AGA.Lib` active](../dist/AMOSPro_AGA.Lib) est **M19 P2d**, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. La [bibliothèque protégée `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) est désormais **P2d promue**, strictement identique à la Lib installable. L'exemple **P2 ALL IN ONE** a passé les **Gates B Runtime et C vrai AMOS Compiler** sous WinUAE avec le **même ASC octet-identique**, d'après les journaux fournis ; Gate D sur Amiga physique non testée.
 
 **Exemple vedette :** [**P2 ALL IN ONE — toute la suite Bob AGA**](bob_p2_all_in_one/README.fr.md) · [source ASC](bob_p2_all_in_one/BOB_ALL_IN_ONE.asc) · [English](bob_p2_all_in_one/README.md). Aucune image externe : 240 cycles AMAL, collisions, retournements H/V/HV, masques de plans et mise à jour automatique. L'ancien [exemple de restauration locale](bob_local_restore/README.fr.md) et les [exemples Bob historiques](aga_bob_bank_get/README.fr.md) ont leurs propres preuves ; le PASS P2 ne les requalifie pas.
 
