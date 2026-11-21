@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — Retour visuel P2e.1 : écran AGA masqué et Bobs carrés
+
+Retour utilisateur : l'écran AGA n'apparaît pas sans raccourci **Amiga+A** ; les carrés ne sont pas adaptés à une vérification visuelle du retournement Bob. L'ASC actif P2e.1 est corrigé **uniquement au niveau du banc** : ajout de `Amos To Back` après initialisation des deux back buffers, remplacement des images carrées par des **F/L masqués 16×16**. ASC actif : 8800 octets, Git blob `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf`. **Ancien préflight du banc 8430 octets ne qualifie plus le nouvel ASC** ; nouveau préflight CI et Runtime à réaliser. **Aucun PASS WinUAE P2e.1 acquis** par ce changement.
+
+Une démo publique visuelle [FLIP_VISUAL.asc](../examples/aga_bob_flip/FLIP_VISUAL.asc) montre un **F 32×32 asymétrique** en modes normal/H/V/HV et applique `Amos To Back`. Elle n'est ni l'ASC actif, ni un test WinUAE passé. Le programme P2e.1 conserve les oracles pixels des deux bobs. Lib P2d et LAST_GOOD inchangées, repo `main` uniquement.
+
+
 ## 21 novembre 2026 — P2e.1 actif pour Gate B Runtime WinUAE
 
 L'auteur a demandé de poursuivre et de **basculer la campagne**. Le nouvel unique ASC [M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), 8 430 octets, SHA256 `3ecef4545829e0a705a1a4b09178ec53f981d29ab290d5ecdca579c895d4336a`, pilote deux canaux AMAL 0/1 et deux Bobs AGA 16×16 avec une banque AGBO commune et 16 octets de tampon AMAL. **Préflight officiel strict PASS** sur la source exacte, sans erreur/avertissement ; deux canaux, un Synchro et un seul Swap explicite par frame. **Gate B P2e.1 NON TESTÉE**, Gate C réservée au futur exemple global P2.

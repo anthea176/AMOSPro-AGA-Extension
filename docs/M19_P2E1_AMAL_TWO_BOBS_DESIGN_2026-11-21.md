@@ -2,9 +2,9 @@
 
 ## Activation de la campagne le 21 novembre 2026
 
-**Unique ASC actif :** [tests/current/M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), **8 430 octets**, SHA256 `3ecef4545829e0a705a1a4b09178ec53f981d29ab290d5ecdca579c895d4336a`. Identique à la source de conception P2e.1, hors commentaire d'état de validation. L'ASC P2e.0 a quitté `tests/current` dans la même transition ; il reste dans [l'historique Git au commit 55ca846e](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc). Son log Runtime PASS original [est conservé](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), sans déplacer de test validé vers `tests/passed/`.
+**Unique ASC actif :** [tests/current/M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), **8 800 octets** après correction visuelle, Git blob `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf`. Identique à la source de conception P2e.1, hors commentaire d'état de validation. L'ASC P2e.0 a quitté `tests/current` dans la même transition ; il reste dans [l'historique Git au commit 55ca846e](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc). Son log Runtime PASS original [est conservé](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), sans déplacer de test validé vers `tests/passed/`.
 
-**PREFLIGHT PASS :** `tools/amos_preflight.py --strict-target` exécuté sur la source ASC exacte, sans erreur ni avertissement ; contrôle structurel complémentaire PASS. Les changements sont uniquement ASC et documentation ; **aucune nouvelle bibliothèque ni commande AGA**. Gate B Runtime de P2e.1 **NON TESTÉE**, Gate C et D NON TESTÉES.
+**PREFLIGHT antérieur PASS sur l'ASC de 8 430 octets** ; version corrigée de 8 800 octets en attente d'un nouveau préflight CI ; contrôle structurel complémentaire PASS. Les changements sont uniquement ASC et documentation ; **aucune nouvelle bibliothèque ni commande AGA**. Gate B Runtime de P2e.1 **NON TESTÉE**, Gate C et D NON TESTÉES.
 
 ## Situation au 21 novembre 2026
 
@@ -13,6 +13,12 @@
 - **LAST_GOOD :** P1e, 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, protegee et non promue.
 - **Nouvelle source :** [M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt](../tests/design/M19_P2E1_AMAL_TWO_BOBS_UNVALIDATED.txt), **8 420 octets**, SHA256 `f0054af6f44ec6cfbbb1dcc233322c516e3e026954f3149d3e60149177a35537`, encodage ASCII.
 - **Statut de la source de conception avant bascule : PREPARE / controle structurel local PASS**. Le nouvel ASC actif a depuis un preflight officiel strict PASS ; **Gate B WinUAE / Gate C Compiler / Gate D physique NON TESTEES**. Ne pas utiliser cette source comme preuve de fonctionnement.
+
+## Correction du banc actif après retour utilisateur (21/11/2026)
+
+Les rectangles 16×16 opaques sont remplacés par une **forme F (index 165) et une forme L (index 90)**, masquées par `Make AGA Bob Mask I,0`. La logique de capture et l'oracle du **pixel en haut à gauche** sont inchangés : ce pixel appartient à la barre verticale pleine de chaque lettre. Le retour utilisateur mentionne aussi l'écran AGA invisible sans **Amiga+A** : le banc appelle désormais `Amos To Back` après initialisation des deux pages physiques, puis toujours `Amos To Front` après fermeture. **Nouveau Git blob ASC : `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf` (8800 octets), non encore exécuté sur WinUAE.** Ne pas attribuer le PASS P2e.0 à cette nouvelle version.
+
+Pour valider le Flip visuellement, une démo séparée [FLIP_VISUAL.asc](../examples/aga_bob_flip/FLIP_VISUAL.asc) affiche un F 32×32 orienté dans les quatre modes 0, 1, 2 et 3. Cette démo ne change pas la campagne P2e.1.
 
 ## Objectif discriminant
 
@@ -24,7 +30,7 @@ Demontrer que **deux canaux AMAL originaux independants** (0 et 1) ecrivent chac
 | X logique | 96..128 | 192..224 |
 | Y logique | 100..116 | 144..160 |
 | Images AGBO | 1 (165), 2 (90) | 2 (90), 1 (165) |
-| Taille des images | 16×16, opaque | 16×16, opaque |
+| Taille des images | 16×16, F masqué (index 0) | 16×16, L masqué (index 0) |
 | Mouvement | +32,+16 puis retour, 32 pas par trajet | +32,-16 puis retour, 32 pas |
 | Controle pixel | Ancienne page affichée apres Swap | Idem, source separee |
 
@@ -44,5 +50,5 @@ L'ASC est actif sous `tests/current/` après préflight strict PASS. Ne pas char
 
 Sortie attendue *si le test fonctionne* : `RESULT 1`, `ERR 0`, `BG0/BG1 1/1`, `PIX0/PIX1 >= 2`, six deltas `CHG*` > 0, `CLOSE_RETURNED 1`, `VERDICT PASS`. **Ce n'est pas un resultat observe.**
 
-**Limites :** pas de collision, masques, priorite, debordement hors ecran, AMAL multibanques ou interaction Sprite DMA teste ; une capture pixel sur de petites regions ne prouve pas l'absence d'artefacts sur tout l'ecran. Les 16×16 de deux Bobs sont visibles pour permettre un controle utilisateur.
+**Limites :** pas de collision, masques, priorite, debordement hors ecran, AMAL multibanques ou interaction Sprite DMA teste ; une capture pixel sur de petites regions ne prouve pas l'absence d'artefacts sur tout l'ecran. Les 16×16 masqués des deux Bobs sont visibles pour permettre un contrôle utilisateur.
 
