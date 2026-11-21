@@ -1,22 +1,18 @@
-# M19 P2a — Collisions Bob–Bob sous WinUAE
+# M19 P2b — Banc WinUAE de retournement des Bobs
 
-**ASC unique de campagne** — [M19_P2A_BOB_COL.asc](M19_P2A_BOB_COL.asc), 3 358 octets ASCII LF, SHA256 `dfb44261c99979b7000e7ae1b2f0ec364b6538687173f25235a20f007bf5e2f4`. Le banc crée ses propres images AGBO. Il requiert deux banques AMOS libres, **24 et 25**.
+[AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) M19 P2b, **135 352 octets**, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, **98 commandes et 200 entrées AP20**. La version protégée [LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) est P1e.
 
-**Lib active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), P2a, 129 544 octets, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`. La [référence LAST_GOOD](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) reste P1e.
+1. Copier la Lib active dans l'emplacement habituel sous `APSystem`, puis redémarrer AMOS Pro en AGA avec un MC68020 ou supérieur.
+2. Dans un programme vierge, importer [M19_P2B_BOB_FLIP.asc](M19_P2B_BOB_FLIP.asc) via **Project → Merge ASCII**. Les banques 24, 25 et 27 doivent être libres. Le banc crée ses images lui-même.
+3. Lancer en Runtime et ouvrir `RAM:M19_P2B_BOB_FLIP.TXT`.
 
-## Exécution
+Le banc capture un pixel du buffer arrière avec `Aga C Block Capture` pour chaque orientation et vérifie deux positions de collision. Attendu en Runtime `PRG_STATE 1`, `RESULT 1`, `CHECKS 21`, `ERR 0`, `CLOSE_RETURNED 1`, `VERDICT PASS`.
 
-1. Copier la Lib P2a dans l'emplacement habituel sous `APSystem` et redémarrer AMOS Pro. Utiliser WinUAE en AGA avec un MC68020 ou supérieur.
-2. Dans un programme vierge, importer [M19_P2A_BOB_COL.asc](M19_P2A_BOB_COL.asc) via **Project → Merge ASCII**.
-3. Lancer en **Runtime** et relever `RAM:M19_P2A_BOB_COL.TXT`.
-
-| Contrôle | Valeur attendue |
+| Mode | Pixel attendu |
 | --- | --- |
-| `PRG_STATE`, `RESULT`, `ERR` | `1`, `1`, `0` |
-| `RECT_HOLE`, `MASK_HOLE` | `1`, `0` |
-| `RECT_SOLID`, `MASK_SOLID` | `1`, `1` |
-| `CLIPPED`, `RESET` | `0`, `1` |
-| `BAD_MODE`, `BOB_OFF` | `-1`, `-1` |
-| `CHECKS`, `CLOSE_RETURNED`, `VERDICT` | `8`, `1`, `PASS` |
+| Normal | (101,101) |
+| H | (99,101) |
+| V | (101,99) |
+| HV | (99,99) |
 
-Gate A couvre le préflight et les tests natifs sous émulation MC68020. Gate B Runtime, Gate C AMOS Compiler et Gate D matérielle restent à établir sur P2a. Le [banc P1e précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/6b7b8e213a870996d77684541130d050f2a02b1b/tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc) reste accessible dans Git avec ses [instructions historiques](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/6b7b8e213a870996d77684541130d050f2a02b1b/tests/current/README.md).
+Les contrôles CPU, ABI, pixels et gestion Chip passent sous émulation MC68020 avec services Exec et Blitter simulés. Le passage sous WinUAE Runtime et le vrai Compiler restent à établir. Le [banc P2a précédent](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/8b8830fb4d4308deeed8ec58d79d2a5baf2db226/tests/current/M19_P2A_BOB_COL.asc) est conservé dans l’historique Git.

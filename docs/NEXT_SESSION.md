@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2b installable, Bob Flip
+
+**Lib active** [M19 P2b](../dist/AMOSPro_AGA.Lib), 135 352 octets, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, 98 commandes et 200 entrées AP20. `Aga Bob Flip(N,Mode)` sélectionne normal, H, V ou HV pour un Bob actif. Cache Chip par slot, partagé par le rendu et les collisions, revalidé par identité de banque et génération. Gate A native PASS à deux implantations. [Banc et journal attendus](../tests/current/README.md). Runtime et Compiler P2b à valider. LAST_GOOD P1e.
+
 ## 21 novembre 2026 — P2b noyau planaire privé et préparation Chip
 
 **Gate A privée MC68020 PASS.** [Contrat et preuve](M19_P2B_BOB_ORIENTATION_HOST.md) · [émetteur](../tools/m19_p2b_planar_orientation020_emit.py) · [banc natif](../tools/test_m19_p2b_planar_orientation020_gate_a.py). Deux entrées privées, 562 octets, SHA256 `c4632d93c8af5c856dafd5e27d2003bc805830ff29c3644c412a94735acace69`. Plans et masque retournés dans une destination séparée, préparation par Exec simulé et libération sur refus. 216 sorties comparées octet pour octet sur deux implantations MC68020. Le noyau natif P2a accepte le masque produit et respecte le clipping du banc. **Suite** : cache par identité de banque, génération, image et orientation, état par Bob et validation des cycles Update, Bank Free, Close et End. Lib active P2a, LAST_GOOD P1e et ASC de campagne préservés.

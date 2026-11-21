@@ -1,0 +1,46 @@
+name: M19 P2b installable Bob Flip Gate A
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/*m19_p2b*.py'
+      - 'tools/active_library.py'
+      - 'tools/build_m19_p2a_public_in_memory.py'
+      - 'tools/test_current_ram_log.py'
+      - 'tests/current/*.asc'
+      - 'dist/AMOSPro_AGA.Lib'
+      - '.github/workflows/m19-p2b-public-lib-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Check the active campaign and documented API
+        run: |
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P2B_BOB_FLIP.asc
+          python -B tools/test_current_ram_log.py
+          python -B tools/test_readme_api_coverage.py
+      - name: Execute native Bob Flip, drawing, collision and memory lifecycle
+        run: python -B tools/test_m19_p2b_bob_flip_gate_a.py
+      - name: Verify active library against the reproducible builder
+        run: |
+          PYTHONPATH=tools python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from active_library import verify_active, P1E_SHA, P2B_SHA
+          active, protected, label = verify_active(Path('.'))
+          assert sha256(active).hexdigest() == P2B_SHA
+          assert sha256(protected).hexdigest() == P1E_SHA
+          print(label)
+          PY
+          git diff --exit-code -- dist/ tests/current/ tests/passed/

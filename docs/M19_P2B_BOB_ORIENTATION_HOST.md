@@ -17,10 +17,10 @@ Le hotspot effectif suit la même formule, y compris s'il est hors de l'image. L
 
 **Gate A privée PASS** sous Unicorn MC68020 à deux adresses de code, avec **216 comparaisons planaires octet pour octet**, contrôles de refus, canaris, registres et pile. Le noyau natif P2a lit le masque P2b produit et rend les résultats attendus avec ou sans clipping. Les appels Exec sont simulés et le banc calcule l'origine du Bob à partir du hotspot avec le modèle hôte.
 
-## Intégration dans le moteur à qualifier
+## Intégration P2b livrée
 
-- Évaluer un cache Chip de variantes par identité de banque, génération, image et orientation. Préparer uniquement les variantes demandées et les partager entre Bobs. Une variante consomme `2 × ceil(W/16) × H × (profondeur + présence_du_masque)` octets de pixels et masque, hors métadonnées.
-- Préparer toutes les sources avant le premier Blit et avant de publier un nouvel état d'orientation. Vérifier le refus sans mutation lors d'un échec d'allocation ou de validation. Couvrir le remplacement d'image P1e, Bank Free, Close et End, et conserver la source jusqu'à la fin du DMA.
-- Vérifier les cas écran à deux pages, clipping et restauration du fond, deux Bobs sur la même image et collision avec un masque asymétrique. L'emplacement de l'état natif, sa durée de vie lors des commandes Bob et une éventuelle syntaxe AP20 restent à définir.
+La bibliothèque [M19 P2b](../dist/AMOSPro_AGA.Lib), 135 352 octets, SHA256 `96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448`, est reconstruite par le [builder](../tools/build_m19_p2b_in_memory.py). Le point d'entrée public `Aga Bob Flip(N,Mode)` règle l'orientation d'un Bob actif. Le mode appartient au slot et reste en place lorsque le même ID est réutilisé. Le mode 0 libère sa variante, Close/End réinitialisent les modes.
 
-[Modèle hôte](../tools/m19_p2b_bob_orientation_model.py) et [tests](../tools/test_m19_p2b_bob_orientation_model.py). **6 tests hôtes P2b et 40 régressions hôtes P2a PASS.** L’intégration au rendu, le Runtime WinUAE, le Compiler et le matériel restent à qualifier sur P2b. La candidate active reste P2a et le dernier bon reste P1e.
+Le cache borné conserve au plus un bloc par slot Bob. Un slot vérifie le numéro de banque, le pointeur, la génération, l'image et les adresses des plans et du masque avant réutilisation. La variante est préparée au premier usage. Une nouvelle génération impose une nouvelle préparation. Bank Free libère les blocs de la banque concernée, Close et End libèrent l'ensemble après fermeture effective. En cas d'épuisement Chip, la collision renvoie -1 et le rendu refuse la frame, ce qui bloque sa présentation via Aga Swap.
+
+Les [tests natifs intégrés](../tools/test_m19_p2b_bob_flip_gate_a.py) couvrent le dispatch AP20 interprété et la relocation Compiler simulée, les pixels, les collisions, la seconde page et le nettoyage. Le [banc WinUAE](../tests/current/README.md) doit encore être exécuté. LAST_GOOD reste P1e.
