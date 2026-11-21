@@ -1,0 +1,55 @@
+name: M19 P2d source-backed Motorola MC68020 ASM export
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/export_m19_p2d_native_source.py'
+      - 'tools/test_export_m19_p2d_native_source.py'
+      - 'tools/generate_aga_multiunit_source.py'
+      - 'tools/decoder68k.py'
+      - 'tools/build_m19_p2d_in_memory.py'
+      - 'EXPORT_REAL_SOURCE.bat'
+      - '.github/workflows/m19-p2d-source-assembler.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify source provenance and mnemonic coverage
+        run: python -B tools/test_export_m19_p2d_native_source.py
+      - name: Build vasm Motorola MC68020 in runner temporary directory
+        run: |
+          git clone --depth 1 https://github.com/rhargreaves/vasm.git "$RUNNER_TEMP/vasm"
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+          test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Produce real ASM for all P2d native groups, verify against promoted P2d
+        run: |
+          python -B tools/export_m19_p2d_native_source.py --out "$RUNNER_TEMP/p2d_source" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
+          python - "$RUNNER_TEMP/p2d_source" <<'PY'
+          import json,sys
+          from pathlib import Path
+          d=json.loads((Path(sys.argv[1])/'M19_P2D_SOURCE_MANIFEST.json').read_text())
+          assert d['verified_native_asm']
+          assert all(g['native_assembler_verified'] for g in d['native_groups'])
+          print('P2D VASM BYTE-EXACT PASS',d['input_sha256'])
+          PY
+      - name: Publish assembly sources and manifest as download artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: M19_P2D_REAL_MC68020_ASM_SOURCE
+          path: |
+            ${{ runner.temp }}/p2d_source/*.s
+            ${{ runner.temp }}/p2d_source/*.json
+          retention-days: 30
+          if-no-files-found: error
+      - name: Check shipped libraries and current tests unchanged
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/

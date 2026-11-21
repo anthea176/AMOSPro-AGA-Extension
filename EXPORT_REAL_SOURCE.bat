@@ -2,37 +2,19 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 echo.
-echo AMOS Professional AGA - export assembleur natif MC68020 verifie
-echo Source : dist\AMOSPro_AGA.Lib (lecture seule)
-echo Sortie : src\generated\
+echo AMOSPro-AGA M19 P2d - source assembleur Motorola MC68020
+echo Source Python : tools\build_m19_p2d_in_memory.py
+echo Sortie : src\generated\p2d_source\
 echo.
-if not exist "tools\generate_aga_native_source.py" (
-  echo [ERREUR] Generateur source manquant.
+if not exist "tools\export_m19_p2d_native_source.py" (
+  echo [ERREUR] Exporteur P2d manquant. Mets a jour la branche main.
   pause
   exit /b 1
 )
 if not exist "dist\AMOSPro_AGA.Lib" (
-  echo [ERREUR] Bibliotheque active absente.
+  echo [ERREUR] Lib P2d absente.
   pause
   exit /b 1
-)
-set "VASM="
-if defined VASM_M68K (
-  if exist "%VASM_M68K%" set "VASM=%VASM_M68K%"
-)
-if not defined VASM (
-  where vasmm68k_mot.exe >nul 2>nul
-  if not errorlevel 1 set "VASM=vasmm68k_mot.exe"
-)
-if not defined VASM (
-  if exist "tools\vasmm68k_mot.exe" set "VASM=%CD%\tools\vasmm68k_mot.exe"
-)
-if not defined VASM (
-  echo [ERREUR] vasmm68k_mot.exe introuvable.
-  echo Installe vasm Motorola et ajoute-le au PATH, ou definis VASM_M68K.
-  echo La generation n'est pas declaree verifiee sans l'assembleur.
-  pause
-  exit /b 2
 )
 where py >nul 2>nul
 if not errorlevel 1 (
@@ -40,21 +22,36 @@ if not errorlevel 1 (
 ) else (
   set "PYTHON=python"
 )
-%PYTHON% "tools\generate_aga_native_source.py" --lib "dist\AMOSPro_AGA.Lib" --out "src\generated" --baseline none --strict --verify-vasm "%VASM%" %*
+set "VASM="
+if defined VASM_M68K (
+  if exist "%VASM_M68K%" set "VASM=%VASM_M68K%"
+)
+if not defined VASM (
+  if exist "tools\vasmm68k_mot.exe" set "VASM=%CD%\tools\vasmm68k_mot.exe"
+)
+if not defined VASM (
+  where vasmm68k_mot.exe >nul 2>nul
+  if not errorlevel 1 set "VASM=vasmm68k_mot.exe"
+)
+if defined VASM (
+  echo Verification vasm : %VASM%
+  %PYTHON% "tools\export_m19_p2d_native_source.py" --out "src\generated\p2d_source" --vasm "%VASM%" %*
+) else (
+  echo [INFO] vasm absent : source genere, verification assembleur NON faite.
+  %PYTHON% "tools\export_m19_p2d_native_source.py" --out "src\generated\p2d_source" %*
+)
 set "RC=%ERRORLEVEL%"
 if not "%RC%"=="0" (
   echo.
-  echo [ERREUR] Source assembleur non identique a la Lib officielle.
-  echo Aucune bibliotheque installee ou sous dist n'a ete modifiee.
+  echo [ERREUR] Export ou verification source P2d echoue.
+  echo Aucune bibliotheque officielle modifiee.
   pause
   exit /b %RC%
 )
 echo.
-echo [OK] Assemblage MC68020 et comparaison binaire avec la Lib active.
-echo Source principale : src\generated\AMOSPro_AGA_R88_NATIVE.s
-echo Modules inclus  : C2P, IFF, BOBS, AGA.
-echo ATTENTION : les octets encore non classes sont conserves en DC.B.
-echo La validation vasm ne prouve pas les Gates WinUAE B/C.
-echo Aucune Lib officielle n'a ete remplacee.
+echo [OK] Sources assembleur P2d generees depuis le builder exact.
+echo Voir src\generated\p2d_source\M19_P2D_SOURCE_MANIFEST.json
+echo Verifier le champ verified_native_asm avant de reutiliser les .s.
+echo dist\ et LAST_GOOD inchanges.
 pause
 exit /b 0
