@@ -23,7 +23,7 @@ P2B_MEMF_CHIP          equ 2
 p2b_planar_orientation_entry:
     movem.l d0-d1/d4-d7/a0-a6,-(a7)
     lea -P2B_FRAME_BYTES(a7),a7
-    move.l d1,P2B_FRAME_HEIGHT(a7)
+    move.l d1,(a7)  ; HEIGHT offset 0, avoid 16-bit displacement
     move.l d4,P2B_FRAME_PLANES(a7)
     bsr.w p2b_planar_measure
     tst.l d3
@@ -73,7 +73,7 @@ p2b_planar_save_step:
     move.l P2B_FRAME_PADDING(a7),d4
 
 p2b_planar_plane:
-    move.l P2B_FRAME_HEIGHT(a7),d7
+    move.l (a7),d7  ; HEIGHT offset 0, 2-byte addressing mode
     movea.l a0,a2
     btst #1,d5
     beq.w p2b_planar_row
