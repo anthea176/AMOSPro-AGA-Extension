@@ -22,7 +22,7 @@ No AP20, new Lib, DMA, Swap, WinUAE or Compiler qualification.
 """
 from __future__ import annotations
 from hashlib import sha256
-from m68k_emit import Code,D,A,M,I
+from m68k_emit import Code,D,A,M,I,PRE,POST
 from m19_p2a_pair_chip_resolve_emit import OUTPUT_BYTES as PAIR_BYTES
 from m19_p2a_pair_hotspot020_emit import OUTPUT_BYTES as HOT_BYTES
 from m19_p2a_pair_geometry020_emit import OUTPUT_BYTES as DESC_BYTES
@@ -48,7 +48,8 @@ def emit_p2a_collision_query020()->tuple[bytes,dict[str,int]]:
         c.imm('and',1,D(5));B(6,'p2a_query_invalid')
 
     L('p2a_collision_query_entry')
-    c.raw('48e7efee4feffea0') # MOVEM AMOS ABI, frame -352(SP)
+    c.move(A(3),PRE(7))     # A3 is NOT covered by historical MOVEM mask.
+    c.raw('48e7efee4feffea0') # Rest of AMOS ABI, frame -352(SP)
     c.move(A(7),A(2))
     S(D(0),'id_a');S(D(1),'id_b')
     S(D(4),'mode');S(A(1),'context');S(A(4),'callback')
@@ -106,7 +107,9 @@ def emit_p2a_collision_query020()->tuple[bytes,dict[str,int]]:
     S(D(3),'result')
     L('p2a_query_return')
     G('result',D(3))
-    c.raw('4fef01604cdf77f774004e75')
+    c.raw('4fef01604cdf77f7')
+    c.move(POST(7),A(3))    # Restore caller A3 before RTS.
+    c.raw('74004e75')
     raw=c.out()
     if (len(raw)%2 or len(raw)>=32766 or
             c.labels['p2a_collision_query_entry']!=0):
