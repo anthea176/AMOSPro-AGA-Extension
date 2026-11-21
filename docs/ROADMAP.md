@@ -19,7 +19,7 @@
 
 P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga Bob Priority(Mode)` et conserve le tri initial par ID au mode 0. [Rapport P1b](M19_P1B_HOTSPOT_CANDIDATE_2026-11-21.md#résultats-runtime-winue).
 
-**Action suivante** — Valider le [contrat P1d](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob). [Résultats P1c Runtime et Compiler](M19_P1C_PRIORITY_GATES_BC_2026-11-21.md). L’audit historique `Artifact integrity` reste en échec sur le contrôle R82.
+**Action suivante** — Décider de la bascule WinUAE de [P1d Limit Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob), implémentée dans le builder en mémoire. [Résultats P1c Runtime et Compiler](M19_P1C_PRIORITY_GATES_BC_2026-11-21.md). L’audit historique `Artifact integrity` reste en échec sur le contrôle R82.
 
 **M20 EN ATTENTE :** prototype Python P0 (13 tests hôtes PASS) conservé ; aucune poursuite avant décision sur M19.
 

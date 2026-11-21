@@ -166,6 +166,7 @@ def emit_frame_draw(c: Code, *, traversal=None, frame_bytes=FRAME):
     c.tst(D(3));B(7,'explicit_frame_unwind')
     FG('bank',D(3));FG('image',D(0))
     FG('x',D(1));FG('y',D(4))
+    L('explicit_frame_paint_call')
     B(1,'explicit_safe_blit_entry')
     c.tst(D(3));B(7,'explicit_frame_return')
 

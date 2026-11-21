@@ -1,5 +1,13 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1d Limit Bob, candidate en mémoire
+
+Signature approuvée par l’auteur. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob) · [Builder](../tools/build_m19_p1d_limit_bob_in_memory.py) · [Banc MC68020](../tools/test_m19_p1d_limit_bob_gate_a.py).
+
+**P1d en mémoire** — 121 432 octets, SHA256 `47fc7c5d056211a62a50b5405b8952db0bb715ace72a8dc257c4a90def2eb785`, 94 commandes, 192 entrées AP20, cinq groupes et PC16 maximal 32 530. Gate A locale PASS sur 76 scénarios natifs et deux placements. Le banc vérifie les pixels et les masques, les quatre modes de tri, les refus avant DMA, l’ouverture et la restauration du décor des deux pages via Update/Clear. Services Amiga simulés.
+
+P1c reste la Lib installable avec son banc WinUAE. P0 reste `LAST_GOOD`. Les essais WinUAE P1d attendent une décision de bascule.
+
 ## 21 novembre 2026 — M19 P1c Bob Priority installée dans la Lib de travail
 
 L'auteur a approuvé `_OK=Aga Bob Priority(Mode)` à quatre modes. Implémentation MC68020 dans le [builder P1c](../tools/build_m19_p1c_bob_priority_in_memory.py) à partir de P1b reconstruite octet pour octet. [Contrat](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1c--priorité-daffichage-des-bobs). Le mode 0 conserve le parcours historique. Les autres modes utilisent les coordonnées Y logiques et les ID des Bobs actifs. Le réglage revient à 0 à l'ouverture réussie d'un écran.
@@ -7,8 +15,6 @@ L'auteur a approuvé `_OK=Aga Bob Priority(Mode)` à quatre modes. Implémentati
 **Candidate P1c** — 119 916 octets, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`, 93 commandes et 190 entrées AP20, groupes [142,153,156,179,183], PC16 maximal 32 144. [Banc Gate A](../tools/test_m19_p1c_bob_priority_gate_a.py). **Gate A locale PASS** sur 36 scénarios natifs répartis sur deux placements, avec l’ABI et le dispatch AP20 modélisés, les quatre modes, les hotspots, les refus avant DMA et les deux pages via Update/Clear. Régression P1b intégrée : 98 contrôles PASS.
 
 **Bascule autorisée par l’auteur le 21/11/2026.** P1c est la Lib de travail sur `main`. P0 reste `LAST_GOOD`. [Banc WinUAE](../tests/current/README.md) — huit sondes de priorité sur les deux pages, quatre phases hotspot et 405 frames de régression. **Gates B Runtime et C Compiler PASS sur les mesures du banc**, deux journaux Runtime et un compilé. [Résultats et portée](M19_P1C_PRIORITY_GATES_BC_2026-11-21.md). Gate D à tester.
-
-**P1d** — [Contrat de clipping au pixel](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1d--limit-bob) à valider avant l'intégration native.
 
 ## 21 novembre 2026 — M19 P1b Hot Spot — Gate B Runtime WinUAE PASS
 

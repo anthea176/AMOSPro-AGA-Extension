@@ -195,6 +195,7 @@ def emit_private_bob_blit() -> tuple[bytes, dict[str, int]]:
 
     # Make the exact source BitMap on stack. Its eight plane pointers are
     # exclusively derived from the single verified private Chip allocation.
+    L('private_blit_build_bitmap')
     G('stride', D(0)); c.move(D(0), M(4, 0), 'w')
     G('height', D(0)); c.move(D(0), M(4, 2), 'w')
     c.move(I(0, 'w'), M(4, 4), 'b')  # bm_Flags

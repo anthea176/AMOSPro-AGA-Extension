@@ -183,6 +183,8 @@ def emit_safe_bank_blit() -> tuple[bytes, dict[str,int]]:
 
     # Private painter already has its own balanced ABI and CPU guard.
     L('private_bob_blit_entry')
+    c.labels['private_blit_build_bitmap'] = len(c.b) + painter_labels['private_blit_build_bitmap']
+    c.labels['private_blit_clipped_ok'] = len(c.b) + painter_labels['ok']
     c.raw(painter.hex())
     raw = c.out()
     assert raw[:len(previous)] == previous
