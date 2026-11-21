@@ -2,7 +2,7 @@
 
 **P1e active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. 96 commandes, 196 entrées AP20, cinq groupes MC68020. [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083).
 
-**`LAST_GOOD` protégée :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **P0**, **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`. Ne pas remplacer, promouvoir ni utiliser ce binaire à la place de la candidate de test.
+**`LAST_GOOD` P1e promue le 21/11/2026 :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, binaire strictement identique à la Lib active. Gate A native PASS et Gate B Runtime WinUAE PASS 2/2. Gate C AMOS Compiler et Gate D physique NON TESTÉES. [Rapport de promotion](../../docs/M19_P1E_PROMOTION_2026-11-21.md).
 
 **ASC unique** — [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), **27 589 octets ASCII LF**, SHA256 `5172de5ef2c0e3e44d5566f47170ae8a9692bcc30d04490c9d972e1a3ae62e1f`. 405 frames, trois phases Bank Free, 42 getters, quatre phases hotspot, huit mesures de priorité 24 lectures de clipping et trois frames d’édition AGBO. [Banque AGBO 26](M19_P1B_HOTSPOT_BANK26.abk) — 200 octets, SHA256 `8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325`.
 
@@ -69,8 +69,8 @@ Les deux refus mesurés couvrent l’insertion sur un ID occupé et la suppressi
 | Gate | P1e |
 | --- | --- |
 | A — MC68020 sous Unicorn, services simulés | **PASS**, commandes natives sur deux placements et préflight de l’ASC |
-| B — AMOS Runtime WinUAE | **À tester avec la Lib P1e** |
-| C — véritable exécutable AMOS Compiler | **À tester** |
+| B — AMOS Runtime WinUAE | **PASS 2/2** : 405/405 frames, 9/9 pixels P1e, ERR 0, PATH_OK |
+| C — véritable exécutable AMOS Compiler | **NON TESTÉ**, reporté sur instruction explicite de l’auteur |
 | D — Amiga physique | **NON TESTÉ** |
 
 [Résultats des deux passages P1d](../../docs/M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md) · [Résultats des trois passages P1c](../../docs/M19_P1C_PRIORITY_GATES_BC_2026-11-21.md).

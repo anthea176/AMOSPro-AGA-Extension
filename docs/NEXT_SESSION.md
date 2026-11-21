@@ -1,8 +1,17 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P1e LAST_GOOD, ouverture P2
+
+**Autorisation expresse de l’auteur :** « non pas de compile promot la lib, met a jour les CI et on continu sur le chantier P2 ». Promotion sur `main` de la Lib active P1e en `LAST_GOOD` par copie Git blob strictement identique (**124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, blob `5bb0c476c2b286495a1d0cf7d4415dbbc4eec369`). L’ancienne P0 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` est conservée dans l’historique Git.
+
+**Gate A native MC68020 : PASS ; Gate B Runtime WinUAE : PASS 2/2.** Deux journaux distincts `M19_P1E_BANK_EDIT(1).TXT` et `M19_P1E_BANK_EDITbis.TXT`, de 2 412 octets chacun, identiques par comparaison octet pour octet (SHA256 `3059b4fada16af884616756877ce0512831b752a8a299ad27db922d46b2644f3`). Dans chacun : `RESULT 1`, `ERR 0`, `FRAMES_OK 405`, `EDIT_FRAMES_OK 3`, `EDIT_PIXELS_OK 9`, `EDIT_REJECT_OK 2`, `CLOSE_RETURNED 1`, `BANKS_ERASED 4`, `VERDICT PATH_OK`. Le champ `LIB_SHA256` des logs est une étiquette produite par l’ASC, pas un contrôle autonome du fichier installé dans WinUAE. **Gate C vrai Compiler NON TESTÉE et non demandée ; Gate D physique NON TESTÉE.** [Rapport](M19_P1E_PROMOTION_2026-11-21.md).
+
+**P2** : commencer par les collisions Bob–Bob, modèle rectangulaire de référence puis test exact des masques, avant tout changement d’API ou de binaire. Retournements H/V non destructifs ensuite. Pas de nouvelle Lib ni remplacement de l’ASC dans cette phase de cadrage. [Contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive).
+
+
 ## 21 novembre 2026 — M19 P1e Del Bob / Ins Bob pour WinUAE
 
-La bascule autorisée installe **P1e** dans `dist/AMOSPro_AGA.Lib` sur `main`. Taille 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, 96 commandes, 196 entrées AP20, cinq groupes MC68020, PC16 maximal 14 130. [Builder](../tools/build_m19_p1e_bank_edit_in_memory.py) · [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083) · [Campagne WinUAE](../tests/current/README.md). Gate B Runtime à exécuter sur deux passages. Gates C et D à tester. P0 reste `LAST_GOOD`.
+La bascule autorisée installe **P1e** dans `dist/AMOSPro_AGA.Lib` sur `main`. Taille 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, 96 commandes, 196 entrées AP20, cinq groupes MC68020, PC16 maximal 14 130. [Builder](../tools/build_m19_p1e_bank_edit_in_memory.py) · [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083) · [Campagne WinUAE](../tests/current/README.md). Cet état était celui de la bascule initiale ; voir la promotion P1e et la Gate B PASS documentées en tête de page.
 
 ## 21 novembre 2026 — M19 P1d Limit Bob, Lib de travail pour WinUAE
 
