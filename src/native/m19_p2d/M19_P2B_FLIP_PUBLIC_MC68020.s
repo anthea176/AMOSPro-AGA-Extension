@@ -3,7 +3,7 @@
 ; Source authority: tools/m19_p2b_bob_flip_emit.py::emit_bob_flip.
 ; BOBS offsets +$09E36..+$09F25, exactly 240 instruction bytes.
 ; The later variant/paint/geometry/cleanup routines remain audit-backed.
-; Explicit .l(PC) preserves original MC68020 full-extension PC-relative LEA.
+; PC-relative target encoding is checked against the byte-exact source emitter.
 
 P2B_FLIP_SLOT_BYTES   equ 64
 P2B_FLIP_MAX_OBJECTS  equ 64
@@ -19,7 +19,7 @@ P2B_FLIP_FREE_MEM     equ -210
 
 ; D0=Bob ID (1..64), A0=slot.
 p2b_slot:
-    lea p2b_slots.l(pc),a0
+    lea p2b_slots(pc),a0
     move.l d0,d2
     subq.l #1,d2
     lsl.l #6,d2
@@ -28,7 +28,7 @@ p2b_slot:
 
 ; D0=Bob ID, D3=mode or zero for wrong owner/invalid ID.
 p2b_mode:
-    lea p2b_owner.l(pc),a0
+    lea p2b_owner(pc),a0
     move.l a5,d2
     cmp.l (a0),d2
     bne.w p2b_mode_normal
@@ -70,7 +70,7 @@ p2b_public_flip:
     bsr.w p1c_context
     move.l a0,d0
     beq.w p2b_flip_fail
-    lea p2b_owner.l(pc),a0
+    lea p2b_owner(pc),a0
     move.l (a0),d0
     beq.w p2b_flip_read
     move.l a5,d1
@@ -84,7 +84,7 @@ p2b_flip_read:
     bsr.w relay_checked_read_entry
     tst.l d3
     beq.w p2b_flip_fail
-    lea p2b_owner.l(pc),a0
+    lea p2b_owner(pc),a0
     move.l a5,(a0)
     move.l P2B_FLIP_FRAME_ID(a2),d0
     bsr.w p2b_slot
