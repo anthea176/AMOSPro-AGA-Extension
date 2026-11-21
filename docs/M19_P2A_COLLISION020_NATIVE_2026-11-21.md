@@ -44,4 +44,4 @@ Le [banc natif](../tools/test_m19_p2a_collision020_gate_a.py) produit la preuve 
 
 ## Prochain jalon
 
-Ajouter un **adaptateur natif de lecture** qui exploite les ponts P1e déjà vérifiés : capture cohérente de deux Bobs actifs, vérification des stamps et banques sans changer la sélection, résolution des deux images et masques Chip, application des limites, construction des deux descripteurs, appel du noyau. Préciser le refus sur `READY/DIRTY` et l'impact des collisions hors écran avant d'autoriser un token AP20 ou une nouvelle Lib. Aucune promotion P2a implicite.
+**Étape lecture accomplie :** [pont privé de lecture appariée P0f](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md), 328 octets MC68020 et 9/9 tests PASS. À poursuivre : résolution des deux images et masques Chip via P0j-b3, limites P1d, deux descripteurs et appel du noyau avec une Gate A native intégrée. Préciser le refus sur `READY/DIRTY` et l'impact des collisions hors écran avant d'autoriser un token AP20 ou une nouvelle Lib. Aucune promotion P2a implicite.

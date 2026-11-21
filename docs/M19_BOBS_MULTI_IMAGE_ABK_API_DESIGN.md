@@ -206,7 +206,7 @@ La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob
 
 ### P2 — Fonctions avancées / compatibilité progressive
 
-**21/11/2026 : P2a démarré en source-only.** [Modèle hôte et pont aux structures P1e/AGBO, 40 tests et CI PASS](M19_P2A_COLLISIONS_HOST_2026-11-21.md). Une première fonction numérique de collision par paire est proposée, **non approuvée et non implémentée en API**. [Le noyau privé MC68020 source-only](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) a passé 9 tests natifs isolés (764 octets, modes rectangle/masque). Signatures AP20, préparation native sûre des descripteurs et intégration AMOS restent à établir.
+**21/11/2026 : P2a démarré en source-only.** [Modèle hôte et pont aux structures P1e/AGBO, 40 tests et CI PASS](M19_P2A_COLLISIONS_HOST_2026-11-21.md). Une première fonction numérique de collision par paire est proposée, **non approuvée et non implémentée en API**. [Le noyau privé MC68020 source-only](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) a passé 9 tests natifs isolés (764 octets, modes rectangle/masque). Le [pont privé P0f](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md) vérifie désormais la paire d'objets (328 octets MC68020, 9/9 tests source-only PASS) ; signatures AP20, résolution Chip sûre, préparation des 40 octets/descripteur et intégration AMOS restent à établir.
 
 | Fonction AMOS | Adaptation AGA envisagée |
 | --- | --- |

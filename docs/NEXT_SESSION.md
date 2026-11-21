@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — M19 P2a : paire de Bobs contrôlée par le vrai P0f, 328 octets natifs
+
+[Émetteur](../tools/m19_p2a_pair_checked_read_emit.py) · [Banc de validation](../tools/test_m19_p2a_pair_checked_read_gate_a.py) · [Rapport privé](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md) · [CI P2a PASS (58 tests)](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44901815788). **MC68020 source-only, 328 octets**, SHA256 `3e2cdedb603fb090f0bfd4b46cf3ecc1e3684ace2ddf922b7b3076c6efa6d5dd`. Le pont appelle deux fois le **vrai `identity_check` P0f** avec `A5` propriétaire et `Bnk.GetAdr` simulé ; il publie atomiquement deux enregistrements natifs P0e de 24 octets après validation des deux banques, générations et stamps. Deux placements, 9/9 tests MC68020 PASS ; le noyau antérieur de collisions 764 octets reste validé indépendamment (9/9). Registres et sélection de banque préservés.
+
+**Statuts :** 17 + 23 hôtes, 9 noyau MC68020 et 9 pont P0f MC68020 = **58/58 PASS** ; la policy CPU/livraison PASS. **Reste à faire :** résoudre les images et masques via le P0j-b3 *sur un tampon sûr*, construire deux descripteurs de 40 octets avec limites P1d et joindre le noyau de collision. Pas d'API AP20/Lib/ASC P2a ; Gate A chaîne native complète/B WinUAE/C Compiler/D physique : NON TESTÉES. P1e LAST_GOOD 124 444 octets reste intacte.
+
+
 ## 21 novembre 2026 — M19 P2a noyau MC68020 isolé PASS
 
 [Source du noyau MC68020](../tools/m19_p2a_collision020_emit.py) · [Banc natif](../tools/test_m19_p2a_collision020_gate_a.py) · [Rapport de validation](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) · [CI PASS 44901130823](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44901130823). Noyau privé **764 octets**, SHA256 `2546b269cad753c6b401c5d3cf3330e0f96545e64506a023d381b60c154450b7`, deux modes : 0 rectangle, 1 masque AGBO. ABI D2=0 et D3=1/0/-1, registres AMOS et mémoire source préservés. **9 tests natifs MC68020 PASS sur 2 implantations, dont 720 comparaisons aléatoires et 240 cas de masques non alignés**, ajoutés aux 40 tests hôtes préexistants. Contrôle CPU / livraison PASS (CI 44901130811). Une première CI a trouvé A3 clobber ; corrigé via A6 préservé, puis relancé PASS.

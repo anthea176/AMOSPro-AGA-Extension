@@ -27,7 +27,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 | Sujet | Objectif |
 | --- | --- |
-| **P2a — collisions Bob–Bob** | **Modèle P1e/AGBO 40 tests hôtes PASS + noyau MC68020 764 octets, 9 tests natifs PASS** (2 implantations, 720 cas aléatoires) ; [rapport noyau](M19_P2A_COLLISION020_NATIVE_2026-11-21.md). Signature AP20 proposée uniquement, aucune Lib P2a. [Modèle hôte P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive). |
+| **P2a — collisions Bob–Bob** | **58 tests PASS** : 40 Python, 9 noyau de collision MC68020 (764 octets), 9 lectures appariées P0f MC68020 (328 octets) ; [noyau](M19_P2A_COLLISION020_NATIVE_2026-11-21.md) · [pont privé P0f](M19_P2A_PAIR_CHECKED_READ_2026-11-21.md). Signature AP20 proposée uniquement, aucune Lib P2a. [Modèle hôte P2a](M19_P2A_COLLISIONS_HOST_2026-11-21.md) · [contrat P2](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p2--fonctions-avancées--compatibilité-progressive). |
 | **P2b — retournements H/V** | Transformations non destructives par objet, image et hotspot partagés préservés. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
