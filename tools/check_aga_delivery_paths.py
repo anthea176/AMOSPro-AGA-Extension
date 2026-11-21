@@ -22,6 +22,7 @@ PROMOTION_R84_BLOB = '9c6c52a1d857c89089b2540b438b76efbf80c77b'
 PROMOTION_P0_BLOB = '6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2'
 PROMOTION_P1E_BLOB = '5bb0c476c2b286495a1d0cf7d4415dbbc4eec369'  # P1e native A PASS, Runtime B PASS x2; C/D untested
 PROMOTION_P2D_BLOB = '8a849b89aae57c2cda0b4db8771034a0978d3e78'  # P2d 136020 bytes, B/C integrated PASS, exact existing active Lib
+SPRITE_PROBE_DESIGN = 'tests/design/sprites_aga/SPRITE_PROBE.asc'  # one approved S0b work source
 PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 
 
@@ -48,7 +49,9 @@ def path_errors(path: str, *, deleted: bool = False, approved_promotion: bool = 
     # Protected historical paths remain rejected above, even on deletion.
     if (not deleted and path.lower().endswith('.asc')
             and not path.startswith('tests/current/')):
-        if path.startswith('examples/'):
+        if path == SPRITE_PROBE_DESIGN:
+            pass  # explicitly scoped, one reusable S0b ASC, never a general tests/design exception
+        elif path.startswith('examples/'):
             if PUBLIC_VERSION.search(path[len('examples/'):]):
                 errors.append('public AMOS example ASC needs a version-free filename')
         elif not errors:
@@ -188,6 +191,11 @@ class DeliveryPolicyTests(unittest.TestCase):
         for path in ('tests/passed/OLD.asc', 'tests/fixtures/test.abk',
                      'tests/historical/OLD.asc', 'dist/experimental/OLD.Lib'):
             self.assertTrue(path_errors(path), path)
+
+    def test_allow_only_one_s0b_design_probe(self):
+        self.assertEqual(path_errors(SPRITE_PROBE_DESIGN), [])
+        self.assertTrue(path_errors('tests/design/sprites_aga/ANOTHER_PROBE.asc'))
+        self.assertTrue(path_errors('tests/design/sprites_aga/SPRITE_PROBE_V2.asc'))
 
     def test_reject_test_in_examples(self):
         self.assertTrue(path_errors('examples/m19/new.asc'))

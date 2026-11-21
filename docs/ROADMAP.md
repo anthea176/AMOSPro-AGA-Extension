@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **Actualite S0 du 22/11/2026** : WinUAE Runtime de la sonde ViewPort PASS (`$5000`, drapeau SPRITES present), [journal original](evidence/M19_S0_VIEWPORT_RUNTIME_2026-11-21.TXT). [Sonde de canaux S0b](../tests/design/sprites_aga/SPRITE_PROBE.asc) preparee sous `tests/design/sprites_aga/` avec un seul ASC ; tests WinUAE S0b et Compiler non effectues. Aucune nouvelle Lib, P2d LAST_GOOD inchangee.
+
+
 > **Pilotage actif — 21 novembre 2026.** Ce document décrit l'état actuel et les priorités. Les preuves et jalons historiques sont dans [NEXT_SESSION.md](NEXT_SESSION.md) et [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md).
 
 ## 1. Référence de travail

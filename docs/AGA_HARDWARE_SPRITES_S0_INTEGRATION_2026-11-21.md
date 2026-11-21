@@ -1,5 +1,12 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## Mise a jour du 22/11/2026 — observation WinUAE S0 et probe S0b
+
+Le journal Runtime S0 [archive tel que fourni](evidence/M19_S0_VIEWPORT_RUNTIME_2026-11-21.TXT) confirme `ViewPort.Modes=$5000` (SPRITES `$4000` present) sur les cinq echantillons Open/DB/cursor/Swap, `RESULT=1`, `ERR=0`, `CLOSE_RETURNED=1`, `PRG_STATE=1`. **Gate B du contexte ViewPort seulement PASS.** `SPRINS=0` et `UCOPINS=0` ne prouvent aucune disponibilite de canal. Aucune Gate C ou D et aucun sprite reel affiche.
+
+Pour lever le second verrou, [un seul ASC experimental S0b](../tests/design/sprites_aga/SPRITE_PROBE.asc) utilise la fonction native AMOS `Gfxcall` pour appeler `graphics.library/GetSprite` `-408` (A0/D0) et `FreeSprite` `-414` (D0), sans ajouter de token AGA. Deux acquisitions successives suivies chacune d'une liberation : curseur visible puis masque. Le banc ne fait **ni `MoveSprite`, ni `ChangeSprite`, ni DMA de sprite** et ne prouve pas le detach DMA du futur S1. `GetSprite` modifie temporairement les canaux OS : effectuer d'abord un snapshot WinUAE. `-1` renvoye dans le WORD bas est journalise comme `65535` et signifie absence de canal libre. **S0b B/C/D restent a tester**, P2d protegee.
+
+
 ## Sonde AMOS S0 du ViewPort, en attente de WinUAE
 
 **Banc source-only prêt à être exécuté :** [`examples/sprite_s0_viewport/VIEWPORT_PROBE.asc`](../examples/sprite_s0_viewport/VIEWPORT_PROBE.asc) · [notice et risques](../examples/sprite_s0_viewport/README.md). Il utilise les commandes **AMOS natives** `AREG(5)`, `LEEK`, `DEEK` et les API P2d existantes, donc **aucune nouvelle Lib ni commande Sprite**. Il vérifie `A5+$1C8`, `Screen*`, `Window.WScreen` et les dimensions, puis mesure `ViewPort.Modes` à `Screen+76` et le drapeau `SPRITES=$4000` après Open, Double Buffer, Cursor Hide/Show et Swap. Le dessin est une paire de glyphes F/L asymétriques, écran avancé par `Amos To Back`, logs `RAM:M19_S0_VP_RUNTIME.TXT` et `RAM:M19_S0_VP_COMPILED.TXT` **séparés**.

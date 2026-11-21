@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'examples/sprite_s0_viewport/**'
+      - 'tests/design/sprites_aga/**'
       - 'tools/test_m19_s0_viewport_probe_source.py'
       - '.github/workflows/aga-sprite-s0-viewport.yml'
   workflow_dispatch:
@@ -22,6 +23,6 @@ jobs:
       - name: Read-only S0 ASC source guards
         run: python3 -B tools/test_m19_s0_viewport_probe_source.py
       - name: Official AMOS syntax preflight (not a compiler)
-        run: python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings examples/sprite_s0_viewport/VIEWPORT_PROBE.asc
+        run: python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings examples/sprite_s0_viewport/VIEWPORT_PROBE.asc tests/design/sprites_aga/SPRITE_PROBE.asc
       - name: Protected libraries and Bob regression unchanged
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
