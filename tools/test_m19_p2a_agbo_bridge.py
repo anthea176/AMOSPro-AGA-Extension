@@ -227,5 +227,26 @@ class AGBOBridgeP2aHost(unittest.TestCase):
             BankSnapshot(payload(),0x100000,0)
 
 
+    def test_23_real_p1b_bank26_agbo_fixture(self):
+        from hashlib import sha256
+        from pathlib import Path
+        from build_m19_p1b_hotspot_fixture import fixture, VISIBLE
+        from m19_p0a_multi_bob_abk import parse_abk
+        path=Path(__file__).resolve().parents[1]/'tests/current/M19_P1B_HOTSPOT_BANK26.abk'
+        actual=path.read_bytes()
+        self.assertEqual(len(actual),200)
+        self.assertEqual(sha256(actual).hexdigest(),
+                         '8dda90831afb616854c03094a34b728c6cb95bc4952c77af152d8cfe4a16f325')
+        self.assertEqual(actual,fixture())
+        bank_id,flags,bank=parse_abk(actual)
+        self.assertEqual((bank_id,flags),(26,1))
+        native=bank.image(1)
+        self.assertEqual((native.width,native.height,native.hotspot_x,native.hotspot_y),(8,6,4,3))
+        mask=host_image(native)
+        for y in range(native.height):
+            for x in range(native.width):
+                self.assertEqual(mask.opaque(x,y),bool(VISIBLE[y*native.width+x]))
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

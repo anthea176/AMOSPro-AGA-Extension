@@ -7,6 +7,8 @@ on:
       - 'tools/test_m19_p2a_bob_collision_model.py'
       - 'tools/m19_p2a_agbo_bridge.py'
       - 'tools/test_m19_p2a_agbo_bridge.py'
+      - 'tools/build_m19_p1b_hotspot_fixture.py'
+      - 'tests/current/M19_P1B_HOTSPOT_BANK26.abk'
       - 'tools/m19_p0a_multi_bob_abk.py'
       - 'tools/m19_p0e_object_table_emit.py'
       - 'tools/m19_p0f_bank_stamp_emit.py'
@@ -39,7 +41,7 @@ jobs:
           PY
       - name: Run 17 deterministic host collision regressions
         run: python -B tools/test_m19_p2a_bob_collision_model.py
-      - name: Run 22 source-backed AGBO v1 / P0e / P0f / P1d collision regressions
+      - name: Run 23 source-backed AGBO/P0e/P0f/P1d collision regressions including real bank26 fixture
         run: python -B tools/test_m19_p2a_agbo_bridge.py
       - name: Guard binary, active ASC and archives
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/fixtures/
