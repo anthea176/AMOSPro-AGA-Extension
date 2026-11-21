@@ -1,5 +1,16 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2a à P2e : test ALL IN ONE avant promotion exemple
+
+Demande auteur : « dernier test intègre toutes les fonctions du P2 ; si cela fonctionne et lui convient, le basculer ultérieurement dans `examples/` ». **NE PAS PROMOUVOIR avant l'essai et l'autorisation suivante.**
+
+**Dernière observation réelle P2e.1** : [journal 769 octets CRLF](evidence/M19_P2E1_AMAL_RUNTIME_PASS_RETRY_2026-11-21.TXT), SHA256 `1a6e32042f6f0e664f84d983b26e95deaecae51311340430dca7f44fd06fe1d8`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `VALID_SAMPLES 240`, `SWAPS 241`, `PIX0=PIX1=29`, `SWAP_REFUSALS=SWAP_RECOVERED=RETRY_VBLS=120`, `VERDICT PASS`, fermeture AGA OK. Ce PASS appartient au **banc P2e.1 précédent, 10 421 octets**, [source figée](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/299b0f78a7e23c7fdabcdd401755839eb5e90fa2/tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), **pas** au programme intégré.
+
+**Nouvel unique ASC actif** : [M19_P2_ALL_IN_ONE.asc](../tests/current/M19_P2_ALL_IN_ONE.asc), **25 056 octets ASCII**, Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`, `SOURCE_TAG P2_FULL_V1_20261121`. Phase1 = P2e/P2d AMAL et auto Update conservés ; phase2 = **P2a collision 8 assertions** ; phase3 = **P2b Flip 4 orientations, 20 pixels, silhouettes F/L 32×32** ; phase4 = **P2c Planes 5 masques, 10 pixels, P2d Auto Update Off**. Les refus de Swap restent comptés et 4 retries VBL maximum sont conservés. **Nouveau runtime WinUAE et Compiler NON TESTÉS** ; préflight CI à valider.
+
+**Journal nouveau** : `RAM:M19_P2_FULL_RUNTIME.TXT` (Compiled `RAM:M19_P2_FULL_COMPILED.TXT`), séparé de `M19_P2E1_AMAL_RUNTIME.TXT`. Instructions : [tests/current/README.md](../tests/current/README.md), contrat : [M19_P2_ALL_IN_ONE_2026-11-21.md](M19_P2_ALL_IN_ONE_2026-11-21.md). `dist/AMOSPro_AGA.Lib` **P2d identique**, `LAST_GOOD` P1e protégée, aucune autre branche.
+
+
 ## 21 novembre 2026 — P2e.1 Runtime FAIL ERR 15, diagnostic ciblé Swap
 
 Nouveau log utilisateur [M19_P2E1_AMAL_RUNTIME_FAIL_ERR15_2026-11-21.TXT](evidence/M19_P2E1_AMAL_RUNTIME_FAIL_ERR15_2026-11-21.TXT) conservé **567 octets CRLF**, SHA256 `aa9dc89dcd0790e6ca68c25754dd39968d1318d74621a0bd911d275331f7330f`. `PRG_STATE 1`, `RUN_MODE RUNTIME`, `FRAME 2`, `VALID_SAMPLES 1`, `SWAPS 2`, `BG0/BG1 1/1`, **`ERR 15`**, `RESULT 0`, `VERDICT FAIL`, `CLOSE_RETURNED 1`. Échec sur **l'appel `Aga Swap` de la deuxième frame**, avant vérification pixel ; les deux AMAL ont des positions plausibles et la fermeture fonctionne. **[Analyse exacte](M19_P2E1_RUNTIME_ERR15_DIAG_2026-11-21.md)**.

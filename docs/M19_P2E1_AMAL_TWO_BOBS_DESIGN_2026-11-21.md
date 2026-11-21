@@ -1,5 +1,7 @@
 # M19 P2e.1 — Deux canaux AMAL vers deux Bobs AGA (campagne Runtime)
 
+**STATUT HISTORIQUE :** le banc P2e.1 autonome est figé à [commit 299b0f78](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/299b0f78a7e23c7fdabcdd401755839eb5e90fa2/tests/current/M19_P2E1_AMAL_TWO_BOBS.asc). Son **Runtime PASS avec 120 refus de Swap récupérés** est [conservé](evidence/M19_P2E1_AMAL_RUNTIME_PASS_RETRY_2026-11-21.TXT). La nouvelle campagne intégrée P2a–e est [M19_P2_ALL_IN_ONE.asc](../tests/current/M19_P2_ALL_IN_ONE.asc), **non testée Runtime**, qui reste dans `tests/current/` jusqu'à validation et accord de l'auteur. Les références P2e.1 ci-dessous sont historiques.
+
 ## Activation de la campagne le 21 novembre 2026
 
 **Unique ASC actif :** [tests/current/M19_P2E1_AMAL_TWO_BOBS.asc](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc), **8 800 octets** après correction visuelle, Git blob `edcbbdc9d863dd96f6b5ad22abe44ba0d4c37aaf`. Identique à la source de conception P2e.1, hors commentaire d'état de validation. L'ASC P2e.0 a quitté `tests/current` dans la même transition ; il reste dans [l'historique Git au commit 55ca846e](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/55ca846e9a44065b0e1ba3e8c9a68041ce37746e/tests/current/M19_P2E0_AMAL_BRIDGE.asc). Son log Runtime PASS original [est conservé](evidence/M19_P2E0_AMAL_BRIDGE_RUNTIME_2026-11-21.TXT), sans déplacer de test validé vers `tests/passed/`.

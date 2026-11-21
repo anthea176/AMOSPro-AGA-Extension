@@ -17,6 +17,7 @@ on:
       - 'tools/test_readme_api_coverage.py'
       - 'tools/test_examples.py'
       - 'tools/test_amos_log_modes.py'
+      - 'tools/test_m19_p2_all_in_one_source.py'
       - 'tests/current/*.asc'
       - 'tools/audit_ap20.py'
       - 'dist/AMOSPro_AGA.Lib'
@@ -47,6 +48,7 @@ jobs:
           python3 -B tools/test_readme_api_coverage.py
           python3 -B tools/test_examples.py
           python3 -B tools/test_amos_log_modes.py
+          python3 -B tools/test_m19_p2_all_in_one_source.py
           python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/*.asc examples/aga_bob_flip/FLIP_VISUAL.asc
       - name: Keep the active roadmap short and synchronized
         run: |
