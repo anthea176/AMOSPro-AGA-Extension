@@ -13,6 +13,8 @@ L'image AGBO unique est **un F asymétrique de 32×32 pixels**, à barre longue 
 | Bas gauche | 2 | F retourné verticalement |
 | Bas droite | 3 | F retourné sur les deux axes |
 
+Le hotspot 0 de l'image est inversé avec la géométrie par `Aga Bob Flip` : les coordonnées des Bobs retournés sont décalées de **31 pixels** pour garder les quatre silhouettes alignées dans leurs cases.
+
 L'écran AGA est placé automatiquement devant l'écran AMOS par **`Amos To Back`**, après initialisation des deux pages et le premier affichage. Une touche ferme l'écran et restaure **`Amos To Front`**.
 
 ## Exécution
