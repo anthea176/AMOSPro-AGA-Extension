@@ -57,7 +57,7 @@ jobs:
           current,good,label=verify_active(Path('.'))
           digest=sha256(current).hexdigest()
           assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA)
-          assert sha256(good).hexdigest()==P0_FREE_SHA
+          assert sha256(good).hexdigest()==P1E_SHA
           if digest==B7M2_SHA:
               asc=Path('tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc')
               assert sha256(asc.read_bytes()).hexdigest()=='a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec'
@@ -65,7 +65,7 @@ jobs:
               asc=Path('tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
               from test_m19_b8_clear_update_asc_static import verify
               verify(asc)
-          print('PASS active verified B7/B8 candidate + sole ASC + P0 protected')
+          print('PASS active verified B7/B8 candidate + sole ASC + P1e LAST_GOOD protected')
           PY
       - name: Static AMOS Professional preflight when B8 is active
         run: |

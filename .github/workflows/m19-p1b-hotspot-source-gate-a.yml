@@ -68,7 +68,7 @@ jobs:
           PYTHONPATH=tools python -B tools/build_m19_p1b_hotspot_in_memory.py
       - name: Real MC68020 Safe Blitter integration after valid AGBO
         run: PYTHONPATH=tools python -B tools/test_m19_p1b_hotspot_draw_gate_a.py
-      - name: Verify installed single candidate P1b and protected P0
+      - name: Verify installed P1e and author-promoted LAST_GOOD, retaining historical P1b build
         run: |
           PYTHONPATH=tools python -B - <<'PY'
           import pathlib,hashlib
@@ -82,7 +82,7 @@ jobs:
           assert (root/'tests/current/M19_P1B_HOTSPOT_BANK26.abk').read_bytes()==fixture()
           cur,good,label=verify_active(root)
           assert cur==actual and hashlib.sha256(cur).hexdigest() in (P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA)
-          assert len(good)==117896
+          assert len(good)==124444 and hashlib.sha256(good).hexdigest()==P1E_SHA
           print('P1B SOURCE EXACT SHA',P1B_SHA,'FIXTURE EXACT 200 bytes',flush=True)
           PY
       - name: Sole campaign AMOS static preflight (not WinUAE)
