@@ -216,7 +216,14 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                   'p2b_planar_measure:', 'p2b_planar_chip_prepare_entry:'):
         require(planar_source.count(label) == 1,
                 f'P2b materializer source label missing: {label}')
-    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', planar_source),
+    # MC68020 MULU.L D4,D3 32-bit: vasm canonicalizes the unused Dh bits
+    # from the emitter's $3000 to $3003. Preserve this ONE source-pinned
+    # noncanonical extension; reject every other raw opcode in this module.
+    exception = '    dc.w $4C04,$3000   ; exact MULU.L D4,D3; documented encoder exception'
+    require(planar_source.count(exception) == 1,
+            'P2b original 68020 MULU.L extension exception altered')
+    inspected = planar_source.replace(exception, '')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', inspected),
             'unclassified opcode/data directive inside P2b materializer')
     (folder / PLANAR_SOURCE_NAME).write_text(planar_source,
                                             encoding='ascii', newline='\n')
