@@ -2,7 +2,7 @@
 
 ## 21 novembre 2026 — P2a Livrée : nouvelle Lib testable, Gate A PASS
 
-**Lib active** : [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **129 544 octets**, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes/198 AP20 ; [exemple](../examples/bob_collision.asc), [guide](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). API `Aga Bob Col(A,B,Mode)` : collisions rectangle (0) et masque (1). Gate A publique source-native sur deux relocations PASS (5 tests), préflight ASC PASS. **Suivant : lancer le test sous WinUAE**, récupérer `RAM:M19_P2A_BOB_COL.TXT` (attendu `VERDICT PASS`, `CHECKS 8`). Gate B WinUAE / C Compiler / D physique NON TESTÉES. **LAST_GOOD P1e protégée** 124 444 octets, inchangée, aucune promotion.
+**Lib active** : [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **129 544 octets**, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes/198 AP20 ; [exemple](../tests/current/M19_P2A_BOB_COL.asc), [guide](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). API `Aga Bob Col(A,B,Mode)` : collisions rectangle (0) et masque (1). Gate A publique source-native sur deux relocations PASS (5 tests), préflight ASC PASS. **Suivant : lancer le test sous WinUAE**, récupérer `RAM:M19_P2A_BOB_COL.TXT` (attendu `VERDICT PASS`, `CHECKS 8`). Gate B WinUAE / C Compiler / D physique NON TESTÉES. **LAST_GOOD P1e protégée** 124 444 octets, inchangée, aucune promotion.
 
 
 ## 21 novembre 2026 — P2a : UNE requête native MC68020 de collision, Gate A privée PASS

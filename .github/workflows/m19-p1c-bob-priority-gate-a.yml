@@ -36,7 +36,7 @@ jobs:
       - name: Preflight the sole WinUAE ASC and pixel probe
         run: |
           python -B tools/test_current_ram_log.py
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/*.asc
           python -B tools/test_readme_api_coverage.py
       - name: Verify historical P1c source and promoted P1e LAST_GOOD
         run: |

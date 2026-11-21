@@ -41,11 +41,10 @@ jobs:
         run: python -B tools/test_m19_p1e_bank_repack_gate_a.py
       - name: Execute Del Bob and Ins Bob with AMOS bank service fixtures
         run: python -B tools/test_m19_p1e_bank_edit_gate_a.py
-      - name: Verify source-pinned P1e and protected identical LAST_GOOD (Runtime/Compiler not executed here)
+      - name: Verify source-pinned P1e LAST_GOOD and current campaign (Runtime/Compiler not executed here)
         run: |
-          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active, P1E_SHA; from hashlib import sha256; current, good, _ = verify_active(Path(".")); assert current == good and sha256(current).hexdigest() == P1E_SHA'
-          python -B tools/test_m19_b8_clear_update_asc_static.py
+          PYTHONPATH=tools python -B -c 'from pathlib import Path; from active_library import verify_active; from build_m19_p1e_bank_edit_in_memory import build_p1e; _, good, _ = verify_active(Path(".")); assert good == build_p1e()[0]'
           python -B tools/test_current_ram_log.py
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/*.asc
       - name: Preserve the active test and both library binaries
         run: git diff --exit-code -- dist/ tests/current/

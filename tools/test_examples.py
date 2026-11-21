@@ -44,7 +44,6 @@ def main() -> None:
     }
     actual = {p.name for p in EXAMPLE_DIR.glob("*.asc")}
     expected = {f"{name}.asc" for name in EXAMPLES}
-    expected.add("bob_collision.asc")  # Independent current P2a API test; not a frozen legacy example
     require(actual == expected, f"Unexpected example set: {actual ^ expected}")
     for name in EXAMPLES:
         source = EXAMPLE_DIR / f"{name}.asc"
@@ -70,21 +69,6 @@ def main() -> None:
         require(used <= valid_commands,
                 f"Unknown AP20 calls in {source.name}: {used - valid_commands}")
         require(bool(used), f"No AGA calls in {source.name}")
-
-    # The P2a demo is independent of frozen LAST_GOOD P1e.
-    # Do not require its new token to exist in the historical P1e API.
-    fresh = EXAMPLE_DIR / "bob_collision.asc"
-    data = fresh.read_text("ascii")
-    current = inspect(parse((ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()))
-    require(not current["issues"], "Invalid active P2a AP20 library")
-    require(any(x["name"]=="aga bob col" and x["signature"]=="00,0,0"
-                for x in current["tokens"]), "P2a public collision API absent")
-    require("Aga Bob Col(1,2,0)" in data and "Aga Bob Col(1,2,1)" in data,
-            "P2a demo must exercise both native collision modes")
-    require("RAM:M19_P2A_BOB_COL.TXT" in data and data.endswith("\nEnd\n"),
-            "P2a example result log/End missing")
-    require("Aga Screen Close" in data and "Amos To Front" in data,
-            "P2a example must close the AGA screen")
 
     for name in ("picture", "blitter", "collide", "show"):
         text = (EXAMPLE_DIR / f"{name}.asc").read_text("ascii")

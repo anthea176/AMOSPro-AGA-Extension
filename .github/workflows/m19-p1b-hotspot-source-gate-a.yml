@@ -89,6 +89,6 @@ jobs:
         run: |
           PYTHONPATH=tools python -B tools/test_m19_b8_clear_update_asc_static.py
           PYTHONPATH=tools python -B tools/test_current_ram_log.py
-          python -B tools/amos_preflight.py --strict-target tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc
+          python -B tools/amos_preflight.py --strict-target tests/current/*.asc
       - name: Generators must not mutate canonical binary, fixture, or preserved tests
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/

@@ -1,4 +1,4 @@
-name: M19 P2a installable Lib candidate and AMOS example Gate A
+name: M19 P2a installable Lib candidate and AMOS campaign Gate A
 on:
   push:
     branches: [main]
@@ -6,11 +6,12 @@ on:
       - 'tools/m19_p2a_public_bob_col_emit.py'
       - 'tools/build_m19_p2a_public_in_memory.py'
       - 'tools/test_m19_p2a_public_gate_a.py'
+      - 'tools/test_current_ram_log.py'
       - 'tools/active_library.py'
       - 'tools/build_agapic_v2_r82_api_preview.py'
       - 'tools/build_agapic_v2_r82_full_preview.py'
       - 'tools/build_aga_r84_agapic.py'
-      - 'examples/bob_collision.asc'
+      - 'tests/current/*.asc'
       - 'dist/AMOSPro_AGA.Lib'
       - '.github/workflows/m19-p2a-public-lib-gate-a.yml'
   workflow_dispatch:
@@ -33,8 +34,10 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-      - name: AMOS syntax static preflight of actual test example
-        run: python -B tools/amos_preflight.py --strict-target examples/bob_collision.asc
+      - name: Preflight the P2a campaign and its RAM log
+        run: |
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/M19_P2A_BOB_COL.asc
+          python -B tools/test_current_ram_log.py
       - name: Test P2a AP20 source and real native public function
         run: python -B tools/test_m19_p2a_public_gate_a.py
       - name: Build P2a candidate entirely in memory
