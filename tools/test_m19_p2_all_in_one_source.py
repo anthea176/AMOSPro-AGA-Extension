@@ -117,7 +117,9 @@ def verify_evidence() -> None:
     for mode, expected_size, digest, expected_state in cases:
         path = EVIDENCE / f"M19_P2_ALL_IN_ONE_{mode}_PASS_2026-11-21.TXT"
         raw = path.read_bytes()
-        assert len(raw) == expected_size and sha256(raw).hexdigest() == digest
+        assert len(raw) == expected_size, (mode, "size", len(raw), expected_size)
+        actual_sha = sha256(raw).hexdigest()
+        assert actual_sha == digest, (mode, "sha256", actual_sha, digest)
         assert raw.count(b"\r\n") == 97, f"{mode}: original CRLF log corrupted"
         fields = {}
         for line in raw.decode("ascii").splitlines():
