@@ -34,7 +34,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 | **P2e.0 — AMAL / Bobs AGA** | Passerelle mémoire 8 octets vers un Bob, **Gate B Runtime PASS** sur 240 cycles et 29 pixels (voir [rapport](M19_P2E0_AMAL_BRIDGE_2026-11-21.md)). Les flags `Deek` restent diagnostics ; aucun nouveau token/Lib. |
 | **P2e.1 — Deux canaux AMAL** | [Banc actif](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc) de deux Bobs 16×16 avec 2 canaux mémoire AMAL ; **préflight PASS**, WinUAE Runtime à tester, aucun nouveau token ni Lib. [Contrat](M19_P2E1_AMAL_TWO_BOBS_DESIGN_2026-11-21.md). |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
-| **Sprites AGA / AMAL** | Évaluer slots matériels, DMA, collisions et intégration éventuelle avec AMAL. |
+| **Sprites AGA / AMAL** | **Audit S0 documentaire engagé** : [propriété des canaux, Intuition, Copper et curseur](AGA_HARDWARE_SPRITES_S0_AUDIT_2026-11-21.md). Verrous NDK/ABI/écran P2d non levés ; **aucun S1 natif**, aucune nouvelle Lib ni API. |
 | **Tilemaps / scrolling (M20)** | **P0 modèle hôte et 13 tests PASS**, caméra, bandes exposées et deux pages indépendantes ; [spécification et limites](M20_TILEMAP_P0_HOST_MODEL.md). Implémentation native à concevoir, pas de nouveau token. |
 | **Dual playfield (M21)** | Plans indépendants, palettes et scrolling. |
 | **Entrées (M22)** | Vérifier d'abord les commandes joysticks natives, sans inventer une API AGA. |
