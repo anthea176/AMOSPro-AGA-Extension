@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.0 activé pour Runtime WinUAE
+
+**Bascule explicitement demandée par l'auteur** : unique ASC actif [`M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), 5 632 octets, SHA256 `bf1d53b54736e990f30ca3a5e79605f2cc88a7a4d0d9886ab166b9a48fe09fa4`. Script source local vérifié octet-identique au Git blob après écriture, préflight officiel strict PASS ; **Gate B Runtime P2e.0 NON TESTÉE**, Gate C individuelle non demandée. [Protocole WinUAE](../tests/current/README.md).
+
+Le test P2d précédent, **Runtime PASS 43/43**, reste accessible [octet pour octet dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/7f78e93b11220199cda4bebff9168fea160ce74d/tests/current/M19_P2D_BOB_AUTO_UPDATE.asc) ; pas d'archivage automatique. Les bibliothèques `dist/AMOSPro_AGA.Lib` P2d (`ce5fb614...`) et `LAST_GOOD` P1e (`7922f558...`) sont inchangées. P2e.0 lit les 8 octets AMAL de la banque 28, contrôle X/Y/image/flags, applique un seul `Aga Swap` par frame et vérifie la page arrière précédente. Prochain élément requis : retour WinUAE réel `RAM:M19_P2E0_AMAL_BRIDGE.TXT`.
+
 ## 21 novembre 2026 — P2d Runtime PASS, P2e.0 AMAL expérimental
 
 Le journal original reçu pour P2d rapporte `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `PROBE_PREALLOC 1`, `CHECKS 43`, `CLOSE_RETURNED 1`, `VERDICT PASS` (SHA256 `28f7ebfff3d77e7cc65469df3c246f23487eb1696376d2e078be5543eb13ee7b`). **Gate B Runtime PASS 43/43** sur ce banc. Pas de Gate C individuelle : l'auteur souhaite un futur exemple intégrant toutes les fonctions P2, à tester en interprété et avec AMOS Compiler.
