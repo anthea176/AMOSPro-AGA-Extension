@@ -24,9 +24,26 @@ auparavant représentées en `DC.B`, sont désormais des instructions.
   `src/asm_migration/m19_p2d/` (audit reconstruit). **Ce n'est pas encore le
   remplacement intégral du builder Python.**
 
-## Construire (Windows)
+## Un seul fichier maitre pour compiler
 
-À la racine, avec `tools/vasmm68k_mot.exe` :
+**`M19_P2D_LINKED_EDITABLE.s` est le point d'entrée unique de vasm.**
+Il inclut `M19_P2D_BOBS_EDITABLE.s` et les modules P2c/P2d écrits à la main ;
+les autres unités AGA, C2P et IFF restent incluses depuis
+`src/asm_migration/m19_p2d/` en attendant leur migration.
+
+**Compilation directe, sans Python** (Windows) : à la racine, avec
+`tools/vasmm68k_mot.exe` :
+
+```bat
+BUILD_P2D_ASM_DIRECT.bat
+```
+
+Sortie : `src/generated/p2d_editable/M19_P2D_DIRECT_ASM_UNTESTED.Lib`.
+Elle est identique au binaire officiel lorsque les sources sont inchangées,
+ce que vérifie la CI ; toute édition rend le fichier **non validé**.
+Ce mode direct n'impose pas le contrôle de taille/contrat AP20 avant l'écriture.
+
+**Compilation avec garde-fous Python + vasm** :
 
 ```bat
 BUILD_P2D_ASM.bat
@@ -67,12 +84,14 @@ Les candidats modifiés sont effacés avec le dossier temporaire.
 
 ## Prochaine migration
 
-Ce module est **une étape**, pas une prétention de couverture intégrale.
+Ces deux modules sont **une étape**, pas une prétention de couverture intégrale.
 Le reste de la bibliothèque doit être migré depuis les émetteurs Python,
 avec un inventaire des octets de code encore traités en données, avant
 qu'on puisse supprimer la dépendance aux fichiers d'audit et disposer d'un
-projet vasm intégralement symbolique et maintenable. Les sources `.s` du
-présent dossier restent les seuls fichiers de ce jalon à modifier directement.
+projet vasm intégralement symbolique et maintenable. Seuls les deux modules `M19_P2C_PLANES_MC68020.s` et
+`M19_P2D_CONTROLS_MC68020.s` sont considérés comme **sources métier
+maintenus à la main**. Le fichier BOBS principal est encore largement issu
+de l'audit des octets, donc ce n'est pas un code source integral definitif.
 
 Gates : **A (identité vasm / essai de changement) uniquement** une fois
 la CI verte ; **B/C/D non effectuées** pour les nouvelles éditions natives.
