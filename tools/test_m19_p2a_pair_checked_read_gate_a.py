@@ -49,6 +49,11 @@ class PairReadMachine(BoundMachine):
         assert self.public('bob',ident=2,x=-12,y=31,image=1)==1
         assert self.run_select(10)==1
 
+    def selected_triple(self):
+        # P0e/P0f BoundMachine predates the P0j helper selected_triple().
+        # Inspect the existing 12-byte BOBS selected-bank shadow read-only.
+        return bytes(self.uc.mem_read(self.entry+self.labels['bank_active_state'],12))
+
     def _checked(self,uc,address,size,user):
         self.check_calls+=1
 
