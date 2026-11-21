@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — S0 ViewPort : banc AMOS de mesure prêt
+
+**Étape suivante, sans Lib nouvelle :** exécuter [`examples/sprite_s0_viewport/VIEWPORT_PROBE.asc`](../examples/sprite_s0_viewport/VIEWPORT_PROBE.asc) sur WinUAE/AMOS P2d, **Runtime d'abord** et fournir `RAM:M19_S0_VP_RUNTIME.TXT`, éventuellement la capture du rendu F/L. Le banc utilise `AREG(5)`, `LEEK`, `DEEK` pour lire le contexte P2d (`A5+$1C8`) et le drapeau `ViewPort.Modes SPRITES=$4000` à `Screen+76`, avant/après Double Buffer, curseur et Swap. **Snapshot WinUAE indispensable** : pointeurs internes lus directement, crash possible si ABI diverge. Logs distincts par mode, y compris Compiler. **5 tests statiques locaux PASS**, préflight CI en cours ; **B/C/D NON TESTÉES**. `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` et l'unique ASC P2 ALL IN ONE demeurent inchangés. [Mode opératoire](../examples/sprite_s0_viewport/README.md). **Ne pas ajouter de token/Lib Sprite avant lecture du log, ni altérer `Screen.UserData`/Copper/DMA**.
+
+
 ## 21 novembre 2026 — chantier Sprites AGA S0 commencé : audit NDK + modèle de propriété
 
 **Contexte exact :** `main`, Lib P2d `LAST_GOOD` 136 020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, banc P2 ALL IN ONE inchangé. Après clôture Bob, le prochain chantier actif est **Sprites matériels AGA S0**. [Audit d'intégration détaillé](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) : source des pointeurs de contexte P2d et R44, Copper `Screen.UserData`, NDK V39 `graphics.library` (`GetSprite/MoveSprite/ChangeSprite/FreeSprite`), format 16×16 72 octets Chip. [Modèle host-only](../tools/aga_sprite_s0_model.py) / [12 tests PASS](../tools/test_aga_sprite_s0_model.py) : propriété `Screen*/ViewPort*`, attribution effective du canal 0..7 par OS, refus -1/OOM, détachement DMA exigé avant libération, libération idempotente, réouverture sans double-free. **Aucun appel OS natif, aucune Gate A CPU native, B WinUAE, C Compiler, D matériel**, aucune API publique `Aga Sprite`, aucune modification `dist/` ou `tests/current/`.

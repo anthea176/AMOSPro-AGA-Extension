@@ -1,5 +1,14 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## Sonde AMOS S0 du ViewPort, en attente de WinUAE
+
+**Banc source-only prêt à être exécuté :** [`examples/sprite_s0_viewport/VIEWPORT_PROBE.asc`](../examples/sprite_s0_viewport/VIEWPORT_PROBE.asc) · [notice et risques](../examples/sprite_s0_viewport/README.md). Il utilise les commandes **AMOS natives** `AREG(5)`, `LEEK`, `DEEK` et les API P2d existantes, donc **aucune nouvelle Lib ni commande Sprite**. Il vérifie `A5+$1C8`, `Screen*`, `Window.WScreen` et les dimensions, puis mesure `ViewPort.Modes` à `Screen+76` et le drapeau `SPRITES=$4000` après Open, Double Buffer, Cursor Hide/Show et Swap. Le dessin est une paire de glyphes F/L asymétriques, écran avancé par `Amos To Back`, logs `RAM:M19_S0_VP_RUNTIME.TXT` et `RAM:M19_S0_VP_COMPILED.TXT` **séparés**.
+
+**Preuve présente :** cinq contrôles de régression statique Python PASS localement, préflight AMOS/CI à confirmer. **Aucune exécution WinUAE (B), aucune compilation AMOS (C), aucun matériel réel (D)**. Les lectures de pointeurs privés peuvent provoquer un Guru si le contrat a changé : snapshot WinUAE obligatoire avant le premier essai. `SPRITES=1` n'est **pas** une acquisition de canal, et `SPRITES=0` n'autorise **pas** à forcer un bit matériel. Si `ERR=3..7`, arrêter le test et inspecter le contrat au lieu de modifier les offsets à l'aveugle.
+
+**Includes consultés :** [`intuition/screens.i`](https://d0.se/include/intuition/screens.i) et [`graphics/view.h`](https://d0.se/include/graphics/view.h), plus le [manuel AMOS `AREG/LEEK/DEEK`](https://amospromanual.dev/99-appendix-a-machine-code.html). Le rapport original conserve les verrous de détachement DMA et disponibilité de canaux à lever ensuite.
+
+
 **État : AUDIT S0 EN COURS — modèle hôte 12/12 PASS ; aucun Sprite natif / ASC / WinUAE.**
 Référence protégée : **M19 P2d**, `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib` byte-identiques, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, cible MC68020/68EC020 minimum. Les deux bibliothèques et le banc `tests/current/M19_P2_ALL_IN_ONE.asc` ne sont pas modifiés.
 

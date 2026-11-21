@@ -28,8 +28,9 @@ PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 def path_errors(path: str, *, deleted: bool = False, approved_promotion: bool = False) -> list[str]:
     """Check destinations and protect histories, including removals.
 
-    Public version-free examples/*.asc are not the single active test. Removing
-    an old versioned public example is allowed to normalize its filename.
+    Public version-free examples/*.asc are not the single active test. Removal
+    of misplaced non-protected ASC files is allowed to clean up accidental
+    deliveries; protected historical archives remain immutable.
     """
     path = path.replace('\\', '/')
     errors = []
@@ -42,9 +43,13 @@ def path_errors(path: str, *, deleted: bool = False, approved_promotion: bool = 
     if path.startswith('dist/') and path.lower().endswith('.zip'):
         if not errors:
             errors.append('ZIP is not an AGA Lib delivery destination')
-    if path.lower().endswith('.asc') and not path.startswith('tests/current/'):
+    # Reject newly delivered AMOS tests outside the single active slot.
+    # Allow CLEANUP of accidental, unprotected misplaced ASC files.
+    # Protected historical paths remain rejected above, even on deletion.
+    if (not deleted and path.lower().endswith('.asc')
+            and not path.startswith('tests/current/')):
         if path.startswith('examples/'):
-            if not deleted and PUBLIC_VERSION.search(path[len('examples/'):]):
+            if PUBLIC_VERSION.search(path[len('examples/'):]):
                 errors.append('public AMOS example ASC needs a version-free filename')
         elif not errors:
             errors.append('active AMOS test must live in tests/current/')
@@ -194,6 +199,14 @@ class DeliveryPolicyTests(unittest.TestCase):
         self.assertEqual(path_errors('examples/m19_p0a_68020/M19_P0A_MC68020_BANK_GET.asc',
                                      deleted=True), [])
         self.assertTrue(path_errors('tests/passed/OLD.asc', deleted=True))
+
+    def test_cleanup_of_misplaced_unprotected_asc(self):
+        misplaced = 'tests/sprite_s0/M19_S0_VIEWPORT_PROBE.asc'
+        self.assertTrue(path_errors(misplaced))
+        self.assertEqual(path_errors(misplaced, deleted=True), [])
+        self.assertEqual(path_errors('examples/sprite_s0_viewport/VIEWPORT_PROBE.asc'), [])
+        self.assertTrue(path_errors('tests/passed/OLD.asc', deleted=True))
+        self.assertTrue(path_errors('tests/historical/OLD.asc', deleted=True))
 
     def test_reject_renamed_library(self):
         self.assertTrue(path_errors('dist/AMOSPro_AGA_M20.Lib'))

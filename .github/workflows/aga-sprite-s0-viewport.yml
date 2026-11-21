@@ -1,0 +1,27 @@
+name: M19 Sprite S0 ViewPort ASC static check
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'examples/sprite_s0_viewport/**'
+      - 'tools/test_m19_s0_viewport_probe_source.py'
+      - '.github/workflows/aga-sprite-s0-viewport.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read-only S0 ASC source guards
+        run: python3 -B tools/test_m19_s0_viewport_probe_source.py
+      - name: Official AMOS syntax preflight (not a compiler)
+        run: python3 -B tools/amos_preflight.py --strict-target --fail-on-warnings examples/sprite_s0_viewport/VIEWPORT_PROBE.asc
+      - name: Protected libraries and Bob regression unchanged
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
