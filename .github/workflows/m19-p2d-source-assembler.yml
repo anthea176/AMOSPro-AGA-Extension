@@ -12,7 +12,7 @@ on:
       - '.github/workflows/m19-p2d-source-assembler.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   source:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -53,3 +53,17 @@ jobs:
           if-no-files-found: error
       - name: Check shipped libraries and current tests unchanged
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
+      - name: Commit the verified ASM sources directly on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          test "$GITHUB_REF" = "refs/heads/main"
+          mkdir -p src/asm_migration/m19_p2d
+          cp "$RUNNER_TEMP/p2d_source/"*.s src/asm_migration/m19_p2d/
+          cp "$RUNNER_TEMP/p2d_source/M19_P2D_SOURCE_MANIFEST.json" src/asm_migration/m19_p2d/
+          git add src/asm_migration/m19_p2d/
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Publish byte-exact M19 P2d MC68020 ASM migration source"
+            git push origin HEAD:main
+          fi

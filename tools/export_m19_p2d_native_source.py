@@ -168,6 +168,7 @@ def linked_source(data: bytes, parts, title, files: dict[int,str]) -> str:
     raw_tokens, _, _ = unpack_ap20(data)
     lines = [
         '; AGA_NATIVE_MIN_CPU: MC68020',
+        '; AGA_NATIVE_PURPOSE: AUDIT_ONLY',
         '; Source-verified M19 P2d; AMOS AP20 FE31 stubs are link DATA.',
         '; All executable group sources are in INCLUDE files, not DC.W dumps.',
         '; DO NOT replace installed .Lib without an exact vasm comparison.',
@@ -224,6 +225,8 @@ def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
         name=names[index]
         source, report = native_unit_source(name,parts[index],refs[index])
         source = sanitize_illegal_pc_dest(source,report)
+        source = ('; AGA_NATIVE_MIN_CPU: MC68020\n'
+                  '; AGA_NATIVE_PURPOSE: AUDIT_ONLY\n' + source)
         if index==bobs_group:
             source,symbol_count = enrich_labels(source,name,labels)
             report['source_labels_provided_by_python_emitters'] = sum(map(len,labels.values()))
