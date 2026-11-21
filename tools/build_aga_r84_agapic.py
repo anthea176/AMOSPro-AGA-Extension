@@ -59,8 +59,8 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("Pinned deterministic historical R83 source changed")
     protected=PREVIOUS.read_bytes()
     protected_sha=sha256(protected).hexdigest()
-    if protected_sha not in (R84_SHA,P0_FREE_SHA):
-        raise AssertionError("LAST_GOOD must be exact historical R84 or authorized P0")
+    if protected_sha not in (R84_SHA,P0_FREE_SHA,P1E_SHA):
+        raise AssertionError("LAST_GOOD must be exact historical R84 or author-promoted P0/P1e")
     original_tokens, old, _=unpack_ap20(frozen)
     if len(old)!=83 or tuple(len(v) for v in old[80:])!=(5558,2508,52974):
         raise AssertionError("Unexpected R83 three-unit layout")
@@ -121,12 +121,14 @@ def build()->tuple[bytes,dict]:
     if parts[82]!=old[80] or parts[83]!=old[81] or not parts[84].startswith(old[82]):
         raise AssertionError("R83 native C2P/IFF/AGA bytes not preserved")
     # R84 remains exact source-reproducible even after its LAST_GOOD slot is
-    # promoted to P0. In the R84 state require byte-for-byte identity.
+    # promoted to P0 then P1e. In the R84 state require byte-for-byte identity.
     assert len(candidate)==67904 and sha256(candidate).hexdigest()==R84_SHA
     if protected_sha==R84_SHA:
         assert candidate==protected, "Historical R84 LAST_GOOD changed"
+    elif protected_sha==P0_FREE_SHA:
+        assert len(protected)==117896
     else:
-        assert len(protected)==117896 and protected_sha==P0_FREE_SHA
+        assert len(protected)==124444 and protected_sha==P1E_SHA
     verify_known_active(ACTIVE)
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
@@ -148,12 +150,12 @@ class R84Layout(unittest.TestCase):
     def test_historical_r83_and_promoted_r84(self):
         self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
         good=PREVIOUS.read_bytes()
-        self.assertIn(sha256(good).hexdigest(),(R84_SHA,P0_FREE_SHA))
+        self.assertIn(sha256(good).hexdigest(),(R84_SHA,P0_FREE_SHA,P1E_SHA))
         if sha256(good).hexdigest()==R84_SHA:
             self.assertEqual(good,self.image)
         else:
             self.assertNotEqual(good,self.image)
-            self.assertEqual(len(good),117896)
+            self.assertEqual(len(good),117896 if sha256(good).hexdigest()==P0_FREE_SHA else 124444)
         self.assertEqual(sha256(self.image).hexdigest(),R84_SHA)
         self.assertEqual(verify_known_active(ACTIVE), sha256(ACTIVE.read_bytes()).hexdigest())
     def test_unknown_candidate_is_still_rejected(self):
