@@ -6,7 +6,7 @@
 
 | Élément | État |
 | --- | --- |
-| **Bibliothèque active** | [M19 P1e](../dist/AMOSPro_AGA.Lib), promue en LAST_GOOD après 2 Runtime PASS, 124 444 octets, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, 96 commandes, 196 entrées AP20, PC16 maximal 14 130. Gate A native PASS ; Gate B Runtime PASS 2/2 ; Gate C Compiler et D physique NON TESTÉES. |
+| **Bibliothèque active** | **[M19 P2a candidate WinUAE](../dist/AMOSPro_AGA.Lib)**, 129 544 octets SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes et 198 entrées AP20, Gate A source/intégration publique PASS (5 tests MC68020 et préflight de l'[exemple](../examples/bob_collision.asc)). Gate B Runtime WinUAE et Gates C/D non testées. |
 | **ASC unique de campagne** | [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), 405 frames, quatre phases hotspot, huit sondes de priorité, 24 lectures de clipping trois frames d’édition AGBO et banque 26. Journal `RAM:M19_P1E_BANK_EDIT.TXT`. |
 | **Qualification P0** | **Gate A native MC68020 PASS : 104 contrôles préparation Chip + 121 Bank Free** (OS/Blitter simulés, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)). **Gate B WinUAE Runtime P0 : PASS fonctionnel sur les journaux fournis** ([rapport et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C Compiler reportée**, Gate D matériel non testée. |
 | **LAST_GOOD promue P1e** | [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, exactement la Lib active. Promotion autorisée après Gate A native et deux Runtime PASS. Gates C/D NON TESTÉES. Ancienne LAST_GOOD P0 SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d` conservée dans Git. [Rapport](M19_P1E_PROMOTION_2026-11-21.md). |
@@ -27,7 +27,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 | Sujet | Objectif |
 | --- | --- |
-| **P2a — collisions Bob–Bob** | **91/91 tests PASS ; entrée unique MC68020 privée de 484 octets** enchaînant P0f/P0j-b3, hotspots AGBO/P1b natifs, clipping P1d et noyau masqué de 764 octets. [CI source-only intégrée](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44905618103) · [rapport](M19_P2A_FULL_QUERY_NATIVE_2026-11-21.md) · [émetteur](../tools/m19_p2a_collision_query020_emit.py). **Sans Lib, sans token AP20, sans WinUAE P2a**. Prochain verrou : contexte écran/P1d récupéré et validé depuis l'AGA State réelle. |
+| **P2a — collisions Bob–Bob** | **Lib candidate livrée !** Fonction `Aga Bob Col(A,B,Mode)` : 0 rectangles, 1 masques AGBO. [Lib](../dist/AMOSPro_AGA.Lib) et [ASC d'essai](../examples/bob_collision.asc), [rapport P2a public](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). 91 tests privés + 5 tests publics MC68020 Gate A PASS. **Runtime WinUAE à vérifier sur le matériel utilisateur** ; sans promotion LAST_GOOD. |
 | **P2b — retournements H/V** | Transformations non destructives par objet, image et hotspot partagés préservés. |
 | **P2c — SET BOB / AMAL** | Étudier les modes de rendu avancés, les updates automatiques, puis l’intégration éventuelle à AMAL. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |

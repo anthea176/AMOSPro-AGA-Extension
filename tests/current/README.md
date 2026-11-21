@@ -1,6 +1,8 @@
-# M19 P1e — Édition des banques de Bobs sous WinUAE
+# M19 P2a — Collisions Bob–Bob sous WinUAE ; P1e préservée
 
-**P1e active** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. 96 commandes, 196 entrées AP20, cinq groupes MC68020. [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083).
+**P2a active — test WinUAE :** [nouvelle bibliothèque](../../dist/AMOSPro_AGA.Lib), **129 544 octets**, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, **97 commandes / 198 entrées AP20**. Nouvelle fonction `Aga Bob Col(A,B,Mode)` : `0` rectangles, `1` masques, renvoie 1/0/-1. [Exemple de test autonome](../../examples/bob_collision.asc) à charger par **Project → Merge ASCII** ; sortie `RAM:M19_P2A_BOB_COL.TXT`. Gate A native et préflight PASS ; Gate B WinUAE et Gate C Compiler NON TESTÉES.
+
+**P1e ancienne active, maintenant LAST_GOOD et banc de régression** — [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`. 96 commandes, 196 entrées AP20, cinq groupes MC68020. [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44892222083).
 
 **`LAST_GOOD` P1e promue le 21/11/2026 :** [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../../dist/AMOSPro_AGA_LAST_GOOD.Lib) = **124 444 octets**, SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`, binaire strictement identique à la Lib active. Gate A native PASS et Gate B Runtime WinUAE PASS 2/2. Gate C AMOS Compiler et Gate D physique NON TESTÉES. [Rapport de promotion](../../docs/M19_P1E_PROMOTION_2026-11-21.md).
 

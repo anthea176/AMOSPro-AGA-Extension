@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2a Livrée : nouvelle Lib testable, Gate A PASS
+
+**Lib active** : [dist/AMOSPro_AGA.Lib](../dist/AMOSPro_AGA.Lib), **129 544 octets**, SHA256 `e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe`, 97 commandes/198 AP20 ; [exemple](../examples/bob_collision.asc), [guide](M19_P2A_PUBLIC_CANDIDATE_2026-11-21.md). API `Aga Bob Col(A,B,Mode)` : collisions rectangle (0) et masque (1). Gate A publique source-native sur deux relocations PASS (5 tests), préflight ASC PASS. **Suivant : lancer le test sous WinUAE**, récupérer `RAM:M19_P2A_BOB_COL.TXT` (attendu `VERDICT PASS`, `CHECKS 8`). Gate B WinUAE / C Compiler / D physique NON TESTÉES. **LAST_GOOD P1e protégée** 124 444 octets, inchangée, aucune promotion.
+
+
 ## 21 novembre 2026 — P2a : UNE requête native MC68020 de collision, Gate A privée PASS
 
 **[Rapport P2a intégral](M19_P2A_FULL_QUERY_NATIVE_2026-11-21.md) · [Émetteur de l'unique appel MC68020](../tools/m19_p2a_collision_query020_emit.py) · [9 tests d'intégration](../tools/test_m19_p2a_collision_query020_gate_a.py) · [CI native 91/91 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44905618103).** L'entrée privée de **484 octets**, SHA256 `c7bc01b85932eaa98bf9143733382e8c40f736f3989c12633775d63605609cb9`, pilote en **un seul appel 68020** les contrôles réels P0f/P0j-b3, l'extraction des hotspots signés par P0j-b1/P1b (874 octets), le clipping écran et les zones P1d (packer 1 742 octets), puis le noyau de collision rectangle/masque (764 octets). D3=1 hit, 0 no hit, -1 refus, D2=0. Le banc a détecté puis corrigé la préservation d'A3 ; ABI, sélection de banque, source Chip et pile sont testées sous Unicorn MC68020.
