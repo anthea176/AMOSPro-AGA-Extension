@@ -33,6 +33,7 @@ from m19_p2b_planar_orientation020_emit import emit_planar_orientation020
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
 PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
+FLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_FLIP_PUBLIC_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -43,6 +44,9 @@ END_LABEL = 'L_BOBS_0B72A:'
 P2C_START_LABEL = 'p2c_public_planes:'
 P2C_END_LABEL = 'ENTRY_BOBS_0B58C:'
 P2C_SOURCE_NAME = 'M19_P2C_PLANES_MC68020.s'
+FLIP_SOURCE_NAME = 'M19_P2B_FLIP_PUBLIC_MC68020.s'
+FLIP_START = 0x9E36
+FLIP_END = 0x9F26
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -127,6 +131,57 @@ def prove_planar_provenance() -> tuple[int, int, int, bytes]:
     return start, end, start + frag_labels['invalid'], fragment
 
 
+@lru_cache(maxsize=1)
+def prove_flip_public_provenance() -> tuple[int, int, int, bytes]:
+    """Pin the public Flip / slot-cache block to its original P2b emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels = emit_bob_flip(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(original)
+    base = PLANAR_END - labels['p2b_owner']
+    start = base + labels['p2b_slot']
+    public = base + labels['p2b_public_flip']
+    end = base + labels['p2b_variant']
+    failure = base + labels['p2b_flip_fail']
+    require((start, public, failure, end) ==
+            (FLIP_START, 0x9E96, 0x9F12, FLIP_END),
+            'source P2b Flip public offsets differ from pinned P2d')
+    fragment = native[labels['p2b_slot']:labels['p2b_variant']]
+    require(len(fragment) == FLIP_END - FLIP_START and
+            parts[group][start:end] == fragment,
+            'P2b Flip module is not identical to source emitter')
+    return start, end, failure, fragment
+
+
+def replace_raw_flip_public(text: str) -> str:
+    """Replace exactly 240 annotated audit bytes, including mixed DC.B/code."""
+    anchor = 'L_BOBS_09E36:\np2b_slot:\n'
+    first = text.find(anchor)
+    last = text.find('p2b_variant:\n', first)
+    require(first >= 0 and last > first and
+            text.find(anchor, first + len(anchor)) < 0,
+            'unique P2b Flip public/variant boundary not found')
+    old = text[first:last]
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', old)
+    require(matches and
+            'ENTRY_BOBS_09E96:\np2b_public_flip:' in old and
+            'p2b_flip_fail:' in old,
+            'P2b public Flip audit labels missing')
+    cursor = FLIP_START
+    data = bytearray()
+    for offset, value in matches:
+        require(int(offset, 16) == cursor,
+                'P2b Flip audit offsets are no longer contiguous')
+        chunk = bytes.fromhex(value)
+        data.extend(chunk)
+        cursor += len(chunk)
+    require(cursor == FLIP_END and
+            bytes(data) == prove_flip_public_provenance()[3],
+            'P2b public Flip raw/code bytes differ from authoritative emitter')
+    return (text[:first] + 'L_BOBS_09E36:\n    include "' +
+            FLIP_SOURCE_NAME + '"\n' + text[last:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -178,12 +233,14 @@ def replace_raw_p2b_slot_data(text: str) -> str:
 
 def staged_sources(folder: Path, *, module_text: str | None = None,
                    planes_text: str | None = None,
-                   planar_text: str | None = None) -> None:
+                   planar_text: str | None = None,
+                   flip_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
     require(PLANES_FILE.is_file(), f'missing authored module: {PLANES_FILE}')
     require(PLANAR_FILE.is_file(), f'missing authored module: {PLANAR_FILE}')
+    require(FLIP_FILE.is_file(), f'missing authored module: {FLIP_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -192,6 +249,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
+    text = replace_raw_flip_public(text)
     text = replace_raw_planar_block(text)
     text = replace_raw_p2b_slot_data(text)
     require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
@@ -232,6 +290,16 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(not re.search(r'(?im)^\s*dc\.[bwll]\b', planes_source),
             'unclassified opcode/data directive inside P2c module')
     (folder / P2C_SOURCE_NAME).write_text(planes_source, encoding='ascii', newline='\n')
+    flip_source = (flip_text if flip_text is not None
+                   else FLIP_FILE.read_text('ascii'))
+    for label in ('p2b_slot:', 'p2b_mode:', 'p2b_free_slot:',
+                  'p2b_public_flip:', 'p2b_flip_fail:'):
+        require(flip_source.count(label) == 1,
+                f'P2b public Flip module missing {label}')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', flip_source),
+            'unclassified byte/word opcodes inside P2b public Flip')
+    (folder / FLIP_SOURCE_NAME).write_text(flip_source, encoding='ascii',
+                                           newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -300,8 +368,10 @@ def verify_link(original: bytes, image: bytes, group: int,
             'BOBS size/entry offsets changed; variable-length relocation NOT supported')
     differences = [i for i, (a, b) in enumerate(zip(old_parts[group], parts[group])) if a != b]
     planar_start, planar_end, _, _ = prove_planar_provenance()
+    flip_start, flip_end, _, _ = prove_flip_public_provenance()
     require(all((planes_start <= i < control_end) or
-                (planar_start <= i < planar_end) for i in differences),
+                (planar_start <= i < planar_end) or
+                (flip_start <= i < flip_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -314,11 +384,12 @@ def verify_link(original: bytes, image: bytes, group: int,
 def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           module_text: str | None = None,
           planes_text: str | None = None,
-          planar_text: str | None = None) -> tuple[bytes, list[int]]:
+          planar_text: str | None = None,
+          flip_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
-                   planar_text=planar_text)
+                   planar_text=planar_text, flip_text=flip_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -382,9 +453,27 @@ def test_editability(assembler: Path) -> None:
                 'P2b planar MOVEQ #1,D3 was not encoded')
         require(planar_start <= invalid < planar_end,
                 'P2b modified opcode escaped authored materializer')
+
+        flip_start, flip_end, flip_fail, _ = prove_flip_public_provenance()
+        flip_source = FLIP_FILE.read_text('ascii')
+        flip_needle = 'p2b_flip_fail:\n    moveq #0,d3'
+        require(flip_source.count(flip_needle) == 1,
+                'P2b public Flip failure opcode not uniquely editable')
+        flip_edit = flip_source.replace(
+            flip_needle, 'p2b_flip_fail:\n    moveq #1,d3')
+        changed_flip, flip_diffs = build(
+            assembler, root/'modified_flip', allow_edited=True,
+            flip_text=flip_edit)
+        require(flip_diffs == [flip_fail+1],
+                f'P2b Flip edit changed {flip_diffs}, expected {[flip_fail+1]}')
+        require(unpack_ap20(changed_flip)[1][group][flip_fail:flip_fail+2]
+                == b'\x76\x01', 'P2b Flip failure instruction was not encoded')
+        require(flip_start <= flip_fail < flip_end,
+                'P2b public Flip edit escaped authored region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
+    print('P2B_FLIP_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
