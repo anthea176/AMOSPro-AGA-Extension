@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — P2e.0 second Runtime : animation correcte, ERR 21 sur flags
+
+L'auteur fournit le second journal `M19_P2E0_AMAL_BRIDGE(1).TXT`, **342 octets** SHA256 `918f262be52ba0f12bc1435c8c129be9afc4f972997f4eb238822107c8f6be1d` : `PRG_STATE 1`, `FRAME 241`, `VALID_SAMPLES 240`, `SWAPS 241`, `BG0/BG1 1/1`, `SWAP_RESULT 1`, `PIX_SAMPLES 29`, `MOVE_X/Y 1`, `IMAGE1/2 1`, `CLOSE_RETURNED 1`. **Aucun refus du Swap ; 29 vérifications de pixels conformes.** Le verdict du programme est encore **FAIL, `ERR 21`**, uniquement parce que `FLAG_X/Y/A 0`. Le manuel indique ces bits à l'offset +0, mais leur absence sous `Synchro Off` / `Synchro` n'est pas élucidée.
+
+**ASC actif corrigé** [`M19_P2E0_AMAL_BRIDGE.asc`](../tests/current/M19_P2E0_AMAL_BRIDGE.asc), **6 795 octets**, SHA256 `62c94e9560134c0602b6e79b8cb2c78bf5adf207364d85d5a8953201ba61125f` : `FLAG_X/Y/A` restent des observations non bloquantes, et `CHG_X/Y/A` comptabilisent les différences de valeurs effectives entre deux cycles. `ERR 21` repose désormais sur ces transitions, sans inventer de flags. **Gate B du nouvel ASC non testée**, Gate C individuelle reportée. Lib P2d et LAST_GOOD P1e inchangées ; aucune branche ajoutée.
+
 ## 21 novembre 2026 — P2e.0 premier Runtime FAIL ; banc diagnostique corrigé
 
 Le journal utilisateur **P2e.0 initial** (300 octets SHA256 `f2f6914bd719c0409346c0bebdba451775b1d9491c293f442e8a8334a8c5b650`) apporte `PRG_STATE 1`, `ERR 15`, `FRAME 1`, `SWAPS 1`, `LAST_X 97`, `LAST_Y 101`, `LAST_IMAGE 1`, `CLOSE_RETURNED 1`, `VERDICT FAIL`. Le premier `Aga Swap` après placement du Bob échoue. Les trois valeurs AMAL sont correctes ; le rendu n'a pas été présenté. La cause du refus n'est **pas** démontrée.
