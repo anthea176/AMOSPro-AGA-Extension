@@ -12,4 +12,4 @@ En cas d’échec, `STEP` indique la phase (1 auto, 2 restauration, 3 Swap manue
 
 Le [banc P2c](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/ee0fce258a917d9ee0af015029af8dc285bfe4f7/tests/current/M19_P2C_BOB_PLANES.asc) a passé 34/34 en Runtime avec sa propre Lib.
 
-Le nouveau pont AMAL est [une sonde expérimentale P2e.0](../design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.asc), **pas** un second ASC de campagne actif et pas une nouvelle bibliothèque. [Protocole](../../docs/M19_P2E0_AMAL_BRIDGE_2026-11-21.md).
+Le nouveau pont AMAL est [une sonde expérimentale P2e.0](../design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt), **pas** un second ASC de campagne actif et pas une nouvelle bibliothèque. [Protocole](../../docs/M19_P2E0_AMAL_BRIDGE_2026-11-21.md).

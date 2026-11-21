@@ -23,7 +23,7 @@ On réserve `Reserve As Data 28,8`, on vérifie `Length(28)` et l'alignement de 
 
 ## Banc P2e.0
 
-Fichier : [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.asc`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.asc).
+Fichier : [`tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt`](../tests/design/M19_P2E0_AMAL_BRIDGE_UNVALIDATED.txt).
 
 - Cible : Lib P2d existante, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 AP20, CPU MC68020 minimum.
 - Banc autonome, **sans IFF/ABK externe** : deux images AGBO opaques 1×1 aux couleurs 165 et 90 dans la banque 24 ; buffer de lecture 8 octets dans la banque 28 ; banque 27 préallouée pour le pixel oracle.
