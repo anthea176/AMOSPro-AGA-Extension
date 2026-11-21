@@ -15,7 +15,7 @@ from struct import pack, unpack_from
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "tools"), str(ROOT / "tools" / "experiments")]
-from active_library import R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA
+from active_library import R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA
 from audit_ap20 import inspect, parse, token
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -37,8 +37,8 @@ API = ("aga bob batch", 1, BATCH_ENTRY, "00,0")
 
 def build() -> tuple[bytes, dict]:
     live_good=PROTECTED.read_bytes()
-    if len(live_good)!=117896 or sha256(live_good).hexdigest()!=P0_FREE_SHA:
-        raise ValueError("Promoted P0 LAST_GOOD SHA mismatch; refusing historical R87 build")
+    if (len(live_good),sha256(live_good).hexdigest()) not in ((117896,P0_FREE_SHA),(124444,P1E_SHA)):
+        raise ValueError("Unrecognized author-promoted P0/P1e LAST_GOOD")
     from build_aga_r84_agapic import build as build_r84
     protected,r84_meta=build_r84()
     if len(protected)!=67904 or r84_meta['sha256']!=R84_SHA:
@@ -121,7 +121,7 @@ def build() -> tuple[bytes, dict]:
         raise ValueError("Compiler V2 unit exceeds 65,534 bytes")
     active = ACTIVE.read_bytes()
     current_sha = sha256(active).hexdigest()
-    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
+    if current_sha not in (R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA):
         raise ValueError("Unknown dist/ candidate: refusing overwrite")
 
     return output, {
