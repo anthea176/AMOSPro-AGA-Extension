@@ -171,6 +171,18 @@ En mode Y, la clé est l'ancre renvoyée par `Aga Y Bob(N)`. Un changement d'ima
 
 **Banc discriminant.** Superposer Bob 1 à Y=100 et Bob 2 à Y=98 avec des pixels opaques distincts et des hotspots qui inversent leur ordre vertical apparent (par exemple un décalage Y de 4 pour Bob 1 et de 0 pour Bob 2). Mesurer le pixel commun. Le Bob visible au-dessus doit être respectivement 2, 1, 1 et 2 dans les modes 0 à 3. Refaire le test à Y identique, avec Y négatif et clipping, pendant un croisement, et après changement de mode sur les deux pages avec décor non uniforme. Couvrir OFF/réactivation, 64 Bobs, banque invalide avant DMA, mode invalide, ouverture après fermeture, et ABI/relocations Compiler dans la Gate A. Vérifier ensuite le rendu réel dans WinUAE.
 
+#### P1d — Limit Bob
+
+**Signature à valider** — `_OK=Aga Limit Bob(N,X,Y,W,H)`. `N=0` définit la limite globale et `N=1..64` règle une limite propre à cet ID, y compris avant son premier `Aga Bob`. Le rectangle est exprimé en coordonnées de l'écran AGA, en pixels, avec origine signée et largeur/hauteur strictement positives. Il couvre `[X,X+W) × [Y,Y+H)`. `Aga Limit Bob(N,0,0,0,0)` efface le réglage de cet ID ou le réglage global pour `N=0`. Retour `1` si accepté, `0` pour un mode d'appel invalide, un dépassement arithmétique ou un écran actif non détenu. Un refus conserve le réglage précédent.
+
+La zone effective est l'intersection écran ∩ limite globale ∩ limite du Bob. Une limite reste attachée à son ID pendant la session d'écran, y compris après `Bob Off` et réactivation. Une ouverture réussie réinitialise toutes les limites. Le réglage s'applique au prochain `Aga Bob Update`, sans dessin immédiat. Un Bob entièrement coupé reste actif et sa mise à jour réussit sans DMA pour ce Bob. Les coordonnées logiques et le tri P1c conservent leurs règles.
+
+**Raccord à vérifier** — Réutiliser le calcul de clipping du peintre privé après application du hotspot P1b. Ajuster simultanément les coordonnées source et destination. Garder les pointeurs et le pas de ligne d'origine des plans et du masque, ainsi que la géométrie réelle du BitMap pour les vérifications mémoire. Vérifier la marge PC16 sur le build complet avant de choisir le placement du code.
+
+**Tests** — Quatre bords non alignés, zone d'un pixel, dimensions plus petites que le Bob, origine négative, intersection vide, intersection globale/locale, dépassement arithmétique, masques, priorité et hotspot combinés, `Off` puis réactivation, réouverture. Comparer aussi le décor restitué sur les deux pages après déplacement ou suppression de la limite.
+
+[Référence AMOS Professional](https://amospromanual.dev/07-02-blitter-objects.html#limit-bob).
+
 ### P2 — Fonctions avancées / compatibilité progressive
 
 | Fonction AMOS | Adaptation AGA envisagée |
