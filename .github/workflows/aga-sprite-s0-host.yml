@@ -1,0 +1,30 @@
+name: S0 AGA hardware Sprite ownership host model
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/aga_sprite_s0_model.py'
+      - 'tools/test_aga_sprite_s0_model.py'
+      - '.github/workflows/aga-sprite-s0-host.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sprite-s0-host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: S0 host model contract only (not native Gate A)
+        run: |
+          PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_aga_sprite_s0_model.py' -v
+      - name: No installables or active AMOS test rewritten
+        run: |
+          git diff --exit-code -- dist/ tests/current/ tests/passed/

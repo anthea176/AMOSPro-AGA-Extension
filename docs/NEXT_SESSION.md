@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 21 novembre 2026 — chantier Sprites AGA S0 commencé : audit NDK + modèle de propriété
+
+**Contexte exact :** `main`, Lib P2d `LAST_GOOD` 136 020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, banc P2 ALL IN ONE inchangé. Après clôture Bob, le prochain chantier actif est **Sprites matériels AGA S0**. [Audit d'intégration détaillé](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) : source des pointeurs de contexte P2d et R44, Copper `Screen.UserData`, NDK V39 `graphics.library` (`GetSprite/MoveSprite/ChangeSprite/FreeSprite`), format 16×16 72 octets Chip. [Modèle host-only](../tools/aga_sprite_s0_model.py) / [12 tests PASS](../tools/test_aga_sprite_s0_model.py) : propriété `Screen*/ViewPort*`, attribution effective du canal 0..7 par OS, refus -1/OOM, détachement DMA exigé avant libération, libération idempotente, réouverture sans double-free. **Aucun appel OS natif, aucune Gate A CPU native, B WinUAE, C Compiler, D matériel**, aucune API publique `Aga Sprite`, aucune modification `dist/` ou `tests/current/`.
+
+**Verrous S0 avant S1** : vérifier sur l'écran réellement ouvert `Screen.ViewPort.Modes`/sprites, disponibilité des canaux et interaction avec pointeur Intuition, palette/Copper `COLOR16..31`, protocole démontrable de fin de référence DMA et ordre de nettoyage. **S1 visé** : seul Sprite matériel 16×16, canal obtenu via `GetSprite(-1)` si disponible ; aucun accès aux registres DMA directs. En l'absence de preuve de l'état ViewPort, ne pas écrire de nouveaux tokens, handlers ou binaries.
+
+
 ## 21 novembre 2026 — P2d promue LAST_GOOD ; chantier Bob terminé, publication 0.14.0 préparée
 
 **Autorisation utilisateur explicite :** après deux journaux **Runtime B PASS / Compiler C PASS** sur la campagne P2 ALL IN ONE, promouvoir la Lib P2d en `LAST_GOOD` puis préparer **release GitHub et Aminet**. **Bibliothèque promue octet-identique** : `dist/AMOSPro_AGA.Lib` et `dist/AMOSPro_AGA_LAST_GOOD.Lib`, **136 020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`**, Git blob `8a849b89aae57c2cda0b4db8771034a0978d3e78`. Ancienne P1e (SHA256 `7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42`) récupérable dans Git. Gate A native PASS ; **B WinUAE Runtime PASS**, **C vrai Compiler PASS** sur le même test ; **D physique et interprété strict NON TESTÉS**. [Rapport détaillé](M19_P2D_LAST_GOOD_PROMOTION_2026-11-21.md).

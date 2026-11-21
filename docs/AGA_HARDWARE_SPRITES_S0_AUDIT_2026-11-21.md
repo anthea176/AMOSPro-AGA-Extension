@@ -1,11 +1,14 @@
 # Sprites matériels AGA — S0, audit d'intégration initial (21/11/2026)
 
+> **Reprise S0 du 21/11/2026 :** [audit d'intégration NDK et sources P2d](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md), modèle de propriété [host-only](../tools/aga_sprite_s0_model.py) et [12 tests hôtes PASS](../tools/test_aga_sprite_s0_model.py). S0 reste **OUVERT** tant que le ViewPort réel, les canaux disponibles et le détachement DMA ne sont pas prouvés. Aucun nouveau token/Lib/ASC ; P2d `LAST_GOOD` inchangée. Le banc actuel est [M19_P2_ALL_IN_ONE.asc](../tests/current/M19_P2_ALL_IN_ONE.asc), et non P2e.1.
+
+
 > **Suite après clôture M19 Bob P2d :** P2d promue `LAST_GOOD` (Gates A/B/C du scénario P2 PASS). **Prochain travail : reprendre S0 ici**, auditer NDK/ABI et la gestion native du `ViewPort`, des canaux Sprite, du pointeur Intuition et des listes Copper. S0 n'est **pas** terminé, S1 non implémenté. Ne pas développer les Sprites en modifiant la Lib P2d promue sans nouvelle autorisation de candidat.
 
 
 > **Statut : AUDIT DOCUMENTAIRE ET DE CONTRAT EN COURS, PAS S0 TERMINÉ.**
 > Dépôt `anthea176/AMOSPro-AGA-Extension`, branche `main` uniquement.
-> Ce document n'autorise ni binaire, ni API, ni commande `Aga Sprite`, ni remplacement de l'ASC de P2e.1 actuellement actif.
+> Ce document n'autorise ni binaire, ni API, ni commande `Aga Sprite`, ni remplacement de l'unique ASC de régression P2 ALL IN ONE actuellement actif.
 > Cible native future : **MC68020/68EC020 minimum**, Kickstart 3.0+ / `graphics.library` V39+, chipset AGA.
 
 ## 1. Constat sourcé dans l'extension
@@ -56,7 +59,7 @@ La [doc officielle du pointeur Intuition](https://wiki.amigaos.net/wiki/Intuitio
 | Aucun canal libre / OOM Chip | Refus déterministe, canal et données inchangés sur l'échec |
 | Runtime et vrai Compiler | Même rendu/cleanup, preuves B et C **distinctes** |
 
-L'unique ASC sous `tests/current/` demeure **M19 P2e.1** jusqu'à la fin de sa campagne. Ce tableau n'est **pas** un nouveau programme de test, une version de Lib ou une preuve de Gate A/B/C/D.
+L'unique ASC sous `tests/current/` demeure **[M19_P2_ALL_IN_ONE.asc](../tests/current/M19_P2_ALL_IN_ONE.asc)** après validation B/C et promotion de P2d. Ce tableau n'est **pas** un nouveau programme de test, une version de Lib ou une preuve de Gate A/B/C/D.
 
 ## 5. Verrous restants avant implémentation native S1
 

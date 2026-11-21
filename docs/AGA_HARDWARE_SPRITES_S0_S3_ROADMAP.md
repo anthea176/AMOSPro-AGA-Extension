@@ -1,5 +1,8 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+> **Actualisation S0 (21/11/2026)** : [audit d'intégration détaillé](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md), **12 tests hôtes PASS** pour le modèle de propriété des canaux ; ni code natif ni fonctionnement DMA démontré. P2d `LAST_GOOD` inchangée, S1 non commencée.
+
+
 > **Priorité actuelle après clôture P2d Bob (21/11/2026) : REPRENDRE S0.** Moteur Bob P0–P2 clos et P2d promue `LAST_GOOD` après Gates B/C WinUAE sur le banc intégré. Les mentions historiques « R84 LAST_GOOD » ci-dessous reflètent le contexte de conception du 15/11, **pas** la bibliothèque actuelle. Audit S0 NDK/ABI/Intuition/Copper à terminer avant tout prototype S1 (Sprite 16 pixels), et sans modification de P2d promue.
 
 
@@ -43,7 +46,7 @@ Dépôt : `anthea176/AMOSPro-AGA-Extension`, **branche `main` exclusivement**. P
 3. Relever la configuration réelle des registres de display/`FMODE`/palettes et les contraintes d'alignement, de taille Chip, de priorité Sprite/bitplanes et de timing DMA.
 4. Définir le contrat de coordonnées : origine de l'écran privé, offsets hardware, profondeur/format des palettes, hotspot, haute résolution et modes d'affichage.
 5. Vérifier la présence de **huit canaux physiques** tout en identifiant **ceux effectivement disponibles** dans les scénarios testés. Documenter le fonctionnement du pointeur (souvent canal 0) sans supposer sa disponibilité.
-6. Produire un **schéma mémoire + protocole test S1** avant d'ajouter des tokens AP20. **Statut : NON EXÉCUTÉ.**
+6. Produire un **schéma mémoire + protocole test S1** avant d'ajouter des tokens AP20. **Statut : modèle de propriété S0 testé sur hôte, matériel/ABI S0 non clôturés.**
 
 ### S1 — Premier Sprite matériel autonome (16 pixels)
 
