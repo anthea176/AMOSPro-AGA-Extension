@@ -35,6 +35,7 @@ EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.
 PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
 FLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_FLIP_PUBLIC_MC68020.s'
 VARIANT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_VARIANT_ANCHOR_MC68020.s'
+PAINT_GEO_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PAINT_GEOMETRY_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -51,6 +52,9 @@ FLIP_END = 0x9F26
 VARIANT_SOURCE_NAME = 'M19_P2B_VARIANT_ANCHOR_MC68020.s'
 VARIANT_START = 0x9F26
 VARIANT_END = 0xA0AA
+PAINT_GEO_SOURCE_NAME = 'M19_P2B_PAINT_GEOMETRY_MC68020.s'
+PAINT_GEO_START = 0xA0AA
+PAINT_GEO_END = 0xA1D2
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -231,6 +235,53 @@ def replace_raw_p2b_variant(text: str) -> str:
             '"\n' + text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_p2b_paint_geo_provenance() -> tuple[int, int, int, bytes]:
+    """Derive exact painter and pair geometry source bytes from P2b emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels = emit_bob_flip(p1e['context_delta'])
+    base = PLANAR_END - labels['p2b_owner']
+    begin = base + labels['p2b_paint']
+    end = base + labels['p2b_close_return']
+    fail = base + labels['p2b_geometry_fail']
+    require((begin, end, fail) == (PAINT_GEO_START, PAINT_GEO_END, 0xA1C4),
+            'P2b paint/geometry emitter labels differ from pinned P2d')
+    fragment = native[labels['p2b_paint']:labels['p2b_close_return']]
+    _, parts, _ = unpack_ap20(original)
+    require(len(fragment) == end - begin and
+            parts[group][begin:end] == fragment,
+            'P2b paint/geometry mismatch with source emitter')
+    return begin, end, fail, fragment
+
+
+def replace_raw_p2b_paint_geo(text: str) -> str:
+    """Replace only source-proven annotated P2b paint and geometry bytes."""
+    start_tag = 'L_BOBS_0A0AA:\np2b_paint:\n'
+    end_tag = 'L_BOBS_0A1D2:\np2b_close_return:\n'
+    begin = text.find(start_tag)
+    end = text.find(end_tag, begin)
+    require(begin >= 0 and end > begin and
+            text.find(start_tag, begin+len(start_tag)) < 0,
+            'P2b paint/geometry audit labels missing')
+    old = text[begin:end]
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', old)
+    require('p2b_paint_hotspot:' in old and matches,
+            'P2b original paint/geometry witness incomplete')
+    offset, evidence = PAINT_GEO_START, bytearray()
+    for pos, encoded in matches:
+        require(int(pos,16) == offset,
+                f'P2b paint/geometry unexpected offset: {pos}')
+        block = bytes.fromhex(encoded)
+        evidence.extend(block)
+        offset += len(block)
+    require(offset == PAINT_GEO_END and
+            bytes(evidence) == prove_p2b_paint_geo_provenance()[3],
+            'P2b paint/geometry differs from native P2b source')
+    return (text[:begin] + 'L_BOBS_0A0AA:\n    include "' +
+            PAINT_GEO_SOURCE_NAME + '"\n' + text[end:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -284,7 +335,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    planes_text: str | None = None,
                    planar_text: str | None = None,
                    flip_text: str | None = None,
-                   variant_text: str | None = None) -> None:
+                   variant_text: str | None = None,
+                   paint_geo_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -292,6 +344,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(PLANAR_FILE.is_file(), f'missing authored module: {PLANAR_FILE}')
     require(FLIP_FILE.is_file(), f'missing authored module: {FLIP_FILE}')
     require(VARIANT_FILE.is_file(), f'missing authored module: {VARIANT_FILE}')
+    require(PAINT_GEO_FILE.is_file(), f'missing authored module: {PAINT_GEO_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -302,6 +355,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_flip_public(text)
     text = replace_raw_p2b_variant(text)
+    text = replace_raw_p2b_paint_geo(text)
     text = replace_raw_planar_block(text)
     text = replace_raw_p2b_slot_data(text)
     require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
@@ -379,6 +433,22 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'unexpected raw opcode in P2b variant/anchor source')
     (folder / VARIANT_SOURCE_NAME).write_text(variant_source,
                                              encoding='ascii', newline='\n')
+    paint_source = (paint_geo_text if paint_geo_text is not None
+                    else PAINT_GEO_FILE.read_text('ascii'))
+    for label in ('p2b_paint:', 'p2b_paint_hotspot:', 'p2b_geometry:',
+                  'p2b_geo_done_0:', 'p2b_geo_done_1:',
+                  'p2b_geometry_fail:'):
+        require(paint_source.count(label) == 1,
+                'P2b painter source missing ' + label)
+    exception = ('    dc.w $41FB,$0170\n'
+                 '    dc.l p1d_drawing_id-(*-2)')
+    require(paint_source.count(exception) == 1,
+            'P2b painter source-owned PC32 instruction missing')
+    clean_paint = paint_source.replace(exception, '')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', clean_paint),
+            'unexpected raw opcode in P2b painter/geometry')
+    (folder / PAINT_GEO_SOURCE_NAME).write_text(paint_source,
+                                               encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -449,10 +519,12 @@ def verify_link(original: bytes, image: bytes, group: int,
     planar_start, planar_end, _, _ = prove_planar_provenance()
     flip_start, flip_end, _, _ = prove_flip_public_provenance()
     variant_start, variant_end, _, _ = prove_p2b_variant_provenance()
+    paint_start, paint_end, _, _ = prove_p2b_paint_geo_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
-                (variant_start <= i < variant_end) for i in differences),
+                (variant_start <= i < variant_end) or
+                (paint_start <= i < paint_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -467,12 +539,13 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           planes_text: str | None = None,
           planar_text: str | None = None,
           flip_text: str | None = None,
-          variant_text: str | None = None) -> tuple[bytes, list[int]]:
+          variant_text: str | None = None,
+          paint_geo_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
                    planar_text=planar_text, flip_text=flip_text,
-                   variant_text=variant_text)
+                   variant_text=variant_text, paint_geo_text=paint_geo_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -569,11 +642,28 @@ def test_editability(assembler: Path) -> None:
                 == b'\x76\x01', 'P2b variant failure MOVEQ did not assemble')
         require(variant_start <= variant_fail < variant_end,
                 'P2b variant source edit escaped authored module')
+        paint_start, paint_end, paint_fail, _ = prove_p2b_paint_geo_provenance()
+        paint_source = PAINT_GEO_FILE.read_text('ascii')
+        paint_needle = 'p2b_geometry_fail:\n    moveq #0,d3'
+        require(paint_source.count(paint_needle) == 1,
+                'P2b geometry failure instruction not uniquely editable')
+        paint_edited = paint_source.replace(
+            paint_needle, 'p2b_geometry_fail:\n    moveq #1,d3')
+        changed_paint, paint_diffs = build(
+            assembler, root/'modified_paint_geometry', allow_edited=True,
+            paint_geo_text=paint_edited)
+        require(paint_diffs == [paint_fail+1],
+                f'P2b geometry edit affected {paint_diffs}, expected {[paint_fail+1]}')
+        require(unpack_ap20(changed_paint)[1][group][paint_fail:paint_fail+2]
+                == b'\x76\x01', 'P2b geometry failure MOVEQ did not assemble')
+        require(paint_start <= paint_fail < paint_end,
+                'P2b paint/geometry edit escaped authored module')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_FLIP_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_VARIANT_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
+    print('P2B_PAINT_GEOMETRY_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
