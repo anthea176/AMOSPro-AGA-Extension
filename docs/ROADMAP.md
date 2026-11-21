@@ -7,7 +7,7 @@
 | Élément | État |
 | --- | --- |
 | **Bibliothèque active** | [M19 P1c](../dist/AMOSPro_AGA.Lib), candidate WinUAE, 119 916 octets, SHA256 `658717f41e73ea0410ddcea682929d357df1a80fefd40d8ae0dece037a37613c`, 93 commandes, 190 entrées AP20, PC16 maximal 32 144. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44886543740). Gates B/C/D à tester. |
-| **ASC unique de campagne** | [Banc P1c](../tests/current/README.md), 405 frames, quatre phases hotspot, huit sondes de priorité et banque AGBO 26. Journal `RAM:M19_P1C_PRIORITY.TXT`. |
+| **ASC unique de campagne** | [M19_B8_BOB_CLEAR_UPDATE_BC_01.asc](../tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc), 405 frames, quatre phases hotspot, huit sondes de priorité et banque AGBO 26. Journal `RAM:M19_P1C_PRIORITY.TXT`. |
 | **Qualification P0** | **Gate A native MC68020 PASS : 104 contrôles préparation Chip + 121 Bank Free** (OS/Blitter simulés, [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/44801203756)). **Gate B WinUAE Runtime P0 : PASS fonctionnel sur les journaux fournis** ([rapport et limites](M19_P0_BANK_FREE_RUNTIME_B_2026-11-20.md)) ; **Gate C Compiler reportée**, Gate D matériel non testée. |
 | **LAST_GOOD promue P0** | [`dist/AMOSPro_AGA_LAST_GOOD.Lib`](../dist/AMOSPro_AGA_LAST_GOOD.Lib), **117 896 octets**, SHA256 `f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d`, **distinct de la Lib active P1c et conservé sans modification** ; [promotion](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/71ff3862929b729bb44db20294aec9b048775cbf). Ancienne R84, **67 904 octets**, SHA256 `46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d`, récupérable dans Git et par builder. Gate C P0 non testée. |
 
