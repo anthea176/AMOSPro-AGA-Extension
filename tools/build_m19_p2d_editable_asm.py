@@ -27,10 +27,13 @@ from build_m19_p1e_bank_edit_in_memory import build_p1e
 from compiler_relocation import unpack_ap20
 from audit_ap20 import inspect, parse
 from m19_p2d_bob_auto_update_emit import emit_bob_auto_update
+from m19_p2b_bob_flip_emit import emit_bob_flip
+from m19_p2b_planar_orientation020_emit import emit_planar_orientation020
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
 PLANES_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2C_PLANES_MC68020.s'
+PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
 MASTER_FILE = 'M19_P2D_AP20_SOURCE.s'
 SOURCE_NAME = 'M19_P2D_CONTROLS_MC68020.s'
@@ -39,6 +42,9 @@ END_LABEL = 'L_BOBS_0B72A:'
 P2C_START_LABEL = 'p2c_public_planes:'
 P2C_END_LABEL = 'ENTRY_BOBS_0B58C:'
 P2C_SOURCE_NAME = 'M19_P2C_PLANES_MC68020.s'
+PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
+PLANAR_START = 0xA28E
+PLANAR_END = 0xA4C0
 
 
 class SourceError(RuntimeError):
@@ -95,12 +101,69 @@ def prove_source_provenance() -> tuple[bytes, int, int, int, int, int, int]:
     return lib, group, planes, start, end, done, planes_fail
 
 
+@lru_cache(maxsize=1)
+def prove_planar_provenance() -> tuple[int, int, int, bytes]:
+    """The exact P2b materializer bytes come from the Python source emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    context = p1e['context_delta']
+    # The original P2b unit is the exact prefix of the subsequently extended P2d.
+    full, labels = emit_bob_flip(context)
+    fragment, frag_labels = emit_planar_orientation020()
+    _, parts, _ = unpack_ap20(original)
+    native, _, _ = emit_bob_auto_update(context)
+    base = len(parts[group]) - len(native)
+    start = base + labels['p2b_owner'] - len(fragment)
+    end = base + labels['p2b_owner']
+    require((start, end) == (PLANAR_START, PLANAR_END),
+            f'P2b planar source offsets changed: {start:x}..{end:x}')
+    require(parts[group][start:end] == fragment,
+            'P2b handwritten source ancestry differs from official P2d')
+    require(full[labels['p2b_owner'] - len(fragment):labels['p2b_owner']] == fragment,
+            'P2b materializer not adjacent to owned slots')
+    require('invalid' in frag_labels, 'P2b invalid label absent')
+    return start, end, start + frag_labels['invalid'], fragment
+
+
+def replace_raw_planar_block(text: str) -> str:
+    """Replace only the source-pinned 562-byte DC.B block, not other data."""
+    first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
+                  '  ; +$0A286: 53856600FFDA4E75' + '48E7CFFE\n')
+    # The source audit records a 12-byte line at $A286. The first eight
+    # bytes close p2b_purge; the next four begin the materializer.
+    # Keep the prefix as bytes, then insert the actual handwritten source.
+    start = text.find(first_line)
+    require(start >= 0, 'P2b source bytes at $A286 are not the pinned baseline')
+    stop = text.find('L_BOBS_0A4C0:', start)
+    require(stop > start, 'P2b owner data label missing after materializer')
+    original_block = text[start:stop]
+    lines = original_block.splitlines()
+    require(len(lines) > 40 and all('dc.b ' in line for line in lines),
+            'P2b materializer is not a contiguous unclassified data block')
+    from struct import pack
+    hexdump = ''.join(line.split('  ; +$')[1].split(': ')[1]
+                      for line in lines)
+    expected = bytes.fromhex(hexdump)
+    require(len(expected) == PLANAR_END - 0xA286,
+            'unclassified materializer byte coverage changed')
+    require(expected[:8] == bytes.fromhex('53856600ffda4e75'),
+            'P2b purge epilogue changed')
+    require(expected[8:] == prove_planar_provenance()[3],
+            'unclassified bytes differ from original P2b code emitter')
+    replacement = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75'
+                   '  ; +$0A286: 53856600FFDA4E75\n'
+                   '    include "' + PLANAR_SOURCE_NAME + '"\n')
+    return text[:start] + replacement + text[stop:]
+
+
 def staged_sources(folder: Path, *, module_text: str | None = None,
-                   planes_text: str | None = None) -> None:
+                   planes_text: str | None = None,
+                   planar_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
     require(PLANES_FILE.is_file(), f'missing authored module: {PLANES_FILE}')
+    require(PLANAR_FILE.is_file(), f'missing authored module: {PLANAR_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
                  'M19_P2D_UNIT156_MC68020.s'):
@@ -108,6 +171,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
+    text = replace_raw_planar_block(text)
     require(text.count(P2C_START_LABEL) == 1 and text.count(P2C_END_LABEL) == 1,
             'audited P2c assembly has ambiguous module boundaries')
     p2c_first = text.index(P2C_START_LABEL)
@@ -146,6 +210,16 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(not re.search(r'(?im)^\s*dc\.[bwll]\b', planes_source),
             'unclassified opcode/data directive inside P2c module')
     (folder / P2C_SOURCE_NAME).write_text(planes_source, encoding='ascii', newline='\n')
+    planar_source = (planar_text if planar_text is not None
+                     else PLANAR_FILE.read_text('ascii'))
+    for label in ('p2b_planar_orientation_entry:',
+                  'p2b_planar_measure:', 'p2b_planar_chip_prepare_entry:'):
+        require(planar_source.count(label) == 1,
+                f'P2b materializer source label missing: {label}')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', planar_source),
+            'unclassified opcode/data directive inside P2b materializer')
+    (folder / PLANAR_SOURCE_NAME).write_text(planar_source,
+                                            encoding='ascii', newline='\n')
 
 
 def verify_link(original: bytes, image: bytes, group: int,
@@ -163,8 +237,10 @@ def verify_link(original: bytes, image: bytes, group: int,
     require(len(parts[group]) == len(old_parts[group]),
             'BOBS size/entry offsets changed; variable-length relocation NOT supported')
     differences = [i for i, (a, b) in enumerate(zip(old_parts[group], parts[group])) if a != b]
-    require(all(planes_start <= i < control_end for i in differences),
-            'a byte outside the authored P2c/P2d modules differs from the reference')
+    planar_start, planar_end, _, _ = prove_planar_provenance()
+    require(all((planes_start <= i < control_end) or
+                (planar_start <= i < planar_end) for i in differences),
+            'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
                 f'baseline assembly differs in BOBS at {differences[:8]}')
@@ -175,10 +251,12 @@ def verify_link(original: bytes, image: bytes, group: int,
 
 def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           module_text: str | None = None,
-          planes_text: str | None = None) -> tuple[bytes, list[int]]:
+          planes_text: str | None = None,
+          planar_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
-    staged_sources(target, module_text=module_text, planes_text=planes_text)
+    staged_sources(target, module_text=module_text, planes_text=planes_text,
+                   planar_text=planar_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -225,8 +303,26 @@ def test_editability(assembler: Path) -> None:
                 == b'\x76\x01', 'P2c modified opcode did not assemble')
         require(planes_start <= planes_fail < start,
                 'P2c modified opcode escaped the authored module')
+
+        planar_start, planar_end, invalid, _ = prove_planar_provenance()
+        planar_source = PLANAR_FILE.read_text('ascii')
+        needle = 'p2b_planar_invalid:\n    moveq #0,d3'
+        require(planar_source.count(needle) == 1,
+                'P2b planar failure opcode not uniquely editable')
+        planar_edited = planar_source.replace(
+            needle, 'p2b_planar_invalid:\n    moveq #1,d3')
+        changed_planar, planar_diffs = build(
+            assembler, root/'modified_planar', allow_edited=True,
+            planar_text=planar_edited)
+        require(planar_diffs == [invalid+1],
+                f'P2b planar edit affected {planar_diffs}, expected {[invalid+1]}')
+        require(unpack_ap20(changed_planar)[1][group][invalid:invalid+2] == b'\x76\x01',
+                'P2b planar MOVEQ #1,D3 was not encoded')
+        require(planar_start <= invalid < planar_end,
+                'P2b modified opcode escaped authored materializer')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
+    print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
