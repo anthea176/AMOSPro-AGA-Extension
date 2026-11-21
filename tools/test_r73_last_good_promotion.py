@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof of promoted M19 P0 LAST_GOOD and frozen R68/R73/R81/R82/R83/R84 sources.
+"""Read-only proof of promoted M19 P1e LAST_GOOD and frozen R68/R73/R81/R82/R83/R84 sources.
 
 Retains the historical filename for existing CI invocations. R68 and R73
 are immutable deterministic build sources, independent of moving LAST_GOOD.
@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -24,7 +24,7 @@ def main():
     cur,good,label=verify_active(ROOT)
     baseline,_=build_r68()
     validated,meta=build_r73()
-    assert LAST_GOOD_SHA==P0_FREE_SHA
+    assert LAST_GOOD_SHA==P1E_SHA
     assert sha256(baseline).hexdigest()==R68_SHA, "Historical R68 source drift"
     assert len(baseline)==51064 and baseline!=cur
     assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
@@ -35,12 +35,12 @@ def main():
     assert historical_r81_meta["ap20_entries"]==77
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
-    assert len(good)==117896 and sha256(good).hexdigest()==P0_FREE_SHA, "Promoted P0 LAST_GOOD hash must be immutable"
+    assert len(good)==124444 and sha256(good).hexdigest()==P1E_SHA, "Promoted P1e LAST_GOOD hash must be immutable"
     from build_aga_r84_agapic import build as build_r84
     historical_r84,r84meta=build_r84()
     assert len(historical_r84)==67904 and r84meta['sha256']==R84_SHA
     assert sha256(historical_r84).hexdigest()==R84_SHA and historical_r84!=good
-    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA), "Active candidate not pinned"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -67,8 +67,8 @@ def main():
     promoted_report=inspect(parse(good))
     assert not promoted_report["issues"]
     named=[t for t in promoted_report['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
-    assert len(named)==89 and named[-1]['name']=='aga bob bank free'
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free"))
+    assert len(named)==96 and named[-1]['name']=='aga ins bob'
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
@@ -327,26 +327,24 @@ def main():
         if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA):
             assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     else:
-        # Promoted P0 is byte-identical to the canonical active Lib.
-        assert cur==good and sha256(cur).hexdigest()==P0_FREE_SHA
-        assert label.startswith('M19 P0 Bank Free PROMOTED')
+        # Author-promoted P1e is byte-identical to the canonical working Lib.
+        assert cur==good and sha256(cur).hexdigest()==P1E_SHA
+        assert label.startswith('M19 P1e PROMOTED LAST_GOOD')
+        from build_m19_p1e_bank_edit_in_memory import build_p1e
+        rebuilt,meta_p1e=build_p1e()
+        assert cur==rebuilt and meta_p1e['sha256']==P1E_SHA
+        assert meta_p1e['commands']==96 and meta_p1e['entries']==196
+        assert meta_p1e['pc16_max']==14130
         from build_m19_b8_s1_bank_free_in_memory import build_bank_free
-        from build_m19_ap20_islands_in_memory import build as build_islands
-        rebuilt,p0meta=build_bank_free()
-        assert cur==rebuilt and p0meta['sha256']==P0_FREE_SHA
-        assert p0meta['public_commands']==89 and p0meta['ap20_entries']==185
-        assert p0meta['native_groups']==[142,153,156,177,181] and p0meta['pc16_max']==31092
-        _,units_p0,_=unpack_ap20(cur)
-        islands,islands_meta=build_islands()
-        assert islands_meta['sha256']==AP20_ISLANDS_SHA
-        _,units_frozen,_=unpack_ap20(islands)
-        assert all(units_p0[i]==units_frozen[i] for i in (142,153,156))
+        historical_p0,p0meta=build_bank_free()
+        assert len(historical_p0)==117896 and p0meta['sha256']==P0_FREE_SHA
+        assert cur!=historical_p0
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert sha256(good).hexdigest()==P0_FREE_SHA
+    assert sha256(good).hexdigest()==P1E_SHA
     assert current.read_bytes()==cur and last_good.read_bytes()==good
     assert validated!=promoted and historical_r81!=promoted
-    print("P0 LAST_GOOD PROMOTED / HISTORICAL R84 SOURCE PINNED PASS",P0_FREE_SHA,len(good),
+    print("P1e LAST_GOOD PROMOTED / HISTORICAL R84 SOURCE PINNED PASS",P1E_SHA,len(good),
           "active bytes",len(cur),"R81 frozen parent",R81_SHA,"3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 
