@@ -126,7 +126,13 @@ def main():
                 assert units[aga_index].startswith(earlier_groups[aga_index]), "P1e altered inherited AGA/state prefix"
             else:
                 assert units[aga_index]==earlier_groups[aga_index], "B8/P0 altered frozen AGA/state unit"
-            assert units[bob_index].startswith(earlier_groups[bob_index]), "B8/P0 altered frozen Bob prefix"
+            if digest==P1E_SHA:
+                # The P1e extra BOBS stubs shifted group 181 -> 188.
+                # The source-pinned P0 prefix still descends from AP20
+                # Islands group 177, NOT from the shifted new group number.
+                assert units[bob_index].startswith(earlier_groups[177]), "P1e altered inherited Bob prefix"
+            else:
+                assert units[bob_index].startswith(earlier_groups[bob_index]), "B8/P0 altered frozen Bob prefix"
         elif digest in (B7_SHA,B7M1_SHA,B7M2_SHA):
             from build_m19_p0j_end_lifecycle_in_memory import build as build_b7, build_multiframe
             if digest==B7M2_SHA:
