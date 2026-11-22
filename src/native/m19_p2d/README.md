@@ -1,15 +1,17 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**74 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**77 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
 | [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00022..$020A2` | 8 320 |
 | [P0 Get Pipeline — capture banque et validation image](M19_P0_GET_PIPELINE_MC68020.s) | `$020CE..$03772` | 5 796 |
 | [P0j Image Gate return — epilogue ABI](M19_P0J_IMAGE_RETURN_MC68020.s) | `$06254..$06264` | 16 |
+| [P0j Prechecked Paint — validation et chemin All](M19_P0J_PRECHECKED_PAINT_MC68020.s) | `$06264..$0627E` | 26 |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
 | [P0 Relais Off/Read/Reset et retour](M19_P0_RELAY_COMMANDS_MC68020.s) | `$05A6A..$05B6E` | 260 |
+| [P0 Relay Put — entree et selecteur](M19_P0_RELAY_PUT_MC68020.s) | `$05A5C..$05A6A` | 14 |
 | [P0 Bob public et precontrole de frame](M19_P0_PUBLIC_FRAME_MC68020.s) | `$05B6E..$05CF8` | 394 |
 | [B7 Guarded Draw — callback et control End](M19_B7_GUARDED_DRAW_MC68020.s) | `$06D4E..$06EAC` | 350 |
 | [B7 End — pont AMOS et fermeture sure](M19_B7_END_MC68020.s) | `$06EAC..$06FA6` | 250 |
@@ -20,6 +22,7 @@
 | [B8 S1 Bank Return — epilogue ABI](M19_B8S1_BANK_RETURN_MC68020.s) | `$07698..$076A8` | 16 |
 | [B8 End/Register — cycle de vie et callbacks](M19_B8_END_REGISTER_MC68020.s) | `$071EE..$07364` | 362 code + 12 data |
 | [P1b HotSpot Join — jonction et pointeurs image](M19_P1B_HOTSPOT_JOIN_MC68020.s) | `$07962..$079F2` | 144 |
+| [P1b Paint Continue — jonction et drapeau clip](M19_P1B_PAINT_CONTINUE_MC68020.s) | `$079F2..$07A14` | 34 |
 | [P1b HotSpot — origine et clipping signes](M19_P1B_HOTSPOT_ORIGIN_MC68020.s) | `$07A14..$07AC2` | 174 |
 | [P1c Frame Dispatch — mode de priorite](M19_P1C_FRAME_DISPATCH_MC68020.s) | `$07AC2..$07AE8` | 38 |
 | [P1c Priority — reglage 0 a 3 et retour AMOS](M19_P1C_PRIORITY_MC68020.s) | `$07B84..$07BBA` | 54 |
@@ -78,7 +81,7 @@
 | [P2d Public Query Head — resultat AMOS](M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s) | `$0EDD0..$0EDF4` | 36 |
 | [P2d Public Query Tail — epilogue d'ABI](M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s) | `$0EDF4..$0EE00` | 12 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **56 000** |
+| **Total de code ASM propre** | | **56 074** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -253,6 +256,20 @@ une mutation d'un octet par module du lot. Le test groupe couvre
 desormais **29 modules source-verifies**. Les segments non classes,
 notamment les zones `dc.b`, ne sont pas reinterpretés comme code.
 Aucune modification des Lib officielles, des ASC ni des Gates B/C/D.
+
+Le treizieme lot convertit **74 octets d'instructions / 3 modules**
+provenant des zones auparavant `dc.b` : P0 Relay Put
+(`$05A5C..$05A6A`, 14 octets), P0j Prechecked Paint
+(`$06264..$0627E`, 26 octets) et P1b Paint Continue
+(`$079F2..$07A14`, 34 octets). Le fichier d'audit demeure intact.
+L'extracteur accepte ces trois ilots uniquement si les octets bruts
+et leurs offsets concordent avec les deux emetteurs sources P2c/P2d
+SHA-epingles ; les nouvelles sources ASM redigees explicitement
+sont ensuite assemblees directement en mode MC68020 avec comparaison
+byte-exact de l'AP20 officiel, plus une mutation distincte par module.
+Le controle d'edition groupee couvre maintenant **32 modules**.
+Les **708 octets** residuels `dc.b` dans BOBS doivent rester analyses
+avant migration ; aucune bibliotheque ni ASC modifie.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

@@ -36,6 +36,7 @@ class Region:
     end_marker: str | None = None
     staged_end_marker: str | None = None
     start_marker: str | None = None
+    raw_code: bool = False
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -235,6 +236,29 @@ REGIONS = (
            'P2D_QUERY_RETURN_ZERO', 0, 1, 0x0EDFD, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            end_marker='__BOBS_EOF__'),
+    Region('P0_RELAY_PUT', 'M19_P0_RELAY_PUT_MC68020.s',
+           0x05A5C, 0x05A6A, '', '',
+           '    move.l #$00000000,d7',
+           '    move.l #P0_RELAY_PUT_OFFSET,d7',
+           'P0_RELAY_PUT_OFFSET', 0, 1, 0x05A65, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           start_marker='relay_put_entry:', raw_code=True),
+    Region('P0J_PRECHECKED_PAINT', 'M19_P0J_PRECHECKED_PAINT_MC68020.s',
+           0x06264, 0x0627E, '', '',
+           '    moveq #0,d2',
+           '    moveq #P0J_PRECHECK_RETURN_D2,d2',
+           'P0J_PRECHECK_RETURN_D2', 0, 1, 0x0627B, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           start_marker='routed_paint_prechecked_entry:', raw_code=True),
+    Region('P1B_PAINT_CONTINUE', 'M19_P1B_PAINT_CONTINUE_MC68020.s',
+           0x079F2, 0x07A14, '', '',
+           '    move.l #$00000001,116(a4)',
+           '    move.l #P1B_PAINT_CLIPPED_FLAG,116(a4)',
+           'P1B_PAINT_CLIPPED_FLAG', 1, 2, 0x07A0D, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='L_BOBS_07A14:',
+           staged_end_marker='    include "M19_P1B_HOTSPOT_ORIGIN_MC68020.s"',
+           start_marker='p2b_paint_continue:', raw_code=True),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -347,6 +371,7 @@ def extract(text, spec, bytes_expected, *, staged=False):
     require(i >= 0 and j > i and text.find(first,i+len(first)) < 0,
             'audit boundaries missing/ambiguous: '+spec.name)
     result,actual,offset,pseudo = [],bytearray(),spec.start,0
+    raw_lines = 0
     for line in text[i+len(first):j].splitlines():
         if LABEL.fullmatch(line):
             result.append(line)
@@ -359,16 +384,30 @@ def extract(text, spec, bytes_expected, *, staged=False):
         code = bytes.fromhex(match.group(2))
         require(int(match.group(1),16) == offset, 'audit gap at %05X' % offset)
         if DATA.match(inst):
-            require(PSEUDO.fullmatch(inst) is not None and len(code)==6 and
-                    code[:4] == bytes.fromhex('fe11f700'),
-                    'data/unverified pseudo-opcode: '+inst)
-            pseudo += 1
+            if spec.raw_code:
+                require(inst.lstrip().lower().startswith('dc.b '),
+                        'raw island contains non-byte data: '+spec.name)
+                raw_lines += 1
+            else:
+                require(PSEUDO.fullmatch(inst) is not None and len(code)==6 and
+                        code[:4] == bytes.fromhex('fe11f700'),
+                        'data/unverified pseudo-opcode: '+inst)
+                pseudo += 1
+        else:
+            require(not spec.raw_code,
+                    'mixed raw bytes and mnemonic instructions: '+spec.name)
         actual.extend(code)
         offset += len(code)
         result.append(inst)
     require(offset == spec.stop and bytes(actual)==bytes_expected and
             pseudo==spec.pseudo_count,
             'P1e audit/emitter bytes or AMOS ABI count changed: '+spec.name)
+    if spec.raw_code:
+        require(raw_lines > 0 and len(result) == raw_lines,
+                'raw code island contains labels/unclassified instructions: '+spec.name)
+        # The native module is handwritten; source-built bytes plus direct
+        # MC68020 vasm AP20 byte identity, not disassembly, prove correctness.
+        return ''
     body = '\n'.join(result).rstrip()+'\n'
     require(body.count(spec.needle)==1, 'editable instruction not unique')
     return body.replace(spec.needle,spec.replacement)
@@ -426,10 +465,24 @@ def quick_edits():
 
 def check_sources(audit,evidence,compare_files=True):
     for spec in REGIONS:
-        source = render(spec,extract(audit,spec,evidence[spec.name]))
-        if compare_files:
-            require((NATIVE/spec.file).read_text('ascii') == source,
-                    'authored module differs from emitter proof: '+spec.file)
+        body = extract(audit,spec,evidence[spec.name])
+        if spec.raw_code:
+            source = (NATIVE/spec.file).read_text('ascii')
+            header = render(spec,'')
+            require(source.startswith(header) and
+                    source.count(spec.replacement)==1 and
+                    source.endswith('\n'),
+                    'invalid authored raw island header: '+spec.name)
+            actual_body = source[len(header):]
+            require(bool(actual_body.strip()) and
+                    not any(DATA.match(line) for line in actual_body.splitlines()),
+                    'authored raw island must be mnemonic ASM: '+spec.name)
+            # The direct MC68020 assembly and final P2d SHA prove bytes.
+        else:
+            source = render(spec,body)
+            if compare_files:
+                require((NATIVE/spec.file).read_text('ascii') == source,
+                        'authored module differs from emitter proof: '+spec.file)
         print('BOBS_SOURCE_PROVEN %s %d bytes' %
               (spec.name,spec.stop-spec.start))
 
