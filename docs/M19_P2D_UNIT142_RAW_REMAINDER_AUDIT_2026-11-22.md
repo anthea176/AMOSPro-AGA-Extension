@@ -1,4 +1,29 @@
-# UNIT142 — audit du reliquat brut : 12 298 initiaux, 7 144 restants (22/11/2026)
+# UNIT142 — audit du reliquat brut : 12 298 initiaux, 6 428 restants (22/11/2026)
+
+## Etat courant — lots 172-173 : R83 Screen Open, Gate A PASS
+
+**137 modules UNIT142**, **56 312 / 62 740 octets (89,76 %)**
+de vrai code MC68020 ; **6 428 octets bruts preserves**.
+Les 756 octets de Screen Open R83 sont reproduits par l'emetteur
+historique, dont 356 + 360 octets d'ASM editable, 36 octets de noms
+de bibliotheques et 4 octets de `GetP`.
+[Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45055315521),
+avec SHA P2d identique et **137 mutations**.
+
+| Nature non executable, prouvee par source | Octets |
+| --- | ---: |
+| Etat/tables/noms de bibliotheques | 3 692 |
+| Pseudo-appels AMOS Main (45 x 6) | 270 |
+| Marqueurs GetP (48 x 4) | 192 |
+| Signatures AGACBLK / AGAPIC | 32 |
+| **Total non executable source-prouve** | **4 186** |
+| **Reliquat non classifie** | **2 242** |
+
+Ce reliquat demeure en directives brutes. Les 2 242 octets
+ne sont ni declares padding ni consideres automatiquement du
+code : la provenance des emetteurs et le contrat de controle
+sont requis avant toute conversion.
+L'audit R83 `$0005A..$002A2` est une nouvelle piste, non acquise.
 
 ## Etat actuel — lots 170-171 et inventaire source (Gate A PASS)
 

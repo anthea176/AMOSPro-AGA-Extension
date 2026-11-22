@@ -1,5 +1,31 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 172-173 : Screen Open R83 Gate A PASS
+
+**237 modules ASM MC68020**, dont **137 UNIT142** :
+**56 312 / 62 740 octets (89,76 %)** en source executable.
+La routine Screen Open historique R83 (756 octets) est reproduite
+par l'emetteur original et appelee par P1c. Deux modules ASM
+contiennent **716 octets d'instructions**, y compris le NOP original ;
+36 octets de noms de bibliotheques et 4 octets `GetP` restent des donnees.
+
+[Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45055315521) :
+reconstruction P2d 136 020 octets et SHA256 exact,
+assemblage direct vasm et **137 mutations isolees**.
+[Migration 172-173](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/d93220538c8ddd5955b941478a58724e110b5821).
+
+**6 428 octets bruts UNIT142** : **4 186 octets source-prouves
+non executables** (3 692 tables, etat et noms, 270 Rjsr,
+192 GetP, 32 signatures) et **2 242 octets encore non classifies**.
+[Audit source PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45055315521).
+[Inventaire](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+L'audit R83 de fermeture `$0005A..$002A2` reste exploratoire.
+
+Lib P2d et LAST_GOOD SHA256
+`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`,
+ASC actuel intacts. Pas de branche distincte ni de nouvelle
+Gate B WinUAE, C Compiler ou D materiel.
+
 ## 22 novembre 2026 — UNIT142 lots 170-171 : P1c/P1d Gate A PASS
 
 **235 modules ASM MC68020**, dont **135 UNIT142** : **55 596 /

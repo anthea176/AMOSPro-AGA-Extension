@@ -974,12 +974,13 @@ Deux modules Motorola MC68020 recuperent **716 octets executables** :
 
 Les 36 octets des noms `intuition.library` / `graphics.library`
 et le delimitateur AMOS `GetP` (4 octets) ne sont pas des instructions
-et restent dans le wrapper. Deux edits `moveq` independants sont prevus.
+et restent dans le wrapper. Deux edits `moveq` independants sont valides en Gate A.
 
-**Projection a valider en Gate A : 237 modules ASM**, dont 137 UNIT142 ;
-**56 312 / 62 740 octets (89,76 %)** de code UNIT142, **6 428 octets
-bruts**. La classification source devrait isoler **4 186 octets
-non executables et 2 242 octets encore indetermines**.
+**Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45055315521) : 237 modules ASM**, dont 137 UNIT142 ;
+**56 312 / 62 740 octets (89,76 %)** de code, **6 428 octets bruts**.
+P2d reassemble byte-identique, **137 edits confines**.
+L'inventaire source prouve **4 186 octets non executables** et
+conserve **2 242 octets non classifies**.
 Aucune nouvelle Gate B/C/D ; les Lib P2d, LAST_GOOD et l'ASC restent intacts.
 
 ## Compilation directe (Windows)
