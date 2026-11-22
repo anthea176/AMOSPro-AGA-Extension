@@ -932,8 +932,9 @@ restaure. La source P0f historique impose les deplacements respectifs
 isolees (+2 sur la destination), sans toucher a la Lib.
 
 Seul le pseudo-appel AMOS Main `FE11 F700 031D` (6 octets) reste brut.
-**Projection en attente Gate A : 233 modules ASM**, dont **133 UNIT142**,
+**Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45051866506) : 233 modules ASM**, dont **133 UNIT142**,
 **55 508 / 62 740 octets (88,47 %)** et **7 232 octets bruts**.
+Les 133 edits isoles et la reconstruction P2d SHA256 ont ete valides.
 
 ## Compilation directe (Windows)
 

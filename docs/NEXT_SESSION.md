@@ -1,5 +1,25 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 168-169 P0f BSR.W : Gate A PASS
+
+Les deux branches MC68020 `BSR.W` a destination des entrees P0e
+Put/Read sont restaurees en ASM source, selon les deplacements emetteurs
+`F1DE` et `F2BC`. Les corrections de commentaires ont retabli le
+controle strict source-vers-fichier sans modifier les opcodes.
+
+**233 modules ASM MC68020**, dont **133 UNIT142** :
+**55 508 / 62 740 octets UNIT142 (88,47 %)**, **7 232 octets**
+encore bruts. La [Gate A source](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45051866506)
+est **PASS**, avec assemblage vasm direct, reconstruction P2d
+SHA256 exacte et **133 modifications isolees**.
+
+[Correctif BSR.W](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/64deeffc92de2fd35ef927bba025e5082aa291e0).
+**Chantier suivant** : preuve de la fin de UNIT142 via les builders
+historiques P1c/P1d, [sonde lecture seule](../tools/m19_p2d_unit142_p1cd_open_probe.py)
+en CI. Aucune migration P1c/P1d acquise tant que vasm n'a pas confirme
+le code. P2d, LAST_GOOD et l'ASC actif inchanges ; aucune Gate B/C/D
+nouvelle.
+
 ## 22 novembre 2026 — UNIT142 lot 162 P0e Object Table : Gate A PASS
 
 **Etat source actuel : 226 modules ASM MC68020**, dont **126 UNIT142**,

@@ -1,6 +1,19 @@
-# UNIT142 — audit des directives brutes : 12 298 initiaux, 8 894 restants (22/11/2026)
+# UNIT142 — audit du reliquat brut : 12 298 initiaux, 7 232 restants (22/11/2026)
 
-## Etat courant — lot 162 P0e valide
+## Etat courant — lots 168-169 P0f BSR.W Gate A PASS
+
+**133 modules UNIT142** : **55 508 / 62 740 octets (88,47 %)**
+en mnemoniques source, **7 232 octets bruts** conserves.
+Les deux `BSR.W` de 4 octets sont prouvés par l'emetteur P0f
+et les adresses symboliques de P0e. [CI Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45051866506) :
+vasm direct, 133 mutations, AP20 et SHA P2d exacts.
+
+Le code des Open wrappers P1c/P1d et leurs tables se trouvent
+a l'extremite du groupe UNIT142. [Sonde source en cours](../tools/m19_p2d_unit142_p1cd_open_probe.py) :
+aucune nouvelle classification avant comparaison des emitters et
+du resultat vasm.
+
+## Historique — lot 162 P0e valide
 
 **126 modules UNIT142 : 53 846 / 62 740 octets en ASM (85,82 %)** ;
 **8 894 octets bruts**. Les **788 octets de code P0e** ont ete
