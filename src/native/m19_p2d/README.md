@@ -1,9 +1,10 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**51 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**54 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
+| [B7 Guarded Draw — callback et control End](M19_B7_GUARDED_DRAW_MC68020.s) | `$06D4E..$06EAC` | 350 |
 | [B7 End — pont AMOS et fermeture sure](M19_B7_END_MC68020.s) | `$06EAC..$06FA6` | 250 |
 | [B7/B8 Draw/Close — relais et garde End](M19_B7_B8_DRAW_BRIDGE_MC68020.s) | `$06FA6..$071E8` | 578 |
 | [B8 S1 Bank Free — registre, Chip et 64 objets](M19_B8S1_BANK_FREE_MC68020.s) | `$076A8..$07962` | 698 |
@@ -41,6 +42,8 @@
 | [P0i Routed Paint — banque privée et Blitter Safe](M19_P0I_ROUTED_PAINT_MC68020.s) | `$05CF8..$05F30` | 568 |
 | [P0j Frame Image Gate — validation images avant rendu](M19_P0J_IMAGE_GATE_MC68020.s) | `$05F30..$06254` | 804 |
 | [P0j Explicit Bank — resolution banque/Chip et Safe](M19_P0J_EXPLICIT_BANK_MC68020.s) | `$0627E..$0685C` | 1 502 |
+| [P0j Safe Tail — validation finale des buffers](M19_P0J_SAFE_TAIL_MC68020.s) | `$0685C..$068FA` | 158 |
+| [P1b Frame/Guard — dessin, barrières, fermeture](M19_P1B_FRAME_GUARD_MC68020.s) | `$06902..$06D36` | 1 076 |
 | [P2a Pair Check — lecture sécurisée Bob/P0f](M19_P2A_PAIR_CHECK_MC68020.s) | `$08A6E..$08BB6` | 328 |
 | [P2a Geometry — deux descripteurs et limites](M19_P2A_GEOMETRY_MC68020.s) | `$0918A..$09858` | 1 742 |
 | [P2a HotSpot — lecture et revalidation AGBO](M19_P2A_HOTSPOT_MC68020.s) | `$08E20..$0918A` | 874 |
@@ -55,7 +58,7 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **17 116** |
+| **Total de code ASM propre** | | **18 700** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -107,7 +110,14 @@ routines P0j/B7/B8 : `$05F30..$06254` (804 octets, un appel AMOS Main),
 `$0627E..$0685C` (1 502 octets, deux appels AMOS Main),
 `$06FA6..$071E8` (578 octets) et `$07364..$07698` (820 octets).
 Le controle collectif modifie un octet de chaque nouveau module dans une
-seule reconstruction AP20. Les sous-plages avec octets non classes ou donnees
+seule reconstruction AP20.
+Le troisieme lot ajoute **1 584 octets** (3 modules) : P0j Safe Tail
+`$0685C..$068FA` (158), P1b Frame/Guard `$06902..$06D36` (1 076)
+et B7 Guarded Draw `$06D4E..$06EAC` (350). Le controle source verifie les
+offsets et octets contre l'emetteur Python d'origine et le groupe BOBS P2d ;
+la CI recalcule l'AP20 complet et teste une edition par module du lot.
+
+ Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,
 `$071E8..$071EE`, `$07698..$076A8`) sont sciemment laissees
 hors des nouvelles inclusions. Les mnemoniques d'audit ne constituent
