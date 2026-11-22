@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, LAST_GOOD_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, P2D_SHA, LAST_GOOD_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,7 +48,29 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2A_SHA):
+    if digest == P2D_SHA:
+        # The active P2d is multi-unit Compiler V2, not an R82-style
+        # single-unit wrapper. Rebuild P2d from the authoritative emitters,
+        # verify the inherited state unit, then audit the original R82 LEAs.
+        from active_library import verify_active
+        from build_m19_p2d_in_memory import build_p2d
+        from build_aga_r84_agapic import build as build_r84
+        from build_agapic_v2_r82_full_preview import build as build_r82
+        candidate, meta = build_p2d()
+        assert image == candidate and meta['sha256'] == P2D_SHA
+        assert len(image) == 136020 and (meta['commands'], meta['entries']) == (100, 203)
+        active, frozen, _ = verify_active(BINARY.parent.parent)
+        assert active == frozen == image and LAST_GOOD_SHA == P2D_SHA
+        _, units, _ = unpack_ap20(image)
+        r84, r84_meta = build_r84()
+        assert len(r84) == 67904 and r84_meta['sha256'] == R84_SHA
+        _, r84_units, _ = unpack_ap20(r84)
+        assert len(units) == 203 and units[142].startswith(r84_units[84])
+        assert units[meta['group']].startswith(DISPATCH_V2)
+        ancestor, _ = build_r82()
+        assert sha256(ancestor).hexdigest() == R82_SHA
+        _, parts = unwrap_native_parts_v2(ancestor)
+    elif digest in (R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2A_SHA):
         # Modular V2 groups cannot be read as a single V2 monolith.
         # P0c redirects public Close to its BOBS unit, so only the real
         # multi-unit segment table and pinned builder may certify its identity.
@@ -228,7 +250,7 @@ def main():
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
     negative_cases(parts)
-    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; B7/B8/P0/P1e source-built modular AGA group verified against independently rebuilt R84")
+    print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; active SHA-pinned multi-unit input-state lineage verified against R82/R84")
 
 if __name__=="__main__":
     main()
