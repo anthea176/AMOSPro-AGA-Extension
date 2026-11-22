@@ -10,6 +10,7 @@ on:
       - 'tools/m19_p2d_unit142_p0f_identity_preview.py'
       - 'tools/m19_p2d_unit142_p1cd_open_probe.py'
       - 'tools/m19_p2d_unit142_legacy_open_preview.py'
+      - 'tools/m19_p2d_unit142_legacy_close_preview.py'
       - 'tools/m19_p2d_unit142_raw_probe.py'
       - 'tools/m19_p2d_unit142_tail_preview.py'
       - 'tools/m19_p2d_unit142_tail_preview.py'
@@ -46,7 +47,7 @@ jobs:
       - name: Verify CPU policy, Python syntax and source-backed batch
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py tools/m19_p2d_unit142_source.py tools/m19_p2d_unit156_nibble.py tools/m19_p2d_unit153_source.py tools/m19_p2d_unit142_tail_preview.py tools/m19_p2d_unit142_raw_probe.py tools/m19_p2d_unit142_cblock_preview.py tools/m19_p2d_unit142_p0f_identity_preview.py tools/m19_p2d_unit142_p1cd_open_probe.py tools/m19_p2d_unit142_legacy_open_preview.py
+          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py tools/m19_p2d_unit142_source.py tools/m19_p2d_unit156_nibble.py tools/m19_p2d_unit153_source.py tools/m19_p2d_unit142_tail_preview.py tools/m19_p2d_unit142_raw_probe.py tools/m19_p2d_unit142_cblock_preview.py tools/m19_p2d_unit142_p0f_identity_preview.py tools/m19_p2d_unit142_p1cd_open_probe.py tools/m19_p2d_unit142_legacy_open_preview.py tools/m19_p2d_unit142_legacy_close_preview.py
           python -B tools/m19_p2d_bobs_raw_inventory.py --self-test
           python -B tools/m19_p2d_bobs_raw_inventory.py --check
           python -B tools/m19_p2d_asm_batch.py --check
@@ -121,6 +122,9 @@ jobs:
       - name: Explore R83 source ownership of legacy AGA Screen Open
         run: |
           python -B tools/m19_p2d_unit142_legacy_open_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
+      - name: Probe historical R83 AGA Close/End and 40-byte state
+        run: |
+          python -B tools/m19_p2d_unit142_legacy_close_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
       - name: UNIT153 triple-module isolated one-byte edit gate
         run: |
           python -B tools/m19_p2d_unit153_source.py --self-test-edit --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --staged "$RUNNER_TEMP/p2d_asm_baseline"
