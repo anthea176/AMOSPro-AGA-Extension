@@ -8654,50 +8654,7 @@ L_BOBS_08498:
 L_BOBS_084C6:
     include "M19_P1E_EDIT_PUBLISH_MC68020.s"
 L_BOBS_08516:
-edit_selection:
-    lea L_BOBS_020A2(pc),a0                            ; +$08516: 41FA9B8A
-    move.l 36(a2),d0                                   ; +$0851A: 202A0024
-    cmp.l (a0),d0                                      ; +$0851E: B090
-    bne.w L_BOBS_08542                                 ; +$08520: 66000020
-    move.l (a2),d0                                     ; +$08524: 2012
-    cmp.l 4(a0),d0                                     ; +$08526: B0A80004
-    bne.w L_BOBS_08542                                 ; +$0852A: 66000016
-    move.l 48(a2),d0                                   ; +$0852E: 202A0030
-    cmp.l 8(a0),d0                                     ; +$08532: B0A80008
-    bne.w L_BOBS_08542                                 ; +$08536: 6600000A
-    move.l 8(a2),d0                                    ; +$0853A: 202A0008
-    move.l d0,4(a0)                                    ; +$0853E: 21400004
-L_BOBS_08542:
-edit_update_refs:
-    movea.l 92(a2),a4                                  ; +$08542: 286A005C
-    movea.l 96(a2),a6                                  ; +$08546: 2C6A0060
-    move.l #$00000040,d7                               ; +$0854A: 2E3C00000040
-L_BOBS_08550:
-edit_commit_slot:
-    tst.l 16(a4)                                       ; +$08550: 4AAC0010
-    beq.w L_BOBS_085A6                                 ; +$08554: 67000050
-    move.l 36(a2),d0                                   ; +$08558: 202A0024
-    cmp.l (a4),d0                                      ; +$0855C: B094
-    bne.w L_BOBS_085A6                                 ; +$0855E: 66000046
-    move.l 4(a4),d0                                    ; +$08562: 202C0004
-    move.l 20(a2),d1                                   ; +$08566: 222A0014
-    beq.w L_BOBS_08588                                 ; +$0856A: 6700001C
-    cmp.l 16(a2),d0                                    ; +$0856E: B0AA0010
-    bcs.w L_BOBS_08588                                 ; +$08572: 65000014
-    cmp.l d1,d0                                        ; +$08576: B081
-    bhi.w L_BOBS_08588                                 ; +$08578: 6200000E
-    move.l #$00000000,16(a4)                           ; +$0857C: 297C000000000010
-    bra.w L_BOBS_085A6                                 ; +$08584: 60000020
-L_BOBS_08588:
-edit_refresh_stamp:
-    move.l 8(a2),d0                                    ; +$08588: 202A0008
-    move.l d0,(a6)                                     ; +$0858C: 2C80
-    move.l 68(a2),d0                                   ; +$0858E: 202A0044
-    move.l d0,4(a6)                                    ; +$08592: 2D400004
-    move.l 48(a2),d0                                   ; +$08596: 202A0030
-    move.l d0,8(a6)                                    ; +$0859A: 2D400008
-    move.l 12(a2),d0                                   ; +$0859E: 202A000C
-    move.l d0,12(a6)                                   ; +$085A2: 2D40000C
+    include "M19_P1E_EDIT_STAMPS_MC68020.s"
 L_BOBS_085A6:
 edit_commit_next:
     adda.l #$00000018,a4                               ; +$085A6: D9FC00000018
