@@ -29,6 +29,8 @@ MODULE11 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_POINTER_MC68020.s"
 MODULE12 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_VALIDATION_MC68020.s"
 MODULE13 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_FINAL_MC68020.s"
 MODULE14 = ROOT / "src/native/m19_p2d/M19_UNIT153_DISPATCH_V2_MC68020.s"
+MODULE15 = ROOT / "src/native/m19_p2d/M19_UNIT153_WALK_COPY_TAIL_MC68020.s"
+MODULE16 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_PIXEL_STEP_MC68020.s"
 GROUP_SIZE = 0x15B6
 GROUP_SHA = "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700"
 START = "ENTRY_UNIT153_00372:\n"
@@ -121,6 +123,51 @@ HEADER14 = (
     "; UNIT153+$00000..$00022, 34 executable bytes, ABI unchanged.\n"
     "UNIT153_DISPATCH_STACK_BYTES equ 4\n\n"
 )
+HEADER15 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; UNIT153 P2d source-backed walk/copy completion $00EDA..$00F04.\n"
+    "; CPU MC68020, 42 exact instruction bytes; no AMOS linker bytes.\n"
+    "UNIT153_WALK_COPY_RESULT equ 1\n\n"
+)
+BODY15 = """L_UNIT153_00EDA:
+    subq.l #1,d6
+L_UNIT153_00EDC:
+    move.b (a0)+,(a1)+
+    dbra d6,L_UNIT153_00EDC
+    move.l 76(a2),d0
+    move.l a0,d5
+    add.l d0,d5
+    movea.l d5,a0
+    move.l 80(a2),d0
+    move.l a1,d5
+    add.l d0,d5
+    movea.l d5,a1
+    dbra d7,L_UNIT153_00ED6
+    move.l #UNIT153_WALK_COPY_RESULT,d3
+    bra.w L_UNIT153_00F0A
+"""
+HEADER16 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; UNIT153 P2d source-backed third-pixel loop $014F8..$0151A.\n"
+    "; CPU MC68020, 34 exact instruction bytes; no AMOS linker bytes.\n"
+    "UNIT153_THIRD_PIXEL_ADVANCE equ 1\n\n"
+)
+BODY16 = """L_UNIT153_014F8:
+    move.l 100(a2),d0
+    move.l a0,d1
+    add.l d0,d1
+    movea.l d1,a0
+    move.l 104(a2),d0
+    add.l d0,d4
+    move.l 4(a2),d0
+    cmp.l d0,d4
+    bcs.w L_UNIT153_01516
+    sub.l d0,d4
+    addq.l #UNIT153_THIRD_PIXEL_ADVANCE,a0
+L_UNIT153_01516:
+    dbra d6,L_UNIT153_014F4
+"""
+
 EXTRA_SPANS = (
     (
         MODULE2,
@@ -310,10 +357,61 @@ def expected_sources():
         body = "\n".join(out_lines).rstrip()+"\n"
         demand(body.count(old) == 1 and wrapper.count(original_span) == 1,
                "UNIT153 extra edit anchor/replace ambiguous: "+path.name)
+        # These two branch targets are actual instruction starts in the
+        # source-pinned P2d group. Named labels add no bytes.
+        if path == MODULE8:
+            tail = "    bra.w L_UNIT153_00F50\n"
+            demand(body.endswith(tail),
+                   "UNIT153 previous loop anchor $00ED6 not at module8 end")
+            body = body[:-len(tail)] + "L_UNIT153_00ED6:\n" + tail
+        if path == MODULE12:
+            tail = "    bra.w L_UNIT153_0158C\n"
+            demand(body.endswith(tail),
+                   "UNIT153 previous loop anchor $014F4 not at module12 end")
+            body = body[:-len(tail)] + "L_UNIT153_014F4:\n" + tail
         authored = head + body.replace(old, new)
         wrapper = wrapper.replace(original_span,
             '    include "' + path.name + '"\n')
         extras.append((lo, bytes(native), path, authored))
+    # The last two historical tails were preserved as raw audit bytes.
+    # Their exact bytes are extracted from the SHA-pinned source audit and
+    # verified against build_p2d() before accepting the editable source.
+    for path, lo, hi, expected, authored in (
+        (MODULE15, 0x00EDA, 0x00F04,
+         bytes.fromhex(
+             "538612D851CEFFFC202A004C2A08DA802045202A00502A09"
+             "DA80224551CFFFDE263C0000000160000008"),
+         HEADER15 + BODY15),
+        (MODULE16, 0x014F8, 0x0151A,
+         bytes.fromhex(
+             "202A00642208D2802041202A0068D880202A0004B880"
+             "650000069880528851CEFFDC"),
+         HEADER16 + BODY16),
+    ):
+        at = lo
+        lines = []
+        original_bytes = bytearray()
+        for line in audit.splitlines(keepends=True):
+            match = ANNOT.search(line.rstrip("\n"))
+            if match is None:
+                continue
+            offset = int(match.group(1), 16)
+            if lo <= offset < hi:
+                demand(offset == at and line.lstrip().startswith("dc.b "),
+                       "UNIT153 original raw tail not contiguous: " + path.name)
+                payload = bytes.fromhex(match.group(2))
+                lines.append(line)
+                original_bytes.extend(payload)
+                at += len(payload)
+        demand(at == hi and original_bytes == expected and
+               len(expected) == hi-lo,
+               "UNIT153 original raw tail bytes/source offset drift: " + path.name)
+        original_span = "".join(lines)
+        demand(wrapper.count(original_span) == 1,
+               "UNIT153 raw tail wrapper replacement ambiguous: " + path.name)
+        wrapper = wrapper.replace(original_span,
+                                  '    include "' + path.name + '"\n')
+        extras.append((lo, bytes(original_bytes), path, authored))
     return bytes(raw), module, wrapper, extras
 
 
@@ -336,7 +434,36 @@ def verify(official):
                "UNIT153 extra source-built bytes differ: "+path.name)
         demand(path.read_text("ascii") == authored,
                "UNIT153 extra authored module differs: "+path.name)
-    print("UNIT153_SOURCE_PROVEN: 5414 bytes / 14 modules, group", group)
+    # There are exactly 68 bytes of ABI metadata in this 5,558-byte group.
+    # Anything neither source-owned code nor a proven ABI record is rejected.
+    coverage = bytearray(GROUP_SIZE)
+    owned = ((0x00372, raw),) + tuple((lo, code) for lo, code, _, _ in extras)
+    for lo, code in owned:
+        hi = lo + len(code)
+        demand(0 <= lo < hi <= GROUP_SIZE and
+               coverage[lo:hi] == bytes(hi-lo),
+               "UNIT153 overlapping or invalid source-owned code")
+        coverage[lo:hi] = b"\x01" * (hi-lo)
+    amos_main = bytes.fromhex("FE11F700031D")
+    records = (
+        (0x00108, amos_main), (0x00362, b"c2p.library\x00"),
+        (0x0036E, b"GetP"), (0x00530, amos_main),
+        (0x00946, b"GetP"), (0x009FE, b"GetP"),
+        (0x00BD4, amos_main), (0x00C98, amos_main),
+        (0x00F9C, b"GetP"), (0x011A6, amos_main),
+        (0x0126A, amos_main), (0x015B2, b"GetP"),
+    )
+    for lo, literal in records:
+        hi = lo + len(literal)
+        demand(coverage[lo:hi] == bytes(hi-lo) and
+               groups[group][lo:hi] == literal,
+               "UNIT153 AMOS ABI metadata unproven or overlaps code")
+        coverage[lo:hi] = b"\x02" * len(literal)
+    demand(coverage.count(1) == 5490 and coverage.count(2) == 68 and
+           coverage.count(0) == 0 and len(extras) == 15,
+           "UNIT153 remaining unclassified native bytes")
+    print("UNIT153_SOURCE_PROVEN: 5490 bytes / 16 modules, group", group)
+    print("UNIT153_REMAINDER_CLASSIFIED: 68 ABI bytes; 0 unclassified")
     return group
 
 
@@ -344,7 +471,7 @@ def stage(folder, official):
     verify(official)
     (folder / "M19_P2D_UNIT153_MC68020.s").write_bytes(WRAPPER.read_bytes())
     (folder / MODULE.name).write_bytes(MODULE.read_bytes())
-    for path in (MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14):
+    for path in (MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14, MODULE15, MODULE16):
         (folder / path.name).write_bytes(path.read_bytes())
 
 
@@ -353,7 +480,7 @@ def edit_gate(staged, assembler):
     group = verify(reference)
     demand((staged / "M19_P2D_UNIT153_MC68020.s").is_file() and
            all((staged / module.name).is_file()
-               for module in (MODULE, MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14)) and
+               for module in (MODULE, MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14, MODULE15, MODULE16)) and
            (staged / "M19_P2D_AP20_SOURCE.s").is_file(),
            "UNIT153 staging incomplete")
     with TemporaryDirectory(prefix="unit153_source_edit_") as tmp:
@@ -387,6 +514,10 @@ def edit_gate(staged, assembler):
              "UNIT153_THIRD_FINAL_ZERO equ 1"),
             (MODULE14, "UNIT153_DISPATCH_STACK_BYTES equ 4",
              "UNIT153_DISPATCH_STACK_BYTES equ 3"),
+            (MODULE15, "UNIT153_WALK_COPY_RESULT equ 1",
+             "UNIT153_WALK_COPY_RESULT equ 2"),
+            (MODULE16, "UNIT153_THIRD_PIXEL_ADVANCE equ 1",
+             "UNIT153_THIRD_PIXEL_ADVANCE equ 2"),
         ):
             source = (folder / module.name).read_text("ascii")
             demand(source.count(old) == 1,
@@ -414,11 +545,12 @@ def edit_gate(staged, assembler):
                     0xCA5: (24, 25), 0xF09: (0, 1),
                     0xFE7: (0, 1), 0x11B3: (24, 25),
                     0x1277: (24, 25), 0x1545: (0, 1),
-                    0x0000: (0x59, 0x57)}
+                    0x0000: (0x59, 0x57),
+                    0x0EFF: (1, 2), 0x1514: (0x52, 0x54)}
         demand(diffs == sorted(expected) and
                all((lhs[i], rhs[i]) == pair for i, pair in expected.items()),
                "UNIT153 grouped one-byte mutations drift")
-    print("UNIT153_EDIT_TEST_PASS: 14 exact one-byte mutations in UNIT153 only")
+    print("UNIT153_EDIT_TEST_PASS: 16 exact one-byte mutations in UNIT153 only")
 
 
 def main():

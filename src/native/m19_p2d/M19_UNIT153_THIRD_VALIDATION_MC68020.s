@@ -189,4 +189,5 @@ L_UNIT153_014B0:
     move.l 112(a2),d4
     move.l 84(a2),d6
     subq.l #1,d6
+L_UNIT153_014F4:
     bra.w L_UNIT153_0158C

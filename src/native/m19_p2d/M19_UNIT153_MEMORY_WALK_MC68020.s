@@ -167,4 +167,5 @@ L_UNIT153_00E62:
     movea.l 72(a2),a1
     move.l 8(a2),d7
     subq.l #1,d7
+L_UNIT153_00ED6:
     bra.w L_UNIT153_00F50
