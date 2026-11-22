@@ -1,5 +1,12 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## 22/11/2026 — S0d : preuve Runtime et protocole Compiler
+
+Le [journal S0d brut, CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) (478 octets, SHA256 `87ae3944c5703cd3b014894caeca5261130e8e521b58b1c7cdf3f9d185faf928`) confirme `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `CYCLES_OK 3`, `MOVES 108`, `GETS/FREES 3`, `BANK_FREES 3`, `BANK_HELD_ANY 0`, `COPPER_ON_OK/OFF_OK 1`. L'auteur confirme les Sprites et le raster visibles sous WinUAE ; **Gate B PASS pour ce scenario uniquement**. Les compteurs attestent la sequence du programme, pas un audit DMA materiel ou une mesure directe de fuites.
+
+**Gate C a venir** : conserver sans modification [l'unique ASC S0d](../tests/design/sprites_aga/SPRITE_PROBE.asc), Git blob `eb4e9d0275edbe3266724705910fa66747c743ea` ; effectuer une vraie compilation AMOS Professional sous WinUAE de cette source avec la Lib P2d deja installee, puis lancer la **version compilee**. Journal attendu : `RAM:M19_S0D_ROB_COMPILED.TXT`, `PRG_STATE -1`, `RUN_MODE COMPILED`, `RESULT 1`, `ERR 0`, `CYCLES_OK 3`, `VERDICT PASS_ROBUSTNESS_SEQUENCE_ONLY`. Un log Runtime recopie ou une compilation sans lancement ne suffit pas. Voir [procedure complete](NEXT_SESSION.md). **Gates C/D non testees**, protocole de detach DMA toujours experimental.
+
+
 ## 22/11/2026 — Preuve S0c et test S0d de robustesse
 
 Le [journal S0c d'origine](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT) (**565 octets, CRLF, SHA256 `266444494d1ced0fc0e401bfca4c145b5a097ca9bcf066b7c0957e5701d50160`**) affiche `RESULT 1`, `ERR 0`, `MOVE_FRAMES 100`, `GET_CHANNEL 1`, `FREE_SPRITE 1`, `CLOSE_RETURNED 1`, `BANK_CLEAN 1`. L'utilisateur a confirme que le F etait visible, mobile, sans artefact. **Gate B scenario S0c PASS**, pas de preuve de detach DMA formel.

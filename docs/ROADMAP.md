@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **22/11/2026 — Sprites S0d : Gate B Runtime PASS, visuel confirme** ([journal original, 478 octets CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT)) : 3 cycles, 108 deplacements, 3 ouvertures/fermetures, curseur et Copper RGB4, `ERR 0`. **Gate C vraie compilation : a executer sur exactement le meme [SPRITE_PROBE.asc](../tests/design/sprites_aga/SPRITE_PROBE.asc), sans le modifier**. Log distinct attendu `RAM:M19_S0D_ROB_COMPILED.TXT` avec `PRG_STATE -1` ; Gate D et preuve DMA formelle non acquises. [Protocole de Gate C](NEXT_SESSION.md). Lib P2d et LAST_GOOD inchangees.
+
+
 > **S0d 22/11/2026** : [S0c Runtime et animation F visibles PASS](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT) selon journal et observation auteur, mais quiescence DMA non prouvee. [S0d robustesse](../tests/design/sprites_aga/SPRITE_PROBE.asc) prepare dans **le meme ASC** : 3 cycles Open/Close, curseur et Copper RGB4, 108 positions Sprite ; **Gate B/C/D non testees**. P2d et LAST_GOOD proteges.
 
 
