@@ -31,6 +31,7 @@ from m19_p2b_bob_flip_emit import emit_bob_flip
 from m19_p2b_planar_orientation020_emit import emit_planar_orientation020
 from m19_p2a_collision020_emit import emit_collision020
 from m19_p2a_pair_chip_resolve_emit import emit_p2a_pair_chip_resolve
+from m19_p2a_pair_hotspot020_emit import emit_p2a_pair_hotspot020
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
@@ -43,6 +44,7 @@ PUBLIC_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PUBLIC_COL_MC68
 QUERY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_QUERY_MC68020.s'
 KERNEL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_COLLISION_KERNEL_MC68020.s'
 CHIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_CHIP_RESOLVE_MC68020.s'
+HOTSPOT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_HOTSPOT_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -77,6 +79,9 @@ KERNEL_END = 0x9B54
 CHIP_NAME = 'M19_P2A_CHIP_RESOLVE_MC68020.s'
 CHIP_START = 0x8BB6
 CHIP_END = 0x8E20
+HOTSPOT_NAME = 'M19_P2A_HOTSPOT_MC68020.s'
+HOTSPOT_START = 0x8E20
+HOTSPOT_END = 0x918A
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -576,6 +581,58 @@ def replace_raw_p2a_chip(text: str) -> str:
             text[last+len(tail):])
 
 
+@lru_cache(maxsize=1)
+def prove_p2a_hotspot_provenance() -> tuple[int, int, int, bytes]:
+    """Pin the original signed P1b hotspot reader source in the final P2d."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    hotspot, internal_labels = emit_p2a_pair_hotspot020()
+    _, parts, _ = unpack_ap20(original)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['p2a_pair_hotspot_entry']
+    end = base + labels['p2a_pair_geometry_entry']
+    moveq = end - 4
+    require((begin, end, moveq) ==
+            (HOTSPOT_START, HOTSPOT_END, 0x9186),
+            'P2a hotspot emitter offsets differ from P2d')
+    require(internal_labels['p2a_pair_hotspot_entry'] == 0 and
+            len(hotspot) == end-begin and
+            native[labels['p2a_pair_hotspot_entry']:
+                   labels['p2a_pair_geometry_entry']] == hotspot and
+            parts[group][begin:end] == hotspot and
+            hotspot[-4:] == b'\x74\x00\x4e\x75',
+            'P2a hotspot source does not match official P2d')
+    return begin, end, moveq, hotspot
+
+
+def replace_raw_p2a_hotspot(text: str) -> str:
+    """Replace 874 source-proven hotspot bytes between two mixed audit rows."""
+    start = '    dc.b $48,$E7  ; +$08E20: 48E7\n'
+    end = ('    dc.b $4C,$DF,$77,$F7,$74,$00,$4E,$75,$48,$E7,$EF,$EE'
+           '  ; +$09182: 4CDF77F774004E7548E7EFEE\n')
+    i = text.find(start)
+    j = text.find(end, i)
+    require(i >= 0 and j > i,
+            'P2a hotspot mixed audit boundaries missing')
+    matches = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                         text[i:j+len(end)])
+    address, collected = HOTSPOT_START, bytearray()
+    for where, chunk in matches:
+        require(int(where,16) == address,
+                'P2a hotspot byte annotations not contiguous')
+        data = bytes.fromhex(chunk)
+        collected.extend(data)
+        address += len(data)
+    require(address == HOTSPOT_END+4 and
+            collected[:-4] == prove_p2a_hotspot_provenance()[3] and
+            collected[-4:] == bytes.fromhex('48e7efee'),
+            'P2a hotspot audit bytes differ from source emitter')
+    return (text[:i] + '    include "' + HOTSPOT_NAME + '"\n' +
+            '    dc.b $48,$E7,$EF,$EE  ; +$0918A: 48E7EFEE\n' +
+            text[j+len(end):])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -635,7 +692,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    public_col_text: str | None = None,
                    query_text: str | None = None,
                    kernel_text: str | None = None,
-                   chip_text: str | None = None) -> None:
+                   chip_text: str | None = None,
+                   hotspot_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -649,6 +707,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(QUERY_FILE.is_file(), f'missing authored module: {QUERY_FILE}')
     require(KERNEL_FILE.is_file(), f'missing authored module: {KERNEL_FILE}')
     require(CHIP_FILE.is_file(), f'missing authored module: {CHIP_FILE}')
+    require(HOTSPOT_FILE.is_file(), f'missing authored module: {HOTSPOT_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -658,6 +717,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         shutil.copyfile(p, folder / name)
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_p2a_chip(text)
+    text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
     text = replace_raw_p2a_public(text)
@@ -826,6 +886,17 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P2a Chip pair source missing entry/return or has raw bytes')
     (folder / CHIP_NAME).write_text(chip_source,
                                     encoding='ascii', newline='\n')
+    hotspot_source = (hotspot_text if hotspot_text is not None
+                      else HOTSPOT_FILE.read_text('ascii'))
+    for marker in ('p2a_pair_hotspot_entry:', 'p2a_h0_scan:',
+                   'p2a_h0_found:', 'p2a_h1_scan:', 'p2a_h1_found:',
+                   'p2a_hot_refuse:'):
+        require(hotspot_source.count(marker) == 1,
+                'P2a hotspot source missing ' + marker)
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', hotspot_source),
+            'P2a hotspot source contains raw machine-code bytes')
+    (folder / HOTSPOT_NAME).write_text(hotspot_source,
+                                       encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -902,6 +973,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     query_start, query_end, _, _ = prove_p2a_query_provenance()
     kernel_start, kernel_end, _, _ = prove_p2a_kernel_provenance()
     chip_start, chip_end, _, _ = prove_p2a_chip_provenance()
+    hotspot_start, hotspot_end, _, _ = prove_p2a_hotspot_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -911,7 +983,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (public_start <= i < public_end) or
                 (query_start <= i < query_end) or
                 (kernel_start <= i < kernel_end) or
-                (chip_start <= i < chip_end) for i in differences),
+                (chip_start <= i < chip_end) or
+                (hotspot_start <= i < hotspot_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -932,7 +1005,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           public_col_text: str | None = None,
           query_text: str | None = None,
           kernel_text: str | None = None,
-          chip_text: str | None = None) -> tuple[bytes, list[int]]:
+          chip_text: str | None = None,
+          hotspot_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -940,7 +1014,7 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                    variant_text=variant_text, paint_geo_text=paint_geo_text,
                    cleanup_text=cleanup_text, public_col_text=public_col_text,
                    query_text=query_text, kernel_text=kernel_text,
-                   chip_text=chip_text)
+                   chip_text=chip_text, hotspot_text=hotspot_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1139,6 +1213,26 @@ def test_editability(assembler: Path) -> None:
                 == b'\x74\x01', 'P2a Chip modified MOVEQ was not encoded')
         require(chip_start <= chip_ret < chip_end,
                 'P2a Chip edit escaped source-owned region')
+        hotspot_start, hotspot_end, hot_moveq, _ = prove_p2a_hotspot_provenance()
+        hotspot_source = HOTSPOT_FILE.read_text('ascii')
+        needle = 'p2a_hot_refuse:\n    move.l 12(a2),d3'
+        require(hotspot_source.count(needle) == 1,
+                'P2a hotspot return path not uniquely identifiable')
+        moveq_needle = '    moveq #0,d2\n    rts'
+        require(hotspot_source.count(moveq_needle) == 1,
+                'P2a hotspot epilogue MOVEQ not unique')
+        edited_source = hotspot_source.replace(
+            moveq_needle, '    moveq #1,d2\n    rts')
+        changed_hotspot, hot_diffs = build(
+            assembler, root/'modified_hotspot', allow_edited=True,
+            hotspot_text=edited_source)
+        require(hot_diffs == [hot_moveq+1],
+                f'P2a hotspot source edit {hot_diffs}, expected {[hot_moveq+1]}')
+        require(unpack_ap20(changed_hotspot)[1][group]
+                [hot_moveq:hot_moveq+2] == b'\x74\x01',
+                'P2a hotspot modified MOVEQ not present in AP20')
+        require(hotspot_start <= hot_moveq < hotspot_end,
+                'P2a hotspot edit outside owned source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1150,6 +1244,7 @@ def test_editability(assembler: Path) -> None:
     print('P2A_QUERY_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_KERNEL_EDITABILITY_TEST PASS: MOVE.L #-1,D3 -> #-2,D3, one byte changed')
     print('P2A_CHIP_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
+    print('P2A_HOTSPOT_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 

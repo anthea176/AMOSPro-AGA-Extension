@@ -1,9 +1,10 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**Onze modules metier maintenables** depuis les emetteurs Python P2b/P2c/P2d (Gate A) :
+**Douze modules metier maintenables** depuis les emetteurs Python P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
+| [P2a HotSpot — lecture et revalidation AGBO](M19_P2A_HOTSPOT_MC68020.s) | `$08E20..$0918A` | 874 |
 | [P2a Chip Resolve — identities et cache Chip](M19_P2A_CHIP_RESOLVE_MC68020.s) | `$08BB6..$08E20` | 618 |
 | [P2a Collision Kernel — rectangle et masque](M19_P2A_COLLISION_KERNEL_MC68020.s) | `$09858..$09B54` | 764 |
 | [P2a Collision Query — private CPU bridge](M19_P2A_COLLISION_QUERY_MC68020.s) | `$09B54..$09D38` | 484 |
@@ -15,7 +16,7 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **4 408** |
+| **Total de code ASM propre** | | **5 282** |
 
 De plus, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets, 64 emplacements de 64 octets) avec des directives symboliques ; ces donnees ne sont pas du code converti.
 
@@ -40,6 +41,6 @@ BUILD_P2D_ASM.bat
 BUILD_P2D_ASM.bat --self-test-edit
 ```
 
-Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, de tokens AP20, de titre, des autres unites ou d'une zone non migree. Sans edition, la reconstruction doit produire exactement **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le self-test altere temporairement **une instruction dans chacun des onze modules** (P2b Flip, P2b Planar, P2c, P2d), recompilant en memoire et exigeant un changement sur un seul octet dans le groupe BOBS.
+Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, de tokens AP20, de titre, des autres unites ou d'une zone non migree. Sans edition, la reconstruction doit produire exactement **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le self-test altere temporairement **une instruction dans chacun des douze modules** (P2b Flip, P2b Planar, P2c, P2d), recompilant en memoire et exigeant un changement sur un seul octet dans le groupe BOBS.
 
 Pour un edit a longueur constante, `BUILD_P2D_ASM.bat --allow-edited` cree uniquement `src/generated/p2d_editable/M19_P2D_EDITED_UNTESTED.Lib`. **Ne pas installer une version modifiee sans validation specifique.** Les bibliotheques de `dist/`, `LAST_GOOD`, les tests et exemples ne sont pas modifies par cette migration. Les Gates WinUAE Runtime B, vrai AMOS Compiler C et physique D **ne qualifient pas les futures editions natives** par la seule CI.
