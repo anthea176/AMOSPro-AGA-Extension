@@ -35,8 +35,17 @@ L'audit source versionne comporte **121 plages contigues dc**, total
 Le manifeste officiel signale une entree publique **non decodee**
 a l'offset UNIT142 **62690 = `$0F4E2`**. Cela interdit toute
 qualification globale de la grande zone finale comme simple padding.
-Le fait que trois blocs soient byte-identiques ne prouve pas une
-identite de proprietaire ni des contrats d'entree similaires.
+Les trois blocs de 884 octets sont maintenant **recoupes avec le source**
+`tools/m18_cblock_copy_emit.py::emit_cblock_copy_core()` : chacun est
+exactement `b"AGACBLK " + core + b"GetP"`, avec un noyau natif de
+**872 octets**. SHA256 du noyau source emis :
+`8a3df13b72b0a62f237b7df068cc9d3f47c70af759d0bc64949ed765cfd65a97`.
+La [Gate A source](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45046188073)
+a confirme les trois enveloppes octet-identiques au noyau emis
+par le constructeur historique. Cela etablit la **provenance source**,
+pas encore un module Motorola editable ni un contrat d'allocation DMA.
+Les trois enveloppes demeurent comptees dans les 12 298 octets bruts
+jusqu'a un reassemblage direct validant des modules .s reellement extraits.
 
 ## Sequence de reprise protegee
 
