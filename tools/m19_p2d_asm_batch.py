@@ -140,7 +140,7 @@ def extract(text, spec, bytes_expected):
 
 def render(spec, body):
     return ('; AGA_NATIVE_MIN_CPU: MC68020\n'
-            '; Historical owner: %s\n' % spec.owner
+            f'; Historical owner: {spec.owner}\n'
             '; Audited bytes checked against the official M19 P2d library.\n'
             '; BOBS+$%05X..$%05X (%d bytes).\n' %
             (spec.start,spec.stop,spec.stop-spec.start) +
