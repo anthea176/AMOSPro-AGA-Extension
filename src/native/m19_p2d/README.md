@@ -487,6 +487,38 @@ d'un octet** controlees ensemble dans UNIT153, aucune ailleurs.
 **UNIT153 : 3 872 octets / 9 modules. Total : 94 modules ASM.**
 La bibliotheque officielle, LAST_GOOD et les tests AMOS sont inchanges.
 
+### UNIT153 — 31e lot : troisieme preflight public (518 octets)
+
+[M19_UNIT153_THIRD_PUBLIC_MC68020.s](M19_UNIT153_THIRD_PUBLIC_MC68020.s),
+`UNIT153+$00FA0..$011A6`, 136 instructions ; zero initial symbolique.
+
+### UNIT153 — 32e lot : troisieme controle pointeur (190 octets)
+
+[M19_UNIT153_THIRD_POINTER_MC68020.s](M19_UNIT153_THIRD_POINTER_MC68020.s),
+`UNIT153+$011AC..$0126A`, 51 instructions et un label ;
+seuil minimum de 24 octets symbolique.
+
+### UNIT153 — 33e lot : troisieme validateur (648 octets)
+
+[M19_UNIT153_THIRD_VALIDATION_MC68020.s](M19_UNIT153_THIRD_VALIDATION_MC68020.s),
+`UNIT153+$01270..$014F8`, 178 instructions, neuf labels ;
+la plage brute `$014F8..$0151A` reste hors code source.
+
+### UNIT153 — 34e lot : nettoyage final (152 octets)
+
+[M19_UNIT153_THIRD_FINAL_MC68020.s](M19_UNIT153_THIRD_FINAL_MC68020.s),
+`UNIT153+$0151A..$015B2`, 43 instructions et dix labels ;
+dernier GetP intact. Quatre nouvelles constantes modifiables
+sont controlees avec les neuf precedentes (13 mutations isolees).
+
+**UNIT153 : 5 380 octets / 13 modules ; total : 98 modules ASM.**
+Les **178 octets non migrés** de UNIT153 sont le dispatcher AP20,
+les pseudo-appels AMOS Main, les donnees, marqueurs GetP et deux
+iles brutes `$00EDA..$00F04` / `$014F8..$0151A`.
+Ils restent volontairement dans le wrapper, sans interpretation.
+La CI Gate A doit reconstruire P2d octet-identique ;
+aucune modification de dist/ ni ASC et aucune nouvelle Gate B/C/D.
+
 ## Compilation directe (Windows)
 
 ```bat
