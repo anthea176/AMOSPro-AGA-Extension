@@ -685,6 +685,39 @@ d'audit, dont les donnees, GetP et pseudo-appels AMOS Main non classes.
 Source-only : Lib, LAST_GOOD, ASC actif et preuves WinUAE inchanges.
 Gate A a confirmer par CI ; aucune nouvelle Gate B/C/D revendiquee.
 
+
+### UNIT142 — lots 81 a 100 : vingt blocs natifs (6 236 octets)
+
+Vingt plages MC68020 source-verifiees contre le builder P2d ont ete
+converties avec un test d'editabilite isole par module. Les donnees brutes,
+marqueurs GetP et pseudo-appels AMOS Main restent dans le wrapper.
+
+- [bloc $0D7C8](M19_UNIT142_BLOCK_0D7C8_MC68020.s) : `$0D7C8..$0D980`, 440 octets
+- [bloc $01F32](M19_UNIT142_BLOCK_01F32_MC68020.s) : `$01F32..$020E0`, 430 octets
+- [bloc $095EC](M19_UNIT142_BLOCK_095EC_MC68020.s) : `$095EC..$0978A`, 414 octets
+- [bloc $09790](M19_UNIT142_BLOCK_09790_MC68020.s) : `$09790..$0992C`, 412 octets
+- [bloc $0AF3A](M19_UNIT142_BLOCK_0AF3A_MC68020.s) : `$0AF3A..$0B0A0`, 358 octets
+- [bloc $09B16](M19_UNIT142_BLOCK_09B16_MC68020.s) : `$09B16..$09C7A`, 356 octets
+- [bloc $0B8FE](M19_UNIT142_BLOCK_0B8FE_MC68020.s) : `$0B8FE..$0BA58`, 346 octets
+- [bloc $0652C](M19_UNIT142_BLOCK_0652C_MC68020.s) : `$0652C..$0666C`, 320 octets
+- [bloc $0411A](M19_UNIT142_BLOCK_0411A_MC68020.s) : `$0411A..$04252`, 312 octets
+- [bloc $03A24](M19_UNIT142_BLOCK_03A24_MC68020.s) : `$03A24..$03B4E`, 298 octets
+- [bloc $00A80](M19_UNIT142_BLOCK_00A80_MC68020.s) : `$00A80..$00B9E`, 286 octets
+- [bloc $01E12](M19_UNIT142_BLOCK_01E12_MC68020.s) : `$01E12..$01F30`, 286 octets
+- [bloc $0D694](M19_UNIT142_BLOCK_0D694_MC68020.s) : `$0D694..$0D7A4`, 272 octets
+- [bloc $02584](M19_UNIT142_BLOCK_02584_MC68020.s) : `$02584..$0268C`, 264 octets
+- [bloc $07360](M19_UNIT142_BLOCK_07360_MC68020.s) : `$07360..$07468`, 264 octets
+- [bloc $00BA2](M19_UNIT142_BLOCK_00BA2_MC68020.s) : `$00BA2..$00C9A`, 248 octets
+- [bloc $03B52](M19_UNIT142_BLOCK_03B52_MC68020.s) : `$03B52..$03C42`, 240 octets
+- [bloc $0273C](M19_UNIT142_BLOCK_0273C_MC68020.s) : `$0273C..$02828`, 236 octets
+- [bloc $02C9A](M19_UNIT142_BLOCK_02C9A_MC68020.s) : `$02C9A..$02D7E`, 228 octets
+- [bloc $0725A](M19_UNIT142_BLOCK_0725A_MC68020.s) : `$0725A..$0733C`, 226 octets
+
+**164 modules ASM MC68020** au total, dont **64 UNIT142**,
+**46 528 / 62 740 octets (74,16 %)** ; **16 212 octets UNIT142**
+restent a examiner. Gate A a verifier en CI ; pas de nouvelle Gate
+B/C/D, ni modification des deux Lib ou de l'ASC de regression.
+
 ## Compilation directe (Windows)
 
 ```bat
