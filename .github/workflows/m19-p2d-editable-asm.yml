@@ -7,6 +7,8 @@ on:
       - 'src/native/m19_p2d/**'
       - 'tools/build_m19_p2d_editable_asm.py'
       - 'tools/m19_p2d_unit142_source.py'
+      - 'tools/m19_p2d_unit142_raw_probe.py'
+      - 'tools/m19_p2d_unit142_tail_preview.py'
       - 'tools/m19_p2d_unit142_tail_preview.py'
       - 'tools/m19_p2d_unit142_raw_probe.py'
       - 'tools/m19_p2d_unit142_cblock_preview.py'

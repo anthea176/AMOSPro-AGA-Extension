@@ -59,11 +59,11 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 125
+    assert reconstructed == group and len(modules) == 126
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 53058 and len(group) - clean == 9682
+    assert clean == 53846 and len(group) - clean == 8894
 
     tail = group[TAIL_START:TAIL_END]
     assert len(tail) == 6168 and tail.startswith(b"AGAPIC  ")
