@@ -1374,9 +1374,13 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                                     encoding='ascii', newline='\n')
     b7_end_source = (b7_end_text if b7_end_text is not None
                      else B7_END_FILE.read_text('ascii'))
+    # Only the baseline clear or its one-instruction mutation is admissible.
+    # verify_link() still enforces the exact modified byte and AP20 identity.
+    b7_clear_original = b7_end_source.count('    move.l #0,4(a0)')
+    b7_clear_edited = b7_end_source.count('    move.l #1,4(a0)')
     require(b7_end_source.count('b7_end_entry:') == 1 and
             '    bra.w p2b_close_return\n    rts' in b7_end_source and
-            b7_end_source.count('    move.l #0,4(a0)') == 1 and
+            (b7_clear_original, b7_clear_edited) in ((1, 0), (0, 1)) and
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', b7_end_source),
             'B7 End source missing lifecycle or has raw instructions')
     (folder / B7_END_NAME).write_text(b7_end_source,

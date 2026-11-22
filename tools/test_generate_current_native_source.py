@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,6 +26,29 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
+        if exp.sha(wrapped) == P2D_SHA:
+            # P2d has multiple Compiler V2 native islands. The old strict
+            # single-unit exporter must reject it, but the maintained
+            # source builder must reproduce the official image exactly.
+            from build_m19_p2d_in_memory import build_p2d
+            from compiler_relocation import unpack_ap20
+            from audit_ap20 import inspect, parse
+            candidate, meta = build_p2d()
+            assert wrapped == candidate and len(candidate) == 136020
+            assert meta['sha256'] == P2D_SHA
+            assert meta['commands'] == 100 and meta['entries'] == 203
+            assert original[0] == original[1] == wrapped
+            _, groups, title = unpack_ap20(wrapped)
+            assert len(groups) == 203 and b'M19 P2d' in title
+            assert not inspect(parse(wrapped))['issues']
+            try:
+                exp.source_binary_from_input(wrapped)
+            except exp.ExportError as exc:
+                assert 'Unsupported V2 compiler wrapper' in str(exc)
+            else:
+                raise AssertionError('P2d multi-unit V2 exported as false monolithic ASM')
+            print('STRICT M19 P2d SOURCE BUILDER / V2 EXPORT REFUSAL PASS', P2D_SHA)
+            continue
         if exp.sha(wrapped)==P1E_SHA:
             # P1e is a five-native-unit V2 Lib. Rebuild exactly from source;
             # the historical single-dispatcher ASM audit must reject it.

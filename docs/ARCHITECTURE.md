@@ -1,11 +1,13 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+> **Reference actuelle (22/11/2026)** : M19 P2d MC68020, [Lib active](../dist/AMOSPro_AGA.Lib) et [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrees AP20**. Gates A et B/C du banc integre P2 ALL IN ONE validees ; Gate D non testee. [Suivi courant](NEXT_SESSION.md) et [migration ASM partielle](../src/native/m19_p2d/README.md). Les sections B8/B7 ci-dessous documentent leurs **jalons historiques** ; leurs Lib, ASC et LAST_GOOD ne sont plus les actifs.
+
 ## M20 P0 — prototype hôte de scrolling, non natif
 
 Le [modèle indépendant M20 P0](M20_TILEMAP_P0_HOST_MODEL.md) a 13 tests Python PASS : tuiles 16×16 opaques, deux caméras de pages physiques distinctes, bandes exposées, mutations de carte, fond de Bobs et refus DIRTY. **Aucun code MC68020, aucune allocation Chip/Fast réelle, aucun appel AGA, aucune commande publique ni modification de la Lib S1**. Cette étude ne remplace pas les Gates A/B/C/D du futur moteur. B8 S1 conserve sa Gate B Runtime validée sur deux journaux ; Gate C reportée.
 
 
-## Référence active M19 B8 S1 — SafePort bounded Clear (20/11/2026)
+## Historique : M19 B8 S1 — SafePort bounded Clear (20/11/2026)
 
 **Lib unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **116 104 octets**, SHA256 `3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a`, 88 commandes, 184 entrées AP20, groupes natifs `[142,153,156,177,181]`, MC68020 minimum, PC16 maximal **29 962**. [Builder S1](../tools/build_m19_b8_safe_retry_in_memory.py), [émetteur natif](../tools/m19_b8_safe_retry_emit.py). B8 précédente `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae` source byte-exacte comme préfixe : **+360 octets append-only** et seulement le stub de `Aga Bob Clear` redirigé (182). `Aga Bob Update`, Bob setter, B7 Draw/End/Close, tokens historiques, Safe/Disp et DIRTY invariants inchangés.
 
@@ -14,7 +16,7 @@ Le [modèle indépendant M20 P0](M20_TILEMAP_P0_HOST_MODEL.md) a 13 tests Python
 **La section B8 sans S1 ci-dessous est un état historique de travail, pas la Lib active.**
 
 
-## Référence active M19 B8 — livraison de travail du 20/11/2026
+## Historique : M19 B8 — livraison de travail du 20/11/2026
 
 **Bibliothèque unique :** [`dist/AMOSPro_AGA.Lib`](../dist/AMOSPro_AGA.Lib), **115 744 octets**, SHA256 `00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae`, MC68020+, 88 commandes, 184 entrées AP20, cinq unités natives `[142,153,156,177,181]` et PC16 maximal 29 962. [Builder source](../tools/build_m19_b8_first_update_in_memory.py). L'ancienne B7-m2 reste un préfixe source vérifié, sans toucher à `LAST_GOOD`.
 
