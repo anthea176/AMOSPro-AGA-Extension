@@ -1,5 +1,41 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 37–58, 122 modules source ASM
+
+**Dernier commit de migration :**
+[9f0bfc00](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9f0bfc0041f57aa14c8192092177251e5f911fd2),
+sur `main` uniquement. **122 modules ASM MC68020 : 80 BOBS,
+14 UNIT153, 6 UNIT156 et 22 UNIT142**. UNIT142 atteint
+**17 786 / 62 740 octets** source-verifies, sans classification forcee
+des pseudo-appels AMOS Main, marqueurs GetP ou blocs bruts voisins.
+
+**Preuve de provenance :** `tools/m19_p2d_unit142_source.py` exige
+l'integralite de UNIT142 (SHA256
+`8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7`)
+contre la reconstruction P2d de 136 020 octets
+(SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`).
+Les 22 modules natifs sont dans `src/native/m19_p2d/`. Le wrapper
+compact est reconstitue octet pour octet depuis l'audit, sans modification
+de la version d'audit ; le vasm direct et 22 mutations d'un octet
+doivent conserver tokens, titre, groupes AP20 et longueur P2d.
+
+**CI Gate A :** lots 37–40 [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45038967714),
+41–44 [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039227925),
+45–48 [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039353714).
+Les lots 49–52 [en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039486703)
+et 53–58 [en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039666020)
+ne sont **pas encore declares PASS** a la date de ce checkpoint.
+
+**Artefacts proteges :** les deux Lib `dist/AMOSPro_AGA.Lib` et
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` restent identiques (Git blob
+`8a849b89aae57c2cda0b4db8771034a0978d3e78`).
+L'unique ASC `tests/current/M19_P2_ALL_IN_ONE.asc` reste intact.
+Aucune nouvelle Gate B Runtime, C vrai Compiler ou D physique :
+les preuves B/C historiques de P2d ne qualifient pas les futures edits.
+
+**Prochaine passe :** continuer UNIT142 par plages de code prouvees,
+suivant la CI, et conserver les donnees et les zones non classifiees.
+
 ## 22 novembre 2026 — migration source MC68020 P2d : lots 23 a 36
 
 **100 modules ASM edites sur `main`** : 80 BOBS, 14 UNIT153 et 6 UNIT156.
