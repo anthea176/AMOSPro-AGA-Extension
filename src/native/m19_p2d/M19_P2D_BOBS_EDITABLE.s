@@ -8650,19 +8650,7 @@ L_BOBS_08306:
 L_BOBS_0840A:
     include "M19_P1E_EDIT_PREFLIGHT_MC68020.s"
 L_BOBS_08498:
-edit_preflight_next:
-    adda.l #$00000018,a4                               ; +$08498: D9FC00000018
-    adda.l #$00000010,a6                               ; +$0849E: DDFC00000010
-    subq.l #1,d7                                       ; +$084A4: 5387
-    bne.w L_BOBS_0840A                                 ; +$084A6: 6600FF62
-    move.l 84(a2),d0                                   ; +$084AA: 202A0054
-    beq.w L_BOBS_084C6                                 ; +$084AE: 67000016
-    movea.l d0,a0                                      ; +$084B2: 2040
-    lea 8(a0),a1                                       ; +$084B4: 43E80008
-    movea.l 44(a2),a4                                  ; +$084B8: 286A002C
-    bsr.w L_BOBS_03D9E                                 ; +$084BC: 6100B8E0
-    tst.l d3                                           ; +$084C0: 4A83
-    beq.w L_BOBS_085E8                                 ; +$084C2: 67000124
+    include "M19_P1E_EDIT_PREFLIGHT_NEXT_MC68020.s"
 L_BOBS_084C6:
 edit_publish:
     movea.l 56(a2),a0                                  ; +$084C6: 206A0038
