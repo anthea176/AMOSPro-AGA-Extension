@@ -38,6 +38,7 @@ from m19_p0i_multibank_draw_emit import emit_multibank_paint
 from m19_b8_b7_hook_emit import emit_b8_b7_hooks
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
+from m19_p1b_hotspot_origin_emit import emit_hotspot_origin
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -58,6 +59,7 @@ P0I_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P0I_ROUTED_PAINT_MC68020.s
 B8_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8_END_REGISTER_MC68020.s'
 B8S1_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8S1_BANK_FREE_MC68020.s'
 B7_END_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B7_END_MC68020.s'
+P1B_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1B_HOTSPOT_ORIGIN_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -113,6 +115,9 @@ B8S1_END = 0x7962
 B7_END_NAME = 'M19_B7_END_MC68020.s'
 B7_END_START = 0x6EAC
 B7_END_END = 0x6FA6
+P1B_NAME = 'M19_P1B_HOTSPOT_ORIGIN_MC68020.s'
+P1B_START = 0x7A14
+P1B_END = 0x7AC2
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -994,6 +999,51 @@ def replace_raw_b7_end(text: str) -> str:
             '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1b_origin_provenance() -> tuple[int, int, int, bytes]:
+    """Source-prove the P1b 174-byte signed HotSpot origin helper."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    source, src_labels = emit_hotspot_origin()
+    _, parts, _ = unpack_ap20(original)
+    begin = len(parts[group]) - len(native) + labels['p1b_hotspot_origin_entry']
+    end = begin + len(source)
+    mutation = 0x7AAD
+    require((begin, end) == (P1B_START, P1B_END) and
+            src_labels['p1b_hotspot_origin_entry'] == 0,
+            'P1b hotspot source range differs from P2d')
+    fragment = native[labels['p1b_hotspot_origin_entry']:
+                      labels['p1b_hotspot_origin_entry'] + len(source)]
+    require(len(source) == 174 and fragment == source and
+            parts[group][begin:end] == source and
+            source[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('263c00000001'),
+            'P1b hotspot source differs from original emitter or P2d')
+    return begin, end, mutation, source
+
+
+def replace_raw_p1b_origin(text: str) -> str:
+    """Preserve 10 prefix bytes, replace exactly 174 emitter-owned bytes."""
+    first = '    dc.b $00,$00,$00,$01,$00,$74,$60,$00,$D5,$FA,$2F,$00  ; +$07A0A: 0000000100746000D5FA2F00\n'
+    last = 'L_BOBS_07AC2:\np1c_frame_dispatch:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1b raw audit boundaries absent')
+    offset, verified = 0x7A0A, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == offset, 'P1b raw offset discontinuity')
+        chunk = bytes.fromhex(encoded)
+        verified.extend(chunk)
+        offset += len(chunk)
+    require(offset == P1B_END and
+            bytes(verified[:10]) == bytes.fromhex('0000000100746000d5fa') and
+            bytes(verified[10:]) == prove_p1b_origin_provenance()[3],
+            'P1b audit bytes mismatch authoritative source emitter')
+    return (text[:i] +
+            '    dc.b $00,$00,$00,$01,$00,$74,$60,$00,$D5,$FA  ; +$07A0A: 0000000100746000D5FA\n'
+            '    include "' + P1B_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1094,7 +1144,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p0i_text: str | None = None,
                    b8_text: str | None = None,
                    b8s1_text: str | None = None,
-                   b7_end_text: str | None = None) -> None:
+                   b7_end_text: str | None = None,
+                   p1b_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1115,6 +1166,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(B8_FILE.is_file(), f'missing authored module: {B8_FILE}')
     require(B8S1_FILE.is_file(), f'missing authored module: {B8S1_FILE}')
     require(B7_END_FILE.is_file(), f'missing authored module: {B7_END_FILE}')
+    require(P1B_FILE.is_file(), f'missing authored module: {P1B_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1129,6 +1181,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_b8_end_register(text)
     text = replace_raw_b8s1_bank_free(text)
     text = replace_raw_b7_end(text)
+    text = replace_raw_p1b_origin(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1385,6 +1438,16 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'B7 End source missing lifecycle or has raw instructions')
     (folder / B7_END_NAME).write_text(b7_end_source,
                                       encoding='ascii', newline='\n')
+    p1b_source = p1b_text if p1b_text is not None else P1B_FILE.read_text('ascii')
+    p1b_original = p1b_source.count('    move.l #1,d3')
+    p1b_edited = p1b_source.count('    move.l #2,d3')
+    require(p1b_source.count('p1b_hotspot_origin_entry:') == 1 and
+            p1b_source.count('p1b_no_overlap:') == 1 and
+            p1b_source.count('p1b_hotspot_return:') == 1 and
+            (p1b_original, p1b_edited) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', p1b_source),
+            'P1b authored source incomplete or unclassified')
+    (folder / P1B_NAME).write_text(p1b_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1468,6 +1531,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     b8_start, b8_end, _, _ = prove_b8_end_register_provenance()
     b8s1_start, b8s1_end, _, _ = prove_b8s1_bank_free_provenance()
     b7_start, b7_end, _, _ = prove_b7_end_provenance()
+    p1b_start, p1b_end, _, _ = prove_p1b_origin_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1484,7 +1548,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (p0i_start <= i < p0i_end) or
                 (b8_start <= i < b8_end) or
                 (b8s1_start <= i < b8s1_end) or
-                (b7_start <= i < b7_end) for i in differences),
+                (b7_start <= i < b7_end) or
+                (p1b_start <= i < p1b_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1512,7 +1577,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p0i_text: str | None = None,
           b8_text: str | None = None,
           b8s1_text: str | None = None,
-          b7_end_text: str | None = None) -> tuple[bytes, list[int]]:
+          b7_end_text: str | None = None,
+          p1b_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1524,7 +1590,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                    geometry_text=geometry_text,
                    pair_check_text=pair_check_text,
                    p0i_text=p0i_text, b8_text=b8_text,
-                   b8s1_text=b8s1_text, b7_end_text=b7_end_text)
+                   b8s1_text=b8s1_text, b7_end_text=b7_end_text,
+                    p1b_text=p1b_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1843,6 +1910,21 @@ def test_editability(assembler: Path) -> None:
                 'P0j B7 End changed instruction not encoded')
         require(b7_start <= b7_imm < b7_end,
                 'P0j B7 End modified byte outside authored region')
+        p1b_start, p1b_end, p1b_imm, _ = prove_p1b_origin_provenance()
+        p1b_source = P1B_FILE.read_text('ascii')
+        needle = '    move.l #1,d3'
+        require(p1b_source.count(needle) == 1,
+                'P1b HotSpot result setter not uniquely editable')
+        changed, diffs = build(
+            assembler, root/'modified_p1b_origin', allow_edited=True,
+            p1b_text=p1b_source.replace(needle, '    move.l #2,d3'))
+        require(diffs == [p1b_imm],
+                f'P1b hotspot edited bytes {diffs}, expected {[p1b_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [p1b_imm-5:p1b_imm+1] == bytes.fromhex('263c00000002'),
+                'P1b hotspot MOVE.L #2 source edit was not assembled')
+        require(p1b_start <= p1b_imm < p1b_end,
+                'P1b edited byte escaped source range')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1861,6 +1943,7 @@ def test_editability(assembler: Path) -> None:
     print('B8_REGISTER_EDITABILITY_TEST PASS: MOVE.L #1,(A2) -> #2, one byte changed')
     print('B8S1_BANK_FREE_EDITABILITY_TEST PASS: MOVE.L #1,4(A2) -> #2, one byte changed')
     print('B7_END_EDITABILITY_TEST PASS: MOVE.L #0,4(A0) -> #1, one byte changed')
+    print('P1B_HOTSPOT_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
