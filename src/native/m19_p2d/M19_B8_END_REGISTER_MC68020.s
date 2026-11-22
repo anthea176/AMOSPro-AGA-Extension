@@ -123,11 +123,13 @@ b8_b7_end_return:
     moveq #0,d2
     rts
 
+L_BOBS_07348:
 b8_b7_clear_root:
     lea b8_b7_hook_root(pc),a0
     move.l #0,(a0)
     move.l #0,4(a0)
     rts
 
+L_BOBS_0735C:
 b8_b7_hook_root:
     dcb.b 8,0
