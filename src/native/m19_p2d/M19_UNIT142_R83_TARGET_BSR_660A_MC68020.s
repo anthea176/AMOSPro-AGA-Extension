@@ -1,0 +1,6 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; R83 source-exact branch redirected to source-owned UNIT142 label.
+; UNIT142+$0090E..$00912.
+UNIT142_R83_TARGET_BSR_DELTA equ 0
+
+    bsr.w L_UNIT142_0660A+UNIT142_R83_TARGET_BSR_DELTA

@@ -1783,6 +1783,207 @@ def legacy_r83_close_sources(whole, wrapper):
     return wrapper, modules
 
 
+
+LEGACY_R83_FOLLOWUP_MODULES = (
+    ("M19_UNIT142_R83_TARGET_HEAD_MC68020.s", "baa6962e7ce1cf8aac5f00cb631a72f84d6d4e61",
+     0x007FA, 0x00886, "UNIT142_R83_TARGET_HEAD_A5", 456, 460, 0x00801, 0xC8, 0xCC),
+    ("M19_UNIT142_R83_TARGET_BODY_MC68020.s", "66c0aed11118bddb574d5175821a4830e840bab1",
+     0x0088A, 0x0090E, "UNIT142_R83_TARGET_BODY_COUNT", 4, 5, 0x008C1, 0x04, 0x05),
+    ("M19_UNIT142_R83_TARGET_WAIT_MC68020.s", "8d2e94a6c6596f02f67bd83aec11a644b1167845",
+     0x00912, 0x009E0, "UNIT142_R83_TARGET_WAIT_LIMIT", 301, 302, 0x00955, 0x2D, 0x2E),
+    ("M19_UNIT142_R83_TARGET_AUX_MC68020.s", "339bf67bf92bc9bc902356bcdf9d912d4062642f",
+     0x009E4, 0x00A5E, "UNIT142_R83_TARGET_AUX_OFFSET", 32, 34, 0x009F3, 0x20, 0x22),
+    ("M19_UNIT142_R83_TARGET_BSR_660A_MC68020.s", "08bc5af45fe36ee2c8af98941571afcef13e1fcd",
+     0x0090E, 0x00912, "UNIT142_R83_TARGET_BSR_DELTA", 0, 2, 0x00911, 0xFA, 0xFC),
+    ("M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s", "5657e24826d6569b78360249d838c05706658dde",
+     0x009E0, 0x009E4, "UNIT142_R83_TARGET_WAIT_BRA_DELTA", 0, 2, 0x009E3, 0x08, 0x0A),
+    ("M19_UNIT142_R83_MAIN_BRA_TARGET_MC68020.s", "85d7b09bf14df97882de049d942b2aba0f1c0241",
+     0x00062, 0x00066, "UNIT142_R83_MAIN_CLOSE_BRA_DELTA", 0, 2, 0x00065, 0x78, 0x7A),
+    ("M19_UNIT142_R83_CLOSE_ISLAND_MC68020.s", "e0e4779e70b878d3fa30e4f98eeb98d7ace139a4",
+     0x00088, 0x000C0, "UNIT142_R83_ISLAND_CLEAR_OFFSET", 20, 22, 0x000BF, 0x14, 0x16),
+)
+
+
+def legacy_r83_followup_sources(whole, wrapper):
+    """R83 Screen Close target + isolated code: split from exact pinned source.
+
+    The $00088 island may not be entered by the active control flow;
+    this conversion preserves its original Motorola instructions but
+    asserts no new WinUAE/Compiler/runtime qualification.
+    """
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+
+    history, meta = build_r83()
+    demand(meta["sha256"] == R83_SHA and sha256(history).hexdigest() == R83_SHA,
+           "UNIT142 R83 followup historical source SHA mismatch")
+    _token, parts, _title = unpack_ap20(history)
+    target = whole[0x007F6:0x00A62]
+    island = whole[0x00088:0x000C0]
+    demand(len(parts[82]) == 52974 and
+           parts[82][0x007F6:0x00A62] == target and
+           sha256(target).hexdigest() ==
+           "70f5f9565fcca6f8f9aebfd96651c194ca3ccf15e2f825359affc4f4d2207a3a" and
+           parts[82][0x00088:0x000C0] == island and
+           sha256(island).hexdigest() ==
+           "10fbca3026e08742cfaa9a288b6b145384863d9f3b47f1ab0a8d64f7a7f427db",
+           "UNIT142 R83 followup source and offsets drift")
+    demand(target[:4] == b"GetP" and target[-4:] == b"GetP" and
+           target[0x90:0x94] == bytes.fromhex("61004A42") and
+           target[0x118:0x11C] == bytes.fromhex("61005CFA") and
+           target[0x1EA:0x1EE] == bytes.fromhex("6000F808") and
+           whole[0x00062:0x00066] == bytes.fromhex("60000978") and
+           whole[0x00088+0x16:0x00088+0x1A] == bytes.fromhex("67000020") and
+           whole[0x00088+0x30:0x00088+0x34] == bytes.fromhex("67000006"),
+           "UNIT142 R83 followup branch/data markers differ")
+    demand(0x0090E + 2 + 0x5CFA == 0x0660A and
+           0x009E0 + 2 - 0x7F8 == 0x001EA and
+           0x00062 + 2 + 0x0978 == 0x009DC and
+           0x0009E + 2 + 0x0020 == 0x000C0 and
+           0x000B8 + 2 + 0x0006 == 0x000C0,
+           "UNIT142 R83 followup Motorola PC-relative targets differ")
+
+    preview, report = native_unit_source("LEGACY_CLOSE_TARGET", target, [
+        (0, 4), (1, 0x009DC-0x007F6)])
+    island_preview, island_report = native_unit_source("LEGACY_CLOSE_ISLAND",
+                                                        island, [(0,0)])
+    demand(report["bytes"] == 620 and report["mnemonic_bytes"] == 600 and
+           report["raw_dc_bytes"] == 20 and
+           island_report["bytes"] == 56 and
+           island_report["mnemonic_bytes"] == 48 and
+           island_report["raw_dc_bytes"] == 8,
+           "UNIT142 R83 followup source decoder inventory drift")
+
+    def select(preview_text, lo, hi):
+        body, pending, expected = [], [], lo
+        for line in preview_text.splitlines():
+            if LABEL.fullmatch(line):
+                pending.append(line)
+                continue
+            match = ANNOT.search(line)
+            if match is None:
+                continue
+            at = int(match.group(1),16)
+            if lo <= at < hi:
+                demand(at == expected,
+                       "UNIT142 R83 followup gap at +$%05X" % at)
+                body.extend(pending)
+                body.append(line)
+                expected += len(bytes.fromhex(match.group(2)))
+            pending.clear()
+        demand(expected == hi, "UNIT142 R83 followup module extent differs")
+        return "\n".join(body) + "\n"
+
+    def render_segment(tag, lo, hi, symbol, initial, needle, edited):
+        body = select(preview, lo, hi)
+        demand("    dc.b " not in body and body.count(needle) == 1,
+               "UNIT142 R83 source spans contain undecoded bytes: " + tag)
+        header = (
+            "; AGA_NATIVE_MIN_CPU: MC68020\n"
+            "; Unit142 historical R83 source exact; vasm MC68020; no Lib/ASC promotion.\n"
+            "; Absolute offsets $%05X..$%05X.\n" %
+            (0x007F6+lo, 0x007F6+hi) +
+            symbol + " equ " + str(initial) + "\n\n")
+        return header + body.replace(needle,edited)
+
+    expected_sources = {}
+    segments = (
+        ("HEAD", 0x004, 0x090, "UNIT142_R83_TARGET_HEAD_A5",456,
+         "movea.l 456(a5),a2","movea.l UNIT142_R83_TARGET_HEAD_A5(a5),a2"),
+        ("BODY", 0x094, 0x118, "UNIT142_R83_TARGET_BODY_COUNT",4,
+         "moveq #4,d0","moveq #UNIT142_R83_TARGET_BODY_COUNT,d0"),
+        ("WAIT", 0x11C, 0x1EA, "UNIT142_R83_TARGET_WAIT_LIMIT",301,
+         "cmpi.l #$0000012D,d4","cmpi.l #UNIT142_R83_TARGET_WAIT_LIMIT,d4"),
+        ("AUX", 0x1EE, 0x268, "UNIT142_R83_TARGET_AUX_OFFSET",32,
+         "movea.l 32(a2),a4","movea.l UNIT142_R83_TARGET_AUX_OFFSET(a2),a4"),
+    )
+    for tag, lo, hi, symbol, initial, needle, edited in segments:
+        filename = "M19_UNIT142_R83_TARGET_%s_MC68020.s" % tag
+        expected_sources[filename] = render_segment(
+            tag,lo,hi,symbol,initial,needle,edited)
+
+    links = (
+        ("M19_UNIT142_R83_TARGET_BSR_660A_MC68020.s",0x0090E,0x00912,
+         "UNIT142_R83_TARGET_BSR_DELTA", 0,
+         "    bsr.w L_UNIT142_0660A+UNIT142_R83_TARGET_BSR_DELTA\n"),
+        ("M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s",0x009E0,0x009E4,
+         "UNIT142_R83_TARGET_WAIT_BRA_DELTA", 0,
+         "    bra.w ENTRY_LEGACY_CLOSE_CORE_00190+UNIT142_R83_TARGET_WAIT_BRA_DELTA\n"),
+        ("M19_UNIT142_R83_MAIN_BRA_TARGET_MC68020.s",0x00062,0x00066,
+         "UNIT142_R83_MAIN_CLOSE_BRA_DELTA",0,
+         "    bra.w ENTRY_LEGACY_CLOSE_TARGET_001E6+UNIT142_R83_MAIN_CLOSE_BRA_DELTA\n"),
+    )
+    for filename, lo, hi, sym, initial, instruction in links:
+        expected_sources[filename] = (
+            "; AGA_NATIVE_MIN_CPU: MC68020\n"
+            "; R83 source-exact branch redirected to source-owned UNIT142 label.\n"
+            "; UNIT142+$%05X..$%05X.\n" % (lo, hi) +
+            sym + " equ " + str(initial) + "\n\n" + instruction)
+
+    island_text = select(island_preview,0,56)
+    demand(island_text.count("    dc.b $67,$00,$00,$20") == 1 and
+           island_text.count("    dc.b $67,$00,$00,$06") == 1 and
+           island_text.count("clr.l 20(a4)") == 1,
+           "UNIT142 R83 56-byte island raw/branch unknown")
+    island_text = island_text.replace(
+        "    dc.b $67,$00,$00,$20", "    beq.w L_LEGACY_CLOSE_CORE_00066")
+    island_text = island_text.replace(
+        "    dc.b $67,$00,$00,$06", "    beq.w L_LEGACY_CLOSE_CORE_00066")
+    demand("    dc.b " not in island_text, "UNIT142 R83 island has raw bytes")
+    expected_sources["M19_UNIT142_R83_CLOSE_ISLAND_MC68020.s"] = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; R83 historical Close 56-byte instruction island, entry not proven reachable.\n"
+        "; Two BEQ.W targets source-owned cleanup at UNIT142+$000C0.\n"
+        "UNIT142_R83_ISLAND_CLEAR_OFFSET equ 20\n\n" +
+        island_text.replace("clr.l 20(a4)","clr.l UNIT142_R83_ISLAND_CLEAR_OFFSET(a4)"))
+
+    def dc_region(lo, hi):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % b for b in
+                                  whole[at:min(at+12,hi)]) + "\n"
+            for at in range(lo,hi,12))
+
+    for lo,hi,filename in (
+        (0x00062,0x00066,"M19_UNIT142_R83_MAIN_BRA_TARGET_MC68020.s"),
+        (0x00088,0x000C0,"M19_UNIT142_R83_CLOSE_ISLAND_MC68020.s"),
+    ):
+        old = dc_region(lo,hi)
+        demand(wrapper.count(old) == 1,
+               "UNIT142 R83 followup original Close raw region not unique")
+        wrapper = wrapper.replace(old, '    include "' + filename + '"\n')
+
+    old_target = dc_region(0x007F6,0x00A62)
+    demand(wrapper.count(old_target) == 1,
+           "UNIT142 R83 followup original Close target raw region not unique")
+    new_target = (
+        dc_region(0x007F6,0x007FA) +
+        '    include "M19_UNIT142_R83_TARGET_HEAD_MC68020.s"\n' +
+        dc_region(0x00886,0x0088A) +
+        '    include "M19_UNIT142_R83_TARGET_BODY_MC68020.s"\n' +
+        '    include "M19_UNIT142_R83_TARGET_BSR_660A_MC68020.s"\n' +
+        '    include "M19_UNIT142_R83_TARGET_WAIT_MC68020.s"\n' +
+        '    include "M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s"\n' +
+        '    include "M19_UNIT142_R83_TARGET_AUX_MC68020.s"\n' +
+        dc_region(0x00A5E,0x00A62))
+    wrapper = wrapper.replace(old_target,new_target)
+
+    modules = []
+    for filename, pinned_sha, lo, hi, _sym, _initial, _edited, delta, oldbyte, newbyte in LEGACY_R83_FOLLOWUP_MODULES:
+        path = NATIVE_DIR / filename
+        raw_file = path.read_bytes()
+        blob = sha1(b"blob " + str(len(raw_file)).encode("ascii") +
+                    b"\x00" + raw_file).hexdigest()
+        demand(blob == pinned_sha and raw_file.decode("ascii") ==
+               expected_sources[filename] and lo <= delta < hi and
+               whole[delta] == oldbyte and oldbyte != newbyte,
+               "UNIT142 authored R83 followup module/blob/edit mismatch: " + filename)
+        modules.append((lo,hi,filename,expected_sources[filename]))
+    demand(sum(hi-lo for lo,hi,_name,_src in modules) == 668,
+           "UNIT142 R83 followup 668 native instruction bytes mismatch")
+    return wrapper, modules
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -1996,6 +2197,8 @@ def expected_sources():
     modules.extend(legacy)
     wrapper, close_modules = legacy_r83_close_sources(bytes(whole),wrapper)
     modules.extend(close_modules)
+    wrapper, followup = legacy_r83_followup_sources(bytes(whole),wrapper)
+    modules.extend(followup)
     return bytes(whole), wrapper, modules
 
 
@@ -2034,7 +2237,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 56792 bytes / 143 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 57460 bytes / 151 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -2062,6 +2265,8 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     for filename, *_rest in LEGACY_CLOSE_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_R83_FOLLOWUP_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -2082,7 +2287,8 @@ def edit_gate(staged, assembler):
            (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file() and
            all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES) and
-           all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES),
+           all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_FOLLOWUP_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -2184,6 +2390,14 @@ def edit_gate(staged, assembler):
             demand(content.count(before) == 1, "UNIT142 R83 Close edit ambiguous: " + filename)
             path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
                             encoding="ascii", newline="\n")
+        for filename, _blob, _start, _stop, symbol, old_value, new_value, *_ in LEGACY_R83_FOLLOWUP_MODULES:
+            path = folder / filename
+            content = path.read_text("ascii")
+            before = symbol + " equ " + str(old_value)
+            demand(content.count(before) == 1,
+                   "UNIT142 R83 followup edit symbol ambiguous: " + filename)
+            path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -2217,12 +2431,15 @@ def edit_gate(staged, assembler):
         expected.update({delta: (oldbyte, newbyte)
                          for _filename, _blob, _start, _stop, _sym, _old, _new,
                              delta, oldbyte, newbyte in LEGACY_CLOSE_MODULES})
-        demand(len(expected) == 143, "UNIT142 R83 Close/End edit count differs")
+        expected.update({delta: (oldbyte, newbyte)
+                         for _filename, _blob, _start, _stop, _sym, _old, _new,
+                             delta, oldbyte, newbyte in LEGACY_R83_FOLLOWUP_MODULES})
+        demand(len(expected) == 151, "UNIT142 R83 Close target edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 143 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 151 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

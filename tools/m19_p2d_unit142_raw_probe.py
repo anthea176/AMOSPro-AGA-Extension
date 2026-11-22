@@ -59,11 +59,11 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 143
+    assert reconstructed == group and len(modules) == 151
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 56792 and len(group) - clean == 5948
+    assert clean == 57460 and len(group) - clean == 5280
 
     # Source-owned code vs. original state/header/pseudo data, byte exact.
     mask = bytearray(len(group))
@@ -128,7 +128,7 @@ def check() -> None:
               if hi-lo == 6 and group[lo:lo+4] == bytes.fromhex("FE11F700")]
     getp = [(lo, hi) for lo, hi in gaps
             if hi-lo == 4 and group[lo:hi] == GETP]
-    assert len(pseudo) == 45 and len(getp) == 49, (len(pseudo),len(getp))
+    assert len(pseudo) == 45 and len(getp) == 51, (len(pseudo),len(getp))
     for lo, hi in pseudo:
         index = int.from_bytes(group[lo+4:hi], "big")
         assert index in (0x008C,0x031D,0x0320,0x0330,0x0333)
@@ -140,15 +140,15 @@ def check() -> None:
                for _begin, end in CBLOCK_SPANS)
     extra_markers = (len(pseudo)-1)*6 + (len(getp)-3)*4
     assert any(lo == 0x00760 for lo, _ in getp)
-    assert extra_markers == 448
+    assert extra_markers == 456
     print("UNIT142_LINKER_MARKERS_PASS", len(pseudo), "AMOS Main 6-byte records,",
           len(getp), "GetP 4-byte records;", extra_markers,
           "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
     known_noncode += extra_markers
-    assert known_noncode == 4190
+    assert known_noncode == 4198
     unknown = len(group) - clean - known_noncode
-    assert unknown == 1758
+    assert unknown == 1082
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
