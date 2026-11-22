@@ -19,7 +19,7 @@ from m19_p2d_unit142_source import expected_sources, SPANS, CBLOCK_SPANS, GROUP_
 
 ROOT = Path(__file__).resolve().parents[1]
 TAIL_START, TAIL_END = 0x0DCFC, 0x0F514
-PUBLIC_RAW_ENTRY = 0x0F4E2
+PUBLIC_P1D_ENTRY = 0x0F4E2
 
 
 def compare(whole: bytes, tail: bytes, label: str, payload: bytes) -> None:
@@ -59,20 +59,22 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 133
+    assert reconstructed == group and len(modules) == 135
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 55508 and len(group) - clean == 7232
+    assert clean == 55596 and len(group) - clean == 7144
 
     tail = group[TAIL_START:TAIL_END]
     assert len(tail) == 6168 and tail.startswith(b"AGAPIC  ")
-    assert group[PUBLIC_RAW_ENTRY:PUBLIC_RAW_ENTRY + 4] == bytes.fromhex("4EBB0170")
+    assert group[PUBLIC_P1D_ENTRY:PUBLIC_P1D_ENTRY + 4] == bytes.fromhex("4EBB0170")
+    assert any(lo == PUBLIC_P1D_ENTRY and hi == TAIL_END and "P1D_LIMIT_OPEN" in name
+               for lo, hi, name, _code in modules), "P1d public wrapper source missing"
     print("UNIT142_RAW_REMAINDER_PASS", len(group), "native bytes",
           clean, "source-owned", len(group) - clean, "raw preserved")
     print("RAW_TAIL", "%05X..%05X" % (TAIL_START, TAIL_END),
           len(tail), "bytes; AGAPIC ASCII header = 8")
-    print("RAW_PUBLIC_ENTRY_UNCLASSIFIED", "%05X" % PUBLIC_RAW_ENTRY)
+    print("SOURCE_PINNED_PUBLIC_ENTRY", "%05X" % PUBLIC_P1D_ENTRY)
 
     # A zero byte is not automatically padding: record only factual ranges.
     runs = []
@@ -88,7 +90,7 @@ def check() -> None:
             runs.append((TAIL_START + at, TAIL_START + end))
         at = end
     for lo, hi in sorted(runs, key=lambda x: x[1] - x[0], reverse=True)[:12]:
-        print("ZERO_RUN_UNCLASSIFIED", "%05X..%05X" % (lo, hi),
+        print("ZERO_RUN_OBSERVED", "%05X..%05X" % (lo, hi),
               hi - lo, "bytes")
     assert runs, "Expected historical zero-region evidence missing"
 
