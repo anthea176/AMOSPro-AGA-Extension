@@ -37,6 +37,7 @@ from m19_p2a_pair_checked_read_emit import emit_p2a_pair_checked_read
 from m19_p0i_multibank_draw_emit import emit_multibank_paint
 from m19_b8_b7_hook_emit import emit_b8_b7_hooks
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
+from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -56,6 +57,7 @@ PAIR_CHECK_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PAIR_CHECK_MC68
 P0I_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P0I_ROUTED_PAINT_MC68020.s'
 B8_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8_END_REGISTER_MC68020.s'
 B8S1_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8S1_BANK_FREE_MC68020.s'
+B7_END_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B7_END_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -108,6 +110,9 @@ B8_END = 0x7364
 B8S1_NAME = 'M19_B8S1_BANK_FREE_MC68020.s'
 B8S1_START = 0x76A8
 B8S1_END = 0x7962
+B7_END_NAME = 'M19_B7_END_MC68020.s'
+B7_END_START = 0x6EAC
+B7_END_END = 0x6FA6
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -932,6 +937,63 @@ def replace_raw_b8s1_bank_free(text: str) -> str:
             '"\n' + text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_b7_end_provenance() -> tuple[int, int, int, bytes]:
+    """Pin original P0j End procedure including P2b close redirect."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    b7_source, b7_labels = emit_end_lifecycle()
+    _, parts, _ = unpack_ap20(original)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['b7_end_entry']
+    end = prefix + labels['b7_multiframe_draw_entry']
+    ret = prefix + labels['b7_end_return']
+    mutation_byte = 0x6F6D
+    require((begin, end, ret) == (B7_END_START, B7_END_END, 0x6FA0),
+            'P0j B7 End source positions differ from final P2d')
+    old = b7_source[b7_labels['b7_end_entry']:]
+    fragment = native[labels['b7_end_entry']:
+                      labels['b7_multiframe_draw_entry']]
+    patch_at = ret - begin
+    require(len(old) == end-begin and
+            old[patch_at:patch_at+6] == bytes.fromhex('4cdf7fff4e75') and
+            fragment[patch_at:patch_at+6] ==
+            bytes.fromhex('600032304e75') and
+            all(x==y for i,(x,y) in enumerate(zip(old,fragment))
+                if not patch_at <= i < patch_at+6),
+            'P0j B7 End differs outside the P2b owner-cleanup source patch')
+    require(parts[group][begin:end] == fragment and
+            fragment[mutation_byte-begin-5:mutation_byte-begin+3] ==
+            bytes.fromhex('217c000000000004'),
+            'P0j B7 End source/edited immediate location differs from P2d')
+    return begin, end, mutation_byte, fragment
+
+
+def replace_raw_b7_end(text: str) -> str:
+    """Convert only the original 250-byte P0j End region to source module."""
+    first = 'L_BOBS_06EAC:\nb7_end_entry:\n'
+    last = 'L_BOBS_06FA6:\nb7_multiframe_draw_entry:\n'
+    i = text.find(first)
+    j = text.find(last,i)
+    require(i >= 0 and j > i, 'P0j B7 End boundaries missing from audit')
+    raw = text[i:j]
+    annotated = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                           raw)
+    pos, expected = B7_END_START, bytearray()
+    for where, encoded in annotated:
+        require(int(where,16) == pos,
+                f'P0j B7 End non-contiguous audit offset {where}')
+        block = bytes.fromhex(encoded)
+        expected.extend(block)
+        pos += len(block)
+    require(pos == B7_END_END and
+            bytes(expected) == prove_b7_end_provenance()[3],
+            'P0j B7 End raw code differs from source emitters')
+    return (text[:i] + 'L_BOBS_06EAC:\n    include "' + B7_END_NAME +
+            '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1031,7 +1093,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    pair_check_text: str | None = None,
                    p0i_text: str | None = None,
                    b8_text: str | None = None,
-                   b8s1_text: str | None = None) -> None:
+                   b8s1_text: str | None = None,
+                   b7_end_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1051,6 +1114,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P0I_FILE.is_file(), f'missing authored module: {P0I_FILE}')
     require(B8_FILE.is_file(), f'missing authored module: {B8_FILE}')
     require(B8S1_FILE.is_file(), f'missing authored module: {B8S1_FILE}')
+    require(B7_END_FILE.is_file(), f'missing authored module: {B7_END_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1064,6 +1128,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p0i_paint(text)
     text = replace_raw_b8_end_register(text)
     text = replace_raw_b8s1_bank_free(text)
+    text = replace_raw_b7_end(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1307,6 +1372,15 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'B8 S1 Bank Free not sourced as explicit MC68020 instructions')
     (folder / B8S1_NAME).write_text(bank_free_source,
                                     encoding='ascii', newline='\n')
+    b7_end_source = (b7_end_text if b7_end_text is not None
+                     else B7_END_FILE.read_text('ascii'))
+    require(b7_end_source.count('b7_end_entry:') == 1 and
+            '    bra.w p2b_close_return\n    rts' in b7_end_source and
+            b7_end_source.count('    move.l #0,4(a0)') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', b7_end_source),
+            'B7 End source missing lifecycle or has raw instructions')
+    (folder / B7_END_NAME).write_text(b7_end_source,
+                                      encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1389,6 +1463,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     p0i_start, p0i_end, _, _ = prove_p0i_paint_provenance()
     b8_start, b8_end, _, _ = prove_b8_end_register_provenance()
     b8s1_start, b8s1_end, _, _ = prove_b8s1_bank_free_provenance()
+    b7_start, b7_end, _, _ = prove_b7_end_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1404,7 +1479,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (pair_check_start <= i < pair_check_end) or
                 (p0i_start <= i < p0i_end) or
                 (b8_start <= i < b8_end) or
-                (b8s1_start <= i < b8s1_end) for i in differences),
+                (b8s1_start <= i < b8s1_end) or
+                (b7_start <= i < b7_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1431,7 +1507,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           pair_check_text: str | None = None,
           p0i_text: str | None = None,
           b8_text: str | None = None,
-          b8s1_text: str | None = None) -> tuple[bytes, list[int]]:
+          b8s1_text: str | None = None,
+          b7_end_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1443,7 +1520,7 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                    geometry_text=geometry_text,
                    pair_check_text=pair_check_text,
                    p0i_text=p0i_text, b8_text=b8_text,
-                   b8s1_text=b8s1_text)
+                   b8s1_text=b8s1_text, b7_end_text=b7_end_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1746,6 +1823,22 @@ def test_editability(assembler: Path) -> None:
                 'B8 S1 Free modified result immediate not assembled')
         require(b8s1_start <= imm < b8s1_end,
                 'B8 S1 Free edit escaped authored region')
+        b7_start, b7_end, b7_imm, _ = prove_b7_end_provenance()
+        b7_source = B7_END_FILE.read_text('ascii')
+        needle = '    move.l #0,4(a0)'
+        require(b7_source.count(needle) == 1,
+                'P0j B7 End frame-guard clear not uniquely editable')
+        edited_src = b7_source.replace(needle, '    move.l #1,4(a0)')
+        edited_b7, b7_diffs = build(
+            assembler, root/'modified_b7_end', allow_edited=True,
+            b7_end_text=edited_src)
+        require(b7_diffs == [b7_imm],
+                f'P0j B7 End source edit {b7_diffs}, expected {[b7_imm]}')
+        require(unpack_ap20(edited_b7)[1][group]
+                [b7_imm-5:b7_imm+3] == bytes.fromhex('217c000000010004'),
+                'P0j B7 End changed instruction not encoded')
+        require(b7_start <= b7_imm < b7_end,
+                'P0j B7 End modified byte outside authored region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1763,6 +1856,7 @@ def test_editability(assembler: Path) -> None:
     print('P0I_ROUTED_PAINT_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('B8_REGISTER_EDITABILITY_TEST PASS: MOVE.L #1,(A2) -> #2, one byte changed')
     print('B8S1_BANK_FREE_EDITABILITY_TEST PASS: MOVE.L #1,4(A2) -> #2, one byte changed')
+    print('B7_END_EDITABILITY_TEST PASS: MOVE.L #0,4(A0) -> #1, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
