@@ -470,6 +470,23 @@ sont desormais verifiees dans UNIT153 par la Gate A, aucune ailleurs.
 **UNIT153 : 3 148 octets / 7 modules ; 92 modules ASM au total.**
 Aucune nouvelle Lib, aucun ASC, aucune promotion de LAST_GOOD.
 
+### UNIT153 — 29e lot : marche memoire (572 octets)
+
+[M19_UNIT153_MEMORY_WALK_MC68020.s](M19_UNIT153_MEMORY_WALK_MC68020.s) :
+`UNIT153+$00C9E..$00EDA`, 159 instructions et 6 labels.
+Le seuil de 24 octets devient symbolique. Le segment brut
+`$00EDA..$00F04` est preserve sans interpretation.
+
+### UNIT153 — 30e lot : nettoyage et resultat (152 octets)
+
+[M19_UNIT153_WALK_CLEANUP_MC68020.s](M19_UNIT153_WALK_CLEANUP_MC68020.s) :
+`UNIT153+$00F04..$00F9C`, 46 instructions, 11 labels.
+Zero D3 parametre, GetP au bord final non converti. **Neuf mutations
+d'un octet** controlees ensemble dans UNIT153, aucune ailleurs.
+
+**UNIT153 : 3 872 octets / 9 modules. Total : 94 modules ASM.**
+La bibliotheque officielle, LAST_GOOD et les tests AMOS sont inchanges.
+
 ## Compilation directe (Windows)
 
 ```bat
