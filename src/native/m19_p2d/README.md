@@ -862,7 +862,7 @@ s'ajoute aux 122 edits UNIT142 existants.
 **Total : 225 modules ASM MC68020**, dont **125 UNIT142** ;
 **53 058 / 62 740 octets UNIT142 (84,57 %)** editables.
 **9 682 octets UNIT142** restent sous directives brutes.
-Gate A de cette migration en attente CI ; aucune nouvelle Gate B/C/D,
+Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45047314451) ; aucune nouvelle Gate B/C/D,
 aucune modification de P2d, LAST_GOOD ou de l'ASC actif.
 
 ## Compilation directe (Windows)

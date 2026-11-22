@@ -1,4 +1,19 @@
-# UNIT142 — audit des 12 298 octets en directives brutes (22/11/2026)
+# UNIT142 — audit des directives brutes : 12 298 initiaux, 9 682 restants (22/11/2026)
+
+## Etat actuel valide — lots 159 a 161
+
+Le [commit CBlock](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b2a3186a85e62fbe4431607343800616e95708f3)
+a migre **2 616 octets** supplementaires (3 noyaux x 872 octets)
+vers des modules MC68020, avec [Gate A source PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45047314451).
+La couverture atteint **53 058 / 62 740 octets (84,57 %)**, soit
+**125 modules UNIT142**. Le reliquat est **9 682 octets bruts**.
+Les 36 octets de signatures \`AGACBLK \` / marqueurs \`GetP\`
+sont des donnees, conserves. Aucun changement de Lib ni d'ASC.
+
+Le manifeste d'export audit donne toujours la classification historique
+**50 442 / 12 298** ; ces chiffres sont le point de depart, et non
+la couverture courante des modules natifs. La preuve des 2 616 octets
+CBlock provient de l'emetteur M18 et de vasm byte-exact.
 
 ## Provenance et limite
 
@@ -44,8 +59,9 @@ La [Gate A source](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/ru
 a confirme les trois enveloppes octet-identiques au noyau emis
 par le constructeur historique. Cela etablit la **provenance source**,
 pas encore un module Motorola editable ni un contrat d'allocation DMA.
-Les trois enveloppes demeurent comptees dans les 12 298 octets bruts
-jusqu'a un reassemblage direct validant des modules .s reellement extraits.
+Depuis le commit des lots 159–161, leurs 2 616 octets de code sont
+**migrés et Gate A PASS**. La signature et GetP (36 octets) restent en
+`dc.b`. Les **9 682 octets bruts** restants sont a classer sans invention.
 
 ## Sequence de reprise protegee
 
@@ -56,7 +72,7 @@ jusqu'a un reassemblage direct validant des modules .s reellement extraits.
    `GetP`, les pseudo-appels AMOS Main et le padding ; conserver
    leurs octets dans le wrapper ou dans des modules data explicitement
    contractuels, sans les compter comme instructions converties.
-3. Examiner en priorite les trois blocs `AGACBLK` et la zone
+3. Les trois CBlock etant migres, examiner en priorite la zone
    `$0DCFC..$0F514`, puis qualifier l'entree `$0F4E2` par son
    contrat AP20/source. Aucune classification par simple analogie.
 4. Pour toute plage executable prouvee, imposer offsets, etiquettes,

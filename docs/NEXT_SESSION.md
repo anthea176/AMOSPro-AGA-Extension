@@ -1,5 +1,33 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 159 a 161 : CBlock MC68020 Gate A PASS
+
+**Migration source-only sur main : 225 modules ASM MC68020**, dont
+**125 UNIT142**, 14 UNIT153, 6 UNIT156 et 80 BOBS.
+UNIT142 : **53 058 / 62 740 octets convertis (84,57 %)** ; il reste
+**9 682 octets en directives brutes non entierement classes**.
+
+Trois noyaux CBlock M18 source-verifies de **872 octets** ont ete extraits
+aux offsets \`$0ABCE\`, \`$0B592\`, \`$0BF5A\` dans trois modules autonomes,
+avec etiquettes independantes et une mutation source isolee par noyau.
+Les signatures \`AGACBLK \` (8 octets) et delimitateurs \`GetP\` (4 octets)
+restent du \`dc.b\`, jamais des instructions Motorola.
+
+**Preuve :** [commit lots 159-161](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b2a3186a85e62fbe4431607343800616e95708f3)
+et [Gate A MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45047314451).
+CI : reconstruction P2d SHA256 exact, assemblage direct vasm
+\`-Fbin -m68020 -no-opt\`, **125 mutations UNIT142 confinees**,
+controle des autres groupes AP20 et integrite des livraisons.
+**Aucune nouvelle Gate B WinUAE / C Compiler / D physique**.
+
+**Suite :** [audit source des 9 682 octets bruts](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md),
+notamment la zone \`$0DCFC..$0F514\` (6 168 octets ; signature AGAPIC,
+code, donnees et stockage non qualifies) et l'entree publique
+\`$0F4E2\`. Ne pas les forcer en mnemoniques sans provenance
+constructeur et reconstruction octet-identique.
+Les deux Lib officielles P2d (136 020 octets) et l'ASC de regression
+restent proteges. Aucune branche creee ni promotion binaire.
+
 ## 22 novembre 2026 — UNIT142 lots 74 a 158 : mnemoniques audites convertis
 
 **Migration source-only sur main : 222 modules ASM MC68020**, soit
