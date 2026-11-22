@@ -936,6 +936,27 @@ Seul le pseudo-appel AMOS Main `FE11 F700 031D` (6 octets) reste brut.
 **55 508 / 62 740 octets (88,47 %)** et **7 232 octets bruts**.
 Les 133 edits isoles et la reconstruction P2d SHA256 ont ete valides.
 
+### UNIT142 — lots 170 a 171 : Screen Open P1c/P1d (88 octets)
+
+Deux routines Motorola MC68020 d'ouverture proviennent des emetteurs
+M19 P1c et P1d, avec octets de reference verrouilles :
+
+- [P1c Priority Open](M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s) :
+  `$0F0A4..$0F0CA`, 38 octets executables ; contexte de 8 octets
+  conserve en `dcb.b` immediatement apres la routine.
+- [P1d Limit Open](M19_UNIT142_P1D_LIMIT_OPEN_MC68020.s) :
+  `$0F4E2..$0F514`, 50 octets executables ; table de 65 x 16 octets
+  conservee en `dcb.b` et initialisee comme dans le constructeur P1d.
+
+Les appels PC-relatifs utilisent l'extension longue MC68020 de 8 octets,
+non une instruction 68000 ni des octets de donnees arbitraires.
+Deux edits `cmpi.l` confines (1 -> 2) doivent etre valides par Gate A.
+
+**Projection source avant validation : 235 modules ASM**, dont 135 UNIT142,
+**55 596 / 62 740 octets (88,61 %)**, **7 144 octets bruts**.
+Identite P2d / LAST_GOOD / ASC a confirmer par CI sur le commit courant.
+Pas de qualification WinUAE B, Compiler C ou materiel D supplementaire.
+
 ## Compilation directe (Windows)
 
 ```bat

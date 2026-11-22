@@ -9,7 +9,7 @@ the direct assembler writes into dist/ or changes an AMOS campaign.
 from __future__ import annotations
 
 import argparse
-from hashlib import sha256
+from hashlib import sha1, sha256
 from pathlib import Path
 import re
 import shutil
@@ -1432,6 +1432,67 @@ def p0f_expected_source(whole, wrapper):
     return new, [(lo,hi,name,src) for lo,hi,name,src,*_ in result]
 
 
+
+P1CD_PINNED_MODULES = (
+    ("M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s",
+     "faa1052a8b86add74ab9b631b497fb538ab4936c", 0x0F0A4, 0x0F0CA,
+     "UNIT142_P1C_OPEN_OK"),
+    ("M19_UNIT142_P1D_LIMIT_OPEN_MC68020.s",
+     "8450b9fd2a38d191839c3eebd347e7f673bc9a58", 0x0F4E2, 0x0F514,
+     "UNIT142_P1D_OPEN_OK"),
+)
+
+
+def p1cd_open_expected_sources(whole, wrapper):
+    """Two Motorola source-owned Screen Open wrappers; only data remains dc."""
+    from m19_p1c_bob_priority_emit import emit_priority_open
+    from m19_p1d_limit_bob_emit import TABLE_BYTES, emit_limit_open
+
+    open_offset = 0x0F0A4 - 34  # R88 AGA group, original Open V2+1102
+    priority, context = emit_priority_open(1102, open_offset)
+    limit = emit_limit_open(open_offset, 0x0F0D2 - 34)
+    demand(len(priority) == 46 and context + 34 == 0x0F0CA and
+           priority[-8:] == bytes(8) and
+           whole[0x0F0A4:0x0F0D2] == priority and
+           sha256(priority[:-8]).hexdigest() ==
+           "4d688e2393ffff05d15217088b933f7da761c5a178965ef2cfd0fc50385ddec4",
+           "UNIT142 P1c original Screen Open emitter differs")
+    demand(TABLE_BYTES == 1040 and len(limit) == 1090 and
+           limit[:TABLE_BYTES] == bytes(TABLE_BYTES) and
+           whole[0x0F0D2:0x0F514] == limit and
+           sha256(limit[TABLE_BYTES:]).hexdigest() ==
+           "57f37fd84ce40213d3511d5b2b4cd64a5ed659b02271d94e1fe2327e2c6b54a2",
+           "UNIT142 P1d original Screen Open emitter differs")
+    def raw(start, end):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % x for x in whole[at:min(at+12,end)]) + "\n"
+            for at in range(start, end, 12)
+        )
+    before = raw(0x0F0A4, 0x0F4E2)
+    after = "ENTRY_UNIT142_0F4E2:\n" + raw(0x0F4E2, 0x0F514)
+    demand(wrapper.count(before) == 1 and wrapper.count(after) == 1,
+           "UNIT142 P1c/P1d pinned raw wrapper boundaries differ")
+    changed = (
+        "UNIT142_P1C_OPEN_ENTRY:\n"
+        '    include "M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s"\n'
+        "UNIT142_P1C_CONTEXT:\n"
+        "    dcb.b 8,0\n"
+        "UNIT142_P1D_LIMIT_TABLE:\n"
+        "    dcb.b 1040,0\n"
+    )
+    wrapper = wrapper.replace(before, changed).replace(
+        after, 'ENTRY_UNIT142_0F4E2:\n'
+               '    include "M19_UNIT142_P1D_LIMIT_OPEN_MC68020.s"\n')
+    result = []
+    for filename, pinned_blob, lo, hi, _symbol in P1CD_PINNED_MODULES:
+        raw_file = (NATIVE_DIR / filename).read_bytes()
+        git_blob = sha1(("blob %d\0" % len(raw_file)).encode("ascii") + raw_file).hexdigest()
+        demand(git_blob == pinned_blob and
+               raw_file.decode("ascii").startswith("; AGA_NATIVE_MIN_CPU: MC68020\n"),
+               "UNIT142 authored P1c/P1d code not pinned: " + filename)
+        result.append((lo, hi, filename, raw_file.decode("ascii")))
+    return wrapper, result
+
 def p0f_external_bsr_sources(whole,wrapper):
     """Restore two genuine P0f BSR.W to source-verified P0e object entries.
 
@@ -1688,6 +1749,8 @@ def expected_sources():
     modules.extend(p0f_modules)
     wrapper, p0f_bsr = p0f_external_bsr_sources(bytes(whole),wrapper)
     modules.extend(p0f_bsr)
+    wrapper, p1cd = p1cd_open_expected_sources(bytes(whole),wrapper)
+    modules.extend(p1cd)
     return bytes(whole), wrapper, modules
 
 
@@ -1726,7 +1789,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 55508 bytes / 133 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 55596 bytes / 135 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1748,6 +1811,8 @@ def stage(folder, official):
     (folder / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").read_bytes())
     (folder / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").read_bytes())
     (folder / "M19_UNIT142_P0F_BSR_READ_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BSR_READ_MC68020.s").read_bytes())
+    for filename, *_rest in P1CD_PINNED_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1765,7 +1830,8 @@ def edit_gate(staged, assembler):
            (staged / "M19_UNIT142_P0F_BIND_CHECK_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").is_file() and
-           (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file(),
+           (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file() and
+           all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1845,6 +1911,14 @@ def edit_gate(staged, assembler):
                    "UNIT142 P0f BSR symbol not unique: " + filename)
             path.write_text(content.replace(before,symbol + " equ 2"),
                             encoding="ascii",newline="\n")
+        for filename, _hash, _lo, _hi, symbol in P1CD_PINNED_MODULES:
+            path = folder / filename
+            code = path.read_text("ascii")
+            old = symbol + " equ 1"
+            demand(code.count(old) == 1,
+                   "UNIT142 P1c/P1d isolated edit symbol ambiguous: " + filename)
+            path.write_text(code.replace(old, symbol + " equ 2"),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1871,12 +1945,14 @@ def edit_gate(staged, assembler):
         expected[0x0ECA1] = (0, 1)
         expected[0x0EB27] = (0xDE, 0xE0)
         expected[0x0EBF1] = (0xBC, 0xBE)
-        demand(len(expected) == 133,"UNIT142 P0f branch edit count differs")
+        expected[0x0F0B1] = (1, 2)
+        expected[0x0F4EF] = (1, 2)
+        demand(len(expected) == 135, "UNIT142 P1c/P1d edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 133 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 135 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
