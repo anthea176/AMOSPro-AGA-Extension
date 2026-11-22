@@ -1925,13 +1925,13 @@ def prove_p1e_repack_prepare_provenance() -> tuple[int, int, int, bytes]:
     _, parts, _ = unpack_ap20(official)
     prefix = len(parts[group]) - len(native)
     begin = prefix + labels['edit_repack'] + source_labels['repack_sized']
-    original = repack[source_labels['repack_sized']:source_labels['repack_emit']]
+    original = repack[source_labels['repack_sized']:source_labels['repack_write']]
     end = begin + len(original)
     mutation = 0x8841
     require((begin, end) == (P1E_PREP_START, P1E_PREP_END) and
             len(original) == 206 and
             native[labels['edit_repack'] + source_labels['repack_sized']:
-                   labels['edit_repack'] + source_labels['repack_emit']] == original and
+                   labels['edit_repack'] + source_labels['repack_write']] == original and
             parts[group][begin:end] == original and
             original[mutation-begin-3:mutation-begin+1] ==
             bytes.fromhex('c0fc0028'),
@@ -1966,14 +1966,14 @@ def prove_p1e_repack_copy_provenance() -> tuple[int, int, int, bytes]:
     repack, source_labels = emit_bank_repack()
     _, parts, _ = unpack_ap20(official)
     prefix = len(parts[group]) - len(native)
-    begin = prefix + labels['edit_repack'] + source_labels['repack_emit']
-    original = repack[source_labels['repack_emit']:source_labels['repack_emit_done']]
+    begin = prefix + labels['edit_repack'] + source_labels['repack_write']
+    original = repack[source_labels['repack_write']:source_labels['repack_tail']]
     end = begin + len(original)
     mutation = 0x88F9
     require((begin, end) == (P1E_COPY_START, P1E_COPY_END) and
             len(original) == 200 and
-            native[labels['edit_repack'] + source_labels['repack_emit']:
-                   labels['edit_repack'] + source_labels['repack_emit_done']] == original and
+            native[labels['edit_repack'] + source_labels['repack_write']:
+                   labels['edit_repack'] + source_labels['repack_tail']] == original and
             parts[group][begin:end] == original and
             original[mutation-begin-5:mutation-begin+1] ==
             bytes.fromhex('203c00000000'),
@@ -2008,14 +2008,14 @@ def prove_p1e_repack_final_provenance() -> tuple[int, int, int, bytes]:
     repack, source_labels = emit_bank_repack()
     _, parts, _ = unpack_ap20(official)
     prefix = len(parts[group]) - len(native)
-    begin = prefix + labels['edit_repack'] + source_labels['repack_emit_done']
-    original = repack[source_labels['repack_emit_done']:]
+    begin = prefix + labels['edit_repack'] + source_labels['repack_tail']
+    original = repack[source_labels['repack_tail']:]
     end = begin + len(original)
     mutation = 0x89CF
     require((begin, end) == (P1E_FINAL_START, P1E_FINAL_END) and
             len(original) == 184 and
-            native[labels['edit_repack'] + source_labels['repack_emit_done']:
-                   labels['edit_repack'] + source_labels['repack_emit_done'] + len(original)] == original and
+            native[labels['edit_repack'] + source_labels['repack_tail']:
+                   labels['edit_repack'] + source_labels['repack_tail'] + len(original)] == original and
             parts[group][begin:end] == original and
             original[mutation-begin-5:mutation-begin+1] ==
             bytes.fromhex('263c00000000'),
