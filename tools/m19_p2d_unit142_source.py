@@ -1433,6 +1433,15 @@ def p0f_expected_source(whole, wrapper):
 
 
 
+LEGACY_OPEN_MODULES = (
+    ("M19_UNIT142_LEGACY_OPEN_HEAD_MC68020.s",
+     "8ad7223e1a99fdabc53faad372d3b3d0deb39451",
+     0x00470, 0x005D4, "UNIT142_LEGACY_OPEN_HEAD_EDIT", 0, 1, 0x0047D),
+    ("M19_UNIT142_LEGACY_OPEN_HELPERS_MC68020.s",
+     "2e33983bfab09db24f52b4ce5cbfdaa56e948891",
+     0x005F8, 0x00760, "UNIT142_LEGACY_OPEN_HELPER_EDIT", 1, 2, 0x005FF),
+)
+
 P1CD_PINNED_MODULES = (
     ("M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s",
      "5c5aaf4a0adf25deac48ba433d33b86e8ad5e384", 0x0F0A4, 0x0F0CA,
@@ -1540,6 +1549,100 @@ def p0f_external_bsr_sources(whole,wrapper):
         wrapper=wrapper.replace(old,f'    include "{filename}"\n')
         result.append((pos,pos+4,filename,body))
     return wrapper,result
+
+
+def legacy_r83_screen_sources(whole, wrapper):
+    """Exact R83 source-owned legacy Screen Open, with inline data kept raw."""
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+    from m19_p1c_bob_priority_emit import emit_priority_open
+
+    historical, info = build_r83()
+    demand(info["sha256"] == R83_SHA and
+           sha256(historical).hexdigest() == R83_SHA,
+           "UNIT142 historical R83 builder provenance differs")
+    _tk, units, _title = unpack_ap20(historical)
+    reference = whole[0x00470:0x00764]
+    demand(len(units[82]) == 52974 and
+           units[82][0x00470:0x00764] == reference and
+           sha256(reference).hexdigest() ==
+           "f10138229ff9bd91bc90cbd08892c74c67f02cc21653b2d7219786749d0852ea",
+           "UNIT142 legacy R83 Screen Open source drift")
+    priority, _context = emit_priority_open(1102, 0x0F0A4 - 34)
+    disp = int.from_bytes(priority[4:8], "big", signed=True)
+    demand(priority[:4] == bytes.fromhex("4EBB0170") and
+           0x0F0A4 + 2 + disp == 0x00470,
+           "UNIT142 P1c live legacy Open call does not target $00470")
+
+    preview, report = native_unit_source("LEGACY_SCREEN_OPEN", reference, [(0, 0)])
+    demand(report["mnemonic_bytes"] == 714 and report["raw_dc_bytes"] == 42,
+           "UNIT142 legacy Screen Open CFG classification changed")
+    pos0 = preview.find("ENTRY_LEGACY_SCREEN_OPEN_00000:")
+    pos164 = preview.find("L_LEGACY_SCREEN_OPEN_00164:")
+    pos188 = preview.find("L_LEGACY_SCREEN_OPEN_00188:")
+    pos2f0 = preview.find("    dc.b $47,$65,$74,$50  ; +$002F0: 47657450")
+    demand(0 <= pos0 < pos164 < pos188 < pos2f0,
+           "UNIT142 legacy Open code/data boundaries ambiguous")
+    head = preview[pos0:pos164]
+    helpers = preview[pos188:pos2f0]
+    raw_nop = "    dc.b $4E,$71  ; +$00142: 4E71"
+    demand(head.count(raw_nop) == 1 and "dc.b" not in helpers,
+           "UNIT142 legacy Screen Open code unclassified")
+    head = head.replace(raw_nop, "    nop                                                ; +$00142: 4E71")
+
+    def symbolize(body, note, opcode, replacement):
+        hits = [line for line in body.splitlines() if note in line]
+        demand(len(hits) == 1 and hits[0].lstrip().startswith(opcode),
+               "UNIT142 legacy Open isolated edit target not unique")
+        return body.replace(hits[0], replacement, 1)
+
+    head = symbolize(head, "; +$0000C: 7600", "moveq #0,d3",
+                     "    moveq #UNIT142_LEGACY_OPEN_HEAD_EDIT,d3             ; +$0000C: 7600")
+    helpers = symbolize(helpers, "; +$0018E: 7001", "moveq #1,d0",
+                        "    moveq #UNIT142_LEGACY_OPEN_HELPER_EDIT,d0           ; +$0018E: 7001")
+    sources = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; UNIT142 R83 source-proven legacy Screen Open, $00470..$005D4 (356 code bytes).\n"
+        "UNIT142_LEGACY_OPEN_HEAD_EDIT equ 0\n\n" + head,
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; UNIT142 R83 source-proven legacy Screen Open helpers, $005F8..$00760 (360 code bytes).\n"
+        "UNIT142_LEGACY_OPEN_HELPER_EDIT equ 1\n\n" + helpers,
+    )
+    demand(reference[0x164:0x176] == b"intuition.library\x00" and
+           reference[0x176:0x188] == b"graphics.library\x00\x00" and
+           reference[0x2F0:0x2F4] == b"GetP",
+           "UNIT142 legacy Screen Open inline strings or GetP changed")
+
+    def data_lines(a, b):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % x for x in whole[at:min(at+12,b)]) + "\n"
+            for at in range(a, b, 12)
+        )
+
+    original = "L_UNIT142_0045A:\n" + data_lines(0x0045A, 0x00764)
+    demand(wrapper.count(original) == 1,
+           "UNIT142 legacy Screen Open original raw wrapper mismatch")
+    replacement = (
+        "L_UNIT142_0045A:\n" + data_lines(0x0045A, 0x00470)
+        + '    include "M19_UNIT142_LEGACY_OPEN_HEAD_MC68020.s"\n'
+        + "L_LEGACY_SCREEN_OPEN_00164:\n" + data_lines(0x005D4, 0x005E6)
+        + "L_LEGACY_SCREEN_OPEN_00176:\n" + data_lines(0x005E6, 0x005F8)
+        + '    include "M19_UNIT142_LEGACY_OPEN_HELPERS_MC68020.s"\n'
+        + data_lines(0x00760, 0x00764)
+    )
+    wrapper = wrapper.replace(original, replacement)
+    modules = []
+    for spec, source in zip(LEGACY_OPEN_MODULES, sources):
+        filename, blobpin, lo, hi, _symbol, _old, _new, _change = spec
+        rawfile = (NATIVE_DIR / filename).read_bytes()
+        gitblob = sha1(("blob %d\0" % len(rawfile)).encode("ascii") + rawfile).hexdigest()
+        demand(gitblob == blobpin and rawfile.decode("ascii") == source,
+               "UNIT142 legacy R83 authored module not emitter-exact: " + filename)
+        modules.append((lo, hi, filename, source))
+    demand(sum(hi-lo for lo,hi,_filename,_source in modules) == 716,
+           "UNIT142 legacy Screen Open code coverage differs")
+    return wrapper, modules
 
 
 def expected_sources():
@@ -1751,6 +1854,8 @@ def expected_sources():
     modules.extend(p0f_bsr)
     wrapper, p1cd = p1cd_open_expected_sources(bytes(whole),wrapper)
     modules.extend(p1cd)
+    wrapper, legacy = legacy_r83_screen_sources(bytes(whole),wrapper)
+    modules.extend(legacy)
     return bytes(whole), wrapper, modules
 
 
@@ -1789,7 +1894,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 55596 bytes / 135 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 56312 bytes / 137 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1813,6 +1918,8 @@ def stage(folder, official):
     (folder / "M19_UNIT142_P0F_BSR_READ_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BSR_READ_MC68020.s").read_bytes())
     for filename, *_rest in P1CD_PINNED_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_OPEN_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1831,7 +1938,8 @@ def edit_gate(staged, assembler):
            (staged / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file() and
-           all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES),
+           all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1919,6 +2027,13 @@ def edit_gate(staged, assembler):
                    "UNIT142 P1c/P1d isolated edit symbol ambiguous: " + filename)
             path.write_text(code.replace(old, symbol + " equ 2"),
                             encoding="ascii", newline="\n")
+        for filename, _blob, _lo, _hi, symbol, old, new, _diff in LEGACY_OPEN_MODULES:
+            path = folder / filename
+            text = path.read_text("ascii")
+            before = symbol + " equ " + str(old)
+            demand(text.count(before) == 1, "UNIT142 legacy Open edit ambiguous: "+filename)
+            path.write_text(text.replace(before, symbol + " equ " + str(new)),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1947,12 +2062,14 @@ def edit_gate(staged, assembler):
         expected[0x0EBF1] = (0xBC, 0xBE)
         expected[0x0F0B1] = (1, 2)
         expected[0x0F4EF] = (1, 2)
-        demand(len(expected) == 135, "UNIT142 P1c/P1d edit count differs")
+        expected[0x0047D] = (0, 1)
+        expected[0x005FF] = (1, 2)
+        demand(len(expected) == 137, "UNIT142 R83 legacy Open edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 135 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 137 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

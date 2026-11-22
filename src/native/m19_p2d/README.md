@@ -959,6 +959,29 @@ Assemblage vasm P2d byte-exact, **135 mutations isolees**.
 4 146 octets de donnees/marqueurs source-prouves, 2 998 non classes.
 Pas de qualification WinUAE B, Compiler C ou materiel D supplementaire.
 
+### UNIT142 — lots 172 a 173 : Screen Open historique R83 (716 octets)
+
+Le constructeur historique R83, independamment SHA-pinne, reproduit
+octet pour octet la routine AGA `$00470..$00764` (756 octets).
+L'appel P1c vers `$00470` est prouve et la previsualisation de cette
+routine a passe vasm en source directe.
+
+Deux modules Motorola MC68020 recuperent **716 octets executables** :
+- [Screen Open principal](M19_UNIT142_LEGACY_OPEN_HEAD_MC68020.s),
+  `$00470..$005D4` : 356 octets, NOP compris ;
+- [Screen Open auxiliaires](M19_UNIT142_LEGACY_OPEN_HELPERS_MC68020.s),
+  `$005F8..$00760` : 360 octets.
+
+Les 36 octets des noms `intuition.library` / `graphics.library`
+et le delimitateur AMOS `GetP` (4 octets) ne sont pas des instructions
+et restent dans le wrapper. Deux edits `moveq` independants sont prevus.
+
+**Projection a valider en Gate A : 237 modules ASM**, dont 137 UNIT142 ;
+**56 312 / 62 740 octets (89,76 %)** de code UNIT142, **6 428 octets
+bruts**. La classification source devrait isoler **4 186 octets
+non executables et 2 242 octets encore indetermines**.
+Aucune nouvelle Gate B/C/D ; les Lib P2d, LAST_GOOD et l'ASC restent intacts.
+
 ## Compilation directe (Windows)
 
 ```bat

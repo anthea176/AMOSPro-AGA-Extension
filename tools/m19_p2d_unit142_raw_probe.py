@@ -59,11 +59,11 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 135
+    assert reconstructed == group and len(modules) == 137
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 55596 and len(group) - clean == 7144
+    assert clean == 56312 and len(group) - clean == 6428
 
     # Source-owned code vs. original state/header/pseudo data, byte exact.
     mask = bytearray(len(group))
@@ -85,6 +85,9 @@ def check() -> None:
     assert AGA_STATE_OFFSET == 0x001C2
     data = (
         (AGA_STATE_OFFSET, AGA_STATE_OFFSET+40, bytes(40), "AGA Screen state"),
+        # Proven by the exact SHA-pinned R83 native Screen Open source.
+        (0x005D4, 0x005E6, b"intuition.library\x00", "R83 Intuition name"),
+        (0x005E6, 0x005F8, b"graphics.library\x00\x00", "R83 graphics name"),
         (0x0E018, 0x0E620, p0e[labels["object_root"]:], "P0e objects"),
         (0x0ECA4, 0x0F0A4, p0f[flabels["identity_stamp_table"]:], "P0f stamps"),
         (0x0F0CA, 0x0F0D2, p1c[-8:], "P1c context"),
@@ -96,7 +99,7 @@ def check() -> None:
         assert mask[lo:hi] == bytes(hi-lo), label+" already in source code"
         confirmed += hi-lo
         print("UNIT142_SOURCE_DATA_CONFIRMED", label, "%05X..%05X"%(lo,hi),hi-lo)
-    assert confirmed == 3656
+    assert confirmed == 3692
     headers = 0
     for lo,hi in CBLOCK_SPANS:
         for start,end,literal in ((lo,lo+8,b"AGACBLK "),(hi-4,hi,b"GetP")):
@@ -125,7 +128,7 @@ def check() -> None:
               if hi-lo == 6 and group[lo:lo+4] == bytes.fromhex("FE11F700")]
     getp = [(lo, hi) for lo, hi in gaps
             if hi-lo == 4 and group[lo:hi] == GETP]
-    assert len(pseudo) == 45 and len(getp) == 47, (len(pseudo),len(getp))
+    assert len(pseudo) == 45 and len(getp) == 48, (len(pseudo),len(getp))
     for lo, hi in pseudo:
         index = int.from_bytes(group[lo+4:hi], "big")
         assert index in (0x008C,0x031D,0x0320,0x0330,0x0333)
@@ -136,15 +139,16 @@ def check() -> None:
     assert all(any(lo == end-4 for lo, _ in getp)
                for _begin, end in CBLOCK_SPANS)
     extra_markers = (len(pseudo)-1)*6 + (len(getp)-3)*4
-    assert extra_markers == 440
+    assert any(lo == 0x00760 for lo, _ in getp)
+    assert extra_markers == 444
     print("UNIT142_LINKER_MARKERS_PASS", len(pseudo), "AMOS Main 6-byte records,",
           len(getp), "GetP 4-byte records;", extra_markers,
           "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
     known_noncode += extra_markers
-    assert known_noncode == 4146
+    assert known_noncode == 4186
     unknown = len(group) - clean - known_noncode
-    assert unknown == 2998
+    assert unknown == 2242
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
