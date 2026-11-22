@@ -152,6 +152,46 @@ def check() -> None:
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
+    # Keep a reproducible source-only map of the genuinely UNCLASSIFIED
+    # gaps. Observed bytes do not imply executable code or spare padding.
+    classified = bytearray(mask)
+    def mark_noncode(lo, hi, tag):
+        assert 0 <= lo <= hi <= len(group), tag
+        for pos in range(lo, hi):
+            assert classified[pos] in (0, 2), (tag, pos)
+            classified[pos] = 2
+
+    for lo, hi, _original, label in data:
+        mark_noncode(lo, hi, label)
+    for lo, hi in CBLOCK_SPANS:
+        mark_noncode(lo, lo + 8, "AGACBLK")
+        mark_noncode(hi - 4, hi, "CBlock GetP")
+    mark_noncode(TAIL_START, TAIL_START+8, "AGAPIC")
+    for lo, hi in pseudo:
+        mark_noncode(lo, hi, "AMOS Main pseudo-call")
+    for lo, hi in getp:
+        mark_noncode(lo, hi, "AMOS GetP")
+    assert classified.count(1) == clean
+    assert classified.count(2) == known_noncode
+    assert classified.count(0) == unknown
+    undecided = []
+    at = 0
+    while at < len(group):
+        if classified[at]:
+            at += 1
+            continue
+        end = at
+        while end < len(group) and not classified[end]:
+            end += 1
+        undecided.append((at, end))
+        at = end
+    assert sum(hi - lo for lo, hi in undecided) == unknown
+    for lo, hi in sorted(undecided, key=lambda pair: pair[1] - pair[0],
+                         reverse=True)[:30]:
+        print("UNIT142_UNCLASSIFIED_ISLAND", "%05X..%05X" % (lo, hi),
+              hi-lo, "bytes", "hex", group[lo:min(hi,lo+16)].hex().upper())
+
+
     tail = group[TAIL_START:TAIL_END]
     assert len(tail) == 6168 and tail.startswith(b"AGAPIC  ")
     assert group[PUBLIC_P1D_ENTRY:PUBLIC_P1D_ENTRY + 4] == bytes.fromhex("4EBB0170")
