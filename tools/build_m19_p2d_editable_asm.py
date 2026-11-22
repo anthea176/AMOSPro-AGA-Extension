@@ -68,6 +68,7 @@ P1C_CONTEXT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_CONTEXT_MC6802
 P1C_PRE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_PREFLIGHT_MC68020.s'
 P1C_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_ORDER_COLLECT_MC68020.s'
 P1C_DRAW_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_DRAW_MC68020.s'
+P1D_LIMIT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_LIMIT_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -144,6 +145,9 @@ P1C_COL_END = 0x7C98
 P1C_DRAW_NAME = 'M19_P1C_FRAME_DRAW_MC68020.s'
 P1C_DRAW_START = 0x7C98
 P1C_DRAW_END = 0x7D7E
+P1D_LIMIT_NAME = 'M19_P1D_LIMIT_MC68020.s'
+P1D_LIMIT_START = 0x7D7E
+P1D_LIMIT_END = 0x7DFE
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1334,6 +1338,49 @@ def replace_raw_p1c_frame_draw(text: str) -> str:
     return text[:i] + 'L_BOBS_07C98:\n    include "' + P1C_DRAW_NAME + '"\n' + text[j:]
 
 
+@lru_cache(maxsize=1)
+def prove_p1d_limit_provenance() -> tuple[int, int, int, bytes]:
+    """Verify P1d Limit 128-byte source against the original MC68020 emitter."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    p1d, source_labels = emit_limit_bobs(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['p1d_limit_entry']
+    end = base + labels['p1d_scoped_paint']
+    fragment = p1d[source_labels['p1d_limit_entry']:
+                   source_labels['p1d_scoped_paint']]
+    mutation = 0x7DEB
+    require((begin, end) == (P1D_LIMIT_START, P1D_LIMIT_END) and
+            len(fragment) == 128 and
+            native[labels['p1d_limit_entry']:labels['p1d_scoped_paint']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('263c00000001'),
+            'P1d Limit source differs from the official P2d BOBS code')
+    return begin, end, mutation, fragment
+
+
+def replace_raw_p1d_limit(text: str) -> str:
+    """Replace only 128 bytes of source-proven P1d Limit code."""
+    first = 'ENTRY_BOBS_07D7E:\np1d_limit_entry:\n'
+    last = 'L_BOBS_07DFE:\np1d_scoped_paint:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1d Limit annotated source missing')
+    pos, observed = P1D_LIMIT_START, bytearray()
+    for at, code in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1d Limit audit discontinuity')
+        raw = bytes.fromhex(code)
+        observed.extend(raw)
+        pos += len(raw)
+    require(pos == P1D_LIMIT_END and
+            bytes(observed) == prove_p1d_limit_provenance()[3],
+            'P1d Limit raw audit differs from the source emitter')
+    return (text[:i] + 'ENTRY_BOBS_07D7E:\n    include "' +
+            P1D_LIMIT_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1441,7 +1488,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1c_context_text: str | None = None,
                    p1c_pre_text: str | None = None,
                    p1c_col_text: str | None = None,
-                   p1c_draw_text: str | None = None) -> None:
+                   p1c_draw_text: str | None = None,
+                   p1d_limit_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1469,6 +1517,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1C_PRE_FILE.is_file(), f'missing authored module: {P1C_PRE_FILE}')
     require(P1C_COL_FILE.is_file(), f'missing authored module: {P1C_COL_FILE}')
     require(P1C_DRAW_FILE.is_file(), f'missing authored module: {P1C_DRAW_FILE}')
+    require(P1D_LIMIT_FILE.is_file(), f'missing authored module: {P1D_LIMIT_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1490,6 +1539,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1c_frame_preflight(text)
     text = replace_raw_p1c_order_collect(text)
     text = replace_raw_p1c_frame_draw(text)
+    text = replace_raw_p1d_limit(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1828,6 +1878,19 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', draw_source),
             'P1c ordered draw has raw instructions or mismatched stack size')
     (folder / P1C_DRAW_NAME).write_text(draw_source, encoding='ascii', newline='\n')
+    limit_source = (p1d_limit_text if p1d_limit_text is not None
+                    else P1D_LIMIT_FILE.read_text('ascii'))
+    result_original = limit_source.count('    move.l #1,d3')
+    result_edited = limit_source.count('    move.l #2,d3')
+    for marker in ('p1d_limit_entry:', 'p1d_reset_request:', 'p1d_commit:',
+                   'p1d_refuse:', 'p1d_set_return:', 'L_BOBS_07DC6:',
+                   'L_BOBS_07DDE:', 'L_BOBS_07DF0:', 'L_BOBS_07DF6:'):
+        require(limit_source.count(marker) == 1, 'P1d Limit source missing '+marker)
+    require((result_original, result_edited) in ((1, 0), (0, 1)) and
+            limit_source.count('P1D_MAX_BOB equ 64') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', limit_source),
+            'P1d Limit contains unclassified raw instructions or missing bound')
+    (folder / P1D_LIMIT_NAME).write_text(limit_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1918,6 +1981,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1c_pre_start, p1c_pre_end, _, _ = prove_p1c_frame_preflight_provenance()
     p1c_col_start, p1c_col_end, _, _ = prove_p1c_order_collect_provenance()
     p1c_draw_start, p1c_draw_end, _, _ = prove_p1c_frame_draw_provenance()
+    p1d_limit_start, p1d_limit_end, _, _ = prove_p1d_limit_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1941,7 +2005,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1c_context_start <= i < p1c_context_end) or
                  (p1c_pre_start <= i < p1c_pre_end) or
                  (p1c_col_start <= i < p1c_col_end) or
-                 (p1c_draw_start <= i < p1c_draw_end) for i in differences),
+                 (p1c_draw_start <= i < p1c_draw_end) or
+                 (p1d_limit_start <= i < p1d_limit_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1976,7 +2041,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1c_context_text: str | None = None,
           p1c_pre_text: str | None = None,
           p1c_col_text: str | None = None,
-          p1c_draw_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1c_draw_text: str | None = None,
+          p1d_limit_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1995,7 +2061,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1c_context_text=p1c_context_text,
                     p1c_pre_text=p1c_pre_text,
                     p1c_col_text=p1c_col_text,
-                    p1c_draw_text=p1c_draw_text)
+                    p1c_draw_text=p1c_draw_text,
+                    p1d_limit_text=p1d_limit_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -2409,6 +2476,19 @@ def test_editability(assembler: Path) -> None:
                 [draw_imm-5:draw_imm+3] == bytes.fromhex('257c000000020004'),
                 'P1c frame draw edited MOVE.L result not assembled')
         require(draw_start <= draw_imm < draw_end, 'P1c frame draw edit escaped source')
+        lim_start, lim_end, lim_imm, _ = prove_p1d_limit_provenance()
+        lim_source = P1D_LIMIT_FILE.read_text('ascii')
+        needle = '    move.l #1,d3'
+        require(lim_source.count(needle) == 1, 'P1d Limit edit not unique')
+        edited, diffs = build(
+            assembler, root/'modified_p1d_limit', allow_edited=True,
+            p1d_limit_text=lim_source.replace(needle, '    move.l #2,d3'))
+        require(diffs == [lim_imm],
+                f'P1d Limit edited bytes {diffs}, expected {[lim_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [lim_imm-5:lim_imm+1] == bytes.fromhex('263c00000002'),
+                'P1d Limit edited result instruction not assembled')
+        require(lim_start <= lim_imm < lim_end, 'P1d Limit edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -2434,6 +2514,7 @@ def test_editability(assembler: Path) -> None:
     print('P1C_PREFLIGHT_EDITABILITY_TEST PASS: MOVE.L #1,44(A2) -> #2, one byte changed')
     print('P1C_COLLECT_EDITABILITY_TEST PASS: MOVE.L #0,32(A2) -> #1, one byte changed')
     print('P1C_DRAW_EDITABILITY_TEST PASS: MOVE.L #1,4(A2) -> #2, one byte changed')
+    print('P1D_LIMIT_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 

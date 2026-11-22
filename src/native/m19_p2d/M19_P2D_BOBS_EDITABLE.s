@@ -8369,56 +8369,7 @@ L_BOBS_07C18:
 L_BOBS_07C98:
     include "M19_P1C_FRAME_DRAW_MC68020.s"
 ENTRY_BOBS_07D7E:
-p1d_limit_entry:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07D7E: 48E7EFEE
-    move.l d3,d7                                       ; +$07D82: 2E03
-    move.l (a3)+,d6                                    ; +$07D84: 2C1B
-    move.l (a3)+,d5                                    ; +$07D86: 2A1B
-    move.l (a3)+,d4                                    ; +$07D88: 281B
-    move.l (a3)+,d3                                    ; +$07D8A: 261B
-    cmpi.l #$00000040,d3                               ; +$07D8C: 0C8300000040
-    bhi.w L_BOBS_07DF0                                 ; +$07D92: 6200005C
-    bsr.w L_BOBS_07AE8                                 ; +$07D96: 6100FD50
-    move.l a0,d0                                       ; +$07D9A: 2008
-    beq.w L_BOBS_07DF0                                 ; +$07D9C: 67000052
-    adda.l #$00000008,a0                               ; +$07DA0: D1FC00000008
-    lsl.l #4,d3                                        ; +$07DA6: E98B
-    adda.l d3,a0                                       ; +$07DA8: D1C3
-    tst.l d6                                           ; +$07DAA: 4A86
-    ble.w L_BOBS_07DC6                                 ; +$07DAC: 6F000018
-    tst.l d7                                           ; +$07DB0: 4A87
-    ble.w L_BOBS_07DF0                                 ; +$07DB2: 6F00003C
-    add.l d4,d6                                        ; +$07DB6: DC84
-    bvs.w L_BOBS_07DF0                                 ; +$07DB8: 69000036
-    add.l d5,d7                                        ; +$07DBC: DE85
-    bvs.w L_BOBS_07DF0                                 ; +$07DBE: 69000030
-    bra.w L_BOBS_07DDE                                 ; +$07DC2: 6000001A
-L_BOBS_07DC6:
-p1d_reset_request:
-    tst.l d4                                           ; +$07DC6: 4A84
-    bne.w L_BOBS_07DF0                                 ; +$07DC8: 66000026
-    tst.l d5                                           ; +$07DCC: 4A85
-    bne.w L_BOBS_07DF0                                 ; +$07DCE: 66000020
-    tst.l d6                                           ; +$07DD2: 4A86
-    bne.w L_BOBS_07DF0                                 ; +$07DD4: 6600001A
-    tst.l d7                                           ; +$07DD8: 4A87
-    bne.w L_BOBS_07DF0                                 ; +$07DDA: 66000014
-L_BOBS_07DDE:
-p1d_commit:
-    move.l d4,(a0)+                                    ; +$07DDE: 20C4
-    move.l d5,(a0)+                                    ; +$07DE0: 20C5
-    move.l d6,(a0)+                                    ; +$07DE2: 20C6
-    move.l d7,(a0)+                                    ; +$07DE4: 20C7
-    move.l #$00000001,d3                               ; +$07DE6: 263C00000001
-    bra.w L_BOBS_07DF6                                 ; +$07DEC: 60000008
-L_BOBS_07DF0:
-p1d_refuse:
-    move.l #$00000000,d3                               ; +$07DF0: 263C00000000
-L_BOBS_07DF6:
-p1d_set_return:
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$07DF6: 4CDF77F7
-    moveq #0,d2                                        ; +$07DFA: 7400
-    rts                                                ; +$07DFC: 4E75
+    include "M19_P1D_LIMIT_MC68020.s"
 L_BOBS_07DFE:
 p1d_scoped_paint:
     move.l a0,-(a7)                                    ; +$07DFE: 2F08
