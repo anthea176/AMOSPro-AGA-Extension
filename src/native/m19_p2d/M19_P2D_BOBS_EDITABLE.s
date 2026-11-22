@@ -8652,34 +8652,7 @@ L_BOBS_0840A:
 L_BOBS_08498:
     include "M19_P1E_EDIT_PREFLIGHT_NEXT_MC68020.s"
 L_BOBS_084C6:
-edit_publish:
-    movea.l 56(a2),a0                                  ; +$084C6: 206A0038
-    movea.l 60(a2),a1                                  ; +$084CA: 226A003C
-    move.l (a0),(a1)                                   ; +$084CE: 2290
-    movea.l 52(a2),a4                                  ; +$084D0: 286A0034
-    move.l a1,(a4)                                     ; +$084D4: 2889
-    move.l #$00000000,(a0)                             ; +$084D6: 20BC00000000
-    move.l a0,64(a2)                                   ; +$084DC: 25480040
-    movea.l 84(a2),a0                                  ; +$084E0: 206A0054
-    move.l a0,d0                                       ; +$084E4: 2008
-    beq.w L_BOBS_084F0                                 ; +$084E6: 67000008
-    movea.l 80(a2),a1                                  ; +$084EA: 226A0050
-    move.l (a0),(a1)                                   ; +$084EE: 2290
-L_BOBS_084F0:
-edit_registry_insert:
-    move.l 88(a2),d0                                   ; +$084F0: 202A0058
-    beq.w L_BOBS_08502                                 ; +$084F4: 6700000C
-    movea.l d0,a0                                      ; +$084F8: 2040
-    movea.l 80(a2),a1                                  ; +$084FA: 226A0050
-    move.l (a1),(a0)                                   ; +$084FE: 2091
-    move.l a0,(a1)                                     ; +$08500: 2288
-L_BOBS_08502:
-edit_registry_owner:
-    movea.l 76(a2),a0                                  ; +$08502: 206A004C
-    move.l #$00000000,(a0)                             ; +$08506: 20BC00000000
-    tst.l 4(a0)                                        ; +$0850C: 4AA80004
-    beq.w L_BOBS_08516                                 ; +$08510: 67000004
-    move.l a5,(a0)                                     ; +$08514: 208D
+    include "M19_P1E_EDIT_PUBLISH_MC68020.s"
 L_BOBS_08516:
 edit_selection:
     lea L_BOBS_020A2(pc),a0                            ; +$08516: 41FA9B8A
