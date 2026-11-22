@@ -5,7 +5,7 @@
 ; AMOS Main symbolic pseudo-ops preserve six-byte ABI.
 P2D_SYSTEM_SUCCESS_FLAG equ 1
 
-movem.l d0-d1/d4-d7/a0-a2/a4-a6,-(a7)
+    movem.l d0-d1/d4-d7/a0-a2/a4-a6,-(a7)
     lea -96(a7),a7
     movea.l a7,a4
     move.l #$00000000,20(a4)

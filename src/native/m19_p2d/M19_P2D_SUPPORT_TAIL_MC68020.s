@@ -5,7 +5,7 @@
 ; AMOS Main symbolic pseudo-ops preserve six-byte ABI.
 P2D_TAIL_SCRATCH_ZERO equ 0
 
-movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)
+    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)
     lea -64(a7),a7
     movea.l a7,a2
     move.l a0,(a2)

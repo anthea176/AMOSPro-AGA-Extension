@@ -210,7 +210,7 @@ def extract(text, spec, bytes_expected, *, staged=False):
     require(offset == spec.stop and bytes(actual)==bytes_expected and
             pseudo==spec.pseudo_count,
             'P1e audit/emitter bytes or AMOS ABI count changed: '+spec.name)
-    body = '\n'.join(result).strip()+'\n'
+    body = '\n'.join(result).rstrip()+'\n'
     require(body.count(spec.needle)==1, 'editable instruction not unique')
     return body.replace(spec.needle,spec.replacement)
 
