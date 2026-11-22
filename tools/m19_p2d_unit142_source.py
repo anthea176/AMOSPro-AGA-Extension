@@ -1365,6 +1365,23 @@ def verify(official):
     demand(len(matches) == 1 and
            groups[matches[0]] == native,
            "UNIT142 absent/ambiguous in authoritative P2d AP20")
+    # The private CBlock core is embedded three times in UNIT142. Prove its
+    # origin against the historical M18 Python emitter, not a disassembly.
+    from m18_cblock_copy_emit import emit_cblock_copy_core
+    cblock_core, _core_labels = emit_cblock_copy_core()
+    cblock_spans = ((0x0ABC6, 0x0AF3A),
+                    (0x0B58A, 0x0B8FE),
+                    (0x0BF52, 0x0C2C6))
+    cblock_expected = b"AGACBLK " + cblock_core + b"GetP"
+    print("UNIT142_CBLOCK_SOURCE_PROBE", len(cblock_core),
+          sha256(cblock_core).hexdigest(),
+          "envelope", len(cblock_expected))
+    demand(len(cblock_expected) == 884,
+           "UNIT142 M18 CBlock core size unexpected; raw block kept intact")
+    for lo, hi in cblock_spans:
+        demand(native[lo:hi] == cblock_expected,
+               "UNIT142 legacy CBlock emitter differs at $%05X" % lo)
+    print("UNIT142_CBLOCK_PROVEN: three 884-byte core envelopes source-exact")
     for lo, hi, filename, source in modules:
         demand(groups[matches[0]][lo:hi] == native[lo:hi],
                "UNIT142 source slice mismatch: " + filename)
