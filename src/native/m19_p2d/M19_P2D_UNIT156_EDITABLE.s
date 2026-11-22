@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; PARTIAL_SOURCE_MIGRATION: native UNIT156 public + main + tail + nibble + DOS guard; audit remainder
+; PARTIAL_SOURCE_MIGRATION: native UNIT156 dispatch + public + main + tail + nibble + DOS guard; audit remainder
 ; PARTIAL MC68020 MNEMONIC RESTORATION (not an installable .Lib)
 ; Unit: UNIT156 | SHA256: 4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b
 ; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.
@@ -8,17 +8,7 @@
 ; MC68020: assemble with vasmm68k_mot -m68020
 
 UNIT_UNIT156:
-    subq.l #4,a7                                       ; +$00000: 598F
-    movem.l d0/a0,-(a7)                                ; +$00002: 48E78080
-    movea.l 12(a7),a0                                  ; +$00006: 206F000C
-    moveq #0,d0                                        ; +$0000A: 7000
-    move.w (a0)+,d0                                    ; +$0000C: 3018
-    move.l a0,12(a7)                                   ; +$0000E: 2F48000C
-    lea ENTRY_UNIT156_00022(pc),a0                     ; +$00012: 41FA000E
-    adda.l d0,a0                                       ; +$00016: D1C0
-    move.l a0,8(a7)                                    ; +$00018: 2F480008
-    movem.l (a7)+,d0/a0                                ; +$0001C: 4CDF0101
-    rts                                                ; +$00020: 4E75
+    include "M19_UNIT156_DISPATCH_V2_MC68020.s"
 ENTRY_UNIT156_00022:
     include "M19_UNIT156_PUBLIC_GET_MC68020.s"
     include "M19_UNIT156_MAIN_BODY_MC68020.s"

@@ -519,6 +519,29 @@ Ils restent volontairement dans le wrapper, sans interpretation.
 La CI Gate A doit reconstruire P2d octet-identique ;
 aucune modification de dist/ ni ASC et aucune nouvelle Gate B/C/D.
 
+### UNIT153 — 35e lot : dispatcher AP20 V2 (34 octets)
+
+[M19_UNIT153_DISPATCH_V2_MC68020.s](M19_UNIT153_DISPATCH_V2_MC68020.s) :
+les 11 instructions `$00000..$00022` du dispatcher sont maintenant
+un module source, sans changement binaire. Le test modifie uniquement
+l'octet de l'instruction `subq.l #4,a7` (`$00000`) dans sa
+reconstruction privee, avec 13 autres edits propres a UNIT153.
+
+### UNIT156 — 36e lot : dispatcher AP20 V2 (34 octets)
+
+[M19_UNIT156_DISPATCH_V2_MC68020.s](M19_UNIT156_DISPATCH_V2_MC68020.s) :
+meme contrat de 11 instructions sur `$00000..$00022`.
+La source native est rattachee a l'emetteur P2d, pas a un desassemblage
+libre ; controle de six mutations d'un octet dans UNIT156, dont
+`$00000` pour le dispatcher.
+
+**Total : 100 modules ASM (80 BOBS, 14 UNIT153, 6 UNIT156).**
+**UNIT153 : 5 414 / 5 558 octets**, les 144 restants sont des marqueurs,
+donnees et deux ilots bruts. **UNIT156 : 2 330 / 2 508 octets**.
+Les octets de l'ABI AP20 V2 doivent rester strictement identiques
+dans la Lib P2d et LAST_GOOD. Les Gates B/C historiques ne se
+transmettent pas a des edits futurs.
+
 ## Compilation directe (Windows)
 
 ```bat

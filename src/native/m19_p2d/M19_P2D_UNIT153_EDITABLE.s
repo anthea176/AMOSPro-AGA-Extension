@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; PARTIAL_SOURCE_MIGRATION: UNIT153 public preflight native, audit remainder
+; PARTIAL_SOURCE_MIGRATION: UNIT153 dispatcher + public preflight native, audit remainder
 ; PARTIAL MC68020 MNEMONIC RESTORATION (not an installable .Lib)
 ; Unit: UNIT153 | SHA256: 6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700
 ; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.
@@ -8,17 +8,7 @@
 ; MC68020: assemble with vasmm68k_mot -m68020
 
 UNIT_UNIT153:
-    subq.l #4,a7                                       ; +$00000: 598F
-    movem.l d0/a0,-(a7)                                ; +$00002: 48E78080
-    movea.l 12(a7),a0                                  ; +$00006: 206F000C
-    moveq #0,d0                                        ; +$0000A: 7000
-    move.w (a0)+,d0                                    ; +$0000C: 3018
-    move.l a0,12(a7)                                   ; +$0000E: 2F48000C
-    lea ENTRY_UNIT153_00022(pc),a0                     ; +$00012: 41FA000E
-    adda.l d0,a0                                       ; +$00016: D1C0
-    move.l a0,8(a7)                                    ; +$00018: 2F480008
-    movem.l (a7)+,d0/a0                                ; +$0001C: 4CDF0101
-    rts                                                ; +$00020: 4E75
+    include "M19_UNIT153_DISPATCH_V2_MC68020.s"
 ENTRY_UNIT153_00022:
     include "M19_UNIT153_ENTRY_GUARD_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00108: FE11F700031D

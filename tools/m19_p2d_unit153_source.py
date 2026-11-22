@@ -28,6 +28,7 @@ MODULE10 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_PUBLIC_MC68020.s"
 MODULE11 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_POINTER_MC68020.s"
 MODULE12 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_VALIDATION_MC68020.s"
 MODULE13 = ROOT / "src/native/m19_p2d/M19_UNIT153_THIRD_FINAL_MC68020.s"
+MODULE14 = ROOT / "src/native/m19_p2d/M19_UNIT153_DISPATCH_V2_MC68020.s"
 GROUP_SIZE = 0x15B6
 GROUP_SHA = "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700"
 START = "ENTRY_UNIT153_00372:\n"
@@ -113,6 +114,12 @@ HEADER13 = (
     "; P2d UNIT153 third result/loop tail source-verified against emitter.\n"
     "; UNIT153+$0151A..$015B2 (152 code bytes), trailing GetP preserved.\n"
     "UNIT153_THIRD_FINAL_ZERO equ 0\n\n"
+)
+HEADER14 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-owned UNIT153 AP20 V2 dispatcher from pinned P2d emitter.\n"
+    "; UNIT153+$00000..$00022, 34 executable bytes, ABI unchanged.\n"
+    "UNIT153_DISPATCH_STACK_BYTES equ 4\n\n"
 )
 EXTRA_SPANS = (
     (
@@ -211,6 +218,14 @@ EXTRA_SPANS = (
         "    move.l #$00000000,d3",
         "    move.l #UNIT153_THIRD_FINAL_ZERO,d3",
     ),
+    (
+        MODULE14,
+        "UNIT_UNIT153:\n",
+        "ENTRY_UNIT153_00022:\n",
+        0x000, 0x022, 11, 0, HEADER14,
+        "    subq.l #4,a7",
+        "    subq.l #UNIT153_DISPATCH_STACK_BYTES,a7",
+    ),
 )
 
 
@@ -257,7 +272,7 @@ def expected_sources():
     marker = "; AGA_NATIVE_PURPOSE: AUDIT_ONLY"
     demand(audit.count(marker) == 1, "AUDIT_ONLY source marker absent")
     wrapper = audit.replace(marker,
-        "; PARTIAL_SOURCE_MIGRATION: UNIT153 public preflight native, audit remainder")
+        "; PARTIAL_SOURCE_MIGRATION: UNIT153 dispatcher + public preflight native, audit remainder")
     original = audit[start+len(START):stop]
     demand(wrapper.count(original) == 1, "UNIT153 audited preflight ambiguous")
     wrapper = wrapper.replace(original,
@@ -321,7 +336,7 @@ def verify(official):
                "UNIT153 extra source-built bytes differ: "+path.name)
         demand(path.read_text("ascii") == authored,
                "UNIT153 extra authored module differs: "+path.name)
-    print("UNIT153_SOURCE_PROVEN: 5380 bytes / 13 modules, group", group)
+    print("UNIT153_SOURCE_PROVEN: 5414 bytes / 14 modules, group", group)
     return group
 
 
@@ -329,7 +344,7 @@ def stage(folder, official):
     verify(official)
     (folder / "M19_P2D_UNIT153_MC68020.s").write_bytes(WRAPPER.read_bytes())
     (folder / MODULE.name).write_bytes(MODULE.read_bytes())
-    for path in (MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13):
+    for path in (MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14):
         (folder / path.name).write_bytes(path.read_bytes())
 
 
@@ -338,7 +353,7 @@ def edit_gate(staged, assembler):
     group = verify(reference)
     demand((staged / "M19_P2D_UNIT153_MC68020.s").is_file() and
            all((staged / module.name).is_file()
-               for module in (MODULE, MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13)) and
+               for module in (MODULE, MODULE2, MODULE3, MODULE4, MODULE5, MODULE6, MODULE7, MODULE8, MODULE9, MODULE10, MODULE11, MODULE12, MODULE13, MODULE14)) and
            (staged / "M19_P2D_AP20_SOURCE.s").is_file(),
            "UNIT153 staging incomplete")
     with TemporaryDirectory(prefix="unit153_source_edit_") as tmp:
@@ -370,6 +385,8 @@ def edit_gate(staged, assembler):
              "UNIT153_THIRD_VALID_MIN equ 25"),
             (MODULE13, "UNIT153_THIRD_FINAL_ZERO equ 0",
              "UNIT153_THIRD_FINAL_ZERO equ 1"),
+            (MODULE14, "UNIT153_DISPATCH_STACK_BYTES equ 4",
+             "UNIT153_DISPATCH_STACK_BYTES equ 3"),
         ):
             source = (folder / module.name).read_text("ascii")
             demand(source.count(old) == 1,
@@ -396,11 +413,12 @@ def edit_gate(staged, assembler):
                     0xA3D: (0, 1), 0xBE1: (24, 25),
                     0xCA5: (24, 25), 0xF09: (0, 1),
                     0xFE7: (0, 1), 0x11B3: (24, 25),
-                    0x1277: (24, 25), 0x1545: (0, 1)}
+                    0x1277: (24, 25), 0x1545: (0, 1),
+                    0x0000: (0x59, 0x57)}
         demand(diffs == sorted(expected) and
                all((lhs[i], rhs[i]) == pair for i, pair in expected.items()),
                "UNIT153 grouped one-byte mutations drift")
-    print("UNIT153_EDIT_TEST_PASS: 13 exact one-byte mutations in UNIT153 only")
+    print("UNIT153_EDIT_TEST_PASS: 14 exact one-byte mutations in UNIT153 only")
 
 
 def main():
