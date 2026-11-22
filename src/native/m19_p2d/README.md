@@ -718,6 +718,45 @@ marqueurs GetP et pseudo-appels AMOS Main restent dans le wrapper.
 restent a examiner. Gate A a verifier en CI ; pas de nouvelle Gate
 B/C/D, ni modification des deux Lib ou de l'ASC de regression.
 
+
+### UNIT142 — lots 101 a 125 : vingt-cinq plages source-verifiees (3 104 octets)
+
+25 blocs MC68020 supplementaires sont maintenant explicites en ASM et
+verrouilles par les octets de l'emetteur P2d, les offsets et une mutation
+isolee de chaque module. Le wrapper conserve tous les octets non couverts.
+
+- [bloc $020E6](M19_UNIT142_BLOCK_020E6_MC68020.s) : `$020E6..$02198`, 178 octets
+- [bloc $08568](M19_UNIT142_BLOCK_08568_MC68020.s) : `$08568..$08612`, 170 octets
+- [bloc $02690](M19_UNIT142_BLOCK_02690_MC68020.s) : `$02690..$02738`, 168 octets
+- [bloc $099C6](M19_UNIT142_BLOCK_099C6_MC68020.s) : `$099C6..$09A66`, 160 octets
+- [bloc $00C9E](M19_UNIT142_BLOCK_00C9E_MC68020.s) : `$00C9E..$00D38`, 154 octets
+- [bloc $08CDA](M19_UNIT142_BLOCK_08CDA_MC68020.s) : `$08CDA..$08D72`, 152 octets
+- [bloc $09F6A](M19_UNIT142_BLOCK_09F6A_MC68020.s) : `$09F6A..$0A000`, 150 octets
+- [bloc $00764](M19_UNIT142_BLOCK_00764_MC68020.s) : `$00764..$007F6`, 146 octets
+- [bloc $031E4](M19_UNIT142_BLOCK_031E4_MC68020.s) : `$031E4..$0326C`, 136 octets
+- [bloc $09564](M19_UNIT142_BLOCK_09564_MC68020.s) : `$09564..$095E6`, 130 octets
+- [bloc $01540](M19_UNIT142_BLOCK_01540_MC68020.s) : `$01540..$015BA`, 122 octets
+- [bloc $0398C](M19_UNIT142_BLOCK_0398C_MC68020.s) : `$0398C..$03A06`, 122 octets
+- [bloc $09A9E](M19_UNIT142_BLOCK_09A9E_MC68020.s) : `$09A9E..$09B10`, 114 octets
+- [bloc $094BE](M19_UNIT142_BLOCK_094BE_MC68020.s) : `$094BE..$0952C`, 110 octets
+- [bloc $02BBA](M19_UNIT142_BLOCK_02BBA_MC68020.s) : `$02BBA..$02C26`, 108 octets
+- [bloc $02C2A](M19_UNIT142_BLOCK_02C2A_MC68020.s) : `$02C2A..$02C96`, 108 octets
+- [bloc $07B56](M19_UNIT142_BLOCK_07B56_MC68020.s) : `$07B56..$07BC2`, 108 octets
+- [bloc $0C8D8](M19_UNIT142_BLOCK_0C8D8_MC68020.s) : `$0C8D8..$0C940`, 104 octets
+- [bloc $02D90](M19_UNIT142_BLOCK_02D90_MC68020.s) : `$02D90..$02DF6`, 102 octets
+- [bloc $02DFA](M19_UNIT142_BLOCK_02DFA_MC68020.s) : `$02DFA..$02E60`, 102 octets
+- [bloc $0317C](M19_UNIT142_BLOCK_0317C_MC68020.s) : `$0317C..$031E0`, 100 octets
+- [bloc $09428](M19_UNIT142_BLOCK_09428_MC68020.s) : `$09428..$09486`, 94 octets
+- [bloc $09930](M19_UNIT142_BLOCK_09930_MC68020.s) : `$09930..$0998E`, 94 octets
+- [bloc $0781C](M19_UNIT142_BLOCK_0781C_MC68020.s) : `$0781C..$07874`, 88 octets
+- [bloc $0C3C2](M19_UNIT142_BLOCK_0C3C2_MC68020.s) : `$0C3C2..$0C416`, 84 octets
+
+**189 modules ASM**, dont **89 UNIT142** : **49 632 / 62 740 octets
+(79,11 %)**. Il reste **13 108 octets UNIT142** (donnees/markers
+non classes et autres petits blocs). La reconstruction P2d et les
+mutations demeurent Gate A et doivent etre confirmees par CI.
+Aucune nouvelle Gate B/C/D ni livraison de Lib/ASC.
+
 ## Compilation directe (Windows)
 
 ```bat
