@@ -214,6 +214,27 @@ REGIONS = (
            'P2D_PUBLIC_VALUE_OFFSET', 4, 8, 0x0EDE9, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            start_marker='ENTRY_BOBS_0EDD0:'),
+    Region('P1B_FRAME_BRANCH', 'M19_P1B_FRAME_BRANCH_MC68020.s',
+           0x068FA, 0x068FE, '', '',
+           '    bra.w L_BOBS_07AC2',
+           '    bra.w L_BOBS_07AC2+P1B_BRANCH_LOW_BYTE-198',
+           'P1B_BRANCH_LOW_BYTE', 198, 200, 0x068FD, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='    dc.b $4E,$71,$4E,$71  ; +$068FE: 4E714E71'),
+    Region('B8_CLOSE_BRANCH', 'M19_B8_CLOSE_BRANCH_MC68020.s',
+           0x071E8, 0x071EC, '', '',
+           '    bra.w L_BOBS_0A1D2',
+           '    bra.w L_BOBS_0A1D2+B8_CLOSE_BRANCH_LOW_BYTE-232',
+           'B8_CLOSE_BRANCH_LOW_BYTE', 232, 234, 0x071EB, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='    dc.b $4E,$75  ; +$071EC: 4E75'),
+    Region('P2D_PUBLIC_QUERY_TAIL', 'M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s',
+           0x0EDF4, 0x0EE00, '', '',
+           '    moveq #0,d2',
+           '    moveq #P2D_QUERY_RETURN_ZERO,d2',
+           'P2D_QUERY_RETURN_ZERO', 0, 1, 0x0EDFD, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='__BOBS_EOF__'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -313,13 +334,16 @@ def bounds(spec, *, staged=False):
             spec.staged_end_marker is not None else spec.end_marker)
     first = ((spec.start_marker + '\n') if spec.start_marker is not None
              else ('L_BOBS_%05X:\n' % spec.start))
+    if last == '__BOBS_EOF__':
+        return first, ''
     return (first,
             (last + '\n') if last is not None
             else ('L_BOBS_%05X:\n' % spec.stop))
 
 def extract(text, spec, bytes_expected, *, staged=False):
     first,last = bounds(spec, staged=staged)
-    i,j = text.find(first),text.find(last,text.find(first)+len(first))
+    i = text.find(first)
+    j = len(text) if not last else text.find(last,i+len(first))
     require(i >= 0 and j > i and text.find(first,i+len(first)) < 0,
             'audit boundaries missing/ambiguous: '+spec.name)
     result,actual,offset,pseudo = [],bytearray(),spec.start,0
@@ -364,7 +388,8 @@ def replace_raw_sections(text, evidence):
     for spec in REGIONS:
         extract(text,spec,evidence[spec.name],staged=True)
         first,last = bounds(spec, staged=True)
-        i,j = text.index(first),text.index(last,text.index(first)+len(first))
+        i = text.index(first)
+        j = len(text) if not last else text.index(last,i+len(first))
         replacements.append((i,j,first+'    include "'+spec.file+'"\n'))
     for i,j,segment in sorted(replacements,reverse=True):
         text = text[:i]+segment+text[j:]

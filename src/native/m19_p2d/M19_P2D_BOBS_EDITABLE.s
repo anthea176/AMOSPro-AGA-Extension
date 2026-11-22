@@ -202,8 +202,7 @@ L_BOBS_0627E:
 L_BOBS_0685C:
     include "M19_P0J_SAFE_TAIL_MC68020.s"
 L_BOBS_068FA:
-p1b_frame_draw_entry:
-    bra.w L_BOBS_07AC2                                 ; +$068FA: 600011C6
+    include "M19_P1B_FRAME_BRANCH_MC68020.s"
     dc.b $4E,$71,$4E,$71  ; +$068FE: 4E714E71
 L_BOBS_06902:
     include "M19_P1B_FRAME_GUARD_MC68020.s"
@@ -218,8 +217,7 @@ L_BOBS_06EAC:
 L_BOBS_06FA6:
     include "M19_B7_B8_DRAW_BRIDGE_MC68020.s"
 L_BOBS_071E8:
-b8_b7_close_return:
-    bra.w L_BOBS_0A1D2                                 ; +$071E8: 60002FE8
+    include "M19_B8_CLOSE_BRANCH_MC68020.s"
     dc.b $4E,$75  ; +$071EC: 4E75
 L_BOBS_071EE:
     include "M19_B8_END_REGISTER_MC68020.s"
@@ -372,7 +370,4 @@ L_BOBS_0E5C8:
 ENTRY_BOBS_0EDD0:
     include "M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s"
 L_BOBS_0EDF4:
-    lea 32(a7),a7                                      ; +$0EDF4: 4FEF0020
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$0EDF8: 4CDF77F7
-    moveq #0,d2                                        ; +$0EDFC: 7400
-    rts                                                ; +$0EDFE: 4E75
+    include "M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s"
