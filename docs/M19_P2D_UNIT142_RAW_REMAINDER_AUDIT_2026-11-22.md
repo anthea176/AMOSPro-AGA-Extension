@@ -1,4 +1,37 @@
-# UNIT142 — audit du reliquat brut : 12 298 initiaux, 5 948 restants (22/11/2026)
+# UNIT142 — audit du reliquat brut : 12 298 initiaux, 4 574 restants, tous classifiés (22/11/2026)
+
+## Bilan définitif des lots 174–202 — classification source complète
+
+**166 modules UNIT142**, **58 166 / 62 740 octets (92,71 %)**
+convertis en mnémoniques Motorola MC68020 ; **4 574 octets bruts
+conservés exclusivement comme données et contrats AMOS**.
+**Reliquat non classifié : 0 octet.**
+
+| Nature prouvée dans la P2d officielle | Octets |
+| --- | ---: |
+| État AGA, objets, empreintes, P1c/P1d, caches, noms OS et autres données | 4 052 |
+| AMOS Main `Rjsr` (45 enregistrements x 6 octets) | 270 |
+| Délimiteurs `GetP` (55 enregistrements x 4 octets) | 220 |
+| Signatures `AGACBLK` et `AGAPIC` | 32 |
+| **Total non-code, conservé en bytes/dcb** | **4 574** |
+| **Octets encore non classifiés** | **0** |
+
+Les lots R83 ont restauré 1 854 octets de mnémoniques depuis le
+jalon 172–173 : 480 octets Close/End ; 668 Close/branches ;
+620 routine $02364, helper et stubs ; 44 octets des six MOVE.L
+et deux BRA.W ; 42 octets NOP (20 + 1).
+Les blocs de 8 octets $056FA/$0666C et le bloc d'état
+$030E8..$03178 sont conservés en données : accès `LEA`
+par sources natives validées, provenance R83 SHA-pinnée,
+sans prétention de padding libre. L'îlot $07B2A..$07B56 contient
+20 NOP d'origine + GetP final. Le NOP isolé $01F30
+est également conservé en instruction, non reclassé en padding.
+
+[Gate A native MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45061168489) : P2d source directe
+136 020 octets, SHA officiel inchangé, 166 mutations de
+contrôle confinées à UNIT142 et invariants AP20 intacts.
+`dist/` et l'ASC actif sont protégés ; WinUAE Runtime B,
+AMOS Compiler C et Amiga physique D **non réexécutés**.
 
 ## Etat courant — lots 174–179 : R83 Close/End, source ASM (Gate A PASS)
 

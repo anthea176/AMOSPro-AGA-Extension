@@ -1005,6 +1005,28 @@ prouves ; 1 758 non classes). P2d reassemble byte-identique,
 143 mutations isolees, aucun changement des Lib officielles,
 de LAST_GOOD ni de l'ASC actif. Pas de nouvelle Gate B/C/D.
 
+### UNIT142 — lots 174 à 202 : Close R83, helpers et clôture de classification
+
+Migration source-only vérifiée par émetteur/builder historique R83
+et assemblage direct MC68020 :
+
+- lots 174–179 : Close/End, 6 modules, 480 octets ;
+- lots 180–187 : Close targets, branches et island, 8 modules, 668 octets ;
+- lots 188–192 : routine native $02364, helper $052CA, 2 stubs
+  et branchement lié, 5 modules, 620 octets ;
+- lots 193–200 : six `move.l #0,d0` et deux BRA.W, 8 modules,
+  44 octets ;
+- lots 201–202 : 21 NOP Motorola historiques (40 + 2 octets),
+  2 modules ; tests d'édition NOP -> RTS exclusivement temporaires.
+
+**Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45061168489) : 266 modules ASM, 166 UNIT142,
+58 166 / 62 740 octets (92,71 %) de code MC68020,
+4 574 octets de données/ABI source-prouvées, 0 non classifié.**
+Reconstruction directe P2d 136 020 octets SHA256 officiel exact,
+166 mutations de contrôle isolées. Aucune promotion de Lib,
+LAST_GOOD ou ASC ; B/C/D non requalifiées.
+Un NOP n'est pas une autorisation à réutiliser son emplacement.
+
 ## Compilation directe (Windows)
 
 ```bat

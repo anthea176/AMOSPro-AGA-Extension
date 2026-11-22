@@ -1,5 +1,32 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 174–202 : source MC68020 intégralement classifiée
+
+**266 modules ASM**, dont **166 UNIT142**. **58 166 / 62 740 octets
+(92,71 %)** du groupe sont désormais en instructions MC68020 éditables.
+Les **4 574 octets restants** sont **100 % non exécutables, source-prouvés** :
+4 052 octets d'états, tables et noms (dont blocs de cache à 8 octets),
+270 octets de pseudo-appels AMOS Main (45 x 6), 220 octets
+de marqueurs GetP (55 x 4) et 32 octets de signatures.
+**Zéro octet non classifié.**
+
+Depuis le jalon 172–173 : +1 854 octets de code, +29 modules UNIT142.
+Lots R83 : 174–179 Close/End (480 octets), 180–187 Close targets (668),
+188–192 routine $02364, helper, callbacks (620), 193–200 six MOVE.L
+et deux BRA.W (44), 201–202 NOP originaux (42).
+Les 21 NOP Motorola restent des instructions source-pinnées :
+**aucun droit de réutiliser leur stockage comme padding**.
+
+[Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45061168489) : vasm MC68020 direct, reconstruction byte-identique
+P2d 136 020 octets SHA256
+`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`,
+**166 mutations isolées UNIT142** sans dérive AP20.
+`dist/AMOSPro_AGA.Lib`, LAST_GOOD, l'ASC actif et les tests
+passés restent inchangés. Aucune nouvelle Gate B WinUAE,
+C Compiler ou D matériel pour la migration ASM.
+[Audit détaillé](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md) ·
+[Sources natives](../src/native/m19_p2d/README.md).
+
 ## 22 novembre 2026 — UNIT142 lots 174–179 : R83 Close/End source-only
 
 **243 modules ASM MC68020**, dont **143 UNIT142** :
