@@ -1,26 +1,25 @@
-# Outils Python — builder actif et historique versionné
+# Outils Python — builder actif et historique versionne
 
 ## Reference de travail courante — M19 P2d (22/11/2026)
 
-Le seul binaire de travail officiel est `dist/AMOSPro_AGA.Lib`,
+Le seul binaire officiel est dist/AMOSPro_AGA.Lib,
 **P2d 136 020 octets**, SHA256
-`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`,
-promu en LAST_GOOD sur autorisation du 21/11. **100 commandes / 203 AP20** ;
-MC68020 minimum. `tools/build_m19_p2d_in_memory.py::build_p2d`
-reconstruit la P2d officielle depuis ses emetteurs sources.
+ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f,
+promu LAST_GOOD sur autorisation du 21/11.
+**100 commandes / 203 entrees AP20**, MC68020 minimum.
+Builder d'origine : tools/build_m19_p2d_in_memory.py::build_p2d.
+Source ASM : tools/build_m19_p2d_editable_asm.py et
+tools/m19_p2d_unit142_source.py.
 
-**Migration ASM source-only :** `tools/build_m19_p2d_editable_asm.py`,
-`tools/m19_p2d_unit142_source.py` et
-`src/native/m19_p2d/M19_P2D_UNIT142_EDITABLE.s`.
-La source UNIT142 comporte **137 modules / 56 312 octets convertis**
-(89,76 %), avec 137 mutations isolees et reconstruction P2d exacte
-([Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45055315521)).
-**6 428 octets** restent en directives, dont **4 186 octets
-non executables verifies** et **2 242 octets non classifies**.
-
-Cette migration ne modifie pas les Lib officielles ni les tests WinUAE.
-[Etat](../docs/NEXT_SESSION.md) ·
-[Audit du reliquat](../docs/M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+**243 modules ASM**, dont **143 UNIT142**, **56 792/62 740
+octets (90,52 %)** en code source UNIT142 ;
+**5 948 octets** restent bruts (4 190 non-code prouves,
+1 758 non classes). Six modules R83 Close/End (480 octets),
+143 mutations independantes ; [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45058090743)
+et reconstruction P2d octet-identique. Lib P2d, LAST_GOOD,
+ASC actif et tests valides inchanges.
+[Suivi](../docs/NEXT_SESSION.md) et
+[audit du reliquat](../docs/M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
 
 ## Historique — M19 B7-m1, Runtime uniquement (18/11/2026)
 

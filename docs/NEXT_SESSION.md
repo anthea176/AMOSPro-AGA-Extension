@@ -1,5 +1,24 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 174–179 : R83 Close/End source-only
+
+**243 modules ASM MC68020**, dont **143 UNIT142** :
+**56 792 / 62 740 octets (90,52 %) de code source**.
+Six modules R83 Close/End ajoutent **480 octets** : 8 Entry,
+34 Guard, 240 Cleanup, 4 BSR.W symbolique vers $0660A,
+14 Postcall et 180 SafeWait. Les 40 octets d'etat AGA,
+4 octets GetP, 56 octets non qualifies et le BRA.W de
+4 octets vers $009DC restent dans le wrapper, sans supposer
+qu'il s'agit de padding. Le constructeur historique R83
+reste la provenance verifiee. La Gate A valide l'assemblage vasm
+P2d byte-exact et **143 mutations UNIT142 isolees** :
+[CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45058090743) ; les Lib officielles P2d et LAST_GOOD
+restent identiques et protegees.
+
+**5 948 octets bruts** : 4 190 non executables source-prouves,
+1 758 non classifies. Aucune nouvelle Gate B/C/D pour cette
+migration ASM. [Audit](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+
 ## 22 novembre 2026 — UNIT142 lots 172-173 : Screen Open R83 Gate A PASS
 
 **237 modules ASM MC68020**, dont **137 UNIT142** :

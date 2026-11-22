@@ -1,4 +1,35 @@
-# UNIT142 — audit du reliquat brut : 12 298 initiaux, 6 428 restants (22/11/2026)
+# UNIT142 — audit du reliquat brut : 12 298 initiaux, 5 948 restants (22/11/2026)
+
+## Etat courant — lots 174–179 : R83 Close/End, source ASM (Gate A PASS)
+
+La zone historique R83 $0005A..$002A2 (584 octets) est
+identique au constructeur SHA-pinne R83. Six modules Motorola
+MC68020 couvrent **480 octets** et portent chacun une mutation
+de controle :
+- $0005A..$00062 : Entry (8)
+- $00066..$00088 : Guard (34)
+- $000C0..$001B0 : Cleanup (240)
+- $001B0..$001B4 : BSR.W vers le label prouve $0660A (4)
+- $001B4..$001C2 : Postcall (14)
+- $001EA..$0029E : SafeWait (180)
+
+Conservation explicite dans le wrapper : BRA.W $00062..$00066
+(4 octets, destination calculee $009DC), bloc brut
+$00088..$000C0 (56 octets), Etat AGA
+$001C2..$001EA (40 octets), et GetP
+$0029E..$002A2 (4 octets).
+La verification d'une destination ne suffit pas a convertir
+un opcode dont le contrat source n'est pas encore prouve.
+Aucune des 56 donnees/octets non classes n'est declaree
+padding reutilisable.
+
+**143 modules UNIT142**, **56 792 / 62 740 octets
+(90,52 %) de vrai code source** ; **5 948 bruts** :
+4 190 non executables prouves et **1 758 non classes**.
+[Gate A MC68020](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45058090743) : construction directe
+P2d 136 020 octets, SHA256 officiel conserve et
+143 mutations isolees. Les deux Lib et l'ASC
+de regression ne sont pas modifies. Gates B/C/D non requalifiees.
 
 ## Etat courant — lots 172-173 : R83 Screen Open, Gate A PASS
 

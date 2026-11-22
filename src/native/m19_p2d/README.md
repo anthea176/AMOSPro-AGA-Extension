@@ -983,6 +983,28 @@ L'inventaire source prouve **4 186 octets non executables** et
 conserve **2 242 octets non classifies**.
 Aucune nouvelle Gate B/C/D ; les Lib P2d, LAST_GOOD et l'ASC restent intacts.
 
+### UNIT142 — lots 174 a 179 : R83 Close/End (480 octets)
+
+Six modules MC68020 source-verifies recouvrent les instructions
+de la routine R83 : 8 Entry, 34 Guard, 240 Cleanup, 4 BSR.W
+symbolique vers $0660A, 14 Postcall et 180 SafeWait.
+La provenence est le constructeur historique R83
+independamment SHA-pinne ; les modules sont controlees
+par comparaison exacte, vasm et mutation isolee par module.
+
+Le BRA.W $00062..$00066 (destination $009DC) demeure
+en octets bruts. Il en va de meme des 56 octets ambigus
+$00088..$000C0, des 40 octets d'etat AGA et du marqueur
+GetP de 4 octets. Aucun octet non qualifie n'est reinterprete
+en padding.
+
+**Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45058090743) : 243 modules ASM** dont
+**143 UNIT142**, **56 792 / 62 740 octets (90,52 %)**
+convertis et **5 948 octets bruts** (4 190 non-code
+prouves ; 1 758 non classes). P2d reassemble byte-identique,
+143 mutations isolees, aucun changement des Lib officielles,
+de LAST_GOOD ni de l'ASC actif. Pas de nouvelle Gate B/C/D.
+
 ## Compilation directe (Windows)
 
 ```bat
