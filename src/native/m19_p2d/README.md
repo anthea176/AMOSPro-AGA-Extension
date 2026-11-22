@@ -158,6 +158,36 @@ Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, d
 
 Pour un edit a longueur constante, `BUILD_P2D_ASM.bat --allow-edited` cree uniquement `src/generated/p2d_editable/M19_P2D_EDITED_UNTESTED.Lib`. **Ne pas installer une version modifiee sans validation specifique.** Les bibliotheques de `dist/`, `LAST_GOOD`, les tests et exemples ne sont pas modifies par cette migration. Les Gates WinUAE Runtime B, vrai AMOS Compiler C et physique D **ne qualifient pas les futures editions natives** par la seule CI.
 
+## Acceleration du controle d'edition groupe en CI
+
+La Gate A d'un push conserve les deux preuves precedentes :
+reconstruction de P2d par les emetteurs source (taille/SHA/AP20 exacts), puis
+assemblage direct MC68020 du code natif. Le controle groupe **reutilise
+uniquement les fichiers ASM deja prepares par cette reconstruction** ;
+il ne relance pas les emetteurs Python historiques une deuxieme fois.
+
+La commande de la CI est :
+
+```sh
+python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-batch --batch-staged "$RUNNER_TEMP/p2d_asm_baseline"
+```
+
+Ce mode refuse les sources ASM perimees, exige le binaire P2d officiel
+et la LAST_GOOD octet-identiques, controle la sortie P2d preparee, puis
+**reassemble reellement avec vasm** une baseline exacte et une variante
+editant **chaque module du lot**. Il verifie les octets modifies dans
+l'unique unite BOBS, tous les autres octets, la longueur, les tokens,
+le titre, la topologie AP20 et la validite structurelle. Les deux
+assemblages temporaires sont detruits apres le test. Aucun binaire de
+`dist/` ni test de campagne n'est modifie.
+
+Sans `--batch-staged`, le test autonome `--self-test-batch` garde son
+chemin complet historique. Le dimanche ou lors d'un lancement manuel
+`full_edit_tests=true`, le test exhaustif garde toutes ses modifications
+individuelles et inclut deja le test groupe ; la CI n'execute donc pas
+le controle rapide en doublon. Cette optimisation ne change aucune preuve
+WinUAE B, Compiler C ou materiel D.
+
 ## Pseudo-instructions AMOS Main
 
 Les 28 appels directs AMOS Main du groupe BOBS sont maintenant symboliques : `Bnk.GetAdr`, `Bnk.Change`, `Lst.Cree`, `Lst.Del`. `DC.W $FE11,$F700,INDEX` conserve la pseudo-instruction AMOS (non Motorola), avec index source verifie dans `amos_main_abi.rjsr`. La CI impose le nombre et les octets originaux de chaque appel.

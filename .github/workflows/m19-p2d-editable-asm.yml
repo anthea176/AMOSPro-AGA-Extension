@@ -70,9 +70,10 @@ jobs:
           assert len(data) == 136020 and hashlib.sha256(data).hexdigest() == expected
           print('DIRECT_VASM_MC68020_EXACT PASS', len(data), expected)
           PY
-      - name: Grouped editability gate - all new batch modules, one rebuild
+      - name: Grouped editability gate - reuse verified P2d staging
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full_edit_tests != true)
         run: |
-          python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-batch
+          python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-batch --batch-staged "$RUNNER_TEMP/p2d_asm_baseline"
       - name: Exhaustive existing and batch module editability gate
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full_edit_tests == true)
         run: |

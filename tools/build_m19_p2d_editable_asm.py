@@ -4086,6 +4086,71 @@ def test_batch_editability(assembler: Path) -> None:
     print('P1E_BATCH_EDIT_TEST PASS: every module edited, one byte each')
     print('P1E_BATCH_EDIT_TEST PASS: original AP20 size/topology preserved')
 
+
+def test_batch_editability_staged(assembler: Path, staged: Path) -> None:
+    """Re-use verified P2d source staging; independently assemble both variants."""
+    staged = staged.resolve()
+    require(staged.is_dir() and (staged / MASTER_FILE).is_file(),
+            'missing previously staged P2d ASM project')
+    original = (ROOT / 'dist' / 'AMOSPro_AGA.Lib').read_bytes()
+    good = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    require(len(original) == 136020 and sha256(original).hexdigest() == P2D_SHA
+            and original == good, 'official P2d/LAST_GOOD SHA mismatch')
+    prior = staged / 'M19_P2D_ASM_REBUILT_CHECK.Lib'
+    require(prior.is_file() and prior.read_bytes() == original,
+            'staged project lacks a byte-exact, previously verified baseline')
+    replacements, expected = p1e_batch_quick_edits()
+    require(len(replacements) == len(P1E_BATCH_REGIONS)
+            and len(expected) == len(P1E_BATCH_REGIONS)
+            and len(set(expected)) == len(expected),
+            'incomplete or overlapping batch source edits')
+    for region in P1E_BATCH_REGIONS:
+        source = ROOT / 'src' / 'native' / 'm19_p2d' / region.file
+        staged_source = staged / region.file
+        require(staged_source.is_file()
+                and staged_source.read_bytes() == source.read_bytes(),
+                'stale or modified staged batch module: ' + region.name)
+    with TemporaryDirectory(prefix='p2d_batch_reuse_') as directory:
+        root = Path(directory)
+        baseline = root / 'baseline'
+        shutil.copytree(staged, baseline)
+        rebuilt = checked_vasm(assembler, baseline / MASTER_FILE,
+                               baseline / 'M19_P2D_BATCH_BASELINE_UNTESTED.Lib')
+        require(rebuilt == original, 'staged source baseline differs from official P2d')
+        edited = root / 'edited'
+        shutil.copytree(staged, edited)
+        for file, source in replacements.items():
+            target = edited / file
+            require(target.is_file(), 'missing staged batch module: ' + file)
+            target.write_text(source, encoding='ascii', newline='\n')
+        changed = checked_vasm(assembler, edited / MASTER_FILE,
+                               edited / 'M19_P2D_BATCH_EDITED_UNTESTED.Lib')
+        require(len(changed) == len(original), 'batch edit altered AP20 length')
+        old_tokens, old_parts, old_title = unpack_ap20(original)
+        tokens, parts, title = unpack_ap20(changed)
+        require(tokens == old_tokens and title == old_title
+                and len(parts) == len(old_parts)
+                and all(len(before) == len(after)
+                        for before, after in zip(old_parts, parts)),
+                'batch edit altered AP20 ABI/title/unit layout')
+        affected = [i for i, (before, after) in enumerate(zip(old_parts, parts))
+                    if before != after]
+        require(len(affected) == 1, 'batch edits affected other AP20 units')
+        group = affected[0]
+        diffs = [i for i, (before, after) in enumerate(
+                 zip(old_parts[group], parts[group])) if before != after]
+        require(diffs == expected,
+                f'batch edits changed {diffs}, expected {expected}')
+        for region in P1E_BATCH_REGIONS:
+            require(old_parts[group][region.mutation] == region.initial
+                    and parts[group][region.mutation] == region.edited,
+                    'batch instruction mutation not assembled: ' + region.name)
+        report = inspect(parse(changed))
+        require(not report['issues'],
+                f'edited AP20 parsing issues: {report["issues"]}')
+    print('P2D_BATCH_REUSE_PASS: staged baseline reassembled byte-exact')
+    print('P2D_BATCH_REUSE_PASS: all batch edits assembled; AP20 ABI/topology preserved')
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--vasm', required=True, type=Path)
@@ -4096,14 +4161,22 @@ def main() -> int:
     parser.add_argument('--self-test-edit', action='store_true',
                         help='Run the full legacy 45-module edit test plus batch edits')
     parser.add_argument('--self-test-batch', action='store_true',
-                        help='Fast grouped edit test: one rebuild for all new P1e batch modules')
+                        help='Grouped edit test: independently or from verified staging')
+    parser.add_argument('--batch-staged', type=Path,
+                        help='With --self-test-batch: reuse an already verified ASM build tree')
     args = parser.parse_args()
     try:
+        require(args.batch_staged is None or
+                (args.self_test_batch and not args.allow_edited),
+                '--batch-staged requires --self-test-batch (no edited delivery)')
         if args.self_test_edit:
             test_editability(args.vasm)
             test_batch_editability(args.vasm)
         elif args.self_test_batch:
-            test_batch_editability(args.vasm)
+            if args.batch_staged is not None:
+                test_batch_editability_staged(args.vasm, args.batch_staged)
+            else:
+                test_batch_editability(args.vasm)
         else:
             build(args.vasm, args.out.resolve(), allow_edited=args.allow_edited)
         return 0
