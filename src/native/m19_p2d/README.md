@@ -816,6 +816,8 @@ Validation Gate A a confirmer.
 
 ### UNIT142 — lots 152 a 158 : sept epilogues et relais (40 octets)
 
+**Gate A MC68020 PASS :** [CI source et edits 122 modules](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45045272699).
+
 Les sept derniers segments en mnemoniques de l'audit sont maintenant
 independants : quatre epilogues `tst.l`, deux `rts` et un branchement
 `bra.w`. Les mutations d'edition utilisent `ifne/else/endif` vasm
@@ -835,8 +837,8 @@ edit = une seule difference d'octet, sans installer le code edite.
 sont convertis, soit **50 442 / 62 740 octets UNIT142 (80,40 %)**
 en source editable. Les **12 298 octets de directives brutes**
 restent strictement conserves : donnees, marqueurs GetP, pseudo-appels
-AMOS Main et zones sans classification certaine. La CI Gate A est
-requise pour valider la reconstruction source et les 122 mutations.
+AMOS Main et zones sans classification certaine. La CI Gate A confirme la reconstruction P2d octet-identique,
+l'assemblage direct vasm MC68020 et les 122 modifications isolees.
 Aucune nouvelle Gate WinUAE B, Compiler C ni materiel D.
 
 ## Compilation directe (Windows)

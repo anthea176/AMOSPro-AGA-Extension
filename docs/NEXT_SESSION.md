@@ -32,7 +32,7 @@ et [152–158](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/4f2190f
 [126–147](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45044909638).
 Les lots [148–151](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45045067107)
 et [152–158](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45045272699)
-sont **en attente de PASS** a ce point documentaire.
+ont maintenant **Gate A source MC68020 PASS**.
 La Gate A interdit toute derive P2d et exige l'assemblage direct
 vasm -m68020, les edits isoles, la topologie AP20 et l'integrite du
 binaire. Aucun nouveau test WinUAE Runtime B, AMOS Compiler C ou
