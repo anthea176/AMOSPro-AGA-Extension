@@ -21,6 +21,7 @@ from machine68k import CPUType, Register
 from build_opt020_p2_r71 import R71_SHA, build as build_r71
 from build_opt020_p2_r72 import build as build_r72
 from compiler_bridge_v2_probe import unwrap_native_parts_v2
+from active_library import LAST_GOOD_SHA
 from m16_agapic import pack_image
 from m16_image_draw_r45_emit import emit_image_draw
 from native_relative_links import assert_native_links
@@ -121,7 +122,8 @@ def late_failure(native: bytes, payload: bytes, *, expect_d3: int, mode=0) -> No
 def main() -> None:
     active = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
     protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(protected).hexdigest() == "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
+    # The protected library follows the explicitly approved promotion (P2d).
+    assert sha256(protected).hexdigest() == LAST_GOOD_SHA
     r71, _ = build_r71()
     assert sha256(r71).hexdigest() == R71_SHA
     r72, info = build_r72()
