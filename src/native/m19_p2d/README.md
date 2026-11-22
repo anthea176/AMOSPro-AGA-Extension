@@ -648,6 +648,21 @@ vasm MC68020.
 UNIT142 en 28 modules**. Aucun changement de Lib installable,
 LAST_GOOD, ASC ni nouvelle validation WinUAE.
 
+### UNIT142 — lots 65 a 73 : neuf plages natives (9 614 octets)
+
+Les neuf blocs `$0A476..$0A6DC`, `$0A71A..$0AB90`,
+`$0B0A6..$0B58A`, `$0BA5E..$0BF52`, `$0C41C..$0C8BA`,
+`$0C946..$0CED4`, `$0CF3E..$0D332`, `$0D336..$0D68E`
+et `$0D99A..$0DCFC` sont du code MC68020 nettoye de ses
+annotations d'audit, avec cible native prouvee par la Lib P2d.
+Les marqueurs GetP/AMOS Main et donnees non code sont inchanges.
+37 mutations distinctes de taille constante, dans UNIT142 seulement,
+sont maintenant exigees par le test d'edition source.
+
+**TOTAL : 137 modules ASM**, dont **35 814 / 62 740 octets de
+UNIT142 en 37 modules**. Pas de modification des Lib, LAST_GOOD,
+des ASC ni des preuves WinUAE/Compiler deja gelees.
+
 ## Compilation directe (Windows)
 
 ```bat

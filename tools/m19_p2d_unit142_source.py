@@ -282,6 +282,87 @@ SPANS = (
         "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_0A006_MIN,d5",
         0x0A00D, 24, 25,
     ),
+    (
+        "M19_UNIT142_BLOCK_0A476_MC68020.s",
+        "    dc.b $47,$65,$74,$50  ; +$0A472: 47657450\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0A6DC: FE11F700031D\n",
+        0x0A476, 0x0A6DC, 163, 6,
+        "UNIT142_BLOCK_0A476_VALUE", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_BLOCK_0A476_VALUE,d3",
+        0x0A4AD, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0A71A_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$30  ; +$0A714: FE11F7000330\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$33  ; +$0AB90: FE11F7000333\n",
+        0x0A71A, 0x0AB90, 284, 7,
+        "UNIT142_BLOCK_0A71A_VALUE", 24, 25,
+        "    cmpi.l #$00000018,d0", "    cmpi.l #UNIT142_BLOCK_0A71A_VALUE,d0",
+        0x0A735, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0B0A6_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0B0A0: FE11F700031D\n",
+        "    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20  ; +$0B58A: 41474143424C4B20\n",
+        0x0B0A6, 0x0B58A, 311, 9,
+        "UNIT142_BLOCK_0B0A6_VALUE", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_0B0A6_VALUE,d5",
+        0x0B1FB, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0BA5E_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0BA58: FE11F700031D\n",
+        "    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20  ; +$0BF52: 41474143424C4B20\n",
+        0x0BA5E, 0x0BF52, 315, 9,
+        "UNIT142_BLOCK_0BA5E_VALUE", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_0BA5E_VALUE,d5",
+        0x0BBC3, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0C41C_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0C416: FE11F700031D\n",
+        "    dc.b $60,$00,$00,$08  ; +$0C8BA: 60000008\n",
+        0x0C41C, 0x0C8BA, 319, 7,
+        "UNIT142_BLOCK_0C41C_VALUE", 8, 9,
+        "    cmpi.l #$00000008,d0", "    cmpi.l #UNIT142_BLOCK_0C41C_VALUE,d0",
+        0x0C5D7, 8, 9,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0C946_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0C940: FE11F700031D\n",
+        "    dc.b $60,$00,$00,$08  ; +$0CED4: 60000008\n",
+        0x0C946, 0x0CED4, 394, 13,
+        "UNIT142_BLOCK_0C946_VALUE", 8, 9,
+        "    cmpi.l #$00000008,d0", "    cmpi.l #UNIT142_BLOCK_0C946_VALUE,d0",
+        0x0CB09, 8, 9,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0CF3E_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0CF38: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$0D332: 47657450\n",
+        0x0CF3E, 0x0D332, 252, 17,
+        "UNIT142_BLOCK_0CF3E_VALUE", 24, 25,
+        "    cmpi.l #$00000018,d0", "    cmpi.l #UNIT142_BLOCK_0CF3E_VALUE,d0",
+        0x0CF51, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0D336_MC68020.s",
+        "    dc.b $47,$65,$74,$50  ; +$0D332: 47657450\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0D68E: FE11F700031D\n",
+        0x0D336, 0x0D68E, 220, 10,
+        "UNIT142_BLOCK_0D336_VALUE", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_BLOCK_0D336_VALUE,d3",
+        0x0D3A3, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0D99A_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$20  ; +$0D994: FE11F7000320\n",
+        "    dc.b $41,$47,$41,$50,$49,$43,$20,$20,$48,$E7,$EF,$EE  ; +$0DCFC: 414741504943202048E7EFEE\n",
+        0x0D99A, 0x0DCFC, 235, 25,
+        "UNIT142_BLOCK_0D99A_VALUE", 8, 9,
+        "    cmpi.l #$00000008,d1", "    cmpi.l #UNIT142_BLOCK_0D99A_VALUE,d1",
+        0x0DA99, 8, 9,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -313,6 +394,15 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_BLOCK_08D78_MC68020.s": "verified block $08D78",
     "M19_UNIT142_BLOCK_09C80_MC68020.s": "verified block $09C80",
     "M19_UNIT142_BLOCK_0A006_MC68020.s": "verified block $0A006",
+    "M19_UNIT142_BLOCK_0A476_MC68020.s": "verified block $0A476",
+    "M19_UNIT142_BLOCK_0A71A_MC68020.s": "verified block $0A71A",
+    "M19_UNIT142_BLOCK_0B0A6_MC68020.s": "verified block $0B0A6",
+    "M19_UNIT142_BLOCK_0BA5E_MC68020.s": "verified block $0BA5E",
+    "M19_UNIT142_BLOCK_0C41C_MC68020.s": "verified block $0C41C",
+    "M19_UNIT142_BLOCK_0C946_MC68020.s": "verified block $0C946",
+    "M19_UNIT142_BLOCK_0CF3E_MC68020.s": "verified block $0CF3E",
+    "M19_UNIT142_BLOCK_0D336_MC68020.s": "verified block $0D336",
+    "M19_UNIT142_BLOCK_0D99A_MC68020.s": "verified block $0D99A",
 }
 
 
@@ -432,7 +522,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 26200 bytes / 28 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 35814 bytes / 37 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -487,7 +577,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 28 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 37 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
