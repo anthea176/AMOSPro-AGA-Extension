@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, verify_active
+from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, verify_active
 from build_m19_p28_r88_in_memory import build as build_r88
 from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
@@ -43,12 +43,14 @@ def run() -> None:
         assert actual is not None and actual.text == expected, (opcode, actual)
     current_file = ROOT / "dist/AMOSPro_AGA.Lib"
     good_file = ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib"
-    # R88 is historical now: rebuild the exact image from its pinned R87
-    # predecessor; never make a second installable .Lib or replace P0c.
+    # R88 is historical: rebuild exactly from R87 without writing .Lib.
+    # The active and promoted images may have advanced to P2d.
     active_before = current_file.read_bytes()
     good = good_file.read_bytes()
-    assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA), "Active AP20 islands/B7/P1e differs from pinned SHA"
-    assert digest(good) == P1E_SHA, "Author-promoted P1e LAST_GOOD changed"
+    assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA), "Active AP20 islands/B7/P1e/P2d differs from pinned SHA"
+    assert digest(good) in (P1E_SHA, P2D_SHA), "Author-promoted P1e/P2d LAST_GOOD changed"
+    if digest(active_before) == P2D_SHA:
+        assert active_before == good, "Promoted P2d active and LAST_GOOD differ"
     active, frozen, _ = verify_active(ROOT)
     assert active == active_before and frozen == good
     before, meta = build_r88()
@@ -108,7 +110,7 @@ def run() -> None:
             raise AssertionError("Export was allowed inside dist/")
     assert current_file.read_bytes() == active_before, "Active AP20 islands .Lib modified"
     assert good_file.read_bytes() == good, "LAST_GOOD modified"
-    print("R88 HISTORICAL MULTI-UNIT GATE A EXPORT PASS: frozen builder, 4 groups, exact AP20 bytes, SHA, RBSR; active canonical B7/AP20 islands and LAST_GOOD protected")
+    print("R88 HISTORICAL MULTI-UNIT GATE A EXPORT PASS: frozen builder, 4 groups, exact AP20 bytes, SHA, RBSR; active candidate and LAST_GOOD protected")
     print("NOTE: native vasm reassembly, WinUAE B and Compiler C NOT RUN")
 
 if __name__ == "__main__":
