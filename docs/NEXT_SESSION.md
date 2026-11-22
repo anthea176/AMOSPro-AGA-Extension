@@ -1,5 +1,50 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — migration source MC68020 P2d : lots 23 a 36
+
+**100 modules ASM edites sur `main`** : 80 BOBS, 14 UNIT153 et 6 UNIT156.
+Pour UNIT153, **5 414 / 5 558 octets** sont maintenant du source Motorola
+reproductible ; les **144 octets restants** sont le dispatcher exclu ? Non :
+ils comprennent les pseudo-appels AMOS Main, marqueurs GetP, donnees et
+deux plages brutes non classees. UNIT156 atteint **2 330 / 2 508 octets**
+en 6 modules, avec 178 octets de donnees/marqueurs et brut non classe.
+
+**Commits de travail :**
+[23–24](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/92e9406c207e7a4d8052beb4aabfe01fb270f235),
+[25–26](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/2696ec3c65e6c42cf37407922674095ff6b1f48f),
+[27–28](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/c36aec7c9a1d399383d743563c55da25ebf78e5b),
+[29–30](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/7414277e454855784284d17a13e441483508f808),
+[31–34](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/f6ff5463fd876fa493e529e1242d21d9ff76037f)
+et [35–36](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/f0fa14158631e494aeacc6f61814d0471a85f151).
+Les dispatchers AP20 de 34 octets passent dans deux modules a valeur par
+defaut strictement identique et test d'edition isole de chaque octet.
+
+**Preuves :** Gates A ASM des lots 23–34 PASS (jusqu'a
+[CI 45034958634](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45034958634)).
+Le resultat du lot 35–36 est a controler dans
+[CI 45035211969](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035211969) :
+**pas encore acquis** a la redaction. Les modifications sont des sources
+source-only, pas de nouvelle qualification WinUAE Runtime B, vrai
+AMOS Compiler C ni materiel D.
+
+**Integrite historique :** les tests OPT020 anciens acceptaient encore une
+LAST_GOOD R84 figée ; la promotion autorisee P2d rendait leurs assertions
+obsoletes. Corrections de la reconnaissance P2d et des controles de SHA
+R71/R72 sur `main`, sans neutraliser leurs tests de branchements
+historiques. [CI d'integrite en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035403982).
+
+**Binaires proteges, non modifies :** `dist/AMOSPro_AGA.Lib` et
+`dist/AMOSPro_AGA_LAST_GOOD.Lib` blob commun
+`8a849b89aae57c2cda0b4db8771034a0978d3e78`, 136 020 octets,
+SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`.
+L'unique `tests/current/M19_P2_ALL_IN_ONE.asc` reste inchange
+(blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`).
+
+**Suite de migration :** controler d'abord les CI, puis identifier une
+plage de production source-verifiee de UNIT142. Ne jamais forcer les
+zones brutes UNIT153/UNIT156 comme opcodes, ni remplacer la Lib installee
+a l'occasion d'une migration source.
+
 ## 22 novembre 2026 — S1-P1b : pont AGA + repacking AGSP Gate A CPU PASS
 
 **Gate A CPU MC68020 partielle [CI 45011441994 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994)** : code vasm execute en Unicorn, **6 tests du pont ScreenBuffer/GetRGB32 + 8 tests du repacking banque multi-images**, tous PASS. Les services OS et la memoire AGA sont simules, pas un appel AP20. [Pont MC68020](../src/native/m19_s1/M19_S1P1B_SCREEN_RGB24_MC68020.s) ; [repack AGSP](../src/native/m19_s1/M19_S1P1B_AGSP_REPACK_MC68020.s). Les images deja presentes sont conservees ; les erreurs d'entree/capacite refusent la publication.
