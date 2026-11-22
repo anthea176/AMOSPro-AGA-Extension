@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **22/11/2026 — S1-P1 noyau AGSP RGB24 MC68020 : [Gate A CPU partielle PASS (8 tests)](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45009120270)**, [source](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s) ; **API AMOS et `Save/Load` non intégrés**, DMA non activé. [Étape suivante S1-P1b](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md) : adaptateur ScreenBuffer/ColorMap + banque AGSP transactionnelle, puis vrais tests WinUAE.
+
+
 > **22/11/2026 — S1-P1 noyau MC68020 capture AGSP (source de travail)** : [contrat du noyau](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md), [source ASM](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), tests CPU020 en CI. **Pas encore d'API AP20 ni de Lib S1**, pas de vrai `Save/Load` AMOS ; P2d et `LAST_GOOD` conservés.
 
 

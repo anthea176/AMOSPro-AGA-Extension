@@ -1,5 +1,8 @@
 # S1-P1 — Premier noyau natif MC68020 de capture AGSP (22 novembre 2026)
 
+> **Résultat effectif S1-P1 / 22/11/2026 : [CI native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45009120270)** sur Git blob `0aeadf892e4e7732ccfb58a96450fb253e4c217a` : vasm `-m68020`, binaire réellement exécuté par Unicorn MC68020, **8/8 tests OK**. Validation **Gate A CPU du seul noyau de capture** (pas du pont AMOS/AP20). Erreurs `lsr.l #16` et lecture stride LONG corrigées ; la première CI rouge est conservée comme trace de débogage. P2d et LAST_GOOD intacts. **Aucune exécution Runtime/Compiler/physique de S1**, vrai AMOS `Save/Load` toujours à réaliser.
+
+
 **Statut : source MC68020 isolé, candidat au test Gate A.** Ce code n'est **pas** une commande AMOS, n'est pas inclus dans AP20 ou P2d et ne constitue pas encore une capture AGSP depuis WinUAE. Aucun `Save/Load` réel AGSP n'est revendiqué. Cible CPU du source : **MC68020/68EC020 minimum**, assemblage avec `vasmm68k_mot -Fbin -m68020 -no-opt`.
 
 ## But de l'incrément

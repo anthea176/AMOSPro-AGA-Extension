@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — S1-P1 CAPTURE NATIVE MC68020 : Gate A noyau PASS, integration AP20 a venir
+
+**Source EXACTE:** [`src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s`](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), Git blob `0aeadf892e4e7732ccfb58a96450fb253e4c217a`. **CI [45009120270 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45009120270)** : assemblage reel vasm Motorola **-m68020** et execution du binaire sur **Unicorn MC68020**, 8/8 tests PASS (pixels planaires/RGB24 exacts contre l'oracle Python AGSP v1, X=13 Y=5, source 4/8 plans, index transparent non nul, noir opaque, fusion deux indices de meme RGB, rejet d'une 4e couleur sans ecriture, hauteur 256, geometrie invalide, registres et canaries). Les defauts de compilation `lsr.l #16` et de stride (`move.w` au lieu de `move.l` sur le champ long) ont ete corriges **avant** la CI verte. [Rapport d'integration a jour](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md).
+
+**Ce PASS ne porte que sur le noyau isolé**, qui accepte un descripteur prévalidé de vrais plans source et un snapshot RGB24 déjà construit. Il **ne fournit pas** de nouveau token AP20, d'adaptateur Intuition/ScreenBuffer/`GetRGB32`, ni de banque DATA AGSP enregistrable par l'AMOS natif. **Vrai `Save/Load` AMOS non testé ; Gates S1 WinUAE B, Compiler C et Amiga D non testées.** Le chantier suivant **S1-P1b** devra extraire le bon buffer `Safe`, copier RGB32 en RGB24, publier transactionnellement une banque AGSP, et tester `Save/Load` sans DMA Sprite. Le détachement DMA formel reste séparé et bloquant pour `Aga Sprite` en affichage.
+
+**Archives protégées :** `dist/AMOSPro_AGA.Lib` = `dist/AMOSPro_AGA_LAST_GOOD.Lib` (blob `8a849b89aae57c2cda0b4db8771034a0978d3e78`), `tests/current/M19_P2_ALL_IN_ONE.asc` (blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`), `tests/design/sprites_aga/SPRITE_PROBE.asc` (blob `eb4e9d0275edbe3266724705910fa66747c743ea`). Aucun nouveau binaire installe ni promotion.
+
+
 ## 22 novembre 2026 — S1-P1 source natif : capture RGB24 depuis bitplanes AGA
 
 **S1-P1 introduit un noyau source MC68020 autonome** : [capture 16px planaires -> AGSP 2 plans/RGB24](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), [comparaison CPU020 contre l'oracle AGSP](../tools/test_m19_s1p1_native_capture.py), [protocole / limites](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md) et [workflow dédié](../.github/workflows/m19-s1-p1-native-capture.yml). La CI assemble ce source via vasm MC68020 et exécute ses octets sous Unicorn 68020, avec contrôle des registres et canaries. **Ne pas transférer automatiquement un PASS CI vers la validation AP20/AMOS**. Aucune nouvelle entrée AP20 ni Lib produite, ni ASC Bob/S0d modifié.
