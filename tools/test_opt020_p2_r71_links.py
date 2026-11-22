@@ -16,6 +16,7 @@ from build_opt020_p1e_r69 import build as build_r69
 from build_opt020_p2_r70 import build as build_r70
 from build_opt020_p2_r71 import R71_SHA, build as build_r71
 from compiler_bridge_v2_probe import unwrap_native_parts_v2
+from active_library import LAST_GOOD_SHA
 from native_relative_links import LINKS, assert_native_links, link_positions, relink_native_parts
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,9 +34,9 @@ def expect_failure(parts: list[bytes], fragment: str) -> None:
 def main() -> None:
     before = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
     protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
-    assert sha256(protected).hexdigest() == (
-        "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
-    )
+    # The protected binary is P2d after the author's explicit promotion.
+    # R71/R84 remain frozen historical builder outputs, not moving LAST_GOOD.
+    assert sha256(protected).hexdigest() == LAST_GOOD_SHA
     r69, _ = build_r69()
     r70, _ = build_r70()
     r71, meta = build_r71()
