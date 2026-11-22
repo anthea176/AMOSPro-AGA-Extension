@@ -1,11 +1,13 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**56 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**58 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
+| [P0 Relais Off/Read/Reset et retour](M19_P0_RELAY_COMMANDS_MC68020.s) | `$05A6A..$05B6E` | 260 |
+| [P0 Bob public et precontrole de frame](M19_P0_PUBLIC_FRAME_MC68020.s) | `$05B6E..$05CF8` | 394 |
 | [B7 Guarded Draw — callback et control End](M19_B7_GUARDED_DRAW_MC68020.s) | `$06D4E..$06EAC` | 350 |
 | [B7 End — pont AMOS et fermeture sure](M19_B7_END_MC68020.s) | `$06EAC..$06FA6` | 250 |
 | [B7/B8 Draw/Close — relais et garde End](M19_B7_B8_DRAW_BRIDGE_MC68020.s) | `$06FA6..$071E8` | 578 |
@@ -60,7 +62,7 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **23 526** |
+| **Total de code ASM propre** | | **24 180** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -124,8 +126,17 @@ Le quatrieme lot convertit **4 826 octets / 2 modules** : P0 Screen Pre-Close
 `$049A8..$05A5C` (4 276 octets). Les plages sont prouvees par l'emetteur
 P2d et l'AP20 officiel ; aucune directive de donnees n'est convertie.
 Le second module s'arrete sur le label source `relay_put_entry`, sans
-absorber les octets du relais Put voisin. Le self-test groupe couvre
-**11 modules** (2 P1e historiques, 4 P0j/B7/B8, 3 P0j/P1b/B7 et 2 P0).
+absorber les octets du relais Put voisin. Le cinquieme lot ajoute
+**654 octets / 2 modules** : P0 Relay Commands `$05A6A..$05B6E`
+(260 octets) et P0 Public/Frame `$05B6E..$05CF8` (394 octets).
+Le relais Put `$05A5C..$05A6A` demeure en octets historiques car
+l'audit n'y fournit pas d'instructions sources verifiees. Le second
+module s'arrete a la frontiere du module P0i deja migré, sans absorber
+de code P0i. Le controle source prouve l'assembleur par l'emetteur P2d.
+Le self-test groupe couvre desormais **13 modules**. Le source direct
+`M19_P2D_BOBS_EDITABLE.s` inclut les quatre modules P0 des
+quatrieme et cinquieme lots ; la CI controle leur assemblage MC68020
+direct octet-identique avec P2d, sans regeneration Python.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

@@ -32,6 +32,7 @@ class Region:
     pseudo_count: int
     owner: str = 'tools/m19_p1e_bank_edit_emit.py::emit_bank_edit'
     end_marker: str | None = None
+    staged_end_marker: str | None = None
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -100,6 +101,21 @@ REGIONS = (
            'P0_IMAGE_RESOLVE_STAGE_ZERO', 0, 1, 0x049C1, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            end_marker='relay_put_entry:'),
+
+    Region('P0_RELAY_COMMANDS', 'M19_P0_RELAY_COMMANDS_MC68020.s',
+           0x05A6A, 0x05B6E, 'relay_off_entry', 'public_aga_bob_entry',
+           '    move.l #$0000000E,d7',
+           '    move.l #P0_RELAY_OFF_SELECTOR,d7',
+           'P0_RELAY_OFF_SELECTOR', 14, 15, 0x05A73, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+    Region('P0_PUBLIC_FRAME', 'M19_P0_PUBLIC_FRAME_MC68020.s',
+           0x05B6E, 0x05CF8, 'public_aga_bob_entry', 'routed_paint_one_entry',
+           '    move.l #$00000001,4(a2)',
+           '    move.l #P0_FRAME_ALL_OK_FLAG,4(a2)',
+           'P0_FRAME_ALL_OK_FLAG', 1, 2, 0x05CE5, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='routed_paint_one_entry:',
+           staged_end_marker='    include "M19_P0I_ROUTED_PAINT_MC68020.s"'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -135,13 +151,15 @@ def prove_regions(native, labels, group):
         evidence[spec.name] = chunk
     return evidence
 
-def bounds(spec):
+def bounds(spec, *, staged=False):
+    last = (spec.staged_end_marker if staged and
+            spec.staged_end_marker is not None else spec.end_marker)
     return ('L_BOBS_%05X:\n' % spec.start,
-            (spec.end_marker + '\n') if spec.end_marker is not None
+            (last + '\n') if last is not None
             else ('L_BOBS_%05X:\n' % spec.stop))
 
-def extract(text, spec, bytes_expected):
-    first,last = bounds(spec)
+def extract(text, spec, bytes_expected, *, staged=False):
+    first,last = bounds(spec, staged=staged)
     i,j = text.find(first),text.find(last,text.find(first)+len(first))
     require(i >= 0 and j > i and text.find(first,i+len(first)) < 0,
             'audit boundaries missing/ambiguous: '+spec.name)
@@ -185,8 +203,8 @@ def replace_raw_sections(text, evidence):
     """All-or-nothing source validation before any textual replacement."""
     replacements = []
     for spec in REGIONS:
-        extract(text,spec,evidence[spec.name])
-        first,last = bounds(spec)
+        extract(text,spec,evidence[spec.name],staged=True)
+        first,last = bounds(spec, staged=True)
         i,j = text.index(first),text.index(last,text.index(first)+len(first))
         replacements.append((i,j,first+'    include "'+spec.file+'"\n'))
     for i,j,segment in sorted(replacements,reverse=True):
