@@ -1,9 +1,11 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**65 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**67 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
+| [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00000..$020A2` | 8 354 |
+| [P0 Get Pipeline — capture banque et validation image](M19_P0_GET_PIPELINE_MC68020.s) | `$020CE..$03772` | 5 796 |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
 | [P0 Relais Off/Read/Reset et retour](M19_P0_RELAY_COMMANDS_MC68020.s) | `$05A6A..$05B6E` | 260 |
@@ -69,7 +71,7 @@
 | [P2d service guards — controles internes](M19_P2D_SERVICE_GUARDS_MC68020.s) | `$0DD96..$0E538` | 1 954 |
 | [P2d public update — routines de service](M19_P2D_PUBLIC_UPDATE_MC68020.s) | `$0E5C8..$0EDD0` | 2 056 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **41 778** |
+| **Total de code ASM propre** | | **55 928** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -140,7 +142,7 @@ Le relais Put `$05A5C..$05A6A` demeure en octets historiques car
 l'audit n'y fournit pas d'instructions sources verifiees. Le second
 module s'arrete a la frontiere du module P0i deja migré, sans absorber
 de code P0i. Le controle source prouve l'assembleur par l'emetteur P2d.
-Le self-test groupe couvre desormais **20 modules**. Le source direct
+Le self-test groupe couvre desormais **22 modules**. Le source direct
 `M19_P2D_BOBS_EDITABLE.s` inclut les quatre modules P0 des
 quatrieme et cinquieme lots ; la CI controle leur assemblage MC68020
 direct octet-identique avec P2d, sans regeneration Python.
@@ -156,7 +158,7 @@ le controle de provenance compare d'abord le suffixe BOBS **entier**
 de l'emetteur Python avec la Lib officielle puis impose les octets
 et les offsets exacts de chaque plage; aucun desassemblage n'est
 accepte comme seule autorite. L'assemblage direct et le test de
-modification groupe couvrent desormais **20 modules**.
+modification groupe couvrent desormais **22 modules**.
 
 Le septieme lot convertit **5 362 octets de code / 1 module** :
 `P2D_SERVICE_BODY` (`$0C51E..$0DA10`, 1 501 instructions
@@ -167,7 +169,7 @@ historique, hors du module executable. Preuve de source :
 comparaison sur l'ensemble du suffixe BOBS avec l'emetteur P2d,
 controle de chacun des 5 362 octets et des offsets, assemblage direct
 vasm MC68020 byte-exact et test groupe portant desormais sur
-**20 modules**. Aucun changement de `dist/`, `LAST_GOOD` ou
+**22 modules**. Aucun changement de `dist/`, `LAST_GOOD` ou
 `tests/current/`.
 
 Le huitieme lot ajoute **4 010 octets / 2 modules** :
@@ -180,7 +182,7 @@ Les donnees brutes `$0DCB4..$0DD96` (226 octets),
 migres `$0E59E..$0E5B0` et `$0EDD0..$0EE00`.
 La frontiere `$0E538` s'appuie sur la premiere ligne de
 donnees verifiee, sans introduire de label dans l'export audit.
-Le test groupe de la CI controle maintenant **20 modules**.
+Le test groupe de la CI controle maintenant **22 modules**.
 La validation reste Gate A source sans remplacement des Lib ni
 qualification nouvelle WinUAE B/C.
 
@@ -192,9 +194,25 @@ Les appels AMOS Main sont confirmes par les octets emetteurs
 `FE11F700031D` et conserves a ABI identique. Le bloc de donnees
 `registry_state` a `$046CC` et le relais brut
 `p2b_paint_continue` a `$079F2` restent inchanges.
-Le self-test groupe controle desormais **20 modules**.
+Le self-test groupe controle desormais **22 modules**.
 Cette migration source ne change ni les bibliotheques officielles
 ni les conditions des Gates B/C/D.
+
+Le dixieme lot migre **14 150 octets / 2 modules** :
+`P0_CORE_DISPATCH` (`$00000..$020A2`, 8 354 octets avec
+12 pseudo-appels AMOS Main) et `P0_GET_PIPELINE`
+(`$020CE..$03772`, 5 796 octets avec 4 pseudo-appels).
+Les etiquettes historiques `UNIT_BOBS` et `get_entry` restent
+dans le source principal; les modules commencent immediatement
+apres ces etiquettes. Le bloc de banque `$020A2..$020CE`
+(44 octets) et la table `$03772..$03792` (32 octets)
+ne sont pas modifies. Le format `start_marker` du batch
+permet les deux entrees qui n'utilisent pas `L_BOBS_xxxxx`.
+Tous les appels `FE11F700xxxx` sont conserves symboliquement
+et controles contre l'emetteur historique. La Gate A inclut
+l'assemblage MC68020 direct et l'edition groupee de
+**22 modules**. Aucun changement des bibliotheques installees,
+des ASC ou de la LAST_GOOD.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

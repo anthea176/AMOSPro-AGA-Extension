@@ -33,6 +33,7 @@ class Region:
     owner: str = 'tools/m19_p1e_bank_edit_emit.py::emit_bank_edit'
     end_marker: str | None = None
     staged_end_marker: str | None = None
+    start_marker: str | None = None
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -167,6 +168,22 @@ REGIONS = (
            'P1B_JOIN_START_ZERO', 0, 1, 0x0798B, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            end_marker='p2b_paint_continue:'),
+
+    Region('P0_CORE_DISPATCH', 'M19_P0_CORE_DISPATCH_MC68020.s',
+           0x00000, 0x020A2, '', '',
+           '    move.l #$00000002,144(a2)',
+           '    move.l #P0_CORE_BUFFER_MODE,144(a2)',
+           'P0_CORE_BUFFER_MODE', 2, 3, 0x00447, 12,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           start_marker='UNIT_BOBS:'),
+
+    Region('P0_GET_PIPELINE', 'M19_P0_GET_PIPELINE_MC68020.s',
+           0x020CE, 0x03772, '', '',
+           '    move.l #$00000001,48(a2)',
+           '    move.l #P0_GET_FRAME_VALID,48(a2)',
+           'P0_GET_FRAME_VALID', 1, 2, 0x023E7, 4,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           start_marker='get_entry:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -216,7 +233,9 @@ def prove_regions(native, labels, group):
 def bounds(spec, *, staged=False):
     last = (spec.staged_end_marker if staged and
             spec.staged_end_marker is not None else spec.end_marker)
-    return ('L_BOBS_%05X:\n' % spec.start,
+    first = ((spec.start_marker + '\n') if spec.start_marker is not None
+             else ('L_BOBS_%05X:\n' % spec.start))
+    return (first,
             (last + '\n') if last is not None
             else ('L_BOBS_%05X:\n' % spec.stop))
 
