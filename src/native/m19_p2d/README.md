@@ -453,6 +453,23 @@ tokens, titre, structure AP20 ni autres groupes natifs.
 Aucun changement de la Lib P2d, de `LAST_GOOD`, de l'ASC actif,
 ni transfert de preuve WinUAE B/C par la seule migration source.
 
+### UNIT153 — 27e lot : preflight de masse (466 octets)
+
+Module [M19_UNIT153_BULK_PREFLIGHT_MC68020.s](M19_UNIT153_BULK_PREFLIGHT_MC68020.s),
+`UNIT153+$00A02..$00BD4` : 122 instructions MC68020.
+La constante initiale D3 devient parametree ; l'appel AMOS Main a
+`$00BD4` est conserve hors source Motorola.
+
+### UNIT153 — 28e lot : controle secondaire du pointeur (190 octets)
+
+Module [M19_UNIT153_POINTER_RECHECK_MC68020.s](M19_UNIT153_POINTER_RECHECK_MC68020.s),
+`UNIT153+$00BDA..$00C98` : 51 instructions et un label.
+Le seuil de 24 octets devient parametrique. Sept mutations isolees
+sont desormais verifiees dans UNIT153 par la Gate A, aucune ailleurs.
+
+**UNIT153 : 3 148 octets / 7 modules ; 92 modules ASM au total.**
+Aucune nouvelle Lib, aucun ASC, aucune promotion de LAST_GOOD.
+
 ## Compilation directe (Windows)
 
 ```bat
