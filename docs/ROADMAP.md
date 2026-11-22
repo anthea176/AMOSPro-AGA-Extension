@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **22/11/2026 — S1-P1 noyau MC68020 capture AGSP (source de travail)** : [contrat du noyau](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md), [source ASM](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), tests CPU020 en CI. **Pas encore d'API AP20 ni de Lib S1**, pas de vrai `Save/Load` AMOS ; P2d et `LAST_GOOD` conservés.
+
+
 > **22/11/2026 — S1-P0 AGSP v1 APPROUVÉ : format multi-images + RGB24 local par image, modèle hôte 27 tests PASS.** [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) / [contrat](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). S1 simple (3 opaques) ; S2 attaché (15 opaques) ; >15 refus. API AMOS/WinUAE et sécurité DMA NON qualifiées. P2d et LAST_GOOD protégées.
 
 > **22/11/2026 — Sprite S0d : Gates B et C PASS sur WinUAE, rendu confirme** ([Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT), [Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT)). Trois cycles, 108 mouvements, curseur et Copper fonctionnels ; DMA materiel et Gate D non qualifies. [S1 : IFF indexé CMAP RGB24 capturé sur écran, sans ABK ; commandes non implémentées](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). P2d et `LAST_GOOD` proteges.

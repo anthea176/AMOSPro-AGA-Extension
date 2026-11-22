@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — S1-P1 source natif : capture RGB24 depuis bitplanes AGA
+
+**S1-P1 introduit un noyau source MC68020 autonome** : [capture 16px planaires -> AGSP 2 plans/RGB24](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), [comparaison CPU020 contre l'oracle AGSP](../tools/test_m19_s1p1_native_capture.py), [protocole / limites](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md) et [workflow dédié](../.github/workflows/m19-s1-p1-native-capture.yml). La CI assemble ce source via vasm MC68020 et exécute ses octets sous Unicorn 68020, avec contrôle des registres et canaries. **Ne pas transférer automatiquement un PASS CI vers la validation AP20/AMOS**. Aucune nouvelle entrée AP20 ni Lib produite, ni ASC Bob/S0d modifié.
+
+**Suite S1-P1b :** adaptateur d'écran natif : récupérer la bonne source `ScreenBuffer` Safe de `Aga Iff Load`, remplir le snapshot ColorMap via `GetRGB32`, transaction `Lst.Cree/Bnk.Change/Lst.Del` propriétaire AMOS pour persister dans une banque DATA AGSP et valider un vrai `Save/Load` sous WinUAE. La politique de palette 240..255 est encore hypothétique ; arrêt DMA toujours bloquant pour l'affichage matériel S1 final.
+
+
 ## 22 novembre 2026 — S1-P0 AGSP v1 : contrat approuvé, modèle de banque engagé
 
 **Décision auteur :** conserver **AGSP comme AGBO**, sur le principe d'une banque AMOS DATA multi-images enregistrable via `Save/Load` (enveloppe `AmBk`, identité interne `AGSP`, nom `AGASPRT `). Il ne s'agit pas des Sprite Object OCS. La création repose sur une capture d'une planche IFF/ILBM indexée avec `CMAP` RGB24 depuis l'écran AGA. Chaque image possède **sa palette RGB24 propre** et des indices locaux compacts avec **transparent 0**, sans quantification : 1–3 opaques = Sprite simple 2 plans (S1), 4–15 opaques = Sprite attaché 4 plans (S2 à réaliser), >15 = refus et conseil Bob AGA. Les indices source de couleurs RGB identiques peuvent fusionner ; la valeur RGB exacte ne perd pas de précision. Le prototype n'impose aucun `.abk` de Sprite OCS.
