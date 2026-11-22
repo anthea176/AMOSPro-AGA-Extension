@@ -1,6 +1,6 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**58 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**60 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
@@ -62,7 +62,9 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **24 180** |
+| [P2d support tail — code source restaure](M19_P2D_SUPPORT_TAIL_MC68020.s) | `$0B72A..$0C4FE` | 3 540 |
+| [P2d system service — code source restaure](M19_P2D_SYSTEM_SERVICE_MC68020.s) | `$0DA30..$0DCB4` | 644 |
+| **Total de code ASM propre** | | **28 364** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -133,10 +135,23 @@ Le relais Put `$05A5C..$05A6A` demeure en octets historiques car
 l'audit n'y fournit pas d'instructions sources verifiees. Le second
 module s'arrete a la frontiere du module P0i deja migré, sans absorber
 de code P0i. Le controle source prouve l'assembleur par l'emetteur P2d.
-Le self-test groupe couvre desormais **13 modules**. Le source direct
+Le self-test groupe couvre desormais **15 modules**. Le source direct
 `M19_P2D_BOBS_EDITABLE.s` inclut les quatre modules P0 des
 quatrieme et cinquieme lots ; la CI controle leur assemblage MC68020
 direct octet-identique avec P2d, sans regeneration Python.
+
+
+Le sixieme lot restaure **4 184 octets de code / 2 modules** :
+`P2D_SUPPORT_TAIL` (`$0B72A..$0C4FE`, 3 540 octets) et
+`P2D_SYSTEM_SERVICE` (`$0DA30..$0DCB4`, 644 octets).
+Ce sont des plages d'instructions pures sans donnees ni
+pseudo-instructions AMOS Main. Leurs deux bornes sont des labels
+d'offset et non des symboles natifs exportes par l'emetteur :
+le controle de provenance compare d'abord le suffixe BOBS **entier**
+de l'emetteur Python avec la Lib officielle puis impose les octets
+et les offsets exacts de chaque plage; aucun desassemblage n'est
+accepte comme seule autorite. L'assemblage direct et le test de
+modification groupe couvrent desormais **15 modules**.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

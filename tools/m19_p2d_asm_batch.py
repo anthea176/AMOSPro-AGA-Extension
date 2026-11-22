@@ -116,6 +116,19 @@ REGIONS = (
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            end_marker='routed_paint_one_entry:',
            staged_end_marker='    include "M19_P0I_ROUTED_PAINT_MC68020.s"'),
+
+    Region('P2D_SUPPORT_TAIL', 'M19_P2D_SUPPORT_TAIL_MC68020.s',
+           0x0B72A, 0x0C4FE, '', '',
+           '    move.l #$00000000,28(a2)',
+           '    move.l #P2D_TAIL_SCRATCH_ZERO,28(a2)',
+           'P2D_TAIL_SCRATCH_ZERO', 0, 1, 0x0B74B, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+    Region('P2D_SYSTEM_SERVICE', 'M19_P2D_SYSTEM_SERVICE_MC68020.s',
+           0x0DA30, 0x0DCB4, '', '',
+           '    move.l #$00000001,20(a4)',
+           '    move.l #P2D_SYSTEM_SUCCESS_FLAG,20(a4)',
+           'P2D_SYSTEM_SUCCESS_FLAG', 1, 2, 0x0DC11, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -138,11 +151,22 @@ def prove_regions(native, labels, group):
     for spec in sorted(REGIONS, key=lambda r: r.start):
         require(spec.start >= previous, 'overlapping batch ownership')
         previous = spec.stop
-        require(spec.begin_label in labels and spec.end_label in labels,
-                'missing P1e emitter labels: '+spec.name)
-        a,b = labels[spec.begin_label],labels[spec.end_label]
-        require(a < b and prefix+a == spec.start and prefix+b == spec.stop,
-                'emitter offset drift: '+spec.name)
+        if spec.begin_label and spec.end_label:
+            require(spec.begin_label in labels and spec.end_label in labels,
+                    'missing emitter labels: '+spec.name)
+            a,b = labels[spec.begin_label],labels[spec.end_label]
+            require(a < b and prefix+a == spec.start and
+                    prefix+b == spec.stop,
+                    'emitter offset drift: '+spec.name)
+        else:
+            # Some proven code spans have only exact audit offset labels.
+            # This is NOT disassembly authority: the complete immutable
+            # P2d group suffix was compared to the native Python emitter.
+            require(not spec.begin_label and not spec.end_label,
+                    'partial emitter-label ownership: '+spec.name)
+            a,b = spec.start-prefix,spec.stop-prefix
+            require(0 <= a < b <= len(native),
+                    'offset span outside source emitter: '+spec.name)
         chunk = native[a:b]
         require(group[spec.start:spec.stop] == chunk and
                 len(chunk) == spec.stop-spec.start and
