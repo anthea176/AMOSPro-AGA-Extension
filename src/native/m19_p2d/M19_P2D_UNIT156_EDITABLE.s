@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; PARTIAL_SOURCE_MIGRATION: native UNIT156 nibble + unmodified audit remainder
+; PARTIAL_SOURCE_MIGRATION: native UNIT156 nibble + DOS guard; audit remainder
 ; PARTIAL MC68020 MNEMONIC RESTORATION (not an installable .Lib)
 ; Unit: UNIT156 | SHA256: 4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b
 ; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.
@@ -596,16 +596,5 @@ L_UNIT156_0095E:
     dc.b $01,$01,$00,$00,$01,$01,$00,$01,$01,$01,$01,$00  ; +$0098E: 010100000101000101010100
     dc.b $01,$01,$01,$01  ; +$0099A: 01010101
 L_UNIT156_0099E:
-    movea.l $0004.w,a0                                 ; +$0099E: 20780004
-    move.l a0,d0                                       ; +$009A2: 2008
-    tst.l d0                                           ; +$009A4: 4A80
-    beq.w L_UNIT156_009C4                              ; +$009A6: 6700001C
-    move.l #$00000000,d0                               ; +$009AA: 203C00000000
-    move.w 296(a0),d0                                  ; +$009B0: 30280128
-    btst #1,d0                                         ; +$009B4: 08000001
-    beq.w L_UNIT156_009C4                              ; +$009B8: 6700000A
-    movea.l 44(a5),a0                                  ; +$009BC: 206D002C
-    bra.w L_UNIT156_0071C                              ; +$009C0: 6000FD5A
-L_UNIT156_009C4:
-    bra.w L_UNIT156_00898                              ; +$009C4: 6000FED2
+    include "M19_UNIT156_DOS_GUARD_MC68020.s"
     dc.b $47,$65,$74,$50  ; +$009C8: 47657450

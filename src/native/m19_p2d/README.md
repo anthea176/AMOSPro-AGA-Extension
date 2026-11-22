@@ -342,6 +342,19 @@ Total : **80 modules BOBS + 1 module UNIT156**, sans remplacement de
 `dist/`, de `LAST_GOOD` ni de l'ASC de campagne. Ce Gate A
 ne valide pas de nouveaux tests WinUAE Runtime/Compiler.
 
+### UNIT156 — 18e lot : garde DOS systeme (42 octets)
+
+Deuxieme zone source-verifiee de UNIT156 :
+[M19_UNIT156_DOS_GUARD_MC68020.s](M19_UNIT156_DOS_GUARD_MC68020.s),
+`$0099E..$009C8` (**42 octets**) ; acces Exec, detection
+DOS/buffer et relais vers les chemins internes existants.
+La table d'expansion `$0095E..$0099E`, la chaine `dos.library`
+et le marqueur `GetP` suivant `$009C8` restent intacts.
+Le test de groupe edite maintenant une constante par module et doit
+observer **seulement deux octets changes** dans UNIT156, aucun ailleurs.
+UNIT156 total source-verifie : **86 octets / 2 modules**.
+Ensemble : **82 modules**, dont 80 BOBS. Gate A uniquement.
+
 ## Compilation directe (Windows)
 
 ```bat
