@@ -20,11 +20,16 @@ NATIVE = ROOT / "src/native/m19_p2d/M19_P2D_UNIT156_EDITABLE.s"
 MODULE = ROOT / "src/native/m19_p2d/M19_UNIT156_NIBBLE_MC68020.s"
 MODULE2 = ROOT / "src/native/m19_p2d/M19_UNIT156_DOS_GUARD_MC68020.s"
 MODULE3 = ROOT / "src/native/m19_p2d/M19_UNIT156_CONVERT_TAIL_MC68020.s"
+MODULE4 = ROOT / "src/native/m19_p2d/M19_UNIT156_MAIN_BODY_MC68020.s"
 STAGED_NAME = "M19_P2D_UNIT156_MC68020.s"
 MASTER_NAME = "M19_P2D_AP20_SOURCE.s"
 MODULE_NAME = MODULE.name
 MODULE2_NAME = MODULE2.name
 MODULE3_NAME = MODULE3.name
+MODULE4_NAME = MODULE4.name
+FOURTH, FOURTH_END = 0x00218, 0x007EE
+FOURTH_MARK = '    move.l a0,d5                                       ; +$00218: 2A08\n'
+FOURTH_END_MARK = '    dc.b $00,$07,$67,$00,$00,$04,$0D,$D4,$52,$8C,$08,$00  ; +$007EE: 0007670000040DD4528C0800\n'
 THIRD, THIRD_END = 0x00850, 0x00926
 THIRD_MARK = 'L_UNIT156_00850:\n'
 THIRD_END_MARK = 'L_UNIT156_00926:\n'
@@ -57,6 +62,12 @@ HEADER3 = (
     "; UNIT156+$00850..$00926, 214 code bytes. One original raw MOVE classified.\n"
     "UNIT156_TAIL_ZERO equ 0\n\n"
 )
+HEADER4 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-backed UNIT156 main conversion body from pinned P2d emitter.\n"
+    "; UNIT156+$00218..$007EE (1494 bytes), instructions only, no data.\n"
+    "UNIT156_MIN_POINTER_BYTES equ 24\n\n"
+)
 
 
 class Unit156Error(ValueError):
@@ -68,7 +79,7 @@ def demand(condition: bool, reason: str) -> None:
         raise Unit156Error(reason)
 
 
-def expected_sources() -> tuple[bytes, bytes, bytes, str, str, str, str]:
+def expected_sources() -> tuple[bytes, bytes, bytes, bytes, str, str, str, str, str]:
     audit = AUDIT.read_text("ascii")
     begin = audit.find(FIRST_MARK)
     stop = audit.find(LAST_MARK, begin+len(FIRST_MARK))
@@ -105,7 +116,7 @@ def expected_sources() -> tuple[bytes, bytes, bytes, str, str, str, str]:
            'UNIT156 audit-only marker missing from original export')
     wrapper = wrapper.replace(
         '; AGA_NATIVE_PURPOSE: AUDIT_ONLY',
-        '; PARTIAL_SOURCE_MIGRATION: native UNIT156 tail + nibble + DOS guard; audit remainder'
+        '; PARTIAL_SOURCE_MIGRATION: native UNIT156 main + tail + nibble + DOS guard; audit remainder'
     )
     second_begin = audit.find(SECOND_MARK)
     second_stop = audit.find(SECOND_END_MARK, second_begin+len(SECOND_MARK))
@@ -176,15 +187,52 @@ def expected_sources() -> tuple[bytes, bytes, bytes, str, str, str, str]:
     wrapper = wrapper.replace(
         raw_third, THIRD_MARK+'    include "'+MODULE3_NAME+'"\n'
     )
+    fourth_begin = audit.find(FOURTH_MARK)
+    fourth_stop = audit.find(FOURTH_END_MARK,
+                             fourth_begin+len(FOURTH_MARK))
+    demand(fourth_begin >= 0 and fourth_stop > fourth_begin,
+           "UNIT156 main body source audit boundaries absent")
+    fourth_bytes, fourth_lines, at = bytearray(), [], FOURTH
+    for line in audit[fourth_begin:fourth_stop].splitlines():
+        if LABEL.fullmatch(line):
+            fourth_lines.append(line)
+            continue
+        if not line.strip():
+            continue
+        m = ANNOT.search(line)
+        demand(m is not None and int(m.group(1), 16) == at and
+               not line.lstrip().lower().startswith("dc."),
+               "UNIT156 main body contains non-code or offset gap")
+        opcode = bytes.fromhex(m.group(2))
+        fourth_bytes.extend(opcode)
+        at += len(opcode)
+        fourth_lines.append(line[:m.start()].rstrip())
+    demand(at == FOURTH_END and len(fourth_bytes) == 1494 and
+           fourth_bytes[0x0021F-FOURTH] == 24,
+           "UNIT156 main body emitter size/mutation byte wrong")
+    source4 = "\n".join(fourth_lines).rstrip()+"\n"
+    before = "    cmpi.l #$00000018,d5"
+    demand(source4.count(before) == 1,
+           "UNIT156 pointer threshold instruction is ambiguous")
+    authored4 = HEADER4 + source4.replace(
+        before, "    cmpi.l #UNIT156_MIN_POINTER_BYTES,d5"
+    )
+    raw_fourth = audit[fourth_begin:fourth_stop]
+    demand(wrapper.count(raw_fourth) == 1,
+           "UNIT156 main audit span differs from native wrapper")
+    wrapper = wrapper.replace(
+        raw_fourth, '    include "'+MODULE4_NAME+'"\n'
+    )
     return (bytes(encoded), bytes(second_bytes), bytes(third_bytes),
-            authored, authored2, authored3, wrapper)
+            bytes(fourth_bytes), authored, authored2, authored3, authored4,
+            wrapper)
 
 
 def verify(official: bytes) -> int:
     demand(len(official) == 136020 and
            sha256(official).hexdigest() == P2D_SHA,
            "official P2d source builder SHA mismatch")
-    chunk, chunk2, chunk3, authored, authored2, authored3, wrapper = expected_sources()
+    chunk, chunk2, chunk3, chunk4, authored, authored2, authored3, authored4, wrapper = expected_sources()
     _, parts, _ = unpack_ap20(official)
     matches = [i for i, part in enumerate(parts)
                if len(part) == UNIT_SIZE and
@@ -197,15 +245,19 @@ def verify(official: bytes) -> int:
            "original P2d builder differs from UNIT156 DOS guard source")
     demand(parts[group][THIRD:THIRD_END] == chunk3,
            "original P2d builder differs from UNIT156 tail source")
+    demand(parts[group][FOURTH:FOURTH_END] == chunk4,
+           "original P2d builder differs from UNIT156 main body")
     demand(MODULE.read_text("ascii") == authored,
            "UNIT156 authored mnemonic differs from pinned source")
     demand(MODULE2.read_text("ascii") == authored2,
            "UNIT156 DOS guard mnemonic differs from pinned source")
     demand(MODULE3.read_text("ascii") == authored3,
            "UNIT156 tail mnemonic differs from pinned source")
+    demand(MODULE4.read_text("ascii") == authored4,
+           "UNIT156 main body mnemonic differs from pinned source")
     demand(NATIVE.read_text("ascii") == wrapper,
            "UNIT156 editable wrapper differs from source-backed audit")
-    print("UNIT156_SOURCE_PROVEN: 44+42+214 native bytes, group", group)
+    print("UNIT156_SOURCE_PROVEN: 44+42+214+1494 native bytes, group", group)
     return group
 
 
@@ -215,6 +267,7 @@ def stage(folder: Path, official: bytes) -> None:
     (folder / MODULE_NAME).write_bytes(MODULE.read_bytes())
     (folder / MODULE2_NAME).write_bytes(MODULE2.read_bytes())
     (folder / MODULE3_NAME).write_bytes(MODULE3.read_bytes())
+    (folder / MODULE4_NAME).write_bytes(MODULE4.read_bytes())
 
 
 def self_test_edit(staged: Path, assembler: Path) -> None:
@@ -224,6 +277,7 @@ def self_test_edit(staged: Path, assembler: Path) -> None:
            (staged / MODULE_NAME).is_file() and
            (staged / MODULE2_NAME).is_file() and
            (staged / MODULE3_NAME).is_file() and
+           (staged / MODULE4_NAME).is_file() and
            (staged / MASTER_NAME).is_file(),
            "UNIT156 staged source missing")
     with TemporaryDirectory(prefix="unit156_nibble_edit_") as temporary:
@@ -253,6 +307,14 @@ def self_test_edit(staged: Path, assembler: Path) -> None:
             source3.replace(before3, "UNIT156_TAIL_ZERO equ 1"),
             encoding="ascii", newline="\n"
         )
+        source4 = (folder / MODULE4_NAME).read_text("ascii")
+        before4 = "UNIT156_MIN_POINTER_BYTES equ 24"
+        demand(source4.count(before4) == 1,
+               "UNIT156 main body edit parameter ambiguous")
+        (folder / MODULE4_NAME).write_text(
+            source4.replace(before4, "UNIT156_MIN_POINTER_BYTES equ 25"),
+            encoding="ascii", newline="\n"
+        )
         output = folder / "UNIT156_EDIT_TEST_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -271,12 +333,13 @@ def self_test_edit(staged: Path, assembler: Path) -> None:
         before_part, after_part = original_parts[group], edited_parts[group]
         differences = [n for n, (a,b) in enumerate(zip(
             before_part, after_part)) if a != b]
-        demand(differences == [0x0091D, 0x00937, 0x009AF] and
+        demand(differences == [0x0021F, 0x0091D, 0x00937, 0x009AF] and
+               before_part[0x0021F] == 24 and after_part[0x0021F] == 25 and
                before_part[0x0091D] == 0 and after_part[0x0091D] == 1 and
                before_part[0x00937] == 0 and after_part[0x00937] == 1 and
                before_part[0x009AF] == 0 and after_part[0x009AF] == 1,
-               "UNIT156 three independent edits not confined to expected bytes")
-    print("UNIT156_EDIT_TEST_PASS: three isolated source-only byte mutations")
+               "UNIT156 four independent edits not confined to expected bytes")
+    print("UNIT156_EDIT_TEST_PASS: four isolated source-only byte mutations")
 
 
 def main() -> int:

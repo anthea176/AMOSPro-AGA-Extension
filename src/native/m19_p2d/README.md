@@ -367,6 +367,21 @@ et `$009AF`, sont controlees ensemble sans mutation hors UNIT156.
 UNIT156 migre : **300 octets / 3 modules** ; ensemble **83 modules ASM**.
 Aucune bibliotheque de `dist/` ni source ASC modifiees.
 
+### UNIT156 — 20e lot : corps principal (1 494 octets)
+
+Le corps `UNIT156+$00218..$007EE` est extrait du source d'audit
+apres controle de la provenance sur **1 494 octets / 380 instructions**,
+sans donnees intercalees. Nouveau module source :
+[M19_UNIT156_MAIN_BODY_MC68020.s](M19_UNIT156_MAIN_BODY_MC68020.s).
+Le seuil de lecture `cmpi.l #24,d5` devient un parametre ASM
+a taille inchangee, avec mutation d'un seul octet a `$0021F`.
+Gate A : egalite avec l'emetteur P2d, assemblage MC68020 direct,
+puis **quatre octets modifies exactement** dans UNIT156 et aucun
+autre groupe. Les 98 octets bruts suivants `$007EE..$00850`
+restent hors module, sans classification hasardeuse.
+UNIT156 migre : **1 794 octets / 4 modules** ; ensemble **84 modules ASM**.
+Aucune bibliotheque officielle ou ASC modifie.
+
 ## Compilation directe (Windows)
 
 ```bat
