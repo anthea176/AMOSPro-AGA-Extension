@@ -1,21 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **22/11/2026 — S0d TERMINE pour le scenario WinUAE, Gates B et C PASS** : [Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) et [vrai AMOS Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT), 3 cycles, 108 mouvements, curseur/Copper et rendu confirmes par l'auteur sans artefact. S0 hors WinUAE pas entierement clos : **securite DMA formelle et Gate D a qualifier**. [Contrat S1 minimal PROPOSE, non approuve et non implemente](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). Bibliotheques P2d et `LAST_GOOD` intactes ; [ASC S0d unique](../tests/design/sprites_aga/SPRITE_PROBE.asc) inchange.
+> **22/11/2026 — Sprite S0d : Gates B et C PASS sur WinUAE, rendu confirme** ([Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT), [Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT)). Trois cycles, 108 mouvements, curseur et Copper fonctionnels ; DMA materiel et Gate D non qualifies. [Contrat S1 propose, NON approuve / NON implemente](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). P2d et `LAST_GOOD` proteges.
 
-
-> **22/11/2026 — Sprites S0d : Gate B Runtime PASS, visuel confirme** ([journal original, 478 octets CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT)) : 3 cycles, 108 deplacements, 3 ouvertures/fermetures, curseur et Copper RGB4, `ERR 0`. **Gate C vraie compilation : a executer sur exactement le meme [SPRITE_PROBE.asc](../tests/design/sprites_aga/SPRITE_PROBE.asc), sans le modifier**. Log distinct attendu `RAM:M19_S0D_ROB_COMPILED.TXT` avec `PRG_STATE -1` ; Gate D et preuve DMA formelle non acquises. [Protocole de Gate C](NEXT_SESSION.md). Lib P2d et LAST_GOOD inchangees.
-
-
-> **S0d 22/11/2026** : [S0c Runtime et animation F visibles PASS](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT) selon journal et observation auteur, mais quiescence DMA non prouvee. [S0d robustesse](../tests/design/sprites_aga/SPRITE_PROBE.asc) prepare dans **le meme ASC** : 3 cycles Open/Close, curseur et Copper RGB4, 108 positions Sprite ; **Gate B/C/D non testees**. P2d et LAST_GOOD proteges.
-
-
-> **Sprite AGA 22/11/2026 :** S0b `GetSprite/FreeSprite` **PASS en Runtime WinUAE**, canal 1 attribue puis libere curseur visible/masque ([log](evidence/M19_S0B_SPR_RUNTIME_2026-11-22.TXT)). S0c [Sprite 16x16 mobile](../tests/design/sprites_aga/SPRITE_PROBE.asc) **PREPARE, non execute WinUAE**, meme ASC de travail ; cleanup DMA encore experimental. P2d et LAST_GOOD inchangees. 
-
-
-> **Actualite S0 du 22/11/2026** : WinUAE Runtime de la sonde ViewPort PASS (`$5000`, drapeau SPRITES present), [journal original](evidence/M19_S0_VIEWPORT_RUNTIME_2026-11-21.TXT). [Sonde de canaux S0b](../tests/design/sprites_aga/SPRITE_PROBE.asc) preparee sous `tests/design/sprites_aga/` avec un seul ASC ; tests WinUAE S0b et Compiler non effectues. Aucune nouvelle Lib, P2d LAST_GOOD inchangee.
-
-
-> **Pilotage actif — 21 novembre 2026.** Ce document décrit l'état actuel et les priorités. Les preuves et jalons historiques sont dans [NEXT_SESSION.md](NEXT_SESSION.md) et [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md).
+> Les jalons anciens et les protocoles detailles restent dans [NEXT_SESSION.md](NEXT_SESSION.md) et [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) ; la roadmap conserve seulement l'etat actif.
 
 ## 1. Référence de travail
 
