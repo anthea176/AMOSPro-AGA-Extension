@@ -66,6 +66,42 @@ SPANS = (
         "    moveq #0,d3", "    moveq #UNIT142_SCREEN_INITIAL_D3,d3",
         0x00327, 0, 1,
     ),
+    (
+        "M19_UNIT142_IFF_LOAD_BODY_MC68020.s",
+        "ENTRY_UNIT142_00D3C:\n",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$0153A: 203C00000000\n",
+        0x00D3C, 0x0153A, 513, 50,
+        "UNIT142_IFF_LOAD_ZERO", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_IFF_LOAD_ZERO,d2",
+        0x00ECB, 0, 1,
+    ),
+    (
+        "M19_UNIT142_IFF_PALETTE_BODY_MC68020.s",
+        "ENTRY_UNIT142_015D8:\n",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$01BC4: 203C00000000\n",
+        0x015D8, 0x01BC4, 338, 35,
+        "UNIT142_IFF_PALETTE_CAP", 7, 8,
+        "    cmpi.l #$00000007,8(a5)", "    cmpi.l #UNIT142_IFF_PALETTE_CAP,8(a5)",
+        0x016F9, 7, 8,
+    ),
+    (
+        "M19_UNIT142_IFF_AP20_PRECALL_MC68020.s",
+        "ENTRY_UNIT142_01BDE:\n",
+        "    dc.b $FE,$11,$F7,$00,$00,$8C  ; +$01E0C: FE11F700008C\n",
+        0x01BDE, 0x01E0C, 164, 21,
+        "UNIT142_IFF_FAILURE", -1, 0,
+        "    moveq #-1,d3", "    moveq #UNIT142_IFF_FAILURE,d3",
+        0x01C1D, 255, 0,
+    ),
+    (
+        "M19_UNIT142_COLOR_RANGE_MC68020.s",
+        "ENTRY_UNIT142_0299A:\n",
+        "    dc.b $47,$65,$74,$50  ; +$02BB6: 47657450\n",
+        0x0299A, 0x02BB6, 153, 7,
+        "UNIT142_COLOR_RANGE_CAP", 384, 385,
+        "    cmpi.l #$00000180,d4", "    cmpi.l #UNIT142_COLOR_RANGE_CAP,d4",
+        0x029BD, 128, 129,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -73,6 +109,10 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_INIT_ENTRY_MC68020.s": "AGA init/entry",
     "M19_UNIT142_GRAPHICS_GUARD_MC68020.s": "graphics library guard",
     "M19_UNIT142_GRAPHICS_SCREEN_MC68020.s": "graphics screen preflight",
+    "M19_UNIT142_IFF_LOAD_BODY_MC68020.s": "IFF load preflight body",
+    "M19_UNIT142_IFF_PALETTE_BODY_MC68020.s": "IFF screen and palette validation",
+    "M19_UNIT142_IFF_AP20_PRECALL_MC68020.s": "IFF AP20 pre-call controls",
+    "M19_UNIT142_COLOR_RANGE_MC68020.s": "color range/entry validation",
 }
 
 
@@ -189,7 +229,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 458 bytes / 4 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 5118 bytes / 8 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -244,7 +284,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 4 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 8 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

@@ -568,6 +568,25 @@ des instructions historiques et des zones de donnees / brut non classees.
 Le passage des segments bruts en opcodes n'est pas presume. Aucune nouvelle
 Lib, aucune LAST_GOOD, aucun ASC, aucune nouvelle Gate B/C/D.
 
+### UNIT142 — 41e a 44e lots : validation IFF et couleurs (4 660 octets)
+
+Quatre modules MC68020 issus de plages code-only, source-verifiees et
+assemblees sans toucher aux marqueurs `GetP`, aux pseudo-appels AMOS Main
+ou aux blocs bruts adjacents :
+
+- [corps IFF load](M19_UNIT142_IFF_LOAD_BODY_MC68020.s) : `$00D3C..$0153A`, 2 046 octets ;
+- [palette et ecran IFF](M19_UNIT142_IFF_PALETTE_BODY_MC68020.s) : `$015D8..$01BC4`, 1 516 octets ;
+- [garde appel AMOS Main](M19_UNIT142_IFF_AP20_PRECALL_MC68020.s) : `$01BDE..$01E0C`, 558 octets ;
+- [controles des couleurs](M19_UNIT142_COLOR_RANGE_MC68020.s) : `$0299A..$02BB6`, 540 octets.
+
+Le validateur UNIT142 exige huit mutations d'un octet dans le seul groupe
+UNIT142, comparant tous les groupes, le titre et les tokens AP20.
+Reconstruction integrale P2d SHA256 et vasm direct `-m68020` inchanges.
+**TOTAL : 108 modules ASM**, dont **5 118 octets UNIT142 en 8 modules**.
+Les **57 622 octets** restants demeurent dans le wrapper natif source
+verifie, sans requalification des zones brutes. Aucune Lib, LAST_GOOD
+ou ASC de campagne modifies ; Gate B/C/D non transferees.
+
 ## Compilation directe (Windows)
 
 ```bat
