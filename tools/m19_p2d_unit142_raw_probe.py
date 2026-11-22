@@ -59,11 +59,11 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 156
+    assert reconstructed == group and len(modules) == 164
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 58080 and len(group) - clean == 4660
+    assert clean == 58124 and len(group) - clean == 4616
 
     # Source-owned code vs. original state/header/pseudo data, byte exact.
     mask = bytearray(len(group))
@@ -128,7 +128,11 @@ def check() -> None:
         (0x06674, b"GetP", "AMOS GetP after opaque zeros B"),
         (0x030E8, bytes(MOUSE_STATE_SIZE) + GETP, "144-byte keyboard/mouse state + GetP"),
         (0x05302, bytes(8) + GETP, "R83 helper zero state + GetP"),
+        (0x056FA, bytes(8), "R83 pair cache referenced by screen helper"),
+        (0x0666C, bytes(8), "R83 pair cache referenced by screen lifecycle"),
     )
+    assert "lea L_UNIT142_056FA(pc),a1" in (ROOT / "src/native/m19_p2d/M19_UNIT142_ENTRY_0530E_MC68020.s").read_text("ascii")
+    assert "lea L_UNIT142_0666C(pc),a2" in (ROOT / "src/native/m19_p2d/M19_UNIT142_BLOCK_0652C_MC68020.s").read_text("ascii")
     r83_noncode = 0
     for lo, literal, name in r83_literals:
         hi = lo + len(literal)
@@ -137,7 +141,7 @@ def check() -> None:
         r83_noncode += hi-lo
         print("UNIT142_R83_LITERAL_DATA_CONFIRMED", name,
               "%05X..%05X" % (lo,hi), hi-lo)
-    assert r83_noncode == 344
+    assert r83_noncode == 360
 
     headers = 0
     for lo,hi in CBLOCK_SPANS:
@@ -185,9 +189,9 @@ def check() -> None:
           "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
     known_noncode += extra_markers + r83_noncode
-    assert known_noncode == 4554
+    assert known_noncode == 4570
     unknown = len(group) - clean - known_noncode
-    assert unknown == 106
+    assert unknown == 46
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 

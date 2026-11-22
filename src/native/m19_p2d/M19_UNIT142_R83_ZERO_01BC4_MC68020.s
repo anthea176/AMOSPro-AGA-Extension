@@ -1,0 +1,5 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; Source-backed R83 UNIT142 $01BC4..$01BCA; retained 6-byte MC68020 move.l.
+UNIT142_R83_ZERO_01BC4 equ 0
+
+    move.l #UNIT142_R83_ZERO_01BC4,d0

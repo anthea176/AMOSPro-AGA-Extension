@@ -2167,6 +2167,106 @@ def legacy_r83_next_sources(whole, wrapper):
     return wrapper,modules
 
 
+
+LEGACY_R83_SMALL_MODULES = (
+    ("M19_UNIT142_R83_ZERO_0153A_MC68020.s", "2cd529ead08c4b853f964427fb217750fddc8f41",
+     0x0153A, 0x01540, "UNIT142_R83_ZERO_0153A", 0, 1, 0x0153F, 0, 1),
+    ("M19_UNIT142_R83_ZERO_015BA_MC68020.s", "d41635998d0afb584cbd87d0c075d1682433e6ae",
+     0x015BA, 0x015C0, "UNIT142_R83_ZERO_015BA", 0, 1, 0x015BF, 0, 1),
+    ("M19_UNIT142_R83_ZERO_01BC4_MC68020.s", "204c8d6d4724f5e7248406915f97c8b58aa2319b",
+     0x01BC4, 0x01BCA, "UNIT142_R83_ZERO_01BC4", 0, 1, 0x01BC9, 0, 1),
+    ("M19_UNIT142_R83_ZERO_03986_MC68020.s", "d51594d982a03c60f3293498c21923e0aea607ce",
+     0x03986, 0x0398C, "UNIT142_R83_ZERO_03986", 0, 1, 0x0398B, 0, 1),
+    ("M19_UNIT142_R83_ZERO_03A06_MC68020.s", "249d735e1677b6a5ea0bcaf662dfe4a87e9fe4c3",
+     0x03A06, 0x03A0C, "UNIT142_R83_ZERO_03A06", 0, 1, 0x03A0B, 0, 1),
+    ("M19_UNIT142_R83_ZERO_040FC_MC68020.s", "5f062b654e99c7f619bd261c12ae462544a66a3e",
+     0x040FC, 0x04102, "UNIT142_R83_ZERO_040FC", 0, 1, 0x04101, 0, 1),
+    ("M19_UNIT142_R83_BRA_0C8BA_MC68020.s", "1abc25272dc3a33e92aeb4de979d7d344f898c15",
+     0x0C8BA, 0x0C8BE, "UNIT142_R83_BRA_0C8BA_DELTA", 0, 2, 0x0C8BD, 8, 10),
+    ("M19_UNIT142_R83_BRA_0CED4_MC68020.s", "a535a6a509b4ec9af849b63b4be84beb0057d27d",
+     0x0CED4, 0x0CED8, "UNIT142_R83_BRA_0CED4_DELTA", 0, 2, 0x0CED7, 8, 10),
+)
+
+
+def legacy_r83_small_sources(whole, wrapper):
+    """Restore only R83-proven six-byte MOVE.L and two linked BRA.W."""
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+
+    old, meta = build_r83()
+    demand(sha256(old).hexdigest() == R83_SHA and meta["sha256"] == R83_SHA,
+           "R83 small source provenance changed")
+    _tokens, groups, _title = unpack_ap20(old)
+    demand(len(groups[82])==52974, "R83 small AGA group size drift")
+    expected_sources = {}
+    prefix_to_source = {
+        0x0153A:"M19_UNIT142_IFF_LOAD_BODY_MC68020.s",
+        0x015BA:"M19_UNIT142_BLOCK_01540_MC68020.s",
+        0x01BC4:"M19_UNIT142_IFF_PALETTE_BODY_MC68020.s",
+        0x03986:"M19_UNIT142_ENTRY_034F4_MC68020.s",
+        0x03A06:"M19_UNIT142_BLOCK_0398C_MC68020.s",
+        0x040FC:"M19_UNIT142_ENTRY_03C46_MC68020.s",
+        0x0C8BA:"M19_UNIT142_BLOCK_0C41C_MC68020.s",
+        0x0CED4:"M19_UNIT142_BLOCK_0C946_MC68020.s",
+    }
+    def raw(lo,hi):
+        return "".join("    dc.b " +
+                       ",".join("$%02X" % v for v in
+                                whole[at:min(hi,at+12)]) + "\n"
+                       for at in range(lo,hi,12))
+
+    for filename, pinned, lo, hi, symbol, before, after, delta, oldbyte, newbyte in LEGACY_R83_SMALL_MODULES:
+        reference = (bytes.fromhex("203C00000000") if hi-lo==6
+                     else bytes.fromhex("60000008"))
+        demand(whole[lo:hi]==reference==groups[82][lo:hi] and
+               0<=lo<hi<len(whole) and lo<=delta<hi and
+               whole[delta]==oldbyte and oldbyte!=newbyte,
+               "R83 small exact source or mutation offset differs: "+filename)
+        if hi-lo == 6:
+            source, info = native_unit_source("R83_RAW_MOVEL", reference, [(0,0)])
+            demand(info["mnemonic_bytes"]==6 and info["raw_dc_bytes"]==0 and
+                   "move.l #$00000000,d0" in source,
+                   "R83 small immediate is not uniquely decoded")
+            fmt = "%05X" % lo
+            authored = (
+                "; AGA_NATIVE_MIN_CPU: MC68020\n"
+                "; Source-backed R83 UNIT142 $%s..$%05X; retained 6-byte MC68020 move.l.\n" %
+                (fmt,hi) +
+                symbol + " equ 0\n\n" +
+                "    move.l #"+symbol+",d0\n")
+        else:
+            dest = {0x0C8BA:0x0C8C4,0x0CED4:0x0CEDE}[lo]
+            demand(lo+2+8 == dest and
+                   ("L_UNIT142_%05X:" % dest) in
+                   (NATIVE_DIR / ("M19_UNIT142_BLOCK_%05X_MC68020.s" %
+                                  (0x0C8BE if lo==0x0C8BA else 0x0CED8))).read_text("ascii"),
+                   "R83 small BRA source target not owned")
+            authored = (
+                "; AGA_NATIVE_MIN_CPU: MC68020\n"
+                "; R83 exact branch UNIT142+$%05X -> L_UNIT142_%05X; target source-owned.\n" %
+                (lo,dest) +
+                symbol + " equ 0\n\n"
+                "    bra.w L_UNIT142_%05X+%s\n" % (dest,symbol))
+        payload = (NATIVE_DIR / filename).read_bytes()
+        blob = sha1(b"blob " + str(len(payload)).encode("ascii") +
+                    b"\x00" + payload).hexdigest()
+        demand(blob==pinned and payload.decode("ascii")==authored,
+               "R83 small module differs from pinned assembly: "+filename)
+        prefix = '    include "' + prefix_to_source[lo] + '"\n'
+        target = prefix + raw(lo,hi)
+        demand(wrapper.count(target)==1,
+               "R83 small raw wrapper not uniquely source-marked: "+filename)
+        wrapper = wrapper.replace(target, prefix+'    include "'+filename+'"\n')
+        expected_sources[filename] = authored
+
+    modules = [(lo,hi,filename,expected_sources[filename])
+               for filename,_pinned,lo,hi,*_rest in LEGACY_R83_SMALL_MODULES]
+    demand(sum(hi-lo for lo,hi,_filename,_src in modules)==44,
+           "R83 small 6*6 plus 2*4 code coverage mismatch")
+    return wrapper, modules
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -2384,6 +2484,8 @@ def expected_sources():
     modules.extend(followup)
     wrapper, r83next = legacy_r83_next_sources(bytes(whole),wrapper)
     modules.extend(r83next)
+    wrapper, small = legacy_r83_small_sources(bytes(whole),wrapper)
+    modules.extend(small)
     return bytes(whole), wrapper, modules
 
 
@@ -2422,7 +2524,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 58080 bytes / 156 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 58124 bytes / 164 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -2454,6 +2556,8 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     for filename, *_rest in LEGACY_R83_NEXT_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_R83_SMALL_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -2476,7 +2580,8 @@ def edit_gate(staged, assembler):
            all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_R83_FOLLOWUP_MODULES) and
-           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_NEXT_MODULES),
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_NEXT_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_SMALL_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -2594,6 +2699,14 @@ def edit_gate(staged, assembler):
                    "R83 next edit not isolated: "+filename)
             path.write_text(contents.replace(before, symbol + " equ " + str(new_value)),
                             encoding="ascii", newline="\n")
+        for filename, _blob, _start, _stop, symbol, old_value, new_value, *_ in LEGACY_R83_SMALL_MODULES:
+            path = folder / filename
+            content = path.read_text("ascii")
+            before = symbol + " equ " + str(old_value)
+            demand(content.count(before)==1,
+                   "R83 small edit symbol ambiguous: "+filename)
+            path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -2633,12 +2746,15 @@ def edit_gate(staged, assembler):
         expected.update({delta: (oldbyte, newbyte)
                          for _filename, _blob, _start, _stop, _sym, _old, _new,
                              delta, oldbyte, newbyte in LEGACY_R83_NEXT_MODULES})
-        demand(len(expected) == 156, "UNIT142 R83 next edit count differs")
+        expected.update({delta: (oldbyte, newbyte)
+                         for _filename, _blob, _start, _stop, _sym, _old, _new,
+                             delta, oldbyte, newbyte in LEGACY_R83_SMALL_MODULES})
+        demand(len(expected) == 164, "UNIT142 R83 small edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 156 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 164 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
