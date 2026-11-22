@@ -6,16 +6,24 @@ on:
     paths:
       - 'src/native/m19_p2d/**'
       - 'tools/build_m19_p2d_editable_asm.py'
+      - 'tools/m19_p2d_asm_batch.py'
       - '.github/workflows/m19-p2d-editable-asm.yml'
+  schedule:
+    - cron: '40 2 * * 0'
   workflow_dispatch:
+    inputs:
+      full_edit_tests:
+        description: 'Run exhaustive one-module-at-a-time editability tests'
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
 jobs:
   mc68020-source:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,32 +31,56 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify CPU policy source markers and Python syntax
+      - name: Verify CPU policy, Python syntax and source-backed batch
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -m py_compile tools/build_m19_p2d_editable_asm.py
-      - name: Build vasm Motorola MC68020
+          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py
+          python -B tools/m19_p2d_asm_batch.py --check
+      - name: Restore pinned vasm MC68020 build cache
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned vasm Motorola MC68020 (cache miss only)
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
         run: |
-          git clone --depth 1 https://github.com/rhargreaves/vasm.git "$RUNNER_TEMP/vasm"
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = "8b85ef6eb7d257bf29a56ddc63cf2be20a317256"
           make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
-          test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
-      - name: Compile the handwritten P2d module and prove the exact AP20 image
+      - name: Check assembler availability
+        run: test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Rebuild source-backed P2d and verify byte-exact AP20
         run: |
           python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --out "$RUNNER_TEMP/p2d_asm_baseline"
           sha256sum "$RUNNER_TEMP/p2d_asm_baseline/M19_P2D_ASM_REBUILT_CHECK.Lib"
-      - name: Direct MC68020 assemble from versioned source master (no Python source regeneration)
+      - name: Direct MC68020 assemble without Python source regeneration
         run: |
           cd src/native/m19_p2d
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/M19_P2D_DIRECT_ASM.Lib" M19_P2D_LINKED_EDITABLE.s
           python - "$RUNNER_TEMP/M19_P2D_DIRECT_ASM.Lib" <<'PY'
           import hashlib, pathlib, sys
-          data=pathlib.Path(sys.argv[1]).read_bytes()
-          expected='ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f'
-          assert len(data)==136020 and hashlib.sha256(data).hexdigest()==expected
-          print('DIRECT_VASM_NO_PYTHON_SOURCE_REGEN PASS',len(data),expected)
+          data = pathlib.Path(sys.argv[1]).read_bytes()
+          expected = 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f'
+          assert len(data) == 136020 and hashlib.sha256(data).hexdigest() == expected
+          print('DIRECT_VASM_MC68020_EXACT PASS', len(data), expected)
           PY
-      - name: Edit one real ASM instruction, reassemble, verify a one-byte AP20 delta
+      - name: Grouped editability gate - all new batch modules, one rebuild
+        run: |
+          python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-batch
+      - name: Exhaustive existing and batch module editability gate
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full_edit_tests == true)
         run: |
           python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-edit
-      - name: Confirm source-only delivery, no official binary or tests changes
-        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
+      - name: Confirm source-only delivery and protect official libraries
+        env:
+          EVENT_BEFORE: ${{ github.event.before }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" && -n "$EVENT_BEFORE" && "$EVENT_BEFORE" != "0000000000000000000000000000000000000000" ]]; then
+            git diff --exit-code "$EVENT_BEFORE" "$GITHUB_SHA" -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
+          fi
+          git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/

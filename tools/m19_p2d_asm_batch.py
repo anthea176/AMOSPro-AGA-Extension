@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+# AGA_NATIVE_MIN_CPU: MC68020
+"""Source-backed batched MC68020 extraction; never emits an installable Lib.
+
+The historical Python emitter and the official P2d AP20 bytes are authoritative.
+Audit mnemonics are used only after per-instruction byte verification.
+"""
+from __future__ import annotations
+import argparse
+from dataclasses import dataclass
+from pathlib import Path
+import re
+
+ROOT = Path(__file__).resolve().parents[1]
+NATIVE = ROOT / 'src/native/m19_p2d'
+AUDIT = ROOT / 'src/asm_migration/m19_p2d/M19_P2D_BOBS_MC68020.s'
+
+@dataclass(frozen=True)
+class Region:
+    name: str
+    file: str
+    start: int
+    stop: int
+    begin_label: str
+    end_label: str
+    needle: str
+    replacement: str
+    constant: str
+    initial: int
+    edited: int
+    mutation: int
+    pseudo_count: int
+
+REGIONS = (
+    Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
+           0x7F54, 0x8306, 'edit_begin', 'edit_objects',
+           '    move.l #$00000000,8(a2)',
+           '    move.l #P1E_BATCH_BOOT_ZERO,8(a2)',
+           'P1E_BATCH_BOOT_ZERO', 0, 1, 0x7F59, 4),
+    Region('P1E_COMMIT', 'M19_P1E_EDIT_COMMIT_MC68020.s',
+           0x85A6, 0x85E8, 'edit_commit_next', 'edit_cleanup',
+           '    move.l #$00000001,d3',
+           '    move.l #P1E_BATCH_COMMIT_DONE,d3',
+           'P1E_BATCH_COMMIT_DONE', 1, 2, 0x85E3, 2),
+)
+ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
+LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
+PSEUDO = re.compile(r'\s*dc\.w \$FE11,\$F700,AMOS_MAIN_[A-Z_]+\s*$')
+DATA = re.compile(r'^\s*dcb?\.[bwl]\s+', re.I)
+
+class BatchError(ValueError):
+    pass
+
+def require(ok, why):
+    if not ok:
+        raise BatchError(why)
+
+def prove_regions(native, labels, group):
+    """Source emitter and immutable P2d BOBS group must match exactly."""
+    prefix = len(group)-len(native)
+    require(prefix >= 0 and group[prefix:] == native, 'emitter suffix drift')
+    evidence = {}
+    previous = 0
+    for spec in sorted(REGIONS, key=lambda r: r.start):
+        require(spec.start >= previous, 'overlapping batch ownership')
+        previous = spec.stop
+        require(spec.begin_label in labels and spec.end_label in labels,
+                'missing P1e emitter labels: '+spec.name)
+        a,b = labels[spec.begin_label],labels[spec.end_label]
+        require(a < b and prefix+a == spec.start and prefix+b == spec.stop,
+                'emitter offset drift: '+spec.name)
+        chunk = native[a:b]
+        require(group[spec.start:spec.stop] == chunk and
+                len(chunk) == spec.stop-spec.start and
+                chunk[spec.mutation-spec.start] == spec.initial,
+                'P2d source/size/mutation mismatch: '+spec.name)
+        evidence[spec.name] = chunk
+    return evidence
+
+def bounds(spec):
+    return ('L_BOBS_%05X:\n' % spec.start,
+            'L_BOBS_%05X:\n' % spec.stop)
+
+def extract(text, spec, bytes_expected):
+    first,last = bounds(spec)
+    i,j = text.find(first),text.find(last,text.find(first)+len(first))
+    require(i >= 0 and j > i and text.find(first,i+len(first)) < 0,
+            'audit boundaries missing/ambiguous: '+spec.name)
+    result,actual,offset,pseudo = [],bytearray(),spec.start,0
+    for line in text[i+len(first):j].splitlines():
+        if LABEL.fullmatch(line):
+            result.append(line)
+            continue
+        if not line.strip():
+            continue
+        match = ANNOTATION.search(line)
+        require(match is not None, 'unclassified audit source line: '+line)
+        inst = line[:match.start()].rstrip()
+        code = bytes.fromhex(match.group(2))
+        require(int(match.group(1),16) == offset, 'audit gap at %05X' % offset)
+        if DATA.match(inst):
+            require(PSEUDO.fullmatch(inst) is not None and len(code)==6 and
+                    code[:4] == bytes.fromhex('fe11f700'),
+                    'data/unverified pseudo-opcode: '+inst)
+            pseudo += 1
+        actual.extend(code)
+        offset += len(code)
+        result.append(inst)
+    require(offset == spec.stop and bytes(actual)==bytes_expected and
+            pseudo==spec.pseudo_count,
+            'P1e audit/emitter bytes or AMOS ABI count changed: '+spec.name)
+    body = '\n'.join(result).strip()+'\n'
+    require(body.count(spec.needle)==1, 'editable instruction not unique')
+    return body.replace(spec.needle,spec.replacement)
+
+def render(spec, body):
+    return ('; AGA_NATIVE_MIN_CPU: MC68020\n'
+            '; Historical owner: tools/m19_p1e_bank_edit_emit.py::emit_bank_edit\n'
+            '; Audited bytes checked against the official M19 P2d library.\n'
+            '; BOBS+$%05X..$%05X (%d bytes).\n' %
+            (spec.start,spec.stop,spec.stop-spec.start) +
+            '; AMOS Main symbolic pseudo-ops preserve six-byte ABI.\n'
+            '%s equ %d\n\n' % (spec.constant,spec.initial) + body)
+
+def replace_raw_sections(text, evidence):
+    """All-or-nothing source validation before any textual replacement."""
+    replacements = []
+    for spec in REGIONS:
+        extract(text,spec,evidence[spec.name])
+        first,last = bounds(spec)
+        i,j = text.index(first),text.index(last,text.index(first)+len(first))
+        replacements.append((i,j,first+'    include "'+spec.file+'"\n'))
+    for i,j,segment in sorted(replacements,reverse=True):
+        text = text[:i]+segment+text[j:]
+    return text
+
+def stage_modules(folder,overrides=None):
+    overrides = overrides or {}
+    require(set(overrides).issubset({s.file for s in REGIONS}),
+            'unexpected P1e batch module')
+    for spec in REGIONS:
+        source_file = NATIVE/spec.file
+        require(source_file.is_file(), 'missing source: '+str(source_file))
+        text = overrides.get(spec.file,source_file.read_text('ascii'))
+        require(text.count('; AGA_NATIVE_MIN_CPU: MC68020')==1 and
+                text.count(spec.begin_label+':')==1 and
+                text.count(spec.constant+' equ ')==1 and
+                not any(DATA.match(l) and not PSEUDO.fullmatch(l)
+                        for l in text.splitlines()),
+                'invalid authored batch source: '+spec.name)
+        (folder/spec.file).write_text(text,encoding='ascii',newline='\n')
+
+def quick_edits():
+    """Mutate one instruction per module; one reassembly checks both deltas."""
+    changed,offsets = {},[]
+    for spec in REGIONS:
+        text = (NATIVE/spec.file).read_text('ascii')
+        before = '%s equ %d' % (spec.constant,spec.initial)
+        require(text.count(before)==1, 'nonunique batch edit')
+        changed[spec.file] = text.replace(
+            before,'%s equ %d' % (spec.constant,spec.edited))
+        offsets.append(spec.mutation)
+    return changed,sorted(offsets)
+
+def check_sources(audit,evidence,compare_files=True):
+    for spec in REGIONS:
+        source = render(spec,extract(audit,spec,evidence[spec.name]))
+        if compare_files:
+            require((NATIVE/spec.file).read_text('ascii') == source,
+                    'authored module differs from emitter proof: '+spec.file)
+        print('P1E_SOURCE_PROVEN %s %d bytes' %
+              (spec.name,spec.stop-spec.start))
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--plan',action='store_true')
+    mode.add_argument('--check',action='store_true')
+    mode.add_argument('--emit',type=Path)
+    args = parser.parse_args()
+    try:
+        from build_m19_p2d_editable_asm import (
+            prove_source_provenance,build_p1e,emit_bob_auto_update,
+            unpack_ap20,replace_source_backed_amos_pseudo)
+        official, group, *_ = prove_source_provenance()
+        _,meta = build_p1e()
+        native,labels,_ = emit_bob_auto_update(meta['context_delta'])
+        _,parts,_ = unpack_ap20(official)
+        evidence = prove_regions(native,labels,parts[group])
+        audit = replace_source_backed_amos_pseudo(AUDIT.read_text('ascii'))
+        check_sources(audit,evidence,compare_files=args.check)
+        if args.emit:
+            out = args.emit.resolve()
+            require(out!=ROOT/'dist' and ROOT/'dist' not in out.parents,
+                    'no candidate can be written to dist/')
+            out.mkdir(parents=True,exist_ok=True)
+            for spec in REGIONS:
+                target = out/spec.file
+                require(not target.exists(), 'refuse overwrite '+str(target))
+                target.write_text(
+                    render(spec,extract(audit,spec,evidence[spec.name])),
+                    encoding='ascii',newline='\n')
+        print('P1E_BATCH_STATIC_PASS')
+        return 0
+    except (BatchError,ValueError,OSError) as error:
+        print('[ERROR] P1e batch: '+str(error))
+        return 1
+
+if __name__ == '__main__':
+    raise SystemExit(main())

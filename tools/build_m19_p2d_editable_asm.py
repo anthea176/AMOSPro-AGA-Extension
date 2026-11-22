@@ -43,6 +43,13 @@ from m19_p1c_bob_priority_emit import emit_priority_bobs
 from m19_p1d_limit_bob_emit import emit_limit_bobs
 from m19_p1e_bank_edit_emit import emit_bank_edit
 from m19_p1e_bank_repack_emit import emit_bank_repack
+from m19_p2d_asm_batch import (
+    REGIONS as P1E_BATCH_REGIONS,
+    prove_regions as prove_p1e_batch_regions,
+    replace_raw_sections as replace_p1e_batch_raw,
+    stage_modules as stage_p1e_batch_modules,
+    quick_edits as p1e_batch_quick_edits,
+)
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -2267,6 +2274,16 @@ def replace_raw_p1e_edit_stamps(text: str) -> str:
     return text[:i] + 'L_BOBS_08516:\n    include "' + P1E_STAMPS_NAME + '"\n' + text[j:]
 
 
+@lru_cache(maxsize=1)
+def prove_p1e_batch_provenance() -> dict[str, bytes]:
+    """Proof from original Python emitter + immutable official P2d AP20."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    return prove_p1e_batch_regions(native, labels, parts[group])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -2395,7 +2412,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1e_preflight_text: str | None = None,
                    p1e_next_text: str | None = None,
                    p1e_publish_text: str | None = None,
-                   p1e_stamps_text: str | None = None) -> None:
+                   p1e_stamps_text: str | None = None,
+                   p1e_batch_texts: dict[str, str] | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -2515,6 +2533,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = (text[:first] + '    include "' + SOURCE_NAME + '"\n' +
             text[last:])
     text = replace_source_backed_amos_pseudo(text)
+    text = replace_p1e_batch_raw(text, prove_p1e_batch_provenance())
     (folder / BOBS_FILE).write_text(text, encoding='ascii', newline='\n')
     source = module_text if module_text is not None else EDITABLE_FILE.read_text('ascii')
     require(source.count('p2d_public_auto_update:') == 1 and
@@ -3042,6 +3061,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             and not re.search(r'(?im)^\s*dcb?\.[bwll]\b', stamps),
             'P1e stamp module contains raw opcode or wrong slots')
     (folder / P1E_STAMPS_NAME).write_text(stamps, encoding='ascii', newline='\n')
+    stage_p1e_batch_modules(folder, overrides=p1e_batch_texts)
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -3197,7 +3217,9 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (p1e_pre_start <= i < p1e_pre_end) or
                 (p1e_next_start <= i < p1e_next_end) or
                 (p1e_publish_start <= i < p1e_publish_end) or
-                (p1e_stamps_start <= i < p1e_stamps_end) for i in differences),
+                (p1e_stamps_start <= i < p1e_stamps_end) or
+                any(region.start <= i < region.stop
+                    for region in P1E_BATCH_REGIONS) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -3252,7 +3274,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1e_preflight_text: str | None = None,
           p1e_next_text: str | None = None,
           p1e_publish_text: str | None = None,
-          p1e_stamps_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1e_stamps_text: str | None = None,
+          p1e_batch_texts: dict[str, str] | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -3291,7 +3314,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1e_preflight_text=p1e_preflight_text,
                     p1e_next_text=p1e_next_text,
                     p1e_publish_text=p1e_publish_text,
-                    p1e_stamps_text=p1e_stamps_text)
+                    p1e_stamps_text=p1e_stamps_text,
+                    p1e_batch_texts=p1e_batch_texts)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -4040,6 +4064,28 @@ def test_editability(assembler: Path) -> None:
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
+
+
+def test_batch_editability(assembler: Path) -> None:
+    """A single rebuild proves one independent one-byte edit per batch module."""
+    official, group, *_ = prove_source_provenance()
+    replacements, expected = p1e_batch_quick_edits()
+    require(len(replacements) == len(P1E_BATCH_REGIONS),
+            'quick test omitted a source-backed batch module')
+    with TemporaryDirectory(prefix='p2d_batch_edit_') as directory:
+        changed, diffs = build(assembler, Path(directory)/'edited_batch',
+                               allow_edited=True, p1e_batch_texts=replacements)
+        require(diffs == expected,
+                f'batch edits changed {diffs}, expected {expected}')
+        _, groups, _ = unpack_ap20(changed)
+        for region in P1E_BATCH_REGIONS:
+            require(groups[group][region.mutation] == region.edited,
+                    'batch changed value not assembled: '+region.name)
+        require(changed != official and len(changed) == len(official),
+                'edited AP20 length or output unchanged')
+    print('P1E_BATCH_EDIT_TEST PASS: every module edited, one byte each')
+    print('P1E_BATCH_EDIT_TEST PASS: original AP20 size/topology preserved')
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--vasm', required=True, type=Path)
@@ -4048,11 +4094,16 @@ def main() -> int:
     parser.add_argument('--allow-edited', action='store_true',
                         help='Output a same-size edited candidate ONLY in --out, NOT dist/')
     parser.add_argument('--self-test-edit', action='store_true',
-                        help='Prove real modified-source vasm roundtrip without publishing a Lib')
+                        help='Run the full legacy 45-module edit test plus batch edits')
+    parser.add_argument('--self-test-batch', action='store_true',
+                        help='Fast grouped edit test: one rebuild for all new P1e batch modules')
     args = parser.parse_args()
     try:
         if args.self_test_edit:
             test_editability(args.vasm)
+            test_batch_editability(args.vasm)
+        elif args.self_test_batch:
+            test_batch_editability(args.vasm)
         else:
             build(args.vasm, args.out.resolve(), allow_edited=args.allow_edited)
         return 0
