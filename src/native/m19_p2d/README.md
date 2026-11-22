@@ -841,6 +841,30 @@ AMOS Main et zones sans classification certaine. La CI Gate A confirme la recons
 l'assemblage direct vasm MC68020 et les 122 modifications isolees.
 Aucune nouvelle Gate WinUAE B, Compiler C ni materiel D.
 
+### UNIT142 — lots 159 a 161 : 3 noyaux CBlock en ASM (2 616 octets)
+
+Les trois copies du noyau historique `M18 CBlock` sont desormais
+du vrai source Motorola MC68020. Source de provenance :
+`tools/m18_cblock_copy_emit.py::emit_cblock_copy_core()`,
+SHA256 noyau `8a3df13b72b0a62f237b7df068cc9d3f47c70af759d0bc64949ed765cfd65a97`.
+
+| Position du code UNIT142 | Module | Octets |
+| --- | --- | ---: |
+| `$0ABCE..$0AF36` | [CBlock noyau A](M19_UNIT142_CBLOCK_CORE_0ABCE_MC68020.s) | 872 |
+| `$0B592..$0B8FA` | [CBlock noyau B](M19_UNIT142_CBLOCK_CORE_0B592_MC68020.s) | 872 |
+| `$0BF5A..$0C2C2` | [CBlock noyau C](M19_UNIT142_CBLOCK_CORE_0BF5A_MC68020.s) | 872 |
+
+Chaque copie conserve un namespace de labels distinct. Les 8 octets
+`AGACBLK ` et les 4 octets `GetP` par enveloppe restent du `dc.b`
+(explicitement hors code). Une mutation `moveq` unique par copie
+s'ajoute aux 122 edits UNIT142 existants.
+
+**Total : 225 modules ASM MC68020**, dont **125 UNIT142** ;
+**53 058 / 62 740 octets UNIT142 (84,57 %)** editables.
+**9 682 octets UNIT142** restent sous directives brutes.
+Gate A de cette migration en attente CI ; aucune nouvelle Gate B/C/D,
+aucune modification de P2d, LAST_GOOD ou de l'ASC actif.
+
 ## Compilation directe (Windows)
 
 ```bat

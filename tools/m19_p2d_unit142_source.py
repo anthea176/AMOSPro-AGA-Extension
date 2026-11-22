@@ -27,6 +27,8 @@ STAGED_NAME = "M19_P2D_UNIT142_MC68020.s"
 MASTER_NAME = "M19_P2D_AP20_SOURCE.s"
 GROUP_SIZE = 0xF514
 GROUP_SHA = "8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7"
+CBLOCK_CORE_SHA = "8a3df13b72b0a62f237b7df068cc9d3f47c70af759d0bc64949ed765cfd65a97"
+CBLOCK_SPANS = ((0x0ABC6, 0x0AF3A), (0x0B58A, 0x0B8FE), (0x0BF52, 0x0C2C6))
 ANNOT = re.compile(r"\s+;\s+\+\$([A-F0-9]{5}): ([A-F0-9]+)\s*$")
 LABEL = re.compile(r"[A-Za-z_][A-Za-z_0-9]*:\s*$")
 
@@ -1351,6 +1353,53 @@ def expected_sources():
             target, compact_start + '    include "' + filename + '"\n'
         )
         modules.append((lo, hi, filename, module))
+    # Private CBlock kernels: the pinned M18 source emitter is authoritative.
+    from m18_cblock_copy_emit import emit_cblock_copy_core
+    from generate_aga_multiunit_source import native_unit_source
+    core, _core_labels = emit_cblock_copy_core()
+    demand(len(core) == 872 and sha256(core).hexdigest() == CBLOCK_CORE_SHA,
+           "UNIT142 CBlock native emitter drift")
+    preview, coverage = native_unit_source("CBLOCK_CORE", core, [(0, 0)])
+    demand(coverage["mnemonic_bytes"] == 872 and coverage["raw_dc_bytes"] == 0,
+           "UNIT142 CBlock no longer fully source-decodable")
+    index = preview.find("ENTRY_CBLOCK_CORE_00000:")
+    demand(index >= 0, "UNIT142 CBlock ASM entry missing")
+    body = preview[index:]
+    demand(body.count("    moveq #0,d2") == 1, "UNIT142 CBlock edit ambiguous")
+    for first, last in CBLOCK_SPANS:
+        core_at = first + 8
+        filename = "M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % core_at
+        symbol = "UNIT142_CBLOCK_%05X_RESULT" % core_at
+        demand(whole[first:last] == b"AGACBLK " + core + b"GetP",
+               "UNIT142 embedded CBlock source differs")
+        header = (
+            "; AGA_NATIVE_MIN_CPU: MC68020\n"
+            "; UNIT142 CBlock core source-verified against the pinned M18 emitter.\n"
+            + ("; UNIT142+$%05X..$%05X, 872 native instruction bytes.\n"
+               % (core_at, last - 4))
+            + (symbol + " equ 0\n\n")
+        )
+        renamed = body.replace("CBLOCK_CORE", "UNIT142_CORE_%05X" % core_at)
+        code = header + renamed.replace("    moveq #0,d2",
+                                        "    moveq #%s,d2" % symbol)
+        sig = ("    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20  ; +$%05X: 41474143424C4B20\n"
+               % first)
+        after = "ENTRY_UNIT142_%05X:\n" % last
+        begin = audit.find(sig)
+        end = audit.find(after, begin + len(sig))
+        demand(begin >= 0 and end > begin,
+               "UNIT142 embedded CBlock audit boundary mismatch")
+        original = strip_annotations(audit[begin:end])
+        demand(wrapper.count(original) == 1,
+               "UNIT142 embedded CBlock wrapper boundary mismatch")
+        replacement = (
+            "    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20\n"
+            + ("L_UNIT142_%05X:\n" % core_at)
+            + ('    include "%s"\n' % filename)
+            + "    dc.b $47,$65,$74,$50\n"
+        )
+        wrapper = wrapper.replace(original, replacement)
+        modules.append((core_at, last - 4, filename, code))
     return bytes(whole), wrapper, modules
 
 
@@ -1389,7 +1438,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 50442 bytes / 122 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 53058 bytes / 125 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1399,6 +1448,9 @@ def stage(folder, official):
     (folder / STAGED_NAME).write_bytes(WRAPPER.read_bytes())
     for filename, *_ in SPANS:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for first, _last in CBLOCK_SPANS:
+        filename = "M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8)
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1406,7 +1458,9 @@ def edit_gate(staged, assembler):
     group = verify(official)
     demand((staged / STAGED_NAME).is_file() and
            (staged / MASTER_NAME).is_file() and
-           all((staged / spec[0]).is_file() for spec in SPANS),
+           all((staged / spec[0]).is_file() for spec in SPANS) and
+           all((staged / ("M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8))).is_file()
+               for first, _last in CBLOCK_SPANS),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1423,6 +1477,17 @@ def edit_gate(staged, assembler):
             path.write_text(text.replace(
                 before, symbol + " equ " + str(new_value)),
                 encoding="ascii", newline="\n")
+        for first, _last in CBLOCK_SPANS:
+            core_at = first + 8
+            filename = "M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % core_at
+            symbol = "UNIT142_CBLOCK_%05X_RESULT" % core_at
+            path = folder / filename
+            text = path.read_text("ascii")
+            original = symbol + " equ 0"
+            demand(text.count(original) == 1,
+                   "UNIT142 CBlock edit symbol ambiguous: " + filename)
+            path.write_text(text.replace(original, symbol + " equ 1"),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1440,11 +1505,12 @@ def edit_gate(staged, assembler):
         base, changed = units0[group], units1[group]
         deltas = [i for i, (a, b) in enumerate(zip(base, changed)) if a != b]
         expected = {spec[12]: (spec[13], spec[14]) for spec in SPANS}
+        expected.update({first + 8 + 869: (0, 1) for first, _last in CBLOCK_SPANS})
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 122 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 125 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
