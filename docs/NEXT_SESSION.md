@@ -4,7 +4,7 @@
 
 **Etape source-only sur `main` : 137 modules MC68020** (80 BOBS,
 14 UNIT153, 6 UNIT156, **37 UNIT142**). UNIT142 a maintenant
-**35 814 octets sur 62 740** en source editable, 37 modules et
+**35 814 octets sur 62 740** (57,08 %) en source editable, 37 modules et
 37 tests de mutation isolee ; les 26 926 octets restants sont conserves
 dans le wrapper natif audit-restaure, avec leurs donnees, marqueurs GetP,
 pseudo-appels AMOS Main et zones non classifiees.
@@ -17,14 +17,18 @@ pseudo-appels AMOS Main et zones non classifiees.
 [59–64](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/63f9b2b9693b09099fd76ff4b7f5b651f8aa9af2)
 et [65–73](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/177449991d39f78d4fe1a51e7417c5a0fd33f233).
 
-**Gates A verifiees :** lots 37–58 PASS
-([CI 37–40](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45038967714),
-[CI 41–44](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039227925),
-[CI 45–48](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039353714),
-[CI 49–52](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039486703),
-[CI 53–58](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039666020)).
-**Lots 59–64** [CI en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040075951) ;
-**lots 65–73** [CI en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040310566).
+**Gates A lots 37–73 : PASS, y compris reconstruction P2d byte-exacte,
+assemblage direct vasm MC68020, 37 mutations UNIT142 confinees
+et controle de la Lib/LAST_GOOD.**
+Preuves par lots :
+[37–40](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45038967714),
+[41–44](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039227925),
+[45–48](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039353714),
+[49–52](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039486703),
+[53–58](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039666020),
+[59–64](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040075951),
+[65–73](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040310566).
+[Integrite generale PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45038868367).
 Le test UNIT142 impose la reconstruction P2d officielle par builder source
 (136 020 octets, SHA256
 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`)
