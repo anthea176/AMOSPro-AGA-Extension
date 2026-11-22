@@ -8357,19 +8357,7 @@ p2b_paint_continue:
     dc.b $00,$00,$00,$01,$00,$74,$60,$00,$D5,$FA  ; +$07A0A: 0000000100746000D5FA
     include "M19_P1B_HOTSPOT_ORIGIN_MC68020.s"
 L_BOBS_07AC2:
-p1c_frame_dispatch:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07AC2: 48E7EFEE
-    bsr.w L_BOBS_07B74                                 ; +$07AC6: 610000AC
-    tst.l d0                                           ; +$07ACA: 4A80
-    beq.w L_BOBS_07AD8                                 ; +$07ACC: 6700000A
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$07AD0: 4CDF77F7
-    bra.w L_BOBS_07BBA                                 ; +$07AD4: 600000E4
-L_BOBS_07AD8:
-p1c_frame_default:
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$07AD8: 4CDF77F7
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07ADC: 48E7EFEE
-    lea -160(a7),a7                                    ; +$07AE0: 4FEFFF60
-    bra.w L_BOBS_06902                                 ; +$07AE4: 6000EE1C
+    include "M19_P1C_FRAME_DISPATCH_MC68020.s"
 L_BOBS_07AE8:
 p1c_context:
     bsr.w L_BOBS_04694                                 ; +$07AE8: 6100CBAA
@@ -8425,25 +8413,7 @@ L_BOBS_07B82:
 p1c_read_return:
     rts                                                ; +$07B82: 4E75
 ENTRY_BOBS_07B84:
-p1c_priority_entry:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07B84: 48E7EFEE
-    cmpi.l #$00000003,d3                               ; +$07B88: 0C8300000003
-    bhi.w L_BOBS_07BAC                                 ; +$07B8E: 6200001C
-    move.l d3,d7                                       ; +$07B92: 2E03
-    bsr.w L_BOBS_07AE8                                 ; +$07B94: 6100FF52
-    move.l a0,d0                                       ; +$07B98: 2008
-    beq.w L_BOBS_07BAC                                 ; +$07B9A: 67000010
-    move.l d7,4(a0)                                    ; +$07B9E: 21470004
-    move.l #$00000001,d3                               ; +$07BA2: 263C00000001
-    bra.w L_BOBS_07BB2                                 ; +$07BA8: 60000008
-L_BOBS_07BAC:
-p1c_priority_fail:
-    move.l #$00000000,d3                               ; +$07BAC: 263C00000000
-L_BOBS_07BB2:
-p1c_priority_return:
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$07BB2: 4CDF77F7
-    moveq #0,d2                                        ; +$07BB6: 7400
-    rts                                                ; +$07BB8: 4E75
+    include "M19_P1C_PRIORITY_MC68020.s"
 L_BOBS_07BBA:
 explicit_frame_draw_entry:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07BBA: 48E7EFEE

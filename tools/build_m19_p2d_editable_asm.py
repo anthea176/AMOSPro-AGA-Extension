@@ -39,6 +39,7 @@ from m19_b8_b7_hook_emit import emit_b8_b7_hooks
 from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
 from m19_p1b_hotspot_origin_emit import emit_hotspot_origin
+from m19_p1c_bob_priority_emit import emit_priority_bobs
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -60,6 +61,8 @@ B8_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8_END_REGISTER_MC68020.s'
 B8S1_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B8S1_BANK_FREE_MC68020.s'
 B7_END_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_B7_END_MC68020.s'
 P1B_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1B_HOTSPOT_ORIGIN_MC68020.s'
+P1C_PRIORITY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_PRIORITY_MC68020.s'
+P1C_DISPATCH_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_DISPATCH_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -118,6 +121,12 @@ B7_END_END = 0x6FA6
 P1B_NAME = 'M19_P1B_HOTSPOT_ORIGIN_MC68020.s'
 P1B_START = 0x7A14
 P1B_END = 0x7AC2
+P1C_PRIORITY_NAME = 'M19_P1C_PRIORITY_MC68020.s'
+P1C_PRIORITY_START = 0x7B84
+P1C_PRIORITY_END = 0x7BBA
+P1C_DISPATCH_NAME = 'M19_P1C_FRAME_DISPATCH_MC68020.s'
+P1C_DISPATCH_START = 0x7AC2
+P1C_DISPATCH_END = 0x7AE8
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1044,6 +1053,92 @@ def replace_raw_p1b_origin(text: str) -> str:
             '    include "' + P1B_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1c_priority_provenance() -> tuple[int, int, int, bytes]:
+    """Verify all 54 priority bytes against original MC68020 source."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    p1c, p1c_labels = emit_priority_bobs(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['p1c_priority_entry']
+    end = prefix + labels['explicit_frame_draw_entry']
+    fragment = p1c[p1c_labels['p1c_priority_entry']:
+                   p1c_labels['explicit_frame_draw_entry']]
+    mutation = 0x7BA7
+    require((begin, end) == (P1C_PRIORITY_START, P1C_PRIORITY_END) and
+            len(fragment) == 54 and
+            native[labels['p1c_priority_entry']:
+                   labels['explicit_frame_draw_entry']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[mutation-begin-5:mutation-begin+1] == bytes.fromhex('263c00000001'),
+            'P1c priority source/emitter/P2d byte contract differs')
+    return begin, end, mutation, fragment
+
+
+def replace_raw_p1c_priority(text: str) -> str:
+    """Convert only verified P1c priority code and retain AP20 ENTRY label."""
+    first = 'ENTRY_BOBS_07B84:\np1c_priority_entry:\n'
+    last = 'L_BOBS_07BBA:\nexplicit_frame_draw_entry:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1c priority audit boundaries missing')
+    pos, code = P1C_PRIORITY_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1c priority annotated bytes discontinuous')
+        chunk = bytes.fromhex(encoded)
+        code.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1C_PRIORITY_END and
+            bytes(code) == prove_p1c_priority_provenance()[3],
+            'P1c priority annotated bytes differ from source emitter')
+    return (text[:i] + 'ENTRY_BOBS_07B84:\n    include "' +
+            P1C_PRIORITY_NAME + '"\n' + text[j:])
+
+
+@lru_cache(maxsize=1)
+def prove_p1c_dispatch_provenance() -> tuple[int, int, int, bytes]:
+    """Verify the original 38-byte priority-aware frame dispatcher."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    p1c, p1c_labels = emit_priority_bobs(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['p1c_frame_dispatch']
+    end = prefix + labels['p1c_context']
+    fragment = p1c[p1c_labels['p1c_frame_dispatch']:
+                   p1c_labels['p1c_context']]
+    mutation = 0x7AE3
+    require((begin, end) == (P1C_DISPATCH_START, P1C_DISPATCH_END) and
+            len(fragment) == 38 and
+            native[labels['p1c_frame_dispatch']:
+                   labels['p1c_context']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[mutation-begin-3:mutation-begin+1] == bytes.fromhex('4fefff60'),
+            'P1c dispatch source/emitter/P2d byte contract differs')
+    return begin, end, mutation, fragment
+
+
+def replace_raw_p1c_dispatch(text: str) -> str:
+    """Convert only the verified 38-byte P1c dispatch."""
+    first = 'L_BOBS_07AC2:\np1c_frame_dispatch:\n'
+    last = 'L_BOBS_07AE8:\np1c_context:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1c dispatch audit boundaries missing')
+    pos, code = P1C_DISPATCH_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1c dispatch annotated bytes discontinuous')
+        chunk = bytes.fromhex(encoded)
+        code.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1C_DISPATCH_END and
+            bytes(code) == prove_p1c_dispatch_provenance()[3],
+            'P1c dispatch annotated bytes differ from source emitter')
+    return (text[:i] + 'L_BOBS_07AC2:\n    include "' +
+            P1C_DISPATCH_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1145,7 +1240,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    b8_text: str | None = None,
                    b8s1_text: str | None = None,
                    b7_end_text: str | None = None,
-                   p1b_text: str | None = None) -> None:
+                   p1b_text: str | None = None,
+                   p1c_priority_text: str | None = None,
+                   p1c_dispatch_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1167,6 +1264,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(B8S1_FILE.is_file(), f'missing authored module: {B8S1_FILE}')
     require(B7_END_FILE.is_file(), f'missing authored module: {B7_END_FILE}')
     require(P1B_FILE.is_file(), f'missing authored module: {P1B_FILE}')
+    require(P1C_PRIORITY_FILE.is_file(), f'missing authored module: {P1C_PRIORITY_FILE}')
+    require(P1C_DISPATCH_FILE.is_file(), f'missing authored module: {P1C_DISPATCH_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1182,6 +1281,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_b8s1_bank_free(text)
     text = replace_raw_b7_end(text)
     text = replace_raw_p1b_origin(text)
+    text = replace_raw_p1c_priority(text)
+    text = replace_raw_p1c_dispatch(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1448,6 +1549,27 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', p1b_source),
             'P1b authored source incomplete or unclassified')
     (folder / P1B_NAME).write_text(p1b_source, encoding='ascii', newline='\n')
+    priority_source = (p1c_priority_text if p1c_priority_text is not None
+                       else P1C_PRIORITY_FILE.read_text('ascii'))
+    priority_base = priority_source.count('    move.l #1,d3')
+    priority_changed = priority_source.count('    move.l #2,d3')
+    require(priority_source.count('p1c_priority_entry:') == 1 and
+            priority_source.count('p1c_priority_fail:') == 1 and
+            priority_source.count('p1c_priority_return:') == 1 and
+            (priority_base, priority_changed) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', priority_source),
+            'P1c Priority source missing procedure or contains raw bytes')
+    (folder / P1C_PRIORITY_NAME).write_text(priority_source, encoding='ascii', newline='\n')
+    dispatch_source = (p1c_dispatch_text if p1c_dispatch_text is not None
+                       else P1C_DISPATCH_FILE.read_text('ascii'))
+    dispatch_base = dispatch_source.count('    lea -160(a7),a7')
+    dispatch_changed = dispatch_source.count('    lea -156(a7),a7')
+    require(dispatch_source.count('p1c_frame_dispatch:') == 1 and
+            dispatch_source.count('p1c_frame_default:') == 1 and
+            (dispatch_base, dispatch_changed) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', dispatch_source),
+            'P1c Dispatch source missing labels or contains raw bytes')
+    (folder / P1C_DISPATCH_NAME).write_text(dispatch_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1532,6 +1654,8 @@ def verify_link(original: bytes, image: bytes, group: int,
     b8s1_start, b8s1_end, _, _ = prove_b8s1_bank_free_provenance()
     b7_start, b7_end, _, _ = prove_b7_end_provenance()
     p1b_start, p1b_end, _, _ = prove_p1b_origin_provenance()
+    p1c_priority_start, p1c_priority_end, _, _ = prove_p1c_priority_provenance()
+    p1c_dispatch_start, p1c_dispatch_end, _, _ = prove_p1c_dispatch_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1549,7 +1673,9 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (b8_start <= i < b8_end) or
                 (b8s1_start <= i < b8s1_end) or
                 (b7_start <= i < b7_end) or
-                (p1b_start <= i < p1b_end) for i in differences),
+                (p1b_start <= i < p1b_end) or
+                 (p1c_priority_start <= i < p1c_priority_end) or
+                 (p1c_dispatch_start <= i < p1c_dispatch_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1578,7 +1704,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           b8_text: str | None = None,
           b8s1_text: str | None = None,
           b7_end_text: str | None = None,
-          p1b_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1b_text: str | None = None,
+          p1c_priority_text: str | None = None,
+          p1c_dispatch_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1591,7 +1719,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                    pair_check_text=pair_check_text,
                    p0i_text=p0i_text, b8_text=b8_text,
                    b8s1_text=b8s1_text, b7_end_text=b7_end_text,
-                    p1b_text=p1b_text)
+                    p1b_text=p1b_text,
+                    p1c_priority_text=p1c_priority_text,
+                    p1c_dispatch_text=p1c_dispatch_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1925,6 +2055,33 @@ def test_editability(assembler: Path) -> None:
                 'P1b hotspot MOVE.L #2 source edit was not assembled')
         require(p1b_start <= p1b_imm < p1b_end,
                 'P1b edited byte escaped source range')
+        pri_start, pri_end, pri_imm, _ = prove_p1c_priority_provenance()
+        priority_source = P1C_PRIORITY_FILE.read_text('ascii')
+        needle = '    move.l #1,d3'
+        require(priority_source.count(needle) == 1, 'P1c priority result edit not unique')
+        edited, changes = build(
+            assembler, root/'modified_p1c_priority', allow_edited=True,
+            p1c_priority_text=priority_source.replace(needle, '    move.l #2,d3'))
+        require(changes == [pri_imm],
+                f'P1c priority changed {changes}, expected {[pri_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [pri_imm-5:pri_imm+1] == bytes.fromhex('263c00000002'),
+                'P1c priority edited machine instruction differs')
+        require(pri_start <= pri_imm < pri_end, 'P1c priority edit escaped source')
+
+        dis_start, dis_end, dis_imm, _ = prove_p1c_dispatch_provenance()
+        dispatch_source = P1C_DISPATCH_FILE.read_text('ascii')
+        needle = '    lea -160(a7),a7'
+        require(dispatch_source.count(needle) == 1, 'P1c dispatch edit not unique')
+        edited, changes = build(
+            assembler, root/'modified_p1c_dispatch', allow_edited=True,
+            p1c_dispatch_text=dispatch_source.replace(needle, '    lea -156(a7),a7'))
+        require(changes == [dis_imm],
+                f'P1c dispatch changed {changes}, expected {[dis_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [dis_imm-3:dis_imm+1] == bytes.fromhex('4fefff64'),
+                'P1c dispatch edited stack frame LEA differs')
+        require(dis_start <= dis_imm < dis_end, 'P1c dispatch edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1944,6 +2101,8 @@ def test_editability(assembler: Path) -> None:
     print('B8S1_BANK_FREE_EDITABILITY_TEST PASS: MOVE.L #1,4(A2) -> #2, one byte changed')
     print('B7_END_EDITABILITY_TEST PASS: MOVE.L #0,4(A0) -> #1, one byte changed')
     print('P1B_HOTSPOT_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
+    print('P1C_PRIORITY_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
+    print('P1C_DISPATCH_EDITABILITY_TEST PASS: LEA -160(A7),A7 -> -156, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
