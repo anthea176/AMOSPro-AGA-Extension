@@ -1,0 +1,75 @@
+name: M19 S1-P1b private AGA screen to AGSP RGB24 bridge MC68020
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/native/m19_s1/**'
+      - 'tools/test_m19_s1p1b_screen_rgb24.py'
+      - 'tools/test_m19_s1p1_native_capture.py'
+      - 'tools/m19_s1_agsp_bank.py'
+      - 'docs/M19_S1_P1B_SCREEN_RGB24_BRIDGE_2026-11-22.md'
+      - '.github/workflows/m19-s1-p1b-screen-rgb24.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/native/m19_s1/**'
+      - 'tools/test_m19_s1p1b_screen_rgb24.py'
+      - '.github/workflows/m19-s1-p1b-screen-rgb24.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screen-rgb24-bridge-cpu020:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate CPU policy and test syntax
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B -m py_compile tools/test_m19_s1p1b_screen_rgb24.py
+      - name: Restore pinned VASM Motorola MC68020 assembler
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM (cache miss only)
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Assemble exact bridge and P1 capture core on MC68020
+        run: |
+          VASM="$RUNNER_TEMP/vasm/vasmm68k_mot"
+          test -x "$VASM"
+          "$VASM" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_bridge_mc68020.bin" src/native/m19_s1/M19_S1P1B_SCREEN_RGB24_MC68020.s
+          "$VASM" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_capture_mc68020.bin" src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s
+          test -s "$RUNNER_TEMP/agsp_bridge_mc68020.bin"
+          test -s "$RUNNER_TEMP/agsp_capture_mc68020.bin"
+      - name: Install MC68020 Unicorn emulator
+        run: python -m pip install --disable-pip-version-check 'unicorn>=2.1,<2.2'
+      - name: Test real 68k bridge and P1 kernel vs AGSP reference
+        env:
+          AGSP_NATIVE_BIN: ${{ runner.temp }}/agsp_capture_mc68020.bin
+          AGSP_BRIDGE_BIN: ${{ runner.temp }}/agsp_bridge_mc68020.bin
+        run: PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1b_screen_rgb24.py' -v
+      - name: Check official P2d and LAST_GOOD integrity
+        run: |
+          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/design/sprites_aga/SPRITE_PROBE.asc
