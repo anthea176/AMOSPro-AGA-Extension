@@ -1,5 +1,14 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## 22/11/2026 — S0d : Gates B/C WinUAE closes, visuels confirmes
+
+Les journaux **originaux** [Runtime, 478 octets CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) (SHA256 `87ae3944c5703cd3b014894caeca5261130e8e521b58b1c7cdf3f9d185faf928`) et [Compiler, 479 octets CRLF](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT) (SHA256 `818381dfdb46c88e10a5c2dbe4a7b217b0469114d45938ed5897c7956a8fc81a`) correspondent au meme [ASC S0d](../tests/design/sprites_aga/SPRITE_PROBE.asc), Git blob `eb4e9d0275edbe3266724705910fa66747c743ea`, `SOURCE_TAG M19_S0D_ROB_V1`. En Compiler : `PRG_STATE -1`, `RUN_MODE COMPILED`, `RESULT 1`, `ERR 0`, `CYCLES_OK 3`, `GETS/FREES 3`, `MOVES 108`, `COPPER_ON/OFF 1/1`, `BANK_FREES 3`, `OWN_REMAINING -1`. Les logs sont **identiques hors PRG_STATE/RUN_MODE**. L'auteur confirme le rendu du Sprite 16x16 et du raster en Runtime et Compiler, sans artefacts. **S0d Gates B/C PASS pour ces scenarios**, sans transfert de preuve vers une nouvelle API native.
+
+**Non clos :** synchronisation DMA/detachement formel, mesure independante de fuites Chip, autres configurations, Amiga AGA reel (Gate D). Le `FreeSprite` retourne le canal OS ; ce fait n'est pas une preuve qu'une ancienne liste Copper a cesse de lire le tampon DMA. Les 2 VBL et 3 WaitTOF du banc ne sont **pas** un protocole de liberation valide sur tout materiel. Un futur S1 doit lever ce verrou avant de gerer lui-meme des ressources Chip/Screen.
+
+**Suite documentaire :** [contrat S1 PROPOSE](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) ; sa presence n'autorise aucun nouveau token AP20, ASM, builder ou binaire. L'ancien corps de ce rapport conserve les etapes et annonces historiques, non le statut le plus recent.
+
+
 ## 22/11/2026 — S0d : preuve Runtime et protocole Compiler
 
 Le [journal S0d brut, CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) (478 octets, SHA256 `87ae3944c5703cd3b014894caeca5261130e8e521b58b1c7cdf3f9d185faf928`) confirme `RUN_MODE RUNTIME`, `PRG_STATE 1`, `RESULT 1`, `ERR 0`, `CYCLES_OK 3`, `MOVES 108`, `GETS/FREES 3`, `BANK_FREES 3`, `BANK_HELD_ANY 0`, `COPPER_ON_OK/OFF_OK 1`. L'auteur confirme les Sprites et le raster visibles sous WinUAE ; **Gate B PASS pour ce scenario uniquement**. Les compteurs attestent la sequence du programme, pas un audit DMA materiel ou une mesure directe de fuites.

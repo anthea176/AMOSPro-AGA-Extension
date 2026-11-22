@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **22/11/2026 — S0d TERMINE pour le scenario WinUAE, Gates B et C PASS** : [Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) et [vrai AMOS Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT), 3 cycles, 108 mouvements, curseur/Copper et rendu confirmes par l'auteur sans artefact. S0 hors WinUAE pas entierement clos : **securite DMA formelle et Gate D a qualifier**. [Contrat S1 minimal PROPOSE, non approuve et non implemente](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). Bibliotheques P2d et `LAST_GOOD` intactes ; [ASC S0d unique](../tests/design/sprites_aga/SPRITE_PROBE.asc) inchange.
+
+
 > **22/11/2026 — Sprites S0d : Gate B Runtime PASS, visuel confirme** ([journal original, 478 octets CRLF](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT)) : 3 cycles, 108 deplacements, 3 ouvertures/fermetures, curseur et Copper RGB4, `ERR 0`. **Gate C vraie compilation : a executer sur exactement le meme [SPRITE_PROBE.asc](../tests/design/sprites_aga/SPRITE_PROBE.asc), sans le modifier**. Log distinct attendu `RAM:M19_S0D_ROB_COMPILED.TXT` avec `PRG_STATE -1` ; Gate D et preuve DMA formelle non acquises. [Protocole de Gate C](NEXT_SESSION.md). Lib P2d et LAST_GOOD inchangees.
 
 

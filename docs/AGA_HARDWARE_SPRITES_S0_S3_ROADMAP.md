@@ -1,5 +1,8 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+> **Etat courant au 22/11/2026 :** S0a/b/c ont des preuves Runtime, **S0d est valide Gates B (Runtime) et C (vrai AMOS Compiler)**, animations F et raster confirmes visuellement en deux modes. [Journal Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) et [journal Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT). **Aucune validation de surete DMA materielle generale, pas de Gate D.** [Premier contrat de commandes S1 : PROPOSITION A APPROUVER](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) ; noms, signature, format banque, palette et cleanup sont encore soumis a validation. Aucun token, code natif ou binaire S1 livre.
+
+
 > **Etape S0d (22/11/2026)** : [premier Sprite 16x16 S0c Runtime et visuel PASS](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT), 100 mouvements, retour AMOS et banque Chip liberee selon log ; absence d'artefacts confirmee par auteur. [Banc unique S0d](../tests/design/sprites_aga/SPRITE_PROBE.asc) en cours de qualification pour 3 cycles Open/Close et interactions curseur/Copper. Aucune validation Compiler ou hardware et aucune preuve formelle de DMA-detach.
 
 
