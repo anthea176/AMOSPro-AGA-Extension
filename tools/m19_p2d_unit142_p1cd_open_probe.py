@@ -81,6 +81,39 @@ def check(vasm: Path, dump: bool = False) -> None:
             print("UNIT142_"+name+"_ASM_B64_END")
 
 
+    # The first genuine 68020 JSR uses a full (d32,PC) extension, which the
+    # conservative decoder does not trace. Preserve those six bytes as
+    # source-emitted data and start the trace at the next instruction only.
+    for name, complete, start in (
+        ("P1C_PRIORITY_SPLIT", priority, 6),
+        ("P1D_LIMIT_SPLIT", limit, TABLE_BYTES + 6),
+    ):
+        source, report = native_unit_source(name, complete, [(0, start)])
+        assert report["bytes"] == len(complete)
+        assert report["mnemonic_bytes"] + report["raw_dc_bytes"] == len(complete)
+        assert report["mnemonic_bytes"] > 0, name+" failed to decode code after full-extension JSR"
+        print("UNIT142_"+name+"_COVERAGE", report["mnemonic_bytes"],
+              "mnemonics", report["raw_dc_bytes"], "raw including data")
+        text = "; AGA_NATIVE_MIN_CPU: MC68020\n; AGA_NATIVE_PURPOSE: AUDIT_ONLY\n" + source
+        with TemporaryDirectory(prefix="unit142_"+name+"_") as temp:
+            folder=Path(temp)
+            asm=folder/(name+".s")
+            output=folder/(name+".bin")
+            asm.write_text(text, encoding="ascii", newline="\n")
+            cmd=[str(vasm.resolve()),"-Fbin","-m68020","-no-opt","-quiet",
+                 "-o",str(output),asm.name]
+            result=subprocess.run(cmd,cwd=folder,text=True,capture_output=True,check=False)
+            if result.returncode:
+                raise AssertionError(name+" vasm split failed: "+result.stderr)
+            assert output.read_bytes() == complete, name+" split source differs"
+        print("UNIT142_"+name+"_VASM_SPLIT_EXACT_PASS",
+              len(complete), sha256(complete).hexdigest())
+        if dump:
+            print("UNIT142_"+name+"_ASM_B64_BEGIN")
+            print(base64.b64encode(text.encode("ascii")).decode("ascii"))
+            print("UNIT142_"+name+"_ASM_B64_END")
+
+
 if __name__ == "__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--vasm",required=True,type=Path)
