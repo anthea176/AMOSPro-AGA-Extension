@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from hashlib import sha1, sha256
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from struct import unpack_from
 import re
 
@@ -20,7 +21,7 @@ LEGACY_GIT_SHA = "19ad2044252783454f4082c118e53b34a6b83478"
 R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
-from build_m19_p25_no_probe import build as build_r87
+import build_m19_p25_no_probe as historical_r87
 from active_library import P2D_SHA
 
 
@@ -181,7 +182,23 @@ def main():
     else:
         # Legacy candidate layouts continue to require the historical P0 pin.
         assert len(last_good) == 117896 and sha256(last_good).hexdigest() == P0_FREE_SHA
-    candidate, meta=build_r87()
+    # R87 is an immutable historical builder with an old installation guard.
+    # Supply its pinned P0 input in a temporary file, leaving both official
+    # P2d libraries and the historical builder untouched.
+    with TemporaryDirectory(prefix="m19_p24_r87_source_") as temporary:
+        frozen_p0 = Path(temporary) / "M19_P0_FROZEN.Lib"
+        frozen_p0.write_bytes(active_p0)
+        original_protected = historical_r87.PROTECTED
+        original_active = historical_r87.ACTIVE
+        try:
+            historical_r87.PROTECTED = frozen_p0
+            historical_r87.ACTIVE = (
+                ROOT / "dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib"
+            )
+            candidate, meta=historical_r87.build()
+        finally:
+            historical_r87.PROTECTED = original_protected
+            historical_r87.ACTIVE = original_active
     assert meta["commands"]==77 and meta["ap20_entries"]==87
     current_sha=sha256(current_lib).hexdigest()
     assert len(current_lib)==73184 and current_sha==R87_SHA
