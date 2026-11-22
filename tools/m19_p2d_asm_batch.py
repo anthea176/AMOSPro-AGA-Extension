@@ -37,6 +37,7 @@ class Region:
     staged_end_marker: str | None = None
     start_marker: str | None = None
     raw_code: bool = False
+    raw_overhang: int = 0
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -256,9 +257,9 @@ REGIONS = (
            '    move.l #P1B_PAINT_CLIPPED_FLAG,116(a4)',
            'P1B_PAINT_CLIPPED_FLAG', 1, 2, 0x07A0D, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
-           end_marker='L_BOBS_07A14:',
+           end_marker='    dc.b $24,$01,$30,$28,$00,$1C,$48,$C0,$94,$80,$26,$04  ; +$07A16: 24013028001C48C094802604',
            staged_end_marker='    include "M19_P1B_HOTSPOT_ORIGIN_MC68020.s"',
-           start_marker='p2b_paint_continue:', raw_code=True),
+           start_marker='p2b_paint_continue:', raw_code=True, raw_overhang=2),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -372,6 +373,7 @@ def extract(text, spec, bytes_expected, *, staged=False):
             'audit boundaries missing/ambiguous: '+spec.name)
     result,actual,offset,pseudo = [],bytearray(),spec.start,0
     raw_lines = 0
+    clipped = 0
     for line in text[i+len(first):j].splitlines():
         if LABEL.fullmatch(line):
             result.append(line)
@@ -383,6 +385,12 @@ def extract(text, spec, bytes_expected, *, staged=False):
         inst = line[:match.start()].rstrip()
         code = bytes.fromhex(match.group(2))
         require(int(match.group(1),16) == offset, 'audit gap at %05X' % offset)
+        if spec.raw_code and offset < spec.stop < offset+len(code):
+            overflow = offset + len(code) - spec.stop
+            require(not staged and overflow == spec.raw_overhang and
+                    not clipped, 'unverified raw audit byte overhang: '+spec.name)
+            code = code[:-overflow]
+            clipped = overflow
         if DATA.match(inst):
             if spec.raw_code:
                 require(inst.lstrip().lower().startswith('dc.b '),
@@ -403,8 +411,9 @@ def extract(text, spec, bytes_expected, *, staged=False):
             pseudo==spec.pseudo_count,
             'P1e audit/emitter bytes or AMOS ABI count changed: '+spec.name)
     if spec.raw_code:
-        require(raw_lines > 0 and len(result) == raw_lines,
-                'raw code island contains labels/unclassified instructions: '+spec.name)
+        require(raw_lines > 0 and len(result) == raw_lines and
+                clipped == (0 if staged else spec.raw_overhang),
+                'raw code island contains labels, gap or bad end: '+spec.name)
         # The native module is handwritten; source-built bytes plus direct
         # MC68020 vasm AP20 byte identity, not disassembly, prove correctness.
         return ''
