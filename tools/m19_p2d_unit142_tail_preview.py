@@ -78,7 +78,14 @@ def main() -> None:
           "stamp-table", identity_labels["identity_stamp_table"])
 
     executable = original[:labels["object_root"]]
-    preview, coverage = native_unit_source("P0E_OBJECT_CODE", executable, [(0, 0)])
+    entries = [
+        (index, labels[name])
+        for index, name in enumerate((
+            "object_put_entry", "object_off_entry",
+            "object_read_entry", "object_reset_entry",
+        ))
+    ]
+    preview, coverage = native_unit_source("P0E_OBJECT_CODE", executable, entries)
     assert coverage["bytes"] == len(executable)
     assert coverage["mnemonic_bytes"] + coverage["raw_dc_bytes"] == len(executable)
     print("UNIT142_P0E_OBJECT_CODE_COVERAGE",
