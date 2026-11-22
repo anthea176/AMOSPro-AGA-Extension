@@ -1806,7 +1806,6 @@ def edit_gate(staged, assembler):
         expected[0x0EB7B] = (0, 1)
         expected[0x0ECA1] = (0, 1)
         demand(len(expected) == 131,"UNIT142 P0f edit count differs")
-        demand(len(expected) == 127, "UNIT142 AGA bridge edit count drift")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
