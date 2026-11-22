@@ -1,11 +1,12 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**67 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**71 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
 | [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00022..$020A2` | 8 320 |
 | [P0 Get Pipeline — capture banque et validation image](M19_P0_GET_PIPELINE_MC68020.s) | `$020CE..$03772` | 5 796 |
+| [P0j Image Gate return — epilogue ABI](M19_P0J_IMAGE_RETURN_MC68020.s) | `$06254..$06264` | 16 |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
 | [P0 Relais Off/Read/Reset et retour](M19_P0_RELAY_COMMANDS_MC68020.s) | `$05A6A..$05B6E` | 260 |
@@ -15,6 +16,7 @@
 | [B7/B8 Draw/Close — relais et garde End](M19_B7_B8_DRAW_BRIDGE_MC68020.s) | `$06FA6..$071E8` | 578 |
 | [B8 S1 Bank Free — registre, Chip et 64 objets](M19_B8S1_BANK_FREE_MC68020.s) | `$076A8..$07962` | 698 |
 | [B8 NoDraw/Prestage — enregistrement End et staging banque](M19_B8_NODRAW_PRESTAGE_MC68020.s) | `$07364..$07698` | 820 |
+| [B8 S1 Bank Return — epilogue ABI](M19_B8S1_BANK_RETURN_MC68020.s) | `$07698..$076A8` | 16 |
 | [B8 End/Register — cycle de vie et callbacks](M19_B8_END_REGISTER_MC68020.s) | `$071EE..$07364` | 362 code + 12 data |
 | [P1b HotSpot Join — jonction et pointeurs image](M19_P1B_HOTSPOT_JOIN_MC68020.s) | `$07962..$079F2` | 144 |
 | [P1b HotSpot — origine et clipping signes](M19_P1B_HOTSPOT_ORIGIN_MC68020.s) | `$07A14..$07AC2` | 174 |
@@ -70,8 +72,10 @@
 | [P2d system service — code source restaure](M19_P2D_SYSTEM_SERVICE_MC68020.s) | `$0DA30..$0DCB4` | 644 |
 | [P2d service guards — controles internes](M19_P2D_SERVICE_GUARDS_MC68020.s) | `$0DD96..$0E538` | 1 954 |
 | [P2d public update — routines de service](M19_P2D_PUBLIC_UPDATE_MC68020.s) | `$0E5C8..$0EDD0` | 2 056 |
+| [P2d Service Return — epilogue ABI](M19_P2D_SERVICE_RETURN_MC68020.s) | `$0E59E..$0E5B0` | 18 |
+| [P2d Public Query Head — resultat AMOS](M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s) | `$0EDD0..$0EDF4` | 36 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **55 894** |
+| **Total de code ASM propre** | | **55 980** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -221,6 +225,19 @@ Ce n'est pas une restitution fondee sur un desassemblage seul. La Gate A inclut
 l'assemblage MC68020 direct et l'edition groupee de
 **22 modules**. Aucun changement des bibliotheques installees,
 des ASC ou de la LAST_GOOD.
+
+Le onzieme lot source-verifie isole **86 octets de code / 4 modules** :
+P0j Image Return (`$06254..$06264`, 16 octets), B8 S1 Bank Return
+(`$07698..$076A8`, 16 octets), P2d Service Return
+(`$0E59E..$0E5B0`, 18 octets) et le debut de la requete publique
+P2d (`$0EDD0..$0EDF4`, 36 octets). Les labels ABI externes, les
+deplacements et les destinations de branche sont conserves ; les
+instructions sont comparees aux octets produits par l'emetteur natif
+P2d avant reconstruction vasm MC68020. Le test d'edition groupee porte
+desormais sur **26 modules**, chacun avec une mutation d'un octet
+independante. Les zones `dc.b` non classees et la fin de l'epilogue
+`$0EDF4..$0EE00` demeurent inchangees. Aucune nouvelle Lib, aucun ASC
+et aucune promotion ; Gates WinUAE B/C/D non transferees.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

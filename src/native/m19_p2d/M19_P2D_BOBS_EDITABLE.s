@@ -192,12 +192,7 @@ L_BOBS_05B6E:
 L_BOBS_05F30:
     include "M19_P0J_IMAGE_GATE_MC68020.s"
 L_BOBS_06254:
-img_gate_return:
-    move.l 4(a2),d3                                    ; +$06254: 262A0004
-    lea 160(a7),a7                                     ; +$06258: 4FEF00A0
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$0625C: 4CDF77F7
-    moveq #0,d2                                        ; +$06260: 7400
-    rts                                                ; +$06262: 4E75
+    include "M19_P0J_IMAGE_RETURN_MC68020.s"
 routed_paint_prechecked_entry:
     dc.b $48,$E7,$EF,$EE,$61,$00,$FC,$C6,$4A,$83,$67,$00  ; +$06264: 48E7EFEE6100FCC64A836700
     dc.b $00,$06,$61,$00,$FC,$64,$4C,$DF,$77,$F7,$74,$00  ; +$06270: 00066100FC644CDF77F77400
@@ -231,12 +226,7 @@ L_BOBS_071EE:
 L_BOBS_07364:
     include "M19_B8_NODRAW_PRESTAGE_MC68020.s"
 L_BOBS_07698:
-b8s1_bank_return:
-    move.l 36(a2),d3                                   ; +$07698: 262A0024
-    lea 64(a7),a7                                      ; +$0769C: 4FEF0040
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$076A0: 4CDF77F7
-    moveq #0,d2                                        ; +$076A4: 7400
-    rts                                                ; +$076A6: 4E75
+    include "M19_B8S1_BANK_RETURN_MC68020.s"
     include "M19_B8S1_BANK_FREE_MC68020.s"
 L_BOBS_07962:
     include "M19_P1B_HOTSPOT_JOIN_MC68020.s"
@@ -373,28 +363,14 @@ L_BOBS_0DD96:
     dc.b $25,$7C,$00,$00,$00,$00,$00,$14,$28,$BC,$00,$00  ; +$0E58C: 257C00000000001428BC0000
     dc.b $00,$01,$60,$00,$00,$02  ; +$0E598: 000160000002
 L_BOBS_0E59E:
-    move.l (a4),d3                                     ; +$0E59E: 2614
-    move.l #$00000000,d2                               ; +$0E5A0: 243C00000000
-    lea 96(a7),a7                                      ; +$0E5A6: 4FEF0060
-    movem.l (a7)+,d0-d1/d4-d7/a0-a2/a4-a6              ; +$0E5AA: 4CDF77F3
-    rts                                                ; +$0E5AE: 4E75
+    include "M19_P2D_SERVICE_RETURN_MC68020.s"
 L_BOBS_0E5B0:
     dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00  ; +$0E5B0: 000000000000000000000000
     dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00  ; +$0E5BC: 000000000000000000000000
 L_BOBS_0E5C8:
     include "M19_P2D_PUBLIC_UPDATE_MC68020.s"
 ENTRY_BOBS_0EDD0:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$0EDD0: 48E7EFEE
-    lea -32(a7),a7                                     ; +$0EDD4: 4FEFFFE0
-    move.l d3,d0                                       ; +$0EDD8: 2003
-    movea.l a7,a1                                      ; +$0EDDA: 224F
-    bsr.w L_BOBS_0EABA                                 ; +$0EDDC: 6100FCDC
-    tst.l d3                                           ; +$0EDE0: 4A83
-    beq.w L_BOBS_0EDEE                                 ; +$0EDE2: 6700000A
-    move.l 4(a7),d3                                    ; +$0EDE6: 262F0004
-    bra.w L_BOBS_0EDF4                                 ; +$0EDEA: 60000008
-L_BOBS_0EDEE:
-    move.l #$FFFF7FFF,d3                               ; +$0EDEE: 263CFFFF7FFF
+    include "M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s"
 L_BOBS_0EDF4:
     lea 32(a7),a7                                      ; +$0EDF4: 4FEF0020
     movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$0EDF8: 4CDF77F7
