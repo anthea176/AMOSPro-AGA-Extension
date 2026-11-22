@@ -136,6 +136,22 @@ REGIONS = (
            '    move.l #P2D_SERVICE_MODE_ONE,36(a4)',
            'P2D_SERVICE_MODE_ONE', 1, 2, 0x0D837, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+
+    Region('P2D_SERVICE_GUARDS', 'M19_P2D_SERVICE_GUARDS_MC68020.s',
+           0x0DD96, 0x0E538, '', '',
+           '    move.l #$00000000,(a2)',
+           '    move.l #P2D_GUARD_INIT_ZERO,(a2)',
+           'P2D_GUARD_INIT_ZERO', 0, 1, 0x0DDA5, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='    dc.b $48,$E7,$CF,$EE,$4F,$EF,$FF,$A0,$28,$4F,$28,$BC  ; +$0E538: 48E7CFEE4FEFFFA0284F28BC'),
+
+    Region('P2D_PUBLIC_UPDATE', 'M19_P2D_PUBLIC_UPDATE_MC68020.s',
+           0x0E5C8, 0x0EDD0, '', '',
+           '    move.l #$00000003,4(a4)',
+           '    move.l #P2D_PUBLIC_MODE_THREE,4(a4)',
+           'P2D_PUBLIC_MODE_THREE', 3, 4, 0x0E701, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='ENTRY_BOBS_0EDD0:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
