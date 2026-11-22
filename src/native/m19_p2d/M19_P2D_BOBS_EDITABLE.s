@@ -1,4 +1,9 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
+; Original AMOS Main rjsr indices (source tools/amos_main_abi.py).
+AMOS_MAIN_GETADR     equ 797
+AMOS_MAIN_CHANGE     equ 819
+AMOS_MAIN_LIST_CREATE equ 91
+AMOS_MAIN_LIST_DELETE equ 93
 ; M19 P2d BOBS native editable assembly: P2c/P2d manually authored.
 ; WARNING: remaining BOBS routines are still audit-restored instructions/data.
 ; Verified external emitter aliases (relative to native group):
@@ -158,7 +163,7 @@ ENTRY_BOBS_00022:
     bcs.w L_BOBS_002BA                                 ; +$00072: 65000246
     cmpi.l #$0000FFFF,d0                               ; +$00076: 0C800000FFFF
     bhi.w L_BOBS_002BA                                 ; +$0007C: 6200023C
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00080: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$00080: FE11F700031D
     move.l a0,d5                                       ; +$00086: 2A08
     cmpi.l #$00000018,d5                               ; +$00088: 0C8500000018
     bls.w L_BOBS_002BA                                 ; +$0008E: 6300022A
@@ -1049,7 +1054,7 @@ L_BOBS_00C5E:
     bcs.w L_BOBS_00CE0                                 ; +$00C8A: 65000054
     cmpi.l #$0000FFFF,d0                               ; +$00C8E: 0C800000FFFF
     bhi.w L_BOBS_00CE0                                 ; +$00C94: 6200004A
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00C98: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$00C98: FE11F700031D
     move.l a0,d0                                       ; +$00C9E: 2008
     tst.l d0                                           ; +$00CA0: 4A80
     beq.w L_BOBS_00CE0                                 ; +$00CA2: 6700003C
@@ -1119,7 +1124,7 @@ L_BOBS_00CF6:
     bcs.w L_BOBS_01102                                 ; +$00D92: 6500036E
     cmpi.l #$0000FFFF,d0                               ; +$00D96: 0C800000FFFF
     bhi.w L_BOBS_01102                                 ; +$00D9C: 62000364
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00DA0: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$00DA0: FE11F700031D
     move.l a0,d5                                       ; +$00DA6: 2A08
     cmpi.l #$00000018,d5                               ; +$00DA8: 0C8500000018
     bls.w L_BOBS_01102                                 ; +$00DAE: 63000352
@@ -1660,7 +1665,7 @@ ENTRY_BOBS_01464:
     bcs.w L_BOBS_0186E                                 ; +$014D4: 65000398
     cmpi.l #$0000FFFF,d0                               ; +$014D8: 0C800000FFFF
     bhi.w L_BOBS_0186E                                 ; +$014DE: 6200038E
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$014E2: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$014E2: FE11F700031D
     move.l a0,d5                                       ; +$014E8: 2A08
     cmpi.l #$00000018,d5                               ; +$014EA: 0C8500000018
     bls.w L_BOBS_0186E                                 ; +$014F0: 6300037C
@@ -2123,7 +2128,7 @@ bank_bank_select:
     bcs.w L_BOBS_01D2C                                 ; +$01BB0: 6500017A
     cmpi.l #$0000FFFF,d0                               ; +$01BB4: 0C800000FFFF
     bhi.w L_BOBS_01D2C                                 ; +$01BBA: 62000170
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$01BBE: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$01BBE: FE11F700031D
     move.l a0,d0                                       ; +$01BC4: 2008
     tst.l d0                                           ; +$01BC6: 4A80
     bne.w L_BOBS_01BF2                                 ; +$01BC8: 66000028
@@ -2134,7 +2139,7 @@ bank_bank_select:
     tst.l d3                                           ; +$01BDC: 4A83
     beq.w L_BOBS_01D2C                                 ; +$01BDE: 6700014C
     move.l (a2),d0                                     ; +$01BE2: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$01BE4: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$01BE4: FE11F700031D
     move.l a0,d0                                       ; +$01BEA: 2008
     tst.l d0                                           ; +$01BEC: 4A80
     beq.w L_BOBS_01D2C                                 ; +$01BEE: 6700013C
@@ -2306,7 +2311,7 @@ bank_commit:
     andi.l #$00000001,d0                               ; +$01E92: 028000000001
     bne.w L_BOBS_0207E                                 ; +$01E98: 660001E4
     move.l (a2),d0                                     ; +$01E9C: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$01E9E: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$01E9E: FE11F700031D
     move.l a0,d4                                       ; +$01EA4: 2808
     tst.l d4                                           ; +$01EA6: 4A84
     beq.w L_BOBS_01F50                                 ; +$01EA8: 670000A6
@@ -2355,7 +2360,7 @@ L_BOBS_01F50:
     move.l 8(a2),d0                                    ; +$01F54: 202A0008
     addi.l #$00000010,d0                               ; +$01F58: 068000000010
     move.l #$00010001,d1                               ; +$01F5E: 223C00010001
-    dc.b $FE,$11,$F7,$00,$00,$5B  ; +$01F64: FE11F700005B
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_CREATE  ; +$01F64: FE11F700005B
     move.l a1,d4                                       ; +$01F6A: 2809
     tst.l d0                                           ; +$01F6C: 4A80
     beq.w L_BOBS_0207E                                 ; +$01F6E: 6700010E
@@ -2384,7 +2389,7 @@ L_BOBS_01FB0:
     move.w (a0)+,(a1)+                                 ; +$01FC4: 32D8
 L_BOBS_01FC6:
     move.l (a2),d0                                     ; +$01FC6: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$01FC8: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$01FC8: FE11F700031D
     move.l a0,d0                                       ; +$01FCE: 2008
     cmp.l 12(a2),d0                                    ; +$01FD0: B0AA000C
     bne.w L_BOBS_0207E                                 ; +$01FD4: 660000A8
@@ -2427,13 +2432,13 @@ L_BOBS_02040:
     move.l a1,(a0)                                     ; +$0204C: 2089
     move.l #$00000000,24(a2)                           ; +$0204E: 257C000000000018
 L_BOBS_02056:
-    dc.b $FE,$11,$F7,$00,$03,$33  ; +$02056: FE11F7000333
+    dc.w $FE11,$F700,AMOS_MAIN_CHANGE  ; +$02056: FE11F7000333
     move.l 16(a2),d0                                   ; +$0205C: 202A0010
     tst.l d0                                           ; +$02060: 4A80
     beq.w L_BOBS_02074                                 ; +$02062: 67000010
     lea 24(a2),a0                                      ; +$02066: 41EA0018
     movea.l 16(a2),a1                                  ; +$0206A: 226A0010
-    dc.b $FE,$11,$F7,$00,$00,$5D  ; +$0206E: FE11F700005D
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE  ; +$0206E: FE11F700005D
 L_BOBS_02074:
     move.l #$00000001,d3                               ; +$02074: 263C00000001
     bra.w L_BOBS_02096                                 ; +$0207A: 6000001A
@@ -2443,7 +2448,7 @@ L_BOBS_0207E:
     beq.w L_BOBS_02096                                 ; +$02084: 67000010
     lea 24(a2),a0                                      ; +$02088: 41EA0018
     movea.l 20(a2),a1                                  ; +$0208C: 226A0014
-    dc.b $FE,$11,$F7,$00,$00,$5D  ; +$02090: FE11F700005D
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE  ; +$02090: FE11F700005D
 L_BOBS_02096:
     lea 80(a7),a7                                      ; +$02096: 4FEF0050
     movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$0209A: 4CDF77F7
@@ -2534,7 +2539,7 @@ get_entry:
     cmp.l d1,d0                                        ; +$021E4: B081
     bne.w L_BOBS_02AC4                                 ; +$021E6: 660008DC
     move.l 20(a2),d0                                   ; +$021EA: 202A0014
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$021EE: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$021EE: FE11F700031D
     move.l a0,d0                                       ; +$021F4: 2008
     move.l 24(a2),d1                                   ; +$021F6: 222A0018
     cmp.l d1,d0                                        ; +$021FA: B081
@@ -3147,7 +3152,7 @@ finished_entries:
     tst.l d3                                           ; +$02A90: 4A83
     beq.w L_BOBS_02AC4                                 ; +$02A92: 67000030
     move.l 20(a2),d0                                   ; +$02A96: 202A0014
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$02A9A: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$02A9A: FE11F700031D
     move.l a0,d0                                       ; +$02AA0: 2008
     tst.l d0                                           ; +$02AA2: 4A80
     beq.w L_BOBS_02AC4                                 ; +$02AA4: 6700001E
@@ -3434,7 +3439,7 @@ m_args_done:
     cmp.l d1,d0                                        ; +$02E0E: B081
     bne.w L_BOBS_03598                                 ; +$02E10: 66000786
     move.l 12(a2),d0                                   ; +$02E14: 202A000C
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$02E18: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$02E18: FE11F700031D
     move.l a0,d0                                       ; +$02E1E: 2008
     move.l 16(a2),d1                                   ; +$02E20: 222A0010
     cmp.l d1,d0                                        ; +$02E24: B081
@@ -3946,7 +3951,7 @@ m_build_complete:
     tst.l d3                                           ; +$03568: 4A83
     beq.w L_BOBS_03598                                 ; +$0356A: 6700002C
     move.l 12(a2),d0                                   ; +$0356E: 202A000C
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$03572: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$03572: FE11F700031D
     move.l a0,d0                                       ; +$03578: 2008
     tst.l d0                                           ; +$0357A: 4A80
     beq.w L_BOBS_03598                                 ; +$0357C: 6700001A
@@ -4147,7 +4152,7 @@ checked_stage_entry:
     cmp.l d1,d0                                        ; +$03828: B081
     bne.w L_BOBS_03C7E                                 ; +$0382A: 66000452
     move.l (a2),d0                                     ; +$0382E: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$03830: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$03830: FE11F700031D
     move.l a0,d0                                       ; +$03836: 2008
     move.l 12(a2),d1                                   ; +$03838: 222A000C
     cmp.l d1,d0                                        ; +$0383C: B081
@@ -4487,7 +4492,7 @@ checked_lookup_entry:
     cmp.l d1,d0                                        ; +$03D18: B081
     bne.w L_BOBS_03D8E                                 ; +$03D1A: 66000072
     move.l (a2),d0                                     ; +$03D1E: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$03D20: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$03D20: FE11F700031D
     move.l a0,d0                                       ; +$03D26: 2008
     move.l 12(a2),d1                                   ; +$03D28: 222A000C
     cmp.l d1,d0                                        ; +$03D2C: B081
@@ -6763,7 +6768,7 @@ img_gate_next:
     move.l 100(a2),d0                                  ; +$05F9A: 202A0064
     move.l d0,12(a2)                                   ; +$05F9E: 2540000C
     move.l 8(a2),d0                                    ; +$05FA2: 202A0008
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$05FA6: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$05FA6: FE11F700031D
     move.l a0,d0                                       ; +$05FAC: 2008
     move.l d0,16(a2)                                   ; +$05FAE: 25400010
     cmpi.l #$00000018,d0                               ; +$05FB2: 0C8000000018
@@ -6992,7 +6997,7 @@ explicit_bank_lookup_entry:
     andi.l #$00000001,d0                               ; +$062E4: 028000000001
     bne.w L_BOBS_064E0                                 ; +$062EA: 660001F4
     move.l (a2),d0                                     ; +$062EE: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$062F0: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$062F0: FE11F700031D
     move.l a0,d0                                       ; +$062F6: 2008
     move.l d0,12(a2)                                   ; +$062F8: 2540000C
     cmpi.l #$00000018,d0                               ; +$062FC: 0C8000000018
@@ -7170,7 +7175,7 @@ explicit_checked_stage_entry:
     andi.l #$00000001,d0                               ; +$06566: 028000000001
     bne.w L_BOBS_03C7E                                 ; +$0656C: 6600D710
     move.l (a2),d0                                     ; +$06570: 2012
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$06572: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$06572: FE11F700031D
     move.l a0,d0                                       ; +$06578: 2008
     move.l d0,12(a2)                                   ; +$0657A: 2540000C
     cmpi.l #$00000018,d0                               ; +$0657E: 0C8000000018
@@ -8948,7 +8953,7 @@ edit_begin:
     tst.l d0                                           ; +$0800C: 4A80
     beq.w L_BOBS_085E8                                 ; +$0800E: 670005D8
     move.l 36(a2),d0                                   ; +$08012: 202A0024
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$08016: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$08016: FE11F700031D
     move.l a0,(a2)                                     ; +$0801C: 2488
     move.l a0,d0                                       ; +$0801E: 2008
     cmpi.l #$00000018,d0                               ; +$08020: 0C8000000018
@@ -8999,14 +9004,14 @@ edit_begin:
     addq.l #2,d1                                       ; +$080CE: 5481
 L_BOBS_080D0:
 edit_allocate:
-    dc.b $FE,$11,$F7,$00,$00,$5B  ; +$080D0: FE11F700005B
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_CREATE  ; +$080D0: FE11F700005B
     tst.l d0                                           ; +$080D6: 4A80
     beq.w L_BOBS_085E8                                 ; +$080D8: 6700050E
     move.l a1,d0                                       ; +$080DC: 2009
     beq.w L_BOBS_085E8                                 ; +$080DE: 67000508
     move.l a1,60(a2)                                   ; +$080E2: 2549003C
     move.l 36(a2),d0                                   ; +$080E6: 202A0024
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$080EA: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$080EA: FE11F700031D
     move.l a0,d0                                       ; +$080F0: 2008
     cmp.l (a2),d0                                      ; +$080F2: B092
     bne.w L_BOBS_085E8                                 ; +$080F4: 660004F2
@@ -9062,7 +9067,7 @@ edit_allocate:
 L_BOBS_081B8:
 edit_find_links:
     move.l 36(a2),d0                                   ; +$081B8: 202A0024
-    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$081BC: FE11F700031D
+    dc.w $FE11,$F700,AMOS_MAIN_GETADR  ; +$081BC: FE11F700031D
     move.l a0,d0                                       ; +$081C2: 2008
     cmp.l (a2),d0                                      ; +$081C4: B092
     bne.w L_BOBS_085E8                                 ; +$081C6: 66000420
@@ -9372,7 +9377,7 @@ edit_commit_next:
     adda.l #$00000010,a6                               ; +$085AC: DDFC00000010
     subq.l #1,d7                                       ; +$085B2: 5387
     bne.w L_BOBS_08550                                 ; +$085B4: 6600FF9A
-    dc.b $FE,$11,$F7,$00,$03,$33  ; +$085B8: FE11F7000333
+    dc.w $FE11,$F700,AMOS_MAIN_CHANGE  ; +$085B8: FE11F7000333
     move.l 84(a2),d0                                   ; +$085BE: 202A0054
     beq.w L_BOBS_085D0                                 ; +$085C2: 6700000C
     movea.l d0,a1                                      ; +$085C6: 2240
@@ -9382,7 +9387,7 @@ L_BOBS_085D0:
 edit_drop_old_bank:
     lea 64(a2),a0                                      ; +$085D0: 41EA0040
     movea.l 56(a2),a1                                  ; +$085D4: 226A0038
-    dc.b $FE,$11,$F7,$00,$00,$5D  ; +$085D8: FE11F700005D
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE  ; +$085D8: FE11F700005D
     move.l #$00000001,d3                               ; +$085DE: 263C00000001
     bra.w L_BOBS_08626                                 ; +$085E4: 60000040
 L_BOBS_085E8:
@@ -9402,7 +9407,7 @@ edit_cleanup_bank:
     beq.w L_BOBS_08620                                 ; +$0860E: 67000010
     lea 64(a2),a0                                      ; +$08612: 41EA0040
     movea.l 60(a2),a1                                  ; +$08616: 226A003C
-    dc.b $FE,$11,$F7,$00,$00,$5D  ; +$0861A: FE11F700005D
+    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE  ; +$0861A: FE11F700005D
 L_BOBS_08620:
 edit_fail:
     move.l #$00000000,d3                               ; +$08620: 263C00000000

@@ -846,6 +846,40 @@ def replace_raw_p2b_slot_data(text: str) -> str:
             SLOTS_SOURCE_NAME + '"\n' + text[last:])
 
 
+def replace_source_backed_amos_pseudo(text: str) -> str:
+    """Convert source-pinned AMOS Main pseudo ops, not MC68020 instructions."""
+    from amos_main_abi import main_index, rjsr
+    definitions = ('; Original AMOS Main rjsr indices '
+                   '(source tools/amos_main_abi.py).\n'
+                   'AMOS_MAIN_GETADR     equ 797\n'
+                   'AMOS_MAIN_CHANGE     equ 819\n'
+                   'AMOS_MAIN_LIST_CREATE equ 91\n'
+                   'AMOS_MAIN_LIST_DELETE equ 93\n')
+    marker = '; AGA_NATIVE_MIN_CPU: MC68020\n'
+    require(marker in text, 'BOBS MC68020 marker missing')
+    table = (('Bnk.GetAdr','GETADR',797,20),
+             ('Bnk.Change','CHANGE',819,2),
+             ('Lst.Cree','LIST_CREATE',91,2),
+             ('Lst.Del','LIST_DELETE',93,4))
+    pattern = re.compile(r'(?m)^    dc\.b [^\n]*  ; \+\$([0-9A-F]{5}): '
+                         r'(FE11F700[0-9A-F]{4})$')
+    records = list(pattern.finditer(text))
+    require(len(records)==28, 'AMOS Main pseudo call count changed')
+    for command, alias, index, count in table:
+        signature = rjsr(index).hex().upper()
+        require(main_index(command)==index and
+                signature=='FE11F700'+f'{index:04X}',
+                'AMOS Main source index drift: '+command)
+        occurrences = [x for x in records if x.group(2)==signature]
+        require(len(occurrences)==count,
+                'AMOS Main source call count drift: '+command)
+        for record in occurrences:
+            line=('    dc.w $FE11,$F700,AMOS_MAIN_'+alias+
+                  '  ; +$'+record.group(1)+': '+record.group(2))
+            text=text.replace(record.group(0),line,1)
+    return text.replace(marker,marker+definitions,1)
+
+
 def staged_sources(folder: Path, *, module_text: str | None = None,
                    planes_text: str | None = None,
                    planar_text: str | None = None,
@@ -919,6 +953,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'dc.b ' in old_region, 'mismatched historical P2d assembly region')
     text = (text[:first] + '    include "' + SOURCE_NAME + '"\n' +
             text[last:])
+    text = replace_source_backed_amos_pseudo(text)
     (folder / BOBS_FILE).write_text(text, encoding='ascii', newline='\n')
     source = module_text if module_text is not None else EDITABLE_FILE.read_text('ascii')
     require(source.count('p2d_public_auto_update:') == 1 and

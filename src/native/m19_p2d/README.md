@@ -47,3 +47,7 @@ BUILD_P2D_ASM.bat --self-test-edit
 Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, de tokens AP20, de titre, des autres unites ou d'une zone non migree. Sans edition, la reconstruction doit produire exactement **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le self-test altere temporairement **une instruction dans chacun des quinze modules** (P2b Flip, P2b Planar, P2c, P2d), recompilant en memoire et exigeant un changement sur un seul octet dans le groupe BOBS.
 
 Pour un edit a longueur constante, `BUILD_P2D_ASM.bat --allow-edited` cree uniquement `src/generated/p2d_editable/M19_P2D_EDITED_UNTESTED.Lib`. **Ne pas installer une version modifiee sans validation specifique.** Les bibliotheques de `dist/`, `LAST_GOOD`, les tests et exemples ne sont pas modifies par cette migration. Les Gates WinUAE Runtime B, vrai AMOS Compiler C et physique D **ne qualifient pas les futures editions natives** par la seule CI.
+
+## Pseudo-instructions AMOS Main
+
+Les 28 appels directs AMOS Main du groupe BOBS sont maintenant symboliques : `Bnk.GetAdr`, `Bnk.Change`, `Lst.Cree`, `Lst.Del`. `DC.W $FE11,$F700,INDEX` conserve la pseudo-instruction AMOS (non Motorola), avec index source verifie dans `amos_main_abi.rjsr`. La CI impose le nombre et les octets originaux de chaque appel.
