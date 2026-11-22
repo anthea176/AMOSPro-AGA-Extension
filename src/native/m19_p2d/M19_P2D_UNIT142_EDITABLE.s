@@ -86,7 +86,7 @@ ENTRY_UNIT142_01BDE:
     include "M19_UNIT142_IFF_AP20_PRECALL_MC68020.s"
     dc.b $FE,$11,$F7,$00,$00,$8C
     include "M19_UNIT142_BLOCK_01E12_MC68020.s"
-    dc.b $4E,$71
+    include "M19_UNIT142_R83_NOP_01F30_MC68020.s"
     include "M19_UNIT142_BLOCK_01F32_MC68020.s"
     dc.b $FE,$11,$F7,$00,$00,$8C
     include "M19_UNIT142_BLOCK_020E6_MC68020.s"
@@ -226,10 +226,8 @@ L_UNIT142_077D0:
     include "M19_UNIT142_BLOCK_07878_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
     include "M19_UNIT142_BLOCK_078A4_MC68020.s"
-    dc.b $4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71
-    dc.b $4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71
-    dc.b $4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71
-    dc.b $4E,$71,$4E,$71,$47,$65,$74,$50
+    include "M19_UNIT142_R83_NOPS_07B2A_MC68020.s"
+    dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_07B56_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
     include "M19_UNIT142_BLOCK_07BC8_MC68020.s"

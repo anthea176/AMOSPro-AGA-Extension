@@ -2267,6 +2267,87 @@ def legacy_r83_small_sources(whole, wrapper):
     return wrapper, modules
 
 
+
+LEGACY_R83_NOP_MODULES = (
+    ("M19_UNIT142_R83_NOP_01F30_MC68020.s", "45b661270f5ec43d6216ca29b1d2f35e55ad4b10",
+     0x01F30, 0x01F32, 1, 0x01F31),
+    ("M19_UNIT142_R83_NOPS_07B2A_MC68020.s", "5218991db2f288e17563bf9bc8728f836b8d5990",
+     0x07B2A, 0x07B52, 20, 0x07B2B),
+)
+
+
+def legacy_r83_nop_sources(whole, wrapper):
+    """Original R83 Motorola NOPs; do not claim reusable padding or execution."""
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+
+    old, meta = build_r83()
+    demand(sha256(old).hexdigest()==R83_SHA and meta["sha256"]==R83_SHA,
+           "R83 NOP original builder provenance differs")
+    _tokens, groups, _title = unpack_ap20(old)
+    demand(len(groups[82])==52974 and
+           sha256(whole[0x07B2A:0x07B56]).hexdigest() ==
+           "65e1e82ae53665bf1ffb799df0c1ea9e012a3840828ecada4fa72931d3078542" and
+           sha256(whole[0x01F30:0x01F32]).hexdigest() ==
+           "da9c9d32a1f9be264c491f8c1988ec06d1cdd81d302d5a163a8413eda1997394",
+           "R83 NOP source digest changed")
+    demand(whole[0x07B52:0x07B56]==b"GetP" and
+           whole[0x07B2A:0x07B52]==bytes.fromhex("4E71")*20 and
+           whole[0x01F30:0x01F32]==bytes.fromhex("4E71"),
+           "R83 NOP/GetP code-vs-ABI split drift")
+
+    def raw(lo,hi):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % x for x in whole[at:min(at+12,hi)]) +
+            "\n" for at in range(lo,hi,12))
+    before={
+        0x01F30: ('    include "M19_UNIT142_BLOCK_01E12_MC68020.s"\n' +
+                  raw(0x01F30,0x01F32)),
+        0x07B2A: ('    include "M19_UNIT142_BLOCK_078A4_MC68020.s"\n' +
+                  raw(0x07B2A,0x07B56)),
+    }
+    modules=[]
+    for filename,pinned,lo,hi,nops,delta in LEGACY_R83_NOP_MODULES:
+        reference=whole[lo:hi]
+        demand(reference==groups[82][lo:hi] and
+               reference==bytes.fromhex("4E71")*nops and
+               delta==lo+1, "R83 original NOP length/CPU opcode differs")
+        preview,report=native_unit_source("R83_ORIGINAL_NOP", reference, [(0,0)])
+        demand(report["mnemonic_bytes"]==hi-lo and
+               report["raw_dc_bytes"]==0 and
+               len([line for line in preview.splitlines()
+                    if line.lstrip().startswith("nop ")])==nops,
+               "R83 source preview contains an unsupported Motorola NOP")
+        if nops==1:
+            source=("; AGA_NATIVE_MIN_CPU: MC68020\n"
+                    "; R83 source-pinned UNIT142+$01F30..$01F32, real Motorola NOP.\n"
+                    "; The historical byte is not declared reusable padding.\n\n"
+                    "    nop\n")
+        else:
+            source=("; AGA_NATIVE_MIN_CPU: MC68020\n"
+                    "; R83 source-pinned 20 original NOPs UNIT142+$07B2A..$07B52.\n"
+                    "; These are instructions, not a grant to reuse their storage.\n\n"
+                    + "    nop\n"*20)
+        payload=(NATIVE_DIR / filename).read_bytes()
+        blob=sha1(b"blob " + str(len(payload)).encode("ascii") +
+                  b"\x00" + payload).hexdigest()
+        demand(blob==pinned and payload.decode("ascii")==source,
+               "R83 authored NOP source differs: " + filename)
+        prefix=before[lo].split("    dc.b $4E,$71")[0]
+        if nops==1:
+            new=prefix+'    include "'+filename+'"\n'
+        else:
+            new=prefix+'    include "'+filename+'"\n'+raw(0x07B52,0x07B56)
+        demand(wrapper.count(before[lo])==1,
+               "R83 NOP raw wrapper not found uniquely: " + filename)
+        wrapper=wrapper.replace(before[lo],new)
+        modules.append((lo,hi,filename,source))
+    demand(sum(hi-lo for lo,hi,_f,_s in modules)==42,
+           "R83 NOP source conversion should recover 42 instruction bytes")
+    return wrapper,modules
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -2486,6 +2567,8 @@ def expected_sources():
     modules.extend(r83next)
     wrapper, small = legacy_r83_small_sources(bytes(whole),wrapper)
     modules.extend(small)
+    wrapper, nops = legacy_r83_nop_sources(bytes(whole),wrapper)
+    modules.extend(nops)
     return bytes(whole), wrapper, modules
 
 
@@ -2524,7 +2607,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 58124 bytes / 164 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 58166 bytes / 166 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -2558,6 +2641,8 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     for filename, *_rest in LEGACY_R83_SMALL_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_R83_NOP_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -2581,7 +2666,8 @@ def edit_gate(staged, assembler):
            all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_R83_FOLLOWUP_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_R83_NEXT_MODULES) and
-           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_SMALL_MODULES),
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_SMALL_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_NOP_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -2707,6 +2793,16 @@ def edit_gate(staged, assembler):
                    "R83 small edit symbol ambiguous: "+filename)
             path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
                             encoding="ascii", newline="\n")
+        # NOP has no operand. Mutate the first instruction in each temporary
+        # staging file to RTS (4E71 -> 4E75), never in production or dist/.
+        for filename, _blob, _lo, _hi, nops, _delta in LEGACY_R83_NOP_MODULES:
+            path=folder / filename
+            content=path.read_text("ascii")
+            demand(content.count("    nop\n")==nops and
+                   "    rts\n" not in content,
+                   "R83 NOP temporary one-instruction edit not isolated: "+filename)
+            path.write_text(content.replace("    nop\n","    rts\n",1),
+                            encoding="ascii",newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -2749,12 +2845,14 @@ def edit_gate(staged, assembler):
         expected.update({delta: (oldbyte, newbyte)
                          for _filename, _blob, _start, _stop, _sym, _old, _new,
                              delta, oldbyte, newbyte in LEGACY_R83_SMALL_MODULES})
-        demand(len(expected) == 164, "UNIT142 R83 small edit count differs")
+        expected.update({delta:(0x71,0x75)
+                         for _filename,_blob,_lo,_hi,_nops,delta in LEGACY_R83_NOP_MODULES})
+        demand(len(expected) == 166, "UNIT142 R83 NOP edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 164 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 166 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
