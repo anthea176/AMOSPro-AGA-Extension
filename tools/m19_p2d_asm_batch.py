@@ -38,6 +38,7 @@ class Region:
     start_marker: str | None = None
     raw_code: bool = False
     raw_overhang: int = 0
+    raw_labels: tuple[str, ...] = ()
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -260,6 +261,14 @@ REGIONS = (
            end_marker='    dc.b $24,$01,$30,$28,$00,$1C,$48,$C0,$94,$80,$26,$04  ; +$07A16: 24013028001C48C094802604',
            staged_end_marker='    include "M19_P1B_HOTSPOT_ORIGIN_MC68020.s"',
            start_marker='p2b_paint_continue:', raw_code=True, raw_overhang=2),
+    Region('P0C_PROGRAM_END_CALLBACK', 'M19_P0C_PROGRAM_END_CALLBACK_MC68020.s',
+           0x048FA, 0x049A8, '', '',
+           '    andi.l #$00000001,d0',
+           '    andi.l #P0C_CALLBACK_OWNER_ALIGNMENT,d0',
+           'P0C_CALLBACK_OWNER_ALIGNMENT', 1, 2, 0x04915, 0,
+           'tools/m19_p0c_program_end_bridge_emit.py::emit_program_end_bridge',
+           start_marker='program_end_bridge_entry:', raw_code=True,
+           raw_labels=('end_bridge_return:',)),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -411,9 +420,11 @@ def extract(text, spec, bytes_expected, *, staged=False):
             pseudo==spec.pseudo_count,
             'P1e audit/emitter bytes or AMOS ABI count changed: '+spec.name)
     if spec.raw_code:
-        require(raw_lines > 0 and len(result) == raw_lines and
+        labels = tuple(line for line in result if LABEL.fullmatch(line))
+        require(raw_lines > 0 and labels == spec.raw_labels and
+                len(result) == raw_lines + len(labels) and
                 clipped == (0 if staged else spec.raw_overhang),
-                'raw code island contains labels, gap or bad end: '+spec.name)
+                'raw code island contains unexpected labels, gap or bad end: '+spec.name)
         # The native module is handwritten; source-built bytes plus direct
         # MC68020 vasm AP20 byte identity, not disassembly, prove correctness.
         return ''

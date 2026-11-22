@@ -1,6 +1,6 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**77 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**78 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
@@ -9,6 +9,7 @@
 | [P0j Image Gate return — epilogue ABI](M19_P0J_IMAGE_RETURN_MC68020.s) | `$06254..$06264` | 16 |
 | [P0j Prechecked Paint — validation et chemin All](M19_P0J_PRECHECKED_PAINT_MC68020.s) | `$06264..$0627E` | 26 |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
+| [P0c Program End callback — registre et retour ABI](M19_P0C_PROGRAM_END_CALLBACK_MC68020.s) | `$048FA..$049A8` | 174 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
 | [P0 Relais Off/Read/Reset et retour](M19_P0_RELAY_COMMANDS_MC68020.s) | `$05A6A..$05B6E` | 260 |
 | [P0 Relay Put — entree et selecteur](M19_P0_RELAY_PUT_MC68020.s) | `$05A5C..$05A6A` | 14 |
@@ -81,7 +82,7 @@
 | [P2d Public Query Head — resultat AMOS](M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s) | `$0EDD0..$0EDF4` | 36 |
 | [P2d Public Query Tail — epilogue d'ABI](M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s) | `$0EDF4..$0EE00` | 12 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **56 074** |
+| **Total de code ASM propre** | | **56 248** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -270,6 +271,17 @@ byte-exact de l'AP20 officiel, plus une mutation distincte par module.
 Le controle d'edition groupee couvre maintenant **32 modules**.
 Les **708 octets** residuels `dc.b` dans BOBS doivent rester analyses
 avant migration ; aucune bibliotheque ni ASC modifie.
+
+Le quatorzieme lot migre **174 octets / 1 module P0c** :
+callback `Program End` `$048FA..$049A8`, selon
+`tools/m19_p0c_program_end_bridge_emit.py::emit_program_end_bridge`.
+Le label interne `end_bridge_return` et la signature de l'ancien
+End restent maintenus ; tous les branchements restent en taille .w.
+L'audit original reste intact ; le nouvel ASM doit s'assembler en
+MC68020 exactement comme la P2d source-reconstruite et passer l'edition
+groupee de **33 modules**. Il reste **534 octets bruts** dans BOBS,
+dont des donnees et de plus grosses routines a classifier. Aucun
+binaire installable ni ASC modifie.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,
