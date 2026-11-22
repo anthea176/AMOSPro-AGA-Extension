@@ -82,11 +82,11 @@ def check(vasm: Path, dump: bool = False) -> None:
 
 
     # The first genuine 68020 JSR uses a full (d32,PC) extension, which the
-    # conservative decoder does not trace. Preserve those six bytes as
+    # conservative decoder does not trace. Preserve those eight bytes as
     # source-emitted data and start the trace at the next instruction only.
     for name, complete, start in (
-        ("P1C_PRIORITY_SPLIT", priority, 6),
-        ("P1D_LIMIT_SPLIT", limit, TABLE_BYTES + 6),
+        ("P1C_PRIORITY_SPLIT", priority, 8),
+        ("P1D_LIMIT_SPLIT", limit, TABLE_BYTES + 8),
     ):
         source, report = native_unit_source(name, complete, [(0, start)])
         assert report["bytes"] == len(complete)
