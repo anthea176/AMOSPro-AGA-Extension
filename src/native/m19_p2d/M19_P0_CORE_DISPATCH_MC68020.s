@@ -1,22 +1,10 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
 ; Historical owner: tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update
 ; Audited bytes checked against the official M19 P2d library.
-; BOBS+$00000..$020A2 (8354 bytes).
+; BOBS+$00022..$020A2 (8320 bytes).
 ; AMOS Main symbolic pseudo-ops preserve six-byte ABI.
 P0_CORE_BUFFER_MODE equ 2
 
-    subq.l #4,a7
-    movem.l d0/a0,-(a7)
-    movea.l 12(a7),a0
-    moveq #0,d0
-    move.w (a0)+,d0
-    move.l a0,12(a7)
-    lea ENTRY_BOBS_00022(pc),a0
-    adda.l d0,a0
-    move.l a0,8(a7)
-    movem.l (a7)+,d0/a0
-    rts
-ENTRY_BOBS_00022:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)
     lea -96(a7),a7
     movea.l a7,a2

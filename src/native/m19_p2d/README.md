@@ -4,7 +4,7 @@
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
-| [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00000..$020A2` | 8 354 |
+| [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00022..$020A2` | 8 320 |
 | [P0 Get Pipeline — capture banque et validation image](M19_P0_GET_PIPELINE_MC68020.s) | `$020CE..$03772` | 5 796 |
 | [P0 Screen Pre-Close — fermeture et callbacks](M19_P0_SCREEN_PRECLOSE_MC68020.s) | `$046D4..$048FA` | 550 |
 | [P0 banque/image — resolution et relais](M19_P0_BANK_IMAGE_RESOLVE_MC68020.s) | `$049A8..$05A5C` | 4 276 |
@@ -71,7 +71,7 @@
 | [P2d service guards — controles internes](M19_P2D_SERVICE_GUARDS_MC68020.s) | `$0DD96..$0E538` | 1 954 |
 | [P2d public update — routines de service](M19_P2D_PUBLIC_UPDATE_MC68020.s) | `$0E5C8..$0EDD0` | 2 056 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **55 928** |
+| **Total de code ASM propre** | | **55 894** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -198,10 +198,12 @@ Le self-test groupe controle desormais **22 modules**.
 Cette migration source ne change ni les bibliotheques officielles
 ni les conditions des Gates B/C/D.
 
-Le dixieme lot migre **14 150 octets / 2 modules** :
-`P0_CORE_DISPATCH` (`$00000..$020A2`, 8 354 octets avec
+Le dixieme lot migre **14 116 octets / 2 modules** :
+`P0_CORE_DISPATCH` (`$00022..$020A2`, 8 320 octets avec
 12 pseudo-appels AMOS Main) et `P0_GET_PIPELINE`
 (`$020CE..$03772`, 5 796 octets avec 4 pseudo-appels).
+Le dispatcher AP20 original `$00000..$00022` (34 octets)
+reste hors de l'emetteur natif et dans `M19_P2D_BOBS_EDITABLE.s`.
 Les etiquettes historiques `UNIT_BOBS` et `get_entry` restent
 dans le source principal; les modules commencent immediatement
 apres ces etiquettes. Le bloc de banque `$020A2..$020CE`

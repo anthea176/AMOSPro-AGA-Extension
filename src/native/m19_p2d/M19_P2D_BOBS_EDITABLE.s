@@ -126,6 +126,18 @@ p2d_close_return equ UNIT_BOBS+$0B718
 ; MC68020: assemble with vasmm68k_mot -m68020
 
 UNIT_BOBS:
+    subq.l #4,a7                                       ; +$00000: 598F
+    movem.l d0/a0,-(a7)                                ; +$00002: 48E78080
+    movea.l 12(a7),a0                                  ; +$00006: 206F000C
+    moveq #0,d0                                        ; +$0000A: 7000
+    move.w (a0)+,d0                                    ; +$0000C: 3018
+    move.l a0,12(a7)                                   ; +$0000E: 2F48000C
+    lea ENTRY_BOBS_00022(pc),a0                        ; +$00012: 41FA000E
+    adda.l d0,a0                                       ; +$00016: D1C0
+    move.l a0,8(a7)                                    ; +$00018: 2F480008
+    movem.l (a7)+,d0/a0                                ; +$0001C: 4CDF0101
+    rts                                                ; +$00020: 4E75
+ENTRY_BOBS_00022:
     include "M19_P0_CORE_DISPATCH_MC68020.s"
 L_BOBS_020A2:
 bank_active_state:
