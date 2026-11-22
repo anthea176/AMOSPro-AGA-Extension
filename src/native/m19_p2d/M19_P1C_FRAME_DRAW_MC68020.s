@@ -64,7 +64,7 @@ p1c_cursor_ready:
     move.l 16(a2),d1
     move.l 20(a2),d4
 explicit_frame_paint_call:
-    bsr.w explicit_safe_blit_entry
+    bsr.w p1d_scoped_paint
     tst.l d3
     beq.w explicit_frame_return
 L_BOBS_07D52:

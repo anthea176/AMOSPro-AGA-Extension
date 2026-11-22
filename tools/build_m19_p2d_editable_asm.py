@@ -40,6 +40,7 @@ from m19_b8_s1_bank_free_emit import emit_b8_s1_bank_free
 from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
 from m19_p1b_hotspot_origin_emit import emit_hotspot_origin
 from m19_p1c_bob_priority_emit import emit_priority_bobs
+from m19_p1d_limit_bob_emit import emit_limit_bobs
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -1289,19 +1290,29 @@ def prove_p1c_frame_draw_provenance() -> tuple[int, int, int, bytes]:
     _, p1e = build_p1e()
     native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
     p1c, source_labels = emit_priority_bobs(p1e['context_delta'])
+    p1d, p1d_labels = emit_limit_bobs(p1e['context_delta'])
     _, parts, _ = unpack_ap20(official)
     base = len(parts[group]) - len(native)
     begin = base + labels['explicit_frame_next']
     end = base + labels['p1d_limit_entry']
-    fragment = p1c[source_labels['explicit_frame_next']:]
+    # P1d source deliberately redirects exactly one BSR.W from the P1c
+    # original Safe Blitter into the scoped Bob painter.
+    original_fragment = p1c[source_labels['explicit_frame_next']:]
+    fragment = p1d[p1d_labels['explicit_frame_next']:
+                   p1d_labels['p1d_limit_entry']]
+    site = p1d_labels['explicit_frame_paint_call'] - p1d_labels['explicit_frame_next']
+    mutations = [i for i, (x, y) in enumerate(zip(original_fragment, fragment))
+                 if x != y]
     mutation = 0x7D6B
     require((begin, end) == (P1C_DRAW_START, P1C_DRAW_END) and
-            len(fragment) == 230 and
+            len(fragment) == len(original_fragment) == 230 and
+            original_fragment[site:site+2] == fragment[site:site+2] == bytes.fromhex('6100') and
+            mutations and all(i in (site+2, site+3) for i in mutations) and
             native[labels['explicit_frame_next']:labels['p1d_limit_entry']] == fragment and
             parts[group][begin:end] == fragment and
             fragment[mutation-begin-5:mutation-begin+3] ==
             bytes.fromhex('257c000000010004'),
-            'P1c ordered frame source differs from final P2d layout')
+            'P1c ordered frame/P1d scoped paint source redirect drift')
     return begin, end, mutation, fragment
 
 
