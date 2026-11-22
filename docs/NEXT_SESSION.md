@@ -29,7 +29,11 @@ AMOS Compiler C ni materiel D.
 LAST_GOOD R84 figée ; la promotion autorisee P2d rendait leurs assertions
 obsoletes. Corrections de la reconnaissance P2d et des controles de SHA
 R71/R72 sur `main`, sans neutraliser leurs tests de branchements
-historiques. [CI d'integrite en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035403982).
+historiques. **Gate A ciblee R69/R71/R72 PASS**
+([CI 45035764957](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035764957)),
+avec verification du SHA P2d/LAST_GOOD. La
+[CI d'integrite generale](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035403982)
+reste distincte et en cours au point de controle.
 
 **Binaires proteges, non modifies :** `dist/AMOSPro_AGA.Lib` et
 `dist/AMOSPro_AGA_LAST_GOOD.Lib` blob commun
