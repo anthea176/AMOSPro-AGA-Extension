@@ -1,8 +1,8 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
 ; Historical owner: tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update
-; Exact bytes checked against the historical P2d emitter and AP20 BOBS group.
+; Audited bytes checked against the official M19 P2d library.
 ; BOBS+$0DA30..$0DCB4 (644 bytes).
-; Pure MC68020 instruction region; no AMOS Main pseudo-ops or data.
+; AMOS Main symbolic pseudo-ops preserve six-byte ABI.
 P2D_SYSTEM_SUCCESS_FLAG equ 1
 
 movem.l d0-d1/d4-d7/a0-a2/a4-a6,-(a7)
