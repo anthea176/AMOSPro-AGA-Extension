@@ -28,6 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -83,4 +84,6 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "push" && -n "$EVENT_BEFORE" && "$EVENT_BEFORE" != "0000000000000000000000000000000000000000" ]]; then
             git diff --exit-code "$EVENT_BEFORE" "$GITHUB_SHA" -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
           fi
+          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
           git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
