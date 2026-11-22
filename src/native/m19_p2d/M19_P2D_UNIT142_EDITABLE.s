@@ -199,16 +199,7 @@ L_UNIT142_0045A:
     dc.b $67,$00,$00,$0A,$20,$45,$2C,$46,$4E,$AE,$FF,$C4
     dc.b $22,$46,$2C,$78,$00,$04,$4E,$AE,$FE,$62,$4C,$DF
     dc.b $7F,$FF,$4E,$75,$47,$65,$74,$50
-ENTRY_UNIT142_00A62:
-    movem.l d0-d7/a0-a2/a4-a6,-(a7)
-    movea.l 456(a5),a2
-    tst.l (a2)
-    beq.s L_UNIT142_00A76
-    movea.l 8(a2),a6
-    jsr -270(a6)
-L_UNIT142_00A76:
-    movem.l (a7)+,d0-d7/a0-a2/a4-a6
-    rts
+    include "M19_UNIT142_BLOCK_00A62_MC68020.s"
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_00A80_MC68020.s"
     dc.b $47,$65,$74,$50
@@ -456,10 +447,7 @@ L_UNIT142_077D0:
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_09428_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
-    move.l a0,d0
-    tst.l d0
-    bne.w L_UNIT142_0954C
-    move.l 4(a2),d0
+    include "M19_UNIT142_BLOCK_0948C_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
     include "M19_UNIT142_BLOCK_0949E_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$30
@@ -477,10 +465,7 @@ L_UNIT142_077D0:
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_09930_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
-    move.l a0,d0
-    tst.l d0
-    bne.w L_UNIT142_09A86
-    move.l 4(a2),d0
+    include "M19_UNIT142_BLOCK_09994_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
     include "M19_UNIT142_BLOCK_099A6_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$30
@@ -502,11 +487,7 @@ L_UNIT142_077D0:
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_0A476_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
-    move.l a0,24(a2)
-    move.l 24(a2),d0
-    tst.l d0
-    bne.w L_UNIT142_0A800
-    move.l 20(a2),d0
+    include "M19_UNIT142_BLOCK_0A6E2_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$1D
     include "M19_UNIT142_BLOCK_0A6FA_MC68020.s"
     dc.b $FE,$11,$F7,$00,$03,$30

@@ -794,6 +794,25 @@ restent conserves dans le wrapper.
 sans constante editable de ce type). Source-only, P2d/LAST_GOOD/ASC
 proteges. Gate A en attente des CI de la revision.
 
+
+### UNIT142 — lots 148 a 151 : quatre petits relais (68 octets)
+
+Quatre courts blocs de mnemoniques sont restaures sans inventer
+les zones brutes : appel graphics.library LVO et champs de structures.
+Leurs deplacements sont parametres pour une mutation source isolee
+d'un octet dans le banc Gate A.
+
+- [bloc $00A62](M19_UNIT142_BLOCK_00A62_MC68020.s) : `$00A62..$00A7C`, 26 octets
+- [bloc $0A6E2](M19_UNIT142_BLOCK_0A6E2_MC68020.s) : `$0A6E2..$0A6F4`, 18 octets
+- [bloc $0948C](M19_UNIT142_BLOCK_0948C_MC68020.s) : `$0948C..$09498`, 12 octets
+- [bloc $09994](M19_UNIT142_BLOCK_09994_MC68020.s) : `$09994..$099A0`, 12 octets
+
+**215 modules ASM**, dont **115 UNIT142** : **50 402 / 62 740 octets
+(80,33 %)** en ASM editables. **12 338 octets UNIT142** restent bruts
+ou non classes (12 298 octets de directives et 40 octets de code sans
+mutation simple). Pas de nouveau binaire, ASC ni qualification WinUAE.
+Validation Gate A a confirmer.
+
 ## Compilation directe (Windows)
 
 ```bat

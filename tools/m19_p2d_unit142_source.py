@@ -1029,6 +1029,42 @@ SPANS = (
         "    move.l #$00000001,88(a2)", "    move.l #UNIT142_BLOCK_0D986_EDIT,88(a2)",
         0x0D98B, 1, 2,
     ),
+    (
+        "M19_UNIT142_BLOCK_00A62_MC68020.s",
+        "    dc.b $7F,$FF,$4E,$75,$47,$65,$74,$50  ; +$00A5A: 7FFF4E7547657450\n",
+        "    dc.b $47,$65,$74,$50  ; +$00A7C: 47657450\n",
+        0x00A62, 0x00A7C, 8, 2,
+        "UNIT142_BLOCK_00A62_EDIT", -270, -269,
+        "    jsr -270(a6)", "    jsr UNIT142_BLOCK_00A62_EDIT(a6)",
+        0x00A75, 242, 243,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0A6E2_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0A6DC: FE11F700031D\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0A6F4: FE11F700031D\n",
+        0x0A6E2, 0x0A6F4, 5, 0,
+        "UNIT142_BLOCK_0A6E2_EDIT", 24, 25,
+        "    move.l 24(a2),d0", "    move.l UNIT142_BLOCK_0A6E2_EDIT(a2),d0",
+        0x0A6E9, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0948C_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$09486: FE11F700031D\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$09498: FE11F700031D\n",
+        0x0948C, 0x09498, 4, 0,
+        "UNIT142_BLOCK_0948C_EDIT", 4, 5,
+        "    move.l 4(a2),d0", "    move.l UNIT142_BLOCK_0948C_EDIT(a2),d0",
+        0x09497, 4, 5,
+    ),
+    (
+        "M19_UNIT142_BLOCK_09994_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0998E: FE11F700031D\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$099A0: FE11F700031D\n",
+        0x09994, 0x099A0, 4, 0,
+        "UNIT142_BLOCK_09994_EDIT", 4, 5,
+        "    move.l 4(a2),d0", "    move.l UNIT142_BLOCK_09994_EDIT(a2),d0",
+        0x0999F, 4, 5,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -1143,6 +1179,10 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_BLOCK_09532_MC68020.s": "source-verified clean block $09532",
     "M19_UNIT142_BLOCK_09A6C_MC68020.s": "source-verified clean block $09A6C",
     "M19_UNIT142_BLOCK_0D986_MC68020.s": "source-verified clean block $0D986",
+    "M19_UNIT142_BLOCK_00A62_MC68020.s": "OS graphics LVO call",
+    "M19_UNIT142_BLOCK_0A6E2_MC68020.s": "bank bridge offset",
+    "M19_UNIT142_BLOCK_0948C_MC68020.s": "field bridge offset",
+    "M19_UNIT142_BLOCK_09994_MC68020.s": "field bridge offset",
 }
 
 
@@ -1262,7 +1302,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 50334 bytes / 111 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 50402 bytes / 115 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1317,7 +1357,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 111 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 115 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
