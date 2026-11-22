@@ -330,6 +330,70 @@ def expected_sources() -> tuple[bytes, bytes, bytes, bytes, bytes, bytes, str, s
             wrapper)
 
 
+
+def verify_residual_provenance(unit: bytes) -> None:
+    """Classify every unchanged UNIT156 byte using R80->R81 source emitters.
+
+    The 98-byte region after the optimized BRA is the suffix of the old
+    per-bit loop, with its initial BTST opcode replaced in R81. It starts
+    with an orphan extension word, so MUST NOT be disassembled as a new
+    standalone entry or called reusable padding.
+    """
+    from c2p_r80_iff_chunky_emit import emit_iff_to_chunky
+    from c2p_opt020_variants import emit_iff_chunky_opt020
+
+    original, labels = emit_iff_to_chunky()
+    optimized, opt_labels = emit_iff_chunky_opt020()
+    dispatch = 0x22
+    start = dispatch + labels["byte_start"]
+    end = dispatch + labels["plane_done"]
+    fast = dispatch + opt_labels["byte_start_opt020"]
+    demand(len(unit) == UNIT_SIZE and len(optimized) + dispatch + 4 == UNIT_SIZE
+           and unit[dispatch:-4] == optimized and unit[-4:] == b"GetP",
+           "UNIT156 source-built R81 optimized IFF body does not match P2d")
+    demand((start, end, fast) == (0x007EA, 0x00850, 0x00932) and
+           original[labels["byte_start"]:labels["byte_start"]+4] ==
+           bytes.fromhex("101B0800") and
+           unit[start:start+4] == bytes.fromhex("60000146"),
+           "UNIT156 R81 source hot-loop patch position or BRA.W changed")
+    residue = original[labels["byte_start"]+4:labels["plane_done"]]
+    demand(len(residue) == 98 and
+           optimized[labels["byte_start"]+4:labels["plane_done"]] ==
+           residue == unit[0x007EE:0x00850],
+           "UNIT156 R80 slow-loop residue source provenance drift")
+
+    expected_lut = bytes((n >> bit) & 1
+                         for n in range(16) for bit in (3, 2, 1, 0))
+    source_data = (
+        (0x00926, b"dos.library\x00"),
+        (0x0095E, expected_lut),
+        (0x009C8, b"GetP"),
+    )
+    code_ranges = (
+        (0x00000, 0x00022), (0x00022, 0x00218),
+        (0x00218, 0x007EE), (0x00850, 0x00926),
+        (0x00932, 0x0095E), (0x0099E, 0x009C8),
+    )
+    mask = bytearray(UNIT_SIZE)
+    for lo, hi in code_ranges:
+        demand(mask[lo:hi] == bytes(hi-lo), "UNIT156 overlapping code")
+        mask[lo:hi] = b"\x01" * (hi-lo)
+    demand(mask[0x007EE:0x00850] == bytes(98),
+           "UNIT156 stale slow-loop residue overlaps live source")
+    mask[0x007EE:0x00850] = b"\x02" * 98
+    for lo, data in source_data:
+        hi = lo + len(data)
+        demand(unit[lo:hi] == data and mask[lo:hi] == bytes(hi-lo),
+               "UNIT156 source-backed DOS/LUT/GetP data mismatch")
+        mask[lo:hi] = b"\x03" * len(data)
+    demand(mask.count(1) == 2330 and mask.count(2) == 98 and
+           mask.count(3) == 80 and mask.count(0) == 0,
+           "UNIT156 unexplained code/residue/data bytes remain")
+    print("UNIT156_RESIDUAL_PROVEN: 2330 editable instruction bytes,"
+          " 98 superseded R80 loop bytes, 80 data/ABI bytes,"
+          " 0 unclassified; NO reusable padding")
+
+
 def verify(official: bytes) -> int:
     demand(len(official) == 136020 and
            sha256(official).hexdigest() == P2D_SHA,
@@ -367,6 +431,7 @@ def verify(official: bytes) -> int:
            "UNIT156 dispatcher mnemonic differs from pinned source")
     demand(NATIVE.read_text("ascii") == wrapper,
            "UNIT156 editable wrapper differs from source-backed audit")
+    verify_residual_provenance(parts[group])
     print("UNIT156_SOURCE_PROVEN: 2330 bytes / 6 modules including dispatcher, group", group)
     return group
 
