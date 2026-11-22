@@ -633,6 +633,21 @@ Aucune donnee GetP ou autre segment brut n'est requalifie en code.
 Les bibliotheques P2d et LAST_GOOD, tous les ASC et Gates B/C/D
 demeurent sans changement.
 
+### UNIT142 — lots 59 a 64 : six blocs de code source (8 414 octets)
+
+Ces blocs `$078A4..$07B2A`, `$07BC8..$08564`,
+`$08618..$08CD6`, `$08D78..$09424`,
+`$09C80..$09F66` et `$0A006..$0A472` deviennent
+des modules `M19_UNIT142_BLOCK_xxxxx_MC68020.s`.
+Les marqueurs AMOS Main / GetP et les donnees restent dans le wrapper.
+Les `28` constantes editables ont chacune une mutation unique,
+verifiee seulement sur le groupe UNIT142 par une compilation privee
+vasm MC68020.
+
+**TOTAL : 128 modules ASM**, dont **26 200 / 62 740 octets
+UNIT142 en 28 modules**. Aucun changement de Lib installable,
+LAST_GOOD, ASC ni nouvelle validation WinUAE.
+
 ## Compilation directe (Windows)
 
 ```bat

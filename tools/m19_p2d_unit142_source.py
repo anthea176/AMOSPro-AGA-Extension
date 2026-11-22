@@ -228,6 +228,60 @@ SPANS = (
         "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_04F58_ZERO,d3",
         0x04F67, 0, 1,
     ),
+    (
+        "M19_UNIT142_BLOCK_078A4_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0789E: FE11F700031D\n",
+        "    dc.b $4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71,$4E,$71  ; +$07B2A: 4E714E714E714E714E714E71\n",
+        0x078A4, 0x07B2A, 198, 13,
+        "UNIT142_BLOCK_078A4_MIN", 16, 17,
+        "    cmpi.l #$00000010,d3", "    cmpi.l #UNIT142_BLOCK_078A4_MIN,d3",
+        0x078B9, 16, 17,
+    ),
+    (
+        "M19_UNIT142_BLOCK_07BC8_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$07BC2: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$08564: 47657450\n",
+        0x07BC8, 0x08564, 666, 53,
+        "UNIT142_BLOCK_07BC8_MIN", 16, 17,
+        "    cmpi.l #$00000010,d4", "    cmpi.l #UNIT142_BLOCK_07BC8_MIN,d4",
+        0x07BDD, 16, 17,
+    ),
+    (
+        "M19_UNIT142_BLOCK_08618_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$08612: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$08CD6: 47657450\n",
+        0x08618, 0x08CD6, 474, 34,
+        "UNIT142_BLOCK_08618_MIN", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_08618_MIN,d5",
+        0x0861F, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_08D78_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$08D72: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$09424: 47657450\n",
+        0x08D78, 0x09424, 431, 24,
+        "UNIT142_BLOCK_08D78_MIN", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_08D78_MIN,d5",
+        0x08D7F, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_09C80_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$09C7A: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$09F66: 47657450\n",
+        0x09C80, 0x09F66, 191, 7,
+        "UNIT142_BLOCK_09C80_MIN", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_09C80_MIN,d5",
+        0x09C87, 24, 25,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0A006_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$0A000: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$0A472: 47657450\n",
+        0x0A006, 0x0A472, 295, 8,
+        "UNIT142_BLOCK_0A006_MIN", 24, 25,
+        "    cmpi.l #$00000018,d5", "    cmpi.l #UNIT142_BLOCK_0A006_MIN,d5",
+        0x0A00D, 24, 25,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -253,6 +307,12 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_ENTRY_04B40_MC68020.s": "public entry $04B40",
     "M19_UNIT142_ENTRY_04D4C_MC68020.s": "public entry $04D4C",
     "M19_UNIT142_ENTRY_04F58_MC68020.s": "public entry $04F58",
+    "M19_UNIT142_BLOCK_078A4_MC68020.s": "verified block $078A4",
+    "M19_UNIT142_BLOCK_07BC8_MC68020.s": "verified block $07BC8",
+    "M19_UNIT142_BLOCK_08618_MC68020.s": "verified block $08618",
+    "M19_UNIT142_BLOCK_08D78_MC68020.s": "verified block $08D78",
+    "M19_UNIT142_BLOCK_09C80_MC68020.s": "verified block $09C80",
+    "M19_UNIT142_BLOCK_0A006_MC68020.s": "verified block $0A006",
 }
 
 
@@ -341,11 +401,14 @@ def expected_sources():
         )
         module = header + code.replace(opcode, replacement)
         original_fragment = strip_annotations(fragment)
-        target = start + original_fragment
+        # A source region can start after a raw GetP/AMOS Main marker.
+        # The wrapper has its source offsets stripped, including those markers.
+        compact_start = strip_annotations(start)
+        target = compact_start + original_fragment
         demand(wrapper.count(target) == 1,
                "UNIT142 wrapper region missing/ambiguous: " + filename)
         wrapper = wrapper.replace(
-            target, start + '    include "' + filename + '"\n'
+            target, compact_start + '    include "' + filename + '"\n'
         )
         modules.append((lo, hi, filename, module))
     return bytes(whole), wrapper, modules
@@ -369,7 +432,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 17786 bytes / 22 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 26200 bytes / 28 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -424,7 +487,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 22 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 28 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
