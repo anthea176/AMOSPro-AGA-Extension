@@ -41,6 +41,7 @@ from m19_p0j_end_lifecycle_emit import emit_end_lifecycle
 from m19_p1b_hotspot_origin_emit import emit_hotspot_origin
 from m19_p1c_bob_priority_emit import emit_priority_bobs
 from m19_p1d_limit_bob_emit import emit_limit_bobs
+from m19_p1e_bank_edit_emit import emit_bank_edit
 from m19_p0e_object_table_emit import emit_object_table
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
@@ -72,6 +73,8 @@ P1D_LIMIT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_LIMIT_MC68020.s'
 P1D_SCOPED_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_SCOPED_PAINT_MC68020.s'
 P1D_CLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_CLIP_BRIDGE_MC68020.s'
 P1D_INTERSECT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_INTERSECT_MC68020.s'
+P1E_DEL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_DEL_BOB_MC68020.s'
+P1E_INS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_INS_BOB_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -160,6 +163,12 @@ P1D_CLIP_END = 0x7E6A
 P1D_INTERSECT_NAME = 'M19_P1D_INTERSECT_MC68020.s'
 P1D_INTERSECT_START = 0x7E6A
 P1D_INTERSECT_END = 0x7F00
+P1E_DEL_NAME = 'M19_P1E_DEL_BOB_MC68020.s'
+P1E_DEL_START = 0x7F00
+P1E_DEL_END = 0x7F2E
+P1E_INS_NAME = 'M19_P1E_INS_BOB_MC68020.s'
+P1E_INS_START = 0x7F2E
+P1E_INS_END = 0x7F54
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1522,6 +1531,89 @@ def replace_raw_p1d_intersect(text: str) -> str:
             P1D_INTERSECT_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1e_del_bob_provenance() -> tuple[int, int, int, bytes]:
+    """Pin the 46-byte P1e Del Bob entry to its original source emitter."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    emitted, source_labels = emit_bank_edit(p1e_meta['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['p1e_del_bob']
+    end = prefix + labels['p1e_ins_bob']
+    original = emitted[source_labels['p1e_del_bob']:
+                       source_labels['p1e_ins_bob']]
+    mutation = 0x7F29
+    require((begin, end) == (P1E_DEL_START, P1E_DEL_END) and
+            len(original) == 46 and
+            native[labels['p1e_del_bob']:labels['p1e_ins_bob']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('263c00000000'),
+            'P1e Del Bob public entry differs from original MC68020 emitter')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_del_bob(text: str) -> str:
+    """Replace source-pinned Del Bob public entry, preserving its AP20 index."""
+    first = 'ENTRY_BOBS_07F00:\np1e_del_bob:\n'
+    last = 'ENTRY_BOBS_07F2E:\np1e_ins_bob:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e Del Bob source audit boundaries missing')
+    pos, observed = P1E_DEL_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e Del Bob annotated source gap')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_DEL_END and bytes(observed) == prove_p1e_del_bob_provenance()[3],
+            'P1e Del Bob annotated bytes differ from original source')
+    return (text[:i] + 'ENTRY_BOBS_07F00:\n    include "' +
+            P1E_DEL_NAME + '"\n' + text[j:])
+
+
+@lru_cache(maxsize=1)
+def prove_p1e_ins_bob_provenance() -> tuple[int, int, int, bytes]:
+    """Pin 38-byte P1e Ins Bob arguments against its source constructor."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    emitted, source_labels = emit_bank_edit(p1e_meta['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['p1e_ins_bob']
+    end = prefix + labels['edit_begin']
+    original = emitted[source_labels['p1e_ins_bob']:source_labels['edit_begin']]
+    mutation = 0x7F51
+    require((begin, end) == (P1E_INS_START, P1E_INS_END) and
+            len(original) == 38 and
+            native[labels['p1e_ins_bob']:labels['edit_begin']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+3] ==
+            bytes.fromhex('257c000000000014'),
+            'P1e Ins Bob public entry differs from original source')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_ins_bob(text: str) -> str:
+    """Replace only 38 original P1e Ins Bob argument bytes."""
+    first = 'ENTRY_BOBS_07F2E:\np1e_ins_bob:\n'
+    last = 'L_BOBS_07F54:\nedit_begin:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e Ins Bob audit source boundaries missing')
+    pos, observed = P1E_INS_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e Ins Bob raw audit offset drift')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_INS_END and bytes(observed) == prove_p1e_ins_bob_provenance()[3],
+            'P1e Ins Bob source bytes differ from source constructor')
+    return (text[:i] + 'ENTRY_BOBS_07F2E:\n    include "' +
+            P1E_INS_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1633,7 +1725,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1d_limit_text: str | None = None,
                    p1d_scoped_text: str | None = None,
                    p1d_clip_text: str | None = None,
-                   p1d_intersect_text: str | None = None) -> None:
+                   p1d_intersect_text: str | None = None,
+                   p1e_del_text: str | None = None,
+                   p1e_ins_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1665,6 +1759,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1D_SCOPED_FILE.is_file(), f'missing authored module: {P1D_SCOPED_FILE}')
     require(P1D_CLIP_FILE.is_file(), f'missing authored module: {P1D_CLIP_FILE}')
     require(P1D_INTERSECT_FILE.is_file(), f'missing authored module: {P1D_INTERSECT_FILE}')
+    require(P1E_DEL_FILE.is_file(), f'missing authored module: {P1E_DEL_FILE}')
+    require(P1E_INS_FILE.is_file(), f'missing authored module: {P1E_INS_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1690,6 +1786,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1d_scoped_paint(text)
     text = replace_raw_p1d_clip_bridge(text)
     text = replace_raw_p1d_intersect(text)
+    text = replace_raw_p1e_del_bob(text)
+    text = replace_raw_p1e_ins_bob(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -2078,6 +2176,25 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P1d intersection contains raw bytes or invalid geometry bounds')
     (folder / P1D_INTERSECT_NAME).write_text(intersect_source,
                                               encoding='ascii', newline='\n')
+    del_source = p1e_del_text if p1e_del_text is not None else P1E_DEL_FILE.read_text('ascii')
+    del_base = del_source.count('    move.l #0,d3')
+    del_changed = del_source.count('    move.l #1,d3')
+    require(del_source.count('p1e_del_bob:') == 1 and
+            del_source.count('edit_bad_del:') == 1 and
+            del_source.count('    bra.w edit_return') == 1 and
+            (del_base, del_changed) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', del_source),
+            'P1e Del Bob source missing entry or has unclassified opcodes')
+    (folder / P1E_DEL_NAME).write_text(del_source, encoding='ascii', newline='\n')
+    ins_source = p1e_ins_text if p1e_ins_text is not None else P1E_INS_FILE.read_text('ascii')
+    ins_base = ins_source.count('    move.l #0,P1E_INS_LAST(a2)')
+    ins_changed = ins_source.count('    move.l #1,P1E_INS_LAST(a2)')
+    require(ins_source.count('p1e_ins_bob:') == 1 and
+            ins_source.count('    lea -P1E_INS_FRAME_BYTES(a7),a7') == 1 and
+            (ins_base, ins_changed) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', ins_source),
+            'P1e Ins Bob source missing arguments or has raw opcodes')
+    (folder / P1E_INS_NAME).write_text(ins_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -2172,6 +2289,8 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1d_scoped_start, p1d_scoped_end, _, _ = prove_p1d_scoped_paint_provenance()
     p1d_clip_start, p1d_clip_end, _, _ = prove_p1d_clip_bridge_provenance()
     p1d_intersect_start, p1d_intersect_end, _, _ = prove_p1d_intersect_provenance()
+    p1e_del_start, p1e_del_end, _, _ = prove_p1e_del_bob_provenance()
+    p1e_ins_start, p1e_ins_end, _, _ = prove_p1e_ins_bob_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -2199,7 +2318,9 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1d_limit_start <= i < p1d_limit_end) or
                  (p1d_scoped_start <= i < p1d_scoped_end) or
                  (p1d_clip_start <= i < p1d_clip_end) or
-                 (p1d_intersect_start <= i < p1d_intersect_end) for i in differences),
+                 (p1d_intersect_start <= i < p1d_intersect_end) or
+                 (p1e_del_start <= i < p1e_del_end) or
+                 (p1e_ins_start <= i < p1e_ins_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -2238,7 +2359,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1d_limit_text: str | None = None,
           p1d_scoped_text: str | None = None,
           p1d_clip_text: str | None = None,
-          p1d_intersect_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1d_intersect_text: str | None = None,
+          p1e_del_text: str | None = None,
+          p1e_ins_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -2261,7 +2384,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1d_limit_text=p1d_limit_text,
                     p1d_scoped_text=p1d_scoped_text,
                     p1d_clip_text=p1d_clip_text,
-                    p1d_intersect_text=p1d_intersect_text)
+                    p1d_intersect_text=p1d_intersect_text,
+                    p1e_del_text=p1e_del_text,
+                    p1e_ins_text=p1e_ins_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -2732,6 +2857,33 @@ def test_editability(assembler: Path) -> None:
                 'P1d intersection edited result code not assembled')
         require(intersect_start <= intersect_imm < intersect_end,
                 'P1d intersection edit escaped executable source')
+        del_start, del_end, del_imm, _ = prove_p1e_del_bob_provenance()
+        del_source = P1E_DEL_FILE.read_text('ascii')
+        needle = '    move.l #0,d3'
+        require(del_source.count(needle) == 1, 'P1e Del edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_del', allow_edited=True,
+            p1e_del_text=del_source.replace(needle, '    move.l #1,d3'))
+        require(diffs == [del_imm],
+                f'P1e Del edit changed {diffs}, expected {[del_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [del_imm-5:del_imm+1] == bytes.fromhex('263c00000001'),
+                'P1e Del edited result not assembled')
+        require(del_start <= del_imm < del_end, 'P1e Del edit escaped authored region')
+
+        ins_start, ins_end, ins_imm, _ = prove_p1e_ins_bob_provenance()
+        ins_source = P1E_INS_FILE.read_text('ascii')
+        needle = '    move.l #0,P1E_INS_LAST(a2)'
+        require(ins_source.count(needle) == 1, 'P1e Insert edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_ins', allow_edited=True,
+            p1e_ins_text=ins_source.replace(needle, '    move.l #1,P1E_INS_LAST(a2)'))
+        require(diffs == [ins_imm],
+                f'P1e Ins edit changed {diffs}, expected {[ins_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [ins_imm-5:ins_imm+3] == bytes.fromhex('257c000000010014'),
+                'P1e Insert edited argument not assembled')
+        require(ins_start <= ins_imm < ins_end, 'P1e Ins edit escaped authored region')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -2761,6 +2913,8 @@ def test_editability(assembler: Path) -> None:
     print('P1D_SCOPED_EDITABILITY_TEST PASS: MOVE.L #0,(A0) -> #1, one byte changed')
     print('P1D_CLIP_EDITABILITY_TEST PASS: MOVE.L 216(A4),D0 -> 220, one byte changed')
     print('P1D_INTERSECT_EDITABILITY_TEST PASS: MOVE.L #1,D0 -> #2, one byte changed')
+    print('P1E_DEL_EDITABILITY_TEST PASS: MOVE.L #0,D3 -> #1, one byte changed')
+    print('P1E_INS_EDITABILITY_TEST PASS: MOVE.L #0,20(A2) -> #1, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 

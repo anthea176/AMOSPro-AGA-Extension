@@ -8380,33 +8380,9 @@ L_BOBS_07E20:
 L_BOBS_07E6A:
     include "M19_P1D_INTERSECT_MC68020.s"
 ENTRY_BOBS_07F00:
-p1e_del_bob:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07F00: 48E7EFEE
-    lea -256(a7),a7                                    ; +$07F04: 4FEFFF00
-    movea.l a7,a2                                      ; +$07F08: 244F
-    move.l d3,20(a2)                                   ; +$07F0A: 25430014
-    tst.l d3                                           ; +$07F0E: 4A83
-    beq.w L_BOBS_07F20                                 ; +$07F10: 6700000E
-    move.l (a3)+,16(a2)                                ; +$07F14: 255B0010
-    move.l (a3)+,36(a2)                                ; +$07F18: 255B0024
-    bra.w L_BOBS_07F54                                 ; +$07F1C: 60000036
-L_BOBS_07F20:
-edit_bad_del:
-    move.l (a3)+,d0                                    ; +$07F20: 201B
-    move.l (a3)+,d0                                    ; +$07F22: 201B
-    move.l #$00000000,d3                               ; +$07F24: 263C00000000
-    bra.w L_BOBS_08626                                 ; +$07F2A: 600006FA
+    include "M19_P1E_DEL_BOB_MC68020.s"
 ENTRY_BOBS_07F2E:
-p1e_ins_bob:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07F2E: 48E7EFEE
-    lea -256(a7),a7                                    ; +$07F32: 4FEFFF00
-    movea.l a7,a2                                      ; +$07F36: 244F
-    move.l d3,32(a2)                                   ; +$07F38: 25430020
-    move.l (a3)+,28(a2)                                ; +$07F3C: 255B001C
-    move.l (a3)+,24(a2)                                ; +$07F40: 255B0018
-    move.l (a3)+,16(a2)                                ; +$07F44: 255B0010
-    move.l (a3)+,36(a2)                                ; +$07F48: 255B0024
-    move.l #$00000000,20(a2)                           ; +$07F4C: 257C000000000014
+    include "M19_P1E_INS_BOB_MC68020.s"
 L_BOBS_07F54:
 edit_begin:
     move.l #$00000000,8(a2)                            ; +$07F54: 257C000000000008
