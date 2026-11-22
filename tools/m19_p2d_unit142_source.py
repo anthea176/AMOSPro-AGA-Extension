@@ -1469,7 +1469,7 @@ def p0f_external_bsr_sources(whole,wrapper):
         body = (
             "; AGA_NATIVE_MIN_CPU: MC68020\n"
             f"; UNIT142 P0f bridge BSR.W; historical M19 source targets P0e Object {kind}.\n"
-            f"; Original +\${pos:05X} {hexbytes}, resolves +\${target:05X}.\n"
+            f"; Original +${pos:05X} {hexbytes}, resolves +${target:05X}.\n"
             f"{symbol} equ 0\n\n"
             f"    bsr.w {label}+{symbol}\n"
         )
