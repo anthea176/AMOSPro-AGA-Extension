@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — S1-P0 AGSP v1 : contrat approuvé, modèle de banque engagé
+
+**Décision auteur :** conserver **AGSP comme AGBO**, sur le principe d'une banque AMOS DATA multi-images enregistrable via `Save/Load` (enveloppe `AmBk`, identité interne `AGSP`, nom `AGASPRT `). Il ne s'agit pas des Sprite Object OCS. La création repose sur une capture d'une planche IFF/ILBM indexée avec `CMAP` RGB24 depuis l'écran AGA. Chaque image possède **sa palette RGB24 propre** et des indices locaux compacts avec **transparent 0**, sans quantification : 1–3 opaques = Sprite simple 2 plans (S1), 4–15 opaques = Sprite attaché 4 plans (S2 à réaliser), >15 = refus et conseil Bob AGA. Les indices source de couleurs RGB identiques peuvent fusionner ; la valeur RGB exacte ne perd pas de précision. Le prototype n'impose aucun `.abk` de Sprite OCS.
+
+**Première réalisation :** [spec AGSP v1](M19_S1_AGSP_V1_FORMAT_2026-11-22.md), [codec hôte](../tools/m19_s1_agsp_bank.py), [27 tests locaux](../tools/test_m19_s1_agsp_bank.py), [CI dédiée](../.github/workflows/m19-s1-agsp-host.yml). Détails : 32 octets en-tête, entrées de 48 octets, pixels plane-major et 48 octets RGB24/image, hotspots, générations, import index+CMAP, mise à jour transactionnelle et enveloppe `AmBk` à tester en vraie AMOS. **Stage hôte seulement** : pas encore de `Get AGA Sprite` exécutable, d'allocation DMA Sprite ou de nouvel AP20.
+
+**Prochaine tranche** : valider la capture du **bon buffer AGA** et la banque AGSP `Save/Load` dans une source native basée sur P2d/MC68020, puis qualifier palette partagée (plage `240..255` proposée, non garantie), propriété des canaux OS et **détachement DMA avant libération Chip**. Les anciens bancs S0d Gates B/C restent valides, sans transfert de preuve à AGSP. **Ne pas modifier P2d, LAST_GOOD, tests/current Bob ni SPRITE_PROBE.asc S0d** pour ce jalon.
+
+
 ## 22 novembre 2026 — Choix S1 : capture d'IFF indexé avec palette RGB24, sans ABK
 
 **Décision de conception validée par l'auteur :** ne pas imposer `.abk` ni une banque Work brute. Capturer les Sprites depuis le **buffer écran AGA contenant un IFF/ILBM indexé** chargé par `Aga Iff Load`, avec sa **palette CMAP RGB24**. La palette 24 bits donne la précision des couleurs, pas 24 bits/pixel Sprite : **S1 un canal 16px = 3 opaques + transparente**, puis **S2 32/64px et paire attachée = 15 opaques + transparente**. Un vrai IFF 24 plans RGB est distinct et hors MVP.

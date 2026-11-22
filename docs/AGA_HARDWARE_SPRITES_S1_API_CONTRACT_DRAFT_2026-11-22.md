@@ -1,5 +1,16 @@
 # M19 — Sprites matériels AGA S1 : contrat d'API proposé
 
+## Décision d'architecture AGSP approuvée — 22/11/2026
+
+**L'auteur valide AGSP comme AGBO, et engage le développement.** La source graphique reste une **capture depuis IFF indexé à palette RGB24** ; mais le résultat ne reste pas un objet éphémère : il est stocké dans **une banque AMOS DATA multi-images, format interne `AGSP`**, avec ID d'image, 2/4 bitplanes, hotspot, transparence et palette RGB24 **par image**. La banque est destinée à `Save/Load` via l'enveloppe `AmBk`, **sans compatibilité OCS Sprite**, sans fichier de Sprite OCS ni banque Work brute préparée par l'auteur. Cette décision **remplace explicitement** les anciens scénarios « pas de banque / capture interne uniquement » plus bas dans l'historique de ce document. Le [format v1 et ses 27 tests hôtes](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) font désormais autorité pour S1-P0.
+
+**Couleurs :** l'indice transparent IFF est explicite ; les pixels opaques sont reclassés par **RGB24 exactement égal**, pas quantifiés. 1..3 opaques = **S1, 1 canal, 2 plans** ; 4..15 opaques = **S2 futur, 2 canaux attachés, 4 plans** ; 16 ou plus = **refus**, conseiller un Bob AGA. Chaque image garde ses RGB24, pas de promotion automatique des couleurs de l'IFF dans une palette Sprite partagée.
+
+**Ergonomie approuvée en intention :** `Aga Sprite Bank N` ; `Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen` (bornes inclusives) ; `Aga Sprite N,X,Y,I` ; `Aga Sprite Off N` ; `Aga Sprite Bank Free N`. **Noms, forme instruction/fonction, AP20 et codes de retour restent à valider techniquement** avant livraison d'un véritable binaire ; les anciennes signatures `Aga Sprite Capture/On/Move/Off` du texte historique sont remplacées pour la cible ergonomique. Les images peuvent être nombreuses dans la banque ; S1 limite **un seul objet matériel actif** jusqu'aux essais. L'affectation d'une tranche de palette comme `240..255` est une **hypothèse à qualifier**, ni une réservation automatique, ni une garantie de non-interférence avec l'écran/Copper.
+
+**Limite expérimentale :** la spécification AGSP et le modèle de capture host sont testés, **pas l'API native**. Aucun `Save/Load` AGSP validé par WinUAE, aucune preuve d'arrêt sûr des références DMA avant libération Chip et aucune validation S1 Gate B/C/D. P2d et LAST_GOOD restent protégées.
+
+
 **Date :** 22 novembre 2026  
 **Décision auteur du 22/11/2026 : S1 crée les images par capture d'IFF indexé avec CMAP RGB24 sur l'écran AGA, sans `.abk` ni banque Work brute ; signatures publiques et code natif encore à approuver.**  
 **Dépôt / branche :** `anthea176/AMOSPro-AGA-Extension`, `main` seulement.  

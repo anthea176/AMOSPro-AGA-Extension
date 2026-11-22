@@ -1,0 +1,43 @@
+name: M19 S1 AGSP v1 multi-image bank host regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/m19_s1_agsp_bank.py'
+      - 'tools/test_m19_s1_agsp_bank.py'
+      - 'docs/M19_S1_AGSP_V1_FORMAT_2026-11-22.md'
+      - 'docs/AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md'
+      - '.github/workflows/m19-s1-agsp-host.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/m19_s1_agsp_bank.py'
+      - 'tools/test_m19_s1_agsp_bank.py'
+      - 'docs/M19_S1_AGSP_V1_FORMAT_2026-11-22.md'
+      - 'docs/AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md'
+      - '.github/workflows/m19-s1-agsp-host.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  agsp-v1-host-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout read-only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate AGSP format codec and regression syntax
+        run: python -B -m py_compile tools/m19_s1_agsp_bank.py tools/test_m19_s1_agsp_bank.py
+      - name: Run AGSP RGB24, palette, geometry, bank and corruption tests
+        run: PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1_agsp_bank.py' -v
+      - name: No installation, promotion or active AMOS test change
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/
