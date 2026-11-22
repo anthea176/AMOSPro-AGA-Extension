@@ -12,7 +12,7 @@ edit_validate_bank:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)
     lea -P1E_VALIDATOR_STACK(a7),a7
     movea.l a7,a2
-    move.l d3,P1E_VALIDATOR_BANK(a2)
+    move.l d3,(a2)               ; 2-byte (A2), never 4-byte 0(A2)
     move.l a0,P1E_VALIDATOR_BANKPTR(a2)
     move.l #0,P1E_VALIDATOR_CTX(a2)
     move.l #0,P1E_VALIDATOR_GFX(a2)

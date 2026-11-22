@@ -2443,7 +2443,9 @@ def verify_link(original: bytes, image: bytes, group: int,
     require(all(x == y for i, (x, y) in enumerate(zip(old_parts, parts)) if i != group),
             'modified an AP20 unit outside the controlled P2d BOBS module')
     require(len(parts[group]) == len(old_parts[group]),
-            'BOBS size/entry offsets changed; variable-length relocation NOT supported')
+            f'BOBS size/entry offsets changed: expected {len(old_parts[group])}, '
+            f'assembled {len(parts[group])}, delta {len(parts[group])-len(old_parts[group])}; '
+            'variable-length relocation NOT supported')
     differences = [i for i, (a, b) in enumerate(zip(old_parts[group], parts[group])) if a != b]
     planar_start, planar_end, _, _ = prove_planar_provenance()
     flip_start, flip_end, _, _ = prove_flip_public_provenance()
