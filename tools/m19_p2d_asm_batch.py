@@ -175,7 +175,7 @@ REGIONS = (
            '    move.l #$00000002,144(a2)',
            '    move.l #P0_CORE_BUFFER_MODE,144(a2)',
            'P0_CORE_BUFFER_MODE', 2, 3, 0x00447, 12,
-           'tools/build_m19_p2c_in_memory.py::build_p2c',
+           'tools/build_m19_p2d_in_memory.py::build_p2d',
            start_marker='ENTRY_BOBS_00022:'),
 
     Region('P0_GET_PIPELINE', 'M19_P0_GET_PIPELINE_MC68020.s',
@@ -183,7 +183,7 @@ REGIONS = (
            '    move.l #$00000001,48(a2)',
            '    move.l #P0_GET_FRAME_VALID,48(a2)',
            'P0_GET_FRAME_VALID', 1, 2, 0x023E7, 4,
-           'tools/build_m19_p2c_in_memory.py::build_p2c',
+           'tools/build_m19_p2d_in_memory.py::build_p2d',
            start_marker='get_entry:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
@@ -210,9 +210,25 @@ def prove_regions(native, labels, group, proven_p2c_prefix):
     for spec in sorted(REGIONS, key=lambda r: r.start):
         require(spec.start >= previous, 'overlapping batch ownership')
         previous = spec.stop
-        if spec.stop <= prefix:
-            # P2d inherits this region from the pinned P2c source builder,
-            # not from emit_bob_auto_update. Never infer it from disassembly.
+        if spec.owner == 'tools/build_m19_p2d_in_memory.py::build_p2d':
+            # Composite source ownership: the P2c SHA-pinned prefix and
+            # the independently verified P2d emitter suffix. This region
+            # can cross their exact boundary, but every byte must be proven.
+            require(not spec.begin_label and not spec.end_label and
+                    0 <= spec.start < spec.stop <= len(group),
+                    'invalid composite source region: '+spec.name)
+            p2c_end = min(spec.stop, prefix)
+            prior = (proven_p2c_prefix[spec.start:p2c_end]
+                     if spec.start < p2c_end else b'')
+            p2d_begin = max(spec.start,prefix)-prefix
+            p2d_end = spec.stop-prefix
+            appended = (native[p2d_begin:p2d_end]
+                        if p2d_begin < p2d_end else b'')
+            chunk = prior + appended
+            require(len(chunk) == spec.stop-spec.start,
+                    'incomplete composite source ownership: '+spec.name)
+        elif spec.stop <= prefix:
+            # Dedicated prefix-only regions must name the source P2c builder.
             require(not spec.begin_label and not spec.end_label,
                     'P2c prefix requires absolute source-verified region: '+spec.name)
             require(spec.owner == 'tools/build_m19_p2c_in_memory.py::build_p2c',
@@ -376,6 +392,7 @@ def main():
         require(prefix >= 0 and len(prior_parts[prior_group]) >= prefix,
                 'P2c/P2d BOBS prefix size changed')
         p2c_prefix = prior_parts[prior_group][:prefix]
+        print('BOBS_P2C_P2D_EMITTER_BOUNDARY $%05X' % prefix)
         evidence = prove_regions(native,labels,parts[group],p2c_prefix)
         # The cleanup Lst.Del pseudo-op has an authored module already.
         # Replicate builder staging so the 27 remaining raw calls are counted.

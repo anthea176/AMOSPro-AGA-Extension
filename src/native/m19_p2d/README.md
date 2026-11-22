@@ -211,11 +211,13 @@ apres ces etiquettes. Le bloc de banque `$020A2..$020CE`
 ne sont pas modifies. Le format `start_marker` du batch
 permet les deux entrees qui n'utilisent pas `L_BOBS_xxxxx`.
 Tous les appels `FE11F700xxxx` sont conserves symboliquement.
-Pour les deux modules P0 du dixieme lot, la provenance des octets est
-celle du **prefixe source P2c** reconstruit par `build_p2c()` et
-controle contre `P2C_SHA`, puis compare bit a bit au prefixe
-P2d officiel. La partie native ajoutee dans P2d reste verifiee
-independamment contre `emit_bob_auto_update()`. La Gate A inclut
+Pour les deux modules P0 du dixieme lot, la provenance est **composee** :
+le prefixe P2c est reconstruit par `build_p2c()` avec `P2C_SHA`
+epingle ; le suffixe P2d est reconstruit par
+`emit_bob_auto_update()`, et leur frontiere interne est verifiee.
+Un module peut traverser cette frontiere, mais chaque octet est
+prouve independamment avant comparaison au P2d officiel.
+Ce n'est pas une restitution fondee sur un desassemblage seul. La Gate A inclut
 l'assemblage MC68020 direct et l'edition groupee de
 **22 modules**. Aucun changement des bibliotheques installees,
 des ASC ou de la LAST_GOOD.

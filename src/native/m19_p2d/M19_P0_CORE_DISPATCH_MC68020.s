@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; Historical owner: tools/build_m19_p2c_in_memory.py::build_p2c
+; Historical owner: tools/build_m19_p2d_in_memory.py::build_p2d
 ; Audited bytes checked against the official M19 P2d library.
 ; BOBS+$00022..$020A2 (8320 bytes).
 ; AMOS Main symbolic pseudo-ops preserve six-byte ABI.
