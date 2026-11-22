@@ -757,6 +757,43 @@ non classes et autres petits blocs). La reconstruction P2d et les
 mutations demeurent Gate A et doivent etre confirmees par CI.
 Aucune nouvelle Gate B/C/D ni livraison de Lib/ASC.
 
+
+### UNIT142 — lots 126 a 147 : vingt-deux petits blocs (702 octets)
+
+Les 22 derniers segments de mnemoniques avec immediat editable sont
+extraits avec controle exact des offsets et une mutation d'un octet
+par module. Les 11 petits segments sans immediat et les blocs bruts
+restent conserves dans le wrapper.
+
+- [bloc $0CEF2](M19_UNIT142_BLOCK_0CEF2_MC68020.s) : `$0CEF2..$0CF38`, 70 octets
+- [bloc $0C2C6](M19_UNIT142_BLOCK_0C2C6_MC68020.s) : `$0C2C6..$0C308`, 66 octets
+- [bloc $0C344](M19_UNIT142_BLOCK_0C344_MC68020.s) : `$0C344..$0C386`, 66 octets
+- [bloc $077DC](M19_UNIT142_BLOCK_077DC_MC68020.s) : `$077DC..$07816`, 58 octets
+- [bloc $0C30E](M19_UNIT142_BLOCK_0C30E_MC68020.s) : `$0C30E..$0C340`, 50 octets
+- [bloc $0C38C](M19_UNIT142_BLOCK_0C38C_MC68020.s) : `$0C38C..$0C3BE`, 50 octets
+- [bloc $07878](M19_UNIT142_BLOCK_07878_MC68020.s) : `$07878..$0789E`, 38 octets
+- [bloc $0949E](M19_UNIT142_BLOCK_0949E_MC68020.s) : `$0949E..$094B8`, 26 octets
+- [bloc $099A6](M19_UNIT142_BLOCK_099A6_MC68020.s) : `$099A6..$099C0`, 26 octets
+- [bloc $0A6FA](M19_UNIT142_BLOCK_0A6FA_MC68020.s) : `$0A6FA..$0A714`, 26 octets
+- [bloc $07342](M19_UNIT142_BLOCK_07342_MC68020.s) : `$07342..$0735A`, 24 octets
+- [bloc $0AB96](M19_UNIT142_BLOCK_0AB96_MC68020.s) : `$0AB96..$0ABAE`, 24 octets
+- [bloc $0D7AA](M19_UNIT142_BLOCK_0D7AA_MC68020.s) : `$0D7AA..$0D7C2`, 24 octets
+- [bloc $0C8BE](M19_UNIT142_BLOCK_0C8BE_MC68020.s) : `$0C8BE..$0C8D4`, 22 octets
+- [bloc $0CED8](M19_UNIT142_BLOCK_0CED8_MC68020.s) : `$0CED8..$0CEEE`, 22 octets
+- [bloc $09546](M19_UNIT142_BLOCK_09546_MC68020.s) : `$09546..$09558`, 18 octets
+- [bloc $09A80](M19_UNIT142_BLOCK_09A80_MC68020.s) : `$09A80..$09A92`, 18 octets
+- [bloc $0ABB4](M19_UNIT142_BLOCK_0ABB4_MC68020.s) : `$0ABB4..$0ABC6`, 18 octets
+- [bloc $0746E](M19_UNIT142_BLOCK_0746E_MC68020.s) : `$0746E..$0747C`, 14 octets
+- [bloc $09532](M19_UNIT142_BLOCK_09532_MC68020.s) : `$09532..$09540`, 14 octets
+- [bloc $09A6C](M19_UNIT142_BLOCK_09A6C_MC68020.s) : `$09A6C..$09A7A`, 14 octets
+- [bloc $0D986](M19_UNIT142_BLOCK_0D986_MC68020.s) : `$0D986..$0D994`, 14 octets
+
+**211 modules ASM MC68020 au total**, dont **111 UNIT142**.
+**50 334 / 62 740 octets UNIT142 (80,23 %)** ; il reste **12 406 octets**
+(12 298 octets de directives brutes et 108 octets de mnemoniques
+sans constante editable de ce type). Source-only, P2d/LAST_GOOD/ASC
+proteges. Gate A en attente des CI de la revision.
+
 ## Compilation directe (Windows)
 
 ```bat
