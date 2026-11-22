@@ -542,6 +542,32 @@ Les octets de l'ABI AP20 V2 doivent rester strictement identiques
 dans la Lib P2d et LAST_GOOD. Les Gates B/C historiques ne se
 transmettent pas a des edits futurs.
 
+### UNIT142 — 37e a 40e lots : premiers modules natifs (458 octets)
+
+Quatre plages autonomes de UNIT142 sont maintenant maintenues comme source
+MC68020 et epinglees au builder officiel P2d :
+
+- [dispatcher AP20 V2](M19_UNIT142_DISPATCH_V2_MC68020.s) : `$00000..$00022`, 34 octets ;
+- [initialisation AGA](M19_UNIT142_INIT_ENTRY_MC68020.s) : `$00022..$0005A`, 56 octets ;
+- [garde graphics.library](M19_UNIT142_GRAPHICS_GUARD_MC68020.s) : `$002C2..$0030C`, 74 octets ;
+- [preflight ecran/graphics](M19_UNIT142_GRAPHICS_SCREEN_MC68020.s) : `$00322..$00448`, 294 octets.
+
+Le [validateur UNIT142](../../tools/m19_p2d_unit142_source.py) epingle
+l'ensemble des **62 740 octets UNIT142**, SHA256
+`8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7`,
+contre le groupe AP20 du builder source P2d. Il verifie les offsets et les
+instructions, conserve les donnees et les marqueurs non classifies et
+compare le wrapper natif compact a sa reconstruction deterministe.
+Gate A : vasm MC68020 direct sans regen et **4 mutations d'un octet**
+aux positions `$00000`, `$00045`, `$002CD`, `$00327`,
+sans modifier les autres groupes, tokens, titre ou longueur.
+
+**Total projet : 104 modules ASM** (80 BOBS, 14 UNIT153, 6 UNIT156,
+4 UNIT142). Il reste 62 282 octets de UNIT142 hors modules, contenant
+des instructions historiques et des zones de donnees / brut non classees.
+Le passage des segments bruts en opcodes n'est pas presume. Aucune nouvelle
+Lib, aucune LAST_GOOD, aucun ASC, aucune nouvelle Gate B/C/D.
+
 ## Compilation directe (Windows)
 
 ```bat

@@ -2468,6 +2468,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
         p = AUDIT_DIR / name
         require(p.is_file(), f'missing audit source dependency: {p}')
         shutil.copyfile(p, folder / name)
+    # Source-proven UNIT142 code; preserve all unclassified audit bytes.
+    from m19_p2d_unit142_source import stage as stage_unit142
+    stage_unit142(folder, prove_source_provenance()[0])
     # Source-proven UNIT156 code, retain the rest as audited legacy bytes.
     from m19_p2d_unit156_nibble import stage as stage_unit156_nibble
     stage_unit156_nibble(folder, prove_source_provenance()[0])

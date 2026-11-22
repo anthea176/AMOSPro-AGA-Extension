@@ -858,7 +858,7 @@ Entry_141:
     dc.b $FE,$31,$00,$8E,$D3,$14,$4E,$75  ; +$00000: FE31008ED3144E75
 
 Entry_142:
-    include "../../asm_migration/m19_p2d/M19_P2D_UNIT142_MC68020.s"
+    include "M19_P2D_UNIT142_EDITABLE.s"
 
 Entry_143:
     dc.b $47,$65,$74,$50  ; +$00000: 47657450
