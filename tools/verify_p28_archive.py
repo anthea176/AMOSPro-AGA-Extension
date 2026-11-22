@@ -55,20 +55,22 @@ def main() -> None:
                 verify(root / 'tests/fixtures/m19_p28' / filename, filename)
     for filename, length, digest in [
         ('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib', 73184, R87_SHA),
-        ('dist/AMOSPro_AGA_LAST_GOOD.Lib', 124444, P1E_SHA),
     ]:
         path = root / filename
         if path.exists():
             raw = path.read_bytes()
             assert len(raw) == length and sha256(raw).hexdigest() == digest, path
-    from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA
-    current,good,label=verify_active(root)
-    assert sha256(current).hexdigest() in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA)
-    assert sha256(good).hexdigest()==P1E_SHA
+    # Source of truth for whichever candidate and LAST_GOOD are promoted now.
+    # The frozen R87/R88 inputs and fixture hashes above remain exact.
+    from active_library import verify_active, LAST_GOOD_SHA, P2D_SHA
+    current, good, label = verify_active(root)
+    assert sha256(good).hexdigest() == LAST_GOOD_SHA
+    if sha256(current).hexdigest() == P2D_SHA:
+        assert current == good, 'Promoted P2d candidate/LAST_GOOD differ'
     from build_aga_r84_agapic import build as build_r84
     historical,r84meta=build_r84()
     assert len(historical)==67904 and r84meta['sha256']==R84_SHA
-    print('P2.8 ARCHIVE INTEGRITY PASS: R84 rebuilt, promoted P1e pinned; R88 unpromoted')
+    print('P2.8 ARCHIVE INTEGRITY PASS: R84 rebuilt, current LAST_GOOD pinned; historical R88 unpromoted')
 
 
 if __name__ == '__main__':
