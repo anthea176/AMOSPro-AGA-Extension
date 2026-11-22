@@ -39,6 +39,7 @@ class Region:
     raw_code: bool = False
     raw_overhang: int = 0
     raw_labels: tuple[str, ...] = ()
+    raw_inclusive_start: bool = False
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -269,6 +270,21 @@ REGIONS = (
            'tools/m19_p0c_program_end_bridge_emit.py::emit_program_end_bridge',
            start_marker='program_end_bridge_entry:', raw_code=True,
            raw_labels=('end_bridge_return:',)),
+    Region('P2D_SERVICE_UPDATE_BRIDGE', 'M19_P2D_SERVICE_UPDATE_BRIDGE_MC68020.s',
+           0x0DCB4, 0x0DD96, '', '',
+           '    move.l #$00000000,20(a4)',
+           '    move.l #P2D_SERVICE_BRIDGE_INITIAL_RESULT,20(a4)',
+           'P2D_SERVICE_BRIDGE_INITIAL_RESULT', 0, 1, 0x0DCC3, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           raw_code=True),
+    Region('P2D_SERVICE_ROOT_RESET', 'M19_P2D_SERVICE_ROOT_RESET_MC68020.s',
+           0x0E538, 0x0E59E, '', '',
+           '    move.l #$00000000,(a4)',
+           '    move.l #P2D_SERVICE_RESET_INITIAL_RESULT,(a4)',
+           'P2D_SERVICE_RESET_INITIAL_RESULT', 0, 1, 0x0E547, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           start_marker='    dc.b $48,$E7,$CF,$EE,$4F,$EF,$FF,$A0,$28,$4F,$28,$BC  ; +$0E538: 48E7CFEE4FEFFFA0284F28BC', raw_code=True,
+           raw_inclusive_start=True),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -383,7 +399,8 @@ def extract(text, spec, bytes_expected, *, staged=False):
     result,actual,offset,pseudo = [],bytearray(),spec.start,0
     raw_lines = 0
     clipped = 0
-    for line in text[i+len(first):j].splitlines():
+    code_begin = i if spec.raw_inclusive_start else i+len(first)
+    for line in text[code_begin:j].splitlines():
         if LABEL.fullmatch(line):
             result.append(line)
             continue
@@ -449,7 +466,8 @@ def replace_raw_sections(text, evidence):
         first,last = bounds(spec, staged=True)
         i = text.index(first)
         j = len(text) if not last else text.index(last,i+len(first))
-        replacements.append((i,j,first+'    include "'+spec.file+'"\n'))
+        prefix = '' if spec.raw_inclusive_start else first
+        replacements.append((i,j,prefix+'    include "'+spec.file+'"\n'))
     for i,j,segment in sorted(replacements,reverse=True):
         text = text[:i]+segment+text[j:]
     return text
@@ -553,9 +571,9 @@ def main():
             for spec in REGIONS:
                 target = out/spec.file
                 require(not target.exists(), 'refuse overwrite '+str(target))
-                target.write_text(
-                    render(spec,extract(audit,spec,evidence[spec.name])),
-                    encoding='ascii',newline='\n')
+                source = ((NATIVE/spec.file).read_text('ascii') if spec.raw_code
+                          else render(spec,extract(audit,spec,evidence[spec.name])))
+                target.write_text(source,encoding='ascii',newline='\n')
         print('BOBS_BATCH_STATIC_PASS')
         return 0
     except (BatchError,ValueError,OSError) as error:

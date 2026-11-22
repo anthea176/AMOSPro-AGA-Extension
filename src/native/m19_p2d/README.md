@@ -1,6 +1,6 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**78 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**80 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
@@ -76,13 +76,15 @@
 | [P2d support tail — code source restaure](M19_P2D_SUPPORT_TAIL_MC68020.s) | `$0B72A..$0C4FE` | 3 540 |
 | [P2d service body — routines natives](M19_P2D_SERVICE_BODY_MC68020.s) | `$0C51E..$0DA10` | 5 362 |
 | [P2d system service — code source restaure](M19_P2D_SYSTEM_SERVICE_MC68020.s) | `$0DA30..$0DCB4` | 644 |
+| [P2d Service Update Bridge — controles et appel service](M19_P2D_SERVICE_UPDATE_BRIDGE_MC68020.s) | `$0DCB4..$0DD96` | 226 |
 | [P2d service guards — controles internes](M19_P2D_SERVICE_GUARDS_MC68020.s) | `$0DD96..$0E538` | 1 954 |
+| [P2d Service Root Reset — remise a zero du contexte](M19_P2D_SERVICE_ROOT_RESET_MC68020.s) | `$0E538..$0E59E` | 102 |
 | [P2d public update — routines de service](M19_P2D_PUBLIC_UPDATE_MC68020.s) | `$0E5C8..$0EDD0` | 2 056 |
 | [P2d Service Return — epilogue ABI](M19_P2D_SERVICE_RETURN_MC68020.s) | `$0E59E..$0E5B0` | 18 |
 | [P2d Public Query Head — resultat AMOS](M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s) | `$0EDD0..$0EDF4` | 36 |
 | [P2d Public Query Tail — epilogue d'ABI](M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s) | `$0EDF4..$0EE00` | 12 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **56 248** |
+| **Total de code ASM propre** | | **56 576** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -282,6 +284,17 @@ MC68020 exactement comme la P2d source-reconstruite et passer l'edition
 groupee de **33 modules**. Il reste **534 octets bruts** dans BOBS,
 dont des donnees et de plus grosses routines a classifier. Aucun
 binaire installable ni ASC modifie.
+
+Le quinzieme lot migre **328 octets / 2 modules** : service update bridge
+(`$0DCB4..$0DD96`, 226 octets) et service root reset
+(`$0E538..$0E59E`, 102 octets). Branches inter-modules conservees,
+validations pointeurs Exec et nettoyage transactionnel. Le second
+module commence au premier octet brut de l'audit `$0E538` :
+`raw_inclusive_start` ne recouvre pas le module Guards precedent.
+Controle de provenance par emetteur P2d, vasm MC68020 byte-exact et
+edition groupee **35 modules**. Il reste **206 octets en dc.b**
+(donnees, padding et un relais RTS). Aucune bibliotheque officielle,
+aucune LAST_GOOD ni campagne ASC modifiees.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,
