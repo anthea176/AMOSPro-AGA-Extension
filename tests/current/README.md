@@ -8,6 +8,6 @@ L'exemple **P2a–P2e** est publié sous [`examples/`](../../examples/bob_p2_all
 
 Dans les deux modes : `RESULT 1`, `ERR 0`, `SWAPS 252`, `COL_CHECKS 8`, `FLIP_PIX0/1 8/12`, `PLANES_PIX0/1 5/5`, `VERDICT PASS`. **121 refus initiaux de Swap récupérés après un VBL** dans chaque essai. Gate D physique et interprété strict non testés.
 
-**Lib P2d et LAST_GOOD P1e inchangées.** Banques **24, 27 et 28** libres requises. [Rapport technique complet](../../docs/M19_P2_ALL_IN_ONE_2026-11-21.md).
+**Lib P2d et LAST_GOOD P2d protégées et identiques depuis la promotion autorisée du 21/11/2026.** Banques **24, 27 et 28** libres requises. [Rapport technique complet](../../docs/M19_P2_ALL_IN_ONE_2026-11-21.md).
 
 **Politique conservée : exactement un ASC de campagne sous `tests/current/`, archives `tests/passed/` protégées, exemples publics à nom sans version M/R et aucune promotion de bibliothèque implicite.** Cette copie de référence pourra être remplacée par une nouvelle campagne décidée explicitement.

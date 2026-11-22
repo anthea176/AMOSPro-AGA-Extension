@@ -1,5 +1,55 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 74 a 158 : mnemoniques audites convertis
+
+**Migration source-only sur main : 222 modules ASM MC68020**, soit
+80 BOBS, 14 UNIT153, 6 UNIT156 et **122 UNIT142**.
+UNIT142 couvre desormais **50 442 / 62 740 octets (80,40 %)** en source
+editable : les **14 628 octets de mnemoniques** qui restaient apres
+le lot 73 sont tous extraits dans 85 nouveaux modules, avec une
+mutation source isolee prevue par module.
+
+**Restant : 12 298 octets en directives brutes** (121 plages d'audit).
+Ce reliquat n'est PAS classifie globalement comme de la donnee :
+certaines plages contiennent des marqueurs GetP, appels AMOS Main,
+code natif non isole et zones initialisees/zero.
+Trois plages AGACBLK de 884 octets sont byte-identiques, mais leurs
+roles ne peuvent pas etre supposes equivalentes sans source.
+[Audit du reliquat](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+
+**Commits migration :**
+[74–80](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/3c882ae4ce88cc152206bcf74c417012a5f6278d),
+[81–100](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b5363d340b871d44b32a6a06d7ea1df2ce7e0ce9)
+avec [en-tetes corriges](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/ce89ed31fe601e93515f2459cd5d426d853c93cc),
+[101–125](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9b0b851187cafe8410b0628b5f52a9b2bbc58771),
+[126–147](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/a7de6443a871edcb4f7af2cf922b532f427b635f),
+[148–151](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b5bf4253489e1fa93c7ee50f0e6952f910656989)
+et [152–158](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/4f2190fbf47727d74fce885bc2bdecb3ca56a33d).
+
+**Gates :** source Gate A PASS [74–80](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45043772392),
+[81–100 corrige](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45044640297),
+[101–125](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45044782220),
+[126–147](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45044909638).
+Les lots [148–151](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45045067107)
+et [152–158](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45045272699)
+sont **en attente de PASS** a ce point documentaire.
+La Gate A interdit toute derive P2d et exige l'assemblage direct
+vasm -m68020, les edits isoles, la topologie AP20 et l'integrite du
+binaire. Aucun nouveau test WinUAE Runtime B, AMOS Compiler C ou
+Amiga physique D pour ces editions sources.
+
+**Protections inchangees :** les deux Lib sous dist/ ont le meme Git
+blob `8a849b89aae57c2cda0b4db8771034a0978d3e78` (136 020 octets,
+SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`).
+Un seul ASC actif `tests/current/M19_P2_ALL_IN_ONE.asc`, blob
+`c48d334fd4508d402d28399bffdfec08d4cb4acb`.
+Aucun autre depot ni branche, aucune promotion, aucun nouveau binaire.
+
+**Suite autorisee par le chantier :** audit source-verifie des 12 298
+octets bruts, sans les forcer en opcodes; distinguer les banques,
+marqueurs, padding et routines non decodables. Tout nouveau module doit
+conserver l'identite officielle P2d en Gate A.
+
 ## 22 novembre 2026 — UNIT142 lots 37 a 73 : 137 modules ASM
 
 **Etape source-only sur `main` : 137 modules MC68020** (80 BOBS,

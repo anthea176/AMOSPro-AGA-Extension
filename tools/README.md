@@ -1,6 +1,25 @@
 # Outils Python — builder actif et historique versionné
 
-## Référence de travail actuelle — M19 B7-m1, Runtime uniquement (18/11/2026)
+## Reference de travail courante — M19 P2d (22/11/2026)
+
+Le seul binaire de travail officiel est `dist/AMOSPro_AGA.Lib`,
+**P2d 136 020 octets**, SHA256
+`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`,
+promu en LAST_GOOD sur autorisation du 21/11. **100 commandes / 203 AP20** ;
+MC68020 minimum. `tools/build_m19_p2d_in_memory.py::build_p2d`
+reconstruit la P2d officielle depuis ses emetteurs sources.
+
+**Migration ASM source-only :** `tools/build_m19_p2d_editable_asm.py`,
+`tools/m19_p2d_unit142_source.py` et
+`src/native/m19_p2d/M19_P2D_UNIT142_EDITABLE.s`.
+La source UNIT142 comporte **122 modules / 50 442 octets convertis**
+(80,40 %), avec tests de mutations confines et reconstruction identique
+a la P2d attendue. **12 298 octets bruts non classes** restent preserves.
+Cette migration ne modifie pas les Lib officielles ni les tests WinUAE.
+[Etat](../docs/NEXT_SESSION.md) ·
+[Audit du reliquat](../docs/M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+
+## Historique — M19 B7-m1, Runtime uniquement (18/11/2026)
 
 **Bancs de vitesse arrêtés après Gate B PASS** du décor texturé. Le [programme d'exemple public](../examples/bob_local_restore/README.fr.md) utilise uniquement la restauration locale + quatre Bobs, avec titre et sortie interactive (nouvelle variante, PREFLIGHT PASS ; WinUAE à confirmer). Prochaine étape de développement : [cycle de vie Bob Off, multi-banques et IDs 1..64](../docs/M19_NEXT_BOB_LIFECYCLE_2026-11-18.md), sans modification automatique de la Lib ni Compiler.
 
