@@ -73,6 +73,7 @@ def check() -> None:
         mask[lo:hi] = b"\x01"*(hi-lo)
     assert mask.count(1) == clean and mask.count(0) == len(group)-clean
 
+    from m19_p0c_screen_close_bridge_emit import AGA_STATE_OFFSET
     from m19_p0e_object_table_emit import emit_object_table
     from m19_p0f_object_identity_emit import emit_object_identity
     from m19_p1c_bob_priority_emit import emit_priority_open
@@ -81,7 +82,9 @@ def check() -> None:
     p0f, flabels = emit_object_identity()
     p1c, _ = emit_priority_open(1102, 0x0F0A4-34)
     p1d = emit_limit_open(0x0F0A4-34, 0x0F0D2-34)
+    assert AGA_STATE_OFFSET == 0x001C2
     data = (
+        (AGA_STATE_OFFSET, AGA_STATE_OFFSET+40, bytes(40), "AGA Screen state"),
         (0x0E018, 0x0E620, p0e[labels["object_root"]:], "P0e objects"),
         (0x0ECA4, 0x0F0A4, p0f[flabels["identity_stamp_table"]:], "P0f stamps"),
         (0x0F0CA, 0x0F0D2, p1c[-8:], "P1c context"),
@@ -93,7 +96,7 @@ def check() -> None:
         assert mask[lo:hi] == bytes(hi-lo), label+" already in source code"
         confirmed += hi-lo
         print("UNIT142_SOURCE_DATA_CONFIRMED", label, "%05X..%05X"%(lo,hi),hi-lo)
-    assert confirmed == 3616
+    assert confirmed == 3656
     headers = 0
     for lo,hi in CBLOCK_SPANS:
         for start,end,literal in ((lo,lo+8,b"AGACBLK "),(hi-4,hi,b"GetP")):
@@ -105,9 +108,9 @@ def check() -> None:
     assert group[0x0E8D8:0x0E8DE] == bytes.fromhex("FE11F700031D")
     assert mask[0x0E8D8:0x0E8DE] == bytes(6)
     known_noncode = confirmed + headers + 8 + 6
-    assert known_noncode == 3666
+    assert known_noncode == 3706
     unknown = len(group) - clean - known_noncode
-    assert unknown == 3478
+    assert unknown == 3438
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
