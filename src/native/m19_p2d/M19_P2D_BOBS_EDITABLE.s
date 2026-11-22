@@ -8363,76 +8363,9 @@ L_BOBS_07AE8:
 ENTRY_BOBS_07B84:
     include "M19_P1C_PRIORITY_MC68020.s"
 L_BOBS_07BBA:
-explicit_frame_draw_entry:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07BBA: 48E7EFEE
-    lea -416(a7),a7                                    ; +$07BBE: 4FEFFE60
-    movea.l a7,a2                                      ; +$07BC2: 244F
-    move.l #$00000000,4(a2)                            ; +$07BC4: 257C000000000004
-    bsr.w L_BOBS_05F30                                 ; +$07BCC: 6100E362
-    tst.l d3                                           ; +$07BD0: 4A83
-    beq.w L_BOBS_07D6E                                 ; +$07BD2: 6700019A
-    move.l 456(a5),d0                                  ; +$07BD6: 202D01C8
-    move.l d0,24(a2)                                   ; +$07BDA: 25400018
-    tst.l d0                                           ; +$07BDE: 4A80
-    beq.w L_BOBS_07D6E                                 ; +$07BE0: 6700018C
-    movea.l 24(a2),a0                                  ; +$07BE4: 206A0018
-    move.l 8(a0),d0                                    ; +$07BE8: 20280008
-    move.l d0,28(a2)                                   ; +$07BEC: 2540001C
-    tst.l d0                                           ; +$07BF0: 4A80
-    beq.w L_BOBS_07D6E                                 ; +$07BF2: 6700017A
-    andi.l #$00000001,d0                               ; +$07BF6: 028000000001
-    bne.w L_BOBS_07D6E                                 ; +$07BFC: 66000170
-    move.l #$00000001,44(a2)                           ; +$07C00: 257C00000001002C
-    move.l #$00000000,36(a2)                           ; +$07C08: 257C000000000024
-    bsr.w L_BOBS_07B74                                 ; +$07C10: 6100FF62
-    move.l d0,40(a2)                                   ; +$07C14: 25400028
+    include "M19_P1C_FRAME_PREFLIGHT_MC68020.s"
 L_BOBS_07C18:
-p1c_collect:
-    move.l 44(a2),d0                                   ; +$07C18: 202A002C
-    cmpi.l #$00000040,d0                               ; +$07C1C: 0C8000000040
-    bhi.w L_BOBS_07C90                                 ; +$07C22: 6200006C
-    move.l a2,d1                                       ; +$07C26: 220A
-    addi.l #$00000060,d1                               ; +$07C28: 068100000060
-    movea.l d1,a1                                      ; +$07C2E: 2241
-    bsr.w L_BOBS_05A78                                 ; +$07C30: 6100DE46
-    tst.l d3                                           ; +$07C34: 4A83
-    beq.w L_BOBS_07C88                                 ; +$07C36: 67000050
-    move.l 44(a2),d7                                   ; +$07C3A: 2E2A002C
-    cmpi.l #$00000002,40(a2)                           ; +$07C3E: 0CAA000000020028
-    beq.w L_BOBS_07C58                                 ; +$07C46: 67000010
-    move.l 108(a2),d0                                  ; +$07C4A: 202A006C
-    addi.l #$00008000,d0                               ; +$07C4E: 068000008000
-    lsl.l #7,d0                                        ; +$07C54: EF88
-    or.l d0,d7                                         ; +$07C56: 8E80
-L_BOBS_07C58:
-p1c_insert:
-    move.l 36(a2),d0                                   ; +$07C58: 202A0024
-    lsl.l #2,d0                                        ; +$07C5C: E588
-    movea.l a2,a0                                      ; +$07C5E: 204A
-    adda.l #$000000A0,a0                               ; +$07C60: D1FC000000A0
-    movea.l a0,a1                                      ; +$07C66: 2248
-    adda.l d0,a0                                       ; +$07C68: D1C0
-L_BOBS_07C6A:
-p1c_insert_scan:
-    cmpa.l a1,a0                                       ; +$07C6A: B1C9
-    beq.w L_BOBS_07C82                                 ; +$07C6C: 67000014
-    move.l -4(a0),d0                                   ; +$07C70: 2028FFFC
-    cmp.l d7,d0                                        ; +$07C74: B087
-    bls.w L_BOBS_07C82                                 ; +$07C76: 6300000A
-    move.l d0,(a0)                                     ; +$07C7A: 2080
-    subq.l #4,a0                                       ; +$07C7C: 5988
-    bra.w L_BOBS_07C6A                                 ; +$07C7E: 6000FFEA
-L_BOBS_07C82:
-p1c_store_key:
-    move.l d7,(a0)                                     ; +$07C82: 2087
-    addq.l #1,36(a2)                                   ; +$07C84: 52AA0024
-L_BOBS_07C88:
-p1c_collect_next:
-    addq.l #1,44(a2)                                   ; +$07C88: 52AA002C
-    bra.w L_BOBS_07C18                                 ; +$07C8C: 6000FF8A
-L_BOBS_07C90:
-p1c_collect_done:
-    move.l #$00000000,32(a2)                           ; +$07C90: 257C000000000020
+    include "M19_P1C_ORDER_COLLECT_MC68020.s"
 L_BOBS_07C98:
 explicit_frame_next:
     move.l 32(a2),d0                                   ; +$07C98: 202A0020
