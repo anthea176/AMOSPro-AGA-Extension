@@ -174,6 +174,60 @@ SPANS = (
         "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_0700A_ZERO,d3",
         0x07051, 0, 1,
     ),
+    (
+        "M19_UNIT142_ENTRY_04256_MC68020.s",
+        "ENTRY_UNIT142_04256:\n",
+        "    dc.b $47,$65,$74,$50  ; +$044E6: 47657450\n",
+        0x04256, 0x044E6, 182, 4,
+        "UNIT142_ENTRY_04256_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_04256_ZERO,d3",
+        0x04263, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_044EA_MC68020.s",
+        "ENTRY_UNIT142_044EA:\n",
+        "    dc.b $47,$65,$74,$50  ; +$0479A: 47657450\n",
+        0x044EA, 0x0479A, 195, 2,
+        "UNIT142_ENTRY_044EA_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_044EA_ZERO,d3",
+        0x044F7, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_0479E_MC68020.s",
+        "ENTRY_UNIT142_0479E:\n",
+        "    dc.b $47,$65,$74,$50  ; +$04B3C: 47657450\n",
+        0x0479E, 0x04B3C, 271, 8,
+        "UNIT142_ENTRY_0479E_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_0479E_ZERO,d3",
+        0x047AD, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_04B40_MC68020.s",
+        "ENTRY_UNIT142_04B40:\n",
+        "    dc.b $47,$65,$74,$50  ; +$04D48: 47657450\n",
+        0x04B40, 0x04D48, 158, 8,
+        "UNIT142_ENTRY_04B40_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_04B40_ZERO,d3",
+        0x04B4B, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_04D4C_MC68020.s",
+        "ENTRY_UNIT142_04D4C:\n",
+        "    dc.b $47,$65,$74,$50  ; +$04F54: 47657450\n",
+        0x04D4C, 0x04F54, 158, 8,
+        "UNIT142_ENTRY_04D4C_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_04D4C_ZERO,d3",
+        0x04D57, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_04F58_MC68020.s",
+        "ENTRY_UNIT142_04F58:\n",
+        "    dc.b $47,$65,$74,$50  ; +$0514C: 47657450\n",
+        0x04F58, 0x0514C, 147, 6,
+        "UNIT142_ENTRY_04F58_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_04F58_ZERO,d3",
+        0x04F67, 0, 1,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -193,6 +247,12 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_ENTRY_0609E_MC68020.s": "public entry $0609E",
     "M19_UNIT142_ENTRY_06678_MC68020.s": "public entry $06678",
     "M19_UNIT142_ENTRY_0700A_MC68020.s": "public entry $0700A",
+    "M19_UNIT142_ENTRY_04256_MC68020.s": "public entry $04256",
+    "M19_UNIT142_ENTRY_044EA_MC68020.s": "public entry $044EA",
+    "M19_UNIT142_ENTRY_0479E_MC68020.s": "public entry $0479E",
+    "M19_UNIT142_ENTRY_04B40_MC68020.s": "public entry $04B40",
+    "M19_UNIT142_ENTRY_04D4C_MC68020.s": "public entry $04D4C",
+    "M19_UNIT142_ENTRY_04F58_MC68020.s": "public entry $04F58",
 }
 
 
@@ -309,7 +369,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 13976 bytes / 16 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 17786 bytes / 22 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -364,7 +424,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 16 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 22 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

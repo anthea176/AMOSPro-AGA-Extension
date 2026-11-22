@@ -619,6 +619,20 @@ autre changement AP20.
 Les pseudo-appels AMOS Main, les marqueurs GetP et les champs de donnees
 demeurent dans le wrapper au meme offset. Lib/LAST_GOOD/ASC inchanges.
 
+### UNIT142 — 53e a 58e lots : six entrees exactes (3 810 octets)
+
+Les plages **`$04256..$044E6`, `$044EA..$0479A`,
+`$0479E..$04B3C`, `$04B40..$04D48`, `$04D4C..$04F54`
+et `$04F58..$0514C`** deviennent six modules natifs
+`M19_UNIT142_ENTRY_xxxxx_MC68020.s`, avec source prouve par les
+octets du builder P2d. Chacune possede son test d'edition a un octet,
+soit **22 mutations distinctes** limitees au groupe UNIT142.
+Aucune donnee GetP ou autre segment brut n'est requalifie en code.
+
+**TOTAL : 122 modules ASM**, dont **17 786 octets UNIT142 / 22 modules**.
+Les bibliotheques P2d et LAST_GOOD, tous les ASC et Gates B/C/D
+demeurent sans changement.
+
 ## Compilation directe (Windows)
 
 ```bat
