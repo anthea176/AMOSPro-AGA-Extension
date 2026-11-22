@@ -1,5 +1,36 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+
+## 22 novembre 2026 — Cloture d'inventaire des quatre unites natives P2d
+
+**268 modules ASM MC68020** : BOBS 80 + UNIT142 166 + UNIT153 16 + UNIT156 6.
+Les quatre groupes AP20 totalisent **131 734 octets**, dont
+**122 602 octets en instructions Motorola (93,07 %)** et **9 132
+octets de donnees, ABI, structures et suffixe R80 preserve**.
+**Aucun octet non classifie.** [Bilan transversal](M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md).
+
+- UNIT153 : **5 490 / 5 558 octets en source ASM**, 68 octets d'ABI,
+  16 mutations isolees, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45062152446).
+- UNIT156 : **2 330 / 2 508 octets en source ASM**, 80 octets de DOS/LUT/GetP
+  et **98 octets de la boucle R80 remplacee par R81** : provenance exacte,
+  contenu historique conserve, surtout pas du padding libre.
+  [Audit source et Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45062506007).
+- UNIT142 : 58 166 / 62 740 octets en ASM, 4 574 octets de donnees/ABI,
+  deja clos par [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45061168489).
+- BOBS : 60 928 octets, code, dispatcher, structures et 200 donnees
+  source-prouvees.
+
+**Compilation directe sans regenerateurs Python** depuis
+`src/native/m19_p2d/M19_P2D_LINKED_EDITABLE.s` :
+`vasmm68k_mot -Fbin -m68020 -no-opt -quiet`.
+Resultat byte-identique a P2d (136 020 octets, SHA256
+`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`).
+La bibliotheque officielle, LAST_GOOD et l'ASC sont inchanges.
+**Gate A source uniquement pour ces migrations**, aucune nouvelle Gate B/C/D.
+La suite ne doit pas transformer le reliquat R80 en code vivant
+ou reutiliser l'espace sans preuve d'accessibilite et qualification.
+
+
 ## 22 novembre 2026 — UNIT142 lots 174–202 : source MC68020 intégralement classifiée
 
 **266 modules ASM**, dont **166 UNIT142**. **58 166 / 62 740 octets

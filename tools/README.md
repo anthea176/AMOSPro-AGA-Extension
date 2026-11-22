@@ -1,5 +1,25 @@
 # Outils Python — builder actif et historique versionne
 
+
+## Migration ASM P2d — source entierement classifiee (22/11/2026)
+
+Les quatre unites natives P2d sont couvertes par **268 modules ASM
+MC68020** et un inventaire **sans octet non classifie**.
+**122 602 octets de mnemoniques sur 131 734 octets de groupes AP20
+(93,07 %)** ; 9 132 octets restants prouvables par les sources,
+dont **98 octets de suffixe d'ancienne boucle R80 (IFF/UNIT156)**
+qu'il ne faut pas reutiliser librement.
+
+Reproduire la source via `tools/build_m19_p2d_editable_asm.py`,
+ou directement par vasm sur
+`src/native/m19_p2d/M19_P2D_LINKED_EDITABLE.s`.
+Controles utiles : `m19_p2d_unit142_raw_probe.py --check`,
+`m19_p2d_unit153_source.py --check`,
+`m19_p2d_unit156_nibble.py --check`.
+[Rapport](../docs/M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md).
+Aucune modification de `dist/`, de LAST_GOOD ou des tests AMOS.
+
+
 ## Statut courant — P2d / UNIT142 MC68020 (22/11/2026)
 
 Lib officielle inchangée : `dist/AMOSPro_AGA.Lib` et

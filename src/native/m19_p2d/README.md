@@ -1,5 +1,24 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
+
+## Etat courant — quatre unites natives completement inventoriees (22/11/2026)
+
+La bibliotheque P2d n'est pas modifiee : 136 020 octets,
+SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`.
+**268 modules ASM MC68020**, ventiles BOBS 80 / UNIT142 166 /
+UNIT153 16 / UNIT156 6 ; **131 734 octets de groupes AP20**,
+dont **122 602 octets en mnemoniques (93,07 %)** et **9 132
+octets source-prouves non convertis en instructions actives**.
+**Zero octet non classifie.** [Bilan complet](../../../docs/M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md).
+
+Le **direct master** [`M19_P2D_LINKED_EDITABLE.s`](M19_P2D_LINKED_EDITABLE.s)
+se compile au MC68020 par vasm, sans regeneration Python.
+**UNIT153 Gate A PASS** (16 mutations/5 490 octets source).
+**UNIT156 :** 98 octets de suffixe de boucle R80 conserves octet pour
+octet, plus DOS/LUT/GetP ; **ne pas utiliser les 98 octets comme padding**.
+Gates B/C/D de ces migrations non executees ; dist/LAST_GOOD/ASC inchanges.
+
+
 **80 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 **BOBS actuel :** 56 582 octets d'instructions MC68020 (dont
