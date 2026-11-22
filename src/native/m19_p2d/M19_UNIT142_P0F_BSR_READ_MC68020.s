@@ -1,0 +1,6 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; UNIT142 P0f bridge BSR.W; historical M19 source targets P0e Object Read.
+; Original +$EBEE 6100F2BC, resolves +$0DEAC.
+UNIT142_P0F_READ_BSR_DELTA equ 0
+
+    bsr.w ENTRY_UNIT142_P0E_OBJECT_001A8+UNIT142_P0F_READ_BSR_DELTA

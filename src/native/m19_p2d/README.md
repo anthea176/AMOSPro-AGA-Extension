@@ -921,6 +921,20 @@ quatre edits. **231 modules ASM**, dont **131 UNIT142** :
 **7 240 octets en donnees ou octets non classifies**.
 Aucun changement de Lib, ASC ni qualification Gates B/C/D.
 
+### UNIT142 — lots 168 a 169 : P0f BSR.W restaurés (8 octets)
+
+Les deux branches auparavant conservees en donnees opaques sont des
+**BSR.W Motorola** dont les adresses cibles correspondent exactement
+aux entrees Put (`$0DD04`) et Read (`$0DEAC`) du module P0e
+restaure. La source P0f historique impose les deplacements respectifs
+`F1DE` et `F2BC`. Les modules [BSR Put](M19_UNIT142_P0F_BSR_PUT_MC68020.s) et
+[BSR Read](M19_UNIT142_P0F_BSR_READ_MC68020.s) recuperent ces 8 octets de code avec deux mutations
+isolees (+2 sur la destination), sans toucher a la Lib.
+
+Seul le pseudo-appel AMOS Main `FE11 F700 031D` (6 octets) reste brut.
+**Projection en attente Gate A : 233 modules ASM**, dont **133 UNIT142**,
+**55 508 / 62 740 octets (88,47 %)** et **7 232 octets bruts**.
+
 ## Compilation directe (Windows)
 
 ```bat

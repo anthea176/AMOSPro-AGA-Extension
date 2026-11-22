@@ -1,0 +1,6 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; UNIT142 P0f bridge BSR.W; historical M19 source targets P0e Object Put.
+; Original +$EB24 6100F1DE, resolves +$0DD04.
+UNIT142_P0F_PUT_BSR_DELTA equ 0
+
+    bsr.w ENTRY_UNIT142_P0E_OBJECT_00000+UNIT142_P0F_PUT_BSR_DELTA

@@ -1432,6 +1432,55 @@ def p0f_expected_source(whole, wrapper):
     return new, [(lo,hi,name,src) for lo,hi,name,src,*_ in result]
 
 
+def p0f_external_bsr_sources(whole,wrapper):
+    """Restore two genuine P0f BSR.W to source-verified P0e object entries.
+
+    This is MOTOROLA code; the third P0f FE11 pseudo-call stays raw.
+    Baseline displacement is calculated from verified original emitters,
+    not inferred from an arbitrary disassembly dump.
+    """
+    from m19_p0e_object_table_emit import emit_object_table
+    from m19_p0f_object_identity_emit import emit_object_identity
+
+    object_src, object_labels = emit_object_table()
+    identity_src, _ = emit_object_identity()
+    demand(len(object_src) == 2332 and len(identity_src) == 2222 and
+           object_labels["object_put_entry"] == 0 and
+           object_labels["object_read_entry"] == 0x1A8,
+           "UNIT142 P0e historical object entrypoints changed")
+    verified = (
+        (0x0E7F6+0x32E,0x0DD04+object_labels["object_put_entry"],
+         "M19_UNIT142_P0F_BSR_PUT_MC68020.s",
+         "UNIT142_P0F_PUT_BSR_DELTA","ENTRY_UNIT142_P0E_OBJECT_00000",
+         "6100F1DE","F1DE"),
+        (0x0E7F6+0x3F8,0x0DD04+object_labels["object_read_entry"],
+         "M19_UNIT142_P0F_BSR_READ_MC68020.s",
+         "UNIT142_P0F_READ_BSR_DELTA","ENTRY_UNIT142_P0E_OBJECT_001A8",
+         "6100F2BC","F2BC"),
+    )
+    result=[]
+    for pos,target,filename,symbol,label,hexbytes,disp in verified:
+        start=pos-0x0E7F6
+        demand(identity_src[start:start+4] == bytes.fromhex(hexbytes) and
+               whole[pos:pos+4] == bytes.fromhex(hexbytes) and
+               ((target-(pos+2))&0xFFFF) == int(disp,16),
+               "UNIT142 P0f BSR source target/displacement unproven")
+        kind = "Put" if "PUT" in filename else "Read"
+        body = (
+            "; AGA_NATIVE_MIN_CPU: MC68020\n"
+            f"; UNIT142 P0f bridge BSR.W; historical M19 source targets P0e Object {kind}.\n"
+            f"; Original +\${pos:05X} {hexbytes}, resolves +\${target:05X}.\n"
+            f"{symbol} equ 0\n\n"
+            f"    bsr.w {label}+{symbol}\n"
+        )
+        old = "    dc.b " + ",".join("$%02X" % q for q in bytes.fromhex(hexbytes)) + "\n"
+        demand(wrapper.count(old) == 1,
+               "UNIT142 P0f pinned raw branch not unique: " + filename)
+        wrapper=wrapper.replace(old,f'    include "{filename}"\n')
+        result.append((pos,pos+4,filename,body))
+    return wrapper,result
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -1637,6 +1686,8 @@ def expected_sources():
     modules.append(aga_bridge)
     wrapper, p0f_modules = p0f_expected_source(bytes(whole),wrapper)
     modules.extend(p0f_modules)
+    wrapper, p0f_bsr = p0f_external_bsr_sources(bytes(whole),wrapper)
+    modules.extend(p0f_bsr)
     return bytes(whole), wrapper, modules
 
 
@@ -1675,7 +1726,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 55500 bytes / 131 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 55508 bytes / 133 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1695,6 +1746,8 @@ def stage(folder, official):
     (folder / "M19_UNIT142_P0F_STAMP_BODY_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_STAMP_BODY_MC68020.s").read_bytes())
     (folder / "M19_UNIT142_P0F_BIND_CHECK_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BIND_CHECK_MC68020.s").read_bytes())
     (folder / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").read_bytes())
+    (folder / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").read_bytes())
+    (folder / "M19_UNIT142_P0F_BSR_READ_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0F_BSR_READ_MC68020.s").read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1710,7 +1763,9 @@ def edit_gate(staged, assembler):
            (staged / "M19_UNIT142_P0F_STAMP_HEAD_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_STAMP_BODY_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BIND_CHECK_MC68020.s").is_file() and
-           (staged / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").is_file(),
+           (staged / "M19_UNIT142_P0F_BIND_RETURN_MC68020.s").is_file() and
+           (staged / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").is_file() and
+           (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file(),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1781,6 +1836,15 @@ def edit_gate(staged, assembler):
                "UNIT142 P0f edit symbol ambiguous: M19_UNIT142_P0F_BIND_RETURN_MC68020.s")
         path.write_text(contents.replace(before, "UNIT142_P0F_BIND_RETURN_EDIT equ 1"),
                         encoding="ascii", newline="\n")
+        for filename,symbol in (("M19_UNIT142_P0F_BSR_PUT_MC68020.s","UNIT142_P0F_PUT_BSR_DELTA"),
+                                ("M19_UNIT142_P0F_BSR_READ_MC68020.s","UNIT142_P0F_READ_BSR_DELTA")):
+            path = folder / filename
+            content = path.read_text("ascii")
+            before = symbol + " equ 0"
+            demand(content.count(before) == 1,
+                   "UNIT142 P0f BSR symbol not unique: " + filename)
+            path.write_text(content.replace(before,symbol + " equ 2"),
+                            encoding="ascii",newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1805,12 +1869,14 @@ def edit_gate(staged, assembler):
         expected[0x0E925] = (48, 49)
         expected[0x0EB7B] = (0, 1)
         expected[0x0ECA1] = (0, 1)
-        demand(len(expected) == 131,"UNIT142 P0f edit count differs")
+        expected[0x0EB27] = (0xDE, 0xE0)
+        expected[0x0EBF1] = (0xBC, 0xBE)
+        demand(len(expected) == 133,"UNIT142 P0f branch edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 131 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 133 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
