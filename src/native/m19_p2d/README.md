@@ -1,11 +1,13 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**47 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**51 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
 | [B7 End — pont AMOS et fermeture sure](M19_B7_END_MC68020.s) | `$06EAC..$06FA6` | 250 |
+| [B7/B8 Draw/Close — relais et garde End](M19_B7_B8_DRAW_BRIDGE_MC68020.s) | `$06FA6..$071E8` | 578 |
 | [B8 S1 Bank Free — registre, Chip et 64 objets](M19_B8S1_BANK_FREE_MC68020.s) | `$076A8..$07962` | 698 |
+| [B8 NoDraw/Prestage — enregistrement End et staging banque](M19_B8_NODRAW_PRESTAGE_MC68020.s) | `$07364..$07698` | 820 |
 | [B8 End/Register — cycle de vie et callbacks](M19_B8_END_REGISTER_MC68020.s) | `$071EE..$07364` | 362 code + 12 data |
 | [P1b HotSpot — origine et clipping signes](M19_P1B_HOTSPOT_ORIGIN_MC68020.s) | `$07A14..$07AC2` | 174 |
 | [P1c Frame Dispatch — mode de priorite](M19_P1C_FRAME_DISPATCH_MC68020.s) | `$07AC2..$07AE8` | 38 |
@@ -37,6 +39,8 @@
 | [P1e Repack Copy — repertoire et pixel planes](M19_P1E_REPACK_COPY_MC68020.s) | `$088EE..$089B6` | 200 |
 | [P1e Repack Final — image vide et fermeture](M19_P1E_REPACK_FINALIZE_MC68020.s) | `$089B6..$08A6E` | 184 |
 | [P0i Routed Paint — banque privée et Blitter Safe](M19_P0I_ROUTED_PAINT_MC68020.s) | `$05CF8..$05F30` | 568 |
+| [P0j Frame Image Gate — validation images avant rendu](M19_P0J_IMAGE_GATE_MC68020.s) | `$05F30..$06254` | 804 |
+| [P0j Explicit Bank — resolution banque/Chip et Safe](M19_P0J_EXPLICIT_BANK_MC68020.s) | `$0627E..$0685C` | 1 502 |
 | [P2a Pair Check — lecture sécurisée Bob/P0f](M19_P2A_PAIR_CHECK_MC68020.s) | `$08A6E..$08BB6` | 328 |
 | [P2a Geometry — deux descripteurs et limites](M19_P2A_GEOMETRY_MC68020.s) | `$0918A..$09858` | 1 742 |
 | [P2a HotSpot — lecture et revalidation AGBO](M19_P2A_HOTSPOT_MC68020.s) | `$08E20..$0918A` | 874 |
@@ -51,7 +55,7 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **13 412** |
+| **Total de code ASM propre** | | **17 116** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -84,23 +88,35 @@ py -3 tools\m19_p2d_asm_batch.py --emit src\generated\p2d_batch_preview
 
 **CI :** chaque push reassemble P2d integralement, verifie son SHA, compare
 l'assemblage direct et realise **un seul reassemblage avec une edition distincte
-dans chaque module du lot**. L'exhaustif historique et le test groupe restent
+dans chaque module du lot actif**. L'exhaustif historique et le test groupe restent
 lancables avec `--self-test-edit`, declenches automatiquement chaque dimanche
 ou manuellement via GitHub Actions (`full_edit_tests`). Le binaire de
 `vasmm68k_mot` est mis en cache par SHA source verrouille. Tout changement
 de lib `dist/`, de `LAST_GOOD` ou des tests verrouilles est refuse par la CI
 pour une livraison de source seule.
 
-Le lot P1e courant convertit les plages `$07F54..$08306` (946 octets,
+Le premier lot P1e a converti les plages `$07F54..$08306` (946 octets,
 4 appels AMOS Main symboliques) et `$085A6..$085E8` (66 octets,
 2 appels AMOS Main symboliques). Le controle de modification porte sur
 `$07F59` et `$085E3`. Ces 1 012 octets sont du **source maintenable**
 incluant 36 octets de pseudo-appels AMOS; ils ne correspondent pas a
 1 012 octets d'instructions Motorola pures.
 
-La migration de P1e est ainsi couverte par des modules; les autres routines
-BOBS P0/B7/B8 et les unites AGA/C2P/IFF restent distinctes et partiellement
-basees sur les exports d'audit. **Gate A source ne constitue pas Gate B/C WinUAE.**
+Le deuxieme lot source-verifie traite **4 plages, 3 704 octets** dans les
+routines P0j/B7/B8 : `$05F30..$06254` (804 octets, un appel AMOS Main),
+`$0627E..$0685C` (1 502 octets, deux appels AMOS Main),
+`$06FA6..$071E8` (578 octets) et `$07364..$07698` (820 octets).
+Le controle collectif modifie un octet de chaque nouveau module dans une
+seule reconstruction AP20. Les sous-plages avec octets non classes ou donnees
+(`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,
+`$071E8..$071EE`, `$07698..$076A8`) sont sciemment laissees
+hors des nouvelles inclusions. Les mnemoniques d'audit ne constituent
+pas, seuls, une preuve de code maintenable.
+
+La migration P1e est couverte par des modules; il reste des routines
+BOBS P0/B7/B8, et les unites AGA/C2P/IFF et wrapper AP20 reposent encore
+partiellement sur les exports d'audit. **Gate A source ne constitue pas
+Gate B/C WinUAE.**
 
 ## Compilation directe (Windows)
 

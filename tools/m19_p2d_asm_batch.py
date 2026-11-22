@@ -30,6 +30,7 @@ class Region:
     edited: int
     mutation: int
     pseudo_count: int
+    owner: str = 'tools/m19_p1e_bank_edit_emit.py::emit_bank_edit'
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -42,6 +43,30 @@ REGIONS = (
            '    move.l #$00000001,d3',
            '    move.l #P1E_BATCH_COMMIT_DONE,d3',
            'P1E_BATCH_COMMIT_DONE', 1, 2, 0x85E3, 2),
+    Region('P0J_IMAGE_GATE', 'M19_P0J_IMAGE_GATE_MC68020.s',
+           0x05F30, 0x06254, 'image_frame_preflight_entry', 'img_gate_return',
+           '    move.l #$00000000,4(a2)',
+           '    move.l #P0J_IMAGE_GATE_INITIAL_RESULT,4(a2)',
+           'P0J_IMAGE_GATE_INITIAL_RESULT', 0, 1, 0x05F3F, 1,
+           'tools/m19_p0j_frame_image_preflight_emit.py::emit_image_preflight'),
+    Region('P0J_EXPLICIT_BANK', 'M19_P0J_EXPLICIT_BANK_MC68020.s',
+           0x0627E, 0x0685C, 'explicit_bank_lookup_entry', 'explicit_safe_front_zero',
+           '    move.l #$00000000,36(a2)',
+           '    move.l #P0J_BANK_STAGE_CLEAR_RESULT,36(a2)',
+           'P0J_BANK_STAGE_CLEAR_RESULT', 0, 1, 0x06293, 2,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+    Region('B7_B8_DRAW_BRIDGE', 'M19_B7_B8_DRAW_BRIDGE_MC68020.s',
+           0x06FA6, 0x071E8, 'b7_multiframe_draw_entry', 'b8_b7_close_return',
+           '    move.l #$00000001,(a0)',
+           '    move.l #B7_B8_DRAW_FAIL_FLAG,(a0)',
+           'B7_B8_DRAW_FAIL_FLAG', 1, 2, 0x070C7, 0,
+           'tools/m19_b8_b7_hook_emit.py::emit_b8_b7_hooks'),
+    Region('B8_NODRAW_PRESTAGE', 'M19_B8_NODRAW_PRESTAGE_MC68020.s',
+           0x07364, 0x07698, 'b8_b7_arm_end_nodraw_entry', 'b8s1_bank_return',
+           '    move.l #$00000000,(a2)',
+           '    move.l #B8_PRESTAGE_INITIAL_RESULT,(a2)',
+           'B8_PRESTAGE_INITIAL_RESULT', 0, 1, 0x07373, 0,
+           'tools/m19_b8_s1_bank_prestage_emit.py::emit_b8_s1_bank_prestage'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -115,7 +140,7 @@ def extract(text, spec, bytes_expected):
 
 def render(spec, body):
     return ('; AGA_NATIVE_MIN_CPU: MC68020\n'
-            '; Historical owner: tools/m19_p1e_bank_edit_emit.py::emit_bank_edit\n'
+            '; Historical owner: %s\n' % spec.owner
             '; Audited bytes checked against the official M19 P2d library.\n'
             '; BOBS+$%05X..$%05X (%d bytes).\n' %
             (spec.start,spec.stop,spec.stop-spec.start) +
@@ -168,7 +193,7 @@ def check_sources(audit,evidence,compare_files=True):
         if compare_files:
             require((NATIVE/spec.file).read_text('ascii') == source,
                     'authored module differs from emitter proof: '+spec.file)
-        print('P1E_SOURCE_PROVEN %s %d bytes' %
+        print('BOBS_SOURCE_PROVEN %s %d bytes' %
               (spec.name,spec.stop-spec.start))
 
 def main():
@@ -204,7 +229,7 @@ def main():
                 target.write_text(
                     render(spec,extract(audit,spec,evidence[spec.name])),
                     encoding='ascii',newline='\n')
-        print('P1E_BATCH_STATIC_PASS')
+        print('BOBS_BATCH_STATIC_PASS')
         return 0
     except (BatchError,ValueError,OSError) as error:
         print('[ERROR] P1e batch: '+str(error))
