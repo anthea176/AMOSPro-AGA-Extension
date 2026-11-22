@@ -18,6 +18,8 @@ WRAPPER = ROOT / "src/native/m19_p2d/M19_P2D_UNIT153_EDITABLE.s"
 MODULE = ROOT / "src/native/m19_p2d/M19_UNIT153_PUBLIC_PREFLIGHT_MC68020.s"
 MODULE2 = ROOT / "src/native/m19_p2d/M19_UNIT153_ENTRY_GUARD_MC68020.s"
 MODULE3 = ROOT / "src/native/m19_p2d/M19_UNIT153_POINTER_VALIDATE_MC68020.s"
+MODULE4 = ROOT / "src/native/m19_p2d/M19_UNIT153_SECOND_GET_MC68020.s"
+MODULE5 = ROOT / "src/native/m19_p2d/M19_UNIT153_SHORT_SERVICE_MC68020.s"
 GROUP_SIZE = 0x15B6
 GROUP_SHA = "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700"
 START = "ENTRY_UNIT153_00372:\n"
@@ -44,6 +46,18 @@ HEADER3 = (
     "; UNIT153+$0010E..$00362 (596 code bytes); C2P data preserved.\n"
     "UNIT153_MIN_POINTER_BYTES equ 24\n\n"
 )
+HEADER4 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-verified UNIT153 second pointer/image path, pinned P2d.\n"
+    "; UNIT153+$00536..$00946 (1040 code bytes), GetP marker preserved.\n"
+    "UNIT153_SECOND_MIN_POINTER_BYTES equ 24\n\n"
+)
+HEADER5 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-verified UNIT153 short service, pinned P2d.\n"
+    "; UNIT153+$0094A..$009FE (180 code bytes), GetP marker preserved.\n"
+    "UNIT153_SHORT_INITIAL_D3 equ 0\n\n"
+)
 EXTRA_SPANS = (
     (
         MODULE2,
@@ -60,6 +74,22 @@ EXTRA_SPANS = (
         0x10E, 0x362, 150, 4, HEADER3,
         "    cmpi.l #$00000018,d5",
         "    cmpi.l #UNIT153_MIN_POINTER_BYTES,d5",
+    ),
+    (
+        MODULE4,
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00530: FE11F700031D\n",
+        "    dc.b $47,$65,$74,$50  ; +$00946: 47657450\n",
+        0x536, 0x946, 265, 5, HEADER4,
+        "    cmpi.l #$00000018,d5",
+        "    cmpi.l #UNIT153_SECOND_MIN_POINTER_BYTES,d5",
+    ),
+    (
+        MODULE5,
+        "ENTRY_UNIT153_0094A:\n",
+        "    dc.b $47,$65,$74,$50  ; +$009FE: 47657450\n",
+        0x94A, 0x9FE, 50, 2, HEADER5,
+        "    move.l #$00000000,d3",
+        "    move.l #UNIT153_SHORT_INITIAL_D3,d3",
     ),
 )
 
@@ -171,7 +201,7 @@ def verify(official):
                "UNIT153 extra source-built bytes differ: "+path.name)
         demand(path.read_text("ascii") == authored,
                "UNIT153 extra authored module differs: "+path.name)
-    print("UNIT153_SOURCE_PROVEN: 1272 bytes / 3 modules, group", group)
+    print("UNIT153_SOURCE_PROVEN: 2492 bytes / 5 modules, group", group)
     return group
 
 
@@ -179,7 +209,7 @@ def stage(folder, official):
     verify(official)
     (folder / "M19_P2D_UNIT153_MC68020.s").write_bytes(WRAPPER.read_bytes())
     (folder / MODULE.name).write_bytes(MODULE.read_bytes())
-    for path in (MODULE2, MODULE3):
+    for path in (MODULE2, MODULE3, MODULE4, MODULE5):
         (folder / path.name).write_bytes(path.read_bytes())
 
 
@@ -188,7 +218,7 @@ def edit_gate(staged, assembler):
     group = verify(reference)
     demand((staged / "M19_P2D_UNIT153_MC68020.s").is_file() and
            all((staged / module.name).is_file()
-               for module in (MODULE, MODULE2, MODULE3)) and
+               for module in (MODULE, MODULE2, MODULE3, MODULE4, MODULE5)) and
            (staged / "M19_P2D_AP20_SOURCE.s").is_file(),
            "UNIT153 staging incomplete")
     with TemporaryDirectory(prefix="unit153_source_edit_") as tmp:
@@ -200,6 +230,10 @@ def edit_gate(staged, assembler):
             (MODULE2, "UNIT153_ENTRY_ZERO equ 0", "UNIT153_ENTRY_ZERO equ 1"),
             (MODULE3, "UNIT153_MIN_POINTER_BYTES equ 24",
              "UNIT153_MIN_POINTER_BYTES equ 25"),
+            (MODULE4, "UNIT153_SECOND_MIN_POINTER_BYTES equ 24",
+             "UNIT153_SECOND_MIN_POINTER_BYTES equ 25"),
+            (MODULE5, "UNIT153_SHORT_INITIAL_D3 equ 0",
+             "UNIT153_SHORT_INITIAL_D3 equ 1"),
         ):
             source = (folder / module.name).read_text("ascii")
             demand(source.count(old) == 1,
@@ -221,11 +255,12 @@ def edit_gate(staged, assembler):
                    if i != group), "UNIT153 edit changed unrelated AP20")
         lhs, rhs = original[group], changed[group]
         diffs = [i for i,(x,y) in enumerate(zip(lhs,rhs)) if x != y]
-        expected = {0x33: (0, 1), 0x115: (24, 25), 0x381: (0, 1)}
+        expected = {0x33: (0, 1), 0x115: (24, 25), 0x381: (0, 1),
+                    0x53D: (24, 25), 0x959: (0, 1)}
         demand(diffs == sorted(expected) and
                all((lhs[i], rhs[i]) == pair for i, pair in expected.items()),
                "UNIT153 grouped one-byte mutations drift")
-    print("UNIT153_EDIT_TEST_PASS: 3 bytes at $00033/$00115/$00381 only")
+    print("UNIT153_EDIT_TEST_PASS: 5 exact one-byte mutations in UNIT153 only")
 
 
 def main():

@@ -432,6 +432,27 @@ dont 80 BOBS et cinq UNIT156. Reconstruction et controle vasm MC68020
 par CI Gate A ; aucune Gate B/C/D nouvelle par cette migration.
 Les deux bibliotheques de `dist/` et les ASC restent proteges.
 
+### UNIT153 — 25e lot : second chemin Get (1 040 octets)
+
+Module [M19_UNIT153_SECOND_GET_MC68020.s](M19_UNIT153_SECOND_GET_MC68020.s),
+`UNIT153+$00536..$00946` : 265 instructions et cinq labels,
+sans donnees intercalees. Le seuil 24 devient la constante
+`UNIT153_SECOND_MIN_POINTER_BYTES`; le marqueur GetP reste identique.
+
+### UNIT153 — 26e lot : service court (180 octets)
+
+Module [M19_UNIT153_SHORT_SERVICE_MC68020.s](M19_UNIT153_SHORT_SERVICE_MC68020.s),
+`UNIT153+$0094A..$009FE` : 50 instructions et deux labels.
+L'initialisation D3 devient `UNIT153_SHORT_INITIAL_D3`. Les marqueurs
+GetP et toutes les autres plages sont conserves. La Gate A doit
+detecter **cinq mutations d'un octet** aux positions `$00033`,
+`$00115`, `$00381`, `$0053D`, `$00959`, sans changer
+tokens, titre, structure AP20 ni autres groupes natifs.
+
+**UNIT153 : 2 492 octets / 5 modules ; total : 90 modules ASM.**
+Aucun changement de la Lib P2d, de `LAST_GOOD`, de l'ASC actif,
+ni transfert de preuve WinUAE B/C par la seule migration source.
+
 ## Compilation directe (Windows)
 
 ```bat
