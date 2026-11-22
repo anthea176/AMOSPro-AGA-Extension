@@ -95,6 +95,9 @@ jobs:
       - name: Preview source-exact M18 CBlock core inside UNIT142
         run: |
           python -B tools/m19_p2d_unit142_cblock_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
+      - name: Preview source-exact P0e object code and tail provenance
+        run: |
+          python -B tools/m19_p2d_unit142_tail_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
       - name: Audit remaining raw UNIT142 bytes against historical emitters
         run: |
           python -B tools/m19_p2d_unit142_raw_probe.py --check
