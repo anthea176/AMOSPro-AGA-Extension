@@ -105,6 +105,10 @@ def probe_following_close(vasm: Path, emit_base64: bool = False) -> None:
         ("LEGACY_CLOSE_TARGET", 0x007F6, 0x00A62,
          [(0,4),(1,0x009DC-0x007F6)]),
         ("LEGACY_CLOSE_ISLAND", 0x00088, 0x000C0, [(0,0)]),
+        ("LEGACY_NEXT_02364", 0x02364, 0x02584, [(0,0)]),
+        ("LEGACY_HELPER_052CA", 0x052CA, 0x0530E, [(0,0)]),
+        ("LEGACY_STUB_002A4", 0x002A4, 0x002B2, [(0,0)]),
+        ("LEGACY_STUB_002B4", 0x002B4, 0x002C2, [(0,0)]),
     )
     for name, lo, hi, entries in candidates:
         source = parts[82][lo:hi]
