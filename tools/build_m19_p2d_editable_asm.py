@@ -34,6 +34,7 @@ from m19_p2a_pair_chip_resolve_emit import emit_p2a_pair_chip_resolve
 from m19_p2a_pair_hotspot020_emit import emit_p2a_pair_hotspot020
 from m19_p2a_pair_geometry020_emit import emit_p2a_pair_geometry020
 from m19_p2a_pair_checked_read_emit import emit_p2a_pair_checked_read
+from m19_p0i_multibank_draw_emit import emit_multibank_paint
 
 AUDIT_DIR = ROOT / 'src' / 'asm_migration' / 'm19_p2d'
 EDITABLE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2D_CONTROLS_MC68020.s'
@@ -49,6 +50,7 @@ CHIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_CHIP_RESOLVE_MC68020.
 HOTSPOT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_HOTSPOT_MC68020.s'
 GEOMETRY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_GEOMETRY_MC68020.s'
 PAIR_CHECK_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2A_PAIR_CHECK_MC68020.s'
+P0I_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P0I_ROUTED_PAINT_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -92,6 +94,9 @@ GEOMETRY_END = 0x9858
 PAIR_CHECK_NAME = 'M19_P2A_PAIR_CHECK_MC68020.s'
 PAIR_CHECK_START = 0x8A6E
 PAIR_CHECK_END = 0x8BB6
+P0I_NAME = 'M19_P0I_ROUTED_PAINT_MC68020.s'
+P0I_START = 0x5CF8
+P0I_END = 0x5F30
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -742,6 +747,56 @@ def replace_raw_p2a_pair_check(text: str) -> str:
             '"\n' + text[end:])
 
 
+@lru_cache(maxsize=1)
+def prove_p0i_paint_provenance() -> tuple[int, int, int, bytes]:
+    """Verify old P0i bank route directly against original MC68020 emitter."""
+    original, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    routed, route_labels = emit_multibank_paint()
+    _, parts, _ = unpack_ap20(original)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['routed_paint_one_entry']
+    end = base + labels['image_frame_preflight_entry']
+    moveq = end - 4
+    require((begin, end, moveq) ==
+            (P0I_START, P0I_END, 0x5F2C),
+            'P0i routed painter source positions differ from final P2d')
+    fragment = routed[route_labels['routed_paint_one_entry']:]
+    require(len(fragment) == end-begin and
+            native[labels['routed_paint_one_entry']:
+                   labels['image_frame_preflight_entry']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[-4:] == b'\x74\x00\x4e\x75',
+            'P0i router is not source-identical to final P2d')
+    return begin, end, moveq, fragment
+
+
+def replace_raw_p0i_paint(text: str) -> str:
+    """Source-backed conversion of 568 bytes of private painter/route code."""
+    first_label = 'routed_paint_one_entry:\n'
+    end_label = 'L_BOBS_05F30:\nimage_frame_preflight_entry:\n'
+    first = text.find(first_label)
+    last = text.find(end_label, first)
+    require(first >= 0 and last > first and
+            'routed_paint_all_entry:' in text[first:last],
+            'P0i router source evidence missing')
+    annotations = re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                              text[first:last])
+    pos, assembled = P0I_START, bytearray()
+    for where, code in annotations:
+        require(int(where,16) == pos,
+                f'P0i source audit offsets not contiguous: {where}')
+        raw = bytes.fromhex(code)
+        assembled.extend(raw)
+        pos += len(raw)
+    require(pos == P0I_END and
+            bytes(assembled) == prove_p0i_paint_provenance()[3],
+            'P0i painter audit bytes differ from authoritative emitter')
+    return (text[:first] + '    include "' + P0I_NAME +
+            '"\n' + text[last:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -804,7 +859,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    chip_text: str | None = None,
                    hotspot_text: str | None = None,
                    geometry_text: str | None = None,
-                   pair_check_text: str | None = None) -> None:
+                   pair_check_text: str | None = None,
+                   p0i_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -821,6 +877,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(HOTSPOT_FILE.is_file(), f'missing authored module: {HOTSPOT_FILE}')
     require(GEOMETRY_FILE.is_file(), f'missing authored module: {GEOMETRY_FILE}')
     require(PAIR_CHECK_FILE.is_file(), f'missing authored module: {PAIR_CHECK_FILE}')
+    require(P0I_FILE.is_file(), f'missing authored module: {P0I_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -831,6 +888,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_p2a_chip(text)
     text = replace_raw_p2a_pair_check(text)
+    text = replace_raw_p0i_paint(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1031,6 +1089,21 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P2a checked-read source incomplete or raw opcodes remain')
     (folder / PAIR_CHECK_NAME).write_text(pair_check_source,
                                           encoding='ascii', newline='\n')
+    routed_source = (p0i_text if p0i_text is not None
+                     else P0I_FILE.read_text('ascii'))
+    for marker in ('routed_paint_one_entry:', 'routed_paint_all_entry:',
+                   'route_return:', 'route_restore:', 'route_unwind:'):
+        require(routed_source.count(marker) == 1,
+                'P0i source module missing '+marker)
+    exception = ('    dc.w $FE11,$F700,$031D'
+                 '   ; AMOS Main: Bnk.GetAdr (index 797)')
+    require(routed_source.count(exception) == 1,
+            'P0i AMOS Main Bnk.GetAdr source-backed pseudo opcode missing')
+    checked = routed_source.replace(exception,'')
+    require(not re.search(r'(?im)^\s*dc\.[bwll]\b', checked),
+            'P0i routed painter contains unclassified raw opcode')
+    (folder / P0I_NAME).write_text(routed_source,
+                                  encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1110,6 +1183,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     hotspot_start, hotspot_end, _, _ = prove_p2a_hotspot_provenance()
     geometry_start, geometry_end, _, _ = prove_p2a_geometry_provenance()
     pair_check_start, pair_check_end, _, _ = prove_p2a_pair_check_provenance()
+    p0i_start, p0i_end, _, _ = prove_p0i_paint_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1122,7 +1196,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                 (chip_start <= i < chip_end) or
                 (hotspot_start <= i < hotspot_end) or
                 (geometry_start <= i < geometry_end) or
-                (pair_check_start <= i < pair_check_end) for i in differences),
+                (pair_check_start <= i < pair_check_end) or
+                (p0i_start <= i < p0i_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1146,7 +1221,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           chip_text: str | None = None,
           hotspot_text: str | None = None,
           geometry_text: str | None = None,
-          pair_check_text: str | None = None) -> tuple[bytes, list[int]]:
+          pair_check_text: str | None = None,
+          p0i_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1156,7 +1232,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                    query_text=query_text, kernel_text=kernel_text,
                    chip_text=chip_text, hotspot_text=hotspot_text,
                    geometry_text=geometry_text,
-                   pair_check_text=pair_check_text)
+                   pair_check_text=pair_check_text,
+                   p0i_text=p0i_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -1408,6 +1485,24 @@ def test_editability(assembler: Path) -> None:
                 'P2a checked pair MOVEQ edit not assembled')
         require(pair_start <= pair_moveq < pair_end,
                 'P2a pair edit escaped owned source')
+        p0i_start, p0i_end, route_moveq, _ = prove_p0i_paint_provenance()
+        routed_source = P0I_FILE.read_text('ascii')
+        needle = '    moveq #0,d2\n    rts'
+        require(routed_source.count(needle) == 2,
+                'P0i two-return module does not have expected MOVEQs')
+        # Edit only the final all-objects return, not the one-object route.
+        first, last = routed_source.rsplit(needle, 1)
+        edited_source = first + '    moveq #1,d2\n    rts' + last
+        edited_route, route_diffs = build(
+            assembler, root/'modified_p0i_route', allow_edited=True,
+            p0i_text=edited_source)
+        require(route_diffs == [route_moveq+1],
+                f'P0i edit modified {route_diffs}, expected {[route_moveq+1]}')
+        require(unpack_ap20(edited_route)[1][group]
+                [route_moveq:route_moveq+2] == b'\x74\x01',
+                'P0i route edited MOVEQ not assembled')
+        require(p0i_start <= route_moveq < p0i_end,
+                'P0i source modification escaped local module')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -1422,6 +1517,7 @@ def test_editability(assembler: Path) -> None:
     print('P2A_HOTSPOT_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_GEOMETRY_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('P2A_PAIR_CHECK_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
+    print('P0I_ROUTED_PAINT_EDITABILITY_TEST PASS: MOVEQ #0,D2 -> #1,D2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
