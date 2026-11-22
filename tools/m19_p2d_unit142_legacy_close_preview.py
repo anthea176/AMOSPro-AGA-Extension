@@ -85,9 +85,77 @@ def probe(vasm: Path, emit_base64: bool = False) -> None:
         print("UNIT142_LEGACY_CLOSE_ASM_B64_END")
 
 
+
+def probe_following_close(vasm: Path, emit_base64: bool = False) -> None:
+    """Audit adjacent R83 Close path and unreachable-looking 56-byte island.
+
+    This is not a code migration. Trace from confirmed entry points only.
+    Vasm exactness does not prove an execution path, memory ownership, or ABI.
+    """
+    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
+    _tokens, groups, _title = unpack_ap20(official)
+    assert len(groups[142]) == 62740 and sha256(groups[142]).hexdigest() == UNIT_SHA
+    old, meta = build_r83()
+    assert meta["sha256"] == R83_SHA and sha256(old).hexdigest() == R83_SHA
+    _tokens, parts, _title = unpack_ap20(old)
+    assert len(parts[82]) == 52974
+
+    candidates = (
+        ("LEGACY_CLOSE_TARGET", 0x007F6, 0x00A62,
+         [(0,4),(1,0x009DC-0x007F6)]),
+        ("LEGACY_CLOSE_ISLAND", 0x00088, 0x000C0, [(0,0)]),
+    )
+    for name, lo, hi, entries in candidates:
+        source = parts[82][lo:hi]
+        candidate = groups[142][lo:hi]
+        assert len(source) == len(candidate) == hi-lo
+        if candidate != source:
+            print("UNIT142_R83_AUDIT_ONLY_SOURCE_DIFFERS", name,
+                  f"{lo:05X}..{hi:05X}", "no migration")
+            continue
+        print("UNIT142_R83_AUDIT_ONLY_SOURCE_EXACT_PASS", name,
+              len(source), sha256(source).hexdigest())
+        # First four bytes of the adjacent block are the GetP marker.
+        if name == "LEGACY_CLOSE_TARGET":
+            assert candidate[:4] == b"GetP"
+            assert candidate[4:8] == bytes.fromhex("48E7FFFE")
+            # $00062: BRA.W $009DC, independently R83 source-pinned.
+            assert parts[82][0x00062:0x00066] == bytes.fromhex("60000978")
+            assert 0x00062 + 2 + 0x0978 == 0x009DC
+        preview, report = native_unit_source(name, candidate, entries)
+        assert report["bytes"] == hi-lo
+        assert report["mnemonic_bytes"] + report["raw_dc_bytes"] == hi-lo
+        print("UNIT142_R83_AUDIT_ONLY_PREVIEW", name,
+              report["mnemonic_bytes"], "candidate code bytes;",
+              report["raw_dc_bytes"], "raw/data bytes",
+              "undecoded entries", report["undecoded_public_entry_offsets"])
+        text = ("; AGA_NATIVE_MIN_CPU: MC68020\n"
+                "; AGA_NATIVE_PURPOSE: AUDIT_ONLY\n" + preview)
+        with TemporaryDirectory(prefix="unit142_r83_adjacent_") as tmp:
+            folder = Path(tmp)
+            asm = folder / (name + ".s")
+            output = folder / (name + ".bin")
+            asm.write_text(text, encoding="ascii", newline="\n")
+            command = [str(vasm.resolve()), "-Fbin", "-m68020",
+                       "-no-opt", "-quiet", "-o", str(output), asm.name]
+            run = subprocess.run(command,cwd=folder,text=True,
+                                 capture_output=True,check=False)
+            if run.returncode or not output.is_file() or output.read_bytes() != candidate:
+                print("UNIT142_R83_AUDIT_ONLY_VASM_UNPROVEN", name,
+                      run.stderr[:650], "no migration")
+                continue
+        print("UNIT142_R83_AUDIT_ONLY_VASM_EXACT_PASS", name, hi-lo)
+        if emit_base64:
+            print("UNIT142_R83_" + name + "_ASM_B64_BEGIN")
+            print(base64.b64encode(text.encode("ascii")).decode("ascii"))
+            print("UNIT142_R83_" + name + "_ASM_B64_END")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--vasm",required=True,type=Path)
     parser.add_argument("--emit-base64",action="store_true")
     args=parser.parse_args()
     probe(args.vasm,args.emit_base64)
+    probe_following_close(args.vasm,args.emit_base64)
