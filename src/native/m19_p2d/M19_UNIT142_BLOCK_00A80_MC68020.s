@@ -1,6 +1,6 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; UNIT142 clean source-backed region against pinned P2d emitter.
-; UNIT142+$00A80..$00B9E, 286 instruction bytes.
+; UNIT142 source-verified clean block $00A80 source-verified against pinned P2d emitter.
+; UNIT142+$00A80..$00B9E, 286 instructions/data bytes.
 UNIT142_BLOCK_00A80_EDIT equ 0
 
 ENTRY_UNIT142_00A80:
