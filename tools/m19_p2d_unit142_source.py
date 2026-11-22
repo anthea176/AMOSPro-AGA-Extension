@@ -1706,7 +1706,7 @@ def edit_gate(staged, assembler):
            all((staged / ("M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8))).is_file()
                for first, _last in CBLOCK_SPANS) and
            (staged / "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s").is_file() and
-           (staged / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s").is_file()
+           (staged / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_STAMP_HEAD_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_STAMP_BODY_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BIND_CHECK_MC68020.s").is_file() and
