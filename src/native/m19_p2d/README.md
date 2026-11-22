@@ -396,6 +396,19 @@ Projet : **85 modules ASM** au total. Il reste le dispatcher,
 les donnees et l'ilot `$007EE..$00850` encore brut.
 Aucune modification des deux Lib officielles, ni des ASC.
 
+### UNIT153 — 22e lot : premier preflight public (446 octets)
+
+La plage `UNIT153+$00372..$00530` (121 instructions et deux labels)
+devient le module source [M19_UNIT153_PUBLIC_PREFLIGHT_MC68020.s](M19_UNIT153_PUBLIC_PREFLIGHT_MC68020.s).
+L'appel AMOS Main a `$00530` (`FE11F700031D`) et le dispatcher de
+34 octets sont preserves dans le wrapper/audit non modifie.
+Le [controle UNIT153](../../tools/m19_p2d_unit153_source.py) exige la
+reconstruction P2d officielle, l'unite de **5 558 octets** SHA256
+`6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700`,
+l'identite directe vasm MC68020 et une mutation d'un octet en `$00381`.
+Projet : **86 modules ASM** (80 BOBS, 5 UNIT156, 1 UNIT153).
+Aucune bibliotheque officielle et aucun ASC modifies.
+
 ## Compilation directe (Windows)
 
 ```bat

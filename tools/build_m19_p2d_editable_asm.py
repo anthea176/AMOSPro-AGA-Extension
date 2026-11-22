@@ -2471,6 +2471,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     # Source-proven UNIT156 code, retain the rest as audited legacy bytes.
     from m19_p2d_unit156_nibble import stage as stage_unit156_nibble
     stage_unit156_nibble(folder, prove_source_provenance()[0])
+    from m19_p2d_unit153_source import stage as stage_unit153
+    stage_unit153(folder, prove_source_provenance()[0])
     text = (folder / BOBS_FILE).read_text(encoding='ascii')
     text = replace_raw_p2a_chip(text)
     text = replace_raw_p2a_pair_check(text)
