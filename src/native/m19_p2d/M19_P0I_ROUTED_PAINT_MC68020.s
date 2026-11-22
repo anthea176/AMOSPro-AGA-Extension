@@ -64,7 +64,7 @@ routed_paint_one_entry:
     jsr -534(a6)
     tst.l d0
     beq.w route_return
-    move.l $01C8(a5),d0
+    move.l $05EA(a5),d0  ; Cur_Banks_A5, AMOS source +Equ.s
     move.l d0,52(a2)
     tst.l d0
     beq.w route_return
