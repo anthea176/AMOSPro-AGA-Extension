@@ -152,6 +152,21 @@ REGIONS = (
            'P2D_PUBLIC_MODE_THREE', 3, 4, 0x0E701, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
            end_marker='ENTRY_BOBS_0EDD0:'),
+
+    Region('P0_CHECKED_REGISTRY', 'M19_P0_CHECKED_REGISTRY_MC68020.s',
+           0x03792, 0x046CC, '', '',
+           '    move.l #$00000000,d3',
+           '    move.l #P0_REGISTRY_INITIAL_STATUS,d3',
+           'P0_REGISTRY_INITIAL_STATUS', 0, 1, 0x037B3, 2,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+
+    Region('P1B_HOTSPOT_JOIN', 'M19_P1B_HOTSPOT_JOIN_MC68020.s',
+           0x07962, 0x079F2, '', '',
+           '    move.l #$00000000,d5',
+           '    move.l #P1B_JOIN_START_ZERO,d5',
+           'P1B_JOIN_START_ZERO', 0, 1, 0x0798B, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='p2b_paint_continue:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
