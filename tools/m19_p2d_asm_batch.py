@@ -31,6 +31,7 @@ class Region:
     mutation: int
     pseudo_count: int
     owner: str = 'tools/m19_p1e_bank_edit_emit.py::emit_bank_edit'
+    end_marker: str | None = None
 
 REGIONS = (
     Region('P1E_BOOT', 'M19_P1E_EDIT_BOOTSTRAP_MC68020.s',
@@ -85,6 +86,20 @@ REGIONS = (
            '    move.l #B7_GUARD_DIRTY_ON_CONFLICT,(a0)',
            'B7_GUARD_DIRTY_ON_CONFLICT', 1, 2, 0x06E97, 0,
            'tools/m19_p0j_end_lifecycle_emit.py::emit_end_lifecycle'),
+
+    Region('P0_PRE_CLOSE', 'M19_P0_SCREEN_PRECLOSE_MC68020.s',
+           0x046D4, 0x048FA, 'screen_preclose_entry', 'program_end_bridge_entry',
+           '    move.l #$00000000,8(a2)',
+           '    move.l #P0_PRE_CLOSE_STATE_ZERO,8(a2)',
+           'P0_PRE_CLOSE_STATE_ZERO', 0, 1, 0x046F1, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+    Region('P0_BANK_IMAGE_RESOLVE', 'M19_P0_BANK_IMAGE_RESOLVE_MC68020.s',
+           0x049A8, 0x05A5C, 'bank_image_resolve_entry', 'relay_put_entry',
+           '    move.l #$00000000,108(a2)',
+           '    move.l #P0_IMAGE_RESOLVE_STAGE_ZERO,108(a2)',
+           'P0_IMAGE_RESOLVE_STAGE_ZERO', 0, 1, 0x049C1, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           end_marker='relay_put_entry:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
@@ -122,7 +137,8 @@ def prove_regions(native, labels, group):
 
 def bounds(spec):
     return ('L_BOBS_%05X:\n' % spec.start,
-            'L_BOBS_%05X:\n' % spec.stop)
+            (spec.end_marker + '\n') if spec.end_marker is not None
+            else ('L_BOBS_%05X:\n' % spec.stop))
 
 def extract(text, spec, bytes_expected):
     first,last = bounds(spec)
