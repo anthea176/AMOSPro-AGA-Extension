@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **22/11/2026 — Sprite S0d : Gates B et C PASS sur WinUAE, rendu confirme** ([Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT), [Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT)). Trois cycles, 108 mouvements, curseur et Copper fonctionnels ; DMA materiel et Gate D non qualifies. [Contrat S1 propose, NON approuve / NON implemente](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). P2d et `LAST_GOOD` proteges.
+> **22/11/2026 — Sprite S0d : Gates B et C PASS sur WinUAE, rendu confirme** ([Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT), [Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT)). Trois cycles, 108 mouvements, curseur et Copper fonctionnels ; DMA materiel et Gate D non qualifies. [S1 : IFF indexé CMAP RGB24 capturé sur écran, sans ABK ; commandes non implémentées](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). P2d et `LAST_GOOD` proteges.
 
 > Les jalons anciens et les protocoles detailles restent dans [NEXT_SESSION.md](NEXT_SESSION.md) et [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) ; la roadmap conserve seulement l'etat actif.
 

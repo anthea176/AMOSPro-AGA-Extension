@@ -1,5 +1,7 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+> **Décision S1 22/11/2026 :** capturer directement les Sprites depuis une **planche IFF/ILBM indexée à palette CMAP RGB24 chargée sur l'écran AGA**. Plus de banque Sprite `.abk` ni de Work 64 octets pour l'utilisateur. S1 16px/3 couleurs opaques ; S2 32/64px et 15 couleurs avec deux canaux attachés. [Contrat S1 révisé](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). Pas encore de nouvelles commandes ni validation du détachement DMA.
+
 > **Etat courant au 22/11/2026 :** S0a/b/c ont des preuves Runtime, **S0d est valide Gates B (Runtime) et C (vrai AMOS Compiler)**, animations F et raster confirmes visuellement en deux modes. [Journal Runtime](evidence/M19_S0D_ROB_RUNTIME_2026-11-22.TXT) et [journal Compiler](evidence/M19_S0D_ROB_COMPILED_2026-11-22.TXT). **Aucune validation de surete DMA materielle generale, pas de Gate D.** [Premier contrat de commandes S1 : PROPOSITION A APPROUVER](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) ; noms, signature, format banque, palette et cleanup sont encore soumis a validation. Aucun token, code natif ou binaire S1 livre.
 
 
