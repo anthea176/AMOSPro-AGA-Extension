@@ -8371,48 +8371,12 @@ L_BOBS_07C98:
 ENTRY_BOBS_07D7E:
     include "M19_P1D_LIMIT_MC68020.s"
 L_BOBS_07DFE:
-p1d_scoped_paint:
-    move.l a0,-(a7)                                    ; +$07DFE: 2F08
-    lea L_BOBS_07E1C(pc),a0                            ; +$07E00: 41FA001A
-    move.l (a2),(a0)                                   ; +$07E04: 2092
-    movea.l (a7)+,a0                                   ; +$07E06: 205F
-    bsr.w L_BOBS_06708                                 ; +$07E08: 6100E8FE
-    move.l a0,-(a7)                                    ; +$07E0C: 2F08
-    lea L_BOBS_07E1C(pc),a0                            ; +$07E0E: 41FA000C
-    move.l #$00000000,(a0)                             ; +$07E12: 20BC00000000
-    movea.l (a7)+,a0                                   ; +$07E18: 205F
-    rts                                                ; +$07E1A: 4E75
+    include "M19_P1D_SCOPED_PAINT_MC68020.s"
 L_BOBS_07E1C:
 p1d_drawing_id:
     dc.b $00,$00,$00,$00  ; +$07E1C: 00000000
 L_BOBS_07E20:
-p1d_clip_painter:
-    lea L_BOBS_07E1C(pc),a0                            ; +$07E20: 41FAFFFA
-    tst.l (a0)                                         ; +$07E24: 4A90
-    beq.w L_BOBS_07E62                                 ; +$07E26: 6700003A
-    bsr.w L_BOBS_07AE8                                 ; +$07E2A: 6100FCBC
-    move.l a0,d0                                       ; +$07E2E: 2008
-    beq.w L_BOBS_07E62                                 ; +$07E30: 67000030
-    adda.l #$00000008,a0                               ; +$07E34: D1FC00000008
-    movea.l a0,a1                                      ; +$07E3A: 2248
-    lea L_BOBS_07E1C(pc),a0                            ; +$07E3C: 41FAFFDE
-    move.l (a0),d0                                     ; +$07E40: 2010
-    lsl.l #4,d0                                        ; +$07E42: E988
-    movea.l a1,a0                                      ; +$07E44: 2049
-    adda.l d0,a0                                       ; +$07E46: D1C0
-    move.l a0,-(a7)                                    ; +$07E48: 2F08
-    movea.l a1,a0                                      ; +$07E4A: 2049
-    bsr.w L_BOBS_07E6A                                 ; +$07E4C: 6100001C
-    movea.l (a7)+,a0                                   ; +$07E50: 205F
-    tst.l d0                                           ; +$07E52: 4A80
-    beq.w L_BOBS_058A6                                 ; +$07E54: 6700DA50
-    bsr.w L_BOBS_07E6A                                 ; +$07E58: 61000010
-    tst.l d0                                           ; +$07E5C: 4A80
-    beq.w L_BOBS_058A6                                 ; +$07E5E: 6700DA46
-L_BOBS_07E62:
-p1d_continue:
-    move.l 216(a4),d0                                  ; +$07E62: 202C00D8
-    bra.w L_BOBS_05330                                 ; +$07E66: 6000D4C8
+    include "M19_P1D_CLIP_BRIDGE_MC68020.s"
 L_BOBS_07E6A:
 p1d_intersect:
     move.l (a0),d0                                     ; +$07E6A: 2010
