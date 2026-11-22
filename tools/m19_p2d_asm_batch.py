@@ -129,6 +129,13 @@ REGIONS = (
            '    move.l #P2D_SYSTEM_SUCCESS_FLAG,20(a4)',
            'P2D_SYSTEM_SUCCESS_FLAG', 1, 2, 0x0DC11, 0,
            'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
+
+    Region('P2D_SERVICE_BODY', 'M19_P2D_SERVICE_BODY_MC68020.s',
+           0x0C51E, 0x0DA10, '', '',
+           '    move.l #$00000001,36(a4)',
+           '    move.l #P2D_SERVICE_MODE_ONE,36(a4)',
+           'P2D_SERVICE_MODE_ONE', 1, 2, 0x0D837, 0,
+           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
 LABEL = re.compile(r'[A-Za-z_][A-Za-z_0-9]*:\s*$')
