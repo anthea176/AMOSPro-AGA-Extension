@@ -1,6 +1,6 @@
 # M19 P2d — migration progressive vers des modules ASM MC68020
 
-**Vingt-huit modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
+**Vingt-neuf modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
@@ -17,6 +17,7 @@
 | [P1d Bob Limit — rectangles, validation et reset](M19_P1D_LIMIT_MC68020.s) | `$07D7E..$07DFE` | 128 |
 | [P1d Scoped Paint — relais et nettoyage Bob ID](M19_P1D_SCOPED_PAINT_MC68020.s) | `$07DFE..$07E1C` | 30 |
 | [P1d Clip Bridge — bornage et Safe Blitter](M19_P1D_CLIP_BRIDGE_MC68020.s) | `$07E20..$07E6A` | 74 |
+| [P1d Intersect — intersection des deux rectangles](M19_P1D_INTERSECT_MC68020.s) | `$07E6A..$07F00` | 150 |
 | [P0i Routed Paint — banque privée et Blitter Safe](M19_P0I_ROUTED_PAINT_MC68020.s) | `$05CF8..$05F30` | 568 |
 | [P2a Pair Check — lecture sécurisée Bob/P0f](M19_P2A_PAIR_CHECK_MC68020.s) | `$08A6E..$08BB6` | 328 |
 | [P2a Geometry — deux descripteurs et limites](M19_P2A_GEOMETRY_MC68020.s) | `$0918A..$09858` | 1 742 |
@@ -32,7 +33,7 @@
 | [P2b Planar — retournement H/V et allocation Chip](M19_P2B_PLANAR_MC68020.s) | `$0A28E..$0A4C0` | 562 |
 | [P2c Planes](M19_P2C_PLANES_MC68020.s) | `$0B4C4..$0B58C` | 200 |
 | [P2d Auto Update / Swap / Close](M19_P2D_CONTROLS_MC68020.s) | `$0B58C..$0B72A` | 414 |
-| **Total de code ASM propre** | | **10 336** |
+| **Total de code ASM propre** | | **10 486** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -40,7 +41,7 @@ En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octet
 
 Les modules sont reconstitues **depuis les emetteurs sources** : `tools/m19_p2b_bob_flip_emit.py`, `m19_p2b_planar_orientation020_emit.py`, `m19_p2c_bob_planes_emit.py` et `m19_p2d_bob_auto_update_emit.py`. Le builder verifie les plages et leur contenu a partir des emetteurs d'origine ; la validation exige une reconstruction byte-exacte de P2d. L'assembler est cible `MC68020` minimum.
 
-**La zone P2b Flip `$09E36..$0A4C0` est convertie de bout en bout** (1 674 octets de code). P2a est converti, ainsi que les blocs P0i Routed Paint, P1b origine HotSpot, P1c priorite/dispatch/contexte/preflight/tri/dessin et P1d Limit / Scoped Paint / Clip Bridge, B7 End, B8 End/Register et B8 S1 Bank Free. Il reste d'autres routines BOBS P0/P1/B7/B8 a migrer. Le gros fichier [BOBS editable](M19_P2D_BOBS_EDITABLE.s), les unites AGA/C2P/IFF et le wrapper AP20 reposent encore partiellement sur les exports d'audit. Une unique exception `DC.W $4C04,$3000` dans le planar conserve le codage historique non canonique de `MULU.L D4,D3`. **Cette migration ne represente pas la conversion integrale de la bibliotheque.**
+**La zone P2b Flip `$09E36..$0A4C0` est convertie de bout en bout** (1 674 octets de code). P2a est converti, ainsi que les blocs P0i Routed Paint, P1b origine HotSpot, P1c priorite/dispatch/contexte/preflight/tri/dessin et P1d Limit / Scoped Paint / Clip Bridge / Intersect, B7 End, B8 End/Register et B8 S1 Bank Free. Il reste d'autres routines BOBS P0/P1/B7/B8 a migrer. Le gros fichier [BOBS editable](M19_P2D_BOBS_EDITABLE.s), les unites AGA/C2P/IFF et le wrapper AP20 reposent encore partiellement sur les exports d'audit. Une unique exception `DC.W $4C04,$3000` dans le planar conserve le codage historique non canonique de `MULU.L D4,D3`. **Cette migration ne represente pas la conversion integrale de la bibliotheque.**
 
 ## Compilation directe (Windows)
 
@@ -57,7 +58,7 @@ BUILD_P2D_ASM.bat
 BUILD_P2D_ASM.bat --self-test-edit
 ```
 
-Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, de tokens AP20, de titre, des autres unites ou d'une zone non migree. Sans edition, la reconstruction doit produire exactement **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le self-test altere temporairement **une instruction dans chacun des vingt-huit modules** (P0i, B7, B8 et P2a/P2b/P2c/P2d), recompilant en memoire et exigeant un changement sur un seul octet dans le groupe BOBS.
+Le script `tools/build_m19_p2d_editable_asm.py` refuse toute derive de taille, de tokens AP20, de titre, des autres unites ou d'une zone non migree. Sans edition, la reconstruction doit produire exactement **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Le self-test altere temporairement **une instruction dans chacun des vingt-neuf modules** (P0i, B7, B8 et P2a/P2b/P2c/P2d), recompilant en memoire et exigeant un changement sur un seul octet dans le groupe BOBS.
 
 Pour un edit a longueur constante, `BUILD_P2D_ASM.bat --allow-edited` cree uniquement `src/generated/p2d_editable/M19_P2D_EDITED_UNTESTED.Lib`. **Ne pas installer une version modifiee sans validation specifique.** Les bibliotheques de `dist/`, `LAST_GOOD`, les tests et exemples ne sont pas modifies par cette migration. Les Gates WinUAE Runtime B, vrai AMOS Compiler C et physique D **ne qualifient pas les futures editions natives** par la seule CI.
 

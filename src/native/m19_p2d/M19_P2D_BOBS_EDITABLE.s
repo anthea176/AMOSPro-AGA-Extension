@@ -8378,62 +8378,7 @@ p1d_drawing_id:
 L_BOBS_07E20:
     include "M19_P1D_CLIP_BRIDGE_MC68020.s"
 L_BOBS_07E6A:
-p1d_intersect:
-    move.l (a0),d0                                     ; +$07E6A: 2010
-    cmp.l 8(a0),d0                                     ; +$07E6C: B0A80008
-    beq.w L_BOBS_07EF0                                 ; +$07E70: 6700007E
-    move.l 260(a4),d0                                  ; +$07E74: 202C0104
-    move.l d0,d1                                       ; +$07E78: 2200
-    add.l 268(a4),d1                                   ; +$07E7A: D2AC010C
-    cmp.l (a0),d0                                      ; +$07E7E: B090
-    bge.w L_BOBS_07E86                                 ; +$07E80: 6C000004
-    move.l (a0),d0                                     ; +$07E84: 2010
-L_BOBS_07E86:
-p1d_start_x:
-    cmp.l 8(a0),d1                                     ; +$07E86: B2A80008
-    ble.w L_BOBS_07E92                                 ; +$07E8A: 6F000006
-    move.l 8(a0),d1                                    ; +$07E8E: 22280008
-L_BOBS_07E92:
-p1d_end_x:
-    cmp.l d0,d1                                        ; +$07E92: B280
-    ble.w L_BOBS_07EF8                                 ; +$07E94: 6F000062
-    sub.l d0,d1                                        ; +$07E98: 9280
-    move.l d1,268(a4)                                  ; +$07E9A: 2941010C
-    move.l d0,d1                                       ; +$07E9E: 2200
-    sub.l 260(a4),d1                                   ; +$07EA0: 92AC0104
-    add.l 252(a4),d1                                   ; +$07EA4: D2AC00FC
-    move.l d1,252(a4)                                  ; +$07EA8: 294100FC
-    move.l d0,260(a4)                                  ; +$07EAC: 29400104
-    move.l 264(a4),d0                                  ; +$07EB0: 202C0108
-    move.l d0,d1                                       ; +$07EB4: 2200
-    add.l 272(a4),d1                                   ; +$07EB6: D2AC0110
-    cmp.l 4(a0),d0                                     ; +$07EBA: B0A80004
-    bge.w L_BOBS_07EC6                                 ; +$07EBE: 6C000006
-    move.l 4(a0),d0                                    ; +$07EC2: 20280004
-L_BOBS_07EC6:
-p1d_start_y:
-    cmp.l 12(a0),d1                                    ; +$07EC6: B2A8000C
-    ble.w L_BOBS_07ED2                                 ; +$07ECA: 6F000006
-    move.l 12(a0),d1                                   ; +$07ECE: 2228000C
-L_BOBS_07ED2:
-p1d_end_y:
-    cmp.l d0,d1                                        ; +$07ED2: B280
-    ble.w L_BOBS_07EF8                                 ; +$07ED4: 6F000022
-    sub.l d0,d1                                        ; +$07ED8: 9280
-    move.l d1,272(a4)                                  ; +$07EDA: 29410110
-    move.l d0,d1                                       ; +$07EDE: 2200
-    sub.l 264(a4),d1                                   ; +$07EE0: 92AC0108
-    add.l 256(a4),d1                                   ; +$07EE4: D2AC0100
-    move.l d1,256(a4)                                  ; +$07EE8: 29410100
-    move.l d0,264(a4)                                  ; +$07EEC: 29400108
-L_BOBS_07EF0:
-p1d_visible:
-    move.l #$00000001,d0                               ; +$07EF0: 203C00000001
-    rts                                                ; +$07EF6: 4E75
-L_BOBS_07EF8:
-p1d_invisible:
-    move.l #$00000000,d0                               ; +$07EF8: 203C00000000
-    rts                                                ; +$07EFE: 4E75
+    include "M19_P1D_INTERSECT_MC68020.s"
 ENTRY_BOBS_07F00:
 p1e_del_bob:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$07F00: 48E7EFEE

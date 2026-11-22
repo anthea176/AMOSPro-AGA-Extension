@@ -71,6 +71,7 @@ P1C_DRAW_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_DRAW_MC6802
 P1D_LIMIT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_LIMIT_MC68020.s'
 P1D_SCOPED_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_SCOPED_PAINT_MC68020.s'
 P1D_CLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_CLIP_BRIDGE_MC68020.s'
+P1D_INTERSECT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_INTERSECT_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -156,6 +157,9 @@ P1D_SCOPED_END = 0x7E1C
 P1D_CLIP_NAME = 'M19_P1D_CLIP_BRIDGE_MC68020.s'
 P1D_CLIP_START = 0x7E20
 P1D_CLIP_END = 0x7E6A
+P1D_INTERSECT_NAME = 'M19_P1D_INTERSECT_MC68020.s'
+P1D_INTERSECT_START = 0x7E6A
+P1D_INTERSECT_END = 0x7F00
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1476,6 +1480,48 @@ def replace_raw_p1d_clip_bridge(text: str) -> str:
             P1D_CLIP_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1d_intersect_provenance() -> tuple[int, int, int, bytes]:
+    """Source-prove the signed X/Y limit clipping and unchanged P2d image."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    p1d, source_labels = emit_limit_bobs(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['p1d_intersect']
+    expected = p1d[source_labels['p1d_intersect']:]
+    end = begin + len(expected)
+    mutation = 0x7EF5
+    require((begin, end) == (P1D_INTERSECT_START, P1D_INTERSECT_END) and
+            len(expected) == 150 and
+            native[labels['p1d_intersect']:labels['p1d_intersect'] + len(expected)] == expected and
+            parts[group][begin:end] == expected and
+            expected[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('203c00000001'),
+            'P1d clipping intersection source differs from original P2d code')
+    return begin, end, mutation, expected
+
+
+def replace_raw_p1d_intersect(text: str) -> str:
+    """Source-backed conversion of exactly 150 intersect procedure bytes."""
+    first = 'L_BOBS_07E6A:\np1d_intersect:\n'
+    last = 'ENTRY_BOBS_07F00:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1d intersection raw audit labels missing')
+    pos, observed = P1D_INTERSECT_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1d intersection raw code offset mismatch')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1D_INTERSECT_END and
+            bytes(observed) == prove_p1d_intersect_provenance()[3],
+            'P1d intersection audit bytes differ from source emitter')
+    return (text[:i] + 'L_BOBS_07E6A:\n    include "' +
+            P1D_INTERSECT_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1586,7 +1632,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1c_draw_text: str | None = None,
                    p1d_limit_text: str | None = None,
                    p1d_scoped_text: str | None = None,
-                   p1d_clip_text: str | None = None) -> None:
+                   p1d_clip_text: str | None = None,
+                   p1d_intersect_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1617,6 +1664,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1D_LIMIT_FILE.is_file(), f'missing authored module: {P1D_LIMIT_FILE}')
     require(P1D_SCOPED_FILE.is_file(), f'missing authored module: {P1D_SCOPED_FILE}')
     require(P1D_CLIP_FILE.is_file(), f'missing authored module: {P1D_CLIP_FILE}')
+    require(P1D_INTERSECT_FILE.is_file(), f'missing authored module: {P1D_INTERSECT_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1641,6 +1689,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1d_limit(text)
     text = replace_raw_p1d_scoped_paint(text)
     text = replace_raw_p1d_clip_bridge(text)
+    text = replace_raw_p1d_intersect(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -2012,6 +2061,23 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', clip_source),
             'P1d clipped painter missing source labels or contains raw bytes')
     (folder / P1D_CLIP_NAME).write_text(clip_source, encoding='ascii', newline='\n')
+    intersect_source = (p1d_intersect_text if p1d_intersect_text is not None
+                        else P1D_INTERSECT_FILE.read_text('ascii'))
+    base_result = intersect_source.count('    move.l #1,d0')
+    edited_result = intersect_source.count('    move.l #2,d0')
+    for marker in ('p1d_intersect:', 'p1d_start_x:', 'p1d_end_x:',
+                   'p1d_start_y:', 'p1d_end_y:', 'p1d_visible:',
+                   'p1d_invisible:', 'L_BOBS_07E86:', 'L_BOBS_07E92:',
+                   'L_BOBS_07EC6:', 'L_BOBS_07ED2:',
+                   'L_BOBS_07EF0:', 'L_BOBS_07EF8:'):
+        require(intersect_source.count(marker) == 1, 'P1d intersect missing '+marker)
+    require((base_result, edited_result) in ((1, 0), (0, 1)) and
+            intersect_source.count('P1D_WIDTH equ 268') == 1 and
+            intersect_source.count('P1D_HEIGHT equ 272') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', intersect_source),
+            'P1d intersection contains raw bytes or invalid geometry bounds')
+    (folder / P1D_INTERSECT_NAME).write_text(intersect_source,
+                                              encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -2105,6 +2171,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1d_limit_start, p1d_limit_end, _, _ = prove_p1d_limit_provenance()
     p1d_scoped_start, p1d_scoped_end, _, _ = prove_p1d_scoped_paint_provenance()
     p1d_clip_start, p1d_clip_end, _, _ = prove_p1d_clip_bridge_provenance()
+    p1d_intersect_start, p1d_intersect_end, _, _ = prove_p1d_intersect_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -2131,7 +2198,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1c_draw_start <= i < p1c_draw_end) or
                  (p1d_limit_start <= i < p1d_limit_end) or
                  (p1d_scoped_start <= i < p1d_scoped_end) or
-                 (p1d_clip_start <= i < p1d_clip_end) for i in differences),
+                 (p1d_clip_start <= i < p1d_clip_end) or
+                 (p1d_intersect_start <= i < p1d_intersect_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -2169,7 +2237,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1c_draw_text: str | None = None,
           p1d_limit_text: str | None = None,
           p1d_scoped_text: str | None = None,
-          p1d_clip_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1d_clip_text: str | None = None,
+          p1d_intersect_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -2191,7 +2260,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1c_draw_text=p1c_draw_text,
                     p1d_limit_text=p1d_limit_text,
                     p1d_scoped_text=p1d_scoped_text,
-                    p1d_clip_text=p1d_clip_text)
+                    p1d_clip_text=p1d_clip_text,
+                    p1d_intersect_text=p1d_intersect_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -2647,6 +2717,21 @@ def test_editability(assembler: Path) -> None:
                 'P1d clip edited stride instruction was not assembled')
         require(clip_start <= clip_imm < clip_end,
                 'P1d clip edit escaped executable code region')
+        intersect_start, intersect_end, intersect_imm, _ = prove_p1d_intersect_provenance()
+        intersect_source = P1D_INTERSECT_FILE.read_text('ascii')
+        needle = '    move.l #1,d0'
+        require(intersect_source.count(needle) == 1,
+                'P1d intersection visible-result edit not unique')
+        edited, diffs = build(
+            assembler, root/'modified_p1d_intersect', allow_edited=True,
+            p1d_intersect_text=intersect_source.replace(needle, '    move.l #2,d0'))
+        require(diffs == [intersect_imm],
+                f'P1d intersection edit changed {diffs}, expected {[intersect_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [intersect_imm-5:intersect_imm+1] == bytes.fromhex('203c00000002'),
+                'P1d intersection edited result code not assembled')
+        require(intersect_start <= intersect_imm < intersect_end,
+                'P1d intersection edit escaped executable source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -2675,6 +2760,7 @@ def test_editability(assembler: Path) -> None:
     print('P1D_LIMIT_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
     print('P1D_SCOPED_EDITABILITY_TEST PASS: MOVE.L #0,(A0) -> #1, one byte changed')
     print('P1D_CLIP_EDITABILITY_TEST PASS: MOVE.L 216(A4),D0 -> 220, one byte changed')
+    print('P1D_INTERSECT_EDITABILITY_TEST PASS: MOVE.L #1,D0 -> #2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
