@@ -162,7 +162,7 @@ AGSP_P1_COPY_PALETTE:
     lsl.l #2,d4
     move.l 0(a3,d4.l),d0
     move.l d0,d2
-    lsr.l #16,d2
+    swap d2
     move.b d2,(a5)+
     move.l d0,d2
     lsr.l #8,d2
