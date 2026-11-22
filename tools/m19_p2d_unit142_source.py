@@ -68,6 +68,13 @@ SPANS = (
     ),
 )
 
+MODULE_DESCRIPTION = {
+    "M19_UNIT142_DISPATCH_V2_MC68020.s": "AP20 V2 dispatcher",
+    "M19_UNIT142_INIT_ENTRY_MC68020.s": "AGA init/entry",
+    "M19_UNIT142_GRAPHICS_GUARD_MC68020.s": "graphics library guard",
+    "M19_UNIT142_GRAPHICS_SCREEN_MC68020.s": "graphics screen preflight",
+}
+
 
 class Unit142Error(ValueError):
     pass
@@ -148,7 +155,7 @@ def expected_sources():
                "UNIT142 edit constant ambiguous: " + filename)
         header = (
             "; AGA_NATIVE_MIN_CPU: MC68020\n"
-            "; UNIT142 " + filename + " source-verified against pinned P2d emitter.\n"
+            "; UNIT142 " + MODULE_DESCRIPTION[filename] + " source-verified against pinned P2d emitter.\n"
             f"; UNIT142+${lo:05X}..${hi:05X}, {hi-lo} instructions/data bytes.\n"
             + symbol + f" equ {old_value}\n\n"
         )

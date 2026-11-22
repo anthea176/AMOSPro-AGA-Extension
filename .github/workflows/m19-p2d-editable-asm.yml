@@ -6,6 +6,9 @@ on:
     paths:
       - 'src/native/m19_p2d/**'
       - 'tools/build_m19_p2d_editable_asm.py'
+      - 'tools/m19_p2d_unit142_source.py'
+      - 'tools/m19_p2d_unit153_source.py'
+      - 'tools/m19_p2d_unit156_nibble.py'
       - 'tools/m19_p2d_asm_batch.py'
       - '.github/workflows/m19-p2d-editable-asm.yml'
   schedule:
