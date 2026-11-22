@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **22/11/2026 — P2d : 122 modules ASM MC68020**, dont 22 UNIT142 (17 786/62 740 octets), 14 UNIT153, 6 UNIT156, 80 BOBS. Gates A lots 37–48 PASS, 49–58 en cours ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039666020)). P2d, LAST_GOOD et ASC inchanges ; nouvelles Gates B/C/D non testees. [Reprise](NEXT_SESSION.md).
+> **22/11/2026 — P2d : 137 modules ASM MC68020**, dont 37 UNIT142 (35 814/62 740 octets), 14 UNIT153, 6 UNIT156, 80 BOBS. Gate A 37–58 PASS ; 59–73 [CI en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040310566). P2d, LAST_GOOD et ASC inchanges ; Gates B/C/D non acquises sur les nouveaux edits. [Suivi](NEXT_SESSION.md).
 
 > **22/11/2026 — S1-P1b Gate A CPU PASS : 6 tests pont RGB24 + 8 tests repack AGSP.** [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994) / [Sonde AMOS Save-Load](../examples/agsp_bank/AGSP_BANK_SAVELOAD.asc) + [ABK](../examples/agsp_bank/AGSP_1IMG_16X16.ABK). Gates B/C en attente, AP20/transaction non integres ; P2d/LAST_GOOD proteges.
 

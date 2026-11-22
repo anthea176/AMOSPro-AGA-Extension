@@ -1,5 +1,47 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 37 a 73 : 137 modules ASM
+
+**Etape source-only sur `main` : 137 modules MC68020** (80 BOBS,
+14 UNIT153, 6 UNIT156, **37 UNIT142**). UNIT142 a maintenant
+**35 814 octets sur 62 740** en source editable, 37 modules et
+37 tests de mutation isolee ; les 26 926 octets restants sont conserves
+dans le wrapper natif audit-restaure, avec leurs donnees, marqueurs GetP,
+pseudo-appels AMOS Main et zones non classifiees.
+
+**Commits majeurs :** lots [37–40](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/649c9cb7299a0c4c835fdaf788623bc3fa40ede9),
+[41–44](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/24cd8d50449c80c2e10d9b1f19be5acd3f94f19e),
+[45–48](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/c1fc777ed4a18b72ee704cd0fac73f835d25e4df),
+[49–52](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b03b3d6b243b9e652aaeee86294cb4def79e4a80),
+[53–58](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/9f0bfc0041f57aa14c8192092177251e5f911fd2),
+[59–64](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/63f9b2b9693b09099fd76ff4b7f5b651f8aa9af2)
+et [65–73](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/177449991d39f78d4fe1a51e7417c5a0fd33f233).
+
+**Gates A verifiees :** lots 37–58 PASS
+([CI 37–40](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45038967714),
+[CI 41–44](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039227925),
+[CI 45–48](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039353714),
+[CI 49–52](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039486703),
+[CI 53–58](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45039666020)).
+**Lots 59–64** [CI en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040075951) ;
+**lots 65–73** [CI en cours](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45040310566).
+Le test UNIT142 impose la reconstruction P2d officielle par builder source
+(136 020 octets, SHA256
+`ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`)
+et le groupe entier UNIT142 (62 740 octets, SHA256
+`8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7`).
+Direct vasm -m68020 et edition des constantes en binaire prive
+**Gate A uniquement** ; aucune nouvelle preuve WinUAE B, Compiler C
+ou Amiga physique D.
+
+**Protections :** dist/AMOSPro_AGA.Lib et
+dist/AMOSPro_AGA_LAST_GOOD.Lib conservent exactement le meme blob Git
+`8a849b89aae57c2cda0b4db8771034a0978d3e78` ;
+tests/current/M19_P2_ALL_IN_ONE.asc conserve le blob
+`c48d334fd4508d402d28399bffdfec08d4cb4acb`.
+Ne jamais promouvoir une Lib lors de cette migration, ne jamais
+remplacer l'ASC actif.
+
 ## 22 novembre 2026 — UNIT142 lots 37–58, 122 modules source ASM
 
 **Dernier commit de migration :**
