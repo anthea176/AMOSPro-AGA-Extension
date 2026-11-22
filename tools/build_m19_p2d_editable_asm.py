@@ -75,6 +75,9 @@ P1D_CLIP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_CLIP_BRIDGE_MC680
 P1D_INTERSECT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1D_INTERSECT_MC68020.s'
 P1E_DEL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_DEL_BOB_MC68020.s'
 P1E_INS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_INS_BOB_MC68020.s'
+P1E_CLEAN_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_EDIT_CLEANUP_MC68020.s'
+P1E_VALID_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_VALIDATE_BANK_MC68020.s'
+P1E_STAGE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_VALIDATE_STAGE_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -169,6 +172,15 @@ P1E_DEL_END = 0x7F2E
 P1E_INS_NAME = 'M19_P1E_INS_BOB_MC68020.s'
 P1E_INS_START = 0x7F2E
 P1E_INS_END = 0x7F54
+P1E_CLEAN_NAME = 'M19_P1E_EDIT_CLEANUP_MC68020.s'
+P1E_CLEAN_START = 0x85E8
+P1E_CLEAN_END = 0x8632
+P1E_VALID_NAME = 'M19_P1E_VALIDATE_BANK_MC68020.s'
+P1E_VALID_START = 0x8632
+P1E_VALID_END = 0x865E
+P1E_STAGE_NAME = 'M19_P1E_VALIDATE_STAGE_MC68020.s'
+P1E_STAGE_START = 0x865E
+P1E_STAGE_END = 0x866C
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1614,6 +1626,135 @@ def replace_raw_p1e_ins_bob(text: str) -> str:
             P1E_INS_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1e_edit_cleanup_provenance() -> tuple[int, int, int, bytes]:
+    """Prove 74-byte P1e cleanup, including symbolic AMOS Main Lst.Del."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    emitted, src_labels = emit_bank_edit(p1e_meta['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_cleanup']
+    end = prefix + labels['edit_validate_bank']
+    original = emitted[src_labels['edit_cleanup']:src_labels['edit_validate_bank']]
+    mutation = 0x8625
+    require((begin, end) == (P1E_CLEAN_START, P1E_CLEAN_END) and
+            len(original) == 74 and
+            native[labels['edit_cleanup']:labels['edit_validate_bank']] == original and
+            parts[group][begin:end] == original and
+            original.count(bytes.fromhex('fe11f700005d')) == 1 and
+            original[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('263c00000000'),
+            'P1e cleanup source or AMOS Lst.Del opcode differs from P2d')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_cleanup(text: str) -> str:
+    """Convert source-proven 74-byte cleanup including AMOS Main pseudo-op."""
+    first = 'L_BOBS_085E8:\nedit_cleanup:\n'
+    last = 'L_BOBS_08632:\nedit_validate_bank:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e cleanup annotated source labels missing')
+    pos, observed = P1E_CLEAN_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e cleanup annotated byte gap')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_CLEAN_END and
+            bytes(observed) == prove_p1e_edit_cleanup_provenance()[3],
+            'P1e cleanup raw bytes are not original emitter bytes')
+    return (text[:i] + 'L_BOBS_085E8:\n    include "' +
+            P1E_CLEAN_NAME + '"\n' + text[j:])
+
+
+@lru_cache(maxsize=1)
+def prove_p1e_bank_validation_provenance() -> tuple[int, int, int, bytes]:
+    """Pin 44-byte P1e validator wrapper before checked live-bank stage."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    emitted, src_labels = emit_bank_edit(p1e_meta['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_validate_bank']
+    end = prefix + labels['edit_validate_or_stage']
+    original = emitted[src_labels['edit_validate_bank']:
+                       src_labels['edit_validate_or_stage']]
+    mutation = 0x8657
+    require((begin, end) == (P1E_VALID_START, P1E_VALID_END) and
+            len(original) == 44 and
+            native[labels['edit_validate_bank']:labels['edit_validate_or_stage']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+3] ==
+            bytes.fromhex('257c000000000054'),
+            'P1e validated bank source does not match P2d')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_bank_validation(text: str) -> str:
+    """Replace only the 44-byte bank validator source segment."""
+    first = 'L_BOBS_08632:\nedit_validate_bank:\n'
+    last = 'L_BOBS_0865E:\nedit_validate_or_stage:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e validate bank source audit labels absent')
+    pos, observed = P1E_VALID_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e bank validator annotated gap')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_VALID_END and
+            bytes(observed) == prove_p1e_bank_validation_provenance()[3],
+            'P1e bank validation differs from source emitter')
+    return (text[:i] + 'L_BOBS_08632:\n    include "' +
+            P1E_VALID_NAME + '"\n' + text[j:])
+
+
+@lru_cache(maxsize=1)
+def prove_p1e_bank_stage_provenance() -> tuple[int, int, int, bytes]:
+    """Pin the P1e 14-byte validate/chip-stage handoff."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    emitted, src_labels = emit_bank_edit(p1e_meta['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_validate_or_stage']
+    end = prefix + labels['edit_repack']
+    original = emitted[src_labels['edit_validate_or_stage']:
+                       src_labels['edit_repack']]
+    mutation = 0x8669
+    require((begin, end) == (P1E_STAGE_START, P1E_STAGE_END) and
+            len(original) == 14 and
+            native[labels['edit_validate_or_stage']:labels['edit_repack']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('263c00000001'),
+            'P1e validated chip staging handoff differs from emitter')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_bank_stage(text: str) -> str:
+    """Replace source-pinned 14-byte bank staging handoff."""
+    first = 'L_BOBS_0865E:\nedit_validate_or_stage:\n'
+    last = 'L_BOBS_0866C:\nedit_repack:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e bank stage source audit labels absent')
+    pos, observed = P1E_STAGE_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e bank stage annotated code gap')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_STAGE_END and
+            bytes(observed) == prove_p1e_bank_stage_provenance()[3],
+            'P1e staged bank handoff audit does not match source')
+    return (text[:i] + 'L_BOBS_0865E:\n    include "' +
+            P1E_STAGE_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1677,11 +1818,12 @@ def replace_source_backed_amos_pseudo(text: str) -> str:
     table = (('Bnk.GetAdr','GETADR',797,20),
              ('Bnk.Change','CHANGE',819,2),
              ('Lst.Cree','LIST_CREATE',91,2),
-             ('Lst.Del','LIST_DELETE',93,4))
+             ('Lst.Del','LIST_DELETE',93,3))
     pattern = re.compile(r'(?m)^    dc\.b [^\n]*  ; \+\$([0-9A-F]{5}): '
                          r'(FE11F700[0-9A-F]{4})$')
     records = list(pattern.finditer(text))
-    require(len(records)==28, 'AMOS Main pseudo call count changed')
+    # One source-authored Lst.Del pseudo-op now resides inside P1e cleanup.
+    require(len(records)==27, 'AMOS Main pseudo call count changed')
     for command, alias, index, count in table:
         signature = rjsr(index).hex().upper()
         require(main_index(command)==index and
@@ -1727,7 +1869,10 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1d_clip_text: str | None = None,
                    p1d_intersect_text: str | None = None,
                    p1e_del_text: str | None = None,
-                   p1e_ins_text: str | None = None) -> None:
+                   p1e_ins_text: str | None = None,
+                   p1e_clean_text: str | None = None,
+                   p1e_valid_text: str | None = None,
+                   p1e_stage_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1761,6 +1906,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1D_INTERSECT_FILE.is_file(), f'missing authored module: {P1D_INTERSECT_FILE}')
     require(P1E_DEL_FILE.is_file(), f'missing authored module: {P1E_DEL_FILE}')
     require(P1E_INS_FILE.is_file(), f'missing authored module: {P1E_INS_FILE}')
+    require(P1E_CLEAN_FILE.is_file(), f'missing authored module: {P1E_CLEAN_FILE}')
+    require(P1E_VALID_FILE.is_file(), f'missing authored module: {P1E_VALID_FILE}')
+    require(P1E_STAGE_FILE.is_file(), f'missing authored module: {P1E_STAGE_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1788,6 +1936,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1d_intersect(text)
     text = replace_raw_p1e_del_bob(text)
     text = replace_raw_p1e_ins_bob(text)
+    text = replace_raw_p1e_cleanup(text)
+    text = replace_raw_p1e_bank_validation(text)
+    text = replace_raw_p1e_bank_stage(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -2195,6 +2346,38 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', ins_source),
             'P1e Ins Bob source missing arguments or has raw opcodes')
     (folder / P1E_INS_NAME).write_text(ins_source, encoding='ascii', newline='\n')
+    cleanup_source = (p1e_clean_text if p1e_clean_text is not None
+                      else P1E_CLEAN_FILE.read_text('ascii'))
+    for marker in ('edit_cleanup:', 'edit_cleanup_bank:',
+                   'edit_fail:', 'edit_return:', 'L_BOBS_0860A:',
+                   'L_BOBS_08620:', 'L_BOBS_08626:'):
+        require(cleanup_source.count(marker) == 1, 'P1e cleanup missing '+marker)
+    pseudo = '    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE'
+    cleanup_baseline = cleanup_source.count('    move.l #0,d3')
+    cleanup_edited = cleanup_source.count('    move.l #1,d3')
+    require(cleanup_source.count(pseudo) == 1 and
+            (cleanup_baseline, cleanup_edited) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', cleanup_source.replace(pseudo, '')),
+            'P1e cleanup contains unknown raw opcode or missing AMOS pseudo')
+    (folder / P1E_CLEAN_NAME).write_text(cleanup_source, encoding='ascii', newline='\n')
+    validator_source = (p1e_valid_text if p1e_valid_text is not None
+                        else P1E_VALID_FILE.read_text('ascii'))
+    valid_baseline = validator_source.count('    move.l #0,P1E_VALIDATOR_RESULT(a2)')
+    valid_edited = validator_source.count('    move.l #1,P1E_VALIDATOR_RESULT(a2)')
+    require(validator_source.count('edit_validate_bank:') == 1 and
+            (valid_baseline, valid_edited) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', validator_source),
+            'P1e validated bank wrapper has invalid executable source')
+    (folder / P1E_VALID_NAME).write_text(validator_source, encoding='ascii', newline='\n')
+    stage_source = (p1e_stage_text if p1e_stage_text is not None
+                    else P1E_STAGE_FILE.read_text('ascii'))
+    stage_baseline = stage_source.count('    move.l #1,d3')
+    stage_edited = stage_source.count('    move.l #2,d3')
+    require(stage_source.count('edit_validate_or_stage:') == 1 and
+            (stage_baseline, stage_edited) in ((1, 0), (0, 1)) and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', stage_source),
+            'P1e staging handoff contains unclassified code')
+    (folder / P1E_STAGE_NAME).write_text(stage_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -2291,6 +2474,9 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1d_intersect_start, p1d_intersect_end, _, _ = prove_p1d_intersect_provenance()
     p1e_del_start, p1e_del_end, _, _ = prove_p1e_del_bob_provenance()
     p1e_ins_start, p1e_ins_end, _, _ = prove_p1e_ins_bob_provenance()
+    p1e_clean_start, p1e_clean_end, _, _ = prove_p1e_edit_cleanup_provenance()
+    p1e_valid_start, p1e_valid_end, _, _ = prove_p1e_bank_validation_provenance()
+    p1e_stage_start, p1e_stage_end, _, _ = prove_p1e_bank_stage_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -2320,7 +2506,10 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1d_clip_start <= i < p1d_clip_end) or
                  (p1d_intersect_start <= i < p1d_intersect_end) or
                  (p1e_del_start <= i < p1e_del_end) or
-                 (p1e_ins_start <= i < p1e_ins_end) for i in differences),
+                 (p1e_ins_start <= i < p1e_ins_end) or
+                 (p1e_clean_start <= i < p1e_clean_end) or
+                 (p1e_valid_start <= i < p1e_valid_end) or
+                 (p1e_stage_start <= i < p1e_stage_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -2361,7 +2550,10 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1d_clip_text: str | None = None,
           p1d_intersect_text: str | None = None,
           p1e_del_text: str | None = None,
-          p1e_ins_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1e_ins_text: str | None = None,
+          p1e_clean_text: str | None = None,
+          p1e_valid_text: str | None = None,
+          p1e_stage_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -2386,7 +2578,10 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1d_clip_text=p1d_clip_text,
                     p1d_intersect_text=p1d_intersect_text,
                     p1e_del_text=p1e_del_text,
-                    p1e_ins_text=p1e_ins_text)
+                    p1e_ins_text=p1e_ins_text,
+                    p1e_clean_text=p1e_clean_text,
+                    p1e_valid_text=p1e_valid_text,
+                    p1e_stage_text=p1e_stage_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -2884,6 +3079,48 @@ def test_editability(assembler: Path) -> None:
                 [ins_imm-5:ins_imm+3] == bytes.fromhex('257c000000010014'),
                 'P1e Insert edited argument not assembled')
         require(ins_start <= ins_imm < ins_end, 'P1e Ins edit escaped authored region')
+        clean_start, clean_end, clean_imm, _ = prove_p1e_edit_cleanup_provenance()
+        clean_source = P1E_CLEAN_FILE.read_text('ascii')
+        needle = '    move.l #0,d3'
+        require(clean_source.count(needle) == 1, 'P1e cleanup edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_cleanup', allow_edited=True,
+            p1e_clean_text=clean_source.replace(needle, '    move.l #1,d3'))
+        require(diffs == [clean_imm],
+                f'P1e cleanup changed {diffs}, expected {[clean_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [clean_imm-5:clean_imm+1] == bytes.fromhex('263c00000001'),
+                'P1e cleanup edited result instruction not assembled')
+        require(clean_start <= clean_imm < clean_end, 'P1e cleanup edit escaped source')
+
+        valid_start, valid_end, valid_imm, _ = prove_p1e_bank_validation_provenance()
+        valid_source = P1E_VALID_FILE.read_text('ascii')
+        needle = '    move.l #0,P1E_VALIDATOR_RESULT(a2)'
+        require(valid_source.count(needle) == 1, 'P1e validator edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_validator', allow_edited=True,
+            p1e_valid_text=valid_source.replace(
+                needle, '    move.l #1,P1E_VALIDATOR_RESULT(a2)'))
+        require(diffs == [valid_imm],
+                f'P1e validator changed {diffs}, expected {[valid_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [valid_imm-5:valid_imm+3] == bytes.fromhex('257c000000010054'),
+                'P1e bank validator edited result not assembled')
+        require(valid_start <= valid_imm < valid_end, 'P1e validator edit escaped source')
+
+        stage_start, stage_end, stage_imm, _ = prove_p1e_bank_stage_provenance()
+        stage_source = P1E_STAGE_FILE.read_text('ascii')
+        needle = '    move.l #1,d3'
+        require(stage_source.count(needle) == 1, 'P1e bank stage edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_stage', allow_edited=True,
+            p1e_stage_text=stage_source.replace(needle, '    move.l #2,d3'))
+        require(diffs == [stage_imm],
+                f'P1e stage changed {diffs}, expected {[stage_imm]}')
+        require(unpack_ap20(changed)[1][group]
+                [stage_imm-5:stage_imm+1] == bytes.fromhex('263c00000002'),
+                'P1e staging handoff edited result not assembled')
+        require(stage_start <= stage_imm < stage_end, 'P1e stage edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -2915,6 +3152,9 @@ def test_editability(assembler: Path) -> None:
     print('P1D_INTERSECT_EDITABILITY_TEST PASS: MOVE.L #1,D0 -> #2, one byte changed')
     print('P1E_DEL_EDITABILITY_TEST PASS: MOVE.L #0,D3 -> #1, one byte changed')
     print('P1E_INS_EDITABILITY_TEST PASS: MOVE.L #0,20(A2) -> #1, one byte changed')
+    print('P1E_CLEANUP_EDITABILITY_TEST PASS: MOVE.L #0,D3 -> #1, one byte changed')
+    print('P1E_VALIDATOR_EDITABILITY_TEST PASS: MOVE.L #0,84(A2) -> #1, one byte changed')
+    print('P1E_STAGE_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 

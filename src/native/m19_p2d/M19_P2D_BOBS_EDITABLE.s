@@ -8869,49 +8869,11 @@ edit_drop_old_bank:
     move.l #$00000001,d3                               ; +$085DE: 263C00000001
     bra.w L_BOBS_08626                                 ; +$085E4: 60000040
 L_BOBS_085E8:
-edit_cleanup:
-    move.l 88(a2),d0                                   ; +$085E8: 202A0058
-    beq.w L_BOBS_0860A                                 ; +$085EC: 6700001C
-    movea.l d0,a0                                      ; +$085F0: 2040
-    lea 8(a0),a1                                       ; +$085F2: 43E80008
-    movea.l 44(a2),a4                                  ; +$085F6: 286A002C
-    bsr.w L_BOBS_03D9E                                 ; +$085FA: 6100B7A2
-    movea.l 88(a2),a1                                  ; +$085FE: 226A0058
-    movea.l $0004.w,a6                                 ; +$08602: 2C780004
-    jsr -690(a6)                                       ; +$08606: 4EAEFD4E
-L_BOBS_0860A:
-edit_cleanup_bank:
-    move.l 60(a2),d0                                   ; +$0860A: 202A003C
-    beq.w L_BOBS_08620                                 ; +$0860E: 67000010
-    lea 64(a2),a0                                      ; +$08612: 41EA0040
-    movea.l 60(a2),a1                                  ; +$08616: 226A003C
-    dc.w $FE11,$F700,AMOS_MAIN_LIST_DELETE  ; +$0861A: FE11F700005D
-L_BOBS_08620:
-edit_fail:
-    move.l #$00000000,d3                               ; +$08620: 263C00000000
-L_BOBS_08626:
-edit_return:
-    lea 256(a7),a7                                     ; +$08626: 4FEF0100
-    movem.l (a7)+,d0-d2/d4-d7/a0-a2/a4-a6              ; +$0862A: 4CDF77F7
-    moveq #0,d2                                        ; +$0862E: 7400
-    rts                                                ; +$08630: 4E75
+    include "M19_P1E_EDIT_CLEANUP_MC68020.s"
 L_BOBS_08632:
-edit_validate_bank:
-    movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$08632: 48E7EFEE
-    lea -176(a7),a7                                    ; +$08636: 4FEFFF50
-    movea.l a7,a2                                      ; +$0863A: 244F
-    move.l d3,(a2)                                     ; +$0863C: 2483
-    move.l a0,12(a2)                                   ; +$0863E: 2548000C
-    move.l #$00000000,4(a2)                            ; +$08642: 257C000000000004
-    move.l #$00000000,8(a2)                            ; +$0864A: 257C000000000008
-    move.l #$00000000,84(a2)                           ; +$08652: 257C000000000054
-    bra.w L_BOBS_03858                                 ; +$0865A: 6000B1FC
+    include "M19_P1E_VALIDATE_BANK_MC68020.s"
 L_BOBS_0865E:
-edit_validate_or_stage:
-    move.l a1,d3                                       ; +$0865E: 2609
-    bne.w L_BOBS_03DA2                                 ; +$08660: 6600B740
-    move.l #$00000001,d3                               ; +$08664: 263C00000001
-    rts                                                ; +$0866A: 4E75
+    include "M19_P1E_VALIDATE_STAGE_MC68020.s"
 L_BOBS_0866C:
 edit_repack:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(a7)              ; +$0866C: 48E7EFEE
