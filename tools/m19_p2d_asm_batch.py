@@ -244,7 +244,8 @@ def stage_modules(folder,overrides=None):
         require(source_file.is_file(), 'missing source: '+str(source_file))
         text = overrides.get(spec.file,source_file.read_text('ascii'))
         require(text.count('; AGA_NATIVE_MIN_CPU: MC68020')==1 and
-                text.count(spec.begin_label+':')==1 and
+                (not spec.begin_label or
+                 text.count(spec.begin_label+':')==1) and
                 text.count(spec.constant+' equ ')==1 and
                 not any(DATA.match(l) and not PSEUDO.fullmatch(l)
                         for l in text.splitlines()),
