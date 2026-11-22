@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **22/11/2026 — Migration source P2d M19 lots 23–36 sur `main` : 100 modules ASM** (80 BOBS, 14 UNIT153, 6 UNIT156). UNIT153 : 5 414/5 558 octets ; UNIT156 : 2 330/2 508 octets. Gates A lots 23–34 PASS, lots 35–36 en cours dans la [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035211969). Aucun changement de la Lib P2d, de LAST_GOOD ni des ASC ; nouvelle Gate B/C/D non revendiquee. [Suivi et limites](NEXT_SESSION.md).
+> **22/11/2026 — ASM P2d : 100 modules source-verifies** sur `main` (80 BOBS, 14 UNIT153, 6 UNIT156), **Gate A 23–36 PASS** ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035211969)). UNIT153 5 414/5 558 octets, UNIT156 2 330/2 508. P2d, LAST_GOOD, ASC inchanges ; aucune nouvelle Gate B/C/D. [Preuves](NEXT_SESSION.md).
 
 > **22/11/2026 — S1-P1b Gate A CPU PASS : 6 tests pont RGB24 + 8 tests repack AGSP.** [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994) / [Sonde AMOS Save-Load](../examples/agsp_bank/AGSP_BANK_SAVELOAD.asc) + [ABK](../examples/agsp_bank/AGSP_1IMG_16X16.ABK). Gates B/C en attente, AP20/transaction non integres ; P2d/LAST_GOOD proteges.
 

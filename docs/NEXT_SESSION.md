@@ -4,9 +4,9 @@
 
 **100 modules ASM edites sur `main`** : 80 BOBS, 14 UNIT153 et 6 UNIT156.
 Pour UNIT153, **5 414 / 5 558 octets** sont maintenant du source Motorola
-reproductible ; les **144 octets restants** sont le dispatcher exclu ? Non :
-ils comprennent les pseudo-appels AMOS Main, marqueurs GetP, donnees et
-deux plages brutes non classees. UNIT156 atteint **2 330 / 2 508 octets**
+reproductible ; les **144 octets restants** comprennent les
+pseudo-appels AMOS Main, les marqueurs GetP, des donnees et deux plages
+brutes non classees. UNIT156 atteint **2 330 / 2 508 octets**
 en 6 modules, avec 178 octets de donnees/marqueurs et brut non classe.
 
 **Commits de travail :**
@@ -19,11 +19,9 @@ et [35–36](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/f0fa14158
 Les dispatchers AP20 de 34 octets passent dans deux modules a valeur par
 defaut strictement identique et test d'edition isole de chaque octet.
 
-**Preuves :** Gates A ASM des lots 23–34 PASS (jusqu'a
-[CI 45034958634](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45034958634)).
-Le resultat du lot 35–36 est a controler dans
-[CI 45035211969](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035211969) :
-**pas encore acquis** a la redaction. Les modifications sont des sources
+**Preuves :** Gates A ASM des lots 23–36 **PASS**, y compris la
+reconstruction byte-exacte, l'assemblage direct vasm MC68020 et les tests
+d'edition isoles ([CI du 36e lot, 45035211969](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45035211969)). Les modifications sont des sources
 source-only, pas de nouvelle qualification WinUAE Runtime B, vrai
 AMOS Compiler C ni materiel D.
 
