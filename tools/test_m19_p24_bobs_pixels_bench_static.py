@@ -21,6 +21,7 @@ R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 from build_m19_p25_no_probe import build as build_r87
+from active_library import P2D_SHA
 
 
 def git_blob_sha(raw: bytes) -> str:
@@ -165,10 +166,21 @@ def main():
     from build_m19_b8_s1_bank_free_in_memory import build_bank_free
     active_p0,p0meta=build_bank_free()
     assert len(active_p0)==117896 and p0meta['sha256']=='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
-    assert active_islands in (active_m2,active_b8,active_s1,active_p0), 'Unknown active B7/B8/S1/P0 candidate'
+    # This is an archive-only P2.4 oracle: keep historical candidate checks,
+    # but accept the author-promoted P2d as the active official library.
+    active_is_p2d = (len(active_islands) == 136020 and
+                     sha256(active_islands).hexdigest() == P2D_SHA)
+    assert active_is_p2d or active_islands in (active_m2,active_b8,active_s1,active_p0), \
+        'Unknown active B7/B8/S1/P0/P2d candidate'
     assert m2meta['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6' and m2meta['predecessor_sha'] == m1meta['sha256']
     assert island_meta['sha256']=="34f4e3c13f9a079e3e586e50b054b83459bb32bd7c5d15211b55437275e6bf56"
-    assert len(last_good) == 117896 and sha256(last_good).hexdigest() == P0_FREE_SHA
+    if active_is_p2d:
+        # P2d LAST_GOOD is promoted and must match the installed work Lib exactly.
+        assert len(last_good) == 136020 and last_good == active_islands
+        assert sha256(last_good).hexdigest() == P2D_SHA
+    else:
+        # Legacy candidate layouts continue to require the historical P0 pin.
+        assert len(last_good) == 117896 and sha256(last_good).hexdigest() == P0_FREE_SHA
     candidate, meta=build_r87()
     assert meta["commands"]==77 and meta["ap20_entries"]==87
     current_sha=sha256(current_lib).hexdigest()
