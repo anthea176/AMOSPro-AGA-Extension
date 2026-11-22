@@ -950,11 +950,13 @@ M19 P1c et P1d, avec octets de reference verrouilles :
 
 Les appels PC-relatifs utilisent l'extension longue MC68020 de 8 octets,
 non une instruction 68000 ni des octets de donnees arbitraires.
-Deux edits `cmpi.l` confines (1 -> 2) doivent etre valides par Gate A.
+Deux edits `cmpi.l` confines (1 -> 2) sont valides par Gate A.
 
-**Projection source avant validation : 235 modules ASM**, dont 135 UNIT142,
+**Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45053448900) : 235 modules ASM**, dont 135 UNIT142,
 **55 596 / 62 740 octets (88,61 %)**, **7 144 octets bruts**.
-Identite P2d / LAST_GOOD / ASC a confirmer par CI sur le commit courant.
+Assemblage vasm P2d byte-exact, **135 mutations isolees**.
+[Inventaire PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45054203673) :
+4 146 octets de donnees/marqueurs source-prouves, 2 998 non classes.
 Pas de qualification WinUAE B, Compiler C ou materiel D supplementaire.
 
 ## Compilation directe (Windows)

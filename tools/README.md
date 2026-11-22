@@ -12,10 +12,12 @@ reconstruit la P2d officielle depuis ses emetteurs sources.
 **Migration ASM source-only :** `tools/build_m19_p2d_editable_asm.py`,
 `tools/m19_p2d_unit142_source.py` et
 `src/native/m19_p2d/M19_P2D_UNIT142_EDITABLE.s`.
-La source UNIT142 comporte **133 modules / 55 508 octets convertis**
-(88,47 %), avec 133 mutations isolees et reconstruction P2d exacte
-([Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45051866506)).
-**7 232 octets bruts non classes** restent preserves.
+La source UNIT142 comporte **135 modules / 55 596 octets convertis**
+(88,61 %), avec 135 mutations isolees et reconstruction P2d exacte
+([Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45053448900)).
+**7 144 octets** restent en directives : **4 146 non executables
+source-prouves**, **2 998 non classes**
+([audit PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45054203673)).
 Cette migration ne modifie pas les Lib officielles ni les tests WinUAE.
 [Etat](../docs/NEXT_SESSION.md) ·
 [Audit du reliquat](../docs/M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).

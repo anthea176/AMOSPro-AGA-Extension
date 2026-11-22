@@ -1,4 +1,27 @@
-# UNIT142 — audit du reliquat brut : 12 298 initiaux, 7 232 restants (22/11/2026)
+# UNIT142 — audit du reliquat brut : 12 298 initiaux, 7 144 restants (22/11/2026)
+
+## Etat actuel — lots 170-171 et inventaire source (Gate A PASS)
+
+**135 modules UNIT142**, **55 596 / 62 740 octets (88,61 %)**
+de code MC68020 source-verifie et **7 144 octets bruts** conserves.
+Les wrappers P1c/P1d apportent 38 + 50 octets de code.
+[Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45053448900)
+pour vasm direct, SHA P2d et 135 mutations confinees.
+
+| Type d'octets prouve non executable | Octets |
+| --- | ---: |
+| Etat AGA, P0e/P0f, contexte P1c, table P1d | 3 656 |
+| Pseudo-appels AMOS Main Rjsr (45 x 6) | 270 |
+| Delimiteurs GetP (47 x 4) | 188 |
+| Signatures AGACBLK et AGAPIC | 32 |
+| **Total non-code source-prouve** | **4 146** |
+| **Residuel non classifie** | **2 998** |
+
+[Audit Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45054203673) :
+les emetteurs historiques, la grammaire AMOS Main `rjsr` et
+le format `GetP` sont recoupes avec les 135 plages et le SHA P2d.
+Les 2 998 octets restants peuvent melanger code et donnees :
+aucune conversion sans preuve de source, de point d'entree et de vasm.
 
 ## Etat courant — lots 168-169 P0f BSR.W Gate A PASS
 

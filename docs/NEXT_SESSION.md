@@ -1,5 +1,27 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lots 170-171 : P1c/P1d Gate A PASS
+
+**235 modules ASM MC68020**, dont **135 UNIT142** : **55 596 /
+62 740 octets (88,61 %)** de code. Les 38 octets P1c et 50 octets
+P1d sont des instructions source-verifiees ; leurs 8 et 1 040 octets
+de contexte et de table restent donnees. Le JSR PC-relatif long impose
+la syntaxe MC68020 32 bits, pas une approximation d'offset.
+
+[Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45053448900) :
+reconstruction P2d SHA256 byte-exact, vasm direct et 135 mutations
+confinees. [Migration](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/c7aea5035bd175b0001b0b154c718d8b4bcb3f6f),
+[correctif JSR](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/985972f04377ab9ab9c5fb4f6daaa7157e2edb9e).
+
+**7 144 octets bruts** conserves : **4 146 octets prouvables non
+executables** (3 656 tables/etat, 270 Rjsr, 188 GetP et 32 signatures),
+**2 998 octets non classes**, [audit Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45054203673).
+L'audit R83 de la routine historique Screen Open est exploratoire,
+pas un nouveau lot de code acquis. [Rapport](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md).
+
+P2d, LAST_GOOD, l'ASC de regression restent identiques ; pas de
+promotion binaire ni de nouvelle Gate WinUAE B / Compiler C / hardware D.
+
 ## 22 novembre 2026 — UNIT142 lots 168-169 P0f BSR.W : Gate A PASS
 
 Les deux branches MC68020 `BSR.W` a destination des entrees P0e
