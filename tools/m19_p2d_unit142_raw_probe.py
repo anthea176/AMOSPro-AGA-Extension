@@ -59,11 +59,11 @@ def check() -> None:
     group = groups[142]
     assert len(group) == 62740 and sha256(group).hexdigest() == GROUP_SHA
     reconstructed, _wrapper, modules = expected_sources()
-    assert reconstructed == group and len(modules) == 137
+    assert reconstructed == group and len(modules) == 143
     clean = sum(hi - lo for lo, hi, _name, _source in modules)
     assert sum(hi - lo for (_file, _start, _stop, lo, hi, *_rest) in SPANS) == 50442
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
-    assert clean == 56312 and len(group) - clean == 6428
+    assert clean == 56792 and len(group) - clean == 5948
 
     # Source-owned code vs. original state/header/pseudo data, byte exact.
     mask = bytearray(len(group))
@@ -148,7 +148,7 @@ def check() -> None:
     known_noncode += extra_markers
     assert known_noncode == 4186
     unknown = len(group) - clean - known_noncode
-    assert unknown == 2242
+    assert unknown == 1762
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 

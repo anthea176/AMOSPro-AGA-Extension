@@ -1645,6 +1645,144 @@ def legacy_r83_screen_sources(whole, wrapper):
     return wrapper, modules
 
 
+
+LEGACY_CLOSE_MODULES = (
+    ("M19_UNIT142_R83_CLOSE_ENTRY_MC68020.s", "c96ab92f5a9c024b759190d3d528e4fbd920e87d",
+     0x0005A, 0x00062, "UNIT142_R83_CLOSE_ENTRY_A5_OFFSET", 456, 460, 0x00061, 0xC8, 0xCC),
+    ("M19_UNIT142_R83_CLOSE_GUARD_MC68020.s", "c7c5682d810e4a14f1bcad2da1af326c1f39ec93",
+     0x00066, 0x00088, "UNIT142_R83_CLOSE_GUARD_GFX_OFFSET", 8, 9, 0x00071, 0x08, 0x09),
+    ("M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s", "5a2ae1280ec4b51da981977d520b0d667d547cbc",
+     0x000C0, 0x001B0, "UNIT142_R83_CLOSE_CLEANUP_CLEAR_COUNT", 4, 5, 0x00163, 0x04, 0x05),
+    ("M19_UNIT142_R83_CLOSE_CROSS_BSR_MC68020.s", "3c93cdd5ef3a11707133b15daab22b3212342a37",
+     0x001B0, 0x001B4, "UNIT142_R83_CLOSE_CROSS_BSR_DELTA", 0, 2, 0x001B3, 0x58, 0x5A),
+    ("M19_UNIT142_R83_CLOSE_POSTCALL_MC68020.s", "734afd4908d74826912290089e5aa3766f99549f",
+     0x001B4, 0x001C2, "UNIT142_R83_CLOSE_POSTCALL_ROOT_OFFSET", 32, 33, 0x001BF, 0x20, 0x21),
+    ("M19_UNIT142_R83_CLOSE_SAFEWAIT_MC68020.s", "a64a15c3977027539e90ec53e62acbfa3f0ed866",
+     0x001EA, 0x0029E, "UNIT142_R83_CLOSE_SAFEWAIT_READY", 1, 2, 0x00239, 0x01, 0x02),
+)
+
+
+def legacy_r83_close_sources(whole, wrapper):
+    """Source-proof R83 legacy Close/End, no claim of runtime qualification."""
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+    from m19_p0c_screen_close_bridge_emit import AGA_STATE_OFFSET
+
+    historic, info = build_r83()
+    demand(info["sha256"] == R83_SHA and sha256(historic).hexdigest() == R83_SHA,
+           "UNIT142 R83 Close historical builder differs")
+    _tokens, parts, _title = unpack_ap20(historic)
+    source = whole[0x0005A:0x002A2]
+    demand(len(parts[82]) == 52974 and parts[82][0x0005A:0x002A2] == source and
+           len(source) == 584 and sha256(source).hexdigest() ==
+           "99d588b4e9e1cad7159a78889940265ad3b2921def3ded40b282767a2d8fac36",
+           "UNIT142 R83 Close source SHA/provenance mismatch")
+    demand(AGA_STATE_OFFSET == 0x001C2 and
+           source[0x168:0x190] == bytes(40) and
+           source[0x244:0x248] == b"GetP" and
+           source[0x08:0x0C] == bytes.fromhex("60000978") and
+           source[0x156:0x15A] == bytes.fromhex("61006458"),
+           "UNIT142 R83 Close state/linker/branch mismatch")
+    demand(0x00062 + 2 + 0x978 == 0x009DC and
+           0x001B0 + 2 + 0x6458 == 0x0660A,
+           "UNIT142 R83 external branch displacement mismatch")
+    preview, report = native_unit_source("LEGACY_CLOSE_CORE", source,
+                                          [(0, 0), (1, 0x001EA-0x0005A)])
+    demand(report["bytes"] == 584 and report["mnemonic_bytes"] == 476 and
+           report["raw_dc_bytes"] == 108,
+           "UNIT142 R83 Close source decoding inventory changed")
+    spans = (
+        ("ENTRY", 0x0005A, 0x00062, "ENTRY_LEGACY_CLOSE_CORE_00000:",
+         "    dc.b $60,$00,$09,$78",
+         "movea.l 456(a5),a2", "movea.l UNIT142_R83_CLOSE_ENTRY_A5_OFFSET(a5),a2"),
+        ("GUARD", 0x00066, 0x00088, "L_LEGACY_CLOSE_CORE_0000C:",
+         "    dc.b $20,$6C,$00,$0C,$2C,$78",
+         "movea.l 8(a2),a6", "movea.l UNIT142_R83_CLOSE_GUARD_GFX_OFFSET(a2),a6"),
+        ("CLEANUP", 0x000C0, 0x001B0, "L_LEGACY_CLOSE_CORE_00066:",
+         "    dc.b $61,$00,$64,$58",
+         "moveq #4,d0", "moveq #UNIT142_R83_CLOSE_CLEANUP_CLEAR_COUNT,d0"),
+        ("POSTCALL", 0x001B4, 0x001C2, "L_LEGACY_CLOSE_CORE_0015A:",
+         "    dc.b $00,$00,$00,$00",
+         "movea.l 32(a2),a4", "movea.l UNIT142_R83_CLOSE_POSTCALL_ROOT_OFFSET(a2),a4"),
+        ("SAFEWAIT", 0x001EA, 0x0029E, "ENTRY_LEGACY_CLOSE_CORE_00190:",
+         "    dc.b $47,$65,$74,$50",
+         "moveq #1,d0", "moveq #UNIT142_R83_CLOSE_SAFEWAIT_READY,d0"),
+    )
+    segments = {}
+    for tag, start, stop, first, last, needle, replacement in spans:
+        a = preview.find(first)
+        b = preview.find(last, a+len(first))
+        demand(a >= 0 and b > a and preview.find(first, a+len(first)) < 0,
+               "UNIT142 R83 Close CFG boundary ambiguous: " + tag)
+        block = preview[a:b]
+        offset = start - 0x0005A
+        for line in block.splitlines():
+            mark = ANNOT.search(line)
+            if mark is None:
+                demand(LABEL.fullmatch(line) is not None,
+                       "UNIT142 R83 Close unknown line: " + line)
+            else:
+                demand(int(mark.group(1),16) == offset and
+                       not line.lstrip().lower().startswith("dc."),
+                       "UNIT142 R83 Close mixed code/data: " + tag)
+                offset += len(bytes.fromhex(mark.group(2)))
+        demand(offset == stop-0x0005A and block.count(needle) == 1,
+               "UNIT142 R83 Close exact module size/edit ambiguous: " + tag)
+        segments[tag] = block
+    def data_lines(start, stop):
+        return "".join("    dc.b " +
+                       ",".join("$%02X" % b for b in whole[at:min(at+12,stop)]) +
+                       "\n" for at in range(start, stop, 12))
+    before = ("L_UNIT142_0005A:\n" + data_lines(0x0005A, 0x001C2) +
+              "L_UNIT142_001C2:\n" + data_lines(0x001C2, 0x002A2))
+    demand(wrapper.count(before) == 1,
+           "UNIT142 original R83 Close raw wrapper changed")
+    after = ("L_UNIT142_0005A:\n"
+             '    include "M19_UNIT142_R83_CLOSE_ENTRY_MC68020.s"\n'
+             + data_lines(0x00062, 0x00066)
+             + '    include "M19_UNIT142_R83_CLOSE_GUARD_MC68020.s"\n'
+             + data_lines(0x00088, 0x000C0)
+             + '    include "M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s"\n'
+             + '    include "M19_UNIT142_R83_CLOSE_CROSS_BSR_MC68020.s"\n'
+             + '    include "M19_UNIT142_R83_CLOSE_POSTCALL_MC68020.s"\n'
+             + "L_UNIT142_001C2:\n    dcb.b 40,0\n"
+             + '    include "M19_UNIT142_R83_CLOSE_SAFEWAIT_MC68020.s"\n'
+             + data_lines(0x0029E, 0x002A2))
+    wrapper = wrapper.replace(before, after)
+    modules = []
+    for filename, pinned_blob, start, stop, symbol, initial, edited, delta, old_byte, new_byte in LEGACY_CLOSE_MODULES:
+        payload = (NATIVE_DIR / filename).read_bytes()
+        gitblob = sha1(b"blob " + str(len(payload)).encode("ascii") +
+                       b"\x00" + payload).hexdigest()
+        demand(gitblob == pinned_blob and whole[delta] == old_byte and
+               start <= delta < stop and edited != initial,
+               "UNIT142 R83 Close authored blob or mutation differs: " + filename)
+        if "CROSS_BSR" in filename:
+            authored = (
+                "; AGA_NATIVE_MIN_CPU: MC68020\n"
+                "; UNIT142 R83 Close/End cross-entry BSR.W; target $0660A is source-labelled.\n"
+                "; UNIT142+$001B0..$001B4 (4 MC68020 instruction bytes).\n"
+                "UNIT142_R83_CLOSE_CROSS_BSR_DELTA equ 0\n\n"
+                "    bsr.w L_UNIT142_0660A+UNIT142_R83_CLOSE_CROSS_BSR_DELTA\n")
+        else:
+            tag, _start, _stop, _first, _last, needle, replace = next(
+                span for span in spans if span[1:3] == (start,stop))
+            authored = (
+                "; AGA_NATIVE_MIN_CPU: MC68020\n"
+                "; UNIT142 historical R83 Close/End source-pinned; active P2d bytes unchanged.\n"
+                "; UNIT142+$%05X..$%05X (%d MC68020 instructions).\n" %
+                (start,stop,stop-start) +
+                symbol + " equ " + str(initial) + "\n\n" +
+                segments[tag].replace(needle,replace))
+        demand(payload.decode("ascii") == authored,
+               "UNIT142 R83 Close module contents not emitter-exact: " + filename)
+        modules.append((start,stop,filename,authored))
+    demand(sum(stop-start for start,stop,_filename,_text in modules) == 480,
+           "UNIT142 R83 Close migrated code must be 480 bytes")
+    return wrapper, modules
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -1856,6 +1994,8 @@ def expected_sources():
     modules.extend(p1cd)
     wrapper, legacy = legacy_r83_screen_sources(bytes(whole),wrapper)
     modules.extend(legacy)
+    wrapper, close_modules = legacy_r83_close_sources(bytes(whole),wrapper)
+    modules.extend(close_modules)
     return bytes(whole), wrapper, modules
 
 
@@ -1894,7 +2034,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 56312 bytes / 137 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 56792 bytes / 143 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1920,6 +2060,8 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     for filename, *_rest in LEGACY_OPEN_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_CLOSE_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1939,7 +2081,8 @@ def edit_gate(staged, assembler):
            (staged / "M19_UNIT142_P0F_BSR_PUT_MC68020.s").is_file() and
            (staged / "M19_UNIT142_P0F_BSR_READ_MC68020.s").is_file() and
            all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES) and
-           all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES),
+           all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -2034,6 +2177,13 @@ def edit_gate(staged, assembler):
             demand(text.count(before) == 1, "UNIT142 legacy Open edit ambiguous: "+filename)
             path.write_text(text.replace(before, symbol + " equ " + str(new)),
                             encoding="ascii", newline="\n")
+        for filename, _blob, _start, _stop, symbol, old_value, new_value, *_ in LEGACY_CLOSE_MODULES:
+            path = folder / filename
+            content = path.read_text("ascii")
+            before = symbol + " equ " + str(old_value)
+            demand(content.count(before) == 1, "UNIT142 R83 Close edit ambiguous: " + filename)
+            path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -2064,12 +2214,15 @@ def edit_gate(staged, assembler):
         expected[0x0F4EF] = (1, 2)
         expected[0x0047D] = (0, 1)
         expected[0x005FF] = (1, 2)
-        demand(len(expected) == 137, "UNIT142 R83 legacy Open edit count differs")
+        expected.update({delta: (oldbyte, newbyte)
+                         for _filename, _blob, _start, _stop, _sym, _old, _new,
+                             delta, oldbyte, newbyte in LEGACY_CLOSE_MODULES})
+        demand(len(expected) == 143, "UNIT142 R83 Close/End edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 137 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 143 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

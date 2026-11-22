@@ -1,0 +1,6 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; UNIT142 R83 Close/End cross-entry BSR.W; target $0660A is source-labelled.
+; UNIT142+$001B0..$001B4 (4 MC68020 instruction bytes).
+UNIT142_R83_CLOSE_CROSS_BSR_DELTA equ 0
+
+    bsr.w L_UNIT142_0660A+UNIT142_R83_CLOSE_CROSS_BSR_DELTA
