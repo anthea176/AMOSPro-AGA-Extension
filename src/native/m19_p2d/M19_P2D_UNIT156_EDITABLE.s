@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; PARTIAL_SOURCE_MIGRATION: native UNIT156 nibble + DOS guard; audit remainder
+; PARTIAL_SOURCE_MIGRATION: native UNIT156 tail + nibble + DOS guard; audit remainder
 ; PARTIAL MC68020 MNEMONIC RESTORATION (not an installable .Lib)
 ; Unit: UNIT156 | SHA256: 4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b
 ; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.
@@ -518,72 +518,7 @@ L_UNIT156_007CA:
     dc.b $00,$00,$67,$00,$00,$04,$0D,$D4,$52,$8C,$51,$CA  ; +$00842: 0000670000040DD4528C51CA
     dc.b $FF,$9C  ; +$0084E: FF9C
 L_UNIT156_00850:
-    addq.l #1,d6                                       ; +$00850: 5286
-    cmp.l 64(a5),d6                                    ; +$00852: BCAD0040
-    bcs.w L_UNIT156_0074A                              ; +$00856: 6500FEF2
-    move.l a1,d0                                       ; +$0085A: 2009
-    addi.l #$00000140,d0                               ; +$0085C: 068000000140
-    movea.l d0,a1                                      ; +$00862: 2240
-    dbra d4,L_UNIT156_00744                            ; +$00864: 51CCFEDE
-L_UNIT156_00868:
-    move.l a0,d0                                       ; +$00868: 2008
-    cmp.l a2,d0                                        ; +$0086A: B08A
-    beq.w L_UNIT156_0088E                              ; +$0086C: 67000020
-    tst.l 72(a5)                                       ; +$00870: 4AAD0048
-    beq.w L_UNIT156_00898                              ; +$00874: 67000022
-    move.l #$00000000,d0                               ; +$00878: 203C00000000
-    move.b (a0)+,d0                                    ; +$0087E: 1018
-    cmpi.l #$00000080,d0                               ; +$00880: 0C8000000080
-    bne.w L_UNIT156_00898                              ; +$00886: 66000010
-    bra.w L_UNIT156_00868                              ; +$0088A: 6000FFDC
-L_UNIT156_0088E:
-    move.l #$00000001,d0                               ; +$0088E: 203C00000001
-    bra.w L_UNIT156_0089E                              ; +$00894: 60000008
-L_UNIT156_00898:
-    move.l #$00000000,d0                               ; +$00898: 203C00000000
-L_UNIT156_0089E:
-    movem.l (a7)+,d1-d7/a0-a4/a6                       ; +$0089E: 4CDF5FFE
-    tst.l d0                                           ; +$008A2: 4A80
-    rts                                                ; +$008A4: 4E75
-L_UNIT156_008A6:
-    movem.l d1-d7/a0-a4/a6,-(a7)                       ; +$008A6: 48E77FFA
-    tst.l 20(a5)                                       ; +$008AA: 4AAD0014
-    beq.w L_UNIT156_008BE                              ; +$008AE: 6700000E
-    movea.l 16(a5),a6                                  ; +$008B2: 2C6D0010
-    move.l 20(a5),d1                                   ; +$008B6: 222D0014
-    jsr -36(a6)                                        ; +$008BA: 4EAEFFDC
-L_UNIT156_008BE:
-    tst.l 96(a5)                                       ; +$008BE: 4AAD0060
-    beq.w L_UNIT156_008D2                              ; +$008C2: 6700000E
-    movea.l 96(a5),a1                                  ; +$008C6: 226D0060
-    movea.l $0004.w,a6                                 ; +$008CA: 2C780004
-    jsr -690(a6)                                       ; +$008CE: 4EAEFD4E
-L_UNIT156_008D2:
-    tst.l 24(a5)                                       ; +$008D2: 4AAD0018
-    beq.w L_UNIT156_008E6                              ; +$008D6: 6700000E
-    movea.l 24(a5),a1                                  ; +$008DA: 226D0018
-    movea.l $0004.w,a6                                 ; +$008DE: 2C780004
-    jsr -690(a6)                                       ; +$008E2: 4EAEFD4E
-L_UNIT156_008E6:
-    tst.l 12(a5)                                       ; +$008E6: 4AAD000C
-    beq.w L_UNIT156_008FA                              ; +$008EA: 6700000E
-    movea.l 12(a5),a1                                  ; +$008EE: 226D000C
-    movea.l $0004.w,a6                                 ; +$008F2: 2C780004
-    jsr -690(a6)                                       ; +$008F6: 4EAEFD4E
-L_UNIT156_008FA:
-    tst.l 16(a5)                                       ; +$008FA: 4AAD0010
-    beq.w L_UNIT156_0090E                              ; +$008FE: 6700000E
-    movea.l 16(a5),a1                                  ; +$00902: 226D0010
-    movea.l $0004.w,a6                                 ; +$00906: 2C780004
-    jsr -414(a6)                                       ; +$0090A: 4EAEFE62
-L_UNIT156_0090E:
-    move.l #$00000001,d0                               ; +$0090E: 203C00000001
-    bra.w L_UNIT156_0091E                              ; +$00914: 60000008
-    dc.b $20,$3C,$00,$00,$00,$00  ; +$00918: 203C00000000
-L_UNIT156_0091E:
-    movem.l (a7)+,d1-d7/a0-a4/a6                       ; +$0091E: 4CDF5FFE
-    tst.l d0                                           ; +$00922: 4A80
-    rts                                                ; +$00924: 4E75
+    include "M19_UNIT156_CONVERT_TAIL_MC68020.s"
 L_UNIT156_00926:
     dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00  ; +$00926: 646F732E6C69627261727900
 L_UNIT156_00932:

@@ -355,6 +355,18 @@ observer **seulement deux octets changes** dans UNIT156, aucun ailleurs.
 UNIT156 total source-verifie : **86 octets / 2 modules**.
 Ensemble : **82 modules**, dont 80 BOBS. Gate A uniquement.
 
+### UNIT156 — 19e lot : fin de conversion et nettoyage (214 octets)
+
+La plage `UNIT156+$00850..$00926` devient le troisieme module
+[M19_UNIT156_CONVERT_TAIL_MC68020.s](M19_UNIT156_CONVERT_TAIL_MC68020.s)
+(214 octets). L'instruction `move.l #0,d0` de `$00918` encore
+en `dc.b` est classee avec preuve emitter et code assemble MC68020 ;
+les donnees `dos.library` a `$00926` restent en place.
+Trois substitutions d'un octet, aux positions `$0091D`, `$00937`
+et `$009AF`, sont controlees ensemble sans mutation hors UNIT156.
+UNIT156 migre : **300 octets / 3 modules** ; ensemble **83 modules ASM**.
+Aucune bibliotheque de `dist/` ni source ASC modifiees.
+
 ## Compilation directe (Windows)
 
 ```bat
