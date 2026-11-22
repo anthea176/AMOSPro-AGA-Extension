@@ -109,6 +109,16 @@ def probe_following_close(vasm: Path, emit_base64: bool = False) -> None:
         ("LEGACY_HELPER_052CA", 0x052CA, 0x0530E, [(0,0)]),
         ("LEGACY_STUB_002A4", 0x002A4, 0x002B2, [(0,0)]),
         ("LEGACY_STUB_002B4", 0x002B4, 0x002C2, [(0,0)]),
+        ("R83_RAW_MOVEL_0153A", 0x0153A, 0x01540, [(0,0)]),
+        ("R83_RAW_MOVEL_015BA", 0x015BA, 0x015C0, [(0,0)]),
+        ("R83_RAW_MOVEL_01BC4", 0x01BC4, 0x01BCA, [(0,0)]),
+        ("R83_RAW_MOVEL_03986", 0x03986, 0x0398C, [(0,0)]),
+        ("R83_RAW_MOVEL_03A06", 0x03A06, 0x03A0C, [(0,0)]),
+        ("R83_RAW_MOVEL_040FC", 0x040FC, 0x04102, [(0,0)]),
+        ("R83_RAW_BRA_0C8BA", 0x0C8BA, 0x0C8BE, [(0,0)]),
+        ("R83_RAW_BRA_0CED4", 0x0CED4, 0x0CED8, [(0,0)]),
+        ("R83_NOP_01F30", 0x01F30, 0x01F32, [(0,0)]),
+        ("R83_NOP_SLOTS_07B2A", 0x07B2A, 0x07B56, [(0,0)]),
     )
     for name, lo, hi, entries in candidates:
         source = parts[82][lo:hi]
