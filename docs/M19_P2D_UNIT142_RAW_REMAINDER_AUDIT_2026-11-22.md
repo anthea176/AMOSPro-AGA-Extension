@@ -63,6 +63,36 @@ Depuis le commit des lots 159–161, leurs 2 616 octets de code sont
 **migrés et Gate A PASS**. La signature et GetP (36 octets) restent en
 `dc.b`. Les **9 682 octets bruts** restants sont a classer sans invention.
 
+## Inventaire automatique complementaire — Gate A PASS
+
+Le script source-only
+[`tools/m19_p2d_unit142_raw_probe.py`](../tools/m19_p2d_unit142_raw_probe.py)
+est controle par [la CI Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45047829366)
+avec resultat **PASS** : il recoupe le groupe P2d original avec les
+**53 058 octets des 125 modules UNIT142**, sans remplacer la Lib.
+Reliquat confirme : **9 682 octets**, dont le bloc
+`$0DCFC..$0F514` de **6 168 octets**.
+
+| Plage de zeros dans UNIT142 | Octets | Classement |
+| --- | ---: | --- |
+| `$0E018..$0E620` | 1 544 | zeros constates, usage a rapprocher de P0e |
+| `$0ECA4..$0F0A4` | 1 024 | zeros constates, usage a rapprocher de P0f |
+| `$0F0CA..$0F4E2` | 1 048 | zeros constates, role non qualifie |
+
+Le meme outil retrouve octet-identiques les sources historiques
+`capture_r84_v2` (**2 510 octets a `$0D336`**),
+`bank_info_r84` (**1 088 octets a `$0CEF2`**), et
+`scanline_r47` (**758 octets a `$074DA` et `$0DA06`**).
+Les fonctions anciennes restent source-dependantes : ces correspondances
+ne constituent **aucune nouvelle qualification Runtime/Compiler**.
+
+La plage `$0DD04` commence par le prologue du noyau
+`m19_p0e_object_table_emit.py`, mais son extraction ASM et son
+reassemblage exact relevent d'une **validation distincte**.
+Le marqueur `AGAPIC  ` a `$0DCFC` est conserve comme donnee, et
+l'entree `$0F4E2` reste non decodee. Les suites de zeros ne sont
+pas declarees comme padding reutilisable.
+
 ## Sequence de reprise protegee
 
 1. Recouper les limites des 121 plages avec le manifeste, les
