@@ -2,6 +2,12 @@
 
 **80 modules metier maintenables** issus des emetteurs Python historiques P0i/B7/B8/P2a/P2b/P2c/P2d (Gate A) :
 
+**BOBS actuel :** 56 582 octets d'instructions MC68020 (dont
+2 NOP de padding et 1 RTS explicite), 4 112 octets de structures deja
+integrees aux modules, 200 octets de donnees `dc.b` dans le source BOBS
+principal et 34 octets de dispatcher AP20. Total **60 928 octets**,
+inchange octet pour octet.
+
 | Source native | Plage BOBS (debut inclus, fin exclue) | Octets |
 | --- | --- | ---: |
 | [P0 Core Dispatch — entrées BOBS et cycles AMOS](M19_P0_CORE_DISPATCH_MC68020.s) | `$00022..$020A2` | 8 320 |
@@ -84,7 +90,7 @@
 | [P2d Public Query Head — resultat AMOS](M19_P2D_PUBLIC_QUERY_HEAD_MC68020.s) | `$0EDD0..$0EDF4` | 36 |
 | [P2d Public Query Tail — epilogue d'ABI](M19_P2D_PUBLIC_QUERY_TAIL_MC68020.s) | `$0EDF4..$0EE00` | 12 |
 | [P0 Checked Registry — controle de banque et registre](M19_P0_CHECKED_REGISTRY_MC68020.s) | `$03792..$046CC` | 3 898 |
-| **Total de code ASM propre** | | **56 576** |
+| **Total de code ASM propre** | | **56 582** |
 
 En plus du code, [P2b slots](M19_P2B_SLOTS_DATA_MC68020.s) definit **4 100 octets de donnees** (pointeur proprietaire 4 octets et 64 emplacements de 64 octets) ; le module B8 End/Register ajoute **12 octets de donnees** (`B8RG` et racine des callbacks). Soit **4 112 octets de donnees**, non comptes comme code ASM converti.
 
@@ -295,6 +301,18 @@ Controle de provenance par emetteur P2d, vasm MC68020 byte-exact et
 edition groupee **35 modules**. Il reste **206 octets en dc.b**
 (donnees, padding et un relais RTS). Aucune bibliotheque officielle,
 aucune LAST_GOOD ni campagne ASC modifiees.
+
+
+Le seizieme lot convertit **6 octets de code/padding BOBS** restant :
+les deux instructions `NOP` a `$068FE..$06902` et le `RTS`
+a `$071EC..$071EE`, auparavant inscrits en `dc.b`. Aucun
+module supplementaire : le total reste 80. Le controle
+`tools/m19_p2d_bobs_raw_inventory.py` verrouille les **200 octets
+encore en `dc.b`** comme donnees, leurs huit plages et les trois
+opcodes de jonction ; il dispose d'un autotest et s'execute en CI.
+La reconstruction P2d et l'assemblage vasm MC68020 doivent encore
+etre identiques aux 136 020 octets et au SHA256 de la Lib officielle.
+Aucune nouvelle Lib, aucune LAST_GOOD ni ASC modifies.
 
  Les sous-plages avec octets non classes ou donnees
 (`$06264..$0627E`, `$068FA..$06902`, `$06D36..$06D4E`,

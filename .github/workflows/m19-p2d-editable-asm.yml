@@ -35,7 +35,9 @@ jobs:
       - name: Verify CPU policy, Python syntax and source-backed batch
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py
+          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py
+          python -B tools/m19_p2d_bobs_raw_inventory.py --self-test
+          python -B tools/m19_p2d_bobs_raw_inventory.py --check
           python -B tools/m19_p2d_asm_batch.py --check
       - name: Restore pinned vasm MC68020 build cache
         id: vasm-cache

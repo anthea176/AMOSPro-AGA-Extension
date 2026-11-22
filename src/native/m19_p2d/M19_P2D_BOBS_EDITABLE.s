@@ -185,7 +185,8 @@ L_BOBS_0685C:
     include "M19_P0J_SAFE_TAIL_MC68020.s"
 L_BOBS_068FA:
     include "M19_P1B_FRAME_BRANCH_MC68020.s"
-    dc.b $4E,$71,$4E,$71  ; +$068FE: 4E714E71
+    nop                                                ; +$068FE: 4E71
+    nop                                                ; +$06900: 4E71
 L_BOBS_06902:
     include "M19_P1B_FRAME_GUARD_MC68020.s"
 L_BOBS_06D36:
@@ -200,7 +201,7 @@ L_BOBS_06FA6:
     include "M19_B7_B8_DRAW_BRIDGE_MC68020.s"
 L_BOBS_071E8:
     include "M19_B8_CLOSE_BRANCH_MC68020.s"
-    dc.b $4E,$75  ; +$071EC: 4E75
+    rts                                                ; +$071EC: 4E75
 L_BOBS_071EE:
     include "M19_B8_END_REGISTER_MC68020.s"
 L_BOBS_07364:
