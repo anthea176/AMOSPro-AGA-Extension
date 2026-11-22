@@ -66,6 +66,7 @@ P1C_DISPATCH_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_DISPATC
 P1C_CONTEXT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_CONTEXT_MC68020.s'
 P1C_PRE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_PREFLIGHT_MC68020.s'
 P1C_COL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_ORDER_COLLECT_MC68020.s'
+P1C_DRAW_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1C_FRAME_DRAW_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -139,6 +140,9 @@ P1C_PRE_END = 0x7C18
 P1C_COL_NAME = 'M19_P1C_ORDER_COLLECT_MC68020.s'
 P1C_COL_START = 0x7C18
 P1C_COL_END = 0x7C98
+P1C_DRAW_NAME = 'M19_P1C_FRAME_DRAW_MC68020.s'
+P1C_DRAW_START = 0x7C98
+P1C_DRAW_END = 0x7D7E
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1278,6 +1282,47 @@ def replace_raw_p1c_order_collect(text: str) -> str:
             P1C_COL_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1c_frame_draw_provenance() -> tuple[int, int, int, bytes]:
+    """Validate complete P1c ordered draw/restore against source emitters."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    p1c, source_labels = emit_priority_bobs(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    base = len(parts[group]) - len(native)
+    begin = base + labels['explicit_frame_next']
+    end = base + labels['p1d_limit_entry']
+    fragment = p1c[source_labels['explicit_frame_next']:]
+    mutation = 0x7D6B
+    require((begin, end) == (P1C_DRAW_START, P1C_DRAW_END) and
+            len(fragment) == 230 and
+            native[labels['explicit_frame_next']:labels['p1d_limit_entry']] == fragment and
+            parts[group][begin:end] == fragment and
+            fragment[mutation-begin-5:mutation-begin+3] ==
+            bytes.fromhex('257c000000010004'),
+            'P1c ordered frame source differs from final P2d layout')
+    return begin, end, mutation, fragment
+
+
+def replace_raw_p1c_frame_draw(text: str) -> str:
+    """Replace only source-pinned P1c ordered draw and recovery."""
+    first = 'L_BOBS_07C98:\nexplicit_frame_next:\n'
+    last = 'ENTRY_BOBS_07D7E:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1c ordered draw audit boundaries missing')
+    pos, observed = P1C_DRAW_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1c ordered draw audit discontinuity')
+        part = bytes.fromhex(encoded)
+        observed.extend(part)
+        pos += len(part)
+    require(pos == P1C_DRAW_END and
+            bytes(observed) == prove_p1c_frame_draw_provenance()[3],
+            'P1c ordered draw raw bytes do not match authoritative emitter')
+    return text[:i] + 'L_BOBS_07C98:\n    include "' + P1C_DRAW_NAME + '"\n' + text[j:]
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1384,7 +1429,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1c_dispatch_text: str | None = None,
                    p1c_context_text: str | None = None,
                    p1c_pre_text: str | None = None,
-                   p1c_col_text: str | None = None) -> None:
+                   p1c_col_text: str | None = None,
+                   p1c_draw_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1411,6 +1457,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1C_CONTEXT_FILE.is_file(), f'missing authored module: {P1C_CONTEXT_FILE}')
     require(P1C_PRE_FILE.is_file(), f'missing authored module: {P1C_PRE_FILE}')
     require(P1C_COL_FILE.is_file(), f'missing authored module: {P1C_COL_FILE}')
+    require(P1C_DRAW_FILE.is_file(), f'missing authored module: {P1C_DRAW_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1431,6 +1478,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1c_context(text)
     text = replace_raw_p1c_frame_preflight(text)
     text = replace_raw_p1c_order_collect(text)
+    text = replace_raw_p1c_frame_draw(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -1754,6 +1802,21 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             not re.search(r'(?im)^\s*dcb?\.[bwll]\b', col_source),
             'P1c priority collection has unclassified bytes or invalid list bounds')
     (folder / P1C_COL_NAME).write_text(col_source, encoding='ascii', newline='\n')
+    draw_source = p1c_draw_text if p1c_draw_text is not None else P1C_DRAW_FILE.read_text('ascii')
+    base_result = draw_source.count('    move.l #1,4(a2)')
+    edited_result = draw_source.count('    move.l #2,4(a2)')
+    for marker in ('explicit_frame_next:', 'p1c_cursor_ready:',
+                   'explicit_frame_paint_call:', 'explicit_frame_advance:',
+                   'explicit_frame_unwind:', 'explicit_frame_done:',
+                   'explicit_frame_return:', 'L_BOBS_07CBE:',
+                   'L_BOBS_07D52:', 'L_BOBS_07D56:',
+                   'L_BOBS_07D66:', 'L_BOBS_07D6E:'):
+        require(draw_source.count(marker) == 1, 'P1c ordered draw source missing '+marker)
+    require((base_result, edited_result) in ((1, 0), (0, 1)) and
+            draw_source.count('P1C_NEXT_FRAME_SIZE equ 416') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', draw_source),
+            'P1c ordered draw has raw instructions or mismatched stack size')
+    (folder / P1C_DRAW_NAME).write_text(draw_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -1843,6 +1906,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1c_context_start, p1c_context_end, _, _ = prove_p1c_context_provenance()
     p1c_pre_start, p1c_pre_end, _, _ = prove_p1c_frame_preflight_provenance()
     p1c_col_start, p1c_col_end, _, _ = prove_p1c_order_collect_provenance()
+    p1c_draw_start, p1c_draw_end, _, _ = prove_p1c_frame_draw_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -1865,7 +1929,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1c_dispatch_start <= i < p1c_dispatch_end) or
                  (p1c_context_start <= i < p1c_context_end) or
                  (p1c_pre_start <= i < p1c_pre_end) or
-                 (p1c_col_start <= i < p1c_col_end) for i in differences),
+                 (p1c_col_start <= i < p1c_col_end) or
+                 (p1c_draw_start <= i < p1c_draw_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -1899,7 +1964,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1c_dispatch_text: str | None = None,
           p1c_context_text: str | None = None,
           p1c_pre_text: str | None = None,
-          p1c_col_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1c_col_text: str | None = None,
+          p1c_draw_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -1917,7 +1983,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1c_dispatch_text=p1c_dispatch_text,
                     p1c_context_text=p1c_context_text,
                     p1c_pre_text=p1c_pre_text,
-                    p1c_col_text=p1c_col_text)
+                    p1c_col_text=p1c_col_text,
+                    p1c_draw_text=p1c_draw_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -2318,6 +2385,19 @@ def test_editability(assembler: Path) -> None:
                 [col_imm-5:col_imm+3] == bytes.fromhex('257c000000010020'),
                 'P1c ordered key collection one-byte mutation not assembled')
         require(col_start <= col_imm < col_end, 'P1c collector edit escaped source')
+        draw_start, draw_end, draw_imm, _ = prove_p1c_frame_draw_provenance()
+        draw_source = P1C_DRAW_FILE.read_text('ascii')
+        needle = '    move.l #1,4(a2)'
+        require(draw_source.count(needle) == 1, 'P1c draw edit not unique')
+        edited, diffs = build(
+            assembler, root/'modified_p1c_draw', allow_edited=True,
+            p1c_draw_text=draw_source.replace(needle, '    move.l #2,4(a2)'))
+        require(diffs == [draw_imm],
+                f'P1c ordered frame draw changed {diffs}, expected {[draw_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [draw_imm-5:draw_imm+3] == bytes.fromhex('257c000000020004'),
+                'P1c frame draw edited MOVE.L result not assembled')
+        require(draw_start <= draw_imm < draw_end, 'P1c frame draw edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -2342,6 +2422,7 @@ def test_editability(assembler: Path) -> None:
     print('P1C_CONTEXT_EDITABILITY_TEST PASS: MOVEA.L #0,A0 -> #1, one byte changed')
     print('P1C_PREFLIGHT_EDITABILITY_TEST PASS: MOVE.L #1,44(A2) -> #2, one byte changed')
     print('P1C_COLLECT_EDITABILITY_TEST PASS: MOVE.L #0,32(A2) -> #1, one byte changed')
+    print('P1C_DRAW_EDITABILITY_TEST PASS: MOVE.L #1,4(A2) -> #2, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
