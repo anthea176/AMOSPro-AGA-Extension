@@ -587,6 +587,22 @@ Les **57 622 octets** restants demeurent dans le wrapper natif source
 verifie, sans requalification des zones brutes. Aucune Lib, LAST_GOOD
 ou ASC de campagne modifies ; Gate B/C/D non transferees.
 
+### UNIT142 — 45e a 48e lots : quatre entrees 020 (3 660 octets)
+
+Quatre nouvelles plages d'instructions pures sont promues en modules
+editables MC68020 a partir de l'emetteur P2d et de la preuve SHA globale :
+
+- [entree $02E64](M19_UNIT142_ENTRY_02E64_MC68020.s) : `$02E64..$030E8`, 644 octets ;
+- [entree $03270](M19_UNIT142_ENTRY_03270_MC68020.s) : `$03270..$034F0`, 640 octets ;
+- [entree $034F4](M19_UNIT142_ENTRY_034F4_MC68020.s) : `$034F4..$03986`, 1 170 octets ;
+- [entree $03C46](M19_UNIT142_ENTRY_03C46_MC68020.s) : `$03C46..$040FC`, 1 206 octets.
+
+Les bornes avant les donnees/markers et tous les labels sont conserves.
+Le test d'edition exige maintenant 12 mutations d'un seul octet dans
+le seul groupe UNIT142. **112 modules ASM total, dont 8 778 octets
+UNIT142 en 12 modules.** Aucun changement de Lib active, LAST_GOOD,
+ASC ou qualification nouvelle Runtime/Compiler.
+
 ## Compilation directe (Windows)
 
 ```bat
