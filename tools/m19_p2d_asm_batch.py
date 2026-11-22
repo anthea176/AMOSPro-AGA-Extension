@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from hashlib import sha256
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 import re
 
@@ -198,10 +199,29 @@ def require(ok, why):
     if not ok:
         raise BatchError(why)
 
-def prove_regions(native, labels, group, proven_p2c_prefix):
+@lru_cache(maxsize=1)
+def _source_p2c_prefix(prefix):
+    """Original P2c source-built BOBS prefix; independent SHA-pinned proof."""
+    from active_library import P2C_SHA
+    from build_m19_p2c_in_memory import build_p2c
+    from compiler_relocation import unpack_ap20
+    prior, info = build_p2c()
+    require(info['sha256'] == P2C_SHA and
+            sha256(prior).hexdigest() == P2C_SHA,
+            'P2c prior source provenance SHA mismatch')
+    _, parts, _ = unpack_ap20(prior)
+    group = info['bob_group']
+    require(0 <= group < len(parts) and 0 <= prefix <= len(parts[group]),
+            'P2c BOBS source prefix boundaries changed')
+    return parts[group][:prefix]
+
+
+def prove_regions(native, labels, group, proven_p2c_prefix=None):
     """Two independently source-built owners: P2c prefix and P2d native suffix."""
     prefix = len(group)-len(native)
     require(prefix >= 0 and group[prefix:] == native, 'P2d emitter suffix drift')
+    if proven_p2c_prefix is None:
+        proven_p2c_prefix = _source_p2c_prefix(prefix)
     require(len(proven_p2c_prefix) == prefix and
             group[:prefix] == proven_p2c_prefix,
             'P2c source-built prefix differs from official P2d')
