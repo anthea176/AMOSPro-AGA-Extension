@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **Sprite AGA 22/11/2026 :** S0b `GetSprite/FreeSprite` **PASS en Runtime WinUAE**, canal 1 attribue puis libere curseur visible/masque ([log](evidence/M19_S0B_SPR_RUNTIME_2026-11-22.TXT)). S0c [Sprite 16x16 mobile](../tests/design/sprites_aga/SPRITE_PROBE.asc) **PREPARE, non execute WinUAE**, meme ASC de travail ; cleanup DMA encore experimental. P2d et LAST_GOOD inchangees. 
+
+
 > **Actualite S0 du 22/11/2026** : WinUAE Runtime de la sonde ViewPort PASS (`$5000`, drapeau SPRITES present), [journal original](evidence/M19_S0_VIEWPORT_RUNTIME_2026-11-21.TXT). [Sonde de canaux S0b](../tests/design/sprites_aga/SPRITE_PROBE.asc) preparee sous `tests/design/sprites_aga/` avec un seul ASC ; tests WinUAE S0b et Compiler non effectues. Aucune nouvelle Lib, P2d LAST_GOOD inchangee.
 
 

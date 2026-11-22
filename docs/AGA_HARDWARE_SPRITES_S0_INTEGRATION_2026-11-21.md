@@ -1,5 +1,12 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## 22/11/2026 — S0b Runtime PASS et S0c Sprite 16x16 experimental
+
+[Log S0b original](evidence/M19_S0B_SPR_RUNTIME_2026-11-22.TXT) : `RESULT 1`, `ERR 0`, deux acquisitions successives du canal 1 (curseur visible puis masque), deux liberations, `OWN_REMAINING -1`, `CLOSE_RETURNED 1`. **Gate B de l'allocation OS seulement PASS**, aucun sprite actif. L'ancien ASC S0b reste dans l'historique Git. 
+
+La nouvelle revision de [`tests/design/sprites_aga/SPRITE_PROBE.asc`](../tests/design/sprites_aga/SPRITE_PROBE.asc) est **S0c, premier Sprite 16x16 potentiellement visible** : SimpleSprite 12 octets + image 72 octets + image vide 72 octets dans une seule banque Chip Work, GetSprite/ChangeSprite/MoveSprite/FreeSprite par Gfxcall, aucun DMA ecrit en direct. Le nettoyage redirige la source vers une image transparente, attend deux VBL, rend le canal, ferme l'ecran, attend trois WaitTOF apres retour AMOS puis libere Chip. Autodocs : `FreeSprite` ne fait que marquer le canal libre ; ni l'image vide ni les attentes ne sont encore une **preuve WinUAE ou physique du detach DMA**. Le programme journalise `PASS_SEQUENCE_ONLY` et demande capture pour valider l'affichage ; aucune Gate B/C/D sur S0c. [AmigaOS Hardware Sprites](https://wiki.amigaos.net/wiki/Hardware_Sprites), [NDK SimpleSprite](https://amigadev.elowar.com/read/ADCD_2.1/Includes_and_Autodocs_3._guide/node060B.html). Ne pas promouvoir en S1/API avant verification.
+
+
 ## Mise a jour du 22/11/2026 — observation WinUAE S0 et probe S0b
 
 Le journal Runtime S0 [archive tel que fourni](evidence/M19_S0_VIEWPORT_RUNTIME_2026-11-21.TXT) confirme `ViewPort.Modes=$5000` (SPRITES `$4000` present) sur les cinq echantillons Open/DB/cursor/Swap, `RESULT=1`, `ERR=0`, `CLOSE_RETURNED=1`, `PRG_STATE=1`. **Gate B du contexte ViewPort seulement PASS.** `SPRINS=0` et `UCOPINS=0` ne prouvent aucune disponibilite de canal. Aucune Gate C ou D et aucun sprite reel affiche.
