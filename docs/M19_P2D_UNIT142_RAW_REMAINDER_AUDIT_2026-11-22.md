@@ -1,6 +1,15 @@
-# UNIT142 — audit des directives brutes : 12 298 initiaux, 9 682 restants (22/11/2026)
+# UNIT142 — audit des directives brutes : 12 298 initiaux, 8 894 restants (22/11/2026)
 
-## Etat actuel valide — lots 159 a 161
+## Etat courant — lot 162 P0e valide
+
+**126 modules UNIT142 : 53 846 / 62 740 octets en ASM (85,82 %)** ;
+**8 894 octets bruts**. Les **788 octets de code P0e** ont ete
+extraits avec [Gate A MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048818538).
+Les 1 544 octets de table P0e restent en `dcb.b` ; ils ne sont pas
+comptes comme instructions. Le bilan des lots 159 a 161 ci-dessous
+reste un **checkpoint historique**, non l'etat courant.
+
+## Etat historique valide — lots 159 a 161
 
 Le [commit CBlock](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/b2a3186a85e62fbe4431607343800616e95708f3)
 a migre **2 616 octets** supplementaires (3 noyaux x 872 octets)

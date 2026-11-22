@@ -1,5 +1,27 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — UNIT142 lot 162 P0e Object Table : Gate A PASS
+
+**Etat source actuel : 226 modules ASM MC68020**, dont **126 UNIT142**,
+14 UNIT153, 6 UNIT156 et 80 BOBS. **53 846 / 62 740 octets de
+UNIT142 convertis (85,82 %)** ; **8 894 octets** non convertis.
+
+[Commit lot 162](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/24434c3e267daad93d9eae91d4f9f946184d456d)
+et [Gate A definitive apres correction du test d'inventaire](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048818538) :
+la reconstruction P2d et l'assemblage direct vasm MC68020 sont
+octet-identiques, avec **126 edits isoles UNIT142**. Le code des
+quatre entrees P0e Put/Off/Read/Reset compte **788 octets**,
+les **1 544 octets** de table d'objets restent des donnees `dcb.b`.
+Le test d'inventaire [corrige](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/134d19f070f3082845311484cdf552da51366c68)
+reconnait le module 126.
+
+La [cartographie du reliquat](M19_P2D_UNIT142_RAW_REMAINDER_AUDIT_2026-11-22.md)
+separe pont AGA P0e (470 octets), noyau P0f et tables persistantes.
+La provenance source de ces blocs est etablie ; les nouveaux
+tests vasm restent a distinguer d'une migration source validee.
+**P2d / LAST_GOOD / ASC actifs intacts**. Aucune nouvelle qualification
+WinUAE B, AMOS Compiler C ou materiel D.
+
 ## 22 novembre 2026 — UNIT142 lots 159 a 161 : CBlock MC68020 Gate A PASS
 
 **Migration source-only sur main : 225 modules ASM MC68020**, dont

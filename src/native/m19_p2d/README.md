@@ -883,9 +883,10 @@ La signature `AGAPIC  ` (8 octets) reste une directive `dc.b`.
 **Total : 226 modules ASM MC68020**, dont **126 UNIT142** ;
 **53 846 / 62 740 octets UNIT142 (85,82 %)** en source.
 **8 894 octets UNIT142** restent bruts ou non classes.
-Une 126e mutation source isolee est exigee par la Gate A.
-Cette etape source-only n'altere ni la Lib P2d, ni LAST_GOOD,
-ni l'ASC. Nouvelle Gate A en attente ; pas de Gates B/C/D recentes.
+La [Gate A du lot 162](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048818538)
+a valide la 126e mutation source isolee, la reconstruction P2d et
+l'assemblage direct MC68020. Pas de nouveau binaire ni d'ASC,
+pas de nouvelles Gates B/C/D.
 
 ## Compilation directe (Windows)
 
