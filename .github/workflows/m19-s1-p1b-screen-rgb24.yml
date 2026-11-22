@@ -1,4 +1,4 @@
-name: M19 S1-P1b private AGA screen to AGSP RGB24 bridge MC68020
+name: M19 S1-P1b screen RGB24 bridge and AGSP multi-image repack MC68020
 
 on:
   push:
@@ -6,9 +6,11 @@ on:
     paths:
       - 'src/native/m19_s1/**'
       - 'tools/test_m19_s1p1b_screen_rgb24.py'
+      - 'tools/test_m19_s1p1b_agsp_repack.py'
       - 'tools/test_m19_s1p1_native_capture.py'
       - 'tools/m19_s1_agsp_bank.py'
       - 'docs/M19_S1_P1B_SCREEN_RGB24_BRIDGE_2026-11-22.md'
+      - 'docs/M19_S1_P1B_AGSP_REPACK_MC68020_2026-11-22.md'
       - '.github/workflows/m19-s1-p1b-screen-rgb24.yml'
   pull_request:
     branches: [main]
@@ -36,7 +38,7 @@ jobs:
       - name: Validate CPU policy and test syntax
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -B -m py_compile tools/test_m19_s1p1b_screen_rgb24.py
+          python -B -m py_compile tools/test_m19_s1p1b_screen_rgb24.py tools/test_m19_s1p1b_agsp_repack.py
       - name: Restore pinned VASM Motorola MC68020 assembler
         id: vasm-cache
         uses: actions/cache@v4
@@ -59,6 +61,8 @@ jobs:
           test -x "$VASM"
           "$VASM" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_bridge_mc68020.bin" src/native/m19_s1/M19_S1P1B_SCREEN_RGB24_MC68020.s
           "$VASM" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_capture_mc68020.bin" src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s
+          "$VASM" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_repack_mc68020.bin" src/native/m19_s1/M19_S1P1B_AGSP_REPACK_MC68020.s
+          test -s "$RUNNER_TEMP/agsp_repack_mc68020.bin"
           test -s "$RUNNER_TEMP/agsp_bridge_mc68020.bin"
           test -s "$RUNNER_TEMP/agsp_capture_mc68020.bin"
       - name: Install MC68020 Unicorn emulator
@@ -67,7 +71,10 @@ jobs:
         env:
           AGSP_NATIVE_BIN: ${{ runner.temp }}/agsp_capture_mc68020.bin
           AGSP_BRIDGE_BIN: ${{ runner.temp }}/agsp_bridge_mc68020.bin
-        run: PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1b_screen_rgb24.py' -v
+          AGSP_REPACK_BIN: ${{ runner.temp }}/agsp_repack_mc68020.bin
+        run: |
+          PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1b_screen_rgb24.py' -v
+          PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1b_agsp_repack.py' -v
       - name: Check official P2d and LAST_GOOD integrity
         run: |
           printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
