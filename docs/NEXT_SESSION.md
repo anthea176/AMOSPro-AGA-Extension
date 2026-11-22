@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 22 novembre 2026 — S1-P1b : pont AGA + repacking AGSP Gate A CPU PASS
+
+**Gate A CPU MC68020 partielle [CI 45011441994 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994)** : code vasm execute en Unicorn, **6 tests du pont ScreenBuffer/GetRGB32 + 8 tests du repacking banque multi-images**, tous PASS. Les services OS et la memoire AGA sont simules, pas un appel AP20. [Pont MC68020](../src/native/m19_s1/M19_S1P1B_SCREEN_RGB24_MC68020.s) ; [repack AGSP](../src/native/m19_s1/M19_S1P1B_AGSP_REPACK_MC68020.s). Les images deja presentes sont conservees ; les erreurs d'entree/capacite refusent la publication.
+
+**Sonde de compatibilite DATA AMOS prete pour WinUAE :** [ASC](../examples/agsp_bank/AGSP_BANK_SAVELOAD.asc) et [ABK 212 octets](../examples/agsp_bank/AGSP_1IMG_16X16.ABK), [generation deterministe](../tools/m19_s1p1b_agsp_fixture.py), SHA256 ABK `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`. Preflight source et bytes de l'ABK PASS en CI. Source ASC sous `examples/` avec nom sans version (regles de livraison), **tests/current/M19_P2_ALL_IN_ONE.asc est conserve identique**. Le banc charge, controle, sauvegarde, efface et recharge une banque DATA, mais les vraies Gates Runtime B / Compiler C ne sont **PAS TESTEES**. [Mode operatoire](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
+
+**Suite native S1-P1c non realisee :** wrapper AMOS/AP20, validation des allocations et plages memoire, transaction de banque `Lst.Cree / Bnk.Change / Lst.Del` apres repacking; puis test de vrai Save/Load. La securite DMA/palette demeure hors jalon. Aucun changement P2d/LAST_GOOD.
+
+
 ## 22 novembre 2026 — S1-P1 CAPTURE NATIVE MC68020 : Gate A noyau PASS, integration AP20 a venir
 
 **Source EXACTE:** [`src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s`](../src/native/m19_s1/M19_S1P1_AGSP_CAPTURE_MC68020.s), Git blob `0aeadf892e4e7732ccfb58a96450fb253e4c217a`. **CI [45009120270 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45009120270)** : assemblage reel vasm Motorola **-m68020** et execution du binaire sur **Unicorn MC68020**, 8/8 tests PASS (pixels planaires/RGB24 exacts contre l'oracle Python AGSP v1, X=13 Y=5, source 4/8 plans, index transparent non nul, noir opaque, fusion deux indices de meme RGB, rejet d'une 4e couleur sans ecriture, hauteur 256, geometrie invalide, registres et canaries). Les defauts de compilation `lsr.l #16` et de stride (`move.w` au lieu de `move.l` sur le champ long) ont ete corriges **avant** la CI verte. [Rapport d'integration a jour](M19_S1_P1_NATIVE_CAPTURE_MC68020_2026-11-22.md).

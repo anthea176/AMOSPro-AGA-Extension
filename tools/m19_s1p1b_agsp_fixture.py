@@ -5,7 +5,7 @@ from pathlib import Path
 import argparse
 from m19_s1_agsp_bank import empty_bank, make_abk, parse_abk, put_capture
 
-DEST = Path(__file__).resolve().parents[1] / 'tests/design/agsp_s1/AGSP_1IMG_16X16.ABK'
+DEST = Path(__file__).resolve().parents[1] / 'examples/agsp_bank/AGSP_1IMG_16X16.ABK'
 
 
 def expected_fixture():

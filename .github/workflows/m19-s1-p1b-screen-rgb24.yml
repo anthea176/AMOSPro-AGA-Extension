@@ -8,7 +8,7 @@ on:
       - 'tools/test_m19_s1p1b_screen_rgb24.py'
       - 'tools/test_m19_s1p1b_agsp_repack.py'
       - 'tools/m19_s1p1b_agsp_fixture.py'
-      - 'tests/design/agsp_s1/**'
+      - 'examples/agsp_bank/**'
       - 'tools/test_m19_s1p1_native_capture.py'
       - 'tools/m19_s1_agsp_bank.py'
       - 'docs/M19_S1_P1B_SCREEN_RGB24_BRIDGE_2026-11-22.md'
@@ -42,7 +42,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B -m py_compile tools/test_m19_s1p1b_screen_rgb24.py tools/test_m19_s1p1b_agsp_repack.py tools/m19_s1p1b_agsp_fixture.py
-          python -B tools/amos_preflight.py --strict-target tests/design/agsp_s1/AGSP_DATA_BANK_SAVELOAD.asc
+          python -B tools/amos_preflight.py --strict-target examples/agsp_bank/AGSP_DATA_BANK_SAVELOAD.asc
           python -B tools/m19_s1p1b_agsp_fixture.py --check
       - name: Restore pinned VASM Motorola MC68020 assembler
         id: vasm-cache

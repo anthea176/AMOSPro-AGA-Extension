@@ -1,5 +1,7 @@
 # M19 S1-P1b — Premier pont écran AGA privé vers AGSP RGB24
 
+> **Gate A CPU PARTIELLE PASS 22/11/2026 :** [CI 45011441994](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994) : 6 tests du vrai binaire MC68020 assemble et execute sous Unicorn. Services systeme et buffers simules ; aucune vraie commande AMOS ni Gate B/C.
+
 **Date :** 22 novembre 2026. **Cible : MC68020 / 68EC020 minimum.**
 
 **Statut initial : module source MC68020 proposé, à tester par CI vasm/Unicorn.**

@@ -9,8 +9,8 @@ Tester le **vrai contrat AMOS Professional des banques DATA** avec un fichier bi
 **Ce test ne valide ni une nouvelle Lib, ni un chargement d'IFF, ni une commande Sprite, ni le DMA.** C'est une vérification de compatibilité du stockage DATA `Save/Load` sous AMOS.
 
 Fichiers :
-- [Source AMOS ASCII](../tests/design/agsp_s1/AGSP_DATA_BANK_SAVELOAD.asc) — `SOURCE_TAG M19_S1P1B_DATA_ABK_V1` ;
-- [banque binaire AGSP_1IMG_16X16.ABK](../tests/design/agsp_s1/AGSP_1IMG_16X16.ABK) — **212 octets**, SHA256 `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`, Git blob `535b7ae0b7897e3d87ac634d264c967c252e3fc1`;
+- [Source AMOS ASCII](../examples/agsp_bank/AGSP_DATA_BANK_SAVELOAD.asc) — `SOURCE_TAG M19_S1P1B_DATA_ABK_V1` ;
+- [banque binaire AGSP_1IMG_16X16.ABK](../examples/agsp_bank/AGSP_1IMG_16X16.ABK) — **212 octets**, SHA256 `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`, Git blob `535b7ae0b7897e3d87ac634d264c967c252e3fc1`;
 - [générateur Python déterministe](../tools/m19_s1p1b_agsp_fixture.py), relié au [codec AGSP officiel du projet](../tools/m19_s1_agsp_bank.py).
 
 ## Préparation WinUAE / AMOS
