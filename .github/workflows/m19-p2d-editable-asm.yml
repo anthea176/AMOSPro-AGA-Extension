@@ -7,6 +7,7 @@ on:
       - 'src/native/m19_p2d/**'
       - 'tools/build_m19_p2d_editable_asm.py'
       - 'tools/m19_p2d_unit142_source.py'
+      - 'tools/m19_p2d_unit142_p0f_identity_preview.py'
       - 'tools/m19_p2d_unit142_raw_probe.py'
       - 'tools/m19_p2d_unit142_tail_preview.py'
       - 'tools/m19_p2d_unit142_tail_preview.py'
@@ -43,7 +44,7 @@ jobs:
       - name: Verify CPU policy, Python syntax and source-backed batch
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py tools/m19_p2d_unit142_source.py tools/m19_p2d_unit156_nibble.py tools/m19_p2d_unit153_source.py tools/m19_p2d_unit142_tail_preview.py tools/m19_p2d_unit142_raw_probe.py tools/m19_p2d_unit142_cblock_preview.py
+          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py tools/m19_p2d_unit142_source.py tools/m19_p2d_unit156_nibble.py tools/m19_p2d_unit153_source.py tools/m19_p2d_unit142_tail_preview.py tools/m19_p2d_unit142_raw_probe.py tools/m19_p2d_unit142_cblock_preview.py tools/m19_p2d_unit142_p0f_identity_preview.py
           python -B tools/m19_p2d_bobs_raw_inventory.py --self-test
           python -B tools/m19_p2d_bobs_raw_inventory.py --check
           python -B tools/m19_p2d_asm_batch.py --check
@@ -106,6 +107,9 @@ jobs:
       - name: Preview source-owned P0e AGA bridge without promotion
         run: |
           python -B tools/m19_p2d_unit142_aga_bridge_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
+      - name: Preview source-owned P0f stamp and binder without promotion
+        run: |
+          python -B tools/m19_p2d_unit142_p0f_identity_preview.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --emit-base64
       - name: Audit remaining raw UNIT142 bytes against historical emitters
         run: |
           python -B tools/m19_p2d_unit142_raw_probe.py --check
