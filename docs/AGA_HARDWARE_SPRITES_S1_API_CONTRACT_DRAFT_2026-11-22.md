@@ -69,7 +69,7 @@ Ces signatures **ne sont pas implémentées** et nécessitent approbation distin
 
 | Gate / étape | Conditions prévues (non acquises pour S1) |
 | --- | --- |
-| **Contrat** | Approbation auteur des signatures, de la sémantique de `canal+1`, du capture IFF RGB24, de l'indice transparent, de la palette et de la politique de fermeture |
+| **Contrat** | Approbation auteur des signatures, du retour booléen de `On`, de la capture IFF RGB24, de l'indice transparent, de la palette et de la politique de fermeture |
 | **Source / Gate A** | Builder/émetteurs natifs basés sur sources P2d, marqueur `AGA_NATIVE_MIN_CPU: MC68020`, ABI/AP20, `GetP`, D3/D2, registres et relocation vérifiés ; tests propriété OS/Chip, refus de canaux, erreurs, compile source / CI, régressions Bob/Copper |
 | **Gate B Runtime WinUAE** | Un seul ASC expérimental réutilisé sous `tests/design/sprites_aga/`, 1 Sprite 16x16 visible, coordonnées/animation, IFF 8 plans indexé avec CMAP RGB24 et région à 3 couleurs opaques maximum, canal indisponible, arrêt, Close/reopen, souris, Copper et Bob en arrière-plan ; rendu et logs |
 | **Gate C vrai AMOS Compiler** | Même source et même Lib candidate *exactes*, binaire produit et lancé par le Compiler AMOS, log `PRG_STATE -1`, parité fonctionnelle/visuelle, aucun freeze à Open/Close |
@@ -79,9 +79,9 @@ En plus des compteurs `GET/FREE`, mesurer la **Chip RAM libre avant/après** san
 
 ## 5. Ce qui reste à trancher avant toute implémentation
 
-1. **Valider ou modifier le MVP : un seul Sprite 16x16 actif**, puis plusieurs Sprites en phase ultérieure.
-2. **Valider ou modifier les trois noms/signatures** `On(bank,x,y)`, `Move(x,y)`, `Off`, et le retour de `On` : `canal+1` contre `1` booléen + autre accès au canal.
-3. **Valider ou modifier le format de source Work 64 octets** et l'exposition de la palette : affectation RGB24 aux pens réellement accessibles sans toucher au fond IFF.
+1. **Valider le MVP : un seul Sprite matériel 16 pixels actif**, capture depuis IFF indexé RGB24, puis passage en S2 à 32/64 pixels, deux canaux attachés et plusieurs objets.
+2. **Valider les quatre noms/signatures candidates** : `Capture(Id,SX,SY,W,H,TransparentPen)`, `On(Id,X,Y)`, `Move(X,Y)`, `Off` ; tous les retours sont proposés comme booléens `1/0`, sans exposition directe du canal OS.
+3. **Valider le chemin IFF indexé CMAP RGB24 vers capture**, l'indice de transparence, le remapping local de trois couleurs opaques et l'affectation des pens Sprite sans modifier le fond IFF.
 4. **Clore techniquement la sûreté de retrait DMA** et la transaction de `Aga Screen Close`. Si ce point demeure indémontrable, **S1 reste bloqué**.
 
 **Aucun builder, source AMOS, extension AP20, binaire ni `LAST_GOOD` modifié par cette étude.** Aucune promotion automatique après un éventuel test. Les archives S0 restent des preuves historiques.
