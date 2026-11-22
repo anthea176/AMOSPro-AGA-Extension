@@ -1984,6 +1984,189 @@ def legacy_r83_followup_sources(whole, wrapper):
     return wrapper, modules
 
 
+
+LEGACY_R83_NEXT_MODULES = (
+    ("M19_UNIT142_R83_NEXT_02364_MC68020.s", "76ee0690b63d2fc841b7119ab12467f3228f7f67",
+     0x02364, 0x02580, "UNIT142_R83_NEXT_A5_OFFSET", 456, 460, 0x0236F, 0xC8, 0xCC),
+    ("M19_UNIT142_R83_HELPER_052CA_MC68020.s", "5105fb2762457961c0f17ea937c446aa3d02cbd2",
+     0x052CA, 0x05302, "UNIT142_R83_HELPER_ZERO", 0, 1, 0x052E9, 0, 1),
+    ("M19_UNIT142_R83_STUB_002A4_MC68020.s", "34ae67ecff93a19b3ef685d0fbe02b6b2fd695a2",
+     0x002A4, 0x002AE, "UNIT142_R83_STUB_002A4_OFFSET", 400, 402, 0x002AB, 0x90, 0x92),
+    ("M19_UNIT142_R83_STUB_002B4_MC68020.s", "881680024445d512d0ec5ec91a20df1def3b4e0a",
+     0x002B4, 0x002BE, "UNIT142_R83_STUB_002B4_OFFSET", 400, 402, 0x002BB, 0x90, 0x92),
+    ("M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s", "7952234e1b623c5307b2df1da2c16feeb16f0617",
+     0x00886, 0x0088A, "UNIT142_R83_TARGET_BSR_52CA_DELTA", 0, 2, 0x00889, 0x42, 0x44),
+)
+
+
+def legacy_r83_next_sources(whole, wrapper):
+    """Source-proven R83 next function, OS helper and two tiny AMOS callbacks."""
+    from active_library import R83_SHA
+    from build_aga_r83_modular import build as build_r83
+    from generate_aga_multiunit_source import native_unit_source
+
+    old, meta = build_r83()
+    demand(meta["sha256"] == R83_SHA and sha256(old).hexdigest() == R83_SHA,
+           "R83 next code source historical builder drift")
+    _tokens, groups, _title = unpack_ap20(old)
+    demand(len(groups[82]) == 52974, "historical R83 AGA unit size changed")
+
+    locations = (
+        (0x02364, 0x02584,
+         "40f5ef9af87bec05a7b29c466a821106096ebc1944976c68068de671db076440",
+         "LEGACY_NEXT_02364"),
+        (0x052CA, 0x0530E,
+         "9f80c2bccfcc8b90123e6ef0a943be3d29552af8a8dd0a72c28d6bf031bbaee5",
+         "LEGACY_HELPER_052CA"),
+        (0x002A4, 0x002B2,
+         "f019fec9eb9fcbec84b72e91a628935bc97243f8a605063cce385eb2ca5eed19",
+         "LEGACY_STUB_002A4"),
+        (0x002B4, 0x002C2,
+         "f019fec9eb9fcbec84b72e91a628935bc97243f8a605063cce385eb2ca5eed19",
+         "LEGACY_STUB_002B4"),
+    )
+    candidates = {}
+    for lo,hi,digest,label in locations:
+        part = whole[lo:hi]
+        demand(part == groups[82][lo:hi] and
+               sha256(part).hexdigest() == digest,
+               "R83 next source exactness/offset mismatch: " + label)
+        preview, report = native_unit_source(label, part, [(0,0)])
+        target_code = { "LEGACY_NEXT_02364":(540,4),
+                        "LEGACY_HELPER_052CA":(48,20),
+                        "LEGACY_STUB_002A4":(10,4),
+                        "LEGACY_STUB_002B4":(10,4) }[label]
+        demand((report["bytes"],report["mnemonic_bytes"],report["raw_dc_bytes"]) ==
+               (hi-lo,*target_code), "R83 next preview classification drift: "+label)
+        candidates[label] = preview
+
+    demand(whole[0x02580:0x02584] == b"GetP" and
+           whole[0x052CA:0x052D0] == bytes.fromhex("2F0E2F082F0A") and
+           whole[0x05302:0x0530E] == bytes(8)+b"GetP" and
+           whole[0x002AE:0x002B2] == b"GetP" and
+           whole[0x002BE:0x002C2] == b"GetP" and
+           whole[0x00886:0x0088A] == bytes.fromhex("61004A42") and
+           0x00886+2+0x4A42 == 0x052CA and
+           whole[0x052D0:0x052D4] == bytes.fromhex("6100FFDC") and
+           0x052D0+2-0x24 == 0x052AE and
+           whole[0x052F2:0x052F6] == bytes.fromhex("610003B2") and
+           0x052F2+2+0x3B2 == 0x056A6,
+           "R83 next linker/GetP/BSR external source drift")
+
+    def cut(preview, first, stop):
+        begin = preview.find(first)
+        end = preview.find(stop, begin+len(first))
+        demand(begin>=0 and end>begin and preview.find(first,begin+len(first)) < 0,
+               "R83 next source preview boundaries changed")
+        return preview[begin:end]
+
+    full = cut(candidates["LEGACY_NEXT_02364"],
+               "ENTRY_LEGACY_NEXT_02364_00000:",
+               "    dc.b $47,$65,$74,$50  ; +$0021C: 47657450")
+    demand(full.count("movea.l 456(a5),a4") == 1 and "    dc.b " not in full,
+           "R83 next public function contains an unexplained byte")
+    sources = {}
+    sources["M19_UNIT142_R83_NEXT_02364_MC68020.s"] = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; R83 source-verified UNIT142 $02364..$02580; original builder byte identity.\n"
+        "UNIT142_R83_NEXT_A5_OFFSET equ 456\n\n" +
+        full.replace("movea.l 456(a5),a4",
+                     "movea.l UNIT142_R83_NEXT_A5_OFFSET(a5),a4"))
+
+    helper = cut(candidates["LEGACY_HELPER_052CA"],
+                 "ENTRY_LEGACY_HELPER_052CA_00000:",
+                 "L_LEGACY_HELPER_052CA_00038:")
+    for literal in ("    dc.b $61,$00,$FF,$DC",
+                    "    dc.b $61,$00,$03,$B2",
+                    "L_LEGACY_HELPER_052CA_00038(pc)",
+                    "move.l #$00000000,4(a1)"):
+        demand(helper.count(literal)==1,
+               "R83 helper historical raw external target not unique: "+literal)
+    helper = (helper.replace("    dc.b $61,$00,$FF,$DC",
+                             "    bsr.w L_UNIT142_052AE")
+                    .replace("    dc.b $61,$00,$03,$B2",
+                             "    bsr.w L_UNIT142_056A6")
+                    .replace("L_LEGACY_HELPER_052CA_00038(pc)",
+                             "L_UNIT142_05302(pc)")
+                    .replace("move.l #$00000000,4(a1)",
+                             "move.l #UNIT142_R83_HELPER_ZERO,4(a1)"))
+    demand("    dc.b " not in helper,
+           "R83 helper unresolved raw instruction after branch ownership")
+    sources["M19_UNIT142_R83_HELPER_052CA_MC68020.s"] = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; R83 source-verified UNIT142 $052CA..$05302, preserving helper zero state.\n"
+        "UNIT142_R83_HELPER_ZERO equ 0\n\n" + helper)
+
+    for offset in (0x002A4,0x002B4):
+        tag = "%05X" % offset
+        origin = "LEGACY_STUB_" + tag
+        stub = cut(candidates[origin],
+                   "ENTRY_LEGACY_STUB_"+tag+"_00000:",
+                   "    dc.b $47,$65,$74,$50  ; +$0000A: 47657450")
+        demand(stub.count("jsr 400(a0)")==1 and "    dc.b " not in stub,
+               "R83 callback stub opcodes/data not isolated")
+        sym = "UNIT142_R83_STUB_"+tag+"_OFFSET"
+        stub = stub.replace("ENTRY_LEGACY_STUB_"+tag+"_00000:",
+                            "ENTRY_UNIT142_R83_STUB_"+tag+":")
+        stub = stub.replace("jsr 400(a0)", "jsr "+sym+"(a0)")
+        sources["M19_UNIT142_R83_STUB_"+tag+"_MC68020.s"] = (
+            "; AGA_NATIVE_MIN_CPU: MC68020\n"
+            "; Source-pinned R83 public AGA callback stub $%s..$%05X.\n" %
+            (tag,offset+10) +
+            sym+" equ 400\n\n"+stub)
+    sources["M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s"] = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; R83 Close cross-call UNIT142+$00886 -> $052CA; target is proven source.\n"
+        "UNIT142_R83_TARGET_BSR_52CA_DELTA equ 0\n\n"
+        "    bsr.w ENTRY_LEGACY_HELPER_052CA_00000+UNIT142_R83_TARGET_BSR_52CA_DELTA\n")
+
+    def raw(lo,hi):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % x for x in
+                                   whole[at:min(at+12,hi)]) + "\n"
+            for at in range(lo,hi,12))
+    replacements = (
+        (raw(0x02364,0x02584),
+         '    include "M19_UNIT142_R83_NEXT_02364_MC68020.s"\n' +
+         raw(0x02580,0x02584)),
+        (raw(0x052CA,0x05302),
+         '    include "M19_UNIT142_R83_HELPER_052CA_MC68020.s"\n'),
+        ('    include "M19_UNIT142_BLOCK_002A2_MC68020.s"\n' +
+         raw(0x002A4,0x002B2),
+         '    include "M19_UNIT142_BLOCK_002A2_MC68020.s"\n' +
+         '    include "M19_UNIT142_R83_STUB_002A4_MC68020.s"\n' +
+         raw(0x002AE,0x002B2)),
+        ('    include "M19_UNIT142_BLOCK_002B2_MC68020.s"\n' +
+         raw(0x002B4,0x002C2),
+         '    include "M19_UNIT142_BLOCK_002B2_MC68020.s"\n' +
+         '    include "M19_UNIT142_R83_STUB_002B4_MC68020.s"\n' +
+         raw(0x002BE,0x002C2)),
+        (raw(0x00886,0x0088A),
+         '    include "M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s"\n'),
+    )
+    for old,new in replacements:
+        demand(wrapper.count(old)==1,
+               "R83 next raw wrapper replacement missing or ambiguous")
+        wrapper = wrapper.replace(old,new)
+    # Preserve these unchanged bytes as DATA, never count them as Motorola.
+    demand(wrapper.count("L_UNIT142_05302:\n"+raw(0x05302,0x0530E))==1,
+           "R83 helper state / GetP altered in wrapper")
+
+    modules = []
+    for filename, pinned, lo,hi,_sym,_initial,_new_value,delta,oldbyte,newbyte in LEGACY_R83_NEXT_MODULES:
+        payload = (NATIVE_DIR / filename).read_bytes()
+        gitblob = sha1(b"blob " + str(len(payload)).encode("ascii") +
+                       b"\x00" + payload).hexdigest()
+        demand(gitblob==pinned and payload.decode("ascii")==sources[filename] and
+               0<=lo<hi<=len(whole) and
+               whole[delta]==oldbyte and lo<=delta<hi and oldbyte!=newbyte,
+               "R83 next authored ASM/provenance/edit mismatch: "+filename)
+        modules.append((lo,hi,filename,sources[filename]))
+    demand(sum(hi-lo for lo,hi,_name,_code in modules)==620,
+           "R83 next instruction coverage not 620")
+    return wrapper,modules
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -2199,6 +2382,8 @@ def expected_sources():
     modules.extend(close_modules)
     wrapper, followup = legacy_r83_followup_sources(bytes(whole),wrapper)
     modules.extend(followup)
+    wrapper, r83next = legacy_r83_next_sources(bytes(whole),wrapper)
+    modules.extend(r83next)
     return bytes(whole), wrapper, modules
 
 
@@ -2237,7 +2422,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 57460 bytes / 151 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 58080 bytes / 156 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -2267,6 +2452,8 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     for filename, *_rest in LEGACY_R83_FOLLOWUP_MODULES:
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    for filename, *_rest in LEGACY_R83_NEXT_MODULES:
+        (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -2288,7 +2475,8 @@ def edit_gate(staged, assembler):
            all((staged / filename).is_file() for filename, *_ in P1CD_PINNED_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_OPEN_MODULES) and
            all((staged / filename).is_file() for filename, *_ in LEGACY_CLOSE_MODULES) and
-           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_FOLLOWUP_MODULES),
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_FOLLOWUP_MODULES) and
+           all((staged / filename).is_file() for filename, *_ in LEGACY_R83_NEXT_MODULES),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -2398,6 +2586,14 @@ def edit_gate(staged, assembler):
                    "UNIT142 R83 followup edit symbol ambiguous: " + filename)
             path.write_text(content.replace(before, symbol + " equ " + str(new_value)),
                             encoding="ascii", newline="\n")
+        for filename, _blob, _start, _stop, symbol, old_value, new_value, *_ in LEGACY_R83_NEXT_MODULES:
+            path = folder / filename
+            contents = path.read_text("ascii")
+            before = symbol + " equ " + str(old_value)
+            demand(contents.count(before)==1,
+                   "R83 next edit not isolated: "+filename)
+            path.write_text(contents.replace(before, symbol + " equ " + str(new_value)),
+                            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -2434,12 +2630,15 @@ def edit_gate(staged, assembler):
         expected.update({delta: (oldbyte, newbyte)
                          for _filename, _blob, _start, _stop, _sym, _old, _new,
                              delta, oldbyte, newbyte in LEGACY_R83_FOLLOWUP_MODULES})
-        demand(len(expected) == 151, "UNIT142 R83 Close target edit count differs")
+        expected.update({delta: (oldbyte, newbyte)
+                         for _filename, _blob, _start, _stop, _sym, _old, _new,
+                             delta, oldbyte, newbyte in LEGACY_R83_NEXT_MODULES})
+        demand(len(expected) == 156, "UNIT142 R83 next edit count differs")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 151 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 156 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
