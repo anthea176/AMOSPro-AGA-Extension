@@ -85,7 +85,7 @@ jobs:
       - name: UNIT156 nibble source one-byte edit gate
         run: |
           python -B tools/m19_p2d_unit156_nibble.py --self-test-edit --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --staged "$RUNNER_TEMP/p2d_asm_baseline"
-      - name: UNIT153 public source one-byte edit gate
+      - name: UNIT153 triple-module isolated one-byte edit gate
         run: |
           python -B tools/m19_p2d_unit153_source.py --self-test-edit --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --staged "$RUNNER_TEMP/p2d_asm_baseline"
       - name: Confirm source-only delivery and protect official libraries

@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 AUDIT = ROOT / "src/asm_migration/m19_p2d/M19_P2D_UNIT153_MC68020.s"
 WRAPPER = ROOT / "src/native/m19_p2d/M19_P2D_UNIT153_EDITABLE.s"
 MODULE = ROOT / "src/native/m19_p2d/M19_UNIT153_PUBLIC_PREFLIGHT_MC68020.s"
+MODULE2 = ROOT / "src/native/m19_p2d/M19_UNIT153_ENTRY_GUARD_MC68020.s"
+MODULE3 = ROOT / "src/native/m19_p2d/M19_UNIT153_POINTER_VALIDATE_MC68020.s"
 GROUP_SIZE = 0x15B6
 GROUP_SHA = "6eda5283af42617aa13ad81e24d9130abedc4528ed05b469de2d765d20b4d700"
 START = "ENTRY_UNIT153_00372:\n"
@@ -27,6 +29,38 @@ HEADER = (
     "; UNIT153 public preflight source-verified against pinned P2d builder.\n"
     "; Group+$00372..$00530 (446 bytes): following AMOS Main GETADR marker preserved.\n"
     "UNIT153_INITIAL_D3 equ 0\n\n"
+)
+
+
+HEADER2 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-verified UNIT153 entry/system guard from pinned P2d emitter.\n"
+    "; UNIT153+$00022..$00108 (230 code bytes); AMOS Main marker preserved.\n"
+    "UNIT153_ENTRY_ZERO equ 0\n\n"
+)
+HEADER3 = (
+    "; AGA_NATIVE_MIN_CPU: MC68020\n"
+    "; Source-verified UNIT153 bank pointer validation and cleanup.\n"
+    "; UNIT153+$0010E..$00362 (596 code bytes); C2P data preserved.\n"
+    "UNIT153_MIN_POINTER_BYTES equ 24\n\n"
+)
+EXTRA_SPANS = (
+    (
+        MODULE2,
+        "ENTRY_UNIT153_00022:\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00108: FE11F700031D\n",
+        0x22, 0x108, 62, 0, HEADER2,
+        "    move.l #$00000000,d3",
+        "    move.l #UNIT153_ENTRY_ZERO,d3",
+    ),
+    (
+        MODULE3,
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$00108: FE11F700031D\n",
+        "L_UNIT153_00362:\n",
+        0x10E, 0x362, 150, 4, HEADER3,
+        "    cmpi.l #$00000018,d5",
+        "    cmpi.l #UNIT153_MIN_POINTER_BYTES,d5",
+    ),
 )
 
 
@@ -78,13 +112,50 @@ def expected_sources():
     demand(wrapper.count(original) == 1, "UNIT153 audited preflight ambiguous")
     wrapper = wrapper.replace(original,
         '    include "' + MODULE.name + '"\n')
-    return bytes(raw), module, wrapper
+    # Restore two further disjoint code-only spans. The audit source is
+    # read-only: no source bytes are inferred from the installed .Lib.
+    extras = []
+    for path, begin_mark, end_mark, lo, hi, op_count, label_count, head, old, new in EXTRA_SPANS:
+        begin = audit.find(begin_mark)
+        end = audit.find(end_mark, begin+len(begin_mark))
+        demand(begin >= 0 and end > begin and
+               audit.find(begin_mark, begin+len(begin_mark)) < 0,
+               "UNIT153 extra source markers missing/ambiguous: "+path.name)
+        original_span = audit[begin+len(begin_mark):end]
+        out_lines, native, offset, instructions, label_total = [], bytearray(), lo, 0, 0
+        for line in original_span.splitlines():
+            if LABEL.fullmatch(line):
+                out_lines.append(line)
+                label_total += 1
+                continue
+            if not line.strip():
+                continue
+            match = ANNOT.search(line)
+            demand(match is not None and int(match.group(1), 16) == offset and
+                   not line.lstrip().lower().startswith("dc."),
+                   "UNIT153 extra unproven mnemonic/offset: "+path.name)
+            opcode = bytes.fromhex(match.group(2))
+            native.extend(opcode)
+            offset += len(opcode)
+            out_lines.append(line[:match.start()].rstrip())
+            instructions += 1
+        demand(offset == hi and len(native) == hi-lo and
+               instructions == op_count and label_total == label_count,
+               "UNIT153 extra code span/count drift: "+path.name)
+        body = "\n".join(out_lines).rstrip()+"\n"
+        demand(body.count(old) == 1 and wrapper.count(original_span) == 1,
+               "UNIT153 extra edit anchor/replace ambiguous: "+path.name)
+        authored = head + body.replace(old, new)
+        wrapper = wrapper.replace(original_span,
+            '    include "' + path.name + '"\n')
+        extras.append((lo, bytes(native), path, authored))
+    return bytes(raw), module, wrapper, extras
 
 
 def verify(official):
     demand(len(official) == 136020 and
            sha256(official).hexdigest() == P2D_SHA, "official P2d SHA changed")
-    raw, module, wrapper = expected_sources()
+    raw, module, wrapper, extras = expected_sources()
     _, groups, _ = unpack_ap20(official)
     ids = [i for i, part in enumerate(groups)
            if len(part) == GROUP_SIZE and sha256(part).hexdigest() == GROUP_SHA]
@@ -95,7 +166,12 @@ def verify(official):
     demand(MODULE.read_text("ascii") == module and
            WRAPPER.read_text("ascii") == wrapper,
            "UNIT153 authored module or wrapper differs from source proof")
-    print("UNIT153_SOURCE_PROVEN: 446 bytes, group", group)
+    for begin, code, path, authored in extras:
+        demand(groups[group][begin:begin+len(code)] == code,
+               "UNIT153 extra source-built bytes differ: "+path.name)
+        demand(path.read_text("ascii") == authored,
+               "UNIT153 extra authored module differs: "+path.name)
+    print("UNIT153_SOURCE_PROVEN: 1272 bytes / 3 modules, group", group)
     return group
 
 
@@ -103,26 +179,33 @@ def stage(folder, official):
     verify(official)
     (folder / "M19_P2D_UNIT153_MC68020.s").write_bytes(WRAPPER.read_bytes())
     (folder / MODULE.name).write_bytes(MODULE.read_bytes())
+    for path in (MODULE2, MODULE3):
+        (folder / path.name).write_bytes(path.read_bytes())
 
 
 def edit_gate(staged, assembler):
     reference = (staged / "M19_P2D_ASM_REBUILT_CHECK.Lib").read_bytes()
     group = verify(reference)
     demand((staged / "M19_P2D_UNIT153_MC68020.s").is_file() and
-           (staged / MODULE.name).is_file() and
+           all((staged / module.name).is_file()
+               for module in (MODULE, MODULE2, MODULE3)) and
            (staged / "M19_P2D_AP20_SOURCE.s").is_file(),
            "UNIT153 staging incomplete")
     with TemporaryDirectory(prefix="unit153_source_edit_") as tmp:
         folder = Path(tmp)
         for file in staged.glob("*.s"):
             shutil.copy2(file, folder / file.name)
-        source = (folder / MODULE.name).read_text("ascii")
-        old = "UNIT153_INITIAL_D3 equ 0"
-        demand(source.count(old) == 1, "UNIT153 edit constant ambiguous")
-        (folder / MODULE.name).write_text(
-            source.replace(old, "UNIT153_INITIAL_D3 equ 1"),
-            encoding="ascii", newline="\n"
-        )
+        for module, old, new in (
+            (MODULE, "UNIT153_INITIAL_D3 equ 0", "UNIT153_INITIAL_D3 equ 1"),
+            (MODULE2, "UNIT153_ENTRY_ZERO equ 0", "UNIT153_ENTRY_ZERO equ 1"),
+            (MODULE3, "UNIT153_MIN_POINTER_BYTES equ 24",
+             "UNIT153_MIN_POINTER_BYTES equ 25"),
+        ):
+            source = (folder / module.name).read_text("ascii")
+            demand(source.count(old) == 1,
+                   "UNIT153 edit constant ambiguous: "+module.name)
+            (folder / module.name).write_text(
+                source.replace(old, new), encoding="ascii", newline="\n")
         binary = folder / "UNIT153_EDIT_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020", "-no-opt",
                    "-quiet", "-o", str(binary), "M19_P2D_AP20_SOURCE.s"]
@@ -138,9 +221,11 @@ def edit_gate(staged, assembler):
                    if i != group), "UNIT153 edit changed unrelated AP20")
         lhs, rhs = original[group], changed[group]
         diffs = [i for i,(x,y) in enumerate(zip(lhs,rhs)) if x != y]
-        demand(diffs == [0x381] and lhs[0x381] == 0 and rhs[0x381] == 1,
-               "UNIT153 one-byte mutation drift")
-    print("UNIT153_EDIT_TEST_PASS: one byte at $00381 only")
+        expected = {0x33: (0, 1), 0x115: (24, 25), 0x381: (0, 1)}
+        demand(diffs == sorted(expected) and
+               all((lhs[i], rhs[i]) == pair for i, pair in expected.items()),
+               "UNIT153 grouped one-byte mutations drift")
+    print("UNIT153_EDIT_TEST_PASS: 3 bytes at $00033/$00115/$00381 only")
 
 
 def main():

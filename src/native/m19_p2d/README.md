@@ -409,6 +409,29 @@ l'identite directe vasm MC68020 et une mutation d'un octet en `$00381`.
 Projet : **86 modules ASM** (80 BOBS, 5 UNIT156, 1 UNIT153).
 Aucune bibliotheque officielle et aucun ASC modifies.
 
+### UNIT153 — 23e lot : garde entree/systeme (230 octets)
+
+Source native [M19_UNIT153_ENTRY_GUARD_MC68020.s](M19_UNIT153_ENTRY_GUARD_MC68020.s),
+`UNIT153+$00022..$00108` (62 instructions). La pseudo-instruction AMOS
+Main `$00108..$0010E` demeure dans le wrapper. Le zero initial de D3
+devient `UNIT153_ENTRY_ZERO`, sans changement de longueur ni d'octets
+par defaut.
+
+### UNIT153 — 24e lot : validation du pointeur et nettoyage (596 octets)
+
+Source native [M19_UNIT153_POINTER_VALIDATE_MC68020.s](M19_UNIT153_POINTER_VALIDATE_MC68020.s),
+`UNIT153+$0010E..$00362` (150 instructions, quatre labels).
+Le seuil de 24 octets devient `UNIT153_MIN_POINTER_BYTES`. La chaine
+`c2p.library`, le marqueur GetP et le dispatcher restent intacts.
+Le test d'edition modifie une constante dans chacun des trois modules
+UNIT153 : exactement les octets `$00033`, `$00115`, `$00381`,
+sans alteration des autres groupes AP20.
+
+**UNIT153 : 1 272 octets / 3 modules. Total : 88 modules ASM**,
+dont 80 BOBS et cinq UNIT156. Reconstruction et controle vasm MC68020
+par CI Gate A ; aucune Gate B/C/D nouvelle par cette migration.
+Les deux bibliotheques de `dist/` et les ASC restent proteges.
+
 ## Compilation directe (Windows)
 
 ```bat
