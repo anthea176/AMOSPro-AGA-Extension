@@ -1400,6 +1400,82 @@ def expected_sources():
         )
         wrapper = wrapper.replace(original, replacement)
         modules.append((core_at, last - 4, filename, code))
+    # P0e object table: verify ORIGINAL Python emitter bytes, never infer
+    # object semantics from the binary audit. Only its first 788 bytes are
+    # executable; root (8) and 64 object slots (64x24) are zero DATA.
+    from m19_p0e_object_table_emit import (
+        ROOT_BYTES, MAX_OBJECTS, SLOT_BYTES, emit_object_table,
+    )
+    from generate_aga_multiunit_source import native_unit_source
+    original, labels = emit_object_table()
+    code_end = labels["object_root"]
+    demand(len(original) == 2332 and code_end == 788
+           and labels["object_table"] == code_end + ROOT_BYTES
+           and original[code_end:] == bytes(ROOT_BYTES + MAX_OBJECTS * SLOT_BYTES),
+           "UNIT142 P0e source table dimensions or zero data changed")
+    demand(whole[0x0DD04:0x0DD04 + len(original)] == original
+           and whole[0x0DCFC:0x0DD04] == b"AGAPIC  ",
+           "UNIT142 P0e native source differs from exact P2d emitter")
+    entries = [(i, labels[name]) for i, name in enumerate((
+        "object_put_entry", "object_off_entry",
+        "object_read_entry", "object_reset_entry",
+    ))]
+    candidate, coverage = native_unit_source(
+        "P0E_OBJECT_CODE", original[:code_end], entries
+    )
+    demand(coverage["bytes"] == code_end
+           and coverage["mnemonic_bytes"] == code_end
+           and coverage["raw_dc_bytes"] == 0,
+           "UNIT142 P0e source code not fully decoded into Motorola")
+    entry = candidate.find("ENTRY_P0E_OBJECT_CODE_00000:")
+    demand(entry >= 0, "UNIT142 P0e native entry absent")
+    body = candidate[entry:]
+    demand(body.count("    moveq #0,d2") == 1,
+           "UNIT142 P0e object result ambiguous")
+    filename = "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s"
+    symbol = "UNIT142_P0E_OBJECT_RESULT"
+    header = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; UNIT142 P0e object table code source-verified against the exact historical emitter.\n"
+        "; UNIT142+$0DD04..$0E018, 788 native instruction bytes.\n"
+        + symbol + " equ 0\n\n"
+    )
+    module = header + body.replace("P0E_OBJECT_CODE", "UNIT142_P0E_OBJECT").replace(
+        "    moveq #0,d2", "    moveq #" + symbol + ",d2"
+    )
+    first_marker = (
+        "    dc.b $41,$47,$41,$50,$49,$43,$20,$20,$48,$E7,$EF,$EE"
+        "  ; +$0DCFC: 414741504943202048E7EFEE\n"
+    )
+    begin = audit.find(first_marker)
+    end_annotation = audit.find("  ; +$0E620: ", begin + len(first_marker))
+    demand(begin >= 0 and end_annotation > begin,
+           "UNIT142 P0e audit envelope boundaries missing")
+    end = audit.rfind("\n", begin, end_annotation) + 1
+    fragment = audit[begin:end]
+    original_at = 0x0DCFC
+    for line in fragment.splitlines():
+        match = ANNOT.search(line)
+        demand(match is not None
+               and line.lstrip().startswith("dc.b")
+               and int(match.group(1), 16) == original_at,
+               "UNIT142 P0e mixed audit/data within source envelope")
+        original_at += len(bytes.fromhex(match.group(2)))
+    demand(original_at == 0x0E620,
+           "UNIT142 P0e original source envelope not 2340 bytes")
+    compact = strip_annotations(fragment)
+    demand(wrapper.count(compact) == 1,
+           "UNIT142 P0e raw wrapper fragment missing or ambiguous")
+    replacement = (
+        "    dc.b $41,$47,$41,$50,$49,$43,$20,$20\n"
+        + ('    include "%s"\n' % filename)
+        + "UNIT142_P0E_OBJECT_ROOT:\n"
+        + "    dcb.b 8,0\n"
+        + "UNIT142_P0E_OBJECT_TABLE:\n"
+        + "    dcb.b 1536,0\n"
+    )
+    wrapper = wrapper.replace(compact, replacement)
+    modules.append((0x0DD04, 0x0E018, filename, module))
     return bytes(whole), wrapper, modules
 
 
@@ -1438,7 +1514,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 53058 bytes / 125 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 53846 bytes / 126 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1451,6 +1527,8 @@ def stage(folder, official):
     for first, _last in CBLOCK_SPANS:
         filename = "M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8)
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
+    p0e_file = "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s"
+    (folder / p0e_file).write_bytes((NATIVE_DIR / p0e_file).read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1460,7 +1538,8 @@ def edit_gate(staged, assembler):
            (staged / MASTER_NAME).is_file() and
            all((staged / spec[0]).is_file() for spec in SPANS) and
            all((staged / ("M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8))).is_file()
-               for first, _last in CBLOCK_SPANS),
+               for first, _last in CBLOCK_SPANS) and
+           (staged / "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s").is_file(),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1488,6 +1567,14 @@ def edit_gate(staged, assembler):
                    "UNIT142 CBlock edit symbol ambiguous: " + filename)
             path.write_text(text.replace(original, symbol + " equ 1"),
                             encoding="ascii", newline="\n")
+        p0e_file = folder / "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s"
+        p0e_source = p0e_file.read_text("ascii")
+        p0e_before = "UNIT142_P0E_OBJECT_RESULT equ 0"
+        demand(p0e_source.count(p0e_before) == 1,
+               "UNIT142 P0e isolated edit symbol absent or ambiguous")
+        p0e_file.write_text(p0e_source.replace(
+            p0e_before, "UNIT142_P0E_OBJECT_RESULT equ 1"),
+            encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1506,11 +1593,12 @@ def edit_gate(staged, assembler):
         deltas = [i for i, (a, b) in enumerate(zip(base, changed)) if a != b]
         expected = {spec[12]: (spec[13], spec[14]) for spec in SPANS}
         expected.update({first + 8 + 869: (0, 1) for first, _last in CBLOCK_SPANS})
+        expected[0x0E015] = (0, 1)
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 125 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 126 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

@@ -865,6 +865,28 @@ s'ajoute aux 122 edits UNIT142 existants.
 Gate A [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45047314451) ; aucune nouvelle Gate B/C/D,
 aucune modification de P2d, LAST_GOOD ou de l'ASC actif.
 
+### UNIT142 — lot 162 : code P0e de table d'objets (788 octets)
+
+L'emetteur historique `m19_p0e_object_table_emit.py::emit_object_table()`
+est **exactement present dans UNIT142** a `$0DD04..$0E620`,
+selon la [Gate A de provenance](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048150577).
+Ses **788 octets executables `$0DD04..$0E018`** sont convertis en
+[module MC68020](M19_UNIT142_P0E_OBJECT_CORE_MC68020.s).
+Les quatre routines Put/Off/Read/Reset ont un assemblage direct vasm
+MC68020 byte-identique et un resultat mutable isole.
+
+Les 8 octets d'etat proprietaire et les 64 emplacements de 24 octets
+(**1 544 octets au total**) sont des donnees initialisees a zero,
+conservees comme `dcb.b 8,0` et `dcb.b 1536,0` dans le wrapper.
+La signature `AGAPIC  ` (8 octets) reste une directive `dc.b`.
+
+**Total : 226 modules ASM MC68020**, dont **126 UNIT142** ;
+**53 846 / 62 740 octets UNIT142 (85,82 %)** en source.
+**8 894 octets UNIT142** restent bruts ou non classes.
+Une 126e mutation source isolee est exigee par la Gate A.
+Cette etape source-only n'altere ni la Lib P2d, ni LAST_GOOD,
+ni l'ASC. Nouvelle Gate A en attente ; pas de Gates B/C/D recentes.
+
 ## Compilation directe (Windows)
 
 ```bat
