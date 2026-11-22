@@ -14,7 +14,7 @@ from hashlib import sha256
 from pathlib import Path
 
 from active_library import P2D_SHA
-from compiler_relocation import unpack_ap20
+from compiler_relocation import GETP, unpack_ap20
 from m19_p2d_unit142_source import expected_sources, SPANS, CBLOCK_SPANS, GROUP_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -107,10 +107,44 @@ def check() -> None:
     assert mask[TAIL_START:TAIL_START+8] == bytes(8)
     assert group[0x0E8D8:0x0E8DE] == bytes.fromhex("FE11F700031D")
     assert mask[0x0E8D8:0x0E8DE] == bytes(6)
+    # Linker grammar is authoritative: FE11/F700 is AMOS Main Rjsr,
+    # and literal "GetP" delimits Compiler parameters. Decode neither
+    # as Motorola instructions, and count only complete isolated islands.
+    from amos_main_abi import rjsr
+    gaps = []
+    pos = 0
+    while pos < len(mask):
+        if mask[pos]:
+            pos += 1
+            continue
+        lo = pos
+        while pos < len(mask) and not mask[pos]:
+            pos += 1
+        gaps.append((lo, pos))
+    pseudo = [(lo, hi) for lo, hi in gaps
+              if hi-lo == 6 and group[lo:lo+4] == bytes.fromhex("FE11F700")]
+    getp = [(lo, hi) for lo, hi in gaps
+            if hi-lo == 4 and group[lo:hi] == GETP]
+    assert len(pseudo) == 45 and len(getp) == 47, (len(pseudo),len(getp))
+    for lo, hi in pseudo:
+        index = int.from_bytes(group[lo+4:hi], "big")
+        assert index in (0x008C,0x031D,0x0320,0x0330,0x0333)
+        assert group[lo:hi] == rjsr(index), "Unproven AMOS Main pseudo-op"
+    for lo, hi in getp:
+        assert group[lo:hi] == GETP
+    assert any(lo == 0x0E8D8 for lo, _ in pseudo)
+    assert all(any(lo == end-4 for lo, _ in getp)
+               for _begin, end in CBLOCK_SPANS)
+    extra_markers = (len(pseudo)-1)*6 + (len(getp)-3)*4
+    assert extra_markers == 440
+    print("UNIT142_LINKER_MARKERS_PASS", len(pseudo), "AMOS Main 6-byte records,",
+          len(getp), "GetP 4-byte records;", extra_markers,
+          "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
-    assert known_noncode == 3706
+    known_noncode += extra_markers
+    assert known_noncode == 4146
     unknown = len(group) - clean - known_noncode
-    assert unknown == 3438
+    assert unknown == 2998
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
