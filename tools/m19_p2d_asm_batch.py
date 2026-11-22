@@ -181,13 +181,17 @@ def main():
     try:
         from build_m19_p2d_editable_asm import (
             prove_source_provenance,build_p1e,emit_bob_auto_update,
-            unpack_ap20,replace_source_backed_amos_pseudo)
+            unpack_ap20,replace_source_backed_amos_pseudo,
+            replace_raw_p1e_cleanup)
         official, group, *_ = prove_source_provenance()
         _,meta = build_p1e()
         native,labels,_ = emit_bob_auto_update(meta['context_delta'])
         _,parts,_ = unpack_ap20(official)
         evidence = prove_regions(native,labels,parts[group])
-        audit = replace_source_backed_amos_pseudo(AUDIT.read_text('ascii'))
+        # The cleanup Lst.Del pseudo-op has an authored module already.
+        # Replicate builder staging so the 27 remaining raw calls are counted.
+        audit = replace_raw_p1e_cleanup(AUDIT.read_text('ascii'))
+        audit = replace_source_backed_amos_pseudo(audit)
         check_sources(audit,evidence,compare_files=args.check)
         if args.emit:
             out = args.emit.resolve()
