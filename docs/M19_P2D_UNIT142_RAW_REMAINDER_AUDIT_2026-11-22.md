@@ -93,6 +93,34 @@ Le marqueur `AGAPIC  ` a `$0DCFC` est conserve comme donnee, et
 l'entree `$0F4E2` reste non decodee. Les suites de zeros ne sont
 pas declarees comme padding reutilisable.
 
+## Cartographie de la zone AGAPIC / P0e / P0f
+
+Les limites suivantes sont recoupees avec les emetteurs Python de la
+**P2d officielle**. La table explicite les roles prouvables ; des octets
+nuls ne prouvent pas qu'une zone soit du padding reutilisable.
+
+| Offset UNIT142 (fin exclue) | Octets | Provenance et classification |
+| --- | ---: | --- |
+| `$0DCFC..$0DD04` | 8 | nom de banque `AGAPIC  `, donnee |
+| `$0DD04..$0E018` | 788 | P0e Object Table, code MC68020 migre au lot 162 |
+| `$0E018..$0E620` | 1 544 | P0e : racine 8 octets + 64 slots de 24 octets, initialises a zero |
+| `$0E620..$0E7F6` | 470 | pont AGA P0e, emitter `AGA_CORE` source-exact, migration en attente |
+| `$0E7F6..$0ECA4` | 1 198 | P0f Stamp/Binder, executable et marqueurs AMOS a distinguer |
+| `$0ECA4..$0F0A4` | 1 024 | P0f : table de 64 empreintes de 16 octets, initialisee a zero |
+| `$0F0A4..$0F0CA` | 38 | residu non classe, a auditer avant tout source edit |
+| `$0F0CA..$0F4E2` | 1 048 | zone de zeros, usage non qualifie |
+| `$0F4E2..$0F514` | 50 | entree publique dont le decodage n'est pas encore prouve |
+
+Cette decomposition couvre exactement **6 168 octets** de la zone
+`$0DCFC..$0F514`. Le code P0e de 788 octets est deja extrait dans
+[`src/native/m19_p2d/M19_UNIT142_P0E_OBJECT_CORE_MC68020.s`](../src/native/m19_p2d/M19_UNIT142_P0E_OBJECT_CORE_MC68020.s).
+Le P0e AGA Bridge et P0f possedent leurs emitters sources
+[`m19_p0e_split_bridge_emit.py`](../tools/m19_p0e_split_bridge_emit.py),
+[`m19_p0f_object_identity_emit.py`](../tools/m19_p0f_object_identity_emit.py).
+Un match source exact n'autorise pas a remplacer des `dc.b` sans un
+reassemblage de module et un test de mutation confines. Les marqueurs
+AMOS `FE11` ne sont jamais a compter comme du code MC68020.
+
 ## Sequence de reprise protegee
 
 1. Recouper les limites des 121 plages avec le manifeste, les
