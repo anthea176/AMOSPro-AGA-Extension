@@ -663,6 +663,28 @@ sont maintenant exigees par le test d'edition source.
 UNIT142 en 37 modules**. Pas de modification des Lib, LAST_GOOD,
 des ASC ni des preuves WinUAE/Compiler deja gelees.
 
+### UNIT142 — lots 74 a 80 : sept plages natives (4 478 octets)
+
+Sept plages additionnelles de mnemoniques MC68020 sont extraites de l'audit
+et verrouillees contre la reconstruction officielle P2d :
+
+- [bloc $0219C](M19_UNIT142_BLOCK_0219C_MC68020.s) : `$0219C..$0235C`, **448 octets** ;
+- [bloc $0282C](M19_UNIT142_BLOCK_0282C_MC68020.s) : `$0282C..$02996`, **362 octets** ;
+- [bloc $05150](M19_UNIT142_BLOCK_05150_MC68020.s) : `$05150..$052CA`, **378 octets** ;
+- [bloc $05706](M19_UNIT142_BLOCK_05706_MC68020.s) : `$05706..$058C2`, **444 octets** ;
+- [bloc $058C6](M19_UNIT142_BLOCK_058C6_MC68020.s) : `$058C6..$05C76`, **944 octets** ;
+- [bloc $05C7A](M19_UNIT142_BLOCK_05C7A_MC68020.s) : `$05C7A..$0609A`, **1056 octets** ;
+- [bloc $07482](M19_UNIT142_BLOCK_07482_MC68020.s) : `$07482..$077D0`, **846 octets** ;
+
+**Total de migration source : 144 modules ASM**, dont **44 UNIT142** ;
+**40 292 / 62 740 octets UNIT142 (64,22 %)** maintenables.
+Le validateur exige 44 mutations distinctes d'un octet et une reconstruction
+P2d identique, y compris le titre, les tokens et toutes les unites AP20.
+Les **22 448 octets UNIT142 restants** conservent exactement leurs octets
+d'audit, dont les donnees, GetP et pseudo-appels AMOS Main non classes.
+Source-only : Lib, LAST_GOOD, ASC actif et preuves WinUAE inchanges.
+Gate A a confirmer par CI ; aucune nouvelle Gate B/C/D revendiquee.
+
 ## Compilation directe (Windows)
 
 ```bat

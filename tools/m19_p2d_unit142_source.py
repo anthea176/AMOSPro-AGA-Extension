@@ -363,6 +363,69 @@ SPANS = (
         "    cmpi.l #$00000008,d1", "    cmpi.l #UNIT142_BLOCK_0D99A_VALUE,d1",
         0x0DA99, 8, 9,
     ),
+    (
+        "M19_UNIT142_BLOCK_0219C_MC68020.s",
+        "ENTRY_UNIT142_0219C:\n",
+        "    dc.b $47,$65,$74,$50  ; +$0235C: 47657450\n",
+        0x0219C, 0x0235C, 136, 6,
+        "UNIT142_BLOCK_0219C_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_0219C_RESULT,d2",
+        0x02359, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_0282C_MC68020.s",
+        "ENTRY_UNIT142_0282C:\n",
+        "    dc.b $47,$65,$74,$50  ; +$02996: 47657450\n",
+        0x0282C, 0x02996, 107, 6,
+        "UNIT142_BLOCK_0282C_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_0282C_RESULT,d2",
+        0x02993, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_05150_MC68020.s",
+        "ENTRY_UNIT142_05150:\n",
+        "    dc.b $2F,$0E,$2F,$08,$2F,$0A,$61,$00,$FF,$DC,$4A,$80  ; +$052CA: 2F0E2F082F0A6100FFDC4A80\n",
+        0x05150, 0x052CA, 107, 9,
+        "UNIT142_BLOCK_05150_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_05150_RESULT,d2",
+        0x052AB, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_05706_MC68020.s",
+        "ENTRY_UNIT142_05706:\n",
+        "    dc.b $47,$65,$74,$50  ; +$058C2: 47657450\n",
+        0x05706, 0x058C2, 129, 7,
+        "UNIT142_BLOCK_05706_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_05706_RESULT,d2",
+        0x058BF, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_058C6_MC68020.s",
+        "ENTRY_UNIT142_058C6:\n",
+        "    dc.b $47,$65,$74,$50  ; +$05C76: 47657450\n",
+        0x058C6, 0x05C76, 258, 22,
+        "UNIT142_BLOCK_058C6_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_058C6_RESULT,d2",
+        0x05C73, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_05C7A_MC68020.s",
+        "ENTRY_UNIT142_05C7A:\n",
+        "    dc.b $47,$65,$74,$50  ; +$0609A: 47657450\n",
+        0x05C7A, 0x0609A, 290, 24,
+        "UNIT142_BLOCK_05C7A_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_05C7A_RESULT,d2",
+        0x06097, 0, 1,
+    ),
+    (
+        "M19_UNIT142_BLOCK_07482_MC68020.s",
+        "    dc.b $FE,$11,$F7,$00,$03,$20  ; +$0747C: FE11F7000320\n",
+        "L_UNIT142_077D0:\n",
+        0x07482, 0x077D0, 229, 23,
+        "UNIT142_BLOCK_07482_RESULT", 0, 1,
+        "    moveq #0,d2", "    moveq #UNIT142_BLOCK_07482_RESULT,d2",
+        0x074AF, 0, 1,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -403,6 +466,13 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_BLOCK_0CF3E_MC68020.s": "verified block $0CF3E",
     "M19_UNIT142_BLOCK_0D336_MC68020.s": "verified block $0D336",
     "M19_UNIT142_BLOCK_0D99A_MC68020.s": "verified block $0D99A",
+    "M19_UNIT142_BLOCK_0219C_MC68020.s": "public entry $0219C",
+    "M19_UNIT142_BLOCK_0282C_MC68020.s": "public entry $0282C",
+    "M19_UNIT142_BLOCK_05150_MC68020.s": "public entry $05150",
+    "M19_UNIT142_BLOCK_05706_MC68020.s": "public entry $05706",
+    "M19_UNIT142_BLOCK_058C6_MC68020.s": "public entry $058C6",
+    "M19_UNIT142_BLOCK_05C7A_MC68020.s": "public entry $05C7A",
+    "M19_UNIT142_BLOCK_07482_MC68020.s": "native block $07482",
 }
 
 
@@ -522,7 +592,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 35814 bytes / 37 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 40292 bytes / 44 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -576,8 +646,8 @@ def edit_gate(staged, assembler):
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
-               "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 37 exact bytes, only UNIT142, no AP20 drift")
+               "UNIT142 isolated one-byte edits escaped expected offsets")
+    print("UNIT142_EDIT_TEST_PASS: 44 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
