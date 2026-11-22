@@ -2,8 +2,9 @@
 ; UNIT142 P1c Screen Open priority setup, from source-pinned M19 emitter.
 ; UNIT142+$0F0A4..$0F0CA, 38 bytes of MC68020 instructions.
 UNIT142_P1C_OPEN_OK equ 1
+UNIT142_P1C_ORIG_OPEN equ UNIT_UNIT142+$470
 
-    jsr (UNIT_UNIT142+$470,pc)
+    jsr (UNIT142_P1C_ORIG_OPEN.l,pc)
     cmpi.l #UNIT142_P1C_OPEN_OK,d3
     bne.w UNIT142_P1C_OPEN_RETURN
     move.l a0,-(a7)

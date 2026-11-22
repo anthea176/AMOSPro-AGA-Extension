@@ -1435,7 +1435,7 @@ def p0f_expected_source(whole, wrapper):
 
 P1CD_PINNED_MODULES = (
     ("M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s",
-     "faa1052a8b86add74ab9b631b497fb538ab4936c", 0x0F0A4, 0x0F0CA,
+     "5c5aaf4a0adf25deac48ba433d33b86e8ad5e384", 0x0F0A4, 0x0F0CA,
      "UNIT142_P1C_OPEN_OK"),
     ("M19_UNIT142_P1D_LIMIT_OPEN_MC68020.s",
      "8450b9fd2a38d191839c3eebd347e7f673bc9a58", 0x0F4E2, 0x0F514,
