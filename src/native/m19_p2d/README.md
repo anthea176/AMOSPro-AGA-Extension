@@ -813,6 +813,32 @@ ou non classes (12 298 octets de directives et 40 octets de code sans
 mutation simple). Pas de nouveau binaire, ASC ni qualification WinUAE.
 Validation Gate A a confirmer.
 
+
+### UNIT142 — lots 152 a 158 : sept epilogues et relais (40 octets)
+
+Les sept derniers segments en mnemoniques de l'audit sont maintenant
+independants : quatre epilogues `tst.l`, deux `rts` et un branchement
+`bra.w`. Les mutations d'edition utilisent `ifne/else/endif` vasm
+pour les instructions sans immediat : baseline = opcodes d'origine,
+edit = une seule difference d'octet, sans installer le code edite.
+
+- [bloc $015C0](M19_UNIT142_BLOCK_015C0_MC68020.s) : `$015C0..$015C8`, 8 octets
+- [bloc $01BCA](M19_UNIT142_BLOCK_01BCA_MC68020.s) : `$01BCA..$01BD2`, 8 octets
+- [bloc $03A0C](M19_UNIT142_BLOCK_03A0C_MC68020.s) : `$03A0C..$03A14`, 8 octets
+- [bloc $04102](M19_UNIT142_BLOCK_04102_MC68020.s) : `$04102..$0410A`, 8 octets
+- [bloc $002A2](M19_UNIT142_BLOCK_002A2_MC68020.s) : `$002A2..$002A4`, 2 octets
+- [bloc $002B2](M19_UNIT142_BLOCK_002B2_MC68020.s) : `$002B2..$002B4`, 2 octets
+- [bloc $02360](M19_UNIT142_BLOCK_02360_MC68020.s) : `$02360..$02364`, 4 octets
+
+**222 modules ASM MC68020**, dont **122 UNIT142**. Les **14 628
+ octets de mnemoniques audites** restants au checkpoint des lots 73
+sont convertis, soit **50 442 / 62 740 octets UNIT142 (80,40 %)**
+en source editable. Les **12 298 octets de directives brutes**
+restent strictement conserves : donnees, marqueurs GetP, pseudo-appels
+AMOS Main et zones sans classification certaine. La CI Gate A est
+requise pour valider la reconstruction source et les 122 mutations.
+Aucune nouvelle Gate WinUAE B, Compiler C ni materiel D.
+
 ## Compilation directe (Windows)
 
 ```bat

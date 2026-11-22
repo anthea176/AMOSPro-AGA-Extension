@@ -62,12 +62,10 @@ L_UNIT142_001C2:
     dc.b $00,$14,$2C,$78,$00,$04,$4E,$AE,$FE,$8C,$4A,$80
     dc.b $67,$00,$00,$06,$08,$86,$00,$01,$29,$46,$00,$14
     dc.b $20,$06,$4E,$75,$47,$65,$74,$50
-ENTRY_UNIT142_002A2:
-    rts
+    include "M19_UNIT142_BLOCK_002A2_MC68020.s"
     dc.b $20,$6D,$FF,$FC,$4E,$A8,$01,$90,$4E,$75,$47,$65
     dc.b $74,$50
-ENTRY_UNIT142_002B2:
-    rts
+    include "M19_UNIT142_BLOCK_002B2_MC68020.s"
     dc.b $20,$6D,$FF,$FC,$4E,$A8,$01,$90,$4E,$75,$47,$65
     dc.b $74,$50
 ENTRY_UNIT142_002C2:
@@ -212,21 +210,13 @@ ENTRY_UNIT142_00D3C:
     dc.b $20,$3C,$00,$00,$00,$00
     include "M19_UNIT142_BLOCK_01540_MC68020.s"
     dc.b $20,$3C,$00,$00,$00,$00
-L_UNIT142_015C0:
-    movem.l (a7)+,d1-d7/a0-a4/a6
-    tst.l d0
-    rts
-L_UNIT142_015C8:
+    include "M19_UNIT142_BLOCK_015C0_MC68020.s"
     dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
     dc.b $47,$65,$74,$50
 ENTRY_UNIT142_015D8:
     include "M19_UNIT142_IFF_PALETTE_BODY_MC68020.s"
     dc.b $20,$3C,$00,$00,$00,$00
-L_UNIT142_01BCA:
-    movem.l (a7)+,d1-d7/a0-a4/a6
-    tst.l d0
-    rts
-L_UNIT142_01BD2:
+    include "M19_UNIT142_BLOCK_01BCA_MC68020.s"
     dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
 ENTRY_UNIT142_01BDE:
     include "M19_UNIT142_IFF_AP20_PRECALL_MC68020.s"
@@ -240,8 +230,7 @@ ENTRY_UNIT142_01BDE:
 ENTRY_UNIT142_0219C:
     include "M19_UNIT142_BLOCK_0219C_MC68020.s"
     dc.b $47,$65,$74,$50
-ENTRY_UNIT142_02360:
-    bra.w L_UNIT142_078E6
+    include "M19_UNIT142_BLOCK_02360_MC68020.s"
     dc.b $2A,$1B,$28,$1B,$22,$1B,$20,$1B,$28,$6D,$01,$C8
     dc.b $2C,$0C,$4A,$86,$67,$00,$01,$FC,$2C,$14,$4A,$86
     dc.b $67,$00,$01,$F4,$24,$6C,$00,$20,$2C,$0A,$4A,$86
@@ -338,11 +327,7 @@ ENTRY_UNIT142_034F4:
     dc.b $20,$3C,$00,$00,$00,$00
     include "M19_UNIT142_BLOCK_0398C_MC68020.s"
     dc.b $20,$3C,$00,$00,$00,$00
-L_UNIT142_03A0C:
-    movem.l (a7)+,d1-d7/a0-a4/a6
-    tst.l d0
-    rts
-L_UNIT142_03A14:
+    include "M19_UNIT142_BLOCK_03A0C_MC68020.s"
     dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_03A24_MC68020.s"
@@ -352,11 +337,7 @@ L_UNIT142_03A14:
 ENTRY_UNIT142_03C46:
     include "M19_UNIT142_ENTRY_03C46_MC68020.s"
     dc.b $20,$3C,$00,$00,$00,$00
-L_UNIT142_04102:
-    movem.l (a7)+,d1-d7/a0-a4/a6
-    tst.l d0
-    rts
-L_UNIT142_0410A:
+    include "M19_UNIT142_BLOCK_04102_MC68020.s"
     dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
     dc.b $47,$65,$74,$50
     include "M19_UNIT142_BLOCK_0411A_MC68020.s"

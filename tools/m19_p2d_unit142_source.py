@@ -1065,6 +1065,69 @@ SPANS = (
         "    move.l 4(a2),d0", "    move.l UNIT142_BLOCK_09994_EDIT(a2),d0",
         0x0999F, 4, 5,
     ),
+    (
+        "M19_UNIT142_BLOCK_015C0_MC68020.s",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$015BA: 203C00000000\n",
+        "    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00  ; +$015C8: 646F732E6C69627261727900\n",
+        0x015C0, 0x015C8, 3, 2,
+        "UNIT142_BLOCK_015C0_EDIT", 0, 1,
+        "    tst.l d0", "    ifne UNIT142_BLOCK_015C0_EDIT\n        tst.w d0\n    else\n        tst.l d0\n    endif",
+        0x015C5, 128, 64,
+    ),
+    (
+        "M19_UNIT142_BLOCK_01BCA_MC68020.s",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$01BC4: 203C00000000\n",
+        "    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00  ; +$01BD2: 646F732E6C69627261727900\n",
+        0x01BCA, 0x01BD2, 3, 2,
+        "UNIT142_BLOCK_01BCA_EDIT", 0, 1,
+        "    tst.l d0", "    ifne UNIT142_BLOCK_01BCA_EDIT\n        tst.w d0\n    else\n        tst.l d0\n    endif",
+        0x01BCF, 128, 64,
+    ),
+    (
+        "M19_UNIT142_BLOCK_03A0C_MC68020.s",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$03A06: 203C00000000\n",
+        "    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00  ; +$03A14: 646F732E6C69627261727900\n",
+        0x03A0C, 0x03A14, 3, 2,
+        "UNIT142_BLOCK_03A0C_EDIT", 0, 1,
+        "    tst.l d0", "    ifne UNIT142_BLOCK_03A0C_EDIT\n        tst.w d0\n    else\n        tst.l d0\n    endif",
+        0x03A11, 128, 64,
+    ),
+    (
+        "M19_UNIT142_BLOCK_04102_MC68020.s",
+        "    dc.b $20,$3C,$00,$00,$00,$00  ; +$040FC: 203C00000000\n",
+        "    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00  ; +$0410A: 646F732E6C69627261727900\n",
+        0x04102, 0x0410A, 3, 2,
+        "UNIT142_BLOCK_04102_EDIT", 0, 1,
+        "    tst.l d0", "    ifne UNIT142_BLOCK_04102_EDIT\n        tst.w d0\n    else\n        tst.l d0\n    endif",
+        0x04107, 128, 64,
+    ),
+    (
+        "M19_UNIT142_BLOCK_002A2_MC68020.s",
+        "    dc.b $20,$06,$4E,$75,$47,$65,$74,$50  ; +$0029A: 20064E7547657450\n",
+        "    dc.b $20,$6D,$FF,$FC,$4E,$A8,$01,$90,$4E,$75,$47,$65  ; +$002A4: 206DFFFC4EA801904E754765\n",
+        0x002A2, 0x002A4, 1, 1,
+        "UNIT142_BLOCK_002A2_EDIT", 0, 1,
+        "    rts", "    ifne UNIT142_BLOCK_002A2_EDIT\n        nop\n    else\n        rts\n    endif",
+        0x002A3, 117, 113,
+    ),
+    (
+        "M19_UNIT142_BLOCK_002B2_MC68020.s",
+        "    dc.b $74,$50  ; +$002B0: 7450\n",
+        "    dc.b $20,$6D,$FF,$FC,$4E,$A8,$01,$90,$4E,$75,$47,$65  ; +$002B4: 206DFFFC4EA801904E754765\n",
+        0x002B2, 0x002B4, 1, 1,
+        "UNIT142_BLOCK_002B2_EDIT", 0, 1,
+        "    rts", "    ifne UNIT142_BLOCK_002B2_EDIT\n        nop\n    else\n        rts\n    endif",
+        0x002B3, 117, 113,
+    ),
+    (
+        "M19_UNIT142_BLOCK_02360_MC68020.s",
+        "    dc.b $47,$65,$74,$50  ; +$0235C: 47657450\n",
+        "    dc.b $2A,$1B,$28,$1B,$22,$1B,$20,$1B,$28,$6D,$01,$C8  ; +$02364: 2A1B281B221B201B286D01C8\n",
+        0x02360, 0x02364, 1, 1,
+        "UNIT142_BLOCK_02360_EDIT", 0, 2,
+        "    bra.w L_UNIT142_078E6", "    bra.w L_UNIT142_078E6+UNIT142_BLOCK_02360_EDIT",
+        0x02363, 132, 134,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -1183,6 +1246,13 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_BLOCK_0A6E2_MC68020.s": "bank bridge offset",
     "M19_UNIT142_BLOCK_0948C_MC68020.s": "field bridge offset",
     "M19_UNIT142_BLOCK_09994_MC68020.s": "field bridge offset",
+    "M19_UNIT142_BLOCK_015C0_MC68020.s": "stack epilogue tst $015C0",
+    "M19_UNIT142_BLOCK_01BCA_MC68020.s": "stack epilogue tst $01BCA",
+    "M19_UNIT142_BLOCK_03A0C_MC68020.s": "stack epilogue tst $03A0C",
+    "M19_UNIT142_BLOCK_04102_MC68020.s": "stack epilogue tst $04102",
+    "M19_UNIT142_BLOCK_002A2_MC68020.s": "return $002A2",
+    "M19_UNIT142_BLOCK_002B2_MC68020.s": "return $002B2",
+    "M19_UNIT142_BLOCK_02360_MC68020.s": "branch $02360",
 }
 
 
@@ -1302,7 +1372,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 50402 bytes / 115 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 50442 bytes / 122 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1357,7 +1427,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 115 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 122 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
