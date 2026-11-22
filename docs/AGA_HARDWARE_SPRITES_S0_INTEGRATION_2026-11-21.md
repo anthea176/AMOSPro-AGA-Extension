@@ -1,5 +1,12 @@
 # S0 — Audit d'intégration des Sprites matériels AGA (21 novembre 2026)
 
+## 22/11/2026 — Preuve S0c et test S0d de robustesse
+
+Le [journal S0c d'origine](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT) (**565 octets, CRLF, SHA256 `266444494d1ced0fc0e401bfca4c145b5a097ca9bcf066b7c0957e5701d50160`**) affiche `RESULT 1`, `ERR 0`, `MOVE_FRAMES 100`, `GET_CHANNEL 1`, `FREE_SPRITE 1`, `CLOSE_RETURNED 1`, `BANK_CLEAN 1`. L'utilisateur a confirme que le F etait visible, mobile, sans artefact. **Gate B scenario S0c PASS**, pas de preuve de detach DMA formel.
+
+Le [programme unique de travail](../tests/design/sprites_aga/SPRITE_PROBE.asc) passe a **S0d**, trois cycles consecutifs avec cursor toggle puis Copper RGB4 On/Off. Allocation par OS exclusivement, stockage Chip propre a chaque cycle, compteur de liberation et cleanup en cas d'erreur. Le Copper ne modifie que `COLOR00` via les fonctions existantes et est desactive avant fermeture. La source ne contient aucun nouveau token Sprite, aucun nouvel ASM, aucun ecrasement de Lib. **Gates B/C/D S0d non testees** ; WinUAE Runtime et capture de rendu a faire, snapshot avant essai. Aucun mecanisme d'arret DMA universel n'est encore formellement qualifie ; ne pas utiliser S0d comme preuve de securite de `FreeSprite/FreeMem` sur Amiga physique.
+
+
 ## 22/11/2026 — S0b Runtime PASS et S0c Sprite 16x16 experimental
 
 [Log S0b original](evidence/M19_S0B_SPR_RUNTIME_2026-11-22.TXT) : `RESULT 1`, `ERR 0`, deux acquisitions successives du canal 1 (curseur visible puis masque), deux liberations, `OWN_REMAINING -1`, `CLOSE_RETURNED 1`. **Gate B de l'allocation OS seulement PASS**, aucun sprite actif. L'ancien ASC S0b reste dans l'historique Git. 

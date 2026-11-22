@@ -1,5 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **S0d 22/11/2026** : [S0c Runtime et animation F visibles PASS](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT) selon journal et observation auteur, mais quiescence DMA non prouvee. [S0d robustesse](../tests/design/sprites_aga/SPRITE_PROBE.asc) prepare dans **le meme ASC** : 3 cycles Open/Close, curseur et Copper RGB4, 108 positions Sprite ; **Gate B/C/D non testees**. P2d et LAST_GOOD proteges.
+
+
 > **Sprite AGA 22/11/2026 :** S0b `GetSprite/FreeSprite` **PASS en Runtime WinUAE**, canal 1 attribue puis libere curseur visible/masque ([log](evidence/M19_S0B_SPR_RUNTIME_2026-11-22.TXT)). S0c [Sprite 16x16 mobile](../tests/design/sprites_aga/SPRITE_PROBE.asc) **PREPARE, non execute WinUAE**, meme ASC de travail ; cleanup DMA encore experimental. P2d et LAST_GOOD inchangees. 
 
 

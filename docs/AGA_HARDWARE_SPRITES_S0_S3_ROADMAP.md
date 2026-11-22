@@ -1,5 +1,8 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+> **Etape S0d (22/11/2026)** : [premier Sprite 16x16 S0c Runtime et visuel PASS](evidence/M19_S0C_VIS_RUNTIME_2026-11-22.TXT), 100 mouvements, retour AMOS et banque Chip liberee selon log ; absence d'artefacts confirmee par auteur. [Banc unique S0d](../tests/design/sprites_aga/SPRITE_PROBE.asc) en cours de qualification pour 3 cycles Open/Close et interactions curseur/Copper. Aucune validation Compiler ou hardware et aucune preuve formelle de DMA-detach.
+
+
 > **Actualisation S0 (21/11/2026)** : [audit d'intégration détaillé](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md), **12 tests hôtes PASS** pour le modèle de propriété des canaux ; ni code natif ni fonctionnement DMA démontré. P2d `LAST_GOOD` inchangée, S1 non commencée.
 
 

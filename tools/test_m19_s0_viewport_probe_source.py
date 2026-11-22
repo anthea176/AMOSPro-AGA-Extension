@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 ASC = ROOT / 'examples/sprite_s0_viewport/VIEWPORT_PROBE.asc'
-S0B = ROOT / 'tests/design/sprites_aga/SPRITE_PROBE.asc'
+S0D = ROOT / 'tests/design/sprites_aga/SPRITE_PROBE.asc'
 
 
 def inspect_source(raw: bytes) -> list[str]:
@@ -85,116 +85,117 @@ class SourceTests(unittest.TestCase):
         self.assertNotEqual(inspect_source(raw), [])
 
 
-def inspect_s0c_source(raw: bytes) -> list[str]:
-    """S0c static guards: bounded Chip data, OS ownership and deferred memory release.
-
-    These checks do not prove real display, hardware DMA detachment or Compiler.
-    """
-    errors: list[str] = []
+def inspect_s0d_source(raw: bytes) -> list[str]:
+    """Source-only S0d checks; no WinUAE, compiler or hardware claim."""
+    problems: list[str] = []
     if not raw.isascii() or b'\r' in raw:
-        errors.append('S0c ASC must be ASCII with LF only')
-    code = raw.decode('ascii')
-    lines = code.splitlines()
+        problems.append('S0d must be ASCII LF')
+    text = raw.decode('ascii', errors='replace')
+    lines = text.splitlines()
     if any(len(line) > 220 for line in lines):
-        errors.append('S0c has AMOS lines longer than 220 characters')
+        problems.append('AMOS line exceeds 220 characters')
     bare = '\n'.join(line for line in lines if not line.lstrip().startswith("'"))
-    if re.search(r'\b(?:OFF_SPRITE|ON_SPRITE|Aga\s+Swap|Poke|Call|Execall|Pload)\b', bare, re.I):
-        errors.append('S0c must not touch hardware DMA registers or use arbitrary machine code')
+    if re.search(r'\b(?:Poke|Call|Execall|Pload|Aga\s+Swap)\b|\$DFF[0-9A-Fa-f]+', bare, re.I):
+        problems.append('direct hardware access or unapproved code')
     anchors = (
+        'For _CYCLE=1 To 3',
+        '_OPEN=0 : _BANK=0 : _BANK_OWN=0 : _BANK_CLEAN=0',
+        'If Aga Detect=0',
+        '_OPEN=Aga Screen Open(320,256,256,$00021000)',
         '_VIEWPORT=_SCREEN+44',
         '_MODES=Deek(_VIEWPORT+32)',
-        '(_MODES and $4000)',
-        'If _SPRITES_FLAG<>1',
+        '(_MODES and $4000)=0',
+        '_DB=Aga Double Buffer',
         'If Length(_I)=0',
         'Trap Reserve As Chip Work _BANK,156',
         '_PTR=Start(_BANK) : _IMAGE=_PTR+12 : _BLANK=_IMAGE+72',
-        'Loke _PTR,0 : Doke _PTR+4,16 : Doke _PTR+6,0',
-        'For _I=0 To 70 Step 2',
-        'Doke _IMAGE+_I,0',
-        'Doke _BLANK+_I,0',
+        'Doke _PTR+4,16',
         'Doke _IMAGE+4+_ROW*4,_PL0',
-        'Doke _IMAGE+6+_ROW*4,_PL1',
+        'Doke _BLANK+_I,0',
         'Areg(0)=_PTR : Dreg(0)=-1',
-        'If _CHANNEL=65535',
-        'If _CHANNEL>7',
-        '_OWN=_CHANNEL',
-        'If _STRUCT_NUM<>_CHANNEL',
+        'If _CHANNEL=65535 or _CHANNEL>7',
+        '_OWN=_CHANNEL : _GETS=_GETS+1',
         '_COLOR_BASE=16+((_CHANNEL and 6)*2)',
-        '_P1=Aga Palette Set(_COLOR_BASE+1,255,70,50)',
         'Areg(0)=_VIEWPORT : Areg(1)=_PTR : Areg(2)=_IMAGE',
-        '_PIXELS_ARMED=1',
-        'Dreg(0)=35+_FRAME*2 : Dreg(1)=96',
-        'For _FRAME=1 To 100',
+        'For _FRAME=1 To 36',
+        'Dreg(0)=35+_FRAME*5 : Dreg(1)=70+_CYCLE*28',
+        'If _ERR=0 and _CYCLE=2 and _FRAME=12',
+        'If _ERR=0 and _CYCLE=2 and _FRAME=24',
+        'If _ERR=0 and _CYCLE=3 and _FRAME=8',
+        '_CC=Aga Copper Clear',
+        '_CW1=Aga Copper Wait(30,0)',
+        '_CM1=Aga Copper Move($180,$F00)',
+        '_CW2=Aga Copper Wait(180,0)',
+        '_CM2=Aga Copper Move($180,$008)',
+        '_CE=Aga Copper End',
+        '_CON=Aga Copper On',
+        'If _ERR=0 and _CYCLE=3 and _FRAME=25',
+        '_COFF=Aga Copper Off',
+        'If _COPPER_TOUCHED=1',
         'If _OWN>=0',
         'Areg(0)=_VIEWPORT : Areg(1)=_PTR : Areg(2)=_BLANK',
-        '_BLANK_SET=1',
         'For _J=1 To 2',
-        'If _PIXELS_ARMED=1',
         'Dreg(0)=_OWN',
-        '_FREE=1 : _OWN=-1',
+        '_FREE=1 : _FREES=_FREES+1 : _OWN=-1',
+        'If _OPEN=1',
         'Aga Screen Close',
         'Amos To Front',
         'For _J=1 To 3',
-        'If _OPEN=0 or (_CLOSE_RETURNED=1 and _POSTWAIT=3 and _OWN=-1)',
+        '_IGNORE=Gfxcall(-270)',
+        'If _CLOSE_RETURNED=1 and _POSTWAIT=3 and _OWN=-1 and _COPPER_TOUCHED=0',
         'Erase _BANK',
-        '_BANK_HELD=1',
-        'If _PREWAIT=2 and _CLOSE_RETURNED=1 and _POSTWAIT=3 and _BANK_CLEAN=1',
+        '_BANK_HELD=1 : _BANK_HELD_ANY=1',
+        'If _ERR<>0 and _BAD_CYCLE=0',
+        'If _COP_ON_OK=1 and _COP_OFF_OK=1 and _HIDE_OK=2 and _SHOW_OK=7 and _DBS=3',
         'Print #1,"VERDICT ";_VERDICT$',
     )
-    for a in anchors:
-        if a not in bare:
-            errors.append('Missing S0c guard: ' + a)
-    for off, count in ((-408, 1), (-420, 2), (-426, 1), (-414, 1), (-270, 1)):
-        if bare.count(f'Gfxcall({off})') != count:
-            errors.append(f'Wrong number of graphics.library calls at LVO {off}')
-    order = (
-        'Gfxcall(-408)', 'Areg(2)=_IMAGE', 'Gfxcall(-426)',
-        'Areg(2)=_BLANK', 'Gfxcall(-414)', 'Aga Screen Close',
-        'Gfxcall(-270)', 'Erase _BANK',
-    )
+    for anchor in anchors:
+        if anchor not in bare:
+            problems.append('Missing S0d guard: ' + anchor)
+    for lvo, expected in ((-408, 1), (-420, 2), (-426, 1), (-414, 1), (-270, 1)):
+        if bare.count(f'Gfxcall({lvo})') != expected:
+            problems.append(f'Wrong graphics.library call count: LVO {lvo}')
+    if bare.count('_COFF=Aga Copper Off') != 2:
+        problems.append('Copper Off required during animation and cleanup')
+    order = ('_GET=Gfxcall(-408)', 'Areg(2)=_IMAGE',
+             '_IGNORE=Gfxcall(-426)', 'Areg(2)=_BLANK',
+             '_IGNORE=Gfxcall(-414)', 'Aga Screen Close',
+             '_IGNORE=Gfxcall(-270)', 'Erase _BANK')
     if all(s in bare for s in order):
-        pos = [bare.index(s) for s in order]
-        if pos != sorted(pos):
-            errors.append('Unsafe S0c order: image/blank/free/close/TOF/erase')
-    for mode in ('UNKNOWN', 'INTERPRETED', 'RUNTIME', 'COMPILED'):
-        name = f'M19_S0C_VIS_{mode}.TXT'
-        if name not in code or len(name) > 30:
-            errors.append('S0c log name missing or too long: ' + name)
-    if not code.rstrip().endswith('End'):
-        errors.append('S0c missing AMOS End')
-    return errors
+        positions = [bare.index(s) for s in order]
+        if positions != sorted(positions):
+            problems.append('unsafe image/blank/free/close/TOF/erase ordering')
+    for mode in ('INTERPRETED', 'RUNTIME', 'COMPILED', 'UNKNOWN'):
+        name = f'M19_S0D_ROB_{mode}.TXT'
+        if name not in text or len(name) > 30:
+            problems.append('Invalid RAM log: ' + name)
+    if not text.rstrip().endswith('End'):
+        problems.append('Missing program End')
+    return problems
 
 
-class S0cSourceTests(unittest.TestCase):
-    def test_one_reusable_source_with_s0c_cleanup_guards(self):
-        self.assertEqual([p.name for p in S0B.parent.glob('*.asc')], ['SPRITE_PROBE.asc'])
-        self.assertEqual(inspect_s0c_source(S0B.read_bytes()), [])
+class S0dSourceTests(unittest.TestCase):
+    def test_only_one_source_and_all_guards(self):
+        self.assertEqual([p.name for p in S0D.parent.glob('*.asc')], ['SPRITE_PROBE.asc'])
+        self.assertEqual(inspect_s0d_source(S0D.read_bytes()), [])
 
-    def test_wrong_bank_type_detected(self):
-        altered = S0B.read_bytes().replace(b'Reserve As Chip Work', b'Reserve As Work')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_chip_work_is_required(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'Chip Work', b'Work')), [])
 
-    def test_wrong_change_sprite_detected(self):
-        altered = S0B.read_bytes().replace(b'Areg(2)=_BLANK', b'Areg(2)=_IMAGE')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_off_must_be_present(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'Aga Copper Off', b'Aga Copper On')), [])
 
-    def test_unsafe_release_detected(self):
-        altered = S0B.read_bytes().replace(b'If _OWN>=0', b'If _OWN=-1')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_transparent_image_is_required(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'Areg(2)=_BLANK', b'Areg(2)=_IMAGE')), [])
 
-    def test_without_post_close_to_f_detected(self):
-        altered = S0B.read_bytes().replace(b'Gfxcall(-270)', b'Gfxcall(-420)')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_bank_erase_is_required(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'Erase _BANK', b'Erase _IMAGE')), [])
 
-    def test_missing_view_transition_gate_detected(self):
-        altered = S0B.read_bytes().replace(
-            b'_CLOSE_RETURNED=1 and _POSTWAIT=3 and _OWN=-1',
-            b'_CLOSE_RETURNED=1 and _OWN=-1')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_release_must_be_guarded(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'If _OWN>=0', b'If _OWN=-1')), [])
 
-    def test_forbidden_hardware_register_write_detected(self):
-        altered = S0B.read_bytes().replace(b'\nEnd\n', b'\nPoke $DFF096,1\nEnd\n')
-        self.assertNotEqual(inspect_s0c_source(altered), [])
+    def test_hardware_register_write_forbidden(self):
+        self.assertNotEqual(inspect_s0d_source(S0D.read_bytes().replace(b'\nEnd\n', b'\nPoke $DFF096,1\nEnd\n')), [])
 
 
 if __name__ == '__main__':
