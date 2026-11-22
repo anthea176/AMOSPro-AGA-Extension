@@ -65,6 +65,52 @@ def check() -> None:
     assert sum(hi - lo - 12 for lo, hi in CBLOCK_SPANS) == 2616
     assert clean == 55596 and len(group) - clean == 7144
 
+    # Source-owned code vs. original state/header/pseudo data, byte exact.
+    mask = bytearray(len(group))
+    for lo, hi, filename, _source in modules:
+        assert 0 <= lo < hi <= len(group), filename
+        assert mask[lo:hi] == bytes(hi-lo), "Source overlap: " + filename
+        mask[lo:hi] = b"\x01"*(hi-lo)
+    assert mask.count(1) == clean and mask.count(0) == len(group)-clean
+
+    from m19_p0e_object_table_emit import emit_object_table
+    from m19_p0f_object_identity_emit import emit_object_identity
+    from m19_p1c_bob_priority_emit import emit_priority_open
+    from m19_p1d_limit_bob_emit import TABLE_BYTES, emit_limit_open
+    p0e, labels = emit_object_table()
+    p0f, flabels = emit_object_identity()
+    p1c, _ = emit_priority_open(1102, 0x0F0A4-34)
+    p1d = emit_limit_open(0x0F0A4-34, 0x0F0D2-34)
+    data = (
+        (0x0E018, 0x0E620, p0e[labels["object_root"]:], "P0e objects"),
+        (0x0ECA4, 0x0F0A4, p0f[flabels["identity_stamp_table"]:], "P0f stamps"),
+        (0x0F0CA, 0x0F0D2, p1c[-8:], "P1c context"),
+        (0x0F0D2, 0x0F4E2, p1d[:TABLE_BYTES], "P1d limit table"),
+    )
+    confirmed = 0
+    for lo,hi,original,label in data:
+        assert len(original) == hi-lo and group[lo:hi] == original, label
+        assert mask[lo:hi] == bytes(hi-lo), label+" already in source code"
+        confirmed += hi-lo
+        print("UNIT142_SOURCE_DATA_CONFIRMED", label, "%05X..%05X"%(lo,hi),hi-lo)
+    assert confirmed == 3616
+    headers = 0
+    for lo,hi in CBLOCK_SPANS:
+        for start,end,literal in ((lo,lo+8,b"AGACBLK "),(hi-4,hi,b"GetP")):
+            assert group[start:end] == literal and mask[start:end] == bytes(end-start)
+            headers += end-start
+    assert headers == 36
+    assert group[TAIL_START:TAIL_START+8] == b"AGAPIC  "
+    assert mask[TAIL_START:TAIL_START+8] == bytes(8)
+    assert group[0x0E8D8:0x0E8DE] == bytes.fromhex("FE11F700031D")
+    assert mask[0x0E8D8:0x0E8DE] == bytes(6)
+    known_noncode = confirmed + headers + 8 + 6
+    assert known_noncode == 3666
+    unknown = len(group) - clean - known_noncode
+    assert unknown == 3478
+    print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
+          "proven non-code bytes;",unknown,"unclassified preserved bytes")
+
     tail = group[TAIL_START:TAIL_END]
     assert len(tail) == 6168 and tail.startswith(b"AGAPIC  ")
     assert group[PUBLIC_P1D_ENTRY:PUBLIC_P1D_ENTRY + 4] == bytes.fromhex("4EBB0170")
