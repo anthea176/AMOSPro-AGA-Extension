@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Verify historical R88 from deterministic source with active AP20 islands and R84 protected
+      - name: Verify historical R88 from deterministic source with promoted P2d protected
         run: python -B tools/test_generate_aga_multiunit_source.py
       - name: Build vasm Motorola MC68020 assembler in temporary directory
         run: |
@@ -46,13 +46,12 @@ jobs:
           import sys
           root = Path.cwd()
           sys.path.insert(0, str(root / 'tools'))
-          from active_library import AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, R84_SHA, R88_SHA, verify_active
+          from active_library import P2D_SHA, R88_SHA, verify_active
           from build_m19_p28_r88_in_memory import build as build_r88
           from generate_aga_multiunit_source import export
           active = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
           frozen = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-          assert sha256(active).hexdigest() in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA)
-          assert sha256(frozen).hexdigest() == P1E_SHA
+          assert sha256(active).hexdigest() == P2D_SHA and active == frozen
           checked, good, _ = verify_active(root)
           assert (checked, good) == (active, frozen)
           r88, meta = build_r88()
@@ -68,7 +67,7 @@ jobs:
           assert manifest['native_assembler_verified']
           assert (root/'dist/AMOSPro_AGA.Lib').read_bytes() == active
           assert (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == frozen
-          print('R88 HISTORICAL BYTE-EXACT VASM GATE A PASS; promoted P0 untouched')
+          print('R88 HISTORICAL BYTE-EXACT VASM GATE A PASS; promoted P2d untouched')
           PY
       - name: Archive only R88 audit ASM and JSON manifest
         uses: actions/upload-artifact@v4

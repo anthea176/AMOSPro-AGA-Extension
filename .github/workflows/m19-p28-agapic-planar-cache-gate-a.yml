@@ -37,10 +37,22 @@ jobs:
           python-version: "3.12"
       - name: Install CPU emulator and assembler decoder
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
-      - name: Verify active AP20 islands, historical R88/R87 and protected R84
+      - name: Verify current promoted P2d and frozen R87 before historical R88 tests
         run: |
           python -B tools/verify_fast.py
-          python -B -c "import hashlib,pathlib; h=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest(); assert h('dist/AMOSPro_AGA.Lib') in ('242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6','00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae','3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a','f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d','7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'); assert h('dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib')=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'; assert h('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42'"
+          python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          import sys
+          root = Path.cwd()
+          sys.path.insert(0, str(root/'tools'))
+          from active_library import P2D_SHA, R87_SHA, verify_active
+          current, good, _ = verify_active(root)
+          assert sha256(current).hexdigest() == P2D_SHA and current == good
+          archive = (root/'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
+          assert sha256(archive).hexdigest() == R87_SHA
+          print('R88 historical inputs PASS: promoted P2d and R87 predecessor')
+          PY
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
           python -B tools/test_m16_agapic.py
