@@ -7,6 +7,7 @@ Audit mnemonics are used only after per-instruction byte verification.
 """
 from __future__ import annotations
 import argparse
+from hashlib import sha256
 from dataclasses import dataclass
 from pathlib import Path
 import re
@@ -174,7 +175,7 @@ REGIONS = (
            '    move.l #$00000002,144(a2)',
            '    move.l #P0_CORE_BUFFER_MODE,144(a2)',
            'P0_CORE_BUFFER_MODE', 2, 3, 0x00447, 12,
-           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           'tools/build_m19_p2c_in_memory.py::build_p2c',
            start_marker='ENTRY_BOBS_00022:'),
 
     Region('P0_GET_PIPELINE', 'M19_P0_GET_PIPELINE_MC68020.s',
@@ -182,7 +183,7 @@ REGIONS = (
            '    move.l #$00000001,48(a2)',
            '    move.l #P0_GET_FRAME_VALID,48(a2)',
            'P0_GET_FRAME_VALID', 1, 2, 0x023E7, 4,
-           'tools/m19_p2d_bob_auto_update_emit.py::emit_bob_auto_update',
+           'tools/build_m19_p2c_in_memory.py::build_p2c',
            start_marker='get_entry:'),
 )
 ANNOTATION = re.compile(r'\s+; \+\$([0-9A-F]{5}): ([0-9A-F]+)\s*$')
@@ -197,38 +198,51 @@ def require(ok, why):
     if not ok:
         raise BatchError(why)
 
-def prove_regions(native, labels, group):
-    """Source emitter and immutable P2d BOBS group must match exactly."""
+def prove_regions(native, labels, group, proven_p2c_prefix):
+    """Two independently source-built owners: P2c prefix and P2d native suffix."""
     prefix = len(group)-len(native)
-    require(prefix >= 0 and group[prefix:] == native, 'emitter suffix drift')
+    require(prefix >= 0 and group[prefix:] == native, 'P2d emitter suffix drift')
+    require(len(proven_p2c_prefix) == prefix and
+            group[:prefix] == proven_p2c_prefix,
+            'P2c source-built prefix differs from official P2d')
     evidence = {}
     previous = 0
     for spec in sorted(REGIONS, key=lambda r: r.start):
         require(spec.start >= previous, 'overlapping batch ownership')
         previous = spec.stop
-        if spec.begin_label and spec.end_label:
-            require(spec.begin_label in labels and spec.end_label in labels,
-                    'missing emitter labels: '+spec.name)
-            a,b = labels[spec.begin_label],labels[spec.end_label]
-            require(a < b and prefix+a == spec.start and
-                    prefix+b == spec.stop,
-                    'emitter offset drift: '+spec.name)
-        else:
-            # Some proven code spans have only exact audit offset labels.
-            # This is NOT disassembly authority: the complete immutable
-            # P2d group suffix was compared to the native Python emitter.
+        if spec.stop <= prefix:
+            # P2d inherits this region from the pinned P2c source builder,
+            # not from emit_bob_auto_update. Never infer it from disassembly.
             require(not spec.begin_label and not spec.end_label,
-                    'partial emitter-label ownership: '+spec.name)
-            a,b = spec.start-prefix,spec.stop-prefix
-            require(0 <= a < b <= len(native),
-                    'offset span outside source emitter: '+spec.name)
-        chunk = native[a:b]
+                    'P2c prefix requires absolute source-verified region: '+spec.name)
+            require(spec.owner == 'tools/build_m19_p2c_in_memory.py::build_p2c',
+                    'wrong source owner for P2c prefix: '+spec.name)
+            a,b = spec.start,spec.stop
+            chunk = proven_p2c_prefix[a:b]
+        else:
+            require(spec.start >= prefix,
+                    'region crosses P2c/P2d source ownership boundary: '+spec.name)
+            if spec.begin_label and spec.end_label:
+                require(spec.begin_label in labels and spec.end_label in labels,
+                        'missing P2d emitter labels: '+spec.name)
+                a,b = labels[spec.begin_label],labels[spec.end_label]
+                require(a < b and prefix+a == spec.start and
+                        prefix+b == spec.stop,
+                        'P2d emitter offset drift: '+spec.name)
+            else:
+                require(not spec.begin_label and not spec.end_label,
+                        'partial P2d emitter-label ownership: '+spec.name)
+                a,b = spec.start-prefix,spec.stop-prefix
+                require(0 <= a < b <= len(native),
+                        'offset span outside P2d source emitter: '+spec.name)
+            chunk = native[a:b]
         require(group[spec.start:spec.stop] == chunk and
                 len(chunk) == spec.stop-spec.start and
                 chunk[spec.mutation-spec.start] == spec.initial,
                 'P2d source/size/mutation mismatch: '+spec.name)
         evidence[spec.name] = chunk
     return evidence
+
 
 def bounds(spec, *, staged=False):
     last = (spec.staged_end_marker if staged and
@@ -346,7 +360,23 @@ def main():
         _,meta = build_p1e()
         native,labels,_ = emit_bob_auto_update(meta['context_delta'])
         _,parts,_ = unpack_ap20(official)
-        evidence = prove_regions(native,labels,parts[group])
+        # The BOBS prefix is inherited unchanged from the P2c source-built
+        # library, protected by its own SHA. P2d emitter owns only the suffix.
+        from active_library import P2C_SHA
+        from build_m19_p2c_in_memory import build_p2c
+        prior, prior_info = build_p2c()
+        require(prior_info['sha256'] == P2C_SHA and
+                sha256(prior).hexdigest() == P2C_SHA,
+                'P2c source builder SHA mismatch')
+        _, prior_parts, _ = unpack_ap20(prior)
+        prior_group = prior_info['bob_group']
+        require(0 <= prior_group < len(prior_parts),
+                'missing P2c BOBS source group')
+        prefix = len(parts[group])-len(native)
+        require(prefix >= 0 and len(prior_parts[prior_group]) >= prefix,
+                'P2c/P2d BOBS prefix size changed')
+        p2c_prefix = prior_parts[prior_group][:prefix]
+        evidence = prove_regions(native,labels,parts[group],p2c_prefix)
         # The cleanup Lst.Del pseudo-op has an authored module already.
         # Replicate builder staging so the 27 remaining raw calls are counted.
         audit = replace_raw_p1e_cleanup(AUDIT.read_text('ascii'))
