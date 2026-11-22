@@ -35,10 +35,11 @@ jobs:
       - name: Verify CPU policy, Python syntax and source-backed batch
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py
+          python -m py_compile tools/build_m19_p2d_editable_asm.py tools/m19_p2d_asm_batch.py tools/m19_p2d_bobs_raw_inventory.py tools/m19_p2d_unit156_nibble.py
           python -B tools/m19_p2d_bobs_raw_inventory.py --self-test
           python -B tools/m19_p2d_bobs_raw_inventory.py --check
           python -B tools/m19_p2d_asm_batch.py --check
+          python -B tools/m19_p2d_unit156_nibble.py --check
       - name: Restore pinned vasm MC68020 build cache
         id: vasm-cache
         uses: actions/cache@v4
@@ -80,6 +81,9 @@ jobs:
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full_edit_tests == true)
         run: |
           python -B tools/build_m19_p2d_editable_asm.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --self-test-edit
+      - name: UNIT156 nibble source one-byte edit gate
+        run: |
+          python -B tools/m19_p2d_unit156_nibble.py --self-test-edit --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --staged "$RUNNER_TEMP/p2d_asm_baseline"
       - name: Confirm source-only delivery and protect official libraries
         env:
           EVENT_BEFORE: ${{ github.event.before }}

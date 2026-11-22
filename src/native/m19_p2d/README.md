@@ -325,6 +325,23 @@ BOBS P0/B7/B8, et les unites AGA/C2P/IFF et wrapper AP20 reposent encore
 partiellement sur les exports d'audit. **Gate A source ne constitue pas
 Gate B/C WinUAE.**
 
+## UNIT156 — premier lot natif hors BOBS (17e lot)
+
+Le bloc `UNIT156+$00932..$0095E` (44 octets, boucle de decomposition
+des demi-octets via la table `$0095E`) a ete isole dans
+[M19_UNIT156_NIBBLE_MC68020.s](M19_UNIT156_NIBBLE_MC68020.s).
+La copie de travail [UNIT156_EDITABLE](M19_P2D_UNIT156_EDITABLE.s)
+conserve tout le reste du groupe a l'identique, y compris les zones
+d'audit et les donnees. Le groupe provient de l'emetteur P2d source,
+taille 2 508 octets et SHA256 `4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b`.
+Le nouveau [controle](../../tools/m19_p2d_unit156_nibble.py) confronte
+les 44 octets a ceux du groupe source-verifie, impose l'identite des
+modules, reconstruit la Lib P2d sous vasm -m68020, puis execute
+une mutation d'un octet dans UNIT156 (et aucun autre groupe).
+Total : **80 modules BOBS + 1 module UNIT156**, sans remplacement de
+`dist/`, de `LAST_GOOD` ni de l'ASC de campagne. Ce Gate A
+ne valide pas de nouveaux tests WinUAE Runtime/Compiler.
+
 ## Compilation directe (Windows)
 
 ```bat
