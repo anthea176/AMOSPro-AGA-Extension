@@ -603,6 +603,22 @@ le seul groupe UNIT142. **112 modules ASM total, dont 8 778 octets
 UNIT142 en 12 modules.** Aucun changement de Lib active, LAST_GOOD,
 ASC ou qualification nouvelle Runtime/Compiler.
 
+### UNIT142 — 49e a 52e lots : quatre entrees supplementaires (5 198 octets)
+
+Source MC68020 verifiee contre le groupe UNIT142 integral du P2d
+SHA-epingle, sans decoder les zones de donnees :
+[entree $0530E](M19_UNIT142_ENTRY_0530E_MC68020.s) 1 004 octets,
+[entree $0609E](M19_UNIT142_ENTRY_0609E_MC68020.s) 1 162 octets,
+[entree $06678](M19_UNIT142_ENTRY_06678_MC68020.s) 2 446 octets,
+[entree $0700A](M19_UNIT142_ENTRY_0700A_MC68020.s) 586 octets.
+
+Les 16 constantes d'edition sont testees en une re-compilation
+vasm MC68020 avec 16 octets distincts dans UNIT142 et aucun
+autre changement AP20.
+**TOTAL : 116 modules ASM, dont 13 976 octets UNIT142 en 16 modules.**
+Les pseudo-appels AMOS Main, les marqueurs GetP et les champs de donnees
+demeurent dans le wrapper au meme offset. Lib/LAST_GOOD/ASC inchanges.
+
 ## Compilation directe (Windows)
 
 ```bat

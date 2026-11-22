@@ -138,6 +138,42 @@ SPANS = (
         "    moveq #0,d2", "    moveq #UNIT142_ENTRY_03C46_ZERO,d2",
         0x03D9F, 0, 1,
     ),
+    (
+        "M19_UNIT142_ENTRY_0530E_MC68020.s",
+        "ENTRY_UNIT142_0530E:\n",
+        "    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$47,$65,$74,$50  ; +$056FA: 000000000000000047657450\n",
+        0x0530E, 0x056FA, 279, 15,
+        "UNIT142_ENTRY_0530E_LIMIT", 112, 113,
+        "    cmpi.l #$00000070,d7", "    cmpi.l #UNIT142_ENTRY_0530E_LIMIT,d7",
+        0x0533F, 112, 113,
+    ),
+    (
+        "M19_UNIT142_ENTRY_0609E_MC68020.s",
+        "ENTRY_UNIT142_0609E:\n",
+        "    dc.b $47,$65,$74,$50  ; +$06528: 47657450\n",
+        0x0609E, 0x06528, 327, 19,
+        "UNIT142_ENTRY_0609E_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_0609E_ZERO,d3",
+        0x060AF, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_06678_MC68020.s",
+        "ENTRY_UNIT142_06678:\n",
+        "    dc.b $47,$65,$74,$50  ; +$07006: 47657450\n",
+        0x06678, 0x07006, 663, 55,
+        "UNIT142_ENTRY_06678_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_06678_ZERO,d3",
+        0x066A1, 0, 1,
+    ),
+    (
+        "M19_UNIT142_ENTRY_0700A_MC68020.s",
+        "ENTRY_UNIT142_0700A:\n",
+        "    dc.b $FE,$11,$F7,$00,$03,$1D  ; +$07254: FE11F700031D\n",
+        0x0700A, 0x07254, 154, 6,
+        "UNIT142_ENTRY_0700A_ZERO", 0, 1,
+        "    move.l #$00000000,d3", "    move.l #UNIT142_ENTRY_0700A_ZERO,d3",
+        0x07051, 0, 1,
+    ),
 )
 
 MODULE_DESCRIPTION = {
@@ -153,6 +189,10 @@ MODULE_DESCRIPTION = {
     "M19_UNIT142_ENTRY_03270_MC68020.s": "public entry $03270",
     "M19_UNIT142_ENTRY_034F4_MC68020.s": "public entry $034F4",
     "M19_UNIT142_ENTRY_03C46_MC68020.s": "public entry $03C46",
+    "M19_UNIT142_ENTRY_0530E_MC68020.s": "public entry $0530E",
+    "M19_UNIT142_ENTRY_0609E_MC68020.s": "public entry $0609E",
+    "M19_UNIT142_ENTRY_06678_MC68020.s": "public entry $06678",
+    "M19_UNIT142_ENTRY_0700A_MC68020.s": "public entry $0700A",
 }
 
 
@@ -269,7 +309,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 8778 bytes / 12 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 13976 bytes / 16 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -324,7 +364,7 @@ def edit_gate(staged, assembler):
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 four one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 12 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 16 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():
