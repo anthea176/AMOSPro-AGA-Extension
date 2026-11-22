@@ -80,6 +80,8 @@ P1E_CLEAN_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_EDIT_CLEANUP_MC6
 P1E_VALID_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_VALIDATE_BANK_MC68020.s'
 P1E_STAGE_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_VALIDATE_STAGE_MC68020.s'
 P1E_REPACK_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_ENTRY_MC68020.s'
+P1E_INSERT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_INSERT_MC68020.s'
+P1E_SCAN_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_SCAN_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -186,6 +188,12 @@ P1E_STAGE_END = 0x866C
 P1E_REPACK_NAME = 'M19_P1E_REPACK_ENTRY_MC68020.s'
 P1E_REPACK_START = 0x866C
 P1E_REPACK_END = 0x8722
+P1E_INSERT_NAME = 'M19_P1E_REPACK_INSERT_MC68020.s'
+P1E_INSERT_START = 0x8722
+P1E_INSERT_END = 0x87C2
+P1E_SCAN_NAME = 'M19_P1E_REPACK_SCAN_MC68020.s'
+P1E_SCAN_START = 0x87C2
+P1E_SCAN_END = 0x8820
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -1807,6 +1815,94 @@ def replace_raw_p1e_repack_entry(text: str) -> str:
             P1E_REPACK_NAME + '"\n' + text[j:])
 
 
+@lru_cache(maxsize=1)
+def prove_p1e_repack_insertion_provenance() -> tuple[int, int, int, bytes]:
+    """Prove insertion geometry and per-plane sizing from repack source."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    repack, source_labels = emit_bank_repack()
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_repack'] + source_labels['repack_insertion']
+    original = repack[source_labels['repack_insertion']:
+                      source_labels['repack_scan_init']]
+    end = begin + len(original)
+    mutation = 0x87BF
+    require((begin, end) == (P1E_INSERT_START, P1E_INSERT_END) and
+            len(original) == 160 and
+            native[labels['edit_repack'] + source_labels['repack_insertion']:
+                   labels['edit_repack'] + source_labels['repack_scan_init']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+3] ==
+            bytes.fromhex('257c000000010044'),
+            'P1e insertion source bytes/limits differ from official P2d')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_repack_insertion(text: str) -> str:
+    """Replace source-proven 160-byte insertion and per-plane sizing."""
+    first = 'L_BOBS_08722:\n'
+    last = 'L_BOBS_087C2:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e insertion raw source labels missing')
+    pos, observed = P1E_INSERT_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e insertion audit code discontinuity')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_INSERT_END and
+            bytes(observed) == prove_p1e_repack_insertion_provenance()[3],
+            'P1e insertion raw bytes differ from original emitter')
+    return (text[:i] + 'L_BOBS_08722:\n    include "' +
+            P1E_INSERT_NAME + '"\n' + text[j:])
+
+
+@lru_cache(maxsize=1)
+def prove_p1e_repack_scan_provenance() -> tuple[int, int, int, bytes]:
+    """Prove 94-byte repack AGBO image directory scanner from emit_bank_repack."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e_meta = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e_meta['context_delta'])
+    repack, source_labels = emit_bank_repack()
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_repack'] + source_labels['repack_scan_init']
+    original = repack[source_labels['repack_scan_init']:
+                      source_labels['repack_sized']]
+    end = begin + len(original)
+    mutation = 0x87D9
+    require((begin, end) == (P1E_SCAN_START, P1E_SCAN_END) and
+            len(original) == 94 and
+            native[labels['edit_repack'] + source_labels['repack_scan_init']:
+                   labels['edit_repack'] + source_labels['repack_sized']] == original and
+            parts[group][begin:end] == original and
+            original[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('203c00000000'),
+            'P1e AGBO directory scan source differs from official P2d')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_repack_scan(text: str) -> str:
+    """Replace 94 bytes of source-proven bank directory scan."""
+    first = 'L_BOBS_087C2:\n'
+    last = 'L_BOBS_08820:\n'
+    i, j = text.find(first), text.find(last, text.find(first))
+    require(i >= 0 and j > i, 'P1e repack scan raw source boundaries missing')
+    pos, observed = P1E_SCAN_START, bytearray()
+    for at, encoded in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)', text[i:j]):
+        require(int(at, 16) == pos, 'P1e repack scan audit offset gap')
+        chunk = bytes.fromhex(encoded)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_SCAN_END and
+            bytes(observed) == prove_p1e_repack_scan_provenance()[3],
+            'P1e repack scan raw code differs from original source')
+    return (text[:i] + 'L_BOBS_087C2:\n    include "' +
+            P1E_SCAN_NAME + '"\n' + text[j:])
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -1925,7 +2021,9 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1e_clean_text: str | None = None,
                    p1e_valid_text: str | None = None,
                    p1e_stage_text: str | None = None,
-                   p1e_repack_text: str | None = None) -> None:
+                   p1e_repack_text: str | None = None,
+                   p1e_insert_text: str | None = None,
+                   p1e_scan_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -1963,6 +2061,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1E_VALID_FILE.is_file(), f'missing authored module: {P1E_VALID_FILE}')
     require(P1E_STAGE_FILE.is_file(), f'missing authored module: {P1E_STAGE_FILE}')
     require(P1E_REPACK_FILE.is_file(), f'missing authored module: {P1E_REPACK_FILE}')
+    require(P1E_INSERT_FILE.is_file(), f'missing authored module: {P1E_INSERT_FILE}')
+    require(P1E_SCAN_FILE.is_file(), f'missing authored module: {P1E_SCAN_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -1994,6 +2094,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1e_bank_validation(text)
     text = replace_raw_p1e_bank_stage(text)
     text = replace_raw_p1e_repack_entry(text)
+    text = replace_raw_p1e_repack_insertion(text)
+    text = replace_raw_p1e_repack_scan(text)
     text = replace_raw_p2a_hotspot(text)
     text = replace_raw_p2a_query(text)
     text = replace_raw_p2a_kernel(text)
@@ -2444,6 +2546,31 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             'P1e repack entry contains raw opcodes or misplaced zero-offset MOVE')
     (folder / P1E_REPACK_NAME).write_text(repack_source,
                                           encoding='ascii', newline='\n')
+    insert_source = (p1e_insert_text if p1e_insert_text is not None
+                     else P1E_INSERT_FILE.read_text('ascii'))
+    insert_original = insert_source.count('    move.l #1,P1E_INSERT_EMIT_BLANK(a2)')
+    insert_edited = insert_source.count('    move.l #2,P1E_INSERT_EMIT_BLANK(a2)')
+    for marker in ('repack_insertion:', 'repack_planes:', 'L_BOBS_087A2:'):
+        require(insert_source.count(marker) == 1, 'P1e repack insert missing '+marker)
+    require((insert_original, insert_edited) in ((1, 0), (0, 1)) and
+            insert_source.count('P1E_INSERT_MAX_PIXELS equ $00400000') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', insert_source),
+            'P1e repack insertion has unclassified bytes or changed pixel limit')
+    (folder / P1E_INSERT_NAME).write_text(insert_source,
+                                          encoding='ascii', newline='\n')
+    scan_source = (p1e_scan_text if p1e_scan_text is not None
+                   else P1E_SCAN_FILE.read_text('ascii'))
+    scan_original = scan_source.count('    move.l #0,d0')
+    scan_edited = scan_source.count('    move.l #1,d0')
+    for marker in ('repack_scan_init:', 'repack_scan:', 'repack_insert_scan:',
+                   'repack_keep:', 'repack_scan_next:', 'L_BOBS_087CE:',
+                   'L_BOBS_087F8:', 'L_BOBS_08800:', 'L_BOBS_08814:'):
+        require(scan_source.count(marker) == 1, 'P1e scan source missing '+marker)
+    require((scan_original, scan_edited) in ((1, 0), (0, 1)) and
+            scan_source.count('P1E_SCAN_ENTRY equ 40') == 1 and
+            not re.search(r'(?im)^\s*dcb?\.[bwll]\b', scan_source),
+            'P1e directory scan has raw opcodes or invalid record stride')
+    (folder / P1E_SCAN_NAME).write_text(scan_source, encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -2546,6 +2673,8 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1e_valid_start, p1e_valid_end, _, _ = prove_p1e_bank_validation_provenance()
     p1e_stage_start, p1e_stage_end, _, _ = prove_p1e_bank_stage_provenance()
     p1e_repack_start, p1e_repack_end, _, _ = prove_p1e_repack_entry_provenance()
+    p1e_insert_start, p1e_insert_end, _, _ = prove_p1e_repack_insertion_provenance()
+    p1e_scan_start, p1e_scan_end, _, _ = prove_p1e_repack_scan_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -2579,7 +2708,9 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1e_clean_start <= i < p1e_clean_end) or
                  (p1e_valid_start <= i < p1e_valid_end) or
                  (p1e_stage_start <= i < p1e_stage_end) or
-                 (p1e_repack_start <= i < p1e_repack_end) for i in differences),
+                 (p1e_repack_start <= i < p1e_repack_end) or
+                 (p1e_insert_start <= i < p1e_insert_end) or
+                 (p1e_scan_start <= i < p1e_scan_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -2624,7 +2755,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1e_clean_text: str | None = None,
           p1e_valid_text: str | None = None,
           p1e_stage_text: str | None = None,
-          p1e_repack_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1e_repack_text: str | None = None,
+          p1e_insert_text: str | None = None,
+          p1e_scan_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -2653,7 +2786,9 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1e_clean_text=p1e_clean_text,
                     p1e_valid_text=p1e_valid_text,
                     p1e_stage_text=p1e_stage_text,
-                    p1e_repack_text=p1e_repack_text)
+                    p1e_repack_text=p1e_repack_text,
+                    p1e_insert_text=p1e_insert_text,
+                    p1e_scan_text=p1e_scan_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -3207,6 +3342,36 @@ def test_editability(assembler: Path) -> None:
                 'P1e repack edited result instruction not assembled')
         require(repack_start <= repack_imm < repack_end,
                 'P1e repack entry edit escaped authored source')
+        ins_start, ins_end, ins_imm, _ = prove_p1e_repack_insertion_provenance()
+        ins_source = P1E_INSERT_FILE.read_text('ascii')
+        needle = '    move.l #1,P1E_INSERT_EMIT_BLANK(a2)'
+        require(ins_source.count(needle) == 1, 'P1e repack insert edit not unique')
+        edited, diffs = build(
+            assembler, root/'modified_p1e_repack_insert', allow_edited=True,
+            p1e_insert_text=ins_source.replace(
+                needle, '    move.l #2,P1E_INSERT_EMIT_BLANK(a2)'))
+        require(diffs == [ins_imm],
+                f'P1e repack insert changed {diffs}, expected {[ins_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [ins_imm-5:ins_imm+3] == bytes.fromhex('257c000000020044'),
+                'P1e repack inserted result not assembled')
+        require(ins_start <= ins_imm < ins_end,
+                'P1e repack insert edit escaped source')
+
+        scan_start, scan_end, scan_imm, _ = prove_p1e_repack_scan_provenance()
+        scan_source = P1E_SCAN_FILE.read_text('ascii')
+        needle = '    move.l #0,d0'
+        require(scan_source.count(needle) == 1, 'P1e scan edit not unique')
+        edited, diffs = build(
+            assembler, root/'modified_p1e_repack_scan', allow_edited=True,
+            p1e_scan_text=scan_source.replace(needle, '    move.l #1,d0'))
+        require(diffs == [scan_imm],
+                f'P1e repack scan changed {diffs}, expected {[scan_imm]}')
+        require(unpack_ap20(edited)[1][group]
+                [scan_imm-5:scan_imm+1] == bytes.fromhex('203c00000001'),
+                'P1e repack scan edit not assembled')
+        require(scan_start <= scan_imm < scan_end,
+                'P1e repack scan edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -3242,6 +3407,8 @@ def test_editability(assembler: Path) -> None:
     print('P1E_VALIDATOR_EDITABILITY_TEST PASS: MOVE.L #0,84(A2) -> #1, one byte changed')
     print('P1E_STAGE_EDITABILITY_TEST PASS: MOVE.L #1,D3 -> #2, one byte changed')
     print('P1E_REPACK_ENTRY_EDITABILITY_TEST PASS: MOVE.L #0,76(A2) -> #1, one byte changed')
+    print('P1E_REPACK_INSERT_EDITABILITY_TEST PASS: MOVE.L #1,68(A2) -> #2, one byte changed')
+    print('P1E_REPACK_SCAN_EDITABILITY_TEST PASS: MOVE.L #0,D0 -> #1, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
