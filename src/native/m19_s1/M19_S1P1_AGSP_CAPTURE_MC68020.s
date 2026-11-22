@@ -241,7 +241,7 @@ AGSP_P1_EXIT:
 ; Preserves all main-loop registers except D0, condition codes.
 AGSP_P1_READ_INDEX:
     movem.l d2-d5/a5-a6,-(sp)
-    move.w 44(a4),d4
+    move.l 44(a4),d4
     mulu.w d4,d3
     moveq #0,d5
     move.w d2,d5
