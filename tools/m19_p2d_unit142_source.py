@@ -1275,6 +1275,58 @@ def strip_annotations(text):
     return "\n".join(lines) + "\n"
 
 
+def aga_bridge_expected_source(whole, wrapper):
+    """Exact 470-byte P0e AGA bridge from verified original M19 emitter."""
+    from generate_aga_multiunit_source import native_unit_source
+    from m19_p0e_split_bridge_emit import AGA_CORE, AGA_OFFSETS
+
+    demand(len(AGA_CORE) == 470 and
+           sha256(AGA_CORE).hexdigest() ==
+           "ddcd43fdfd7922650076dfccc6c31a347dea0b4f5df6350a629882ecb4f3046b" and
+           whole[0x0E620:0x0E7F6] == AGA_CORE,
+           "UNIT142 P0e AGA bridge source provenance differs")
+    entries = [(i, AGA_OFFSETS[name]) for i, name in
+               enumerate(("put", "off", "read", "reset"))]
+    preview, cov = native_unit_source("P0E_AGA_BRIDGE", AGA_CORE, entries)
+    demand(cov["bytes"] == 470 and cov["mnemonic_bytes"] == 470 and
+           cov["raw_dc_bytes"] == 0, "UNIT142 P0e AGA bridge not pure ASM")
+    prefix = "ENTRY_P0E_AGA_BRIDGE_00000:\n"
+    demand(preview.count(prefix) == 1, "P0e AGA bridge entrypoint missing")
+    body = preview[preview.index(prefix):]
+    symbol = "UNIT142_P0E_AGA_BRIDGE_RESULT"
+    op = "    moveq #0,d2"
+    demand(body.count(op) == 1 and whole[0x0E7F3] == 0,
+           "P0e AGA bridge isolated edit not source backed")
+    header = (
+        "; AGA_NATIVE_MIN_CPU: MC68020\n"
+        "; UNIT142 P0e AGA object bridge source-backed from M19 emitter.\n"
+        "; UNIT142+$0E620..$0E7F6, 470 bytes of Motorola instructions.\n"
+        "; SHA256 ddcd43fdfd7922650076dfccc6c31a347dea0b4f5df6350a629882ecb4f3046b\n"
+        + symbol + " equ 0\n\n"
+    )
+    module = header + body.replace(op, "    moveq #" + symbol + ",d2")
+    first = "    dc.b $48,$E7,$EF,$EE,$2E,$3C,$00,$00,$00,$00,$60,$00\n"
+    demand(wrapper.count(first) == 1 and
+           wrapper.endswith("    dc.b $4E,$75\n"),
+           "P0e bridge wrapper source boundaries changed")
+    at = wrapper.index(first)
+    demand("ENTRY_UNIT142_0F4E2:" in wrapper[at:],
+           "P0e bridge would drop the undecoded public entry")
+    def as_data(start, end):
+        return "".join(
+            "    dc.b " + ",".join("$%02X" % v for v in whole[i:min(i+12,end)]) + "\n"
+            for i in range(start,end,12)
+        )
+    result = (
+        wrapper[:at] + '    include "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s"\n'
+        + as_data(0x0E7F6,0x0F4E2)
+        + "ENTRY_UNIT142_0F4E2:\n"
+        + as_data(0x0F4E2,0x0F514)
+    )
+    return result,(0x0E620,0x0E7F6,
+        "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s",module)
+
+
 def expected_sources():
     audit = AUDIT.read_text("ascii")
     # Validate all 62,740 native bytes in order, not just the changed slices.
@@ -1476,6 +1528,8 @@ def expected_sources():
     )
     wrapper = wrapper.replace(compact, replacement)
     modules.append((0x0DD04, 0x0E018, filename, module))
+    wrapper, aga_bridge = aga_bridge_expected_source(bytes(whole), wrapper)
+    modules.append(aga_bridge)
     return bytes(whole), wrapper, modules
 
 
@@ -1514,7 +1568,7 @@ def verify(official):
                "UNIT142 editable source differs from pinned proof: " + filename)
     demand(WRAPPER.read_text("ascii") == wrapper,
            "UNIT142 native wrapper not derived exactly from pinned source")
-    print("UNIT142_SOURCE_PROVEN: 53846 bytes / 126 MC68020 modules, AP20 group",
+    print("UNIT142_SOURCE_PROVEN: 54316 bytes / 127 MC68020 modules, AP20 group",
           matches[0], "unit", len(native))
     return matches[0]
 
@@ -1529,6 +1583,7 @@ def stage(folder, official):
         (folder / filename).write_bytes((NATIVE_DIR / filename).read_bytes())
     p0e_file = "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s"
     (folder / p0e_file).write_bytes((NATIVE_DIR / p0e_file).read_bytes())
+    (folder / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s").write_bytes((NATIVE_DIR / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s").read_bytes())
 
 
 def edit_gate(staged, assembler):
@@ -1539,7 +1594,8 @@ def edit_gate(staged, assembler):
            all((staged / spec[0]).is_file() for spec in SPANS) and
            all((staged / ("M19_UNIT142_CBLOCK_CORE_%05X_MC68020.s" % (first + 8))).is_file()
                for first, _last in CBLOCK_SPANS) and
-           (staged / "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s").is_file(),
+           (staged / "M19_UNIT142_P0E_OBJECT_CORE_MC68020.s").is_file() and
+           (staged / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s").is_file(),
            "UNIT142 staged source missing")
     with TemporaryDirectory(prefix="unit142_mc68020_edit_") as temp:
         folder = Path(temp)
@@ -1575,6 +1631,13 @@ def edit_gate(staged, assembler):
         p0e_file.write_text(p0e_source.replace(
             p0e_before, "UNIT142_P0E_OBJECT_RESULT equ 1"),
             encoding="ascii", newline="\n")
+        bridge_file = folder / "M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s"
+        bridge_src = bridge_file.read_text("ascii")
+        bridge_sym = "UNIT142_P0E_AGA_BRIDGE_RESULT equ 0"
+        demand(bridge_src.count(bridge_sym) == 1,
+               "UNIT142 P0e bridge edit symbol ambiguous")
+        bridge_file.write_text(bridge_src.replace(
+            bridge_sym, "UNIT142_P0E_AGA_BRIDGE_RESULT equ 1"), encoding="ascii", newline="\n")
         output = folder / "UNIT142_EDITED_UNTESTED.Lib"
         command = [str(assembler.resolve()), "-Fbin", "-m68020",
                    "-no-opt", "-quiet", "-o", str(output), MASTER_NAME]
@@ -1594,11 +1657,13 @@ def edit_gate(staged, assembler):
         expected = {spec[12]: (spec[13], spec[14]) for spec in SPANS}
         expected.update({first + 8 + 869: (0, 1) for first, _last in CBLOCK_SPANS})
         expected[0x0E015] = (0, 1)
+        expected[0x0E7F3] = (0, 1)
+        demand(len(expected) == 127, "UNIT142 AGA bridge edit count drift")
         demand(deltas == sorted(expected) and
                all((base[i], changed[i]) == pair
                    for i, pair in expected.items()),
                "UNIT142 isolated one-byte edits escaped expected offsets")
-    print("UNIT142_EDIT_TEST_PASS: 126 exact bytes, only UNIT142, no AP20 drift")
+    print("UNIT142_EDIT_TEST_PASS: 127 exact bytes, only UNIT142, no AP20 drift")
 
 
 def main():

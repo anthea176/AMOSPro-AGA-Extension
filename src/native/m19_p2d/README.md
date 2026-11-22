@@ -888,6 +888,18 @@ a valide la 126e mutation source isolee, la reconstruction P2d et
 l'assemblage direct MC68020. Pas de nouveau binaire ni d'ASC,
 pas de nouvelles Gates B/C/D.
 
+### UNIT142 — lot 163 : pont AGA P0e natif (470 octets)
+
+L'emetteur `m19_p0e_split_bridge_emit.py::AGA_CORE` est
+**identique octet pour octet** au groupe UNIT142 `$0E620..$0E7F6`.
+Le [module ASM du pont AGA](M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s)
+reprend les quatre entrees Put/Off/Read/Reset en 470 octets de
+mnemoniques, sans directive brute. [Preuve vasm 470/470](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048898071).
+Une mutation source isolee supplementaire est integree au Gate A.
+**Gate A lot 163 en attente**. Projection : **227 modules ASM**,
+dont **127 UNIT142**, **54 316 / 62 740 (86,57 %)** ; **8 424 octets
+bruts**. Aucune promotion ni ASC modifie, Gates B/C/D non revendiquees.
+
 ## Compilation directe (Windows)
 
 ```bat
