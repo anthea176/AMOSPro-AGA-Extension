@@ -106,11 +106,13 @@ def check() -> None:
     # DATA, not candidate Motorola instructions. Do not treat zero runs
     # or unrelated opaque code as padding.
     from build_aga_r83_modular import build as build_r83
+    from build_c2p_r76_rpg_fix import MOUSE_STATE_SIZE
     historical, r83_info = build_r83()
     assert r83_info["sha256"] == R83_SHA
     assert sha256(historical).hexdigest() == R83_SHA
     _r83_tokens, r83_parts, _r83_title = unpack_ap20(historical)
     assert len(r83_parts[82]) == 52974
+    assert MOUSE_STATE_SIZE == 144 and AGA_STATE_OFFSET + 12070 == 0x030E8
     r83_literals = (
         (0x00448, b"intuition.library\x00graphics.library\x00\x00GetP", "Intuition/graphics names"),
         (0x0030C, b"graphics.library\x00\x00GetP", "graphics name/GetP"),
@@ -124,6 +126,7 @@ def check() -> None:
         (0x09A92, b"FICHIP8 GetP", "FICHIP8 signature/GetP"),
         (0x05702, b"GetP", "AMOS GetP after opaque zeros A"),
         (0x06674, b"GetP", "AMOS GetP after opaque zeros B"),
+        (0x030E8, bytes(MOUSE_STATE_SIZE) + GETP, "144-byte keyboard/mouse state + GetP"),
     )
     r83_noncode = 0
     for lo, literal, name in r83_literals:
@@ -133,7 +136,7 @@ def check() -> None:
         r83_noncode += hi-lo
         print("UNIT142_R83_LITERAL_DATA_CONFIRMED", name,
               "%05X..%05X" % (lo,hi), hi-lo)
-    assert r83_noncode == 184
+    assert r83_noncode == 332
 
     headers = 0
     for lo,hi in CBLOCK_SPANS:
@@ -181,9 +184,9 @@ def check() -> None:
           "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
     known_noncode += extra_markers + r83_noncode
-    assert known_noncode == 4382
+    assert known_noncode == 4530
     unknown = len(group) - clean - known_noncode
-    assert unknown == 898
+    assert unknown == 750
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
