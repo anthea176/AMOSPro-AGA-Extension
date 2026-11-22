@@ -1,5 +1,5 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
-; AGA_NATIVE_PURPOSE: AUDIT_ONLY
+; PARTIAL_SOURCE_MIGRATION: native UNIT156 nibble + unmodified audit remainder
 ; PARTIAL MC68020 MNEMONIC RESTORATION (not an installable .Lib)
 ; Unit: UNIT156 | SHA256: 4e14633eea1ed1fd906ee9f4691e3a0bfc3c6086aaea858f8d2fc1a88ea8f31b
 ; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.

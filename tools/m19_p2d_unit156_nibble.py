@@ -79,6 +79,12 @@ def expected_sources() -> tuple[bytes, str, str]:
     )
     wrapper = (audit[:begin+len(FIRST_MARK)] +
                '    include "' + MODULE_NAME + '"\n' + audit[stop:])
+    demand(wrapper.count('; AGA_NATIVE_PURPOSE: AUDIT_ONLY') == 1,
+           'UNIT156 audit-only marker missing from original export')
+    wrapper = wrapper.replace(
+        '; AGA_NATIVE_PURPOSE: AUDIT_ONLY',
+        '; PARTIAL_SOURCE_MIGRATION: native UNIT156 nibble + unmodified audit remainder'
+    )
     return bytes(encoded), authored, wrapper
 
 
