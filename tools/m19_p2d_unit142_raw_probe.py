@@ -13,7 +13,7 @@ import argparse
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import P2D_SHA
+from active_library import P2D_SHA, R83_SHA
 from compiler_relocation import GETP, unpack_ap20
 from m19_p2d_unit142_source import expected_sources, SPANS, CBLOCK_SPANS, GROUP_SHA
 
@@ -100,6 +100,41 @@ def check() -> None:
         confirmed += hi-lo
         print("UNIT142_SOURCE_DATA_CONFIRMED", label, "%05X..%05X"%(lo,hi),hi-lo)
     assert confirmed == 3692
+
+    # R83 carries a second group of literal AmigaOS library/driver names,
+    # AMOS GetP delimiters and signature headers. These are source-proven
+    # DATA, not candidate Motorola instructions. Do not treat zero runs
+    # or unrelated opaque code as padding.
+    from build_aga_r83_modular import build as build_r83
+    historical, r83_info = build_r83()
+    assert r83_info["sha256"] == R83_SHA
+    assert sha256(historical).hexdigest() == R83_SHA
+    _r83_tokens, r83_parts, _r83_title = unpack_ap20(historical)
+    assert len(r83_parts[82]) == 52974
+    r83_literals = (
+        (0x00448, b"intuition.library\x00graphics.library\x00\x00GetP", "Intuition/graphics names"),
+        (0x0030C, b"graphics.library\x00\x00GetP", "graphics name/GetP"),
+        (0x02D7E, b"input.device\x00\x00GetP", "input.device name/GetP"),
+        (0x015C8, b"dos.library\x00GetP", "DOS name/GetP IFF"),
+        (0x03A14, b"dos.library\x00GetP", "DOS name/GetP load"),
+        (0x0410A, b"dos.library\x00GetP", "DOS name/GetP save"),
+        (0x01BD2, b"dos.library\x00", "DOS name before pseudo-op"),
+        (0x077D0, b"AGAPIC  GetP", "AGA picture signature/GetP"),
+        (0x09558, b"FICON8  GetP", "FICON8 signature/GetP"),
+        (0x09A92, b"FICHIP8 GetP", "FICHIP8 signature/GetP"),
+        (0x05702, b"GetP", "AMOS GetP after opaque zeros A"),
+        (0x06674, b"GetP", "AMOS GetP after opaque zeros B"),
+    )
+    r83_noncode = 0
+    for lo, literal, name in r83_literals:
+        hi = lo + len(literal)
+        assert group[lo:hi] == literal == r83_parts[82][lo:hi], name
+        assert mask[lo:hi] == bytes(hi-lo), name + " overlaps code"
+        r83_noncode += hi-lo
+        print("UNIT142_R83_LITERAL_DATA_CONFIRMED", name,
+              "%05X..%05X" % (lo,hi), hi-lo)
+    assert r83_noncode == 184
+
     headers = 0
     for lo,hi in CBLOCK_SPANS:
         for start,end,literal in ((lo,lo+8,b"AGACBLK "),(hi-4,hi,b"GetP")):
@@ -145,10 +180,10 @@ def check() -> None:
           len(getp), "GetP 4-byte records;", extra_markers,
           "additional non-code bytes after previously counted records")
     known_noncode = confirmed + headers + 8 + 6
-    known_noncode += extra_markers
-    assert known_noncode == 4198
+    known_noncode += extra_markers + r83_noncode
+    assert known_noncode == 4382
     unknown = len(group) - clean - known_noncode
-    assert unknown == 1082
+    assert unknown == 898
     print("UNIT142_RESIDUAL_CLASSIFIED_PASS", known_noncode,
           "proven non-code bytes;",unknown,"unclassified preserved bytes")
 
@@ -163,6 +198,8 @@ def check() -> None:
 
     for lo, hi, _original, label in data:
         mark_noncode(lo, hi, label)
+    for lo, literal, label in r83_literals:
+        mark_noncode(lo, lo + len(literal), label)
     for lo, hi in CBLOCK_SPANS:
         mark_noncode(lo, lo + 8, "AGACBLK")
         mark_noncode(hi - 4, hi, "CBlock GetP")
