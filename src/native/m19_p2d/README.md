@@ -900,6 +900,27 @@ Une mutation source isolee supplementaire est integree au Gate A.
 dont **127 UNIT142**, **54 316 / 62 740 (86,57 %)** ; **8 424 octets
 bruts**. Aucune promotion ni ASC modifie, Gates B/C/D non revendiquees.
 
+### UNIT142 — lots 164 a 167 : P0f stamp et binder (1 184 octets)
+
+Quatre modules Motorola extraient les **1 184 octets de code MC68020**
+du noyau source `m19_p0f_object_identity_emit.py`, en conservant
+**14 octets de pseudo-operations / branches non decodees** sous `dc.b`
+dans le wrapper. Chaque plage possede une constante mutable et un
+controle de modification isolee. La table des 64 empreintes (1 024
+ octets) reste en `dcb.b 1024,0`, sans etre comptee comme instruction.
+
+- [Module P0f 1](M19_UNIT142_P0F_STAMP_HEAD_MC68020.s) : 226 octets
+- [Module P0f 2](M19_UNIT142_P0F_STAMP_BODY_MC68020.s) : 582 octets
+- [Module P0f 3](M19_UNIT142_P0F_BIND_CHECK_MC68020.s) : 198 octets
+- [Module P0f 4](M19_UNIT142_P0F_BIND_RETURN_MC68020.s) : 178 octets
+
+[Preuve d'emetteur et vasm exact 1 198 octets](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45048989705).
+La Gate A d'integration doit encore confirmer la P2d complete et les
+quatre edits. **231 modules ASM**, dont **131 UNIT142** :
+**55 500 / 62 740 octets (88,46 %)** en code source,
+**7 240 octets en donnees ou octets non classifies**.
+Aucun changement de Lib, ASC ni qualification Gates B/C/D.
+
 ## Compilation directe (Windows)
 
 ```bat
