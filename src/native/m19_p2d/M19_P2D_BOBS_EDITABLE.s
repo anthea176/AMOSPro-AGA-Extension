@@ -8648,47 +8648,7 @@ edit_registry_link:
 L_BOBS_08306:
     include "M19_P1E_EDIT_OBJECTS_MC68020.s"
 L_BOBS_0840A:
-edit_preflight_slot:
-    move.l 16(a4),d0                                   ; +$0840A: 202C0010
-    cmpi.l #$00000001,d0                               ; +$0840E: 0C8000000001
-    bhi.w L_BOBS_085E8                                 ; +$08414: 620001D2
-    tst.l d0                                           ; +$08418: 4A80
-    beq.w L_BOBS_08498                                 ; +$0841A: 6700007C
-    movea.l 100(a2),a0                                 ; +$0841E: 206A0064
-    tst.l (a0)                                         ; +$08422: 4A90
-    beq.w L_BOBS_085E8                                 ; +$08424: 670001C2
-    move.l 36(a2),d0                                   ; +$08428: 202A0024
-    cmp.l (a4),d0                                      ; +$0842C: B094
-    bne.w L_BOBS_08498                                 ; +$0842E: 66000068
-    move.l (a2),d0                                     ; +$08432: 2012
-    cmp.l (a6),d0                                      ; +$08434: B096
-    bne.w L_BOBS_085E8                                 ; +$08436: 660001B0
-    move.l 72(a2),d0                                   ; +$0843A: 202A0048
-    cmp.l 4(a6),d0                                     ; +$0843E: B0AE0004
-    bne.w L_BOBS_085E8                                 ; +$08442: 660001A4
-    move.l 48(a2),d0                                   ; +$08446: 202A0030
-    cmp.l 8(a6),d0                                     ; +$0844A: B0AE0008
-    bne.w L_BOBS_085E8                                 ; +$0844E: 66000198
-    move.l 4(a2),d0                                    ; +$08452: 202A0004
-    cmp.l 12(a6),d0                                    ; +$08456: B0AE000C
-    bne.w L_BOBS_085E8                                 ; +$0845A: 6600018C
-    movea.l (a2),a0                                    ; +$0845E: 2052
-    move.l #$00000000,d1                               ; +$08460: 223C00000000
-    move.w 8(a0),d1                                    ; +$08466: 32280008
-    adda.l #$00000020,a0                               ; +$0846A: D1FC00000020
-    move.l 4(a4),d4                                    ; +$08470: 282C0004
-L_BOBS_08474:
-edit_preflight_image:
-    tst.l d1                                           ; +$08474: 4A81
-    beq.w L_BOBS_085E8                                 ; +$08476: 67000170
-    move.l #$00000000,d0                               ; +$0847A: 203C00000000
-    move.w (a0),d0                                     ; +$08480: 3010
-    cmp.l d4,d0                                        ; +$08482: B084
-    beq.w L_BOBS_08498                                 ; +$08484: 67000012
-    bhi.w L_BOBS_085E8                                 ; +$08488: 6200015E
-    adda.l #$00000028,a0                               ; +$0848C: D1FC00000028
-    subq.l #1,d1                                       ; +$08492: 5381
-    bra.w L_BOBS_08474                                 ; +$08494: 6000FFDE
+    include "M19_P1E_EDIT_PREFLIGHT_MC68020.s"
 L_BOBS_08498:
 edit_preflight_next:
     adda.l #$00000018,a4                               ; +$08498: D9FC00000018

@@ -86,6 +86,7 @@ P1E_PREP_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_PREPARE_MC
 P1E_COPY_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_COPY_MC68020.s'
 P1E_FINAL_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_REPACK_FINALIZE_MC68020.s'
 P1E_OBJECT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_EDIT_OBJECTS_MC68020.s'
+P1E_PREFLIGHT_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P1E_EDIT_PREFLIGHT_MC68020.s'
 PLANAR_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_FILE = ROOT / 'src' / 'native' / 'm19_p2d' / 'M19_P2B_SLOTS_DATA_MC68020.s'
 BOBS_FILE = 'M19_P2D_BOBS_MC68020.s'
@@ -210,6 +211,9 @@ P1E_FINAL_END = 0x8A6E
 P1E_OBJECT_NAME = 'M19_P1E_EDIT_OBJECTS_MC68020.s'
 P1E_OBJECT_START = 0x8306
 P1E_OBJECT_END = 0x840A
+P1E_PREFLIGHT_NAME = 'M19_P1E_EDIT_PREFLIGHT_MC68020.s'
+P1E_PREFLIGHT_START = 0x840A
+P1E_PREFLIGHT_END = 0x8498
 PLANAR_SOURCE_NAME = 'M19_P2B_PLANAR_MC68020.s'
 SLOTS_SOURCE_NAME = 'M19_P2B_SLOTS_DATA_MC68020.s'
 PLANAR_START = 0xA28E
@@ -2084,6 +2088,50 @@ def replace_raw_p1e_edit_objects(text: str) -> str:
     return text[:i] + 'L_BOBS_08306:\n    include "' + P1E_OBJECT_NAME + '"\n' + text[j:]
 
 
+@lru_cache(maxsize=1)
+def prove_p1e_edit_preflight_provenance() -> tuple[int, int, int, bytes]:
+    """Pin the Bob image lookup to the original P1e emitter."""
+    official, group, *_ = prove_source_provenance()
+    _, p1e = build_p1e()
+    native, labels, _ = emit_bob_auto_update(p1e['context_delta'])
+    emit, source_labels = emit_bank_edit(p1e['context_delta'])
+    _, parts, _ = unpack_ap20(official)
+    prefix = len(parts[group]) - len(native)
+    begin = prefix + labels['edit_preflight_slot']
+    end = prefix + labels['edit_preflight_next']
+    original = emit[source_labels['edit_preflight_slot']:
+                    source_labels['edit_preflight_next']]
+    mutation = 0x8465
+    require((begin, end) == (P1E_PREFLIGHT_START, P1E_PREFLIGHT_END) and
+            len(original) == 142 and
+            parts[group][begin:end] == original and
+            native[labels['edit_preflight_slot']:labels['edit_preflight_next']] == original and
+            original[mutation-begin-5:mutation-begin+1] ==
+            bytes.fromhex('223c00000000'),
+            'P1e preflight bytes/labels do not match the original emitter')
+    return begin, end, mutation, original
+
+
+def replace_raw_p1e_edit_preflight(text: str) -> str:
+    """Replace only audited BOBS $0840A..$08498."""
+    first = 'L_BOBS_0840A:\nedit_preflight_slot:\n'
+    last = 'L_BOBS_08498:\nedit_preflight_next:\n'
+    i, j = text.find(first), text.find(last)
+    require(i >= 0 and j > i and text.find(first, i+len(first)) < 0,
+            'P1e image preflight audit region missing/duplicated')
+    observed, pos = bytearray(), P1E_PREFLIGHT_START
+    for at, code in re.findall(r'; \+\$([0-9A-F]{5}): ([0-9A-F]+)',
+                               text[i:j]):
+        require(int(at, 16) == pos, 'P1e preflight audit offset gap')
+        chunk = bytes.fromhex(code)
+        observed.extend(chunk)
+        pos += len(chunk)
+    require(pos == P1E_PREFLIGHT_END and
+            bytes(observed) == prove_p1e_edit_preflight_provenance()[3],
+            'P1e image preflight audit bytes differ from emitter')
+    return text[:i] + 'L_BOBS_0840A:\n    include "' + P1E_PREFLIGHT_NAME + '"\n' + text[j:]
+
+
 def replace_raw_planar_block(text: str) -> str:
     """Replace only the source-pinned 562-byte DC.B block, not other data."""
     first_line = ('    dc.b $53,$85,$66,$00,$FF,$DA,$4E,$75,$48,$E7,$CF,$FE'
@@ -2208,7 +2256,8 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
                    p1e_prep_text: str | None = None,
                    p1e_copy_text: str | None = None,
                    p1e_final_text: str | None = None,
-                   p1e_objects_text: str | None = None) -> None:
+                   p1e_objects_text: str | None = None,
+                   p1e_preflight_text: str | None = None) -> None:
     """Create one complete AP20 assembly project; replace only verified P2d region."""
     require(AUDIT_DIR.is_dir(), f'missing audited P2d assembly: {AUDIT_DIR}')
     require(EDITABLE_FILE.is_file(), f'missing authored module: {EDITABLE_FILE}')
@@ -2252,6 +2301,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     require(P1E_COPY_FILE.is_file(), f'missing authored module: {P1E_COPY_FILE}')
     require(P1E_FINAL_FILE.is_file(), f'missing authored module: {P1E_FINAL_FILE}')
     require(P1E_OBJECT_FILE.is_file(), f'missing authored module: {P1E_OBJECT_FILE}')
+    require(P1E_PREFLIGHT_FILE.is_file(), f'missing authored module: {P1E_PREFLIGHT_FILE}')
     require(SLOTS_FILE.is_file(), f'missing source-owned data: {SLOTS_FILE}')
     for name in (MASTER_FILE, BOBS_FILE, 'M19_P2D_UNIT142_MC68020.s',
                  'M19_P2D_UNIT153_MC68020.s',
@@ -2280,6 +2330,7 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
     text = replace_raw_p1e_del_bob(text)
     text = replace_raw_p1e_ins_bob(text)
     text = replace_raw_p1e_edit_objects(text)
+    text = replace_raw_p1e_edit_preflight(text)
     text = replace_raw_p1e_cleanup(text)
     text = replace_raw_p1e_bank_validation(text)
     text = replace_raw_p1e_bank_stage(text)
@@ -2810,6 +2861,16 @@ def staged_sources(folder: Path, *, module_text: str | None = None,
             and not re.search(r'(?im)^\s*dcb?\.[bwll]\b', objects),
             'P1e object source invalid or contains raw bytes')
     (folder / P1E_OBJECT_NAME).write_text(objects, encoding='ascii', newline='\n')
+    preflight = (p1e_preflight_text if p1e_preflight_text is not None
+                 else P1E_PREFLIGHT_FILE.read_text('ascii'))
+    require((preflight.count('P1E_PREFLIGHT_ZERO equ 0'),
+             preflight.count('P1E_PREFLIGHT_ZERO equ 1')) in ((1, 0), (0, 1))
+            and preflight.count('edit_preflight_slot:') == 1
+            and preflight.count('edit_preflight_image:') == 1
+            and not re.search(r'(?im)^\s*dcb?\.[bwll]\b', preflight),
+            'P1e preflight source has unclassified bytes or invalid flags')
+    (folder / P1E_PREFLIGHT_NAME).write_text(preflight,
+                                            encoding='ascii', newline='\n')
     planar_source = (planar_text if planar_text is not None
                      else PLANAR_FILE.read_text('ascii'))
     for label in ('p2b_planar_orientation_entry:',
@@ -2918,6 +2979,7 @@ def verify_link(original: bytes, image: bytes, group: int,
     p1e_copy_start, p1e_copy_end, _, _ = prove_p1e_repack_copy_provenance()
     p1e_final_start, p1e_final_end, _, _ = prove_p1e_repack_final_provenance()
     p1e_obj_start, p1e_obj_end, _, _ = prove_p1e_edit_objects_provenance()
+    p1e_pre_start, p1e_pre_end, _, _ = prove_p1e_edit_preflight_provenance()
     require(all((planes_start <= i < control_end) or
                 (planar_start <= i < planar_end) or
                 (flip_start <= i < flip_end) or
@@ -2957,7 +3019,8 @@ def verify_link(original: bytes, image: bytes, group: int,
                  (p1e_prep_start <= i < p1e_prep_end) or
                  (p1e_copy_start <= i < p1e_copy_end) or
                  (p1e_final_start <= i < p1e_final_end) or
-                (p1e_obj_start <= i < p1e_obj_end) for i in differences),
+                (p1e_obj_start <= i < p1e_obj_end) or
+                (p1e_pre_start <= i < p1e_pre_end) for i in differences),
             'a byte outside the authored P2b/P2c/P2d modules differs from the reference')
     if not allow_edited:
         require(not differences and image == original,
@@ -3008,7 +3071,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
           p1e_prep_text: str | None = None,
           p1e_copy_text: str | None = None,
           p1e_final_text: str | None = None,
-          p1e_objects_text: str | None = None) -> tuple[bytes, list[int]]:
+          p1e_objects_text: str | None = None,
+          p1e_preflight_text: str | None = None) -> tuple[bytes, list[int]]:
     original, group, planes_start, control_start, control_end, _, _ = prove_source_provenance()
     target.mkdir(parents=True, exist_ok=True)
     staged_sources(target, module_text=module_text, planes_text=planes_text,
@@ -3043,7 +3107,8 @@ def build(assembler: Path, target: Path, *, allow_edited: bool = False,
                     p1e_prep_text=p1e_prep_text,
                     p1e_copy_text=p1e_copy_text,
                     p1e_final_text=p1e_final_text,
-                    p1e_objects_text=p1e_objects_text)
+                    p1e_objects_text=p1e_objects_text,
+                    p1e_preflight_text=p1e_preflight_text)
     output = target / ('M19_P2D_EDITED_UNTESTED.Lib' if allow_edited
                        else 'M19_P2D_ASM_REBUILT_CHECK.Lib')
     result = checked_vasm(assembler, target / MASTER_FILE, output)
@@ -3683,6 +3748,21 @@ def test_editability(assembler: Path) -> None:
                 'P1e object count edit was not assembled')
         require(obj_start <= obj_imm < obj_end,
                 'P1e object edit outside module')
+
+        pre_start, pre_end, pre_imm, _ = prove_p1e_edit_preflight_provenance()
+        pre_src = P1E_PREFLIGHT_FILE.read_text('ascii')
+        needle = 'P1E_PREFLIGHT_ZERO equ 0'
+        require(pre_src.count(needle) == 1, 'P1e preflight edit not unique')
+        changed, diffs = build(
+            assembler, root/'modified_p1e_preflight', allow_edited=True,
+            p1e_preflight_text=pre_src.replace(needle, 'P1E_PREFLIGHT_ZERO equ 1'))
+        require(diffs == [pre_imm],
+                f'P1e preflight edit changed {diffs}, expected {[pre_imm]}')
+        require(unpack_ap20(changed)[1][group][pre_imm-5:pre_imm+1]
+                == bytes.fromhex('223c00000001'),
+                'P1e preflight edited opcode not assembled')
+        require(pre_start <= pre_imm < pre_end,
+                'P1e preflight edit escaped source')
     print('P2D_EDITABILITY_TEST PASS: MOVEQ #1,D3 -> #2,D3, one byte changed,')
     print('P2C_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
     print('P2B_PLANAR_EDITABILITY_TEST PASS: MOVEQ #0,D3 -> #1,D3, one byte changed')
@@ -3724,6 +3804,7 @@ def test_editability(assembler: Path) -> None:
     print('P1E_REPACK_COPY_EDITABILITY_TEST PASS: MOVE.L #0,D0 -> #1, one byte changed')
     print('P1E_REPACK_FINAL_EDITABILITY_TEST PASS: MOVE.L #0,D3 -> #1, one byte changed')
     print('P1E_OBJECT_EDITABILITY_TEST PASS: MOVE.L #64,D7 -> #65, one byte changed')
+    print('P1E_PREFLIGHT_EDITABILITY_TEST PASS: MOVE.L #0,D1 -> #1, one byte changed')
     print('AP20 topology and all other groups unchanged; NOT a WinUAE Runtime test')
 
 
