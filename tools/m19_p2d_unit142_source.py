@@ -149,7 +149,7 @@ def expected_sources():
         header = (
             "; AGA_NATIVE_MIN_CPU: MC68020\n"
             "; UNIT142 " + filename + " source-verified against pinned P2d emitter.\n"
-            f"; UNIT142+\${lo:05X}..\${hi:05X}, {hi-lo} instructions/data bytes.\n"
+            f"; UNIT142+${lo:05X}..${hi:05X}, {hi-lo} instructions/data bytes.\n"
             + symbol + f" equ {old_value}\n\n"
         )
         module = header + code.replace(opcode, replacement)
