@@ -382,6 +382,20 @@ restent hors module, sans classification hasardeuse.
 UNIT156 migre : **1 794 octets / 4 modules** ; ensemble **84 modules ASM**.
 Aucune bibliotheque officielle ou ASC modifie.
 
+### UNIT156 — 21e lot : pipeline Get public (502 octets)
+
+Nouveau module source : [M19_UNIT156_PUBLIC_GET_MC68020.s](M19_UNIT156_PUBLIC_GET_MC68020.s),
+`UNIT156+$00022..$00218` (502 octets). Le dispatcher AP20 V2 de
+34 octets a `$00000..$00022` reste inchange. L'appel AMOS Main
+`FE11F700031D` a `$00212` est conserve en `dc.w` symbolique
+(`UNIT156_AMOS_MAIN_GETADR=797`), pas modifie comme simple data.
+Seuil d'image `cmpi.l #5,d0` parametre, test d'edition controle
+les **5 octets mutables distincts** de UNIT156, aucun ailleurs.
+UNIT156 source-verifie : **2 296 octets / 5 modules**.
+Projet : **85 modules ASM** au total. Il reste le dispatcher,
+les donnees et l'ilot `$007EE..$00850` encore brut.
+Aucune modification des deux Lib officielles, ni des ASC.
+
 ## Compilation directe (Windows)
 
 ```bat
