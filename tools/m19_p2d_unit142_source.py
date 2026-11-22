@@ -1400,7 +1400,7 @@ def p0f_expected_source(whole, wrapper):
         old = "#0" if op == "    moveq #0,d2" else "#$%08X" % old_value
         header = (
             "; AGA_NATIVE_MIN_CPU: MC68020\n"
-            f"; UNIT142 P0f source-owned segment \${lo:05X}..\${hi:05X}, emitter-exact MC68020.\n"
+            f"; UNIT142 P0f source-owned segment ${lo:05X}..${hi:05X}, emitter-exact MC68020.\n"
             "; P0f whole code-and-markers SHA256 fa7d64ce347c08d0e523d5d31ac8a3e3b5175fdd38867bca76c6d7941aa9f2b4\n"
             f"{symbol} equ {old_value}\n\n"
         )
