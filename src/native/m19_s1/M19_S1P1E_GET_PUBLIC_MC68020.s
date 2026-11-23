@@ -101,6 +101,25 @@ agsp_s1_get_body:
     btst #0,d0
     bne.w agsp_s1_get_cleanup
     move.l a4,AGSP_GET_F_STATE(a2)
+    ; Check the private screen state before allocating temporary memory.
+    ; Reject X2/Y2 outside its published width/height (inclusive bounds).
+    movea.l $0004.w,a6
+    movea.l a4,a1
+    jsr -534(a6)              ; Exec.TypeOfMem private state start
+    tst.l d0
+    beq.w agsp_s1_get_cleanup
+    movea.l AGSP_GET_F_STATE(a2),a4
+    lea 19(a4),a1
+    jsr -534(a6)              ; state width/height fields safely accessible
+    tst.l d0
+    beq.w agsp_s1_get_cleanup
+    movea.l AGSP_GET_F_STATE(a2),a4
+    move.l 12(a4),d0          ; state.width
+    cmp.l AGSP_GET_F_X2(a2),d0
+    bls.w agsp_s1_get_cleanup
+    move.l 16(a4),d0          ; state.height
+    cmp.l AGSP_GET_F_Y2(a2),d0
+    bls.w agsp_s1_get_cleanup
 
     ; A bank is selected, so it MUST exist and must have AGSP DATA
     ; name/payload. No re-creation here (selection owns that operation).
