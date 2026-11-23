@@ -174,11 +174,19 @@ def measure(repeats=3, passes=3, cases=None):
             "scroll_copy_bands": lambda: scroll_frame(
                 tm, tiles, before, old_x, old_y, cx, cy, width, height),
         }
-        # Alternate method order across passes in future hardware benchmark.
-        timing = {}
-        for name, operation in methods.items():
-            median_ms, passes_ms = time_variant(operation, repeats, passes)
-            timing[name] = {"median_ms": median_ms, "pass_ms": passes_ms}
+        # Interleave passes A/B/C then C/B/A to reduce order bias.
+        pass_times = {name: [] for name in methods}
+        names = list(methods)
+        for pass_index in range(passes):
+            order = names if pass_index % 2 == 0 else list(reversed(names))
+            for name in order:
+                elapsed, _ = time_variant(methods[name], repeats, 1)
+                pass_times[name].append(elapsed)
+        timing = {
+            name: {"median_ms": round(statistics.median(values), 6),
+                   "pass_ms": values}
+            for name, values in pass_times.items()
+        }
         overlap = max(0, width - abs(dx)) * max(0, height - abs(dy))
         results.append({
             "viewport": [width, height], "layers": layers, "delta": [dx, dy],
