@@ -35,8 +35,10 @@ class PublicSelectMachine(Machine):
         uc.reg_write(UC_M68K_REG_A0,0x180000)
         saved={r:uc.reg_read(r) for r in REGS}
         uc.reg_write(UC_M68K_REG_D3,bank & 0xffffffff)
-        uc.reg_write(UC_M68K_REG_A7,STACK)
+        # SR must be set BEFORE A7: switching to supervisor mode swaps the
+        # user/supervisor stack pointers; otherwise SSP remains zero.
         uc.reg_write(UC_M68K_REG_SR,0x2000)
+        uc.reg_write(UC_M68K_REG_A7,STACK)
         uc.mem_write(STACK,pack('>I',STOP))
         try:
             uc.emu_start(CODE,STOP,count=30_000_000)
