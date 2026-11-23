@@ -32,3 +32,9 @@ Le banc exécute le binaire vasm -m68020 dans Unicorn MC68020, et simule les vra
 La sonde DATA AGSP existante a passé **Gate B Runtime** sur WinUAE (fichier .ABK sauvegardé octet identique), mais **cela ne démontre pas encore que ce publisher est connecté à l'AMOS réel**. Le Compiler de cette sonde est **volontairement NON TESTÉ**, par décision explicite de l'auteur : pas de demande supplémentaire de Gate C pour cette sonde.
 
 **Prochaine intégration sans arrêt de chantier :** wrapper AP20 natif qui alloue/stabilise les tampons, prépare les deux modules de capture et le repack, valide le payload AGSP, appelle le publisher, puis lance le premier test **Runtime** de Get AGA Sprite. La fermeture/détachement DMA Sprite reste hors S1-P1c et bloquante pour l'affichage hardware. Les prototypes seront uniquement sous tests/proto ; examples est réservé aux fichiers distribués.
+
+## Pipeline natif de capture complet (S1-P1c)
+
+[Orchestrateur MC68020](../src/native/m19_s1/M19_S1P1C_CAPTURE_PIPELINE_MC68020.s) et [tests CPU](../tools/test_m19_s1p1c_pipeline.py) : cinq modules assemblés dans un seul binaire VASM. Enchaînement : bitplanes AGA/ColorMap RGB24 → pixels Sprite 2 plans → repack multi-images → validateur strict → commit transactionnel AMOS. Le chemin doit échouer sans publier de banque en cas de buffer Unsafe, trop de couleurs, erreur d'allocation ou mauvais numéro de banque.
+
+L'appelant fournit un **descripteur privé de 72 octets**, déjà alloué et validé, avec les zones tampon. Offsets 0..35 = requête pont S1-P1b ; +36 banque LONG ; +40 image WORD ; +42/+44 hotspots ; +46 réservé ; +48/+52 ancien payload et longueur ; +56 requête de repack ; +60 buffer de destination détaché ; +64 capacité ; +68 requête de publication. Retour **D3=1/0**, D2=0. **Ce n'est pas un token AP20 installé** : préparation des allocations par une vraie commande AMOS, stabilisation de l'écran et WinUAE Runtime sont encore à réaliser. Aucune modification P2d/LAST_GOOD.

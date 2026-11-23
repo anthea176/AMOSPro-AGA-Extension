@@ -5,6 +5,7 @@ on:
     paths:
       - 'src/native/m19_s1/M19_S1P1C_AGSP_BANK_COMMIT_MC68020.s'
       - 'tools/test_m19_s1p1c_amos_bank_commit.py'
+      - 'tools/test_m19_s1p1c_pipeline.py'
       - 'tools/test_m19_s1p1c_agsp_validate.py'
       - 'docs/M19_S1_P1C_AGSP_AMOS_BANK_COMMIT_2026-11-23.md'
       - '.github/workflows/m19-s1-p1c-amos-bank-commit.yml'
@@ -33,7 +34,7 @@ jobs:
       - name: Enforce native CPU policy
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -B -m py_compile tools/test_m19_s1p1c_amos_bank_commit.py tools/test_m19_s1p1c_agsp_validate.py
+          python -B -m py_compile tools/test_m19_s1p1c_amos_bank_commit.py tools/test_m19_s1p1c_agsp_validate.py tools/test_m19_s1p1c_pipeline.py
       - name: Restore pinned VASM
         id: vasm-cache
         uses: actions/cache@v4
@@ -54,6 +55,8 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_publish_mc68020.bin" src/native/m19_s1/M19_S1P1C_AGSP_BANK_COMMIT_MC68020.s
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_validate_mc68020.bin" src/native/m19_s1/M19_S1P1C_AGSP_VALIDATE_MC68020.s
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/agsp_pipeline_mc68020.bin" src/native/m19_s1/M19_S1P1C_CAPTURE_PIPELINE_MC68020.s
+          test -s "$RUNNER_TEMP/agsp_pipeline_mc68020.bin"
           test -s "$RUNNER_TEMP/agsp_validate_mc68020.bin"
           test -s "$RUNNER_TEMP/agsp_publish_mc68020.bin"
       - name: Install Unicorn MC68020 emulator
@@ -62,9 +65,11 @@ jobs:
         env:
           AGSP_PUBLISH_BIN: ${{ runner.temp }}/agsp_publish_mc68020.bin
           AGSP_VALIDATE_BIN: ${{ runner.temp }}/agsp_validate_mc68020.bin
+          AGSP_PIPELINE_BIN: ${{ runner.temp }}/agsp_pipeline_mc68020.bin
         run: |
           PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1c_amos_bank_commit.py' -v
           PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1c_agsp_validate.py' -v
+          PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1c_pipeline.py' -v
       - name: Verify protected P2d, LAST_GOOD and campaign files
         run: |
           printf '%s  %s\n' ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f dist/AMOSPro_AGA.Lib | sha256sum -c -
