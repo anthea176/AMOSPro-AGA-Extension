@@ -63,6 +63,6 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 **Périmètre technique futur de M20 :** contrats des banques AGTM/tileset, prévalidation des indices/pointeurs, CPU 68020 et Blitter comparés, scrolling par bandes et éventuel scrolling matériel, transparence/couches, dirty rects par page, Bobs et intégration Safe/Disp. Architecture modulaire pour RPG Engine, sans logique RPG spécifique dans la Lib.
 
-**Verrous conservés :** pas de changement des commandes publiques AP20, sources natives, `dist/`, `LAST_GOOD`, `tests/current/` ou du chantier Sprite sur la seule base des prototypes. Toute candidate M20 exige décision et Gates A/B/C, puis D si possible. Les sources et jeux de tuiles restent originaux, sans reprise de contenu propriétaire de Fer & Flamme.
+**Verrous conservés :** pas de changement des commandes publiques AP20, sources natives, `dist/`, `LAST_GOOD`, `tests/current/` ou du chantier Sprite sur la seule base des prototypes. Toute candidate M20 exige décision et Gates A/B/C, puis D si possible. Les sources et jeux de tuiles restent originaux, sans reprise de code, de données ou de ressources provenant de projets tiers.
 
 Historique non normatif : [Roadmap archivée](ROADMAP_HISTORY_2026-11-17.md) · [reprise technique](NEXT_SESSION.md).
