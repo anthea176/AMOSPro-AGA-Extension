@@ -100,13 +100,37 @@ def build_get_aga_sprite_candidate(native:bytes)->tuple[bytes,dict]:
     }
 
 
+def write_test_candidate(image:bytes,destination:Path)->Path:
+    """Explicit opt-in: export one UNTESTED candidate only OUTSIDE the repo."""
+    if type(image) is not bytes or not image:
+        raise ValueError('empty or non-bytes AP20 candidate')
+    target=destination.resolve()
+    repository=Path(__file__).resolve().parents[1]
+    if target.is_relative_to(repository):
+        raise ValueError('refuse writing a candidate anywhere in the GitHub repository')
+    if target.exists():
+        raise FileExistsError('refuse overwriting an existing Lib')
+    target.parent.mkdir(parents=True,exist_ok=True)
+    with target.open('xb') as stream:
+        stream.write(image)
+    if target.read_bytes()!=image:
+        raise IOError('written test candidate differs from in-memory AP20 image')
+    return target
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--native',type=Path,required=True)
+    p.add_argument('--test-lib-output',type=Path,default=None)
     args=p.parse_args()
-    _image,metadata=build_get_aga_sprite_candidate(args.native.read_bytes())
+    image,metadata=build_get_aga_sprite_candidate(args.native.read_bytes())
     print('S1_P1E_GET_AGA_SPRITE_IN_MEMORY',metadata)
-    print('NO_FILE_WRITTEN; NO_DIST; NO_LAST_GOOD; NO_WINUAE_OR_COMPILER_CLAIM')
+    if args.test_lib_output is None:
+        print('NO_FILE_WRITTEN; NO_DIST; NO_LAST_GOOD; NO_WINUAE_OR_COMPILER_CLAIM')
+    else:
+        dest=write_test_candidate(image,args.test_lib_output)
+        print('S1_P1E_UNTESTED_WINUAE_BINARY',dest,len(image),metadata['sha256'])
+        print('TEST_ONLY; NOT_INSTALLED; NO_DIST; NO_LAST_GOOD; GATE_B_PENDING')
 
 
 if __name__=='__main__':
