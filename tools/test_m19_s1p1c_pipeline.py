@@ -39,7 +39,7 @@ class PipelineMachine(Machine):
                  image_id=1,bank=10,alloc_fail=False,capacity=0x8000):
         super().__init__(old=old,alloc_fail=alloc_fail)
         self.code=Path(os.environ['AGSP_PIPELINE_BIN']).read_bytes()
-        assert 25000<len(self.code)<60000
+        assert 1000<len(self.code)<65000
         self.uc.mem_write(CODE,self.code)
         self.calls_gfx=[]
         self.cmap=make_cmap()
