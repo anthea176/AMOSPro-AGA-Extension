@@ -50,7 +50,12 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 P0 Bank Free"):
+    if active.startswith("M19 S1-P1e"):
+        from active_library import S1P1E_SHA,P2D_SHA
+        assert sha256(current).hexdigest()==S1P1E_SHA and len(current)==142000
+        assert sha256(LAST_GOOD.read_bytes()).hexdigest()==P2D_SHA
+        print("CURRENT M19 S1-P1e AGSP: 102 commands / 208 AP20 entries, Gate A PASS; WinUAE B / Compiler C PENDING; P2d LAST_GOOD protected")
+    elif active.startswith("M19 P0 Bank Free"):
         from active_library import P0_FREE_SHA
         from build_m19_b8_s1_bank_free_in_memory import build_bank_free
         candidate,meta=build_bank_free()

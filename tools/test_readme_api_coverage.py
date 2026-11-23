@@ -176,7 +176,12 @@ def main() -> None:
     b7m1 = re.search(r"\$VER:\s*AGA\s+(M19\s+P0j-b7-m1)\b", title, re.IGNORECASE)
     b7m2 = re.search(r"\$VER:\s*AGA\s+(M19\s+B7-m2)\b", title, re.IGNORECASE)
     b8 = re.search(r"\$VER:\s*AMOSPro_AGA\s+(M19\s+B8)\b", title, re.IGNORECASE)
-    if b8:
+    agsp = re.search(r"\$VER:\s*AGSP\s+(S1-P1e)\b", title, re.IGNORECASE)
+    if agsp:
+        from active_library import S1P1E_SHA
+        assert sha256(LIB.read_bytes()).hexdigest()==S1P1E_SHA
+        release="S1-P1e"
+    elif b8:
         from active_library import B8_SHA,B8S1_SHA
         if "M19 B8 S1" in title:
             assert sha256(LIB.read_bytes()).hexdigest()==B8S1_SHA, "B8 S1 must match the source-built release"

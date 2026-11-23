@@ -34,6 +34,7 @@ B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # fro
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
 P1E_SHA="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
 P2D_SHA="ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f"
+S1P1E_SHA="1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106"  # Author-approved active AGSP capture test candidate; Gate A only
 P2C_SHA="eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d"
 P2B_SHA="96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448"
 P2A_SHA="e2d149f67da9eb3a8c7222113338a8e0ad3f08fb512792a54b825987e88d92fe"  # M19 P2a test candidate; Gate A PASS, WinUAE B pending; LAST_GOOD P1e
@@ -110,6 +111,30 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S1P1E_SHA:
+        from build_m19_p2d_in_memory import build_p2d
+        from compiler_relocation import GETP, RBSR, unpack_ap20
+        from audit_ap20 import walk_tokens
+        baseline, baseline_meta=build_p2d()
+        assert sha256(baseline).hexdigest()==P2D_SHA
+        assert (baseline_meta['commands'],baseline_meta['entries'])==(100,203)
+        assert good==baseline and len(good)==136020, "P2d LAST_GOOD must remain byte-exact"
+        assert len(cur)==142000 and cur!=good, "S1-P1e candidate bytes changed"
+        old_tokens,old_parts,_=unpack_ap20(baseline)
+        new_tokens,new_parts,title=unpack_ap20(cur)
+        assert len(new_parts)==208 and new_parts[:203]==old_parts
+        assert new_parts[203]==GETP and new_parts[205]==GETP
+        assert new_parts[204].startswith(RBSR) and new_parts[206].startswith(RBSR)
+        old_api=list(walk_tokens(old_tokens))
+        api=list(walk_tokens(new_tokens))
+        assert len(api)==len(old_api)+2 and api[:-2]==old_api
+        assert [(t['name'],t['instruction'],t['function'],t['signature']) for t in api[-2:]]==[
+            ('aga sprite bank',204,1,'I0'),
+            ('get aga sprite',206,1,'00,0,0,0,0,0'),
+        ]
+        assert b'$VER: AGSP S1-P1e' in title
+        assert inspect(parse(cur))['issues']==[], "S1-P1e HUNK/AP20 audit failed"
+        return cur,good,"M19 S1-P1e Get AGA Sprite ACTIVE TEST CANDIDATE; Gate A MC68020 CPU/CI PASS; WinUAE B, true Compiler C and physical D NOT TESTED; P2d LAST_GOOD protected"
     if current_sha == P2D_SHA:
         from build_m19_p2d_in_memory import build_p2d
         expected, meta = build_p2d()

@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 23 novembre 2026 — S1-P1e Get AGA Sprite : candidate de test autorisée dans dist
+
+**Autorisation expresse de l'auteur (« va y ») pour livrer S1-P1e dans `dist/AMOSPro_AGA.Lib`**, `main` uniquement, sans toucher à `LAST_GOOD`. Candidate source MC68020, 142 000 octets, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106` ; **102 commandes, 208 entrées AP20**. Builder `tools/build_m19_s1p1e_get_sprite_ap20.py`, à partir de P2d exacte. **Gate A PASS** : [CI MC68020 et AP20](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45267315257), 11 tests capture CPU et 5 AP20/HUNK, services système simulés. La bibliothèque historique P2d **LAST_GOOD protégée**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes/203 entrées AP20, conserve ses Gates B/C antérieures sans les transférer à S1-P1e.
+
+**Nouvelles Gates :** B Runtime WinUAE/AMOS **à réaliser**, C Compiler réel **non testée**, D matériel **non testée**. Les prototypes restent dans [`tests/proto/agsp_capture/`](../tests/proto/agsp_capture/README.md), et l'unique ASC `tests/current/M19_P2_ALL_IN_ONE.asc` est conservé pour la régression P2. L'image de test ILBM est générable par `tools/m19_s1p1e_make_fixture.py`. La candidate `dist/` est le seul binaire à installer : **ne plus utiliser les artefacts temporaires GitHub Actions**. Pas d'activation DMA Sprites, pas de promotion, pas de release.
+
+
 ## 23 novembre 2026 — AGSP S1-P1b banque DATA : Gate B Runtime PASS ; Compiler SAUTÉ
 
 **Sonde exacte :** [`tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc`](../tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc), `SOURCE_TAG M19_S1P1B_DATA_ABK_V1`. **WinUAE/AMOS Runtime B PASS** avec journal original [`M19_S1P1B_AGSP_RUNTIME_2026-11-23.TXT`](evidence/M19_S1P1B_AGSP_RUNTIME_2026-11-23.TXT) : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, 2 chargements, 1 sauvegarde, 2 effacements, 2 vérifications, `PASS_DATA_BANK_ONLY`. La banque renvoyée par l'auteur [`AGSP_S1P1B_RESAVED_2026-11-23.ABK`](evidence/AGSP_S1P1B_RESAVED_2026-11-23.ABK), 212 octets, est **strictement identique octet pour octet** à la fixture AGSP et possède son SHA256 `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`. Log original 195 octets, SHA256 `8874d8676b8639e124936688d67e9288f4320f040909a194ca9c27d2e19ea46f`. [Rapport et protocole](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).

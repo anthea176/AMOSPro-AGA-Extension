@@ -6,12 +6,13 @@
 
 | Domaine | Statut |
 | --- | --- |
-| **Lib active et LAST_GOOD** | **M19 P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. [Lib](../dist/AMOSPro_AGA.Lib) et [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques, protégées. Aucun remplacement ou promotion automatique. |
+| **Lib de travail** | **M19 S1-P1e Get AGA Sprite candidate**, 142 000 octets, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106`, 102 commandes / 208 entrées AP20. [Lib](../dist/AMOSPro_AGA.Lib), Gate A PASS ; B/C/D non testées. |
+| **LAST_GOOD protégée** | **M19 P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 entrées AP20. [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) non modifiée. |
 | **Régression courante** | Un ASC unique : [`M19_P2_ALL_IN_ONE.asc`](../tests/current/M19_P2_ALL_IN_ONE.asc) (25 056 octets), Gates B Runtime et C vrai Compiler PASS pour ce banc P2a–P2e. [Rapport](M19_P2_ALL_IN_ONE_2026-11-21.md). |
 | **Source MC68020 P2d** | 268 modules, 122 602 octets d'instructions dans 131 734 octets classés ; aucune zone inconnue. [Bilan](M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md) · [Reprise](NEXT_SESSION.md). |
 | **Historique et preuves** | [NEXT_SESSION.md](NEXT_SESSION.md) · [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) · [archive avant rangement](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md). Les Gates de candidats anciens ne sont pas transposables. |
 
-**S1-P1e :** candidate AP20 `Aga Sprite Bank N` / `Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen`, 102 commandes / 208 entrées, **Gate A MC68020 simulée PASS**. [Test Runtime et IFF](../tests/proto/agsp_capture/README.md) : future candidate disponible **en artefact CI de test non promu**, installation WinUAE isolée à qualifier ; Gate B de la nouvelle commande non exécutée. Aucun test Compiler demandé pour la sonde DATA.
+**S1-P1e :** candidate de travail désormais dans `dist/AMOSPro_AGA.Lib` avec autorisation expresse ; API AP20 `Aga Sprite Bank N` / `Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen`, 102 commandes / 208 entrées, **Gate A MC68020 simulée PASS**. [Test Runtime et IFF](../tests/proto/agsp_capture/README.md) : utiliser la Lib du dépôt pour un test WinUAE isolé ; Gate B de la nouvelle commande non exécutée. Aucun test Compiler demandé pour la sonde DATA.
 
 ## 2. Sprites matériels AGA (M19 S0–S3)
 

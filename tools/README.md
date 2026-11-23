@@ -1,5 +1,10 @@
 # Outils Python — builder actif et historique versionne
 
+## Candidate active S1-P1e Get AGA Sprite (23/11/2026)
+
+Après autorisation expresse, la seule `dist/AMOSPro_AGA.Lib` de travail contient S1-P1e : **142 000 octets**, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106`, 102 commandes et 208 entrées AP20. La référence `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste P2d, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f` (136 020 octets). Builder natif : `tools/build_m19_s1p1e_get_sprite_ap20.py` plus `src/native/m19_s1/M19_S1P1D_BANK_PUBLIC_MC68020.s` assemblé avec vasm MC68020. La CI S1 reconstruit S1-P1e octet pour octet et compare à `dist/`. `tools/active_library.py` et `tools/build_aga_current.py --verify` distinguent la candidate de la `LAST_GOOD`. Gate A PASS, Gates B/C/D de la capture non testées. [Protocole Runtime](../tests/proto/agsp_capture/README.md).
+
+
 
 ## Migration ASM P2d — source entierement classifiee (22/11/2026)
 
