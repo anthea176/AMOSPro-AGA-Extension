@@ -6,13 +6,14 @@ Real VASM MC68020 image, no installable Lib and no WinUAE claims.
 from __future__ import annotations
 from hashlib import sha256
 import os
+import tempfile
 from pathlib import Path
 import unittest
 
 from active_library import P2D_SHA
 from audit_ap20 import inspect,parse,walk_tokens
 from build_m19_p2d_in_memory import build_p2d
-from build_m19_s1p1e_get_sprite_ap20 import build_get_aga_sprite_candidate
+from build_m19_s1p1e_get_sprite_ap20 import build_get_aga_sprite_candidate,write_test_candidate
 from compiler_bridge_v2_probe import DISPATCH_V2
 from compiler_relocation import GETP,RBSR,unpack_ap20
 
@@ -57,6 +58,25 @@ class AGSPGetPublicAP20GateA(unittest.TestCase):
         self.assertFalse(self.info['installable'])
         self.assertFalse(self.info['runtime_tested'])
         self.assertFalse(self.info['compiler_tested'])
+
+    def test_explicit_test_candidate_only_outside_repository_no_overwrite(self):
+        # Only an opt-in CI output under RUNNER_TEMP can be written.
+        # dist/ and every other path within this repository stay untouchable.
+        with tempfile.TemporaryDirectory(prefix='agsp_s1p1e_') as tmp:
+            output=Path(tmp)/'AMOSPro_AGA.Lib'
+            self.assertEqual(write_test_candidate(self.image,output),output.resolve())
+            self.assertEqual(output.read_bytes(),self.image)
+            self.assertEqual(sha256(output.read_bytes()).hexdigest(),self.info['sha256'])
+            with self.assertRaises(FileExistsError):
+                write_test_candidate(self.image,output)
+        repository=Path(__file__).resolve().parents[1]
+        for path in (repository/'dist/AMOSPro_AGA.Lib',
+                     repository/'dist/AMOSPro_AGA_LAST_GOOD.Lib',
+                     repository/'tests/proto/agsp_capture/NEVER_WRITE.Lib'):
+            with self.subTest(path=path),self.assertRaises(ValueError):
+                write_test_candidate(self.image,path)
+        with self.assertRaises(ValueError):
+            write_test_candidate(b'',Path('/tmp/AGSP_empty.Lib'))
 
     def test_reject_corrupt_native_image(self):
         for raw in (self.raw[:99],self.raw+b'\x00',b'\x00\x00'+self.raw[2:],

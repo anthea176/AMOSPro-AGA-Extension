@@ -11,6 +11,8 @@
 | **Source MC68020 P2d** | 268 modules, 122 602 octets d'instructions dans 131 734 octets classés ; aucune zone inconnue. [Bilan](M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md) · [Reprise](NEXT_SESSION.md). |
 | **Historique et preuves** | [NEXT_SESSION.md](NEXT_SESSION.md) · [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) · [archive avant rangement](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md). Les Gates de candidats anciens ne sont pas transposables. |
 
+**S1-P1e :** candidate AP20 `Aga Sprite Bank N` / `Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen`, 102 commandes / 208 entrées, **Gate A MC68020 simulée PASS**. [Test Runtime et IFF](../tests/proto/agsp_capture/README.md) : future candidate disponible **en artefact CI de test non promu**, installation WinUAE isolée à qualifier ; Gate B de la nouvelle commande non exécutée. Aucun test Compiler demandé pour la sonde DATA.
+
 ## 2. Sprites matériels AGA (M19 S0–S3)
 
 **Les Bobs P0–P2 sont clos sur P2d.** La sonde S0d a passé Runtime B et Compiler C : trois cycles, 108 mouvements, curseur et Copper ; **détachement DMA et Gate D physique non prouvés**. [Audit S0](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md).

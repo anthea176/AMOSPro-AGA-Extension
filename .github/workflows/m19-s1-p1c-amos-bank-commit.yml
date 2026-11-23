@@ -100,3 +100,19 @@ jobs:
           printf '%s  %s\n' ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f dist/AMOSPro_AGA.Lib | sha256sum -c -
           printf '%s  %s\n' ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f dist/AMOSPro_AGA_LAST_GOOD.Lib | sha256sum -c -
           git diff --exit-code -- dist/ tests/current/ tests/passed/
+      - name: Build isolated S1-P1e WinUAE TEST ONLY Lib from source
+        run: |
+          mkdir -p "$RUNNER_TEMP/agsp_s1p1e_test"
+          PYTHONPATH=tools python -B tools/build_m19_s1p1e_get_sprite_ap20.py --native "$RUNNER_TEMP/agsp_select_mc68020.bin" --test-lib-output "$RUNNER_TEMP/agsp_s1p1e_test/AMOSPro_AGA.Lib"
+          test -s "$RUNNER_TEMP/agsp_s1p1e_test/AMOSPro_AGA.Lib"
+          sha256sum "$RUNNER_TEMP/agsp_s1p1e_test/AMOSPro_AGA.Lib"
+          cp "$RUNNER_TEMP/AGSP_CAPTURE_320X256.iff" "$RUNNER_TEMP/agsp_s1p1e_test/AGSP_CAPTURE_320X256.iff"
+          cp tests/proto/agsp_capture/GET_AGA_SPRITE.asc "$RUNNER_TEMP/agsp_s1p1e_test/GET_AGA_SPRITE.asc"
+          printf '%s\n'             'AMOSPro AGA S1-P1e UNTESTED WINUAE CANDIDATE -- NOT FOR RELEASE'             'Install only in an isolated WinUAE/AMOS configuration after backing up the existing extension.'             'Do not replace a known-good library or redistribute this candidate.'             'Contains candidate instructions: Aga Sprite Bank N / Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen.'             'The 320x256 indexed ILBM and AMOS Runtime probe are included for testing.'             'Gate A MC68020 emulation PASS; Gate B WinUAE for NEW tokens pending; Gate C not requested.'             "Source commit: $GITHUB_SHA"             > "$RUNNER_TEMP/agsp_s1p1e_test/TEST_ONLY_README.txt"
+      - name: Upload ephemeral UNTESTED S1-P1e WinUAE test candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: AGSP-S1-P1e-UNTESTED-WinUAE-Candidate
+          path: ${{ runner.temp }}/agsp_s1p1e_test/
+          if-no-files-found: error
+          retention-days: 7
