@@ -72,7 +72,6 @@ class GetMachine(PipelineMachine):
             del self.allocations[ptr]
             return
         if address==GFX-900:
-            from unicorn.m68k_const import UC_M68K_REG_D0,UC_M68K_REG_D1
             assert uc.reg_read(UC_M68K_REG_A0)==COLORMAP
             assert (uc.reg_read(UC_M68K_REG_D0),uc.reg_read(UC_M68K_REG_D1))==(0,256)
             dst=uc.reg_read(UC_M68K_REG_A1)
