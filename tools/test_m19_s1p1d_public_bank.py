@@ -38,7 +38,14 @@ class PublicSelectMachine(Machine):
         uc.reg_write(UC_M68K_REG_A7,STACK)
         uc.reg_write(UC_M68K_REG_SR,0x2000)
         uc.mem_write(STACK,pack('>I',STOP))
-        uc.emu_start(CODE,STOP,count=30_000_000)
+        try:
+            uc.emu_start(CODE,STOP,count=30_000_000)
+        except Exception as exc:
+            raise AssertionError(
+                f'public bank CPU fault PC=0x{uc.reg_read(UC_M68K_REG_PC):08x} '
+                f'SP=0x{uc.reg_read(UC_M68K_REG_A7):08x} '
+                f'D3=0x{uc.reg_read(UC_M68K_REG_D3):08x} '
+                f'native_bytes={len(self.code)}') from exc
         assert uc.reg_read(UC_M68K_REG_PC)==STOP
         assert uc.reg_read(UC_M68K_REG_A7)==STACK+4
         assert all(uc.reg_read(r)==v for r,v in saved.items()),'ABI clobber'
