@@ -282,7 +282,8 @@ class AGSPPublisherCPU(unittest.TestCase):
                 self.assertEqual(m.freed,[])
 
     def test_no_phantom_missing_bank_races(self):
-        m=Machine(race=True)
+        # A missing target alone is not a race: another bank must anchor the head.
+        m=Machine(race=True,other=True)
         self.assertEqual(m.execute(fixture()),0)
         self.assertEqual(m.notes,[])
         self.assertEqual(len(m.freed),1)
