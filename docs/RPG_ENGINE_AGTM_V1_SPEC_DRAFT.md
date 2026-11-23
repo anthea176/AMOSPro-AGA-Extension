@@ -114,7 +114,7 @@ Un moteur à **tuiles pré-composées** peut devenir un quatrième cas : au char
 
 ## 7. Indépendance RPG Engine / licence
 
-Ce contrat est une conception originale et générique. Il n'intègre ni octets ni données de Fer & Flamme, ni source de AGE.lib. Les idées de cache, carte, caméra et scrolling ont servi de référence technique, conformément à l'audit d'indépendance du projet RPG Engine. Assets et cartes de benchmarks à créer indépendamment.
+Ce contrat est une conception originale et générique, indépendante de tout projet tiers. Il ne reprend aucun code, aucune donnée ni aucune ressource externe. Les principes de cache, carte, caméra et scrolling sont spécifiés indépendamment. Les ressources et cartes de benchmark sont produites spécifiquement pour cette étude.
 
 ## 8. Questions à départager par benchmark, pas par hypothèse
 
