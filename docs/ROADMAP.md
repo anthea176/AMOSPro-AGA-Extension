@@ -34,7 +34,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 **P1e** — [Del Bob et Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) sont raccordés à la transaction AMOS et passent le banc natif. La P1e est promue. [Gate B PASS 2/2](M19_P1E_PROMOTION_2026-11-21.md). [Résultats P1d Runtime](M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md).
 
-**M20 — CHANTIER AGA PROGRAMMÉ APRÈS M21 (dual playfield) :** moteur de tilemaps / scrolling et format AGTM pour RPG Engine. **Ce sera un chantier natif de l'extension à part entière**, mais son implémentation reste en attente de la clôture de M21 et d'une autorisation explicite. **Études autorisées dès maintenant** : spécifications, prototypes hôtes et benchmarks reproductibles sans toucher à la Lib ni au chantier Sprites actif. [Spécification AGTM exploratoire](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Résultats hôtes](AGTM_HOST_BENCHMARK_2026-11-23.md) · [socle M20 P0](M20_TILEMAP_P0_HOST_MODEL.md).
+**M20 — CHANTIER AGA PROGRAMMÉ APRÈS M21 (dual playfield) :** moteur de tilemaps / scrolling et format AGTM pour RPG Engine. **Ce sera un chantier natif de l'extension à part entière**, mais son implémentation reste en attente de la clôture de M21 et d'une autorisation explicite. **Études autorisées dès maintenant** : spécifications, prototypes hôtes et benchmarks reproductibles sans toucher à la Lib ni au chantier Sprites actif. [Spécification AGTM exploratoire](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Résultats hôtes](AGTM_HOST_BENCHMARK_2026-11-23.md) · [Mesures avec éditions dynamiques](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md) · [socle M20 P0](M20_TILEMAP_P0_HOST_MODEL.md).
 
 ## 3. M19 P2 terminé — prochain chantier : sprites matériels AGA
 
@@ -59,7 +59,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 **Décision d'ordonnancement :** terminer le chantier **Sprites matériels AGA (M19 S1...)** en cours ; traiter ensuite **Dual playfield (M21)** ; engager **Tilemaps / scrolling / AGTM (M20)** comme **chantier natif principal de l'extension** une fois M21 clôturé. La numérotation M20/M21 est historique et **ne détermine pas l'ordre d'exécution**. Les autres sujets M22–M24 conservent leurs références.
 
-**Avant le lancement du M20 natif, l'étude continue dès maintenant** sur `main` : [spécification exploratoire AGTM v1](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md), [prototype de format](../tools/prototypes/agtm_format_proto.py), [rendu comparatif](../tools/prototypes/agtm_render_bench.py), [résultats hôtes](AGTM_HOST_BENCHMARK_2026-11-23.md). Ces mesures sont en Python/x86-64, **pas des preuves d'accélération MC68020/AGA**.
+**Avant le lancement du M20 natif, l'étude continue dès maintenant** sur `main` : [spécification exploratoire AGTM v1](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md), [prototype de format](../tools/prototypes/agtm_format_proto.py), [rendu comparatif](../tools/prototypes/agtm_render_bench.py), [mesures hôtes statiques](AGTM_HOST_BENCHMARK_2026-11-23.md) · [étude avec éditions et deux pages (27 tests hôtes PASS)](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md). Ces mesures sont en Python/x86-64, **pas des preuves d'accélération MC68020/AGA**.
 
 **Périmètre technique futur de M20 :** contrats des banques AGTM/tileset, prévalidation des indices/pointeurs, CPU 68020 et Blitter comparés, scrolling par bandes et éventuel scrolling matériel, transparence/couches, dirty rects par page, Bobs et intégration Safe/Disp. Architecture modulaire pour RPG Engine, sans logique RPG spécifique dans la Lib.
 
