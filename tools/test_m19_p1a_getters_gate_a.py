@@ -170,10 +170,13 @@ def main():
     from active_library import P2D_SHA
     assert len(good)==136020 and sha256(good).hexdigest()==P2D_SHA, "Promoted P2d LAST_GOOD must be exact"
     assert len(candidate)==118816 and sha256(candidate).hexdigest()==info['sha256']
-    from active_library import P1B_SHA, P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, verify_active
+    from active_library import P1B_SHA, P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, verify_active
     verified, _, _ = verify_active(ROOT)
-    assert active == verified == good and active != candidate
-    assert sha256(active).hexdigest() == P2D_SHA
+    assert active == verified and active != candidate
+    assert sha256(good).hexdigest() == P2D_SHA
+    assert sha256(active).hexdigest() in (P2D_SHA,S1P1E_SHA)
+    if sha256(active).hexdigest()==P2D_SHA:
+        assert active==good
     print('M19 P1a BOB X/Y/I PUBLIC NUMERIC GATE A PASS',checks,'checks;',
           '188 AP20 entries, 5 native units, 2 mocked placements;',
           'candidate',info['sha256'], 'SOURCE ONLY, NO AMOS/WinUAE Compiler')

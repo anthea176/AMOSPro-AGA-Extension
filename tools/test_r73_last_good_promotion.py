@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, verify_active
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, verify_active
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -40,7 +40,7 @@ def main():
     historical_r84,r84meta=build_r84()
     assert len(historical_r84)==67904 and r84meta['sha256']==R84_SHA
     assert sha256(historical_r84).hexdigest()==R84_SHA and historical_r84!=good
-    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA), "Active candidate not pinned"
+    assert sha256(cur).hexdigest() in (R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA), "Active candidate not pinned"
     assert len(promoted)==64112 and sha256(promoted).hexdigest()==R82_SHA
     assert good!=historical_r81 and good!=validated and good!=promoted
     from build_aga_r83_modular import build as build_r83
@@ -68,11 +68,16 @@ def main():
     assert not promoted_report["issues"]
     named=[t for t in promoted_report['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
     assert len(named)==100 and named[-1]['name']=='aga bob auto update'
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d"))
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d","M19 S1-P1e"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==P0_FREE_SHA:
+        if digest==S1P1E_SHA:
+            _,parts,_=unpack_ap20(cur)
+            _,oldparts,_=unpack_ap20(good)
+            assert len(parts)==208 and len(oldparts)==203 and parts[:203]==oldparts
+            assert len(cur)==142000 and label.startswith("M19 S1-P1e")
+        elif digest==P0_FREE_SHA:
             from build_m19_b8_s1_bank_free_in_memory import build_bank_free
             candidate,actual_meta=build_bank_free()
             assert cur==candidate and len(cur)==117896 and actual_meta['sha256']==P0_FREE_SHA
