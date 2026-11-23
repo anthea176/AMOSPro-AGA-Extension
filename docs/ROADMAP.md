@@ -17,9 +17,9 @@
 
 **AGSP v1 adopté** : planches IFF indexées, palette RGB24 par image, transparence explicite ; **3 couleurs opaques maxi en S1 Sprite simple 2bpp**, puis 15 en S2 Sprite attaché 4bpp. Au-delà : refus. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [contrat API](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md).
 
-**S1-P1/P1b : Gate A CPU partielle PASS** : capture MC68020, pont ScreenBuffer/GetRGB32 et repack AGSP (8+6+8 tests). [Détails](M19_S1_P1B_AGSP_REPACK_MC68020_2026-11-22.md). La [sonde ViewPort](../tests/proto/sprite_s0_viewport/README.md) et la [sonde DATA AGSP](../tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc) sont des prototypes non distribués ; leur validation WinUAE propre n'est pas acquise.
+**S1-P1/P1b : Gate A CPU partielle PASS** : capture MC68020, pont ScreenBuffer/GetRGB32 et repack AGSP (8+6+8 tests). [Détails](M19_S1_P1B_AGSP_REPACK_MC68020_2026-11-22.md). La [sonde ViewPort](../tests/proto/sprite_s0_viewport/README.md) reste un prototype non distribué. **La [sonde DATA AGSP](../tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc) a obtenu Gate B Runtime PASS**, avec [journal et ABK exact](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md). **Gate C Compiler délibérément sautée par décision de l'auteur** : non testée, non bloquante pour la suite S1-P1c.
 
-**Prochain travail Sprite :** wrapper AP20, contrôles mémoire/ScreenBuffer Safe, publication transactionnelle de banques DATA AGSP, vrai Runtime/Compiler. Avant activation matérielle : palette Sprite/BPLCON4, possession OS des canaux et arrêt sûr du DMA. Ne pas toucher à la Lib installable ni à LAST_GOOD sans accord spécifique.
+**Prochain travail Sprite :** wrapper AP20, contrôles mémoire/ScreenBuffer Safe, publication transactionnelle de banques DATA AGSP, puis vérification Runtime de la **capture native**. Pas de Compiler demandé pour la sonde DATA. Avant activation matérielle : palette Sprite/BPLCON4, possession OS des canaux et arrêt sûr du DMA. Ne pas toucher à la Lib installable ni à LAST_GOOD sans accord spécifique.
 
 ## 3. M21 Dual Playfield, puis AGTM M20
 

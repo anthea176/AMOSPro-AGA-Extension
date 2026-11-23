@@ -1,5 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 23 novembre 2026 — AGSP S1-P1b banque DATA : Gate B Runtime PASS ; Compiler SAUTÉ
+
+**Sonde exacte :** [`tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc`](../tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc), `SOURCE_TAG M19_S1P1B_DATA_ABK_V1`. **WinUAE/AMOS Runtime B PASS** avec journal original [`M19_S1P1B_AGSP_RUNTIME_2026-11-23.TXT`](evidence/M19_S1P1B_AGSP_RUNTIME_2026-11-23.TXT) : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, 2 chargements, 1 sauvegarde, 2 effacements, 2 vérifications, `PASS_DATA_BANK_ONLY`. La banque renvoyée par l'auteur [`AGSP_S1P1B_RESAVED_2026-11-23.ABK`](evidence/AGSP_S1P1B_RESAVED_2026-11-23.ABK), 212 octets, est **strictement identique octet pour octet** à la fixture AGSP et possède son SHA256 `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`. Log original 195 octets, SHA256 `8874d8676b8639e124936688d67e9288f4320f040909a194ca9c27d2e19ea46f`. [Rapport et protocole](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
+
+**Décision explicite auteur : « on saute le Compiler ».** Pour cette **sonde DATA**, **Gate C = volontairement NON TESTÉE** ; ne pas la redemander, ne pas conditionner S1-P1c à son exécution et ne jamais la marquer PASS. Le PASS B prouve l'aller-retour DATA du fichier de référence, **pas** la capture native depuis l'écran AGA ni l'export AP20. **Développement suivant S1-P1c :** wrapper MC68020, vérification mémoire/ColorMap/ScreenBuffer, transaction AMOS DATA d'une image capturée AGSP multi-images, puis essai Runtime B de cette **nouvelle fonctionnalité**. Ne pas confondre absence de Gate C et validation Compiler. P2d/LAST_GOOD inchangés.
+
+
 ## 23 novembre 2026 — Répertoires de prototypes corrigés et AGTM testé sous WinUAE
 
 **Instruction permanente : `examples/` sert exclusivement à la distribution des exemples avec la Lib.** Les trois anciens dossiers `sprite_s0_viewport/`, `agsp_bank/` et `agtm_prototype/` sont maintenant sous [`tests/proto/`](../tests/proto/README.md), sans changement des sources `.asc` ni de la banque AGSP `.ABK`. La CI autorise les prototypes non actifs dans `tests/proto/` et interdit leur réintroduction dans `examples/`. Un seul ASC actif reste sous `tests/current/`.
