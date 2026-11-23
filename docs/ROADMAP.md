@@ -1,5 +1,7 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **23/11/2026 — GEL DE DÉVELOPPEMENT :** le chantier Sprite S1-P1e est suspendu et la P2d entre en **audit transversal prioritaire**, sans correction native autorisée. Candidate S1 et LAST_GOOD P2d conservées. [Rapport](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) · [Matrice des 102 commandes](AUDIT_AGA_MATRICE_COMMANDES_2026-11-23.md) · [Cahier de 18 tests](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md). **Statut : audit OUVERT**, aucune Gate B/C supplémentaire acquise.
+
 > **23/11/2026 — Distribution :** `examples/` est réservé aux exemples **livrés avec la Lib** ; [`tests/proto/`](../tests/proto/README.md) reçoit les prototypes non distribués (AGSP, AGTM, Sprite S0). L'ancien état détaillé est conservé dans [l'archive intégrale](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md).
 
 ## 1. État actuel

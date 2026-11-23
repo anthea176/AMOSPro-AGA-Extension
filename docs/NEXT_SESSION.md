@@ -1,5 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 23 novembre 2026 — PRIORITÉ ABSOLUE : AUDIT TRANSVERSAL 2D, SPRITE GELÉ
+
+**Décision auteur :** interrompre toute correction native et suspendre le chantier `Get AGA Sprite` S1-P1e jusqu'à l'audit et à la correction du socle P2d. **`main` uniquement ; aucune autre branche ; ne modifier ni sources, ni tests, ni binaires, ni LAST_GOOD, ni journaux existants sans autorisation distincte.** L'enregistrement ci-dessous concerne exclusivement la documentation de l'audit.
+
+- [Rapport technique transversal du 23/11/2026](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) — anomalie de garde Safe IFF (P0 risque), amorçage B8 et Swap (P1), snapshots et décor (P1), cycle Close/End à auditer, CI historique SHA S1-P1e rejeté ; sources précises, preuves et incertitudes.
+- [Matrice **102 commandes sur 102**](AUDIT_AGA_MATRICE_COMMANDES_2026-11-23.md) — mémoire, page, mécanisme de sécurité à auditer, statut individuel **non validé par simple inventaire**.
+- [Cahier de **18 scénarios de non-régression**](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md) — critères PASS/FAIL et Gates A/B/C ; **aucun test nouvellement exécuté**, S1 suspendu.
+- **Lib candidate S1-P1e conservée** : `dist/AMOSPro_AGA.Lib` (142 000 octets, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106`). **LAST_GOOD P2d protégée** : `dist/AMOSPro_AGA_LAST_GOOD.Lib` (136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`).
+- **Audit ouvert** : lecture systématique des chemins effectivement liés et préservation des journaux, puis décision d'architecture. Aucune correction sans accord nouveau.
+
 ## 23 novembre 2026 — S1-P1e Get AGA Sprite : candidate de test autorisée dans dist
 
 **Autorisation expresse de l'auteur (« va y ») pour livrer S1-P1e dans `dist/AMOSPro_AGA.Lib`**, `main` uniquement, sans toucher à `LAST_GOOD`. Candidate source MC68020, 142 000 octets, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106` ; **102 commandes, 208 entrées AP20**. Builder `tools/build_m19_s1p1e_get_sprite_ap20.py`, à partir de P2d exacte. **Gate A PASS** : [CI MC68020 et AP20](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45267315257), 11 tests capture CPU et 5 AP20/HUNK, services système simulés. La bibliothèque historique P2d **LAST_GOOD protégée**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes/203 entrées AP20, conserve ses Gates B/C antérieures sans les transférer à S1-P1e.
