@@ -161,3 +161,24 @@ Le prototype de [rendu/scrolling hôte](../tools/prototypes/agtm_render_bench.py
 **Ces chiffres ne mesurent ni n'estiment des performances MC68020/AGA** ; les transferts en Chip RAM, l'attente DMA, les bitplanes, les Bobs et le VBL pourraient modifier radicalement le résultat. La zone d'écran est quasi intégralement copiée, même si peu de pixels exigent une recomposition de tuiles.
 
 Résultats complets, protocole, mesures brutes, hypothèses mémoire et futurs tests : [AGTM — benchmark hôte du 23/11/2026](AGTM_HOST_BENCHMARK_2026-11-23.md). **Aucun backend natif, aucune API AMOS ni aucun jalon M20 n'ont été lancés sur ces seuls résultats.**
+
+## 12. Protocole de carte mutable et deux pages (étude hôte du 23/11/2026)
+
+Le [prototype de carte mutable et scène double buffer](../tools/prototypes/agtm_dirty_scene_proto.py) sépare désormais les **octets AGTM sérialisés** de la **carte active en mémoire**. Les couches actives sont des tableaux contigus modifiables sans recopier la carte complète : une édition d'une cellule coûte O(1) hors rendu. Les changements sont journalisés par révision ; chaque page conserve sa propre caméra, sa propre révision et son propre décor avant composition des acteurs.
+
+**Contrats candidats pour le futur moteur natif :**
+
+1. **Révisions de page indépendantes** : les modifications reçues par une page ne sont pas considérées comme déjà présentées sur l'autre page.
+2. **Fond propre** : le scrolling ne recopie jamais des pixels contenant des objets mobiles ; la restauration doit conserver l'ancienne surface correcte ou reconstituer le décor.
+3. **Invalidation** : modifications de cellules et, dans une future API, génération du tileset / remplacement de banque doivent invalider explicitement les régions concernées.
+4. **Historique borné** : le prototype conserve 128 éditions. Si une page a manqué une partie de l'historique, le rendu intégral remplace le rafraîchissement partiel.
+5. **Prévalidation** : un refus ne doit pas présenter un back buffer incomplet ; aucun Swap implicite.
+6. **Heuristique de bascule** : à déterminer par benchmarks natifs selon le coût réel des couches, masques, octets Chip transférés et nombre de rectangles.
+
+L'étude a passé **27 tests hôtes** (14 premiers tests + 11 nouveaux tests de scène + 2 tests de benchmark), incluant 120 frames déterministes d'édition, animation et double buffering.
+
+À **320×256, 2 couches, caméra +1 px**, les médianes Python donnent **3,108 ms complet / 0,248 ms incrémental** sans édition ; **3,304 / 0,363 ms** pour 16 éditions ; **3,330 / 0,975 ms** pour 64 éditions ; **3,551 / 1,932 ms** pour 128 éditions. Au-delà du journal, le prototype bascule automatiquement au redraw intégral. **Ce sont uniquement des résultats hôtes x86-64, sans preuve de gain MC68020/AGA.**
+
+Rapport avec protocole, cas limites et échantillons bruts : [AGTM — scrolling dynamique, deux pages et modifications](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md).
+
+**Le contrat d'allocation réelle Chip/Fast, l'intégration avec les Bobs natifs et la stratégie de scrolling matériel restent à définir APRÈS M21. Aucun token ou binaire de l'extension n'est modifié par ces études.**
