@@ -20,7 +20,7 @@ from agtm_format_proto import AGTMMap, TILE_EDGE, render_reference
 
 
 def fixture(cols=64, rows=64, layers=2, tile_count=64):
-    """Original deterministic test assets; no Fer & Flamme content."""
+    """Original deterministic synthetic assets for the AGTM benchmark."""
     tiles = tuple(bytes(
         0 if (index + x * 3 + y * 7) % 17 == 0
         else (index * 11 + x * 7 + y * 13) & 255
