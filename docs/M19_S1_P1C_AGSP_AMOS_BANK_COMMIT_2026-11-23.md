@@ -17,6 +17,14 @@ Séquence :
 4. Revalider l'adresse Bnk.GetAdr et la tête Cur_Banks, parcourir la liste avec une limite de 65 535 liens, identifier exactement le nœud à remplacer ; **une seule écriture LONG** publie le nouveau nœud.
 5. Appeler Bnk.Change **tant que l'ancienne allocation est encore vivante** ; libérer ensuite seulement l'ancien nœud via Lst.Del. Sur refus avant publication, libérer uniquement la nouvelle allocation temporaire.
 
+## Vérification native de la totalité du payload AGSP
+
+Nouveau [validateur strict MC68020](../src/native/m19_s1/M19_S1P1C_AGSP_VALIDATE_MC68020.s) avec [tests CPU indépendants](../tools/test_m19_s1p1c_agsp_validate.py). Entrée **A0 = payload entièrement alloué**, **D0 = longueur exacte et paire** ; sortie **D0=1/0**, **D1=nombre d'images si succès**. Préserve D2..D7/A2..A6, ne modifie aucun octet. Le wrapper devra le faire réussir **avant** de donner le même payload au publisher.
+
+Il vérifie tous les en-têtes, la génération, les réserves, les identifiants croissants, les profondeurs 2/4, largeurs 16/32/64, dimensions, strides, offsets contigus, palettes RGB24 par image, absence de doublons RGB24 et entrées inutilisées à zéro. Il reconstruit les **indices de chaque pixel de chaque bitplane** et exige la numérotation locale 0 transparent, 1..N opaques dans l'ordre de première apparition. Toute corruption doit refuser sans publication et sans lecture hors du payload si le tampon est alloué selon la longueur fournie.
+
+Les deux routines publication et validation restent **modules natifs de développement**, non liés à AP20 et non installés. La Gate C de la sonde AMOS DATA demeure volontairement sautée.
+
 ## Limites et preuve
 
 Le banc exécute le binaire vasm -m68020 dans Unicorn MC68020, et simule les vrais indices de service AMOS Main/Exec avec des hooks de mémoire. Sont vérifiés : insertion dans une liste vierge, banque étrangère préservée, remplacement avec notification avant libération, refus de contenu erroné, manque de mémoire et changement de liste pendant le staging. **C'est une Gate A CPU partielle avec services simulés.**
