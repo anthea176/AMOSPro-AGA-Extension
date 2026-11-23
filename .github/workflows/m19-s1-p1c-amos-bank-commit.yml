@@ -15,6 +15,8 @@ on:
       - 'tools/build_m19_s1p1e_get_sprite_ap20.py'
       - 'tools/test_m19_s1p1e_get_sprite_cpu.py'
       - 'tools/test_m19_s1p1e_get_sprite_ap20.py'
+      - 'tools/m19_s1p1e_make_fixture.py'
+      - 'tests/proto/agsp_capture/**'
       - 'docs/M19_S1_P1E_GET_AGA_SPRITE_2026-11-23.md'
       - 'src/native/m19_s1/M19_S1P1D_BANK_PUBLIC_MC68020.s'
       - 'tools/test_m19_s1p1c_agsp_validate.py'
@@ -45,7 +47,10 @@ jobs:
       - name: Enforce native CPU policy
         run: |
           python -B tools/native_cpu_policy.py --self-test
-          python -B -m py_compile tools/test_m19_s1p1c_amos_bank_commit.py tools/test_m19_s1p1c_agsp_validate.py tools/test_m19_s1p1c_pipeline.py tools/build_m19_s1p1c_private_ap20.py tools/test_m19_s1p1c_private_ap20.py tools/test_m19_s1p1d_public_bank.py tools/build_m19_s1p1d_sprite_bank_ap20.py tools/test_m19_s1p1d_public_ap20.py tools/build_m19_s1p1e_get_sprite_ap20.py tools/test_m19_s1p1e_get_sprite_cpu.py tools/test_m19_s1p1e_get_sprite_ap20.py
+          python -B -m py_compile tools/test_m19_s1p1c_amos_bank_commit.py tools/test_m19_s1p1c_agsp_validate.py tools/test_m19_s1p1c_pipeline.py tools/build_m19_s1p1c_private_ap20.py tools/test_m19_s1p1c_private_ap20.py tools/test_m19_s1p1d_public_bank.py tools/build_m19_s1p1d_sprite_bank_ap20.py tools/test_m19_s1p1d_public_ap20.py tools/build_m19_s1p1e_get_sprite_ap20.py tools/test_m19_s1p1e_get_sprite_cpu.py tools/test_m19_s1p1e_get_sprite_ap20.py tools/m19_s1p1e_make_fixture.py
+          python -B tools/amos_preflight.py --strict-target tests/proto/agsp_capture/GET_AGA_SPRITE.asc
+          python -B tools/m19_s1p1e_make_fixture.py --output "$RUNNER_TEMP/AGSP_CAPTURE_320X256.iff"
+          python -B tools/m19_s1p1e_make_fixture.py --check --output "$RUNNER_TEMP/AGSP_CAPTURE_320X256.iff"
       - name: Restore pinned VASM
         id: vasm-cache
         uses: actions/cache@v4
