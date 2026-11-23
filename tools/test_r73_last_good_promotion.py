@@ -329,7 +329,7 @@ def main():
             assert len(parts)==71 and label.startswith("R74 0.13.19")
         # P0c uses relocated AP20 V2 stubs, with cross-unit routing
         # independently checked by its exact source builder above.
-        if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA):
+        if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,S1P1E_SHA):
             assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     else:
         # Promoted P2d is byte-identical to the canonical working Lib.

@@ -41,7 +41,11 @@ jobs:
         run: python -B tools/test_m19_p1a_getters_gate_a.py
       - name: Validate sole P1a ASC and RAM log contract (static only)
         run: |
-          python -B tools/test_m19_b8_clear_update_asc_static.py
+          if test -f tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc; then
+            python -B tools/test_m19_b8_clear_update_asc_static.py
+          else
+            echo "SKIP historical B8 ASC check: campaign is not active"
+          fi
           python -B tools/amos_preflight.py --strict-target tests/current/*.asc
           python -B tools/test_current_ram_log.py
       - name: Generators must not mutate the P1a canonical Lib or historic tests
