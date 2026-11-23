@@ -174,6 +174,9 @@ class Machine:
         uc.mem_write(REQUEST,bytes(req))
         before_src=self.read(SOURCE,len(payload))
         for n,reg in enumerate(REGS):uc.reg_write(reg,0x55008000+n)
+        # AMOS Main entry context and AP20 input are real ABI values.
+        uc.reg_write(UC_M68K_REG_A5,AMOS)
+        uc.reg_write(UC_M68K_REG_A0,REQUEST)
         saved={reg:uc.reg_read(reg) for reg in REGS}
         uc.reg_write(UC_M68K_REG_SR,0x2000)
         uc.reg_write(UC_M68K_REG_A0,REQUEST)
