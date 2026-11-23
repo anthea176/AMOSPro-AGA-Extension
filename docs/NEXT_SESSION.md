@@ -1,5 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 23 novembre 2026 — Répertoires de prototypes corrigés et AGTM testé sous WinUAE
+
+**Instruction permanente : `examples/` sert exclusivement à la distribution des exemples avec la Lib.** Les trois anciens dossiers `sprite_s0_viewport/`, `agsp_bank/` et `agtm_prototype/` sont maintenant sous [`tests/proto/`](../tests/proto/README.md), sans changement des sources `.asc` ni de la banque AGSP `.ABK`. La CI autorise les prototypes non actifs dans `tests/proto/` et interdit leur réintroduction dans `examples/`. Un seul ASC actif reste sous `tests/current/`.
+
+**AGTM : preuves WinUAE du 23/11/2026** consignées dans [AGTM_WINUAE_PROTOTYPES_2026-11-23.md](AGTM_WINUAE_PROTOTYPES_2026-11-23.md) avec **journaux d'origine CRLF et ABK exact**. Banque DATA AGTM : Runtime B PASS (`SAVE_ERROR=0`, `LOAD_ERROR=0`, `BYTE_MISMATCH=0` ; fichier `AmBk` de 436 octets, payload 416, 352 cellules conformes). Benchmark FULL/SCROLL de 16px : **Runtime B et Compiler C PASS**, `PIXELS_OK=81920`, `PIXEL_BAD=0`, `CLOSE_RETURNED=1` et Chip/Fast stables après nettoyage. Ticks Runtime FULL/SCROLL `177/33` (×5,36), Compiler `140/31` (×4,52) ; mesures d'un prototype basé sur la Lib existante, **pas de code AGTM natif M20**. Gate C de la banque et Gate D physique NON TESTÉES. `LIBRARY_EXPECTED M19_P2D` ne garantit pas la SHA de la Lib réellement installée.
+
+**Lib P2d, LAST_GOOD, Bob `tests/current/M19_P2_ALL_IN_ONE.asc` et `tests/passed/` restent inchangés.** Ordre de développement M21 Dual Playfield → M20 AGTM conservé.
+
+
 
 ## 22 novembre 2026 — Cloture d'inventaire des quatre unites natives P2d
 
@@ -378,7 +387,7 @@ a l'occasion d'une migration source.
 
 **Gate A CPU MC68020 partielle [CI 45011441994 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45011441994)** : code vasm execute en Unicorn, **6 tests du pont ScreenBuffer/GetRGB32 + 8 tests du repacking banque multi-images**, tous PASS. Les services OS et la memoire AGA sont simules, pas un appel AP20. [Pont MC68020](../src/native/m19_s1/M19_S1P1B_SCREEN_RGB24_MC68020.s) ; [repack AGSP](../src/native/m19_s1/M19_S1P1B_AGSP_REPACK_MC68020.s). Les images deja presentes sont conservees ; les erreurs d'entree/capacite refusent la publication.
 
-**Sonde de compatibilite DATA AMOS prete pour WinUAE :** [ASC](../examples/agsp_bank/AGSP_BANK_SAVELOAD.asc) et [ABK 212 octets](../examples/agsp_bank/AGSP_1IMG_16X16.ABK), [generation deterministe](../tools/m19_s1p1b_agsp_fixture.py), SHA256 ABK `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`. Preflight source et bytes de l'ABK PASS en CI. Source ASC sous `examples/` avec nom sans version (regles de livraison), **tests/current/M19_P2_ALL_IN_ONE.asc est conserve identique**. Le banc charge, controle, sauvegarde, efface et recharge une banque DATA, mais les vraies Gates Runtime B / Compiler C ne sont **PAS TESTEES**. [Mode operatoire](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
+**Sonde de compatibilite DATA AMOS prete pour WinUAE :** [ASC](../tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc) et [ABK 212 octets](../tests/proto/agsp_bank/AGSP_1IMG_16X16.ABK), [generation deterministe](../tools/m19_s1p1b_agsp_fixture.py), SHA256 ABK `0e6dcaa50d32ff957c2eb5e22394f870230c7d759642cfe1bf1db2cfc28a64bb`. Preflight source et bytes de l'ABK PASS en CI. Source ASC sous `examples/` avec nom sans version (regles de livraison), **tests/current/M19_P2_ALL_IN_ONE.asc est conserve identique**. Le banc charge, controle, sauvegarde, efface et recharge une banque DATA, mais les vraies Gates Runtime B / Compiler C ne sont **PAS TESTEES**. [Mode operatoire](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
 
 **Suite native S1-P1c non realisee :** wrapper AMOS/AP20, validation des allocations et plages memoire, transaction de banque `Lst.Cree / Bnk.Change / Lst.Del` apres repacking; puis test de vrai Save/Load. La securite DMA/palette demeure hors jalon. Aucun changement P2d/LAST_GOOD.
 
@@ -457,7 +466,7 @@ Réutiliser autant que possible `Aga Iff Load`, `Aga Palette Get/Set` et les mé
 
 ## 21 novembre 2026 — S0 ViewPort : banc AMOS de mesure prêt
 
-**Étape suivante, sans Lib nouvelle :** exécuter [`examples/sprite_s0_viewport/VIEWPORT_PROBE.asc`](../examples/sprite_s0_viewport/VIEWPORT_PROBE.asc) sur WinUAE/AMOS P2d, **Runtime d'abord** et fournir `RAM:M19_S0_VP_RUNTIME.TXT`, éventuellement la capture du rendu F/L. Le banc utilise `AREG(5)`, `LEEK`, `DEEK` pour lire le contexte P2d (`A5+$1C8`) et le drapeau `ViewPort.Modes SPRITES=$4000` à `Screen+76`, avant/après Double Buffer, curseur et Swap. **Snapshot WinUAE indispensable** : pointeurs internes lus directement, crash possible si ABI diverge. Logs distincts par mode, y compris Compiler. **5 tests statiques locaux PASS**, préflight CI en cours ; **B/C/D NON TESTÉES**. `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` et l'unique ASC P2 ALL IN ONE demeurent inchangés. [Mode opératoire](../examples/sprite_s0_viewport/README.md). **Ne pas ajouter de token/Lib Sprite avant lecture du log, ni altérer `Screen.UserData`/Copper/DMA**.
+**Étape suivante, sans Lib nouvelle :** exécuter [`tests/proto/sprite_s0_viewport/VIEWPORT_PROBE.asc`](../tests/proto/sprite_s0_viewport/VIEWPORT_PROBE.asc) sur WinUAE/AMOS P2d, **Runtime d'abord** et fournir `RAM:M19_S0_VP_RUNTIME.TXT`, éventuellement la capture du rendu F/L. Le banc utilise `AREG(5)`, `LEEK`, `DEEK` pour lire le contexte P2d (`A5+$1C8`) et le drapeau `ViewPort.Modes SPRITES=$4000` à `Screen+76`, avant/après Double Buffer, curseur et Swap. **Snapshot WinUAE indispensable** : pointeurs internes lus directement, crash possible si ABI diverge. Logs distincts par mode, y compris Compiler. **5 tests statiques locaux PASS**, préflight CI en cours ; **B/C/D NON TESTÉES**. `dist/AMOSPro_AGA.Lib`, `LAST_GOOD` et l'unique ASC P2 ALL IN ONE demeurent inchangés. [Mode opératoire](../tests/proto/sprite_s0_viewport/README.md). **Ne pas ajouter de token/Lib Sprite avant lecture du log, ni altérer `Screen.UserData`/Copper/DMA**.
 
 
 ## 21 novembre 2026 — chantier Sprites AGA S0 commencé : audit NDK + modèle de propriété

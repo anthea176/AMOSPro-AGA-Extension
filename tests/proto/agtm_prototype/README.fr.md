@@ -1,6 +1,6 @@
 # AGTM — prototypes AMOS pour WinUAE
 
-**Statut : PRÉPARÉ — PREFLIGHT AMOS STRICT PASS ; tests WinUAE Runtime/Compiler NON TESTÉS.**
+**Statut 23/11/2026 : banque AGTM Runtime B PASS ; benchmark tuiles Runtime B et vrai Compiler C PASS.** [Rapport, journaux d'origine et ABK](../../../docs/AGTM_WINUAE_PROTOTYPES_2026-11-23.md). **Prototypes non distribués avec la Lib.**
 
 Ces deux fichiers sont des **prototypes autonomes** pour étudier AGTM sans modifier l'extension installée. Ils emploient des instructions AMOS et des commandes AGA **déjà existantes dans M19 P2d**, sans nouveau token, moteur ASM ou format graphique natif. Le lancement du chantier natif M20 reste prévu **après Dual Playfield M21**.
 
@@ -55,6 +55,6 @@ Ce banc ne teste **ni le scrolling de 1 pixel non aligné, ni plusieurs couches,
 
 Les deux fichiers `.asc` sont en ASCII pur, **préflight strict `amos_preflight.py --strict-target --fail-on-warnings` PASS localement**. Les **21 tests du préflight** passent. Un modèle de pixels Python indépendant a également confirmé l'équivalence logique du décalage 16 px avant exécution Amiga, sans prouver le comportement de `BltBitMap`.
 
-**Gates AGTM : A (natif) NON TESTÉE, B WinUAE NON TESTÉE, C Compiler NON TESTÉE, D matériel NON TESTÉE.** Le préflight ne compile pas le programme. Aucune modification de `tests/current/`, `tests/passed/`, `dist/`, `LAST_GOOD`, des tokens ou des sources ASM.
+**Gates par source :** banque DATA AGTM `AGTM_BANK_ROUNDTRIP.asc` : B Runtime PASS, C Compiler non testée. Benchmark `AGTM_TILE_BENCH.asc` : B Runtime PASS et C vrai Compiler PASS. **Aucun moteur natif M20 testé ; D physique non testée.** La version binaire P2d installée reste à vérifier indépendamment de `LIBRARY_EXPECTED`. `tests/current/`, `tests/passed/`, `dist/`, `LAST_GOOD`, tokens et sources ASM inchangés.
 
 [Spécification AGTM v1](../../../docs/RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Roadmap](../../../docs/ROADMAP.md).

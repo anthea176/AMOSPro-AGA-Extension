@@ -183,13 +183,13 @@ Rapport avec protocole, cas limites et échantillons bruts : [AGTM — scrolling
 
 **Le contrat d'allocation réelle Chip/Fast, l'intégration avec les Bobs natifs et la stratégie de scrolling matériel restent à définir APRÈS M21. Aucun token ou binaire de l'extension n'est modifié par ces études.**
 
-## 13. Premiers prototypes AMOS — essais WinUAE à réaliser
+## 13. Premiers prototypes AMOS — résultats WinUAE 23/11/2026
 
-Deux sources **AMOS Professional autonomes** sont prêtes, sans aucune modification de la bibliothèque installable : [consignes et ressources](../examples/agtm_prototype/README.fr.md).
+Deux sources **AMOS Professional autonomes** sont prêtes, sans aucune modification de la bibliothèque installable : [consignes et ressources](../tests/proto/agtm_prototype/README.fr.md).
 
-- [AGTM_BANK_ROUNDTRIP.asc](../examples/agtm_prototype/AGTM_BANK_ROUNDTRIP.asc) : banque DATA AGTM v1, indices zéro-based, sauvegarde `.ABK`, effacement, rechargement et contrôle exact des cellules. Cette sonde vérifie la compatibilité réelle du format en AMOS, indépendamment de l'écran AGA.
-- [AGTM_TILE_BENCH.asc](../examples/agtm_prototype/AGTM_TILE_BENCH.asc) : moteur **provisoire construit avec les commandes AGA existantes**, une carte 22×16 stockée dans une banque DATA, quatre tuiles FICON8 16×16 et une vue 320×256. Comparaison du redessin intégral (320 icônes) avec `Aga Blit Copy` de 304×256 pixels + 16 tuiles découvertes. Deux passes A/B puis B/A ; `Aga C Block Capture` et comparaison **des 81 920 octets planaires** hors fenêtre chronométrée.
+- [AGTM_BANK_ROUNDTRIP.asc](../tests/proto/agtm_prototype/AGTM_BANK_ROUNDTRIP.asc) : banque DATA AGTM v1, indices zéro-based, sauvegarde `.ABK`, effacement, rechargement et contrôle exact des cellules. Cette sonde vérifie la compatibilité réelle du format en AMOS, indépendamment de l'écran AGA.
+- [AGTM_TILE_BENCH.asc](../tests/proto/agtm_prototype/AGTM_TILE_BENCH.asc) : moteur **provisoire construit avec les commandes AGA existantes**, une carte 22×16 stockée dans une banque DATA, quatre tuiles FICON8 16×16 et une vue 320×256. Comparaison du redessin intégral (320 icônes) avec `Aga Blit Copy` de 304×256 pixels + 16 tuiles découvertes. Deux passes A/B puis B/A ; `Aga C Block Capture` et comparaison **des 81 920 octets planaires** hors fenêtre chronométrée.
 - Conversion explicite : **AGTM index 0..3 → FICON8 IconID 1..4** ; les données de carte ne contiennent jamais directement les identifiants FICON8.
-- **Statut : PREFLIGHT AMOS STRICT PASS uniquement**, sans essai WinUAE ni compilation effective. Les 21 tests du préflight passent. Le test visuel et les journaux Runtime/Compiler sont à obtenir avant toute conclusion de vitesse native.
+- **Mise à jour 23/11/2026 :** banque AGTM **Gate B Runtime PASS** (Save/Load, 352 cellules exactes) ; benchmark tuiles **Gates B Runtime et C vrai Compiler PASS** (`PIXEL_BAD=0` pour 81 920 octets, fermeture OK). Pour un décalage de **16 px**, SCROLL 33 ticks contre FULL 177 en Runtime et 31 contre 140 en Compiler. [Rapport et journaux originaux](AGTM_WINUAE_PROTOTYPES_2026-11-23.md). Aucun test du futur moteur AGTM natif, scrolling 1 pixel ou couches multiples.
 
 Ces prototypes sont **préliminaires** : ils ne constituent ni une commande native de tilemap, ni un bench du scrolling au pixel près, ni une preuve de performance pour deux couches ou les Bobs. Le chantier de développement natif AGTM/M20 reste planifié **après M21**.
