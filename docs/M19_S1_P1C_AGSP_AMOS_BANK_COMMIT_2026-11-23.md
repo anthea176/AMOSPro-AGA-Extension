@@ -42,3 +42,8 @@ L'appelant fournit un **descripteur privé de 72 octets**, déjà alloué et val
 ## Liaison AP20 sans toucher à la bibliothèque installée
 
 Un [builder in-memory source P2d](../tools/build_m19_s1p1c_private_ap20.py) et son [test HUNK/relocation](../tools/test_m19_s1p1c_private_ap20.py) intègrent **l'assemblage binaire exact de la chaîne S1-P1c** comme **groupe AP20 V2 privé supplémentaire**. La candidate n'est **écrite dans aucun fichier, n'est pas installée, et n'ajoute aucun token AMOS**. La table historique des 100 commandes et les 203 entrées P2d sont conservées octet pour octet, et les distances PC16/GETP sont auditées. C'est une préparation mesurable du raccordement AP20, pas une fonction déjà exécutable dans AMOS. L'étape suivante est d'écrire une vraie entrée publique avec validation des paramètres/allocations et d'effectuer un test WinUAE Runtime, sans toucher à LAST_GOOD.
+
+
+## S1-P1e — Entrée publique de capture en cours
+
+[Source et protocole](M19_S1_P1E_GET_AGA_SPRITE_2026-11-23.md) : nouvelle forme candidate `Get AGA Sprite I,X1,Y1,X2,Y2,TransparentPen` (rectangle inclusif, largeur 16 en S1). Wrapper MC68020 avec sélection précédente, allocation privée Exec.AllocVec/FreeVec, repack AGSP, validation complète et publication atomique. La candidate AP20 est **strictement en mémoire et non installée** ; les tests natifs de cette nouvelle tranche doivent être vérifiés en CI, puis en WinUAE Runtime. Gate C de la sonde DATA reste volontairement non testée.
