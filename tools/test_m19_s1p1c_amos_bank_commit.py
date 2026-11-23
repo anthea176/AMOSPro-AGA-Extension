@@ -56,6 +56,8 @@ class Machine:
         assert 100 < len(self.code) < 20000
         self.uc.mem_write(CODE,self.code)
         self.uc.mem_write(EXEC-534,b'\x4e\x75')
+        # ExecBase is stored at absolute $4 in AmigaOS, not in A5.
+        self.put32(4,EXEC)
         self.uc.hook_add(UC_HOOK_CODE,self.on_code)
         self.allocations={}
         self.freed=[]
