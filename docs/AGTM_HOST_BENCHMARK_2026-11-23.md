@@ -9,7 +9,7 @@ Rattachement : [M20 dans la roadmap](ROADMAP.md), futur chantier natif **après 
 - **Machine hôte :** Linux 6.18.57 x86-64 sous KVM, CPU Intel Xeon Platinum 8573C, Python 3.13.5.
 - [Spécification AGTM](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md).
 - [Codec et oracle de référence](../tools/prototypes/agtm_format_proto.py), Git blob f5f3886be11cafb6944600d9bba16e70a19a89ea.
-- [Prototype de benchmark](../tools/prototypes/agtm_render_bench.py), Git blob **142f14571c58edd4bba3a081d09326fd222f3f36**.
+- [Prototype de benchmark](../tools/prototypes/agtm_render_bench.py), Git blob **7db804daf2a33896c7409ffdbb1b0d29cba0c6e9**.
 - Tests : [format](../tools/prototypes/test_agtm_format_proto.py) et [rendu](../tools/prototypes/test_agtm_render_bench.py) : **14 tests PASS localement**, dont scénarios diagonaux, quatre directions, caméra non alignée, grands sauts et deux pages alternées.
 - Données synthétiques originales et déterministes : carte 64×64, 64 images de 16×16, 1 ou 2 couches, transparence du pen 0 sur overlays seulement.
 
