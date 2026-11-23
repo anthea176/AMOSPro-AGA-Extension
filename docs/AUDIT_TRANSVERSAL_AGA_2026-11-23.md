@@ -122,3 +122,20 @@ Sources : [Swap P2d](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/455
 - **Correctifs :** **aucun**. Le développement reste gelé, conformément au plan de l'auteur.
 
 L'audit ne pourra être clos que lorsque **chaque commande** a un statut `conforme` / `anomalie identifiée` / `validation manquante` appuyé par une preuve *native liée* et un test approprié. Pour l'instant la majorité est en `validation manquante`.
+
+## 6. Passage 2 — vérification complémentaires des chemins liés (lecture seule)
+
+### AGA-009 — Close R83 : attente de notifications bornée, latence possible — **P2, à mesurer**
+
+Dans l'[unité R83 Close SafeWait](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/src/native/m19_p2d/M19_UNIT142_R83_CLOSE_SAFEWAIT_MC68020.s#L14-L68), `L_LEGACY_CLOSE_CORE_001A6` relit les indicateurs pending, consomme `GetMsg` pour Safe et Disp, puis répète une attente `WaitTOF` tant que les notifications ne sont pas acquittées. La boucle incrémente D4 jusqu'au seuil `#$12D` (**301** en décimal) avant sa voie de refus.
+
+C'est une **boucle bornée**, non une preuve de freeze infini. Dans une configuration PAL 50 Hz, des centaines de `WaitTOF` peuvent néanmoins représenter plusieurs secondes ressenties comme un blocage ; durée et chemin de sortie exacts à mesurer en Gate B/C. **Ne pas remplacer ce garde par une fermeture forcée sans preuve d'innocuité sur les bitplanes et les callbacks.** Compléter T14 par la variante « Safe/Disp absents pendant la fermeture » et identifier le nombre de WaitTOF réellement effectués.
+
+### Contrôles locaux supplémentaires identifiés (sans valider les interactions B8)
+
+- **CBlock Capture/Draw/Restore :** le [wrapper](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/m18_cblock_bank_emit.py#L264-L289) acquiert Safe par `DB+20` puis `Exec GetMsg(-372)`, attend `WaitBlit(-228)`, et achemine vers le [coeur de copie](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/m18_cblock_copy_emit.py#L68-L114). **Protection locale visible** ; à vérifier par la vraie liaison AP20/P2d et par T13 après Swap avec snapshot B8. Aucune Gate B/C nouvelle.
+- **C2P Convert :** [sélection explicitement distincte du front](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/c2p_r75_convert_emit.py#L89-L109), [GetMsg Safe et WaitBlit](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/c2p_r75_convert_emit.py#L121-L149) avant le BltBitMap vers le back. Contrôles locaux visibles, mais **aucune notification de contenu B8 prouvée** après Convert ; risque d'interaction AGA-003 maintenu.
+- **F Blit/FICHIP :** le [coeur Blitter](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/m18_ficon16_chip_blit_emit.py#L137-L165) attend WaitBlit avant retour et suppose qu'un wrapper a déjà validé Safe et la banque ; la présence et la liaison exacte de ce wrapper restent **à vérifier**. Ne pas traiter le seul WaitBlit comme une acquisition Safe.
+- **Font Select :** [routines de fermeture de police](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/m14_font_select_r37_emit.py#L162-L181) propres au contexte texte. Elles devront être testées avec Close/End, mais la simple possession d'un CloseFont ne valide pas le cycle B8.
+
+**État à l'issue du passage 2 :** ajout de preuves statiques et d'un risque de latence Close ; **aucun nouveau test, aucune modification du moteur, aucune nouvelle conformité globale prononcée**.
