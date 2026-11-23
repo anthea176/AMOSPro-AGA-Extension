@@ -182,3 +182,14 @@ L'étude a passé **27 tests hôtes** (14 premiers tests + 11 nouveaux tests de 
 Rapport avec protocole, cas limites et échantillons bruts : [AGTM — scrolling dynamique, deux pages et modifications](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md).
 
 **Le contrat d'allocation réelle Chip/Fast, l'intégration avec les Bobs natifs et la stratégie de scrolling matériel restent à définir APRÈS M21. Aucun token ou binaire de l'extension n'est modifié par ces études.**
+
+## 13. Premiers prototypes AMOS — essais WinUAE à réaliser
+
+Deux sources **AMOS Professional autonomes** sont prêtes, sans aucune modification de la bibliothèque installable : [consignes et ressources](../examples/agtm_prototype/README.fr.md).
+
+- [AGTM_BANK_ROUNDTRIP.asc](../examples/agtm_prototype/AGTM_BANK_ROUNDTRIP.asc) : banque DATA AGTM v1, indices zéro-based, sauvegarde `.ABK`, effacement, rechargement et contrôle exact des cellules. Cette sonde vérifie la compatibilité réelle du format en AMOS, indépendamment de l'écran AGA.
+- [AGTM_TILE_BENCH.asc](../examples/agtm_prototype/AGTM_TILE_BENCH.asc) : moteur **provisoire construit avec les commandes AGA existantes**, une carte 22×16 stockée dans une banque DATA, quatre tuiles FICON8 16×16 et une vue 320×256. Comparaison du redessin intégral (320 icônes) avec `Aga Blit Copy` de 304×256 pixels + 16 tuiles découvertes. Deux passes A/B puis B/A ; `Aga C Block Capture` et comparaison **des 81 920 octets planaires** hors fenêtre chronométrée.
+- Conversion explicite : **AGTM index 0..3 → FICON8 IconID 1..4** ; les données de carte ne contiennent jamais directement les identifiants FICON8.
+- **Statut : PREFLIGHT AMOS STRICT PASS uniquement**, sans essai WinUAE ni compilation effective. Les 21 tests du préflight passent. Le test visuel et les journaux Runtime/Compiler sont à obtenir avant toute conclusion de vitesse native.
+
+Ces prototypes sont **préliminaires** : ils ne constituent ni une commande native de tilemap, ni un bench du scrolling au pixel près, ni une preuve de performance pour deux couches ou les Bobs. Le chantier de développement natif AGTM/M20 reste planifié **après M21**.
