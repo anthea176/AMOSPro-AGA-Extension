@@ -7,13 +7,13 @@
 
 ## 0. Rattachement à la roadmap et règles de non-interférence
 
-La roadmap AGA contient déjà le chantier **M20 — tilemaps / scrolling**, distinct du chantier actif des sprites matériels AGA. **AGTM n'est pas un jalon « M20 P1 » activé**, ni une autorisation de modifier la Lib. Il s'agit d'une étude utile au RPG Engine qui pourra être prise en compte ultérieurement dans M20, sur décision expresse.
+La [roadmap AGA](ROADMAP.md) confirme désormais **M20 — tilemaps / scrolling / AGTM comme chantier natif complet à lancer APRÈS M21 dual playfield**, tandis que le chantier Sprites matériels AGA demeure la priorité actuelle. **AGTM n'est toujours pas un jalon « M20 P1 » déjà exécuté** ; la phase présente reste spécification et prototypes hôtes, sans autorisation de modifier la Lib.
 
-**Autorisés par cette étude :** les documents de spécification, prototypes hôtes autonomes et leurs tests. **Hors périmètre :** `docs/ROADMAP.md`, les builders, le natif MC68020, les tokens AP20, `tests/current/`, `dist/`, `LAST_GOOD` et toute promotion.
+**Autorisés maintenant :** la spécification, les prototypes hôtes autonomes et leurs tests/mesures. **La mise à jour de la roadmap du 23/11/2026 est la décision explicite de planification**, pas une ouverture de développement natif. **Hors périmètre de l'étude :** les builders, le natif MC68020, les tokens AP20, `tests/current/`, `dist/`, `LAST_GOOD` et toute promotion.
 
 **Références de l'étude :**
 - [Prototype de codec et oracle chunky AGTM](../tools/prototypes/agtm_format_proto.py) — format binaire, mutations immutables et composition de pixels.
-- [Tests hôtes AGTM](../tools/prototypes/test_agtm_format_proto.py) — 9 tests locaux PASS le 23/11/2026 ; aucune Gate A/B/C/D.
+- [Tests hôtes du format](../tools/prototypes/test_agtm_format_proto.py) — 9 tests PASS ; [rendu et scrolling](../tools/prototypes/test_agtm_render_bench.py) — 5 tests PASS supplémentaires, soit **14 PASS localement**, aucune Gate A/B/C/D.
 - [M20 P0 original](M20_TILEMAP_P0_HOST_MODEL.md) — modèle de scrolling et tests existants conservés sans modification.
 
 Une décision distincte est requise avant de figer le format, ouvrir un jalon natif, modifier un outil actif ou changer la roadmap.
@@ -151,3 +151,13 @@ python -B -m unittest discover -s tools/prototypes -p 'test_agtm_format_proto.py
 5. **Chip RAM** : mesurer pages, snapshots, atlas, caches de Bobs, masques, DMA et allocations OS ; les volumes théoriques ne sont pas un bilan de mémoire disponible.
 
 La sérialisation de la **carte** ne dépend pas de la représentation **des pixels des tuiles**. Une variante U16, un masque autonome ou un backend de scrolling matériel nécessiteront une évolution explicite et mesurée de la spécification.
+
+## 11. Mesures comparatives préliminaires (23/11/2026)
+
+Le prototype de [rendu/scrolling hôte](../tools/prototypes/agtm_render_bench.py) a été mesuré en Python 3.13.5 / Linux x86-64, 5 passes intercalées par méthode, 5 rendus par passe, 6 scénarios. Avant chaque série, le rendu pixel oracle et les deux méthodes optimisées ont été comparés octet pour octet.
+
+À 320×256, 2 couches, déplacement de caméra de 1 px, les médianes observées sont **3,115 ms pour la composition par segments de tuiles** et **0,238 ms pour copie du décor + bandes**, soit un rapport **×13,09 sur l'hôte uniquement**. Pour (+8,+8), **3,050 ms** contre **0,352 ms** (×8,67), et pour (+16,0), **3,379 ms** contre **0,404 ms** (×8,36).
+
+**Ces chiffres ne mesurent ni n'estiment des performances MC68020/AGA** ; les transferts en Chip RAM, l'attente DMA, les bitplanes, les Bobs et le VBL pourraient modifier radicalement le résultat. La zone d'écran est quasi intégralement copiée, même si peu de pixels exigent une recomposition de tuiles.
+
+Résultats complets, protocole, mesures brutes, hypothèses mémoire et futurs tests : [AGTM — benchmark hôte du 23/11/2026](AGTM_HOST_BENCHMARK_2026-11-23.md). **Aucun backend natif, aucune API AMOS ni aucun jalon M20 n'ont été lancés sur ces seuls résultats.**
