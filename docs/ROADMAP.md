@@ -34,7 +34,7 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 
 **P1e** — [Del Bob et Ins Bob](M19_BOBS_MULTI_IMAGE_ABK_API_DESIGN.md#p1e--del-bob-et-ins-bob) sont raccordés à la transaction AMOS et passent le banc natif. La P1e est promue. [Gate B PASS 2/2](M19_P1E_PROMOTION_2026-11-21.md). [Résultats P1d Runtime](M19_P1D_LIMIT_BOB_RUNTIME_2026-11-21.md).
 
-**M20 EN ATTENTE :** prototype Python P0 (13 tests hôtes PASS) conservé ; aucune poursuite avant décision sur M19.
+**M20 — CHANTIER AGA PROGRAMMÉ APRÈS M21 (dual playfield) :** moteur de tilemaps / scrolling et format AGTM pour RPG Engine. **Ce sera un chantier natif de l'extension à part entière**, mais son implémentation reste en attente de la clôture de M21 et d'une autorisation explicite. **Études autorisées dès maintenant** : spécifications, prototypes hôtes et benchmarks reproductibles sans toucher à la Lib ni au chantier Sprites actif. [Spécification AGTM exploratoire](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Résultats hôtes](AGTM_HOST_BENCHMARK_2026-11-23.md) · [Mesures avec éditions dynamiques](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md) · [socle M20 P0](M20_TILEMAP_P0_HOST_MODEL.md).
 
 ## 3. M19 P2 terminé — prochain chantier : sprites matériels AGA
 
@@ -50,9 +50,19 @@ P1a (getters) et P1b (hotspot) ont passé leur campagne Runtime. P1c expose `Aga
 | **P2e.1 — Deux canaux AMAL** | [Banc actif corrigé](../tests/current/M19_P2E1_AMAL_TWO_BOBS.asc) : F/L avec transparence et affichage AGA automatique ; **Runtime à tester**, sans nouveau token ni Lib. Démo [Bob Flip F asymétrique](../examples/aga_bob_flip/FLIP_VISUAL.asc) séparée. |
 | **Bobs et animations** | Maintenir la régression `Clear → Update → Swap` et optimiser uniquement sur des mesures. |
 | **Sprites matériels AGA S0** | **Audit NDK/architecture en cours, modèle HOST 12/12 PASS, [sonde AMOS ViewPort prête](../examples/sprite_s0_viewport/README.md) (WinUAE non testé)** : [document S0 d'intégration](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) et [modèle](../tools/aga_sprite_s0_model.py). Méthode S1 retenue sous réserve de preuve : `GetSprite(-1)` / `MoveSprite` / `ChangeSprite` pour un canal 16 pixels non attaché ; vérifier `Screen.ViewPort.Modes`, pointeur Intuition, couleurs Copper, arrêt DMA et fermeture. **Aucun S1 natif, aucune nouvelle Lib/API, Gates B/C/D non testées.** |
-| **Tilemaps / scrolling (M20)** | **P0 modèle hôte et 13 tests PASS**, caméra, bandes exposées et deux pages indépendantes ; [spécification et limites](M20_TILEMAP_P0_HOST_MODEL.md). Implémentation native à concevoir, pas de nouveau token. |
-| **Dual playfield (M21)** | Plans indépendants, palettes et scrolling. |
+| **Dual playfield (M21) — préalable à M20** | Plans indépendants, palettes et scrolling. **À mener avant le lancement natif du chantier AGTM/M20.** |
+| **Tilemaps / scrolling (M20) — après M21** | **Futur chantier de développement AGA confirmé** pour le RPG Engine : carte AGTM, tilesets, rendu batch MC68020, scrolling optimisé, régions modifiées et intégration Bobs/double buffering. **Étude/prototypes/mesures hôtes en cours maintenant**, [spécification AGTM](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) et [benchmark](AGTM_HOST_BENCHMARK_2026-11-23.md) ; aucune nouvelle API/Lib sans qualification. |
 | **Entrées (M22)** | Vérifier d'abord les commandes joysticks natives, sans inventer une API AGA. |
 | **C2P / Copper (M23/M24)** | Évaluer accélérations et API avec preuve CPU, WinUAE et Compiler. |
+
+## 4. Ordre des chantiers — décision du 23/11/2026
+
+**Décision d'ordonnancement :** terminer le chantier **Sprites matériels AGA (M19 S1...)** en cours ; traiter ensuite **Dual playfield (M21)** ; engager **Tilemaps / scrolling / AGTM (M20)** comme **chantier natif principal de l'extension** une fois M21 clôturé. La numérotation M20/M21 est historique et **ne détermine pas l'ordre d'exécution**. Les autres sujets M22–M24 conservent leurs références.
+
+**Avant le lancement du M20 natif, l'étude continue dès maintenant** sur `main` : [spécification exploratoire AGTM v1](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md), [prototype de format](../tools/prototypes/agtm_format_proto.py), [rendu comparatif](../tools/prototypes/agtm_render_bench.py), [mesures hôtes statiques](AGTM_HOST_BENCHMARK_2026-11-23.md) · [étude avec éditions et deux pages (27 tests hôtes PASS)](AGTM_DIRTY_SCROLL_HOST_2026-11-23.md). Ces mesures sont en Python/x86-64, **pas des preuves d'accélération MC68020/AGA**.
+
+**Périmètre technique futur de M20 :** contrats des banques AGTM/tileset, prévalidation des indices/pointeurs, CPU 68020 et Blitter comparés, scrolling par bandes et éventuel scrolling matériel, transparence/couches, dirty rects par page, Bobs et intégration Safe/Disp. Architecture modulaire pour RPG Engine, sans logique RPG spécifique dans la Lib.
+
+**Verrous conservés :** pas de changement des commandes publiques AP20, sources natives, `dist/`, `LAST_GOOD`, `tests/current/` ou du chantier Sprite sur la seule base des prototypes. Toute candidate M20 exige décision et Gates A/B/C, puis D si possible. Les sources et jeux de tuiles restent originaux, sans reprise de code, de données ou de ressources provenant de projets tiers.
 
 Historique non normatif : [Roadmap archivée](ROADMAP_HISTORY_2026-11-17.md) · [reprise technique](NEXT_SESSION.md).
