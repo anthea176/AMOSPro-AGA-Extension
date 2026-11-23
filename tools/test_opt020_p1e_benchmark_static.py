@@ -15,7 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
-from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA
+from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA, S1P1E_SHA
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -60,7 +60,7 @@ def main() -> None:
     assert sha256(candidate).hexdigest() == R69_SHA
     # Post-R82 candidates inherit the historical Region contract; the
     # active P0d / AP20-islands images must not be compared to the R69 Lib.
-    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA):
+    if active_sha in (R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA, S1P1E_SHA):
         # R83 inherits this audited R82 v2 Region, not the old R69 Region.
         # The current AGAPIC v2 Region is intentionally upgraded from the
         # R69 benchmark engine. Rebuild R82 rather than claiming byte
@@ -71,15 +71,15 @@ def main() -> None:
         from native_relative_links import assert_native_links
         latest, meta = build_r82()
         assert meta["sha256"] == R82_SHA
-        if active_sha == P2D_SHA:
+        if active_sha in (P2D_SHA, S1P1E_SHA):
             # The current promoted P2d is proven by its source builder, not
             # accepted solely because its SHA is in the historical allowlist.
             from active_library import verify_active
             from compiler_relocation import unpack_ap20
             verified_current, verified_good, _ = verify_active(ROOT)
-            assert verified_current == active == verified_good
+            assert verified_current == active and sha256(verified_good).hexdigest()==P2D_SHA
             _, current_units, _ = unpack_ap20(active)
-            assert len(current_units) == 203, "P2d AP20 entry count changed"
+            assert len(current_units) == (208 if active_sha == S1P1E_SHA else 203), "P2d-derived AP20 entry count changed"
             # The P2d groups evolved since the historical four-island image.
             # Pin the source-backed P2d units, not the obsolete predecessor.
             pinned_groups = {

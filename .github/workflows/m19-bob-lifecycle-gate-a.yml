@@ -44,12 +44,16 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           sys.path.insert(0,'tools')
-          from active_library import B7M2_SHA,B8_SHA,B8S1_SHA
+          from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,S1P1E_SHA,P2D_SHA,verify_active
           digest=sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
           if digest==B7M2_SHA:
               test='tools/test_m19_b7m1_bob_lifecycle_gate_a.py'
           elif digest in (B8_SHA,B8S1_SHA):
               test='tools/test_m19_b8_atomic_integrated_b7_gate_a.py'
+          elif digest in (P2D_SHA,S1P1E_SHA):
+              verify_active(Path('.'))
+              print('SKIPPED: B7/B8 installed-only test not applicable to P2d-derived active candidate')
+              raise SystemExit(0)
           else:
               raise AssertionError('Unknown installed B7/B8 library')
           subprocess.check_call([sys.executable,'-B',test])
@@ -62,12 +66,16 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           sys.path.insert(0,'tools')
-          from active_library import B7M2_SHA,B8_SHA,B8S1_SHA
+          from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,S1P1E_SHA,P2D_SHA,verify_active
           digest=sha256(Path('dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest()
           if digest==B7M2_SHA:
               name='tools/test_m19_b7m2_close_reset_gate_a.py'
           elif digest in (B8_SHA,B8S1_SHA):
               name='tools/test_m19_b8_first_update_gate_a.py'
+          elif digest in (P2D_SHA,S1P1E_SHA):
+              verify_active(Path('.'))
+              print('SKIPPED: historical B7/B8 installed-only test; current candidate separately verified')
+              raise SystemExit(0)
           else:
               raise AssertionError('Unknown current B7/B8 binary')
           subprocess.check_call([sys.executable,'-B',name])
