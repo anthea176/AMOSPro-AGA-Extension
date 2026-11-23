@@ -1,0 +1,26 @@
+# S1-P1c — Publication transactionnelle AGSP dans les banques DATA AMOS (23/11/2026)
+
+**Statut : source MC68020 autonome et banc de tests Gate A CPU.** Cette routine n'est pas encore liée à un nouveau token AP20, n'implémente pas Get AGA Sprite, et ne modifie ni P2d ni LAST_GOOD.
+
+## Source et mécanisme
+
+[Source Motorola](../src/native/m19_s1/M19_S1P1C_AGSP_BANK_COMMIT_MC68020.s) · [tests CPU](../tools/test_m19_s1p1c_amos_bank_commit.py) · [CI](../.github/workflows/m19-s1-p1c-amos-bank-commit.yml).
+
+La routine reprend **l'ABI AMOS Professional 365 réellement utilisée dans le source P2d P1e**. Les indices Main sont **Bnk.GetAdr 797**, **Lst.Cree 91**, **Bnk.Change 819**, **Lst.Del 93**. Adresse de tête des banques : **A5+$05EA**. Un nœud DATA a 24 octets de préfixe : pointeur de chaîne 4, taille 4 (payload+16), numéro 4, flags 2, réserve 2, nom 8. Le nom de banque AGSP est exactement **AGASPRT** suivi d'un espace. Aucun Bnk.Reserve destructif.
+
+Entrée : **A0 → requête de 16 octets**, offsets : 0 pointeur vers payload AGSP v1 complet et validé, 4 longueur du payload paire (32..16 Mio), 8 numéro de banque LONG 5..65535, 12 zéro. A5 = contexte AMOS Main vivant. Retour : **D3=1** en cas de succès, **D3=0** en cas de refus, D2=0 type entier ; tous les autres registres de l'ABI sont préservés.
+
+Séquence :
+1. Vérifier numéro de banque, pointeur et enveloppe AGSP, plus les extrémités mémoire par Exec.TypeOfMem. Un **contrôle de toutes les plages, du non-recouvrement et de tous les pixels/répertoire est une précondition stricte du wrapper**, pas une propriété supposée de TypeOfMem.
+2. Par Bnk.GetAdr, vérifier l'ancien numéro si présent ; refuser les banques d'un autre nom/type.
+3. Allouer un **nœud dans une liste privée** avec Lst.Cree ; remplir ses métadonnées DATA et copier le payload déjà validé sans toucher à la banque active.
+4. Revalider l'adresse Bnk.GetAdr et la tête Cur_Banks, parcourir la liste avec une limite de 65 535 liens, identifier exactement le nœud à remplacer ; **une seule écriture LONG** publie le nouveau nœud.
+5. Appeler Bnk.Change **tant que l'ancienne allocation est encore vivante** ; libérer ensuite seulement l'ancien nœud via Lst.Del. Sur refus avant publication, libérer uniquement la nouvelle allocation temporaire.
+
+## Limites et preuve
+
+Le banc exécute le binaire vasm -m68020 dans Unicorn MC68020, et simule les vrais indices de service AMOS Main/Exec avec des hooks de mémoire. Sont vérifiés : insertion dans une liste vierge, banque étrangère préservée, remplacement avec notification avant libération, refus de contenu erroné, manque de mémoire et changement de liste pendant le staging. **C'est une Gate A CPU partielle avec services simulés.**
+
+La sonde DATA AGSP existante a passé **Gate B Runtime** sur WinUAE (fichier .ABK sauvegardé octet identique), mais **cela ne démontre pas encore que ce publisher est connecté à l'AMOS réel**. Le Compiler de cette sonde est **volontairement NON TESTÉ**, par décision explicite de l'auteur : pas de demande supplémentaire de Gate C pour cette sonde.
+
+**Prochaine intégration sans arrêt de chantier :** wrapper AP20 natif qui alloue/stabilise les tampons, prépare les deux modules de capture et le repack, valide le payload AGSP, appelle le publisher, puis lance le premier test **Runtime** de Get AGA Sprite. La fermeture/détachement DMA Sprite reste hors S1-P1c et bloquante pour l'affichage hardware. Les prototypes seront uniquement sous tests/proto ; examples est réservé aux fichiers distribués.
