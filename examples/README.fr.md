@@ -1,5 +1,7 @@
 # AMOSPro AGA — exemples et démonstrations
 
+> **Répertoire de distribution exclusivement.** Les sondes et prototypes Sprite/AGSP/AGTM ou autres essais non publiables vont dans [`tests/proto/`](../tests/proto/README.md), jamais ici. La CI vérifie cette règle.
+
 ## Bibliothèque actuelle et exemple Bob vedette — M19 P2d (MC68020+)
 
 La [`AMOSPro_AGA.Lib` active](../dist/AMOSPro_AGA.Lib) est **M19 P2d**, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrées AP20**. La [bibliothèque protégée `LAST_GOOD`](../dist/AMOSPro_AGA_LAST_GOOD.Lib) est désormais **P2d promue**, strictement identique à la Lib installable. L'exemple **P2 ALL IN ONE** a passé les **Gates B Runtime et C vrai AMOS Compiler** sous WinUAE avec le **même ASC octet-identique**, d'après les journaux fournis ; Gate D sur Amiga physique non testée.

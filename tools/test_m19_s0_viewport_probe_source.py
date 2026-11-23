@@ -8,7 +8,7 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-ASC = ROOT / 'examples/sprite_s0_viewport/VIEWPORT_PROBE.asc'
+ASC = ROOT / 'tests/proto/sprite_s0_viewport/VIEWPORT_PROBE.asc'
 S0D = ROOT / 'tests/design/sprites_aga/SPRITE_PROBE.asc'
 
 

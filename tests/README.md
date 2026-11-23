@@ -1,5 +1,7 @@
 # Tests AMOS — R63 v0.13.8, Gate A CPU PASS ; WinUAE B à tester, C reportée fin M18
 
+> **Organisation au 23/11/2026 :** [`proto/`](proto/README.md) regroupe les essais non distribués ; `current/` garde son ASC unique de campagne ; `passed/` est protégé. Le contenu ci-dessous est historique.
+
 **État courant au 13/11/2026 :** [M18_R61_FICON_01.asc](current/M18_R61_FICON_01.asc) valide la nouvelle fonction AGA Fast Icon sous AMOS interprété et en compilé WinUAE : `RESULT 1`, `CLOSE RETURNED`, Chip Free avant/après stable. [Rapport B/C](../docs/M18_R61_FICON_WINUAE_GATES_BC.md). **R61 reste candidate, R60 est LAST_GOOD** ; Gate D matérielle non effectuée. Les mentions R53/R46 ci-dessous sont des états historiques.
 
 ## Historique — capture fonctionnelle R53 (étape antérieure)

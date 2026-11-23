@@ -23,6 +23,10 @@ PROMOTION_P0_BLOB = '6e23a1dc783145adb41f1a9b02fc6fc8f3b80ff2'
 PROMOTION_P1E_BLOB = '5bb0c476c2b286495a1d0cf7d4415dbbc4eec369'  # P1e native A PASS, Runtime B PASS x2; C/D untested
 PROMOTION_P2D_BLOB = '8a849b89aae57c2cda0b4db8771034a0978d3e78'  # P2d 136020 bytes, B/C integrated PASS, exact existing active Lib
 SPRITE_PROBE_DESIGN = 'tests/design/sprites_aga/SPRITE_PROBE.asc'  # one approved S0b work source
+PROTOTYPE_ROOT = 'tests/proto/'  # never packaged with the library
+LEGACY_PROTOTYPES_IN_EXAMPLES = ('examples/sprite_s0_viewport/',
+                                 'examples/agsp_bank/', 'examples/agtm_prototype/')
+PROTOTYPE_FOLDER_IN_EXAMPLES = re.compile(r'^examples/[^/]*(?:proto(?:type)?|probe)[^/]*/', re.I)
 PUBLIC_VERSION = re.compile(r'(?:^|[/_-])(?:M\d+|R\d+)(?=[_/.]|$)', re.I)
 
 
@@ -44,11 +48,18 @@ def path_errors(path: str, *, deleted: bool = False, approved_promotion: bool = 
     if path.startswith('dist/') and path.lower().endswith('.zip'):
         if not errors:
             errors.append('ZIP is not an AGA Lib delivery destination')
-    # Reject newly delivered AMOS tests outside the single active slot.
+    # examples/ is the public Lib distribution, NEVER an experimental test folder.
+    if (not deleted and path.startswith('examples/') and
+            (path.startswith(LEGACY_PROTOTYPES_IN_EXAMPLES) or
+             PROTOTYPE_FOLDER_IN_EXAMPLES.match(path))):
+        errors.append('non-shipping prototype: use tests/proto/ instead of examples/')
+    # Only the active ASC is in tests/current; non-active prototypes may use
+    # tests/proto. Historical passed/fixtures archives remain protected.
+    # Reject other new AMOS tests outside these authorized locations.
     # Allow CLEANUP of accidental, unprotected misplaced ASC files.
     # Protected historical paths remain rejected above, even on deletion.
     if (not deleted and path.lower().endswith('.asc')
-            and not path.startswith('tests/current/')):
+            and not path.startswith(('tests/current/', PROTOTYPE_ROOT))):
         if path == SPRITE_PROBE_DESIGN:
             pass  # explicitly scoped, one reusable S0b ASC, never a general tests/design exception
         elif path.startswith('examples/'):
@@ -208,11 +219,25 @@ class DeliveryPolicyTests(unittest.TestCase):
                                      deleted=True), [])
         self.assertTrue(path_errors('tests/passed/OLD.asc', deleted=True))
 
+    def test_prototypes_not_in_shipped_examples(self):
+        for p in ('tests/proto/sprite_s0_viewport/VIEWPORT_PROBE.asc',
+                  'tests/proto/agtm_prototype/AGTM_TILE_BENCH.asc',
+                  'tests/proto/agtm_prototype/AGTM_BANK_ROUNDTRIP.asc',
+                  'tests/proto/agsp_bank/AGSP_BANK_SAVELOAD.asc'):
+            self.assertEqual(path_errors(p), [], p)
+        for p in ('examples/sprite_s0_viewport/VIEWPORT_PROBE.asc',
+                  'examples/agsp_bank/AGSP_BANK_SAVELOAD.asc',
+                  'examples/agtm_prototype/AGTM_BANK_ROUNDTRIP.asc',
+                  'examples/new_prototype/TEST.asc',
+                  'examples/sprite_probe/PROBE.asc'):
+            self.assertTrue(path_errors(p), p)
+            self.assertEqual(path_errors(p, deleted=True), [], p)
+
     def test_cleanup_of_misplaced_unprotected_asc(self):
         misplaced = 'tests/sprite_s0/M19_S0_VIEWPORT_PROBE.asc'
         self.assertTrue(path_errors(misplaced))
         self.assertEqual(path_errors(misplaced, deleted=True), [])
-        self.assertEqual(path_errors('examples/sprite_s0_viewport/VIEWPORT_PROBE.asc'), [])
+        self.assertEqual(path_errors('tests/proto/sprite_s0_viewport/VIEWPORT_PROBE.asc'), [])
         self.assertTrue(path_errors('tests/passed/OLD.asc', deleted=True))
         self.assertTrue(path_errors('tests/historical/OLD.asc', deleted=True))
 

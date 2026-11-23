@@ -57,4 +57,4 @@ Les deux fichiers `.asc` sont en ASCII pur, **préflight strict `amos_preflight.
 
 **Gates AGTM : A (natif) NON TESTÉE, B WinUAE NON TESTÉE, C Compiler NON TESTÉE, D matériel NON TESTÉE.** Le préflight ne compile pas le programme. Aucune modification de `tests/current/`, `tests/passed/`, `dist/`, `LAST_GOOD`, des tokens ou des sources ASM.
 
-[Spécification AGTM v1](../../docs/RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Roadmap](../../docs/ROADMAP.md).
+[Spécification AGTM v1](../../../docs/RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Roadmap](../../../docs/ROADMAP.md).
