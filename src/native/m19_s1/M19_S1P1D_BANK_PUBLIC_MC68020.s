@@ -9,6 +9,8 @@ AGSP_S1_PUBLIC_BANK_ENTRY:
     bra.w agsp_s1_select_body
 AGSP_S1_PRIVATE_CAPTURE_ENTRY:
     bra.w AGSP_P1C_PIPELINE_ENTRY
+AGSP_S1_PUBLIC_GET_ENTRY:
+    bra.w agsp_s1_get_body
     include "M19_S1P1C_CAPTURE_PIPELINE_MC68020.s"
 
 AGSP_S1_F_BANK equ 0
@@ -114,6 +116,9 @@ agsp_s1_select_end:
     movem.l (sp)+,d0-d2/d4-d7/a0-a2/a4-a6
     moveq #0,d2
     rts
+
+    ; Public Get AGA Sprite entry shares selected bank and private pipeline.
+    include "M19_S1P1E_GET_PUBLIC_MC68020.s"
 
     ; AGSP v1 empty payload, 32 bytes. NOT a legacy OCS sprite bank.
 agsp_s1_empty:

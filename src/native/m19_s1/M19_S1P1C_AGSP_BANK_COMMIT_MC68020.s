@@ -155,9 +155,11 @@ agsp_c_lookup:
     bne.w agsp_c_reject
     moveq #0,d0
     move.w 12(a4),d0
+    beq.w agsp_c_old_flags_ok   ; AMOS may normalize saved DATA flags to 0
     andi.w #$FFFD,d0
     cmpi.w #1,d0
     bne.w agsp_c_reject
+agsp_c_old_flags_ok:
     cmpi.l #AGSP_NAME_0,16(a4)
     bne.w agsp_c_reject
     cmpi.l #AGSP_NAME_1,20(a4)
