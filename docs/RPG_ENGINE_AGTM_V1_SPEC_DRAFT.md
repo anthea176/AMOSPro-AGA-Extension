@@ -22,7 +22,7 @@ Une décision distincte est requise avant de figer le format, ouvrir un jalon na
 
 Créer une représentation de carte 2D extrêmement simple à parcourir dans une boucle native MC68020 : lecture rapide des cellules, tuiles graphiques pré-décodées, défilement incrémental, couches graphiques, mise à jour des deux pages physiques indépendantes. La logique de jeu (collision, quêtes, objets interactifs, pathfinding) reste dans RPG Engine et hors du noyau AGA.
 
-**Base existante conservée :** [M20 P0](M20_TILEMAP_P0_HOST_MODEL.md), `tools/m20_tilemap_model.py` et ses 13 tests hôtes (caméra par page, bandes découvertes, révisions de carte, restauration du fond, Bobs, 405 frames simulées). Le modèle est un oracle chunky et non un renderer AGA. Ce P1 ne le modifie pas.
+**Base existante conservée :** [M20 P0](M20_TILEMAP_P0_HOST_MODEL.md), `tools/m20_tilemap_model.py` et ses 13 tests hôtes (caméra par page, bandes découvertes, révisions de carte, restauration du fond, Bobs, 405 frames simulées). Le modèle est un oracle chunky et non un renderer AGA. Cette étude ne le modifie pas.
 
 **Séparation délibérée :**
 - Banque de carte **AGTM** : indices de cellules, résidente idéalement en Fast RAM.
@@ -40,7 +40,7 @@ Cette séparation permet de développer un futur tileset optimisé `AGTS` ou de 
 - Le premier chemin graphique compare le moteur actuel FICON8/FICHIP8 en 8 bitplanes ; les chemins 4/5/6 bitplanes ou une banque `AGTS` spécialisée seront décidés au benchmark.
 - L'index de tile `N` correspond au **FICON8 IconID `N+1`**, dans la banque graphique associée **à l'ouverture**, et non à un numéro de banque figé dans le fichier.
 - Sur la couche 0, l'index 0 est une tuile valide et opaque. Sur les couches suivantes, **l'index 0 est « aucune tuile »**, les indices 1..255 sont dessinés en mode transparent (index couleur 0 transparent pour FICON8). Le tile 0 ne peut donc être utilisé comme overlay dans ce prototype.
-- Aucun retournement, animation, encodage d'attributs ou masque indépendant de l'index couleur 0 dans le fichier P1. Ajouter ces capacités seulement après mesure et avec évolution versionnée.
+- Aucun retournement, animation, encodage d'attributs ou masque indépendant de l'index couleur 0 dans ce prototype. Ajouter ces capacités seulement après mesure et avec évolution versionnée.
 - La palette est **celle de l'écran AGA**, commune à toute la scène ; pas de changement de palette par cellule.
 
 Le format privilégie la simplicité d'accès : les variantes compressées sur disque doivent être décompressées **une seule fois au chargement** vers cette structure brute, jamais en cours de rendu.
