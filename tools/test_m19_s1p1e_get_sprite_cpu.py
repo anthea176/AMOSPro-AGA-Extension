@@ -18,7 +18,7 @@ from unicorn.m68k_const import (
 )
 from m19_s1_agsp_bank import empty_bank,put_capture,parse_payload
 from test_m19_s1p1c_amos_bank_commit import (
-    CODE,STOP,AMOS,STACK,EXEC,REGS,fixture
+    CODE,STOP,AMOS,STACK,EXEC,REGS,fixture,CUR_BANKS,HEAD
 )
 from test_m19_s1p1c_pipeline import (
     PipelineMachine,GFX,COLORMAP,W,H
@@ -141,6 +141,22 @@ class AGSPPublicGetGateA(unittest.TestCase):
         self.assertEqual(parse_payload(m.bank(10)).image(1).opaque_count,3)
         self.assertEqual(m.calls_gfx,['WaitBlit','GetRGB32'])
         m.no_temps()
+
+    def test_runtime_bank_29_capture_and_replace(self):
+        pixels=bytes(a|b for a,b in zip(make_screen(),make_screen(x=80)))
+        m=GetMachine(screen=pixels)
+        self.assertEqual(m.select(29),1)
+        self.assertEqual(m.bank(29),empty_bank())
+        self.assertEqual(m.get_sprite(),1)
+        first=m.bank(29)
+        self.assertEqual(len(first),192)
+        self.assertEqual(m.get_sprite(2,x1=80,x2=95),1)
+        self.assertEqual(len(m.bank(29)),352)
+        self.assertEqual(m.get_sprite(1,x1=80,x2=95),1)
+        self.assertEqual(len(m.bank(29)),352)
+        self.assertEqual(m.get(CUR_BANKS),HEAD)
+        self.assertIsNone(m.bank(10))
+        self.assertFalse(m.temp_live)
 
     def test_get_without_bank_selection_is_refused(self):
         m=GetMachine()

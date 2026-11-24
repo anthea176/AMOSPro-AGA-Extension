@@ -1,5 +1,7 @@
 # S1-P1g — Prototype Runtime Get AGA Sprite (non distribué)
 
+> **P1g rejetée en Runtime (ERR 7).** P1h corrige le publisher et le mock Cur_Banks. Ne pas relancer P1g ; attendre la candidate P1h validée. L'IFF est présente dans ce dossier.
+
 Ces fichiers sont des **tests en développement**, exclusivement sous `tests/proto/`. Ne jamais les copier dans `examples/` tant qu'ils ne sont pas approuvés comme exemples de release.
 
 ## Préparer le test
@@ -8,7 +10,7 @@ Ces fichiers sont des **tests en développement**, exclusivement sous `tests/pro
 
 1. Sur Windows, à la racine du dépôt, générer l'IFF déterministe :
    `python tools/m19_s1p1e_make_fixture.py`
-   Le fichier `tests/proto/agsp_capture/AGSP_CAPTURE_320X256.iff` (5 428 octets, SHA256 `b39aa201dddd878405c828687973b3b874ae5d0f8cc1f09d1617dda7ff0628b9`) est produit localement, volontairement sans binaire versionné inutile.
+   Le fichier `tests/proto/agsp_capture/AGSP_CAPTURE_320X256.iff` (5 428 octets, SHA256 `b39aa201dddd878405c828687973b3b874ae5d0f8cc1f09d1617dda7ff0628b9`) est désormais versionné ; le générateur permet de contrôler sa provenance.
 2. Récupérer la Lib S1-P1g dans dist/ et vérifier son SHA256 ci-dessus et installer uniquement dans WinUAE de test, après sauvegarde de la Lib et configuration AMOS. Copier l'IFF et [`GET_AGA_SPRITE.asc`](GET_AGA_SPRITE.asc) ensemble. Banque 29 libre. Conserver la LAST_GOOD L2b pour retour arrière.
 3. Dans AMOS Professional, `Project → Merge ASCII` sur une source vierge et exécuter en **Runtime**. Le Compiler de la sonde AGSP précédente a été volontairement sauté, et n'est pas requis pour ce test.
 

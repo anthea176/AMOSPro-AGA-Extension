@@ -16,7 +16,7 @@ from unicorn.m68k_const import (
 )
 from m19_s1_agsp_bank import empty_bank
 from test_m19_s1p1c_amos_bank_commit import (
-    Machine,REGS,CODE,STACK,STOP,AMOS,fixture
+    Machine,REGS,CODE,STACK,STOP,AMOS,fixture,CUR_BANKS,HEAD
 )
 
 
@@ -71,6 +71,16 @@ class AGSPSpriteBankSelectGateA(unittest.TestCase):
         self.assertEqual(m.selection(),(AMOS,10))
         self.assertEqual(m.word(m.bynum(10)+12),1)
         self.assertEqual(m.read(m.bynum(10)+16,8),b'AGASPRT ')
+        self.assertEqual(len(m.notes),1)
+
+    def test_runtime_bank_29_with_unrelated_bank(self):
+        m=PublicSelectMachine(other=True)
+        self.assertEqual(m.select(29),1)
+        self.assertEqual(m.bank(29),empty_bank())
+        self.assertEqual(m.bank(11),bytes(range(32)))
+        self.assertEqual(m.get(CUR_BANKS),HEAD)
+        self.assertEqual(m.selection(),(AMOS,29))
+        self.assertEqual(m.select(29),1)
         self.assertEqual(len(m.notes),1)
 
     def test_reselect_is_idempotent_and_does_not_allocate(self):

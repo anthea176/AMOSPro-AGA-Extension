@@ -29,7 +29,9 @@ REQUEST=0x140000
 SOURCE=0x150000
 EXEC=0x280000
 STACK=0x2c0000
-HEAD=AMOS+0x5ea
+CUR_BANKS=AMOS+0x5ea
+HEAD=0x91000
+ALT_HEAD=0x91010
 MAX_ALLOC=0x270000
 REGS=(UC_M68K_REG_D0,UC_M68K_REG_D1,UC_M68K_REG_D4,
       UC_M68K_REG_D5,UC_M68K_REG_D6,UC_M68K_REG_D7,
@@ -71,7 +73,10 @@ class Machine:
         self.initial_old=old
         self.old_node=None
         self.other_node=None
+        self.put32(CUR_BANKS,HEAD)
         self.put32(HEAD,0)
+        self.put32(ALT_HEAD,0)
+        self.last_lookup=None
         if other:
             self.other_node=self.make_bank(11,b"DATA    ",bytes(range(32)))
         if old is not None:
@@ -105,7 +110,9 @@ class Machine:
         return addr
 
     def nodes(self):
-        out=[];p=self.get(HEAD)
+        cell=self.get(CUR_BANKS)
+        assert cell in (HEAD,ALT_HEAD),'Cur_Banks owner pointer corrupted'
+        out=[];p=self.get(cell)
         for _ in range(100):
             if p==0:return out
             assert p not in out,'loop in AMOS bank list'
@@ -133,12 +140,18 @@ class Machine:
         self.calls.append(ident)
         if ident==797:
             num=uc.reg_read(UC_M68K_REG_D0)
+            self.last_lookup=num
             p=self.bynum(num)
             if self.race and self.calls.count(797)==2 and not self.race_done:
                 # Simulate an externally replaced bank-list head during alloc.
                 self.race_done=True
-                self.put32(HEAD,0)
-                p=0
+                if self.race=='switch_owner':
+                    self.put32(ALT_HEAD,self.get(HEAD))
+                    self.put32(CUR_BANKS,ALT_HEAD)
+                    # Same list/node/lookup; only owner cell differs.
+                else:
+                    self.put32(HEAD,0)
+                    p=0
             uc.reg_write(UC_M68K_REG_A0,p+24 if p else 0)
         elif ident==91:
             if self.alloc_fail:
@@ -155,8 +168,8 @@ class Machine:
                 uc.reg_write(UC_M68K_REG_D0,addr)
                 uc.reg_write(UC_M68K_REG_A1,addr)
         elif ident==819:
-            self.notes.append((self.bynum(10),self.old_node in self.allocations))
-            assert self.bynum(10),'notify must happen only after publish'
+            self.notes.append((self.bynum(self.last_lookup),self.old_node in self.allocations))
+            assert self.bynum(self.last_lookup),'notify must happen only after publish'
             assert self.old_node is None or self.old_node in self.allocations
         elif ident==93:
             list_head=uc.reg_read(UC_M68K_REG_A0)
@@ -213,6 +226,8 @@ class AGSPPublisherCPU(unittest.TestCase):
         self.assertEqual(m.notes,[(p,False)])
         self.assertEqual(m.freed,[])
         self.assertEqual(m.calls,[797,91,797,819])
+        self.assertEqual(m.get(CUR_BANKS),HEAD)
+        self.assertEqual(m.get(HEAD),p)
 
     def test_insert_before_unrelated_bank_preserves_list(self):
         m=Machine(other=True)
@@ -261,6 +276,39 @@ class AGSPPublisherCPU(unittest.TestCase):
         self.assertNotEqual(m.freed[0],m.old_node)
         self.assertIn(m.old_node,m.allocations)
         self.assertEqual(m.calls,[797,91,797,93])
+
+    def test_owner_cell_switch_with_identical_head_is_rejected(self):
+        m=Machine(other=True,race='switch_owner')
+        head_before=m.get(HEAD)
+        self.assertEqual(m.execute(fixture()),0)
+        self.assertEqual(m.get(CUR_BANKS),ALT_HEAD)
+        self.assertEqual(m.get(HEAD),head_before)
+        self.assertEqual(m.get(ALT_HEAD),head_before)
+        self.assertEqual(m.bank(11),bytes(range(32)))
+        self.assertEqual(m.notes,[])
+        self.assertEqual(len(m.freed),1)
+        self.assertEqual(m.calls,[797,91,797,93])
+
+    def test_null_or_odd_owner_rejected_before_main_calls(self):
+        for cell in (0,HEAD+1):
+            with self.subTest(cell=cell):
+                m=Machine()
+                m.put32(CUR_BANKS,cell)
+                self.assertEqual(m.execute(fixture()),0)
+                self.assertEqual(m.get(CUR_BANKS),cell)
+                self.assertEqual(m.calls,[])
+                self.assertEqual(m.created,[])
+
+    @unittest.skipUnless(os.environ.get('AGSP_HISTORICAL_PUBLISH_BIN'),
+                         'requires frozen P1g publisher for negative oracle')
+    def test_historical_publisher_fails_real_indirection_model(self):
+        m=Machine()
+        m.code=Path(os.environ['AGSP_HISTORICAL_PUBLISH_BIN']).read_bytes()
+        m.uc.mem_write(CODE,m.code)
+        with self.assertRaisesRegex(AssertionError,'Cur_Banks owner pointer corrupted'):
+            m.execute(fixture())
+        self.assertNotEqual(m.get(CUR_BANKS),HEAD)
+        self.assertEqual(m.get(HEAD),0)
 
     def test_bad_payloads_never_allocate(self):
         good=fixture()
