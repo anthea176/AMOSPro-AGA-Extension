@@ -157,3 +157,9 @@ Les 19 scénarios restent non exécutés dans cet audit. Les anciens journaux P2
 ## Passage 12 — nouvelle variante T14 (souris/curseur)
 
 [Source natif Mouse Cursor, Pressed/Released et hook Close](AUDIT_AGA_INPUT_MOUSE_CURSOR_P2D_2026-11-24.md). Les deux routines source Pressed/Released utilisent `State+12070`, déjà corrigé depuis R76, mais elles ne vérifient pas à elles seules les **cinq autres sites du contrôle historique** : la certification doit porter sur **sept sites au total**, dont ces deux. T14 doit intégrer Cursor mode 0/1, Close et End avec/sans propriétaire, réouverture et contrôle de la zone d'état et de la mémoire private. **Aucun programme de test créé ni lancé, 19 scénarios conservés, Sprite gelé.**
+
+## Passage 13 — 24 novembre 2026 : écrivains et SafePort
+
+**Passage 13 / 24 novembre :** [écrivains et SafePort](AUDIT_AGA_SAFEPORT_WRITERS_2026-11-24.md) — Blit Fill possède déjà un chemin plein bitmap **SetRast sécurisé**, plus RectFill ; acquisition Safe seule, Disp préservé. Back Fill/IFF restent P0 statiques, Pattern P1 à qualifier ; stratégie de garde proposée, aucun correctif ni essai.
+
+T02/T04/T05/T06/T12/T17/T19 : discriminants précisés dans le rapport. Les 19 scénarios restent non exécutés ; aucun changement de classement ni de Lib.

@@ -308,3 +308,9 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **Mouse X/Y/Buttons, Hotspot/Rect Overlap** ne sont pas des écrivains de bitplanes dans les chemins inspectés : leur sécurité concerne les identités Screen/Window, les bornes et le State, et ne requiert pas automatiquement `GetMsg(SafePort)`.
 
 **Aucune nouvelle anomalie native confirmée sur la souris P2d.** T14 inclut les ressources du curseur et les sept LEA sur chaque nouvelle disposition binaire. Aucun test ni correctif exécuté ; Sprite S1 gelé.
+
+## Passage 13 — 24 novembre 2026 : écrivains et SafePort
+
+**Passage 13 / 24 novembre :** [écrivains et SafePort](AUDIT_AGA_SAFEPORT_WRITERS_2026-11-24.md) — Blit Fill possède déjà un chemin plein bitmap **SetRast sécurisé**, plus RectFill ; acquisition Safe seule, Disp préservé. Back Fill/IFF restent P0 statiques, Pattern P1 à qualifier ; stratégie de garde proposée, aucun correctif ni essai.
+
+T02/T04/T05/T06/T12/T17/T19 : discriminants précisés dans le rapport. Les 19 scénarios restent non exécutés ; aucun changement de classement ni de Lib.

@@ -157,3 +157,9 @@ Le [dossier de contrôle CBlock/C2P/Copper/Close/Fonts](AUDIT_AGA_LIFECYCLE_COPP
 ## Passage 12 — 24 novembre 2026 : Mouse/State et ownership curseur
 
 [Revue du natif P2d et des deux offsets `State+12070`](AUDIT_AGA_INPUT_MOUSE_CURSOR_P2D_2026-11-24.md). Les entrées publiques `Mouse Pressed` et `Mouse Released` montrent le déplacement corrigé **12070** et non l'ancien 11932 de R74/R75. Le `Mouse Cursor` possède un état privé, owner Window et un **helper natif appelé depuis Close R83**. Les lectures Mouse X/Y et les tests de rectangles ne sont pas des writers de bitmap ; les critères SafePort ne s'appliquent pas aveuglément à ces fonctions. **7 sites input State et Gate B/C après rebuild restent VM.** Aucune nouvelle Gate ou correction exécutée.
+
+## Passage 13 — 24 novembre 2026 : écrivains et SafePort
+
+**Passage 13 / 24 novembre :** [écrivains et SafePort](AUDIT_AGA_SAFEPORT_WRITERS_2026-11-24.md) — Blit Fill possède déjà un chemin plein bitmap **SetRast sécurisé**, plus RectFill ; acquisition Safe seule, Disp préservé. Back Fill/IFF restent P0 statiques, Pattern P1 à qualifier ; stratégie de garde proposée, aucun correctif ni essai.
+
+T02/T04/T05/T06/T12/T17/T19 : discriminants précisés dans le rapport. Les 19 scénarios restent non exécutés ; aucun changement de classement ni de Lib.
