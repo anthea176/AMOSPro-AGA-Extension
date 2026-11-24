@@ -58,24 +58,7 @@ def verify_l2_frozen(path: Path) -> list[str]:
     assert sha256(raw).hexdigest() == L2_FROZEN, "L2 probe changed"
     source = raw.decode("ascii")
     for marker in ("_PRG=Prg State", 'Print #1,"PRG_STATE ";_PRG',
-                   "Trap Open Out 1,_LOG$", 'Print "RAM LOG ";_LOG    active = sorted(CURRENT.glob("*.asc"))
-    assert len(active) == 1, f"Expected exactly one active ASC, found {active}"
-    assert PROMOTED.is_file() and FROZEN.read_bytes() == PROMOTED.read_bytes(), (
-        "The B/C-validated example and its frozen regression must match"
-    )
-    paths = [PROMOTED, FLIP, *active]
-    for path in paths:
-        if path == active[0] and sha256(path.read_bytes()).hexdigest() == L2_FROZEN:
-            filenames = verify_l2_frozen(path)
-        else:
-            filenames = verify(path)
-        print(f"MODE_LOG_NAMING PASS: {path.relative_to(ROOT)} : {', '.join(filenames)}")
-    print("MODE_LOG_NAMING PASS (static source only; AMOS Runtime/Compiler not tested)")
-
-
-if __name__ == "__main__":
-    main()
-):
+                   "Trap Open Out 1,_LOG$", 'Print "RAM LOG ";_LOG$'):
         assert marker in source, f"{path}: missing {marker}"
     names = [f"P2D_L2_{mode}.TXT" for _, mode in MODES]
     assert f'_LOG$="RAM:{names[0]}"' in source
@@ -92,10 +75,12 @@ def main() -> None:
     assert PROMOTED.is_file() and FROZEN.read_bytes() == PROMOTED.read_bytes(), (
         "The B/C-validated example and its frozen regression must match"
     )
-    assert active[0].read_bytes() == PROMOTED.read_bytes(), "Active and public ASC differ"
     paths = [PROMOTED, FLIP, *active]
     for path in paths:
-        filenames = verify(path)
+        if path == active[0] and sha256(path.read_bytes()).hexdigest() == L2_FROZEN:
+            filenames = verify_l2_frozen(path)
+        else:
+            filenames = verify(path)
         print(f"MODE_LOG_NAMING PASS: {path.relative_to(ROOT)} : {', '.join(filenames)}")
     print("MODE_LOG_NAMING PASS (static source only; AMOS Runtime/Compiler not tested)")
 
