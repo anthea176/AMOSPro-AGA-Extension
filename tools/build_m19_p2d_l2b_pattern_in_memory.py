@@ -22,7 +22,7 @@ from build_m19_p2d_l1_safeport_in_memory import (
     TAIL as L1_TAIL, assemble,
 )
 from build_m19_p2d_l2_first_bind_in_memory import build_l2
-from compiler_bridge_v2_probe import MAX_UNIT_BYTES
+from compiler_bridge_v2_probe import DISPATCH_V2, MAX_UNIT_BYTES
 from compiler_relocation import RBSR, repack_ap20, unpack_ap20
 
 OVERLAY = ROOT / 'src/native/m19_p2d_l2b'
@@ -63,7 +63,7 @@ def build_l2b(vasm: Path):
     api = {row['name']: row for row in walk_tokens(tok)}
     idx = api['aga screen pattern']['instruction']
     need(idx == 14 and old[idx].startswith(RBSR) and
-         unpack_from('>HH', old[idx], 2) == (UNIT, 0x00764),
+         unpack_from('>HH', old[idx], 2) == (UNIT, 0x00764-len(DISPATCH_V2)),
          'Pattern AP20 dispatch drift')
     need(len(old[UNIT]) == PRIOR_SIZE and old[UNIT][OFFSET:OFFSET+6] == OLD,
          'Pattern source anchor bytes drift')

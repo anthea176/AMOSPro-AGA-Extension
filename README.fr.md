@@ -19,13 +19,12 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande ; Sprites gelés (cible 0.15.0).
-
-**M19 P2d-L2 — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 332 octets**, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, **100 commandes / 203 entrées AP20**. Gate A MC68020 PASS (172 cas writers et 10 suites Bob) ; **SafePort B/C PASS rapportés ; autres essais Runtime L2 PASS, Compiler reporté ; D physique non testée**. [LAST_GOOD M19 P2d protégée](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, conserve ses preuves B/C propres.
+**M19 P2d-L2 — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 332 octets**, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, **100 commandes / 203 entrées AP20**. Gate A MC68020 PASS (172 cas writers et 10 suites Bob) ; **SafePort B/C PASS rapportés ; Runtime Bob/EDGE/RPG PASS ; défaut FRONT de Pattern T06 confirmé ; Compiler reporté ; D physique non testée**. [LAST_GOOD M19 P2d protégée](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, conserve ses preuves B/C propres.
 
 **Test actif :** [M19_P2D_L2_SAFEPORT_BC.asc](tests/current/M19_P2D_L2_SAFEPORT_BC.asc) · [Protocole](docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). Corrections IFF Load, Back Fill et premier Bind B8. Les Sprites S1-P1e sont gelés et absents de cette candidate, mais [leur code et ancien binaire](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/e0de86ccfa61c573c505f8b9c42b890140c85d9b/dist/AMOSPro_AGA.Lib) sont conservés.
 
 **Régression historique :** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [Installation](INSTALL.fr.md) · [Suivi](docs/NEXT_SESSION.md).
+**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande ; Sprites gelés (cible 0.15.0).
 
 ## Commandes AMOS principales
 

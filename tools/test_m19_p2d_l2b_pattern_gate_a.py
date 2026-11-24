@@ -15,6 +15,7 @@ from unicorn.m68k_const import UC_M68K_REG_PC
 from audit_ap20 import walk_tokens
 from build_m19_p2d_l2_first_bind_in_memory import build_l2
 from build_m19_p2d_l2b_pattern_in_memory import build_l2b
+from compiler_bridge_v2_probe import DISPATCH_V2
 from compiler_relocation import RBSR, unpack_ap20
 from test_m19_p2d_l1_safeport_gate_a import (
     Machine, DR, AR, EXEC, GFX, AMOS, STATE, DB, SB, BM, SCREEN,
@@ -45,7 +46,7 @@ class PatternMachine(Machine):
         stub = parts[entry]
         assert stub.startswith(RBSR) and stub[6:8] == b'\x4e\x75'
         group, offset = unpack_from('>HH', stub, 2)
-        assert (group, offset) == (142, 0x00764)
+        assert (group, offset+len(DISPATCH_V2)) == (142, 0x00764)
         if layout == 'runtime':
             address = CODE + sum(map(len, parts[:entry]))
             disp = sum(map(len, parts[:group])) - (address-CODE+2)
@@ -225,6 +226,20 @@ def main():
     assert result.wasSuccessful() and result.testsRun == 10
     print('P2D L2B GATE A PASS: 184 Pattern cases, 172 writer cases, 10 Bob suites', meta)
     print('WinUAE B / real Compiler C / physical D NOT TESTED')
+    # Transfer only the checked append-only source delta, not an alternate Lib.
+    # The canonical image must be reconstructed and checked against these
+    # digests by the authorized delivery operation; this CI never writes Git.
+    import base64
+    import hashlib
+    import json
+    from build_m19_p2d_l2b_pattern_in_memory import OFFSET, PRIOR_SIZE, UNIT
+    _, parts, title = unpack_ap20(image)
+    evidence = dict(size=len(image), sha256=hashlib.sha256(image).hexdigest(),
+                    git_blob=hashlib.sha1(f'blob {len(image)}\\0'.encode()+image).hexdigest(),
+                    branch=parts[UNIT][OFFSET:OFFSET+6].hex(),
+                    tail=base64.b64encode(parts[UNIT][PRIOR_SIZE:]).decode('ascii'),
+                    title=base64.b64encode(title).decode('ascii'))
+    print('L2B_CHECKED_DELTA '+json.dumps(evidence, sort_keys=True), flush=True)
 
 
 if __name__ == '__main__':

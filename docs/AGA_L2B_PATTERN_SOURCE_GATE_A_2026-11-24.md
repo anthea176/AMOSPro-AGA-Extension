@@ -17,3 +17,7 @@ Le builder reconstruit L2 octet pour octet, réassemble le master P2d avec L1+L2
 
 184 cas Pattern sous Unicorn MC68020, deux modèles AP20, deux parités, deux profondeurs, témoin L2 qui dessine FRONT, simple buffer, Safe déjà acquis/retardé/absent, port invalide, échec allocation, invalidité écran/bitmap, indices et padding, RGB, registres, pile, mémoire et libération. Services OS simulés. Rejouer les 172 cas writers L1 et 10 suites Bob L2 sur la candidate. Gate A à lire sur le SHA exact, pas de PASS présumé. Gate B : même T06A inchangé, puis sonde Safe T06B distincte. Gate C manuelle reportée par l'auteur, D non testée. Pas de promotion ni publication.
 
+
+## Reprise du contrôle AP20
+
+Premier run [45448577208](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45448577208) FAIL avant exécution : le stub 14 contient l'offset relatif $0742, le dispatcher V2 ajoute $22 (34 octets) pour atteindre UNIT142+$0764. Le contrôle et le fixture utilisent désormais explicitement `len(DISPATCH_V2)`. Les sources natives L2b sont inchangées. Après PASS complet uniquement, la CI fournit un delta source borné (six octets, queue UNIT142 et titre AP20) avec SHA256 et blob Git de l'image testée ; aucun fichier Lib alternatif ni push CI. Bascule canonique explicitement autorisée par « ben go », conditionnée au PASS exact. README EN/FR : identité active en première ligne du résumé comme l'exige le contrôle, trois paragraphes, mention du défaut T06 confirmé.
