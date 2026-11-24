@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate de test active M19 P2d-L2 (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 entrées AP20. Gate A PASS ; B/C/D non testées. **LAST_GOOD P2d protégée** : [136 020 octets](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, preuves B/C historiques. Pas de release publique ni promotion.
+**Candidate de test active M19 P2d-L2 (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 entrées AP20. Gate A PASS ; SafePort B/C PASS rapportés ; autres scénarios Runtime L2 PASS, Compiler reporté ; D physique non testée. **LAST_GOOD P2d protégée** : [136 020 octets](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, preuves B/C historiques. Pas de release 0.14.1 ni promotion.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 
@@ -55,7 +55,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**Statut actuel :** P2d-L2 candidate de test, Gate A PASS, B/C/D non testées. LAST_GOOD P2d intacte. Sprites gelés. Aucune publication ni promotion.
+**Statut actuel :** P2d-L2 candidate de test, Gate A PASS ; SafePort B/C PASS rapportés ; autres scénarios Runtime L2 PASS, Compiler reporté ; D physique non testée. LAST_GOOD P2d intacte. Sprites gelés. Aucune publication ni promotion.
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 
