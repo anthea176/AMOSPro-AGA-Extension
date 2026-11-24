@@ -15,7 +15,7 @@ from struct import pack,unpack_from
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools/experiments'))
 
-from active_library import R84_SHA,R87_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA
+from active_library import R84_SHA,R87_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2B_SHA
 from audit_ap20 import inspect,parse,token
 from compiler_relocation import unpack_ap20,repack_ap20,RBSR,GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -42,7 +42,7 @@ def build():
     # R88 remains an immutable historical reconstruction after P2d promotion.
     # Authenticate the protected release; never use it as the R88 input.
     if (len(good),sha256(good).hexdigest()) not in (
-            (117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA)):
+            (117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA),(136708,P2DL2B_SHA)):
         raise ValueError('Unknown promoted P0/P1e/P2d LAST_GOOD')
     from build_aga_r84_agapic import build as build_r84
     historical,r84_meta=build_r84()

@@ -6,6 +6,7 @@ on:
       - 'src/native/m19_s1/**'
       - 'tools/test_m19_s1p1i_contract_gate_a.py'
       - 'tools/build_m19_s1p1i*'
+      - 'tools/test_m19_s1p1i_l2b_integration_gate_a.py'
       - 'tools/active_library.py'
       - 'tools/build_agapic_v2_r82_full_preview.py'
       - '.github/workflows/m19-s1-p1i-contract-gate-a.yml'
@@ -50,6 +51,9 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1i.bin" src/native/m19_s1/M19_S1P1I_BANK_PUBLIC_MC68020.s
           PYTHONPATH=tools python -B tools/test_m19_s1p1i_contract_gate_a.py --historical "$RUNNER_TEMP/p1h.bin" --candidate "$RUNNER_TEMP/p1i.bin"
+      - name: Reconstruct whole P1i and run actual inherited L2b chain and regressions
+        run: |
+          PYTHONPATH=tools python -B tools/test_m19_s1p1i_l2b_integration_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1h.bin" --tested-native "$RUNNER_TEMP/p1i.bin"
       - name: Preserve installed and protected libraries
         run: |
           printf '%s  %s\n' '900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
