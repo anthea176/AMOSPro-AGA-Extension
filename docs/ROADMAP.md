@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-> **Objectif auteur : publication 0.14.1**, correctifs de stabilité du socle 2D. Finaliser L0, T06 et L3, puis qualification L4 et décision L5. Pas de nouveau Sprite/Tilemap ni de compilation intermédiaire imposée ; aucune promotion ou publication automatique.
+> **Objectif auteur : publication 0.14.1**, correctifs de stabilité du socle 2D. Finaliser L0, T06 et L3, puis qualification L4 et décision L5. Pas de nouveau Sprite/Tilemap ni de compilation intermédiaire imposée ; aucune promotion ou publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md).
 
 > **Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les statuts B/C antérieurs ci-dessous sont les états à la livraison.
 
@@ -15,9 +15,9 @@
 
 | Domaine | Statut |
 | --- | --- |
-| **Lib de travail** | **M19 P2d-L2**, 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20. [Lib](../dist/AMOSPro_AGA.Lib), Gate A PASS ; B/C/D non testées. |
+| **Lib de travail** | **M19 P2d-L2**, 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20. [Lib](../dist/AMOSPro_AGA.Lib), Gate A PASS ; SafePort B/C PASS rapportés ; autres scénarios Runtime L2 PASS, Compiler reporté ; D physique non testée. |
 | **LAST_GOOD protégée** | **M19 P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, 100 commandes / 203 entrées AP20. [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) non modifiée. |
-| **Campagne courante** | [M19_P2D_L2_SAFEPORT_BC.asc](../tests/current/M19_P2D_L2_SAFEPORT_BC.asc), préflight PASS, B/C en attente. [P2 ALL IN ONE historique](../tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d, non transférable à L2. |
+| **Campagne courante** | [M19_P2D_L2_SAFEPORT_BC.asc](../tests/current/M19_P2D_L2_SAFEPORT_BC.asc), préflight PASS, B/C PASS rapportés. [P2 ALL IN ONE historique](../tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d, non transférable à L2. |
 | **Source MC68020 P2d** | 268 modules, 122 602 octets d'instructions dans 131 734 octets classés ; aucune zone inconnue. [Bilan](M19_P2D_NATIVE_SOURCE_CLASSIFICATION_2026-11-22.md) · [Reprise](NEXT_SESSION.md). |
 | **Historique et preuves** | [NEXT_SESSION.md](NEXT_SESSION.md) · [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) · [archive avant rangement](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md). Les Gates de candidats anciens ne sont pas transposables. |
 
