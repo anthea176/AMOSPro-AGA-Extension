@@ -4,6 +4,12 @@
 
 [ASC](T06_PATTERN_TARGET.asc) : 6381 octets, ASCII LF, SHA256 `55f295a3bc78d38ad349f08e5d28e36e388d1cfd3333e700d91bcba5fcf4e795`, Git blob `8d7ca5b89c1d178242bd5f84d1677079f382e701`. Préflight local amos_preflight.py PASS sur cet ASC exact, aucun essai AMOS exécuté. **PREPARE / Gate B NON TESTEE.** Sonde hors distribution ; l'ASC unique tests/current reste intact.
 
+## Résultat 24/11/2026 — Gate B FAIL
+
+T06A Runtime FAIL sur P2d-L2 : PROBE_COMPLETE=1, TARGET FRONT, ERR 50, back 17/17/17 inchangé, ancien front 64/128/192. Trois Swaps sans refus, fermeture correcte. Écriture de la page présentée confirmée, pas une simple modification de palette. Défaut bloquant 0.14.1 ; aucune preuve d'écriture du back sous Safe pending (non testé).
+
+[Journal original](../../../docs/evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT), 460 octets, 27 CRLF, SHA256 `a20fe38d72e5dd58f97c3d8817257075fd75fe816d6eb1bee27c9dc6f36039ed`, blob `07048c4084abd7c38d08706a68051b6677410db8`. SINGLE_RETURNED=1 et SINGLE_CLOSED=1 attestent le retour de contrôle uniquement. Ne pas relancer sur L2 inchangée. Correction native proposée, à autoriser : conserver l'instruction sans argument et le mode simple buffer ; en double buffer, sélectionner explicitement le back et utiliser son RastPort de dessin vérifié, acquérir Safe avant toute écriture de pixels ou palette, reprise bornée comme Back Fill, refus sans mutation si délai épuisé, ne pas permuter implicitement. Conserver ABI, registres, état de dessin, L1/L2 et archives. Gate A native MC68020 : simple buffer, deux parités DB, Safe absent/disponible/acquitté, refus sans mutation, intégrité des pixels et état. Rejouer T06A à l'identique, puis T06B Safe sur candidate corrigée, avant L3. Aucun patch ni changement de Lib dans ce lot.
+
 ## Lancer
 
 Lib active P2d-L2 SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1` (136332 octets). Programme vierge, banque 27 libre, Project > Merge ASCII, Runtime. Aucune IFF, ABK, AMCAF, Turbo ou C2P requis. Ne pas manipuler menus/écran pendant les swaps. Envoyer RAM:T06_PATTERN_RUNTIME.TXT. Premier affichage = mire (2 secondes en PAL), puis deux pages de test, dernier affichage 2 secondes.

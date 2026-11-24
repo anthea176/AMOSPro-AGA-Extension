@@ -3,6 +3,8 @@
 **Révision : 24 novembre 2026 · Branche : `main` uniquement · Source de référence : `78d16a05700afeb3b5759b67b0b553085eb404c8`.**  
 **Statut : AUDIT OUVERT, corrections gelées, chantier Sprite S1-P1e GELÉ.** Relecture des chemins MC68020 liés et des contrats historiques ; **aucune compilation, aucun test CPU/WinUAE/Compiler nouveau, aucune modification native/Lib/ASC**.
 
+> **Addendum Runtime 24/11/2026 :** T06A Runtime FAIL sur P2d-L2 : PROBE_COMPLETE=1, TARGET FRONT, ERR 50, back 17/17/17 inchangé, ancien front 64/128/192. Trois Swaps sans refus, fermeture correcte. Écriture de la page présentée confirmée, pas une simple modification de palette. Défaut bloquant 0.14.1 ; aucune preuve d'écriture du back sous Safe pending (non testé). [Preuve](evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT). Le classement initial ci-dessous est historique. La routine Pattern utilise SetRGB32 (-852), pas LoadRGB32 ; cf. [protocole T06A](../tests/proto/t06_pattern/README.md).
+
 ## 1. AGA-011 — `Aga Screen Pattern` contourne la sélection de la page arrière
 
 **Liaison publique P2d :** instruction `Aga Screen Pattern` → AP20 **14** → UNIT142+$00764. [Source natif complet](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/78d16a05700afeb3b5759b67b0b553085eb404c8/src/native/m19_p2d/M19_UNIT142_BLOCK_00764_MC68020.s#L6-L56).

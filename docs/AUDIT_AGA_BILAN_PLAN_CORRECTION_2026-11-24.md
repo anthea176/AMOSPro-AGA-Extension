@@ -6,6 +6,8 @@ P2d LAST_GOOD = 136 020 octets, 100 commandes / 203 entrées AP20. S1-P1e active
 
 **Clôture du périmètre de lecture planifié (21 passages). Audit de validation et chantier de correction restent ouverts.** La cartographie des 102 commandes, les 100 entrées publiques natives P2d, et les 19 scénarios sont documentés ; cela ne signifie ni 100 commandes validées en Runtime, ni couverture exhaustive de toutes les branches ASM. Les cas VM et le gel Sprite sont maintenus.
 
+> **Addendum Runtime 24/11/2026 — AGA-011 :** T06A Runtime FAIL sur P2d-L2 : PROBE_COMPLETE=1, TARGET FRONT, ERR 50, back 17/17/17 inchangé, ancien front 64/128/192. Trois Swaps sans refus, fermeture correcte. Écriture de la page présentée confirmée, pas une simple modification de palette. Défaut bloquant 0.14.1 ; aucune preuve d'écriture du back sous Safe pending (non testé). [Preuve](evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT). Classement proposé P0 pour le non-respect du contrat de page, et non pour une corruption mémoire démontrée ; qualification de Safe pending encore requise. Le tableau d'audit statique initial ci-dessous reste historique.
+
 ## 1. Registre de décision consolidé
 
 | ID | Classement à la clôture de lecture | Constat / action proposée | Tests |

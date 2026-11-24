@@ -28,6 +28,12 @@ RPG V9 : `PRG_STATE 1`, `RESULT 1`, `ERR 0`, STAGE PLAY, BG0/BG1/AUTO/BG_SWAP/BO
 
 Les journaux originaux SafePort B/C et P2 ALL IN ONE ne sont pas disponibles dans cette reprise ; ne pas recréer ces preuves. Les anciens PASS P2d restent historiques. Gate D non testée.
 
+## T06A — échec Runtime confirmé
+
+T06A Runtime FAIL sur P2d-L2 : PROBE_COMPLETE=1, TARGET FRONT, ERR 50, back 17/17/17 inchangé, ancien front 64/128/192. Trois Swaps sans refus, fermeture correcte. Écriture de la page présentée confirmée, pas une simple modification de palette. Défaut bloquant 0.14.1 ; aucune preuve d'écriture du back sous Safe pending (non testé).
+
+[Journal original](evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT), SHA256 `a20fe38d72e5dd58f97c3d8817257075fd75fe816d6eb1bee27c9dc6f36039ed`, blob `07048c4084abd7c38d08706a68051b6677410db8`. ASC `8d7ca5b89c1d178242bd5f84d1677079f382e701` inchangé. Correction native proposée, à autoriser : conserver l'instruction sans argument et le mode simple buffer ; en double buffer, sélectionner explicitement le back et utiliser son RastPort de dessin vérifié, acquérir Safe avant toute écriture de pixels ou palette, reprise bornée comme Back Fill, refus sans mutation si délai épuisé, ne pas permuter implicitement. Conserver ABI, registres, état de dessin, L1/L2 et archives. Gate A native MC68020 : simple buffer, deux parités DB, Safe absent/disponible/acquitté, refus sans mutation, intégrité des pixels et état. Rejouer T06A à l'identique, puis T06B Safe sur candidate corrigée, avant L3. Aucun patch ni changement de Lib dans ce lot.
+
 ## Suite
 
-L0 : terminer l'adaptation des contrôles historiques à l'identité L2 exacte et séparer exemple public / ASC actif. T06 Pattern : vérifier la cible réelle de Screen.RastPort sans provoquer d'écriture non Safe ; T10/T11/T14/T16 ressources ensuite. Aucun nouveau code natif, remplacement de Lib, promotion, archivage ASC ou reprise Sprite autorisé par ces PASS. Un seul ASC actif conservé.
+L0 : terminer l'adaptation des contrôles historiques à l'identité L2 exacte et séparer exemple public / ASC actif. T06 Pattern : corriger le ciblage FRONT démontré, puis qualifier Safe ; T10/T11/T14/T16 ressources ensuite. Aucun nouveau code natif, remplacement de Lib, promotion, archivage ASC ou reprise Sprite autorisé par ces PASS. Un seul ASC actif conservé.
