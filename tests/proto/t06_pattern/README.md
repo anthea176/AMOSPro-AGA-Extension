@@ -32,3 +32,9 @@ Source L2 inchangée pour Pattern : AP20 14, [UNIT142+$00764](../../../src/nativ
 
 PROBE_COMPLETE=1 signifie les deux pages mesurées. PASS attendu pour contrat back-only : PRG_STATE=1, RESULT=1, ERR=0, PHASE_LAST=5, TARGET BACK, SWAPS=3, SWAP_REFUSALS=SWAP_RECOVERED, CLOSE_RETURNED=1, CLOSED_MOUSE_X=-1. KIND 0=marque, 1=mire, 2=autre. ERR50 est une cible incorrecte ou des indices inattendus, pas une erreur native AMOS. ERR31 = back mixte, pas de Swap supplémentaire. ERR2 = banque occupée, elle reste intacte ; autres ERR identifient le stade. Ce banc ne mesure pas les RGB, ne prouve pas les frees, et n'appelle délibérément pas Pattern sous Safe pending. Un PASS ne clôt pas T06 complet. Si FRONT/BOTH, corriger le ciblage avant toute sonde agressive ; si BACK, qualifier ensuite Safe absent/disponible/non acquitté et autres writers croisés. Pas d'essai physique de ce prototype.
 
+
+## Reprise T06A sur L2b
+
+P2d-L2b active, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. [Gate A 45449139352](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS (184 Pattern, 172 writers, 10 suites Bob), seconde reconstruction [45449077283](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449077283) même SHA256. Gate B T06A à établir, C reportée, D non testée. LAST_GOOD P2d intacte.
+
+Utiliser [l'ASC actif](../../current/T06_PATTERN_TARGET.asc), octets strictement identiques au banc FAIL L2. Le protocole initial ci-dessus reste la référence de test ; aucune nouvelle compilation.

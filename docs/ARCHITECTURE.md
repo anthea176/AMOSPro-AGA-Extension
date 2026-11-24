@@ -1,5 +1,7 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
+> **24/11/2026 — Bascule L2b :** P2d-L2b active, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. [Gate A 45449139352](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS (184 Pattern, 172 writers, 10 suites Bob), seconde reconstruction [45449077283](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449077283) même SHA256. Gate B T06A à établir, C reportée, D non testée. LAST_GOOD P2d intacte. [Test actif](../tests/current/README.md). Le statut ci-dessous est historique.
+
 > **Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL Runtime PASS (240/240, 241 swaps, 120 refus tous récupérés, 128 pixels de bord valides, ERR 0). T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Le statut ci-dessous correspond à la bascule initiale.
 
 

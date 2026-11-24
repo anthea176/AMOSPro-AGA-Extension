@@ -177,7 +177,11 @@ def main() -> None:
     b7m2 = re.search(r"\$VER:\s*AGA\s+(M19\s+B7-m2)\b", title, re.IGNORECASE)
     b8 = re.search(r"\$VER:\s*AMOSPro_AGA\s+(M19\s+B8)\b", title, re.IGNORECASE)
     agsp = re.search(r"\$VER:\s*AGSP\s+(S1-P1e)\b", title, re.IGNORECASE)
-    if b"$VER: AMOSPro_AGA M19 P2d-L2" in library.title:
+    if b"$VER: AMOSPro_AGA M19 P2d-L2b" in library.title:
+        from active_library import P2DL2B_SHA
+        assert sha256(LIB.read_bytes()).hexdigest() == P2DL2B_SHA
+        release = "M19 P2d-L2b"
+    elif b"$VER: AMOSPro_AGA M19 P2d-L2" in library.title:
         from active_library import P2DL2_SHA
         assert sha256(LIB.read_bytes()).hexdigest() == P2DL2_SHA
         release = "M19 P2d-L2"

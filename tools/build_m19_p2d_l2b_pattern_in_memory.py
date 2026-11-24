@@ -14,7 +14,7 @@ import shutil
 from struct import unpack_from
 import tempfile
 
-from active_library import P2DL2_SHA, verify_active, verify_p2d_l2
+from active_library import P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2, verify_p2d_l2b
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_l1_safeport_in_memory import (
@@ -51,10 +51,13 @@ def replace_once(path, anchor, replacement):
 
 def build_l2b(vasm: Path):
     active, protected, _ = verify_active(ROOT)
-    need(sha256(active).hexdigest() == P2DL2_SHA,
-         'exact installed L2 required; no implicit candidate transition')
+    active_sha = sha256(active).hexdigest()
+    need(active_sha in (P2DL2_SHA, P2DL2B_SHA),
+         'exact installed L2 or L2b required; no implicit transition')
     prior, meta = build_l2(vasm)
-    need(prior == active, 'installed L2 differs from its source rebuild')
+    need(sha256(prior).hexdigest() == P2DL2_SHA, 'L2 source rebuild drift')
+    if active_sha == P2DL2_SHA:
+        need(prior == active, 'installed L2 differs from its source rebuild')
     verify_p2d_l2(prior, protected)
     tok, old, _ = unpack_ap20(prior)
     base_tok, base_parts, base_title = unpack_ap20(protected)
@@ -109,6 +112,9 @@ def build_l2b(vasm: Path):
     need((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes() == active and
          (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == protected,
          'distribution changed')
+    verify_p2d_l2b(image, protected)
+    if active_sha == P2DL2B_SHA:
+        need(image == active, 'installed L2b differs from exact source rebuild')
     return image, dict(meta, sha256=sha256(image).hexdigest(), bytes=len(image),
                        unit142=len(new), pattern_appended=len(new)-PRIOR_SIZE,
                        pattern_branch=OFFSET, pattern_target=target,

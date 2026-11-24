@@ -19,16 +19,16 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P2d-L2 — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **136,332 bytes**, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, **100 commands / 203 AP20 entries**. MC68020 Gate A PASS (172 writer cases and 10 Bob suites); **Focused SafePort B/C PASS reported; Bob/EDGE/RPG Runtime PASS; T06 Pattern FRONT defect confirmed; Compiler deferred; physical D untested**. [Protected M19 P2d LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,020 bytes, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, retains its own historical B/C evidence.
+**M19 P2d-L2b — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **136,708 bytes**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commands / 203 AP20 entries**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS: 184 Pattern cases, 172 writers, 10 Bob suites. L2b Runtime/Compiler/physical Amiga not tested. [Protected P2d LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,020 bytes.
 
-**Active test:** [M19_P2D_L2_SAFEPORT_BC.asc](tests/current/M19_P2D_L2_SAFEPORT_BC.asc) · [Protocol](docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). IFF Load, Back Fill and first B8 Bind fixes. S1-P1e Sprite work is frozen; its two commands are not in this candidate, but [the earlier source and binary](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/e0de86ccfa61c573c505f8b9c42b890140c85d9b/dist/AMOSPro_AGA.Lib) remain in Git history.
+**Active test:** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocol](tests/current/README.md). Pattern back-buffer/SafePort fix. No external resources. Runtime only. Sprite work frozen.
 
 **Historical regression:** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc), validated on P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [Installation](INSTALL.md) · [Progress](docs/NEXT_SESSION.md).
 **Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands; hardware Sprites frozen (planned 0.15.0).
 
 ## Main AMOS commands
 
-**Current library API M19 P2d-L2** — **100 commands / 203 AP20 entries**, MC68020 minimum; P2d signatures unchanged.
+**Current library API M19 P2d-L2b** — **100 commands / 203 AP20 entries**, MC68020 minimum; P2d signatures unchanged.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -140,7 +140,7 @@ These commands remain available for diagnostics, compatibility with older progra
 |---|---|---|
 | `Aga Probe` | `Aga Probe` | Legacy no-argument diagnostic instruction; not a gameplay API. |
 | `Aga Demo` | `_D=Aga Demo` | Legacy no-argument diagnostic function; no stable gameplay return-value contract. |
-| `Aga Screen Pattern` | `Aga Screen Pattern` | No arguments. Draws the built-in diagnostic pattern. |
+| `Aga Screen Pattern` | `Aga Screen Pattern` | Diagnostic pattern and global palette. L2b: draw on back buffer after Safe (up to 3 VBLs), no implicit Swap; silent refusal if unavailable. Single buffer unchanged. |
 | `Aga Back Fill` | `Aga Back Fill couleur` | Fills the entire back buffer; no numeric result. L2 acquires Safe with up to three WaitTOF retries; no drawing on persistent refusal. Gate A PASS, B/C PASS reported for focused SafePort. |
 | `Aga Palette Bank Init` | `_OK=Aga Palette Bank Init(Start(_B),_N)` | Initializes an existing exactly-sized native AMOS DATA bank at `Start(_B)` with `_N=1..256` empty RGB24 palette slots (`16+776×_N` bytes). Sets the native bank name `AGAPAL  `; reinitialization clears existing slots. Returns 1/0. Pass only a live reserved DATA bank pointer; arbitrary or stale addresses are unsafe. Does not change the screen. |
 | `Aga Palette Bank Capture` | `_OK=Aga Palette Bank Capture(Start(_B),_INDEX)` | Captures the active private AGA indexed `ColorMap` (1..256 colours) into one 0-based AGAPAL slot of an initialized DATA bank at `Start(_B)`. Overwrites that slot only, preserving other slots and the screen. Returns 1/0; no implicit VBL or fade. |
