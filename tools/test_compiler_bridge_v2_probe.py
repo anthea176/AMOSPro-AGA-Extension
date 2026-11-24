@@ -144,7 +144,7 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
             # candidate and frozen R84 before testing the unchanged R57 bridge.
             verified, frozen, _ = verify_active(ROOT)
             assert verified == current_bytes and frozen == protected_bytes
-            if active_hash in (P0_FREE_SHA,P1E_SHA,P2D_SHA):
+            if active_hash in (P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2B_SHA):
                 assert current_bytes==protected_bytes, "Promoted P0/P1e/P2d must be byte-exact LAST_GOOD"
             else:
                 assert current_bytes!=protected_bytes, "Unpromoted candidate must differ from LAST_GOOD"
@@ -162,8 +162,8 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
                 new_links = pc16_displacements(new_parts)
                 assert all(new_links.get(k) == v for k, v in old_links.items())
             elif active_hash == P2DL2B_SHA:
-                from active_library import verify_p2d_l2b
-                verify_p2d_l2b(current_bytes, protected_bytes)
+                from active_library import verify_p2d_l2b, frozen_p2d
+                verify_p2d_l2b(current_bytes, frozen_p2d(protected_bytes))
             elif active_hash == P2DL2_SHA:
                 from active_library import verify_p2d_l2
                 verify_p2d_l2(current_bytes, protected_bytes)

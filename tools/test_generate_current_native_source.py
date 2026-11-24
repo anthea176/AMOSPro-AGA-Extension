@@ -34,7 +34,10 @@ def main() -> None:
             from compiler_relocation import unpack_ap20
             from audit_ap20 import inspect, parse
             candidate, meta = build_p2d()
-            assert original[1] == candidate and len(candidate) == 136020
+            assert len(candidate) == 136020
+            from active_library import verify_p2d_l2b
+            if original[1] != candidate:
+                verify_p2d_l2b(original[1], candidate)
             assert meta['sha256'] == P2D_SHA
             assert meta['commands'] == 100 and meta['entries'] == 203
             _, groups, title = unpack_ap20(wrapped)
@@ -45,7 +48,7 @@ def main() -> None:
                 assert b'AGSP S1-P1e' in title
             elif exp.sha(wrapped) == P2DL2B_SHA:
                 from active_library import verify_p2d_l2b
-                assert wrapped == current
+                assert wrapped in (current, last_good)
                 verify_p2d_l2b(wrapped, candidate)
             elif exp.sha(wrapped) == P2DL2_SHA:
                 from active_library import verify_p2d_l2

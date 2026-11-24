@@ -14,7 +14,7 @@ import shutil
 from struct import unpack_from
 import tempfile
 
-from active_library import P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2, verify_p2d_l2b
+from active_library import P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2, verify_p2d_l2b, frozen_p2d
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_l1_safeport_in_memory import (
@@ -58,9 +58,10 @@ def build_l2b(vasm: Path):
     need(sha256(prior).hexdigest() == P2DL2_SHA, 'L2 source rebuild drift')
     if active_sha == P2DL2_SHA:
         need(prior == active, 'installed L2 differs from its source rebuild')
-    verify_p2d_l2(prior, protected)
+    base = frozen_p2d(protected)
+    verify_p2d_l2(prior, base)
     tok, old, _ = unpack_ap20(prior)
-    base_tok, base_parts, base_title = unpack_ap20(protected)
+    base_tok, base_parts, base_title = unpack_ap20(base)
     need(tok == base_tok and len(old) == len(base_parts) == 203,
          'L2 API drift')
     api = {row['name']: row for row in walk_tokens(tok)}
@@ -112,7 +113,7 @@ def build_l2b(vasm: Path):
     need((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes() == active and
          (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == protected,
          'distribution changed')
-    verify_p2d_l2b(image, protected)
+    verify_p2d_l2b(image, base)
     if active_sha == P2DL2B_SHA:
         need(image == active, 'installed L2b differs from exact source rebuild')
     return image, dict(meta, sha256=sha256(image).hexdigest(), bytes=len(image),

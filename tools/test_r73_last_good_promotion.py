@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only proof of promoted M19 P2d LAST_GOOD and frozen historical sources.
+"""Read-only proof of promoted M19 P2d-L2b LAST_GOOD and frozen historical sources.
 
 Retains the historical filename for existing CI invocations. R68 and R73
 are immutable deterministic build sources, independent of moving LAST_GOOD.
@@ -24,7 +24,7 @@ def main():
     cur,good,label=verify_active(ROOT)
     baseline,_=build_r68()
     validated,meta=build_r73()
-    assert LAST_GOOD_SHA==P2D_SHA
+    assert LAST_GOOD_SHA==P2DL2B_SHA
     assert sha256(baseline).hexdigest()==R68_SHA, "Historical R68 source drift"
     assert len(baseline)==51064 and baseline!=cur
     assert len(validated)==51608 and sha256(validated).hexdigest()==R73_SHA, "Historical R73 builder drift"
@@ -35,7 +35,7 @@ def main():
     assert historical_r81_meta["ap20_entries"]==77
     from build_agapic_v2_r82_full_preview import build as build_r82
     promoted, promoted_meta=build_r82()
-    assert len(good)==136020 and sha256(good).hexdigest()==P2D_SHA, "Promoted P2d LAST_GOOD hash must be exact"
+    assert len(good)==136708 and sha256(good).hexdigest()==P2DL2B_SHA, "Promoted L2b LAST_GOOD hash must be exact"
     from build_aga_r84_agapic import build as build_r84
     historical_r84,r84meta=build_r84()
     assert len(historical_r84)==67904 and r84meta['sha256']==R84_SHA
@@ -338,12 +338,13 @@ def main():
         if digest not in (P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA):
             assert_native_links(parts[:70]);check_cross_r74(parts[:70])
     else:
-        # Promoted P2d is byte-identical to the canonical working Lib.
-        assert cur==good and sha256(cur).hexdigest()==P2D_SHA
-        assert label.startswith('M19 P2d PROMOTED LAST_GOOD')
+        # Promoted L2b is byte-identical to the canonical working Lib.
+        assert cur==good and sha256(cur).hexdigest()==P2DL2B_SHA
+        assert label.startswith('M19 P2d-L2b PROMOTED LAST_GOOD')
         from build_m19_p2d_in_memory import build_p2d
         rebuilt,meta_p2d=build_p2d()
-        assert cur==rebuilt and meta_p2d['sha256']==P2D_SHA
+        assert meta_p2d['sha256']==P2D_SHA
+        verify_p2d_l2b(cur, rebuilt)
         assert (meta_p2d['commands'],meta_p2d['entries'],meta_p2d['pc16_max'])==(100,203,854)
         from build_m19_b8_s1_bank_free_in_memory import build_bank_free
         historical_p0,p0meta=build_bank_free()
@@ -351,10 +352,10 @@ def main():
         assert cur!=historical_p0
     asc=list((ROOT/"tests/current").glob("*.asc"))
     assert len(asc)==1, "Exactly one active ASC must exist, independent of the historical R73 test"
-    assert sha256(good).hexdigest()==P2D_SHA
+    assert sha256(good).hexdigest()==P2DL2B_SHA
     assert current.read_bytes()==cur and last_good.read_bytes()==good
     assert validated!=promoted and historical_r81!=promoted
-    print("P2d LAST_GOOD PROMOTED / HISTORICAL R84 SOURCE PINNED PASS",P2D_SHA,len(good),
+    print("P2d-L2b LAST_GOOD PROMOTED / HISTORICAL R84 SOURCE PINNED PASS",P2DL2B_SHA,len(good),
           "active bytes",len(cur),"R81 frozen parent",R81_SHA,"3 inherited links")
     print("Historical R68/R73 builders SHA pinned, one ASC active, no bytes written")
 

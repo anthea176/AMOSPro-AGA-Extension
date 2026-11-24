@@ -46,7 +46,9 @@ jobs:
           raw, info = build_p2d()
           assert sha256(raw).hexdigest() == P2D_SHA
           active, protected, label = verify_active(Path('.'))
-          assert sha256(protected).hexdigest() == P2D_SHA and protected == raw
+          assert sha256(protected).hexdigest() == P2DL2B_SHA and len(protected) == 136708
+          from active_library import verify_p2d_l2b
+          verify_p2d_l2b(protected, raw)
           assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
           current = list(Path('tests/current').glob('*.asc'))
           assert len(current) == 1

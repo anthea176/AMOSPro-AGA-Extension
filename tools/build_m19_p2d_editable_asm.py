@@ -21,7 +21,7 @@ from tempfile import TemporaryDirectory
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
-from active_library import P2D_SHA
+from active_library import P2D_SHA, frozen_p2d
 from build_m19_p2d_in_memory import build_p2d
 from build_m19_p1e_bank_edit_in_memory import build_p1e
 from compiler_relocation import unpack_ap20
@@ -265,8 +265,8 @@ def checked_vasm(assembler: Path, source: Path, output: Path) -> bytes:
 @lru_cache(maxsize=1)
 def prove_source_provenance() -> tuple[bytes, int, int, int, int, int, int]:
     """Require exact P2d native builder and exact source-region boundaries."""
-    # P2d remains the protected reference while S1-P1e is the active candidate.
-    lib = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    # P2d is a frozen historical source, independent of the promoted L2b slot.
+    lib = frozen_p2d((ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes())
     require(len(lib) == 136020 and sha256(lib).hexdigest() == P2D_SHA,
             'official P2d source is not the selected 136020-byte baseline')
     rebuilt, info = build_p2d()
@@ -4099,7 +4099,7 @@ def test_batch_editability_staged(assembler: Path, staged: Path) -> None:
     staged = staged.resolve()
     require(staged.is_dir() and (staged / MASTER_FILE).is_file(),
             'missing previously staged P2d ASM project')
-    original = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    original = frozen_p2d((ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes())
     require(len(original) == 136020 and sha256(original).hexdigest() == P2D_SHA,
             'protected P2d/LAST_GOOD SHA mismatch')
     prior = staged / 'M19_P2D_ASM_REBUILT_CHECK.Lib'

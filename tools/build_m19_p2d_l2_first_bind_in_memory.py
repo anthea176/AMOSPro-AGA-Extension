@@ -13,7 +13,7 @@ import shutil
 from struct import unpack_from
 import tempfile
 
-from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2
+from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2, verify_p2d_l2b
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse
 from build_m19_p2d_in_memory import build_p2d
@@ -63,8 +63,9 @@ def build_l2(vasm: Path):
     active, protected, _ = verify_active(ROOT)
     need(sha256(active).hexdigest() in (S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA), 'active candidate changed')
     base, baseinfo = build_p2d()
-    need(base == protected and sha256(base).hexdigest() == P2D_SHA,
-         'P2d source/protected provenance changed')
+    need(sha256(base).hexdigest() == P2D_SHA, 'P2d source provenance changed')
+    if protected != base:
+        verify_p2d_l2b(protected, base)
     l1, l1info = build_l1(vasm)
     need(len(l1) == 136248 and sha256(l1).hexdigest() == L1_SHA,
          'L1 Gate A exact predecessor changed')
@@ -115,7 +116,7 @@ def build_l2(vasm: Path):
     image = repack_ap20(base,tokens,parts,TITLE)
     need(unpack_ap20(image) == (tokens,parts,TITLE), 'AP20 round trip')
     need(not inspect(parse(image))['issues'], 'AP20 audit issues')
-    verify_p2d_l2(image, protected)
+    verify_p2d_l2(image, base)
     if sha256(active).hexdigest() == P2DL2_SHA:
         need(image == active, 'installed L2 differs from exact source rebuild')
     need((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes() == active

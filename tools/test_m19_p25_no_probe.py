@@ -165,7 +165,7 @@ class BatchGateA(unittest.TestCase):
         assert r84meta['sha256']==R84_SHA
         _, protected, _ = verify_active(ROOT)
         assert protected == PROTECTED.read_bytes()
-        assert sha256(protected).hexdigest() in (P1E_SHA, P2D_SHA)
+        assert sha256(protected).hexdigest() in (P1E_SHA, P2D_SHA, P2DL2B_SHA)
         cls.tokens,cls.parts,cls.title=unpack_ap20(cls.candidate)
         cls.old_tokens,cls.old_parts,_=unpack_ap20(cls.old)
 
@@ -331,7 +331,7 @@ class BatchGateA(unittest.TestCase):
         active, protected, _ = verify_active(ROOT)
         self.assertEqual(active, ACTIVE.read_bytes())
         self.assertEqual(live, protected)
-        self.assertIn(sha256(live).hexdigest(), (P1E_SHA, P2D_SHA))
+        self.assertIn(sha256(live).hexdigest(), (P1E_SHA, P2D_SHA, P2DL2B_SHA))
         self.assertNotEqual(live,self.old)
 
 

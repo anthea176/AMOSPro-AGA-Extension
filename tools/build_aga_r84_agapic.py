@@ -59,7 +59,7 @@ def build()->tuple[bytes,dict]:
         raise AssertionError("Pinned deterministic historical R83 source changed")
     protected=PREVIOUS.read_bytes()
     protected_sha=sha256(protected).hexdigest()
-    if protected_sha not in (R84_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA):
+    if protected_sha not in (R84_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2B_SHA):
         raise AssertionError("LAST_GOOD must match exact historical R84 or author-promoted P0/P1e/P2d")
     original_tokens, old, _=unpack_ap20(frozen)
     if len(old)!=83 or tuple(len(v) for v in old[80:])!=(5558,2508,52974):
@@ -129,8 +129,10 @@ def build()->tuple[bytes,dict]:
         assert len(protected)==117896
     elif protected_sha==P1E_SHA:
         assert len(protected)==124444
+    elif protected_sha==P2D_SHA:
+        assert len(protected)==136020
     else:
-        assert len(protected)==136020 and protected_sha==P2D_SHA
+        assert len(protected)==136708 and protected_sha==P2DL2B_SHA
     verify_known_active(ACTIVE)
     if sha256(candidate).hexdigest()!=R84_SHA:
         raise AssertionError("R84 candidate source drifted since native Gate A")
@@ -152,12 +154,12 @@ class R84Layout(unittest.TestCase):
     def test_historical_r83_and_promoted_r84(self):
         self.assertEqual(sha256(build_r83()[0]).hexdigest(),R83_SHA)
         good=PREVIOUS.read_bytes()
-        self.assertIn(sha256(good).hexdigest(),(R84_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA))
+        self.assertIn(sha256(good).hexdigest(),(R84_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2B_SHA))
         if sha256(good).hexdigest()==R84_SHA:
             self.assertEqual(good,self.image)
         else:
             self.assertNotEqual(good,self.image)
-            self.assertEqual(len(good),117896 if sha256(good).hexdigest()==P0_FREE_SHA else (124444 if sha256(good).hexdigest()==P1E_SHA else 136020))
+            self.assertEqual(len(good), {P0_FREE_SHA:117896, P1E_SHA:124444, P2D_SHA:136020, P2DL2B_SHA:136708}[sha256(good).hexdigest()])
         self.assertEqual(sha256(self.image).hexdigest(),R84_SHA)
         self.assertEqual(verify_known_active(ACTIVE), sha256(ACTIVE.read_bytes()).hexdigest())
     def test_unknown_candidate_is_still_rejected(self):

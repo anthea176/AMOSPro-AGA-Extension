@@ -73,6 +73,6 @@ jobs:
           assert len(historical)==73184 and sha256(historical).hexdigest()=='02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302'
           active,good,_=verify_active(root)
           assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA),(142000,S1P1E_SHA),(136332,P2DL2_SHA),(136708,P2DL2B_SHA))
-          assert (len(good),sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA))
+          assert (len(good),sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA),(136708,P2DL2B_SHA))
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/

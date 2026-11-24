@@ -37,7 +37,7 @@ API = ("aga bob batch", 1, BATCH_ENTRY, "00,0")
 
 def build() -> tuple[bytes, dict]:
     live_good=PROTECTED.read_bytes()
-    if (len(live_good),sha256(live_good).hexdigest()) not in ((117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA)):
+    if (len(live_good),sha256(live_good).hexdigest()) not in ((117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA),(136708,P2DL2B_SHA)):
         raise ValueError("Unrecognized author-promoted P0/P1e LAST_GOOD")
     from build_aga_r84_agapic import build as build_r84
     protected,r84_meta=build_r84()

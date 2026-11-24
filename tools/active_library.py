@@ -52,7 +52,7 @@ P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 P2DL2B_SHA="a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc"  # Exact L2b MC68020 Gate A: 184 Pattern + 172 writers + 10 Bob suites
-LAST_GOOD_SHA=P2D_SHA  # Author-approved M19 P2d promotion 21/11/2026; native A and integrated WinUAE B/C PASS, physical D untested
+LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
 R58_SHA="c4c3a1306058f39e336653b63cd219b2e94f539a55da837a1f03f8edb3f9fc5b"  # Historical user-tested R58 40K V2 probe
@@ -152,6 +152,19 @@ def verify_p2d_l2b(candidate: bytes, baseline: bytes):
     assert not inspect(parse(candidate))['issues']
 
 
+def frozen_p2d(protected: bytes) -> bytes:
+    """Source-built historical P2d, independently of the moving LAST_GOOD."""
+    from build_m19_p2d_in_memory import build_p2d
+    baseline, meta = build_p2d()
+    assert len(baseline) == 136020 and sha256(baseline).hexdigest() == P2D_SHA
+    assert meta['sha256'] == P2D_SHA
+    if sha256(protected).hexdigest() == P2D_SHA:
+        assert protected == baseline
+    else:
+        verify_p2d_l2b(protected, baseline)
+    return baseline
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -166,9 +179,9 @@ def verify_active(root: Path):
     if current_sha == P2DL2B_SHA:
         from build_m19_p2d_in_memory import build_p2d
         expected, meta = build_p2d()
-        assert good == expected and meta['sha256'] == P2D_SHA
-        verify_p2d_l2b(cur, good)
-        return cur, good, "M19 P2d-L2b ACTIVE TEST CANDIDATE; Gate A MC68020 184 Pattern + 172 writers + 10 Bob suites PASS; WinUAE B/C/D NOT TESTED on L2b; P2d LAST_GOOD protected"
+        assert meta['sha256'] == P2D_SHA and cur == good
+        verify_p2d_l2b(cur, expected)
+        return cur, good, "M19 P2d-L2b PROMOTED LAST_GOOD; Gate A MC68020 184 Pattern + 172 writers + 10 Bob suites PASS; Runtime B documented; C deferred, D untested"
     if current_sha == P2DL2_SHA:
         from build_m19_p2d_in_memory import build_p2d
         expected, meta = build_p2d()

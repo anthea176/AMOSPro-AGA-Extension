@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate active M19 P2d-L2b (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 entrées AP20. Gate A PASS ; Pattern, cycles normaux de ressources et régression Bob Runtime PASS. Compiler L2b reporté, D physique non testée. [Qualification](docs/releases/0.14.1_QUALIFICATION.md). LAST_GOOD P2d protégée, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. 0.14.1 non publiée.
+**LAST_GOOD promue M19 P2d-L2b (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 entrées AP20. Gate A PASS ; Pattern, cycles normaux de ressources et régression Bob Runtime PASS. Compiler L2b reporté, D physique non testée. [Qualification](docs/releases/0.14.1_QUALIFICATION.md). LAST_GOOD P2d-L2b protégée, identique à la Lib active, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. 0.14.1 non publiée.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 
@@ -55,7 +55,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**Statut actuel :** P2d-L2b, validation native et scénarios Runtime documentés PASS. Compiler L2b reporté, Amiga physique non testé. LAST_GOOD P2d protégée ; Sprite gelé. Voir [qualification et limites](docs/releases/0.14.1_QUALIFICATION.md).
+**Statut actuel :** P2d-L2b, validation native et scénarios Runtime documentés PASS. Compiler L2b reporté, Amiga physique non testé. LAST_GOOD P2d-L2b protégée ; Sprite gelé. Voir [qualification et limites](docs/releases/0.14.1_QUALIFICATION.md).
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

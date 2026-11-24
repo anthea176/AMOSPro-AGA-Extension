@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Active candidate M19 P2d-L2b (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commands / 203 AP20 entries. Gate A PASS; Pattern, normal resource lifecycle and integrated Bob Runtime PASS. L2b Compiler deferred, physical D untested. [Qualification](docs/releases/0.14.1_QUALIFICATION.md). Protected P2d LAST_GOOD, 136,020 bytes, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. 0.14.1 not released.
+**Promoted LAST_GOOD M19 P2d-L2b (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commands / 203 AP20 entries. Gate A PASS; Pattern, normal resource lifecycle and integrated Bob Runtime PASS. L2b Compiler deferred, physical D untested. [Qualification](docs/releases/0.14.1_QUALIFICATION.md). Protected P2d-L2b LAST_GOOD, byte-identical to active, 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. 0.14.1 not released.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -55,7 +55,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Current status:** P2d-L2b, native and documented Runtime scenarios PASS. L2b Compiler deferred, physical Amiga untested. Protected P2d LAST_GOOD; Sprite work frozen. See [qualification and limits](docs/releases/0.14.1_QUALIFICATION.md).
+**Current status:** P2d-L2b, native and documented Runtime scenarios PASS. L2b Compiler deferred, physical Amiga untested. Protected P2d-L2b LAST_GOOD; Sprite work frozen. See [qualification and limits](docs/releases/0.14.1_QUALIFICATION.md).
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P2d-L2b — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS : 184 cas Pattern, 172 writers, 10 suites Bob. Runtime L2b Pattern, cycles normaux de ressources et régression Bob PASS ; Compiler/Amiga physique non retestés. [Qualification et limites](docs/releases/0.14.1_QUALIFICATION.md). [LAST_GOOD P2d](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, 136 020 octets.
+**M19 P2d-L2b — LAST_GOOD promue (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS : 184 cas Pattern, 172 writers, 10 suites Bob. Runtime L2b Pattern, cycles normaux de ressources et régression Bob PASS ; Compiler/Amiga physique non retestés. [Qualification et limites](docs/releases/0.14.1_QUALIFICATION.md). [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, identique octet pour octet à la Lib active, 136 708 octets. Promotion autorisée le 24 novembre 2026 ; 0.14.1 non publiée.
 
 **Test actif :** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocole](tests/current/README.md). Correctif Pattern : back buffer et SafePort. Aucune ressource externe. Runtime uniquement. Sprite gelé.
 

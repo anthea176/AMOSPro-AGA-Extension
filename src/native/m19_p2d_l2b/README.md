@@ -1,5 +1,7 @@
 # M19 P2d-L2b — source ASM liee (MC68020)
 
+**Promotion 24/11/2026 :** L2b est la LAST_GOOD protegee, identique a la Lib active. P2d reste la base historique reconstructible ; aucune source ASM modifiee par la promotion. [Rapport](../../../docs/M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md).
+
 **Reference de travail au 24/11/2026 :** P2d-L2b, 136 708 octets, 100 commandes / 203 AP20, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. Cible 0.14.1 non publiee. LAST_GOOD P2d protegee : 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`.
 
 ## Master direct

@@ -1,5 +1,11 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — promotion LAST_GOOD L2b
+
+**24 novembre 2026 — promotion L2b autorisée par l'auteur.** « attend avant ca il faudrait promoubvoir la courrante » : promotion interne de P2d-L2b, 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. Les deux Lib de dist/ sont identiques. P2d historique (136020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, blob `8a849b89aae57c2cda0b4db8771034a0978d3e78`) reste reconstructible depuis ses sources et conservée dans Git. Gate A et Runtime documentés sur L2b ; Compiler reporté, D physique non testée. Requalification CI après promotion et disposition des risques résiduels avant publication. Aucune publication, aucun tag ni reprise Sprite automatique.
+
+[Rapport de promotion](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md) · [Qualification](releases/0.14.1_QUALIFICATION.md). Chantier Sprite suspendu par demande auteur le temps de figer le socle ; la prochaine étape technique envisagée est S1-P1e réintégrée sur L2b, sans bascule de Lib ni nouvelle commande à ce stade.
+
 ## 24 novembre 2026 — Préparation de clôture 0.14.1
 
 [Qualification et dispositions résiduelles proposées](releases/0.14.1_QUALIFICATION.md). Identité L2b figée et notes/notice/INSTALL/README/exemples alignés ; aucune nouvelle modification de Lib. CI L0 ciblées et master ASM direct PASS, seul Artifact integrity global encore en cours lors de la lecture ; voir [rapport](AGA_L0_PROVENANCE_CI_2026-11-24.md). C reportée, D non testée. Aucun test WinUAE supplémentaire demandé ; pas de promotion/publication ni de report résiduel accepté par défaut. Le vrai LHA reste à fabriquer et extraire après accord.

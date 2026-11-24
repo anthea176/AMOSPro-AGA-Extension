@@ -51,10 +51,11 @@ def main() -> None:
     data, details = build()
     current,_,active=verify_active(ROOT)
     if active.startswith("M19 P2d-L2b"):
-        from active_library import P2DL2B_SHA, verify_p2d_l2b
+        from active_library import P2DL2B_SHA, verify_p2d_l2b, frozen_p2d
         assert sha256(current).hexdigest() == P2DL2B_SHA
-        verify_p2d_l2b(current, LAST_GOOD.read_bytes())
-        print("CURRENT M19 P2d-L2b: exact Gate A candidate, 100 commands / 203 AP20; see release checklist for Runtime evidence")
+        assert current == LAST_GOOD.read_bytes()
+        verify_p2d_l2b(current, frozen_p2d(LAST_GOOD.read_bytes()))
+        print("CURRENT M19 P2d-L2b: exact promoted LAST_GOOD, 100 commands / 203 AP20; see qualification for Runtime evidence")
     elif active.startswith("M19 P2d-L2"):
         from active_library import verify_p2d_l2
         verify_p2d_l2(current, LAST_GOOD.read_bytes())

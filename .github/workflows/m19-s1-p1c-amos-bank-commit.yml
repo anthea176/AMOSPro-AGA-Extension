@@ -101,11 +101,11 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           import os
-          from active_library import verify_active, P2D_SHA, P2DL2_SHA, S1P1E_SHA
+          from active_library import verify_active, P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1E_SHA
           from build_m19_s1p1e_get_sprite_ap20 import build_get_aga_sprite_candidate
           active, protected, label = verify_active(Path('.'))
-          assert sha256(protected).hexdigest() == P2D_SHA
-          assert sha256(active).hexdigest() in (P2D_SHA, P2DL2_SHA, S1P1E_SHA)
+          assert sha256(protected).hexdigest() == P2DL2B_SHA
+          assert sha256(active).hexdigest() in (P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1E_SHA)
           image, meta = build_get_aga_sprite_candidate(
               (Path(os.environ['RUNNER_TEMP']) / 'agsp_select_mc68020.bin').read_bytes())
           assert len(image) == 142000 and sha256(image).hexdigest() == S1P1E_SHA

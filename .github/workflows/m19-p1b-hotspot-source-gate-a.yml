@@ -82,7 +82,7 @@ jobs:
           assert (root/'tests/current/M19_P1B_HOTSPOT_BANK26.abk').read_bytes()==fixture()
           cur,good,label=verify_active(root)
           assert cur==actual and hashlib.sha256(cur).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
-          assert len(good)==136020 and hashlib.sha256(good).hexdigest()==P2D_SHA
+          assert len(good)==136708 and hashlib.sha256(good).hexdigest()==P2DL2B_SHA
           print('P1B SOURCE EXACT SHA',P1B_SHA,'FIXTURE EXACT 200 bytes',flush=True)
           PY
       - name: Sole campaign AMOS static preflight (not WinUAE)

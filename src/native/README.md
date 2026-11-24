@@ -1,10 +1,10 @@
 # AMOSPro AGA Extension — sources natives MC68020
 
-**Version de travail P2d-L2b (cible 0.14.1, non publiee)** : [master ASM direct](m19_p2d_l2b/M19_P2D_L2B_LINKED_EDITABLE.s) et [guide](m19_p2d_l2b/README.md). 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 AP20. Comparaison exacte du master direct [PASS en CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45462745139), memes 136708 octets que la Lib et le builder.
+**P2d-L2b promue LAST_GOOD le 24/11/2026 (cible 0.14.1, non publiee)** : [master ASM direct](m19_p2d_l2b/M19_P2D_L2B_LINKED_EDITABLE.s) et [guide](m19_p2d_l2b/README.md). 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 AP20. Comparaison exacte du master direct [PASS en CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45462745139), memes 136708 octets que la Lib et le builder.
 
 | Dossier | Role |
 | --- | --- |
-| [m19_p2d](m19_p2d/README.md) | Base ASM historique P2d / LAST_GOOD figee |
+| [m19_p2d](m19_p2d/README.md) | Base ASM historique P2d, ancienne LAST_GOOD figee |
 | [m19_p2d_l1](m19_p2d_l1/) | Overlays SafePort IFF Load et Back Fill |
 | [m19_p2d_l2](m19_p2d_l2/) | Overlay premier Bind B8 |
 | [m19_p2d_l2b](m19_p2d_l2b/README.md) | Overlay Screen Pattern et master lie actif |

@@ -16,7 +16,7 @@ from struct import unpack_from
 import subprocess
 import tempfile
 
-from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active, verify_p2d_l2b
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_in_memory import build_p2d
@@ -64,8 +64,9 @@ def build_l1(vasm: Path):
     need(sha256(active).hexdigest() in (S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA),
          'active S1-P1e/L2 identity changed; new authorization required')
     base, meta = build_p2d()
-    need(base == protected and sha256(base).hexdigest() == P2D_SHA,
-         'P2d protected SHA/source mismatch')
+    need(sha256(base).hexdigest() == P2D_SHA, 'P2d source SHA mismatch')
+    if protected != base:
+        verify_p2d_l2b(protected, base)
     need(len(base) == 136020 and (meta['commands'], meta['entries']) == (100,203),
          'unexpected P2d size/API')
     tok, parts, title = unpack_ap20(base)

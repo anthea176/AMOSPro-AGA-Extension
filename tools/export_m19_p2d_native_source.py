@@ -19,7 +19,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from active_library import P2D_SHA, verify_active
+from active_library import P2D_SHA, verify_active, frozen_p2d
 from build_m19_p2d_in_memory import build_p2d
 from build_m19_p1e_bank_edit_in_memory import build_p1e
 from compiler_bridge_v2_probe import DISPATCH_V2
@@ -46,8 +46,8 @@ def validate_source_build(data: bytes, root: Path):
     need(len(data) == EXPECTED_SIZE and digest(data) == P2D_SHA,
          "unknown .Lib; expected exact M19 P2d 136020-byte SHA")
     _active, last_good, _label = verify_active(root)
-    need(bytes(last_good) == data,
-         "LAST_GOOD does not match promoted P2d")
+    need(frozen_p2d(last_good) == data,
+         "historical P2d source/provenance mismatch")
     rebuilt, info = build_p2d()
     need(rebuilt == data and info['sha256'] == P2D_SHA,
          "deterministic P2d Python builder does not match selected .Lib")
@@ -206,7 +206,8 @@ def linked_source(data: bytes, parts, title, files: dict[int,str]) -> str:
 def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
     input_file = root/'dist/AMOSPro_AGA_LAST_GOOD.Lib'
     active_file = root/'dist/AMOSPro_AGA.Lib'
-    data = input_file.read_bytes()
+    protected_before = input_file.read_bytes()
+    data = frozen_p2d(protected_before)
     previous_active_sha = digest(active_file.read_bytes())
     info = validate_source_build(data, root)
     _, parts, title, groups, refs = parse_native_groups(data)
@@ -280,7 +281,7 @@ def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
     manifest_file=destination/'M19_P2D_SOURCE_MANIFEST.json'
     manifest_file.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',
                              encoding='utf-8',newline='\n')
-    need(digest(input_file.read_bytes())==P2D_SHA and
+    need(input_file.read_bytes()==protected_before and
          digest(active_file.read_bytes())==previous_active_sha,
          'source export modified protected libraries')
     return manifest

@@ -43,8 +43,8 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import P1E_SHA,P2D_SHA,verify_active
+          from active_library import P1E_SHA,P2D_SHA,P2DL2B_SHA,verify_active
           active,good,_=verify_active(Path('.'))
-          assert (len(good),sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA))
+          assert (len(good),sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA),(136708,P2DL2B_SHA))
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
