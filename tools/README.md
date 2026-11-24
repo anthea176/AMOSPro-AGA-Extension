@@ -1,6 +1,10 @@
 # Outils Python — builder actif et historique versionne
 
-## Candidate active P2d-L2 (24/11/2026)
+## Candidate active S1-P1h (24/11/2026)
+
+`dist/AMOSPro_AGA.Lib` : 142720 octets, SHA256 `900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb`, 102 commandes / 208 AP20, [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45481353847). Builder source `build_m19_s1p1h_l2b_bank_fix_ap20.py` (VASM MC68020), vérification exacte avec `test_m19_s1p1h_bank_gate_a.py`. Base protégée L2b SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Runtime B / vrai Compiler C / matériel D non testés. Les anciens builders restent reproductibles et les sections ci-dessous sont historiques.
+
+## Historique P2d-L2 (24/11/2026)
 
 `dist/AMOSPro_AGA.Lib` : 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20, Gate A 172 cas writers + 10 suites Bob PASS. Builder source `build_m19_p2d_l2_first_bind_in_memory.py` (vasm MC68020), reconstruit L1 puis L2 et compare à la Lib active exacte. `active_library.py` vérifie les deux SHA et les plages natives append-only. LAST_GOOD P2d protégée. B/C/D NON TESTÉES. [Protocole](../docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). S1-P1e gelée et reconstructible depuis son builder historique ; aucune commande Sprite active.
 

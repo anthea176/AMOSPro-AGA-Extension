@@ -2,7 +2,7 @@
 
 ## 24 novembre 2026 — S1-P1h publisher AGSP
 
-Runtime P1g ERR 7 ; syntaxe, écran, IFF et palette passés, aucune capture. [Rapport](M19_S1_P1H_CUR_BANKS_FIX_2026-11-24.md) : correction de l'indirection Cur_Banks et du mock de banque ; source MC68020 et Gate A en préparation. P1g non relançable ; aucune bascule avant CI. IFF 5428 octets déjà versionnée dans tests/proto/agsp_capture. LAST_GOOD L2b intacte.
+Runtime P1g ERR 7 ; syntaxe, écran, IFF et palette passés, aucune capture. **S1-P1h livrée**, 142720 octets, SHA256 `900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb`, blob `ee7b6bb6ecec3207d193c1e95641b1d9abe8cb62`, 102 commandes / 208 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45481353847) exacte PASS. Gate A native MC68020 PASS (184 Pattern, 172 writers, 10 suites Bob). Les deux CI AGSP annexes corrigées sont PASS (45484855000 et 45484854747). L'audit Input State corrigé dans dfb178f est PASS (étape du run 45484855065) ; le run Artifact integrity complet et la requalification CI historique sur la nouvelle livraison ne sont pas déclarés PASS. [Rapport](M19_S1_P1H_CUR_BANKS_FIX_2026-11-24.md). Prochain essai : [GET_AGA_SPRITE.asc et IFF](../tests/proto/agsp_capture/README.md) inchangés, banque 29 libre, Runtime WinUAE 68030/JIT ON/AGA PAL, redémarrer AMOS. P1g non relançable. B/C/D P1h non testées ; LAST_GOOD L2b intacte.
 
 ## 24 novembre 2026 — S1-P1g correctif syntaxe AP20
 

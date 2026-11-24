@@ -6,8 +6,8 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [S1-P1g](../dist/AMOSPro_AGA.Lib), 142684 octets, SHA256 `29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66`, 102 commandes / 208 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002173) ciblée AP20 PASS, code natif identique, B/C/D non testées. |
-| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P1g ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
+| Lib de travail | [S1-P1h](../dist/AMOSPro_AGA.Lib), 142720 octets, SHA256 `900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb`, 102 commandes / 208 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45481353847) native PASS ; Cur_Banks corrigé, B/C/D non testées. |
+| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P1h ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
 | ASC unique | [T06_PATTERN_TARGET.asc](../tests/current/T06_PATTERN_TARGET.asc), T06A/T06B Runtime PASS. Les sondes complémentaires restent dans tests/proto. [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
 
@@ -21,7 +21,7 @@
 
 ## 3. Sprites matériels AGA après levée du gel
 
-S1-P1e (102 commandes / 208 AP20, historique Gate A PASS) reprise par accord auteur. **S1-P1f : réintégration sur L2b**, Gate A native PASS mais échec syntaxe AMOS. **S1-P1g : correction AP20**, Gate A ciblée PASS, Lib livrée ; LAST_GOOD L2b inchangée. [Correctif](M19_S1_P1G_AP20_SYNTAX_FIX_2026-11-24.md). Sprite S0d B/C PASS historique, détachement DMA et D non prouvés. AGSP v1 : capture indexée RGB24, transparence explicite, S1 simple 3 couleurs opaques, S2 attaché 15 ; refus au-delà. DATA AGSP Save/Load B PASS, C délibérément sautée. Prochain essai : [capture AGSP Runtime](../tests/proto/agsp_capture/README.md) ; aucune DMA à ce stade. Avant activation DMA : palette, propriété canaux et arrêt sûr. [Audit S0](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) · [AGSP](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [contrat S1](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) · [preuves DATA](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
+S1-P1e (102 commandes / 208 AP20, historique Gate A PASS) reprise par accord auteur. **S1-P1f : réintégration sur L2b**, Gate A native PASS mais échec syntaxe AMOS. **S1-P1g : correction AP20**, Gate A ciblée PASS, Lib livrée ; LAST_GOOD L2b inchangée. [Correctif](M19_S1_P1G_AP20_SYNTAX_FIX_2026-11-24.md), rejet Runtime ERR 7. **S1-P1h : correction Cur_Banks, Gate A native PASS, candidate livrée pour Runtime.** [Rapport](M19_S1_P1H_CUR_BANKS_FIX_2026-11-24.md). Sprite S0d B/C PASS historique, détachement DMA et D non prouvés. AGSP v1 : capture indexée RGB24, transparence explicite, S1 simple 3 couleurs opaques, S2 attaché 15 ; refus au-delà. DATA AGSP Save/Load B PASS, C délibérément sautée. Prochain essai : [capture AGSP Runtime](../tests/proto/agsp_capture/README.md) ; aucune DMA à ce stade. Avant activation DMA : palette, propriété canaux et arrêt sûr. [Audit S0](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) · [AGSP](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [contrat S1](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) · [preuves DATA](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
 
 ## 4. Après Sprite : M21 puis M20
 
