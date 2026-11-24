@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — T14A PASS, T11A préparé
+
+T14A Runtime PASS sur L2b : 26/26 Open/Close, 13 simple + 13 DB, 104 opérations curseur, 13 Swaps, zéro refus/retry Fill, CLOSED_MOUSE_X -1. Les 13 mesures après paires (référence après échauffement) donnent Chip Free=1791304 et Fast Free=138107904, CHIP_LOSS=FAST_LOSS=DIFF_PAIRS=0, MEM_STABLE=1. Pas de fuite cumulative observée pour ce scénario ; pas de preuve sur fuite unique avant référence, End, B8/C2P/Copper ou refus OS injectés. [Journal](evidence/T14_CLOSE_RUNTIME_PASS_L2B_2026-11-24.TXT). Journal original 999 octets CRLF, SHA256 `dc54b5dfd65f460688b43c50083323738457785b2893cf0c4535c6898d246fb4`, blob `f99ee10423c1c5f0c9a8e88e2bca4b91d0c9aded`. [T11A](../tests/proto/l3_cache/T11_CACHE_MEMORY.asc) préflight PASS, Runtime à exécuter, 7 cycles, 14 Stage, 35 contrôles pixel, banques libres 11/12/13/27. Aucun nouvel essai T14A requis sur ces octets. T10 AGBO/AGPC, compléments T11, T14 End/B8/C2P/timeout, T16 Copper et CI L0 restent ouverts.
+
+
 ## 24 novembre 2026 — T06 terminé en Runtime ; L3/T14A préparé
 
 T06B Runtime PASS sur L2b : 12/12 cycles, 12 Pattern immédiatement après Swap réussi sans VBL préalable, BACK_OK=FRONT_OK=12, 36 swaps, 0 refus Swap, 12 reprises Fill et 12 Capture abouties, ERR 0, CLOSE_RETURNED 1, CLOSED_MOUSE_X -1. T06A et T06B qualifiés en Runtime ; fenêtre post-Swap exercée sans observation directe du drapeau interne Safe. Refus Safe absent/allocateur injectés couverts par Gate A, pas par WinUAE. Compiler reporté, D non testée. [Journal](evidence/T06B_SAFE_RUNTIME_PASS_L2B_2026-11-24.TXT). L3 : commencer par T14A, mesure mémoire Open/DB/Close avec curseur ; T10/T11 banques et caches, T14 autres variantes (B8/End/C2P et timeout), T16 Copper restent ouverts. [Sonde T14A](../tests/proto/l3_resources/T14_CLOSE_MEMORY.asc) préflight PASS, Runtime non testé. Aucune nouvelle compilation ni promotion. L0 CI générales reste ouvert.

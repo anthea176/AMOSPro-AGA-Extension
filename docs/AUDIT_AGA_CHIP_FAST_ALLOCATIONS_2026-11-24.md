@@ -31,3 +31,7 @@ Lors d'un remplacement, ancien et nouveau caches peuvent coexister : le pic est 
 - Mesurer séparément allocation maximale disponible et total libre si l'environnement permet de le faire ; fragmentation et overhead OS distincts, aucune valeur supposée.
 
 **Bilan :** appariements visibles et refus locaux positifs ; intégrité de tous les chemins en échec, saturation et fragmentation VM. AGA-004/008/013/014 à qualifier. Pas de P0 supplémentaire établi ; aucune optimisation ou migration mémoire décidée.
+
+## Addendum Runtime L2b — 24/11/2026
+
+T14A Runtime PASS sur L2b : 26/26 Open/Close, 13 simple + 13 DB, 104 opérations curseur, 13 Swaps, zéro refus/retry Fill, CLOSED_MOUSE_X -1. Les 13 mesures après paires (référence après échauffement) donnent Chip Free=1791304 et Fast Free=138107904, CHIP_LOSS=FAST_LOSS=DIFF_PAIRS=0, MEM_STABLE=1. Pas de fuite cumulative observée pour ce scénario ; pas de preuve sur fuite unique avant référence, End, B8/C2P/Copper ou refus OS injectés. [Preuve](evidence/T14_CLOSE_RUNTIME_PASS_L2B_2026-11-24.TXT). [T11A](../tests/proto/l3_cache/README.md) préparé pour restaging FICON/FICHIP et répétition allocation/libération, sans injection OS. Les autres chemins restent à qualifier.

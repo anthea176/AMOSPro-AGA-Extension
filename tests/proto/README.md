@@ -16,3 +16,5 @@
 Ne pas confondre ce dossier avec `tests/current/` (un seul ASC de campagne) ni `tests/passed/` (archives protégées). Les cinq fichiers ASC/ABK déplacés conservent leurs blobs Git **strictement identiques** ; seuls les README et les chemins des scripts sont adaptés.
 
 [Compte rendu WinUAE AGTM](../../docs/AGTM_WINUAE_PROTOTYPES_2026-11-23.md).
+
+| [`l3_cache/`](l3_cache/README.md) | T11A FICON/FICHIP restaging et mémoire, préflight PASS, Runtime à exécuter |
