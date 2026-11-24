@@ -9,7 +9,8 @@
 | [`agsp_capture/`](agsp_capture/README.md) | Capture Sprite AGSP, nouveau token de test `Get AGA Sprite`, Runtime WinUAE non exécuté ; candidate uniquement dans les artefacts CI | 
 | [`agtm_prototype/`](agtm_prototype/README.fr.md) | Banque DATA AGTM et benchmark mosaïque (essais WinUAE reçus le 23/11/2026) |
 
-| [`t06_pattern/`](t06_pattern/README.md) | T06A : cible bitmap Pattern en double buffer stabilisé, préflight PASS, Runtime à exécuter sur L2 |
+| [`t06_pattern/`](t06_pattern/README.md) | T06A : cible bitmap, FAIL L2 puis PASS L2b Runtime, source inchangée |
+| [`t06_pattern_safe/`](t06_pattern_safe/README.md) | T06B : Pattern immédiatement après Swap, 12 cycles, préflight PASS, Runtime à exécuter |
 
 Ne pas confondre ce dossier avec `tests/current/` (un seul ASC de campagne) ni `tests/passed/` (archives protégées). Les cinq fichiers ASC/ABK déplacés conservent leurs blobs Git **strictement identiques** ; seuls les README et les chemins des scripts sont adaptés.
 

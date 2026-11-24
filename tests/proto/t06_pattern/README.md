@@ -38,3 +38,7 @@ PROBE_COMPLETE=1 signifie les deux pages mesurées. PASS attendu pour contrat ba
 P2d-L2b active, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. [Gate A 45449139352](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS (184 Pattern, 172 writers, 10 suites Bob), seconde reconstruction [45449077283](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449077283) même SHA256. Gate B T06A à établir, C reportée, D non testée. LAST_GOOD P2d intacte.
 
 Utiliser [l'ASC actif](../../current/T06_PATTERN_TARGET.asc), octets strictement identiques au banc FAIL L2. Le protocole initial ci-dessus reste la référence de test ; aucune nouvelle compilation.
+
+## Résultat T06A PASS (L2b)
+
+T06A Runtime PASS sur L2b : TARGET BACK, PROBE_COMPLETE 1, back 64/128/192, ancien front 239/239/239, ERR 0, 3 swaps sans refus, CAP_RETRIES 0, FILL_RETRIES 1, CLOSE_RETURNED 1, CLOSED_MOUSE_X -1. Défaut FRONT AGA-011 corrigé dans le scénario stabilisé. T06B sans pré-VBL reste à exécuter ; Gates C/D non testées sur L2b. Le banc T06A et les deux Lib restent inchangés. [Journal original](../../../docs/evidence/T06_PATTERN_RUNTIME_PASS_L2B_2026-11-24.TXT). Journal original 461 octets CRLF, SHA256 `4d0842343c6c99cf9a4742497dd783066159077fc59eb1b3da7980707d943d3f`, blob `ca9e3266d06a81281a0db634856cd83c9aef1be7`. [Suite T06B](../t06_pattern_safe/README.md).

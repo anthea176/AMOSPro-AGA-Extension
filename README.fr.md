@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P2d-L2b — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS : 184 cas Pattern, 172 writers, 10 suites Bob. Runtime/Compiler/Amiga physique L2b non testés. [LAST_GOOD P2d](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, 136 020 octets.
+**M19 P2d-L2b — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS : 184 cas Pattern, 172 writers, 10 suites Bob. Runtime L2b T06A PASS ; T06B en attente ; Compiler/Amiga physique non testés. [LAST_GOOD P2d](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, 136 020 octets.
 
 **Test actif :** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocole](tests/current/README.md). Correctif Pattern : back buffer et SafePort. Aucune ressource externe. Runtime uniquement. Sprite gelé.
 

@@ -1,10 +1,15 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — T06A PASS, T06B préparé
+
+T06A Runtime PASS sur L2b : TARGET BACK, PROBE_COMPLETE 1, back 64/128/192, ancien front 239/239/239, ERR 0, 3 swaps sans refus, CAP_RETRIES 0, FILL_RETRIES 1, CLOSE_RETURNED 1, CLOSED_MOUSE_X -1. Défaut FRONT AGA-011 corrigé dans le scénario stabilisé. T06B sans pré-VBL reste à exécuter ; Gates C/D non testées sur L2b. Le banc T06A et les deux Lib restent inchangés. [Journal](evidence/T06_PATTERN_RUNTIME_PASS_L2B_2026-11-24.TXT). [T06B](../tests/proto/t06_pattern_safe/T06_PATTERN_SAFE.asc) : préflight PASS, Runtime à exécuter, 12 cycles / 36 swaps / pas de VBL avant Pattern / aucune ressource. Puis L3. Les statuts précédents sont historiques.
+
+
 > **24/11/2026 — Bascule L2b :** P2d-L2b active, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. [Gate A 45449139352](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS (184 Pattern, 172 writers, 10 suites Bob), seconde reconstruction [45449077283](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449077283) même SHA256. Gate B T06A à établir, C reportée, D non testée. LAST_GOOD P2d intacte. [Test actif](../tests/current/README.md). Le statut ci-dessous est historique.
 
 ## Objectif auteur : publication 0.14.1
 
-**0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2b active, T06A Runtime à rejouer. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md). [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
+**0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2b active, T06A PASS, T06B Runtime à exécuter. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md). [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
 
 ## 24 novembre 2026 — L2b source-only autorisée, Gate A à établir
 
