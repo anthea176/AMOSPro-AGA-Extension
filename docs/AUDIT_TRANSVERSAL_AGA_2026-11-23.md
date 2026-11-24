@@ -190,3 +190,38 @@ Le [code transactionnel B8](https://github.com/anthea176/AMOSPro-AGA-Extension/b
 - **Indépendance des P0 :** ce contrat ne dispense **jamais** un writer (`Aga Iff Load`, `Aga Back Fill`) de vérifier SafePort : la séquence Clear → IFF/Back Fill → Swap reste potentiellement dangereuse si une nouvelle situation Safe pending survient. **AGA-001 et AGA-010 restent P0 de protection statique.**
 
 **État des preuves :** documentation, émetteur B8 et programme P2d source rapprochés ; aucun test natif ni WinUAE exécuté, aucune correction autorisée. AGA-003 ne sera reclassée P1 qu'avec une preuve contre le chemin Clear→décor→Swap réellement autorisé.
+
+## 9. Passage 5 — 24 novembre 2026 : fermeture de la chaîne native AGA-002 (sans Gate B)
+
+**Contexte :** P2d 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Cette vérification lit les **routines assemblées sources de l'unité BOBS**, pas uniquement un modèle Python. **Aucune modification du moteur ni exécution de test.**
+
+### Chemin exact du premier Swap avec Bob actif
+
+1. [`p2d_public_swap` natif](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_CONTROLS_MC68020.s#L73-L145) : le mode Auto actif avec propriétaire valide et garde CLEAN examine les 64 Bobs ; s'il en trouve au moins un, il appelle **`p2d_service_update`** avant `guarded_swap_entry`. Un `D3=0` part directement vers `p2d_refused`, retourne 0 et **n'appelle pas le Swap original**. Avec zéro Bob actif et pool absent, la voie directe Swap reste disponible : l'anomalie ne concerne pas ce cas.
+2. [Pont de service P2d](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_PUBLIC_UPDATE_MC68020.s#L65-L89) : le premier Update public passe par `L_BOBS_0D738` pour constituer le pool B8 (et armer les callbacks), avant Update/Capture. Le code [`L_BOBS_0D738`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_SERVICE_BODY_MC68020.s#L1402-L1457) appelle `L_BOBS_0C51E` avant toute publication du root de service.
+3. [Chemin natif `L_BOBS_0C51E`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_SERVICE_BODY_MC68020.s#L8-L45) : la première opération est `bsr.w L_BOBS_0BE32`; le service contrôle ensuite identité et géométrie. En parallèle, [l'émetteur B8](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/tools/m19_b8_page_manager_emit.py#L100-L106) fait `b8_service_fetch → b8_checked_back_selector_entry` **avant Bind**, cohérent avec les octets natifs restaurés.
+4. **Garde critique :** dans [`L_BOBS_0BE32` natif](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_SUPPORT_TAIL_MC68020.s#L595-L671), lecture de `DB+20`, masque `#1`, puis **`bne.w L_BOBS_0C07A`** en cas de Safe pending. Ce chemin **ne consomme aucun `GetMsg`**. D3 reste 0, empêchant le Bind ; pas de snapshot prêt pour `Clear`.
+5. À l'inverse, le [Swap original UNIT142](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_UNIT142_BLOCK_00BA2_MC68020.s#L60-L89) possède `GetMsg(-372)` pour les notifications Safe/Disp ; mais P2d n'y arrive pas si la préparation B8 a refusé. [`Aga Wait Vbl`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_UNIT142_BLOCK_00A62_MC68020.s#L6-L15) appelle **`WaitTOF(-270)` seulement** : il ne draine pas SafePort.
+6. **Nuance indispensable :** le [service de copie B8 lorsqu'un pool existe déjà](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/src/native/m19_p2d/M19_P2D_SYSTEM_SERVICE_MC68020.s#L101-L135) dispose bien de `GetMsg(-372)` suivi de `WaitBlit`. Ce mécanisme ne contredit pas le cas **initial**, puisqu'il suppose que le service/root a pu être lié. Le [retry `Clear`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/53780b302f3cbb4068d75dc84d03d0cfcabd6df5/tools/m19_b8_safe_retry_emit.py#L32-L52) exige owner et snapshot valides : il ne peut pas résoudre à lui seul le **tout premier Bind refusé**.
+
+### Classification prudente
+
+**AGA-002 = P1, défaut structurel de progression conditionnelle documenté par le code.** Préconditions conjointes : mode Auto activé, au moins un Bob actif, garde CLEAN, **pool encore absent**, `DB+20 bit0=1`, et **aucune autre commande** ayant acquitté le SafePort entre les essais. Dans cette configuration, un simple enchaînement **`Aga Wait Vbl → Aga Swap`** peut continuer à renvoyer 0 même lorsque la notification Safe est devenue disponible ; le sélecteur ne la lit pas.
+
+Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les anciennes campagnes prouvent déjà que des refus temporaires de Swap peuvent être récupérés. Ce rapport ne conclut pas que tous les `ERR 15` du RPG sont causés par AGA-002.
+
+### Test discriminant à prévoir — T02 révisé (non exécuté)
+
+| Variante | Préparation | Observation attendue pour qualifier la cause |
+|---|---|---|
+| **T02-A, témoin CLEAN** | Aucun Bob actif, pool absent, Safe pending ; attendre VBL puis Swap | Le chemin direct Swap doit être atteint ; il peut acquitter SafePort ou refuser légitimement selon l'état réel |
+| **T02-B, suspect initial** | Au moins un Bob actif, Auto Update 1, pool absent, Safe pending ; VBL puis Swap, sans commande intermédiaire consommant Safe | Examiner si D3=0 avant `guarded_swap_entry`, flag Safe toujours 1, absence de root/snapshot ; ne pas confondre avec défaut géométrique ou banque |
+| **T02-C, témoin d'acquittement** | Même initialisation, mais notification Safe disponible puis **une commande normalement protégée** (par ex. `Aga Blit Fill` sur zone neutre, retour 1 confirmé) avant le Swap | Si Bind/Swap redevient possible seulement après `GetMsg`, l'interdépendance Safe/B8 est corroborée |
+| **T02-D, messages absents** | Safe pending, aucun message disponible, mêmes appels | Refus `0` **légitime** ; aucun accès au back ni présentation illégale, sans attente infinie |
+| **T02-E, root déjà constitué** | Deuxième cycle après Bind réussi, Safe pending | Vérifier la prise en charge Safe du service B8 existant et distinguer initialisation / régime établi |
+
+**Gate A :** injecter flag/message OS simulé et contrôler les appels `GetMsg`, `ChangeScreenBuffer`, `WaitBlit`, allocations et états. **Gate B :** WinUAE Runtime exact avec journaux de D3/Safe/B8 seulement si une instrumentation sûre et autorisée est disponible. **Gate C :** vrai Compiler du même ASC. Ne modifier ni `tests/current/` ni aucune Lib pendant l'audit.
+
+**Décision envisagée après validation de l'audit, PAS appliquée :** définir un protocole Safe commun **avant le Bind initial**, sans attendre de notification de manière non bornée et sans rendre possible une écriture sur la page encore affichée. Réutiliser si possible la routine existante de consommation Safe, avec contrôle owner/DB et préservation de Disp ; vérifier par Gate A/B/C et régression intégrée. La compatibilité Sprite S1 sera seulement étudiée **après** la correction P2d autorisée.
+
+**Statut global : audit ouvert, aucun test supplémentaire exécuté, aucun correctif appliqué, S1-P1e gelée.**

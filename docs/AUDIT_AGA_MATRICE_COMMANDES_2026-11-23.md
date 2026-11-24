@@ -12,7 +12,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 2 | `Aga Screen Open` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | VM |
 | 3 | `Aga Screen Close` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A004 P1 a qualifier |
 | 4 | `Aga Double Buffer` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 a qualifier |
-| 5 | `Aga Swap` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 risque |
+| 5 | `Aga Swap` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 structure conditionnelle |
 | 6 | `Aga Pic Info` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 7 | `Aga Iff Load` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A001 P0 statique |
 | 8 | `Aga Palette Load` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
@@ -89,7 +89,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 79 | `Aga Bob Col` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
 | 80 | `Aga Bob Flip` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
 | 81 | `Aga Bob Planes` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
-| 82 | `Aga Bob Auto Update` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | A002 P1 risque |
+| 82 | `Aga Bob Auto Update` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | A002 P1 structure conditionnelle |
 | 83 | `Aga X Bob` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
 | 84 | `Aga Y Bob` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
 | 85 | `Aga I Bob` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
@@ -135,3 +135,7 @@ Voir [rapport transversal](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) et [cahier de te
 ## Requalification AGA-003 (24 novembre 2026)
 
 Le [modèle P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md) exige **`Aga Bob Clear` avant toute modification de décor** avec Auto Update : `Clear → dessin → Swap`. Le [code B8](../tools/m19_b8_clear_update_tx_emit.py) utilise le masque `cleared` pour ne pas restaurer l'ancien fond et capturer le nouveau. **AGA-003 = validation manquante du chemin contractuel**, pas P1 confirmé à partir d'une séquence sans Clear. Se reporter à [T03](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md) et [Passage 4 de l'audit](AUDIT_TRANSVERSAL_AGA_2026-11-23.md). Les P0 Safe des commandes Back Fill et IFF restent indépendants.
+
+## 24 novembre 2026 — AGA-002 confirmée par chaîne native
+
+Les appels publiés `Aga Swap` (AP20 181 → BOBS+$0B606) et `Aga Bob Auto Update` (AP20 195 → BOBS+$0B58C) sont liés à [`M19_P2D_CONTROLS_MC68020.s`](../src/native/m19_p2d/M19_P2D_CONTROLS_MC68020.s). Le premier Bind B8 utilise le [sélecteur natif `L_BOBS_0BE32`](../src/native/m19_p2d/M19_P2D_SUPPORT_TAIL_MC68020.s) qui refuse Safe pending **sans GetMsg**, avant le Swap original. Statut **P1 anomalie structurelle conditionnelle de progression**, pas freeze WinUAE confirmé ; [cas T02 A–E](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md).
