@@ -263,3 +263,15 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **AGA-005 élargie** : la régression R74/R75 antérieure avait effacé du code natif à cause de **sept LEA de données clavier/souris déplacées**. Le test `tools/test_current_input_state_offsets.py` vérifie 7 LEA + 8 mutations sur lignées historiques ; sa politique SHA active doit reconnaître S1-P1e à l'avenir, **sans modifier code/test pendant le gel**.
 
 **Audit toujours ouvert.** Les 102 commandes restent inventoriées, 19 scénarios spécifiés et non exécutés ici. **Aucun correctif / binaire / ASC / journal modifié ; S1-P1e Sprite GELÉE.**
+
+## 13. Passage 9 — 24 novembre 2026 : preuves Runtime/Compiler et clôture documentaire
+
+**Registre consolidé des preuves primaires, preuves rapportées et 19 scénarios :** [`AUDIT_AGA_PREUVES_ET_CLOTURE_2026-11-24.md`](AUDIT_AGA_PREUVES_ET_CLOTURE_2026-11-24.md).
+
+- Les **journaux originaux P2 ALL IN ONE** sont archivés dans `docs/evidence/` et attestent **Gate B Runtime** (`PRG_STATE 1`) et **Gate C vrai AMOS Compiler** (`PRG_STATE -1`) pour **le même programme exact**, Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`, `SOURCE_TAG P2_FULL_V1_20261121`. Chaque log donne `RESULT 1 ERR 0 VALID_SAMPLES 240 SWAPS 252 SWAP_REFUSALS 121 SWAP_RECOVERED 121 CLOSE_RETURNED 1`. **Cela ne certifie pas les scénarios IFF, Back Fill, Pattern, premier Bind sans Fill ni rechargements de banque**.
+- Les logs **P2e.1 FAIL initial** (`ERR 15 FRAME 2`) et **PASS retry** (120 refus récupérés) sont **deux fichiers distincts et conservés** : ne jamais remplacer le premier par le second.
+- Dans le prototype `P2_EDGE_20X18.asc`, `_ERR=15` est assigné par le **programme test après quatre tentatives de `Aga Swap` infructueuses**. Il **ne code pas directement** un état Safe ou DIRTY du moteur. Les 123 vérifications du pixel opaque local (19,17) étaient correctes avant le FAIL rapporté à la frame 221 ; la cause du refus reste **non identifiée**. Les TXT originaux RPG ne sont pas archivés dans Git à cette référence ; leurs valeurs demeurent des **comptes rendus**, pas des logs inventés.
+- **AGA-012 P2 documentaire** : le `tests/current/README.md` gelé affirme encore que la Lib P2d active et LAST_GOOD sont identiques. Sur `main`, la **Lib active est S1-P1e (142 000)** tandis que **P2d est uniquement LAST_GOOD (136 020)**. **Ne pas modifier le fichier historique gelé** ; consigner la correction de provenance ici et ne tester P2d qu'après vérification du SHA de la Lib réellement installée.
+- **19/19 tests d'audit actuellement NON EXÉCUTÉS** ; T07 dispose d'une preuve B/C **historique** sur le même ASC mais cela ne vaut pas nouvelle qualification. Le rapport distingue **clôture de l'audit** (statuts et preuves documentés) et **clôture de réparation** (correctif autorisé + Gates A/B/C et non-régression).
+
+**État du gel inchangé** : aucune écriture sur source native, Lib, ASC, test, ancienne preuve ou branche. Les corrections restent soumises à autorisation distincte ; Sprite S1-P1e GELÉ.

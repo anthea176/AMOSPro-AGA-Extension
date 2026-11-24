@@ -139,3 +139,7 @@ Le premier `Aga Swap` en Auto Update avec Bob actif passe par `p2d_service_updat
 [Audit du graphe des dépendances](AUDIT_AGA_DEPENDANCES_CACHE_C2P_2026-11-24.md). T06 couvre `Aga Screen Pattern` sur `Screen.RastPort` après Swap, à comparer à un writer Safe. T10/T11 distinguent Fast et Chip réels, cache FICHIP restagé ou non, et marqueur ready. T14 préserve l'invariant des **sept LEA clavier/souris**, historiquement cassé en R74/R75, sans attribuer cette régression à P2d. **T15 Sprite demeure GELÉ.**
 
 **Compteur : 19 scénarios T01–T19, aucun exécuté dans cette passe.** Aucune campagne ou nouvelle Gate validée.
+
+## Passage 9 — portée des preuves historiques, 24 novembre 2026
+
+[Registre des preuves WinUAE/Compiler et critères PASS/FAIL](AUDIT_AGA_PREUVES_ET_CLOTURE_2026-11-24.md). **T07** correspond au banc `P2_FULL_V1_20261121` conservé en [Runtime](evidence/M19_P2_ALL_IN_ONE_RUNTIME_PASS_2026-11-21.TXT) et [Compiler](evidence/M19_P2_ALL_IN_ONE_COMPILED_PASS_2026-11-21.TXT) : B/C **PASS historiques sur P2d uniquement**, pas de nouvel essai durant cet audit. **T18** contient des résultats EDGE/SwapVBL **rapportés sans TXT originaux** : FAIL `ERR15` est un épuisement de quatre tentatives de Swap (code de l'ASC), non un code Safe/DIRTY natif. Les 19 scénarios transversaux T01–T19 restent **NON EXÉCUTÉS dans la présente campagne** ; T15 Sprite **GELÉ**. Ne pas transformer des compteurs anciens en preuve de sécurité des nouvelles séquences.
