@@ -21,7 +21,7 @@ from compiler_relocation import unpack_ap20, RBSR, GETP
 from compiler_bridge_v2_probe import DISPATCH_V2
 from ap20_v3_r82_split import interpreter_rbsr_displacements, assert_reaches_entry_on_mc68020
 from amos_link_test_support import relocate
-from active_library import R84_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, verify_active
+from active_library import R84_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
 from build_m19_p25_no_probe import (
     build, ACTIVE, PROTECTED, GROUP_C2P, GROUP_IFF, GROUP_BOBS, GROUP_AGA,
     BATCH_ENTRY, TITLE
@@ -326,7 +326,7 @@ class BatchGateA(unittest.TestCase):
                             __import__("active_library").B8_SHA,
                             __import__("active_library").B8S1_SHA,
                              __import__("active_library").P0_FREE_SHA,
-                             P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA))
+                             P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS))
         live=PROTECTED.read_bytes()
         active, protected, _ = verify_active(ROOT)
         self.assertEqual(active, ACTIVE.read_bytes())

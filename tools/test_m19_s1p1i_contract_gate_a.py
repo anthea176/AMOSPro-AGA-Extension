@@ -285,6 +285,7 @@ def main():
     raw=a.historical.read_bytes()
     os.environ['AGSP_GET_BIN']=str(a.historical)
     os.environ['AGSP_PUBLISH_BIN']=str(a.historical)
+    os.environ['AGSP_PIPELINE_BIN']=str(a.historical)
     parts=verify_frozen(raw)
     historical(raw,parts)
     if a.candidate:candidate(a.candidate.read_bytes(),parts)
