@@ -1,0 +1,53 @@
+name: M19 S1-P1i independent Sprite contract Gate A (source only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/native/m19_s1/**'
+      - 'tools/test_m19_s1p1i_contract_gate_a.py'
+      - 'tools/build_m19_s1p1i*'
+      - 'tools/active_library.py'
+      - 'tools/build_agapic_v2_r82_full_preview.py'
+      - '.github/workflows/m19-s1-p1i-contract-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore pinned VASM
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM on cache miss
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Install pinned MC68020 test tools
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Prove the original defects on exact installed P1h
+        run: |
+          python -B -m py_compile tools/test_m19_s1p1i_contract_gate_a.py
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1h.bin" src/native/m19_s1/M19_S1P1H_BANK_PUBLIC_MC68020.s
+          PYTHONPATH=tools python -B tools/test_m19_s1p1i_contract_gate_a.py --historical "$RUNNER_TEMP/p1h.bin"
+      - name: Preserve installed and protected libraries
+        run: |
+          printf '%s  %s\n' '900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          git diff --exit-code
