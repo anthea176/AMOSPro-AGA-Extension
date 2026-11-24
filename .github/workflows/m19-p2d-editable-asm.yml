@@ -146,10 +146,10 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS
           active, protected, label = verify_active(Path('.'))
           assert sha256(protected).hexdigest() == P2DL2B_SHA and len(protected) == 136708
-          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA)
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
           print(label)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/

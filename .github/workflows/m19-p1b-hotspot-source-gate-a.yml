@@ -74,14 +74,14 @@ jobs:
           import pathlib,hashlib
           from build_m19_p1b_hotspot_in_memory import build_p1b,P1B_SHA,P1B_BYTES
           from build_m19_p1b_hotspot_fixture import fixture
-          from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, verify_active
+          from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
           root=pathlib.Path('.')
           actual=(root/'dist/AMOSPro_AGA.Lib').read_bytes()
           expected,meta=build_p1b()
           assert len(expected)==P1B_BYTES and hashlib.sha256(expected).hexdigest()==P1B_SHA
           assert (root/'tests/current/M19_P1B_HOTSPOT_BANK26.abk').read_bytes()==fixture()
           cur,good,label=verify_active(root)
-          assert cur==actual and hashlib.sha256(cur).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA)
+          assert cur==actual and hashlib.sha256(cur).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
           assert len(good)==136708 and hashlib.sha256(good).hexdigest()==P2DL2B_SHA
           print('P1B SOURCE EXACT SHA',P1B_SHA,'FIXTURE EXACT 200 bytes',flush=True)
           PY
