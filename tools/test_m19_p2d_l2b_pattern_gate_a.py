@@ -10,6 +10,9 @@ import argparse
 from pathlib import Path
 from struct import pack, unpack_from
 import unittest
+import subprocess
+import tempfile
+from hashlib import sha256
 
 from unicorn.m68k_const import UC_M68K_REG_PC
 from audit_ap20 import walk_tokens
@@ -211,12 +214,37 @@ def run_pattern_cases(prior, fixed):
     return n
 
 
+def verify_linked_source(vasm: Path, expected: bytes) -> None:
+    """Compare the checked-in direct master, without writing any distributed Lib."""
+    root = Path(__file__).resolve().parents[1]
+    folder = root / 'src/native/m19_p2d_l2b'
+    vasm = vasm.resolve()
+    with tempfile.TemporaryDirectory(prefix='aga-p2d-l2b-linked-') as temp:
+        output = Path(temp) / 'source-check.bin'
+        result = subprocess.run(
+            [str(vasm), '-Fbin', '-m68020', '-no-opt', '-quiet',
+             '-I../m19_p2d', '-o', str(output),
+             'M19_P2D_L2B_LINKED_EDITABLE.s'],
+            cwd=folder, capture_output=True, text=True, timeout=120,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        direct = output.read_bytes()
+    digest = sha256(direct).hexdigest()
+    assert digest == 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc', 'direct L2b SHA mismatch'
+    assert direct == expected, 'linked ASM and source builder differ'
+    installed = (root / 'dist/AMOSPro_AGA.Lib').read_bytes()
+    if sha256(installed).hexdigest() == digest:
+        assert direct == installed, 'linked ASM and installed L2b differ'
+    print('P2D L2B LINKED ASM BYTE-EXACT PASS', len(direct), digest, flush=True)
+
+
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('--vasm', type=Path, required=True)
     vasm = cli.parse_args().vasm
     prior, _ = build_l2(vasm)
     image, meta = build_l2b(vasm)
+    verify_linked_source(vasm, image)
     print('P2D L2B SOURCE IN MEMORY', meta, flush=True)
     assert run_pattern_cases(prior, image) == 184
     assert run_cases(image, meta) == 172

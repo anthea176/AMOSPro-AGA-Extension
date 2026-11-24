@@ -1,0 +1,375 @@
+; AGA_NATIVE_MIN_CPU: MC68020
+; L2b linked view of frozen M19_P2D_UNIT142_EDITABLE.s.
+; Historical ranges and SHA comments below describe the P2d base.
+; PARTIAL_SOURCE_MIGRATION: UNIT142 pinned MC68020 code, audit remainder
+; Selected native spans source-owned; remaining legacy mnemonics/data pinned
+; Unit: UNIT142 | SHA256: 8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7
+; Proven SHA-pinned AP20 unit, including its 34-byte V2 dispatcher.
+; DC.B preserves unclassified code/data, GetP and AMOS linker markers.
+; Mnemonic equivalence is NOT proven without --verify-vasm.
+; MC68020: assemble with vasmm68k_mot -m68020
+
+UNIT_UNIT142:
+    include "../m19_p2d/M19_UNIT142_DISPATCH_V2_MC68020.s"
+ENTRY_UNIT142_00022:
+    include "../m19_p2d/M19_UNIT142_INIT_ENTRY_MC68020.s"
+L_UNIT142_0005A:
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_ENTRY_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_MAIN_BRA_TARGET_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_GUARD_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_ISLAND_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_CROSS_BSR_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_POSTCALL_MC68020.s"
+L_UNIT142_001C2:
+    dcb.b 40,0
+    include "../m19_p2d/M19_UNIT142_R83_CLOSE_SAFEWAIT_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_002A2_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_STUB_002A4_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_002B2_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_STUB_002B4_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_002C2:
+    include "../m19_p2d/M19_UNIT142_GRAPHICS_GUARD_MC68020.s"
+L_UNIT142_0030C:
+    dc.b $67,$72,$61,$70,$68,$69,$63,$73,$2E,$6C,$69,$62
+    dc.b $72,$61,$72,$79,$00,$00,$47,$65,$74,$50
+ENTRY_UNIT142_00322:
+    include "../m19_p2d/M19_UNIT142_GRAPHICS_SCREEN_MC68020.s"
+L_UNIT142_00448:
+    dc.b $69,$6E,$74,$75,$69,$74,$69,$6F,$6E,$2E,$6C,$69
+    dc.b $62,$72,$61,$72,$79,$00
+L_UNIT142_0045A:
+    dc.b $67,$72,$61,$70,$68,$69,$63,$73,$2E,$6C,$69,$62
+    dc.b $72,$61,$72,$79,$00,$00,$47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_LEGACY_OPEN_HEAD_MC68020.s"
+L_LEGACY_SCREEN_OPEN_00164:
+    dc.b $69,$6E,$74,$75,$69,$74,$69,$6F,$6E,$2E,$6C,$69
+    dc.b $62,$72,$61,$72,$79,$00
+L_LEGACY_SCREEN_OPEN_00176:
+    dc.b $67,$72,$61,$70,$68,$69,$63,$73,$2E,$6C,$69,$62
+    dc.b $72,$61,$72,$79,$00,$00
+    include "../m19_p2d/M19_UNIT142_LEGACY_OPEN_HELPERS_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "M19_L2B_UNIT142_PATTERN_BODY_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_HEAD_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_BODY_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_BSR_660A_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_WAIT_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_TARGET_AUX_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_00A62_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_00A80_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_00BA2_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "M19_L2B_UNIT142_BACK_FILL_BODY_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_00D3C:
+    include "M19_L2B_UNIT142_IFF_LOAD_BODY_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_0153A_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_01540_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_015BA_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_015C0_MC68020.s"
+    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_015D8:
+    include "../m19_p2d/M19_UNIT142_IFF_PALETTE_BODY_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_01BC4_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_01BCA_MC68020.s"
+    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
+ENTRY_UNIT142_01BDE:
+    include "../m19_p2d/M19_UNIT142_IFF_AP20_PRECALL_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$00,$8C
+    include "../m19_p2d/M19_UNIT142_BLOCK_01E12_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_NOP_01F30_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_01F32_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$00,$8C
+    include "../m19_p2d/M19_UNIT142_BLOCK_020E6_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0219C:
+    include "../m19_p2d/M19_UNIT142_BLOCK_0219C_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02360_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_NEXT_02364_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02584_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02690_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0273C_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0282C:
+    include "../m19_p2d/M19_UNIT142_BLOCK_0282C_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0299A:
+    include "../m19_p2d/M19_UNIT142_COLOR_RANGE_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02BBA_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02C2A_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02C9A_MC68020.s"
+    dc.b $69,$6E,$70,$75,$74,$2E,$64,$65,$76,$69,$63,$65
+    dc.b $00,$00,$47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02D90_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_02DFA_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_02E64:
+    include "../m19_p2d/M19_UNIT142_ENTRY_02E64_MC68020.s"
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0317C_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_031E4_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_03270:
+    include "../m19_p2d/M19_UNIT142_ENTRY_03270_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_034F4:
+    include "../m19_p2d/M19_UNIT142_ENTRY_034F4_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_03986_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_0398C_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_03A06_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_03A0C_MC68020.s"
+    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_03A24_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_03B52_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_03C46:
+    include "../m19_p2d/M19_UNIT142_ENTRY_03C46_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_ZERO_040FC_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_04102_MC68020.s"
+    dc.b $64,$6F,$73,$2E,$6C,$69,$62,$72,$61,$72,$79,$00
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0411A_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_04256:
+    include "../m19_p2d/M19_UNIT142_ENTRY_04256_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_044EA:
+    include "../m19_p2d/M19_UNIT142_ENTRY_044EA_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0479E:
+    include "../m19_p2d/M19_UNIT142_ENTRY_0479E_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_04B40:
+    include "../m19_p2d/M19_UNIT142_ENTRY_04B40_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_04D4C:
+    include "../m19_p2d/M19_UNIT142_ENTRY_04D4C_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_04F58:
+    include "../m19_p2d/M19_UNIT142_ENTRY_04F58_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_05150:
+    include "../m19_p2d/M19_UNIT142_BLOCK_05150_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_HELPER_052CA_MC68020.s"
+L_UNIT142_05302:
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$47,$65,$74,$50
+ENTRY_UNIT142_0530E:
+    include "../m19_p2d/M19_UNIT142_ENTRY_0530E_MC68020.s"
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$47,$65,$74,$50
+ENTRY_UNIT142_05706:
+    include "../m19_p2d/M19_UNIT142_BLOCK_05706_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_058C6:
+    include "../m19_p2d/M19_UNIT142_BLOCK_058C6_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_05C7A:
+    include "../m19_p2d/M19_UNIT142_BLOCK_05C7A_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0609E:
+    include "../m19_p2d/M19_UNIT142_ENTRY_0609E_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0652C_MC68020.s"
+    dc.b $00,$00,$00,$00,$00,$00,$00,$00,$47,$65,$74,$50
+ENTRY_UNIT142_06678:
+    include "../m19_p2d/M19_UNIT142_ENTRY_06678_MC68020.s"
+    dc.b $47,$65,$74,$50
+ENTRY_UNIT142_0700A:
+    include "../m19_p2d/M19_UNIT142_ENTRY_0700A_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0725A_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_07342_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$30
+    include "../m19_p2d/M19_UNIT142_BLOCK_07360_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$33
+    include "../m19_p2d/M19_UNIT142_BLOCK_0746E_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$20
+    include "../m19_p2d/M19_UNIT142_BLOCK_07482_MC68020.s"
+L_UNIT142_077D0:
+    dc.b $41,$47,$41,$50,$49,$43,$20,$20,$47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_077DC_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0781C_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_07878_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_078A4_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_NOPS_07B2A_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_07B56_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_07BC8_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_08568_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_08618_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_08CDA_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_08D78_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_09428_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0948C_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0949E_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$30
+    include "../m19_p2d/M19_UNIT142_BLOCK_094BE_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$33
+    include "../m19_p2d/M19_UNIT142_BLOCK_09532_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$20
+    include "../m19_p2d/M19_UNIT142_BLOCK_09546_MC68020.s"
+    dc.b $46,$49,$43,$4F,$4E,$38,$20,$20,$47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_09564_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_095EC_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_09790_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_09930_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_09994_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_099A6_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$30
+    include "../m19_p2d/M19_UNIT142_BLOCK_099C6_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$33
+    include "../m19_p2d/M19_UNIT142_BLOCK_09A6C_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$20
+    include "../m19_p2d/M19_UNIT142_BLOCK_09A80_MC68020.s"
+    dc.b $46,$49,$43,$48,$49,$50,$38,$20,$47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_09A9E_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_09B16_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_09C80_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_09F6A_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0A006_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0A476_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0A6E2_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0A6FA_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$30
+    include "../m19_p2d/M19_UNIT142_BLOCK_0A71A_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$33
+    include "../m19_p2d/M19_UNIT142_BLOCK_0AB96_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$20
+    include "../m19_p2d/M19_UNIT142_BLOCK_0ABB4_MC68020.s"
+    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20
+L_UNIT142_0ABCE:
+    include "../m19_p2d/M19_UNIT142_CBLOCK_CORE_0ABCE_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0AF3A_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0B0A6_MC68020.s"
+    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20
+L_UNIT142_0B592:
+    include "../m19_p2d/M19_UNIT142_CBLOCK_CORE_0B592_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0B8FE_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0BA5E_MC68020.s"
+    dc.b $41,$47,$41,$43,$42,$4C,$4B,$20
+L_UNIT142_0BF5A:
+    include "../m19_p2d/M19_UNIT142_CBLOCK_CORE_0BF5A_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C2C6_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C30E_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C344_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C38C_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C3C2_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C41C_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_BRA_0C8BA_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C8BE_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C8D8_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0C946_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_R83_BRA_0CED4_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_BLOCK_0CED8_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0CEF2_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0CF3E_MC68020.s"
+    dc.b $47,$65,$74,$50
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D336_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D694_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D7AA_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$30
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D7C8_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$33
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D986_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$20
+    include "../m19_p2d/M19_UNIT142_BLOCK_0D99A_MC68020.s"
+    dc.b $41,$47,$41,$50,$49,$43,$20,$20
+    include "../m19_p2d/M19_UNIT142_P0E_OBJECT_CORE_MC68020.s"
+UNIT142_P0E_OBJECT_ROOT:
+    dcb.b 8,0
+UNIT142_P0E_OBJECT_TABLE:
+    dcb.b 1536,0
+    include "../m19_p2d/M19_UNIT142_P0E_AGA_BRIDGE_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_P0F_STAMP_HEAD_MC68020.s"
+    dc.b $FE,$11,$F7,$00,$03,$1D
+    include "../m19_p2d/M19_UNIT142_P0F_STAMP_BODY_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_P0F_BSR_PUT_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_P0F_BIND_CHECK_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_P0F_BSR_READ_MC68020.s"
+    include "../m19_p2d/M19_UNIT142_P0F_BIND_RETURN_MC68020.s"
+UNIT142_P0F_STAMP_TABLE:
+    dcb.b 1024,0
+UNIT142_P1C_OPEN_ENTRY:
+    include "../m19_p2d/M19_UNIT142_P1C_PRIORITY_OPEN_MC68020.s"
+UNIT142_P1C_CONTEXT:
+    dcb.b 8,0
+UNIT142_P1D_LIMIT_TABLE:
+    dcb.b 1040,0
+ENTRY_UNIT142_0F4E2:
+    include "../m19_p2d/M19_UNIT142_P1D_LIMIT_OPEN_MC68020.s"
+
+    include "../m19_p2d_l1/M19_L1_SAFEPORT_TAIL_MC68020.s"
+    include "M19_L2B_PATTERN_TAIL_MC68020.s"
