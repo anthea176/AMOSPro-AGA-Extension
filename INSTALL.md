@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Active test candidate M19 P2d-L2 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136,332 bytes, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commands / 203 AP20 entries. Gate A PASS; B/C/D not tested. **Protected P2d LAST_GOOD:** [136,020 bytes](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, historical B/C evidence. No public release or promotion.
+**Active test candidate M19 P2d-L2 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136,332 bytes, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commands / 203 AP20 entries. Gate A PASS; focused SafePort B/C PASS reported; other L2 Runtime scenarios passed, Compiler deferred; physical D untested. **Protected P2d LAST_GOOD:** [136,020 bytes](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, historical B/C evidence. No 0.14.1 release or promotion.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -55,7 +55,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Current status:** P2d-L2 test candidate, Gate A PASS, B/C/D not tested. P2d LAST_GOOD intact. Sprite work frozen. No publication or promotion.
+**Current status:** P2d-L2 test candidate, Gate A PASS; focused SafePort B/C PASS reported; other L2 Runtime scenarios passed, Compiler deferred; physical D untested. P2d LAST_GOOD intact. Sprite work frozen. No publication or promotion.
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 
