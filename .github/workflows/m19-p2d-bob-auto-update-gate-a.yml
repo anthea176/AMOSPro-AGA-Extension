@@ -41,13 +41,13 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P2D_SHA
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA
           from build_m19_p2d_in_memory import build_p2d
           raw, info = build_p2d()
           assert sha256(raw).hexdigest() == P2D_SHA
           active, protected, label = verify_active(Path('.'))
-          assert (sha256(active).hexdigest(), sha256(protected).hexdigest()) == (P2D_SHA, P2D_SHA)
-          assert active == raw
+          assert sha256(protected).hexdigest() == P2D_SHA and protected == raw
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA)
           current = list(Path('tests/current').glob('*.asc'))
           assert len(current) == 1 and current[0].name == 'M19_P2_ALL_IN_ONE.asc'
           print(info, label)

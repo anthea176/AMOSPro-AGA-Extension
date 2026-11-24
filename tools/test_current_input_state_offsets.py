@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, P2D_SHA, LAST_GOOD_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, P2D_SHA, S1P1E_SHA, LAST_GOOD_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -48,20 +48,27 @@ def negative_cases(parts):
 def main():
     image=BINARY.read_bytes()
     digest=sha256(image).hexdigest()
-    if digest == P2D_SHA:
-        # The active P2d is multi-unit Compiler V2, not an R82-style
-        # single-unit wrapper. Rebuild P2d from the authoritative emitters,
-        # verify the inherited state unit, then audit the original R82 LEAs.
+    if digest in (P2D_SHA, S1P1E_SHA):
+        # P2d and S1-P1e are multi-unit Compiler V2. The frozen P2d
+        # source is the reference; S1 must inherit all 203 entries exactly.
+        # Only then audit the seven LEAs in the original R82 source.
         from active_library import verify_active
         from build_m19_p2d_in_memory import build_p2d
         from build_aga_r84_agapic import build as build_r84
         from build_agapic_v2_r82_full_preview import build as build_r82
         candidate, meta = build_p2d()
-        assert image == candidate and meta['sha256'] == P2D_SHA
-        assert len(image) == 136020 and (meta['commands'], meta['entries']) == (100, 203)
+        assert sha256(candidate).hexdigest() == meta['sha256'] == P2D_SHA
+        assert len(candidate) == 136020 and (meta['commands'], meta['entries']) == (100, 203)
         active, frozen, _ = verify_active(BINARY.parent.parent)
-        assert active == frozen == image and LAST_GOOD_SHA == P2D_SHA
-        _, units, _ = unpack_ap20(image)
+        assert active == image and frozen == candidate and LAST_GOOD_SHA == P2D_SHA
+        _, units, _ = unpack_ap20(frozen)
+        if digest == S1P1E_SHA:
+            _, active_units, _ = unpack_ap20(image)
+            assert len(image) == 142000 and len(active_units) == 208
+            assert active_units[:203] == units, 'S1-P1e altered inherited P2d AP20 entries'
+            assert active_units[142] == units[142], 'S1-P1e altered input-state unit'
+        else:
+            assert image == candidate
         r84, r84_meta = build_r84()
         assert len(r84) == 67904 and r84_meta['sha256'] == R84_SHA
         _, r84_units, _ = unpack_ap20(r84)
@@ -249,6 +256,8 @@ def main():
     else:
         _,parts=unwrap_native_parts_v2(image)
     target=check(parts)
+    if digest in (P2D_SHA, S1P1E_SHA):
+        assert target == 12070, 'P2d/S1 input State displacement changed'
     negative_cases(parts)
     print("CURRENT INPUT DATA PASS: offset",target,"7 LEAs, 8 negatives; active SHA-pinned multi-unit input-state lineage verified against R82/R84")
 

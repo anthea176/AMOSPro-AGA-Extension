@@ -13,7 +13,7 @@ from hashlib import sha256
 from pathlib import Path
 from struct import pack, unpack_from
 
-from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, verify_active  # SHA-pinned releases.
+from active_library import LAST_GOOD_SHA, R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, verify_active  # SHA-pinned releases.
 
 from compiler_bridge_v2_probe import (
     DISPATCH_V2, MAX_UNIT_BYTES, is_v2_wrapped,
@@ -132,13 +132,13 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
         assert active.is_file() and last_good.is_file(), 'incomplete current/LAST_GOOD fixture'
         current_bytes, protected_bytes = active.read_bytes(), last_good.read_bytes()
         active_hash=sha256(current_bytes).hexdigest()
-        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256,R72_SHA256,R73_SHA256,R74_SHA256,R75_SHA256,R76_SHA256,R77_SHA256,R78_SHA256,R79_SHA256,R80_SHA256,R81_SHA256,R82_SHA256,R83_SHA256,R84_SHA256,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA), "Current must be an exact SHA-pinned V2 library"
+        assert active_hash in (R60_SHA256,R61_SHA256,R62_SHA256,R63_SHA256,R64_SHA256,R65_SHA256,R66_SHA256,R67_SHA256,R68_SHA256,R69_SHA256,R70_SHA256,R71_SHA256,R72_SHA256,R73_SHA256,R74_SHA256,R75_SHA256,R76_SHA256,R77_SHA256,R78_SHA256,R79_SHA256,R80_SHA256,R81_SHA256,R82_SHA256,R83_SHA256,R84_SHA256,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA), "Current must be an exact SHA-pinned V2 library"
         from build_m17_r59_compact_v2 import build as build_r59
         assert sha256(build_r59()[0]).hexdigest() == R59_SHA256, "Historical R59 builder changed"
         from build_m18_r60_image_region import build as build_r60
         assert sha256(build_r60()[0]).hexdigest() == R60_SHA256, "Historical R60 deterministic builder mismatch"
         assert sha256(protected_bytes).hexdigest() == LAST_GOOD_SHA256
-        if active_hash in (R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA):
+        if active_hash in (R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA):
             # Post-R84 candidates are AP20 multi-unit V2, not the historical
             # single-dispatcher probe format. Independently pin the installed
             # candidate and frozen R84 before testing the unchanged R57 bridge.
@@ -148,7 +148,20 @@ def static_checks() -> tuple[list[tuple[int, bytes]], bytes | None]:
                 assert current_bytes==protected_bytes, "Promoted P0/P1e/P2d must be byte-exact LAST_GOOD"
             else:
                 assert current_bytes!=protected_bytes, "Unpromoted candidate must differ from LAST_GOOD"
-            if active_hash == P2D_SHA:
+            if active_hash == S1P1E_SHA:
+                from build_m19_p2d_in_memory import build_p2d
+                from ap20_v2_island_dispatch import pc16_displacements
+                rebuilt, meta = build_p2d()
+                assert protected_bytes == rebuilt and meta['sha256'] == P2D_SHA
+                assert len(protected_bytes) == 136020 and len(current_bytes) == 142000
+                assert (meta['commands'], meta['entries']) == (100, 203)
+                _, old_parts, _ = unpack_ap20(protected_bytes)
+                _, new_parts, _ = unpack_ap20(current_bytes)
+                assert len(new_parts) == 208 and new_parts[:203] == old_parts
+                old_links = pc16_displacements(old_parts)
+                new_links = pc16_displacements(new_parts)
+                assert all(new_links.get(k) == v for k, v in old_links.items())
+            elif active_hash == P2D_SHA:
                 from build_m19_p2d_in_memory import build_p2d
                 rebuilt, meta = build_p2d()
                 assert current_bytes == rebuilt and meta["sha256"] == P2D_SHA
