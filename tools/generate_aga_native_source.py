@@ -498,11 +498,11 @@ def verified_current_compiler_seeds(parsed):
         # verify_active() has checked the exact active source-built candidate
         # and the protected LAST_GOOD. Use the pinned R82 ancestor only for
         # historical CFG seeds; never interpret P2d as a single native unit.
-        if sha(current) in (S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA):
+        if sha(current) in (S1P1E_SHA, P2DL2_SHA):
             need(sha(last_good) == P2D_SHA and current != last_good,
                  'Strict source: S1/P2d distinct pinned identities lost')
         else:
-            need(sha(last_good) in (P0_FREE_SHA,P1E_SHA,P2D_SHA) and current == last_good,
+            need(sha(last_good) in (P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2B_SHA) and current == last_good,
                  'Strict source: author-promoted P0/P1e/P2d LAST_GOOD identity lost')
         from build_aga_r84_agapic import build as build_r84
         old_r84,r84_meta=build_r84()
