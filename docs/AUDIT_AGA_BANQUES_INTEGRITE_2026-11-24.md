@@ -46,3 +46,7 @@ Le contrat [historique P0](M19_P0_BANK_FREE_GATES_2026-11-20.md) distingue libé
 ## Addendum T11A / préparation T10A
 
 T11A FICON/FICHIP Runtime PASS [journal](evidence/T11_CACHE_RUNTIME_PASS_L2B_2026-11-24.TXT), restaging et mémoire stable. [T10A](../tests/proto/l3_banks/README.md) préparé pour Bank Free AGBO normal et refus READY, contrôle byte-identique DATA, réactivation et Close B8 ; pas encore exécuté. AGA-014 refus interne de release et ABA ne sont pas déclarés clos.
+
+## Addendum T10A Runtime L2b
+
+T10A Runtime PASS sur L2b : 5/5 cycles, 5 refus READY sans mutation, 5 Free CLEAN, 5 Free répétés sans effet, 5 réactivations, 5 conservations DATA octet pour octet, 30 pixels, 25 Update/30 Swap, 1 VBL de reprise, 0 retry Capture/Fill. FREE_CHIP_GAIN_MIN=264, 5 Close B8 actifs, Mouse X=-1. Chip Free=1791304, Fast Free=138105688 aux 5 mesures après Erase ; CHIP_LOSS=FAST_LOSS=DIFF_CYCLES=0, MEM_STABLE=1. RESULT 1 ERR 0. Pas de preuve de refus interne release forcé, DIRTY forcé ni ABA. AGA-014 reste à qualifier en injection native ; aucune modification native requise sur le chemin normal. [Preuve](evidence/T10_BANK_RUNTIME_PASS_L2B_2026-11-24.TXT). [T10B](../tests/proto/l3_integrated/README.md) prépare AGPC Fast/Chip ; pas de Load/ABA forcé.

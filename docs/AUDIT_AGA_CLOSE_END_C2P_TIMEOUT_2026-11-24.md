@@ -36,3 +36,7 @@ Sur le chemin de succès, [cleanup Core](https://github.com/anthea176/AMOSPro-AG
 | C2P Close puis Screen Close/End | banque chunky conservée et pas de seconde destruction SDK |
 
 Contrôles Gate A d'abord (OS/DMA simulés), puis B/C autorisées. Les résultats historiques R83 B/C avec deltas Chip/Fast nets nuls restent valides pour [leur seul scénario](C2P_R83_WINUAE_RUNTIME_COMPILER_2026-11-14.md), pas pour le timeout P2d combiné B8. **Aucune Gate nouvelle.** Aucun fichier natif, test, binaire ou journal changé.
+
+## Addendum Runtime L2b
+
+T10A Runtime PASS sur L2b : 5/5 cycles, 5 refus READY sans mutation, 5 Free CLEAN, 5 Free répétés sans effet, 5 réactivations, 5 conservations DATA octet pour octet, 30 pixels, 25 Update/30 Swap, 1 VBL de reprise, 0 retry Capture/Fill. FREE_CHIP_GAIN_MIN=264, 5 Close B8 actifs, Mouse X=-1. Chip Free=1791304, Fast Free=138105688 aux 5 mesures après Erase ; CHIP_LOSS=FAST_LOSS=DIFF_CYCLES=0, MEM_STABLE=1. RESULT 1 ERR 0. Pas de preuve de refus interne release forcé, DIRTY forcé ni ABA. AGA-014 reste à qualifier en injection native ; aucune modification native requise sur le chemin normal. [Preuve](evidence/T10_BANK_RUNTIME_PASS_L2B_2026-11-24.TXT). [T14B/T16A](../tests/proto/l3_integrated/README.md) prépare C2P et Copper actifs à la fermeture normale. End et timeout non exercés par ce banc.
