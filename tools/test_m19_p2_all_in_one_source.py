@@ -64,7 +64,9 @@ def verify_source():
     raw = ASC.read_bytes()
     assert raw.isascii() and b"\r" not in raw
     assert PASSED.read_bytes() == raw, "Frozen test and public example differ"
-    assert ACTIVE.read_bytes() == raw, "Active regression and public example differ"
+    # The public example is pinned to the frozen regression, not to a later campaign.
+    if ACTIVE.is_file():
+        assert ACTIVE.read_bytes() == raw, "Reactivated historical regression differs"
     git_header = b"blob " + str(len(raw)).encode() + b"\x00"
     assert sha1(git_header + raw).hexdigest() == SOURCE_BLOB, "Validated ASC changed"
     source = raw.decode("ascii")
