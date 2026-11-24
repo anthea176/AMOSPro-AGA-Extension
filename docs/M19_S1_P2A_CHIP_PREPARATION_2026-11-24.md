@@ -18,3 +18,7 @@ Palette : utiliser les GET de [VideoControl](https://amigadev.elowar.com/read/AD
 ## Etat
 
 Aucune nouvelle commande AMOS, aucun nouveau binaire de Lib, aucun ASC changé. P1i et LAST_GOOD L2b restent inchangées. Pas de DMA actif, pas de PASS Runtime S1-P2a ni Compiler. Qualification CPU du composant en CI et étude du cycle OS/palette requises avant installation.
+
+## Qualification du composant et sonde suivante
+
+[Gate A composant](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634775) PASS : 44 scénarios, SAVED 2 images, FINAL 3 images, SHA256 du code VASM `e2eea0ba260089e2fbf80dc076dce45999fc85027ea5da031067dd3ebc1cb348`. [CPU/delivery](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634909) PASS. Les deux Lib passent le contrôle SHA256. Nouveau [banc palette](../tests/proto/sprite_s1_palette/README.md) source-only et préflight strict PASS, pas de nouvelle Lib. Le banc mesure le contexte V39 avant et après DB/cursor. Runtime de la sonde et preuve DMA toujours à établir.
