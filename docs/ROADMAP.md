@@ -1,5 +1,7 @@
 # Roadmap — AMOSPro AGA Extension
 
+> **Objectif auteur : publication 0.14.1**, correctifs de stabilité du socle 2D. Finaliser L0, T06 et L3, puis qualification L4 et décision L5. Pas de nouveau Sprite/Tilemap ni de compilation intermédiaire imposée ; aucune promotion ou publication automatique.
+
 > **Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les statuts B/C antérieurs ci-dessous sont les états à la livraison.
 
 

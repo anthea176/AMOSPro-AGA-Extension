@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## Objectif auteur : publication 0.14.1
+
+**0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2 active conservée. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
+
 ## 24 novembre 2026 — L2 : résultats Runtime positifs, poursuite sans nouvelle compilation
 
 **Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et deux journaux bruts](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les indications « non testées » ci-dessous décrivent les checkpoints historiques ; ce résultat fait foi pour l'état courant.
