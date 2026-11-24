@@ -55,7 +55,7 @@ def main() -> None:
     assert sha256(build_r68()[0]).hexdigest() == R68_SHA
     active = CURRENT.read_bytes()
     active_sha = sha256(active).hexdigest()
-    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA)
+    assert active_sha in (R69_SHA, R70_SHA, R71_SHA, R72_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA, S1P1E_SHA)
     candidate, metadata = build()
     assert sha256(candidate).hexdigest() == R69_SHA
     # Post-R82 candidates inherit the historical Region contract; the

@@ -302,10 +302,7 @@ def check(m,name,pending,success,calls,waits,*,alloc_fail=False):
     return 1
 
 
-def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--vasm',type=Path,required=True)
-    image,meta=build_l1(p.parse_args().vasm)
+def run_cases(image,meta):
     base,_=build_p2d()
     n=0
     for layout in ('runtime','compiled'):
@@ -347,8 +344,17 @@ def main():
             m.run('back')
             assert m.safe_calls==2 and m.snapshot()[m.back]==m.expected('back')
             n+=2
-    print('P2D L1 MC68020 Gate A PASS',n,'cases including both AP20 relocation models',meta)
+    print('P2D SafePort writers MC68020 Gate A PASS',n,'cases including both AP20 relocation models',meta)
     print('OS services simulated; WinUAE B, real Compiler C and physical D NOT TESTED')
+
+    return n
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--vasm',type=Path,required=True)
+    image,meta=build_l1(p.parse_args().vasm)
+    run_cases(image,meta)
 
 
 if __name__=='__main__':
