@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — L2 combinée Gate A PASS ; préparation WinUAE
+
+[Rapport L2](AGA_L2_FIRST_BIND_SOURCE_GATE_A_2026-11-24.md) : **PASS 172 cas writers + 10 suites Bob** (CI 45402935866, a6065ac). Candidate P2d-L2 en mémoire : 136332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes/203 AP20, BOBS +80 octets, PC16 max 854 inchangé. Artifact integrity 45402936026 PASS ; dernier workflow OPT020 historique corrigé pour sa cible SHA, résultat à relever. [Campagne WinUAE préparée](AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md) : sonde non distribuée sous tests/proto/p2d_l2_safeport, préflight statique PASS, 6703 octets, SHA256 720348897fd0f939dc413687ccc69ed524fd7edff863dcc89f320a1f68e0f974. T02/T04/T19/T17 partiels puis T07 et EDGE exacts. **B/C/D NON TESTÉES.** Attendre autorisation explicite de bascule L2 de l'unique dist/AMOSPro_AGA.Lib et mise en campagne ; adapter à cette identité les contrôles actifs sans changer LAST_GOOD P2d. S1-P1e, tests/current et archives restent intacts. Sprite gelé, T06 Pattern et L3 ressources non résolus.
+
+
 ## 24 novembre 2026 — L2 premier Bind B8, en qualification source-only
 
 Auteur « oui » à l'intégration du correctif B8 avant préparation de la prochaine Lib. [Rapport L2](AGA_L2_FIRST_BIND_SOURCE_GATE_A_2026-11-24.md). Candidate en mémoire P2d-L1+L2, L1 exact SHA f3adabb4c7f0f8d103586ee8eeb6b1db6a3e3cde5fe86ca16788eceb7b65cbcb. Une branche BNE.W du sélecteur B8 est redirigée vers un helper append-only MC68020, uniquement si Safe pending ET root absent. Port validé, GetMsg non bloquant, bit0 seul effacé après réception, aucun changement de READY/DIRTY ni du Swap historique. Tests : témoin P2d qui refuse même message prêt, progression L2, port absent/invalidé, retry, Update explicite et régression L1. **CI en cours : ne pas annoncer PASS avant preuve.** Screen Pattern AGA-011 reste VM (cible OS réelle), L3 non engagé. Les deux Lib et le banc intégré historique restent inchangés. Sprite gelé, bascule dist à autoriser séparément.

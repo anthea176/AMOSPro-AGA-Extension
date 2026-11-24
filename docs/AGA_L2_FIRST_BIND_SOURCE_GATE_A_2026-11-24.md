@@ -12,7 +12,24 @@ Voir [audit 11](AUDIT_AGA_AMORCAGE_DOUBLE_BUFFER_B8_2026-11-24.md). Le premier S
 - [Builder](../tools/build_m19_p2d_l2_first_bind_in_memory.py) : reconstruire P2d exact et L1 exact, assembler le master source avec overlay BOBS dans une copie temporaire, vérifier groupe 202, taille <=65534, préfixe exact sauf branche, destination du relais, toutes les autres entrées AP20 byte-identiques et tous les PC16. Composer le groupe BOBS corrigé avec UNIT142 L1 exact. Aucune sortie installable ; titre P2d-L2 distinct.
 
 ## 3. Qualification prévue
-[Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935866), [test](../tools/test_m19_p2d_l2_first_bind_gate_a.py). Vasm épinglé, vrai code MC68020 sous Unicorn. Réutilise le banc P2d natif (mise en état de la fixture déjà READY, retour CLEAN préalable) et injecte exclusivement les octets source-assemblés du relais/helper. Le Swap discriminant sans Bob arme réellement DB+20=3. Le témoin historique et L2 sont exécutés sur deux placements ; tests de Safe disponible/absent, refus port absent/impair/TypeOfMem, retry sans Fill intermédiaire, Update explicite, Disp intact avant présentation, comparaison des deux pages et des pixels Bob, régressions READY/DIRTY existantes. Les 172 cas writers L1 sont rejoués sur le binaire combiné. La simulation des services OS et la préparation du contexte ne sont pas une exécution complète Open/Double Buffer/Runtime. **Statut initial : CI lancée, résultat non encore établi.** Aucun essai WinUAE, vrai Compiler ou matériel.
+[Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935866), [test](../tools/test_m19_p2d_l2_first_bind_gate_a.py). Vasm épinglé, vrai code MC68020 sous Unicorn. Réutilise le banc P2d natif (mise en état de la fixture déjà READY, retour CLEAN préalable) et injecte exclusivement les octets source-assemblés du relais/helper. Le Swap discriminant sans Bob arme réellement DB+20=3. Le témoin historique et L2 sont exécutés sur deux placements ; tests de Safe disponible/absent, refus port absent/impair/TypeOfMem, retry sans Fill intermédiaire, Update explicite, Disp intact avant présentation, comparaison des deux pages et des pixels Bob, régressions READY/DIRTY existantes. Les 172 cas writers L1 sont rejoués sur le binaire combiné. La simulation des services OS et la préparation du contexte ne sont pas une exécution complète Open/Double Buffer/Runtime. **Gate A PASS : 172 cas writers + 10 suites Bob.** Aucun essai WinUAE, vrai Compiler ou matériel.
 
 ## 4. Suite
 T02 et T05 visés en Gate A ; T17 RPG, T06 Screen Pattern (RastPort réel de l'OS), T14 et les Gates B/C restent à qualifier. Aucun changement Pattern tant que sa cible physique n'est pas démontrée. L3 reste à décider selon les preuves. Le banc historique M19_P2_ALL_IN_ONE.asc, les exemples, les deux Lib et leurs journaux restent intacts. Aucun rollback, promotion ni reprise Sprite automatique. Préparer une seule campagne de test WinUAE après qualification et autorisation de la nouvelle Lib.
+
+## 5. Résultat exact Gate A
+
+[CI 45402935866 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935866) sur commit a6065ac, job 138475971861. Le témoin P2d refuse deux fois avec Safe prêt sans GetMsg ; L2 progresse avec une seule acquisition Safe avant reprise et Disp conservé. Retards/ports invalides, Update explicite, READY/DIRTY et régressions historiques PASS ; les 172 cas L1 sont rejoués sur L2. 
+
+| Métadonnée | Valeur CI |
+|---|---|
+| Taille L2 | 136332 octets (+312 vs P2d) |
+| SHA256 L2 | `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1` |
+| BOBS groupe 202 | 61008 octets (+80) |
+| Branche / cible dans BOBS | 48958 / 60928 |
+| Commandes / AP20 | 100 / 203 |
+| PC16 max | 854, liens identiques |
+| Gate A | PASS 10 suites Bob + 172 cas writers |
+| Gates B/C/D | NON TESTÉES |
+
+[Artifact integrity 45402936026](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402936026) PASS, [P2d Bob 45402935803](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935803) PASS, [L1 45402935919](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935919) PASS et [CPU 45402936095](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402936095) PASS. La candidate reste en mémoire. AGA-002 corrigée/qualifiée en A pour le chemin premier Bind ; ne pas attribuer sans preuve l'ERR15 du RPG à cette seule cause. [Campagne WinUAE préparée](AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md) ; nouvelle autorisation de bascule requise.

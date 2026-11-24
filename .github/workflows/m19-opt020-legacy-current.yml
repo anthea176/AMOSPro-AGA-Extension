@@ -39,6 +39,13 @@ jobs:
         run: python -B tools/test_opt020_p2_r72_d3.py
       - name: Verify libraries and source-only workflow
         run: |
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          PYTHONPATH=tools python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA
+          active, protected, label = verify_active(Path('.'))
+          assert len(protected) == 136020 and sha256(protected).hexdigest() == P2D_SHA
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA)
+          print(label)
+          PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
