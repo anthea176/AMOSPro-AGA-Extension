@@ -1,6 +1,6 @@
 # Campagne active — L2b / T06A Pattern
 
-> **Suite L3/L4 (24/11/2026)** : les sondes T14A, T11A, T10A, AGPC/C2P/Copper et T14C ont passé leurs scénarios Runtime sur L2b. Voir [checklist](../../docs/releases/0.14.1_RELEASE_CHECKLIST.md). [P2 ALL IN ONE gelé](../passed/M19_P2_ALL_IN_ONE.asc) à rejouer sur L2b pour L4, Runtime uniquement. ASC courant T06A et Lib inchangés. Cas résiduels L3 et L0 CI non clos.
+> **Suite L3/L4 (24/11/2026)** : les sondes T14A, T11A, T10A, AGPC/C2P/Copper et T14C ont passé leurs scénarios Runtime sur L2b. Voir [checklist](../../docs/releases/0.14.1_RELEASE_CHECKLIST.md). [P2 ALL IN ONE gelé](../passed/M19_P2_ALL_IN_ONE.asc) : L4 Runtime PASS transmis, mêmes octets de journal que P2d historique, attribution contextuelle L2b. ASC courant T06A et Lib inchangés. Cas résiduels L3 et L0 CI non clos.
 
 > **T06A/T06B terminés en Runtime :** T06B Runtime PASS sur L2b : 12/12 cycles, 12 Pattern immédiatement après Swap réussi sans VBL préalable, BACK_OK=FRONT_OK=12, 36 swaps, 0 refus Swap, 12 reprises Fill et 12 Capture abouties, ERR 0, CLOSE_RETURNED 1, CLOSED_MOUSE_X -1. T06A et T06B qualifiés en Runtime ; fenêtre post-Swap exercée sans observation directe du drapeau interne Safe. Refus Safe absent/allocateur injectés couverts par Gate A, pas par WinUAE. Compiler reporté, D non testée. [Preuve T06B](../../docs/evidence/T06B_SAFE_RUNTIME_PASS_L2B_2026-11-24.TXT). [Prochain essai L3/T14A](../../tests/proto/l3_resources/T14_CLOSE_MEMORY.asc). L'ASC T06A courant reste inchangé et ne doit pas être rejoué sur ces octets.
 

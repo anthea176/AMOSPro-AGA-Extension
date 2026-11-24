@@ -42,10 +42,10 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA
           active, protected, label = verify_active(Path('.'))
           assert len(protected) == 136020 and sha256(protected).hexdigest() == P2D_SHA
-          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA)
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
           print(label)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
