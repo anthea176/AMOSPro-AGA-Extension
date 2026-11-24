@@ -28,7 +28,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API du socle protégé 0.14.1 M19 P2d-L2b** — **100 commandes / 203 entrées AP20**, MC68020 minimum ; signatures P2d inchangées.
+**API de la bibliothèque courante M19 S1-P1f** — **102 commandes / 208 entrées AP20**, MC68020 minimum. Les deux commandes Sprite sont réservées aux tests, absentes de la 0.14.1.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -111,6 +111,8 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Flip`** | `_OK=Aga Bob Flip(_N,_MODE)` | Oriente le Bob actif N (1..64). Mode 0 normal, 1 horizontal, 2 vertical, 3 combiné. Retour 1 sur succès, 0 sur refus. Le point X/Y reste fixe et le hotspot est transformé. Le mode du slot reste actif jusqu’au mode 0 ou à la fermeture. Le rendu et la collision utilisent la même variante Chip, préparée au premier usage. |
 | **`Aga Bob Planes`** | `_OK=Aga Bob Planes(_N,_MASK)` | Sélectionne les plans de destination écrits par le Bob actif N (1–64). Les bits 0 à 7 sélectionnent les plans de même indice. 255 est la valeur par défaut, 0 préserve tous les plans. Le masque AGBO et les collisions sont indépendants. Retour 1 sur succès, 0 sur refus. |
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | En double buffer AGA, 1 prépare les Bobs à chaque `Aga Swap` et 0 rétablit le mode manuel (défaut). Le réglage exige une page CLEAN. Une page READY est réutilisée au prochain Swap. Retour 1 sur succès, 0 sur refus. |
+| **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | Test S1-P1f uniquement. Sélectionne ou crée une banque DATA AMOS AGSP ; refuse les banques étrangères ou invalides. Aucune allocation DMA. Gate A PASS, Runtime/Compiler en attente. |
+| **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Test S1-P1f uniquement. Capture le buffer AGA inactif Safe vers la banque AGSP sélectionnée ; bornes inclusives, largeur 16, hauteur 1..256, au maximum 3 couleurs opaques RGB24. Remplace l'ID sans effacer les autres images ; aucun affichage DMA. Gate A PASS, Runtime/Compiler en attente. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Fonction numérique de lecture du Y d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Fonction numérique de lecture du numéro d'image 1..4096 d'un Bob actif `N` (1..64), ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |

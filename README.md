@@ -28,7 +28,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Protected 0.14.1 API M19 P2d-L2b** — **100 commands / 203 AP20 entries**, MC68020 minimum; P2d signatures unchanged.
+**Current library API M19 S1-P1f** — **102 commands / 208 AP20 entries**, MC68020 minimum. The two Sprite rows are test-only commands, not included in 0.14.1.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -111,6 +111,8 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Flip`** | `_OK=Aga Bob Flip(_N,_MODE)` | Set orientation of active Bob N (1..64). Mode 0 normal, 1 horizontal, 2 vertical, 3 both. Returns 1 on success, 0 on refusal. Preserves logical X/Y and transforms the hotspot. The slot orientation lasts until reset to 0 or screen close. Rendering and collision share the Chip variant, staged on first use. |
 | **`Aga Bob Planes`** | `_OK=Aga Bob Planes(_N,_MASK)` | Selects destination planes for active Bob N (1–64). Bits 0–7 select planes of the same index. Mask 255 is the default and 0 preserves every plane. The AGBO opacity mask and collisions are independent of this setting. Returns 1 on success and 0 on refusal. |
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | In AGA double buffering, 1 prepares Bobs at each `Aga Swap` and 0 restores manual mode (default). Configuration requires a CLEAN page. A READY page is reused on the next Swap. Returns 1 on success and 0 on refusal. |
+| **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | S1-P1f test only. Select or create an AMOS DATA AGSP bank; rejects foreign or invalid banks. No DMA allocation. Gate A PASS, Runtime/Compiler pending. |
+| **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | S1-P1f test only. Capture the safe inactive AGA buffer into the selected AGSP bank; inclusive bounds, width 16, height 1..256, at most 3 opaque RGB24 colours. Replaces the selected image ID without destroying other images; no DMA display. Gate A PASS, Runtime/Compiler pending. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed Y in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns image ID 1..4096 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
