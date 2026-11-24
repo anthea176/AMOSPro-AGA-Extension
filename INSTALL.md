@@ -1,6 +1,6 @@
 # Installing AMOSPro AGA Extension
 
-**Active TEST candidate S1-P1f (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 142,684 bytes, SHA256 `dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931`, 102 commands / 208 AP20 entries, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45466155974), B/C/D pending. For the 0.14.1 protected base use [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renamed AMOSPro_AGA.Lib in APSystem. 0.14.1 not released.
+**Active TEST candidate S1-P1g (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 142,684 bytes, SHA256 `29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66`, 102 commands / 208 AP20 entries, [targeted AP20 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002173), B/C/D pending. For the 0.14.1 protected base use [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renamed AMOSPro_AGA.Lib in APSystem. 0.14.1 not released.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -9,7 +9,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. For S1-P1f testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same extension slot. Verify SHA256 `dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931`, restart AMOS and follow the [AGSP Runtime protocol](tests/proto/agsp_capture/README.md). WinUAE 68030, JIT ON, AGA PAL.
+2. For S1-P1g testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same extension slot. Verify SHA256 `29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66`, restart AMOS and follow the [AGSP Runtime protocol](tests/proto/agsp_capture/README.md). WinUAE 68030, JIT ON, AGA PAL.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
@@ -18,7 +18,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## 2. Requirements and C2P dependency
 
-**Requirements for the active S1-P1f test candidate (same minimum CPU as P2d):** an **AGA** Amiga (e.g. A1200/A4000, or WinUAE configured for AGA), **Motorola 68020/68EC020 or later** (not a 68000-only machine), AMOS Professional installed, and sufficient **Chip RAM** for the private AGA screen and buffers.
+**Requirements for the active S1-P1g test candidate (same minimum CPU as P2d):** an **AGA** Amiga (e.g. A1200/A4000, or WinUAE configured for AGA), **Motorola 68020/68EC020 or later** (not a 68000-only machine), AMOS Professional installed, and sufficient **Chip RAM** for the private AGA screen and buffers.
 
 **Additional library for C2P:** [**c2p.library v1.9 by Alimede Informatica, on Aminet**](https://aminet.net/package/dev/misc/c2plib) ([upstream source](https://github.com/alimede/c2p.library)). This is a standard AmigaOS shared library, **not** an AMOS extension and **not** part of `AMOSPro_AGA.Lib`.
 
@@ -55,7 +55,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 
 ## Release and licence
 
-**Current status:** S1-P1f Gate A PASS, B/C/D pending; P2d-L2b protected, previous evidence unchanged. [Qualification](docs/releases/0.14.1_QUALIFICATION.md).
+**Current status:** S1-P1g targeted AP20 Gate A PASS, B/C/D pending; P2d-L2b protected, previous evidence unchanged. [Qualification](docs/releases/0.14.1_QUALIFICATION.md).
 
 **Code and source examples:** [MIT](LICENSE). **`demo.iff` and all other visual assets:** [separate artwork terms](ASSETS_LICENSE.md), **not MIT**. Fan art from outside the example pack is not necessary to run these demos.
 

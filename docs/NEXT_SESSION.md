@@ -2,7 +2,7 @@
 
 ## 24 novembre 2026 — S1-P1g correctif syntaxe AP20
 
-S1-P1f : Syntax error rapportée sous AMOS, Get Aga Sprite déclaré instruction avec signature numérique. [Correctif S1-P1g](M19_S1_P1G_AP20_SYNTAX_FIX_2026-11-24.md), signature I0,0,0,0,0,0 ; 3 octets changés dont 2 de titre, 208 unités natives inchangées. SHA256 cible `29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66`, blob `b45ea91d9d2133ed90704305a8da34cbee339507`. Source et Gate A ciblée préparées, livraison après validation ; ASC et LAST_GOOD L2b inchangés. B/C/D non testées sur P1g.
+S1-P1f : Syntax error rapportée sous AMOS, Get Aga Sprite déclaré instruction avec signature numérique. [Correctif S1-P1g](M19_S1_P1G_AP20_SYNTAX_FIX_2026-11-24.md), signature I0,0,0,0,0,0 ; 3 octets changés dont 2 de titre, 208 unités natives inchangées. SHA256 cible `29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66`, blob `b45ea91d9d2133ed90704305a8da34cbee339507`. [Gate A AP20 ciblée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002173), Lib de travail livrée. Code identique au parent ; [requalification native complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002362) séparée. ASC et LAST_GOOD L2b inchangés. Réimporter GET_AGA_SPRITE.asc dans un programme vierge après installation et redémarrage AMOS. B/C/D non testées sur P1g.
 
 ## 24 novembre 2026 — S1-P1f Gate A PASS, candidate livrée
 

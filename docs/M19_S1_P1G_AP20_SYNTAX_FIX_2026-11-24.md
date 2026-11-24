@@ -1,6 +1,6 @@
 # M19 S1-P1g — correction de la signature AP20
 
-**24/11/2026.** Auteur : capture AMOS « Syntax error. » sur Get Aga Sprite, puis accord « GO ». S1-P1f est en échec de syntaxe (Gate B bloquée avant exécution). Aucune preuve de capture Runtime. Correctif préparé sur main, livraison conditionnée à la vérification.
+**24/11/2026.** Auteur : capture AMOS « Syntax error. » sur Get Aga Sprite, puis accord « GO ». S1-P1f est en échec de syntaxe (Gate B bloquée avant exécution). Aucune preuve de capture Runtime. Correctif livré sur main après Gate A AP20 ciblée PASS.
 
 ## Cause et correction
 
@@ -19,4 +19,4 @@ Le delta est exactement 3 octets : 1 octet de signature et 2 octets de titre. Co
 
 ## Validation
 
-Vérification indépendante du delta et des rôles en mémoire effectuée ; CI [Gate A ciblée](../.github/workflows/m19-s1-p1g-token-gate-a.yml) et reconstruction native complète à vérifier. La Gate A native P1f historique ne démontre pas la syntaxe réelle dans AMOS ; le prochain essai B doit être fait en réimportant le même GET_AGA_SPRITE.asc après redémarrage AMOS sur la Lib corrigée. C/D non testées. Ne pas lancer P1f.
+Vérification indépendante du delta et des rôles en mémoire effectuée ; [Gate A AP20 ciblée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002173) sur la source 085dd37130cef8f61853b5c398dae5a34ec04e7f. [Requalification native complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45470002362) séparée. La Gate A native P1f historique ne démontre pas la syntaxe réelle dans AMOS ; le prochain essai B doit être fait en réimportant le même GET_AGA_SPRITE.asc après redémarrage AMOS sur la Lib corrigée. C/D non testées. Ne pas lancer P1f.

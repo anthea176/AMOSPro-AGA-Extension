@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, verify_active
+from active_library import R84_SHA, R88_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, verify_active
 from build_m19_p28_r88_in_memory import build as build_r88
 from compiler_relocation import repack_ap20, unpack_ap20, RBSR
 from export_aga_asm import decode_exact_asm
@@ -47,7 +47,7 @@ def run() -> None:
     # The active and promoted images may have advanced to P2d.
     active_before = current_file.read_bytes()
     good = good_file.read_bytes()
-    assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA, S1P1F_SHA), "Active AP20 islands/B7/P1e/P2d differs from pinned SHA"
+    assert digest(active_before) in (AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA), "Active AP20 islands/B7/P1e/P2d differs from pinned SHA"
     assert digest(good) in (P1E_SHA, P2D_SHA, P2DL2B_SHA), "Author-promoted P1e/P2d LAST_GOOD changed"
     if digest(active_before) in (P2D_SHA, P2DL2B_SHA):
         assert active_before == good, "Promoted P2d active and LAST_GOOD differ"

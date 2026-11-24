@@ -53,13 +53,13 @@ jobs:
           import sys
           root = Path.cwd()
           sys.path.insert(0, str(root / 'tools'))
-          from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, R88_SHA, verify_active
+          from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, R88_SHA, verify_active
           from build_m19_p28_r88_in_memory import build as build_r88
           from generate_aga_multiunit_source import export
           active = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
           frozen = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
           assert len(frozen) == 136708 and sha256(frozen).hexdigest() == P2DL2B_SHA
-          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA)
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA)
           checked, good, _ = verify_active(root)
           assert (checked, good) == (active, frozen)
           r88, meta = build_r88()
