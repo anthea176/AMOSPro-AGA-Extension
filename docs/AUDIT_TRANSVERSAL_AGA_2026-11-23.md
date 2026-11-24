@@ -176,3 +176,17 @@ La même [routine IFF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/4
 | `Aga Screen Pattern` AP20 14 | [bloc $00764](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_00764_MC68020.s) agit sur le RastPort de l'écran | Diagnostic legacy : effet sur les pages DB/snapshots à caractériser, pas à traiter comme writer back Safe par défaut |
 
 **Bilan transversal après passage 3 :** les **contrôles Safe locaux existent** dans plusieurs sous-systèmes, mais aucun protocole d'invalidation **commun** B8 n'a été démontré pour toutes les écritures externes du décor. Ne pas conclure de conformité globale. L'inventaire AP20 (100/100 P2d) est un résultat de traçabilité **statique**, pas 100 tests fonctionnels. Aucun programme AMOS, aucun test CPU, aucune Gate B/C/D, aucune compilation native exécutée lors de ce passage ; moteur, `LAST_GOOD` et S1-P1e inchangés.
+
+## 8. Passage 4 — 24 novembre 2026 : AGA-003 requalifiée à partir du contrat P2d
+
+**Document faisant foi :** [modèle officiel `M19_P2D_BOB_AUTO_UPDATE_MODEL.md`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/docs/M19_P2D_BOB_AUTO_UPDATE_MODEL.md) : lorsque le programme modifie le décor alors que l'Auto Update est actif, la séquence prévue est **`Aga Bob Clear` → dessin du décor → `Aga Swap`**. `Aga Swap` appelle ensuite Update si nécessaire. Le modèle décrit la restauration **par bitmap physique** et précise les transitions CLEAN, READY, DIRTY.
+
+Le [code transactionnel B8](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/tools/m19_b8_clear_update_tx_emit.py) possède bien un masque `cleared` par page : `clear_guard` le positionne après restauration réussie (lignes 217–234) ; `update_prepare` (lignes 273–287) **ne restaure pas l'ancien snapshot lorsque la page est marquée cleared**, mais recapture le fond après le dessin. `update_finish` acquitte le bit de `cleared` après succès (lignes 299–326).
+
+**Révision du classement AGA-003 : `VALIDATION MANQUANTE / CONTRAT EXPLICITE`**, et non « bug P1 déjà identifié » :
+
+- **Séquence autorisée :** Clear réussi → dessin du décor neuf → Swap (Auto Update) ; vérifier que le snapshot nouveau est bien capturé, que les pixels du décor persistent et que les deux pages physiques restent cohérentes. Si ce chemin autorisé échoue : **P1 confirmé**.
+- **Séquence hors contrat :** écrire un décor neuf **sur une page contenant un snapshot de Bob non effacé** sans Clear préalable. La perte du décor par restauration ultérieure n'est **pas suffisante** pour déclarer une anomalie de l'extension. La matrice de tests T03 distinguera les deux.
+- **Indépendance des P0 :** ce contrat ne dispense **jamais** un writer (`Aga Iff Load`, `Aga Back Fill`) de vérifier SafePort : la séquence Clear → IFF/Back Fill → Swap reste potentiellement dangereuse si une nouvelle situation Safe pending survient. **AGA-001 et AGA-010 restent P0 de protection statique.**
+
+**État des preuves :** documentation, émetteur B8 et programme P2d source rapprochés ; aucun test natif ni WinUAE exécuté, aucune correction autorisée. AGA-003 ne sera reclassée P1 qu'avec une preuve contre le chemin Clear→décor→Swap réellement autorisé.

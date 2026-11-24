@@ -139,7 +139,7 @@ Le test **ne conclut pas** que les autres appels sont conformes : la matrice ci-
 
 ## Non-conformités de coordination et décisions encore attendues
 
-1. Les vérifications **locales Safe** de Copy, Fill, Image Draw, F Blit, CBlock, C2P ne prouvent **pas** que le gestionnaire B8 est informé des écritures de décor : le système n'expose pas, dans les chemins examinés, une invalidation explicite du `valid mask` B8 pour ces opérations. **AGA-003 reste suspect**, contrat des opérations de décor à définir.
+1. Les vérifications **locales Safe** de Copy, Fill, Image Draw, F Blit, CBlock, C2P ne prouvent pas l'invalidation globale des snapshots. **Toutefois, le contrat P2d est explicite : `Aga Bob Clear` → dessin du décor → `Aga Swap`**. Le bit `cleared` du [B8 transactionnel](../tools/m19_b8_clear_update_tx_emit.py) permet alors de capturer le nouveau fond sans restaurer l'ancien. **AGA-003 est donc requalifiée en validation manquante du chemin autorisé**, pas bug P1 confirmé par une écriture hors contrat.
 2. Les commandes **legacy sans Safe** (`Aga Back Fill`, `Aga Iff Load`) ne doivent pas être utilisées comme implicitement sûres après un Swap. **Le gel interdit tout patch**, et ce rapport n'autorise aucune correction automatique.
 3. Le `BODY` IFF est décodé en deux passes à partir du même buffer alloué une seule fois, validation avant écriture. Cette structure limite le risque d'une erreur de format tardive pendant la seconde passe : **AGA-007 reste à qualifier**, aucune écriture partielle sur retour 0 n'est démontrée.
 4. **Aucun essai WinUAE/Compiler nouveau**, aucune assertion d'intégrité globale, **aucune validation de la capture Sprite S1** : candidate S1-P1e préservée et chantier gelé.
