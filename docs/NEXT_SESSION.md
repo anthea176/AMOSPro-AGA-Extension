@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2a — préparation Chip source-only
+
+[Rapport et contrat](M19_S1_P2A_CHIP_PREPARATION_2026-11-24.md) : nouvelle routine MC68020 indépendante, validation AGSP P1i, allocation Chip privée, image entrelacée et blank, aucun pointeur source conservé. Banc CPU utilisant les ABK Runtime d'origine ; qualification en cours. Aucun canal activé, aucune Lib remplacée. Verrou S0 de retrait DMA et palette réel avant API d'affichage. P1i capture PASS et LAST_GOOD L2b inchangées.
+
 ## S1-P1i — Runtime capture AGSP PASS / préparation S1-P2
 
 S1-P1i livrée, 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, blob `c7e13993bc32e17cb96c8e8ee68e8b5a1dffeb1b`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) : 38 scénarios Sprite, chaîne native L2b Double Buffer/IFF/Swap/capture dans deux modèles AP20, 184 Pattern, 172 writers, 10 suites Bob. Seule unité 207 changée par rapport à P1h ; tokens et 207 premières unités byte-exacts. Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA. LAST_GOOD L2b intacte.
