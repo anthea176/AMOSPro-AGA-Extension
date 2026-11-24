@@ -42,3 +42,7 @@ Le contrat [historique P0](M19_P0_BANK_FREE_GATES_2026-11-20.md) distingue libé
 | FICON modifié, restaging, Cache Blit Fast puis Chip | Ready et nouveau contenu conformes ; aucun DMA Fast. |
 
 **Bilan :** contrôles locaux substantiels ; aucune preuve nouvelle de corruption réelle ni de P0. AGA-014 et ABA doivent être qualifiés, pas corrigés à l'aveugle. [Cahier T10/T11/T14](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md).
+
+## Addendum T11A / préparation T10A
+
+T11A FICON/FICHIP Runtime PASS [journal](evidence/T11_CACHE_RUNTIME_PASS_L2B_2026-11-24.TXT), restaging et mémoire stable. [T10A](../tests/proto/l3_banks/README.md) préparé pour Bank Free AGBO normal et refus READY, contrôle byte-identique DATA, réactivation et Close B8 ; pas encore exécuté. AGA-014 refus interne de release et ABA ne sont pas déclarés clos.

@@ -35,3 +35,7 @@ Lors d'un remplacement, ancien et nouveau caches peuvent coexister : le pic est 
 ## Addendum Runtime L2b — 24/11/2026
 
 T14A Runtime PASS sur L2b : 26/26 Open/Close, 13 simple + 13 DB, 104 opérations curseur, 13 Swaps, zéro refus/retry Fill, CLOSED_MOUSE_X -1. Les 13 mesures après paires (référence après échauffement) donnent Chip Free=1791304 et Fast Free=138107904, CHIP_LOSS=FAST_LOSS=DIFF_PAIRS=0, MEM_STABLE=1. Pas de fuite cumulative observée pour ce scénario ; pas de preuve sur fuite unique avant référence, End, B8/C2P/Copper ou refus OS injectés. [Preuve](evidence/T14_CLOSE_RUNTIME_PASS_L2B_2026-11-24.TXT). [T11A](../tests/proto/l3_cache/README.md) préparé pour restaging FICON/FICHIP et répétition allocation/libération, sans injection OS. Les autres chemins restent à qualifier.
+
+## Addendum T11A Runtime L2b
+
+T11A Runtime PASS sur L2b : 7/7 cycles (échauffement + 6), 14 Stage, 35/35 pixels, 7 refus slots non préparés, tailles des banques conservées après Close 7/7, pixels initial/avant Stage/après Stage/CPU/non prêt=165/165/90/90/17. CACHE_CHIP_MIN 1192 octets, 7 swaps/Close, zéro retry Fill/Swap, Mouse X=-1. Les sept mesures après Erase sont Chip Free=1791304 et Fast Free=138106392, aucune dérive après échauffement. RESULT 1 ERR 0 MEM_STABLE 1. T14A retransmis, journal strictement identique au blob déjà archivé f99ee10423c1c5f0c9a8e88e2bca4b91d0c9aded : ne pas dupliquer ni présumer un second lancement indépendant. [Preuve](evidence/T11_CACHE_RUNTIME_PASS_L2B_2026-11-24.TXT). Les chemins AGBO, AGPC, injections et autres cycles restent ouverts.

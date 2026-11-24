@@ -11,10 +11,13 @@
 
 | [`t06_pattern/`](t06_pattern/README.md) | T06A : cible bitmap, FAIL L2 puis PASS L2b Runtime, source inchangée |
 | [`t06_pattern_safe/`](t06_pattern_safe/README.md) | T06B : Pattern après Swap, Runtime PASS 12/12, 36 swaps |
-| [`l3_resources/`](l3_resources/README.md) | T14A : 26 Open/Close, curseur, mesures Chip/Fast ; préflight PASS, Runtime à exécuter |
+| [`l3_resources/`](l3_resources/README.md) | T14A : 26 Open/Close, curseur, mémoire stable ; Runtime PASS |
+
+| [`l3_cache/`](l3_cache/README.md) | T11A FICON/FICHIP : Runtime PASS 7/7, restaging et mémoire stable |
+| [`l3_banks/`](l3_banks/README.md) | T10A AGBO Bank Free et Close B8 : préflight PASS, Runtime à exécuter |
 
 Ne pas confondre ce dossier avec `tests/current/` (un seul ASC de campagne) ni `tests/passed/` (archives protégées). Les cinq fichiers ASC/ABK déplacés conservent leurs blobs Git **strictement identiques** ; seuls les README et les chemins des scripts sont adaptés.
 
 [Compte rendu WinUAE AGTM](../../docs/AGTM_WINUAE_PROTOTYPES_2026-11-23.md).
 
-| [`l3_cache/`](l3_cache/README.md) | T11A FICON/FICHIP restaging et mémoire, préflight PASS, Runtime à exécuter |
+
