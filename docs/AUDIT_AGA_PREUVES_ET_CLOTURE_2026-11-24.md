@@ -93,3 +93,7 @@ La clôture de l'audit **n'exige pas que toutes les commandes soient PASS** : el
 5. **Validation** : source ASCII → Gate A MC68020/ABI/CPU + tests négatifs → WinUAE Runtime Gate B → vrai Compiler Gate C → **aucune promotion de LAST_GOOD avant autorisation**, Sprite S1 toujours gelé.
 
 **Aucune nouvelle bibliothèque ni correction native/CI ni test lancé.** Préserver les preuves E01–E06, y compris le FAIL E03, les fichiers `tests/current/`, `tests/passed/` et `tests/proto/`.
+
+## 7. Complément passage 10 — qu'établit réellement `CLOSE_RETURNED 1` ?
+
+[Revue Close/End et source exacte du banc](AUDIT_AGA_CLOSE_END_RESSOURCES_2026-11-24.md). Dans `tests/current/M19_P2_ALL_IN_ONE.asc`, `_CLOSE_RETURNED=1` est écrit immédiatement après `Aga Screen Close`, et **sans contrôle de ressources**. Ce champ prouve le **retour à l'ASC**. Il ne prouve pas le bilan Alloc/Free, le détachement réel des ports Safe/Disp, la destruction C2P/Chip, les hooks B8 ni l'état de réouverture ; ce sont des points T14 encore sans Gate B/C dédiée. **AGA-013 P2 (test/oracle, pas moteur) ; aucune requalification des PASS originaux E01/E02.**

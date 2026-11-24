@@ -275,3 +275,15 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **19/19 tests d'audit actuellement NON EXÉCUTÉS** ; T07 dispose d'une preuve B/C **historique** sur le même ASC mais cela ne vaut pas nouvelle qualification. Le rapport distingue **clôture de l'audit** (statuts et preuves documentés) et **clôture de réparation** (correctif autorisé + Gates A/B/C et non-régression).
 
 **État du gel inchangé** : aucune écriture sur source native, Lib, ASC, test, ancienne preuve ou branche. Les corrections restent soumises à autorisation distincte ; Sprite S1-P1e GELÉ.
+
+## 14. Passage 10 — 24 novembre 2026 : Close/End, vidange ports et oracle de fermeture
+
+**Audit source et critères précis :** [`AUDIT_AGA_CLOSE_END_RESSOURCES_2026-11-24.md`](AUDIT_AGA_CLOSE_END_RESSOURCES_2026-11-24.md).
+
+- **AGA-013 P2, défaut de couverture confirmé dans l'ASC historique** : `tests/current/M19_P2_ALL_IN_ONE.asc` pose `_CLOSE_RETURNED=1` **immédiatement après** l'instruction `Aga Screen Close`. Cela confirme que le **contrôle est revenu** à AMOS, **pas** que tous les ScreenBuffers, ports, allocations C2P/B8/Copper/Font et hooks End ont été libérés. Les journaux originaux E01/E02 restent PASS du banc précis, **aucune preuve globale Close/End en découle**.
+- **SafeWait R83** : boucle bornée par compteur `#$12D` (au plus 301 évaluations de la condition) avec `WaitTOF` intermédiaires. L'attente peut être ressentie comme longue en cas de Safe absent mais cette boucle précise **ne suffit pas à démontrer un freeze sans fin**.
+- **Vidange IDCMP** : `L_LEGACY_CLOSE_CORE_0012E` répète `GetMsg` + `ReplyMsg` jusqu'à port vide, sans compteur fixe. Sur file finie elle finit ; avec producteur externe continu, **latence/terminaison restent VM**, pas anomalie prouvée. Prévoir l'injection simulée sur Gate A de T14.
+- **Callbacks End/B8** : les chemins `P0C program-end` et `B8 end trampoline` contrôlent owner/sentinelles, restaurent ou réarment les pointeurs selon retour ; leur existence **ne démontre pas** que la fermeture réelle et le nettoyage C2P sont corrects dans toutes les erreurs ou après réouverture à la même adresse.
+- **C2P R74/R77** : hooks historiques de fermeture avec remise à zéro de l'ownership avant `WaitBlit`, `DestroyContext` et `CloseLibrary` ; le **raccordement complet au binaire P2d courant** et les doubles Close restent à qualifier, pas automatiquement PASS grâce à l'héritage R74.
+
+**T14 renforcé sans modifier le banc figé.** Aucun nouvel essai Gate A/B/C ni correctif ; AGA-004 reste VM, AGA-013 est P2 de test et non panne native. S1-P1e Sprite GELÉ.
