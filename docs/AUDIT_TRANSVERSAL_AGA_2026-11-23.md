@@ -287,3 +287,14 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **C2P R74/R77** : hooks historiques de fermeture avec remise à zéro de l'ownership avant `WaitBlit`, `DestroyContext` et `CloseLibrary` ; le **raccordement complet au binaire P2d courant** et les doubles Close restent à qualifier, pas automatiquement PASS grâce à l'héritage R74.
 
 **T14 renforcé sans modifier le banc figé.** Aucun nouvel essai Gate A/B/C ni correctif ; AGA-004 reste VM, AGA-013 est P2 de test et non panne native. S1-P1e Sprite GELÉ.
+
+## 15. Passage 11 — 24 novembre 2026 : initialisation DBState et séquence exacte du premier Bind B8
+
+**Trace source détaillée et variantes reproductibles proposées :** [`AUDIT_AGA_AMORCAGE_DOUBLE_BUFFER_B8_2026-11-24.md`](AUDIT_AGA_AMORCAGE_DOUBLE_BUFFER_B8_2026-11-24.md).
+
+- **Aga Double Buffer** AP20 18 → UNIT142+$00A80 : première allocation de 48 octets par `Exec AllocVec(-684)`, flags `$00010001` = MEMF_PUBLIC|MEMF_CLEAR ; les deux ports et ScreenBuffers sont créés, et le **DBState débute avec bit Safe pending à zéro**.
+- **Aga Swap sans Bob actif** : le wrapper P2d AP20 181 passe le scan des 64 Bobs et saute au Swap original. Sur succès, l'original programme **`DB+20=3`**, Safe+Disp pending. Le pool B8 peut toujours être absent après ce premier Swap.
+- **Premier Bob actif + Auto Update, sans GetMsg entre les Swaps** : le second Swap déclenche la constitution B8 ; `L_BOBS_0BE32` refuse le Safe pending **sans le consommer**, P2d ne rejoint pas le Swap original. Un `Aga Wait Vbl` isolé ne peut pas acquitter le port : le refus conditionnel peut se répéter jusqu'à une commande acquittant réellement Safe.
+- **Précision AGA-002 P1** : le défaut n'est **pas** « le premier Swap après Open plante » ; la séquence risquée est **un premier Swap sans Bob réussi, puis premier Bind B8 alors que Safe est pending**, avec banque/Bob valides et sans autre GetMsg. Aucun freeze CPU ni échec EDGE relié de manière probante à cette séquence ; **Gate A/B non exécutées**.
+
+**T01/T02 A–E/T05/T17 doivent matérialiser la chronologie, les états DB et les notifications absentes, prêtes non acquittées et acquittées.** Pas de modification de l'ASC de référence ou de la Lib, Sprite gelé.
