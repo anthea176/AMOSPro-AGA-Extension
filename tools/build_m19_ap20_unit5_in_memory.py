@@ -17,6 +17,7 @@ from struct import pack, unpack_from
 from pathlib import Path
 
 from audit_ap20 import inspect, parse, token
+from active_library import P1E_SHA, P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1E_SHA, SPRITE_L2B_HISTORICAL_SHAS
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_ap20_islands_in_memory import build as build_islands, ISLAND_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA
 from compiler_bridge_v2_probe import DISPATCH_V2, MAX_UNIT_BYTES
@@ -38,6 +39,8 @@ TITLE += bytes(len(TITLE) & 1)
 
 
 def build() -> tuple[bytes, dict]:
+    active_path=Path(__file__).resolve().parents[1]/'dist/AMOSPro_AGA.Lib'
+    active_before=active_path.read_bytes()
     old_raw, old_meta = build_islands()
     assert len(old_raw) == 96908 and sha256(old_raw).hexdigest() == ISLAND_SHA
     old_tokens, old_parts, _ = unpack_ap20(old_raw)
@@ -103,8 +106,8 @@ def build() -> tuple[bytes, dict]:
         raise ValueError('Existing native code position shifted')
     if len(report['tokens']) != 88 or sum(p.startswith(DISPATCH_V2) for p in actual_parts)!=5:
         raise ValueError('Unexpected fifth-group layout')
-    if sha256((Path(__file__).resolve().parents[1] /
-               'dist/AMOSPro_AGA.Lib').read_bytes()).hexdigest() not in (ISLAND_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA):
+    if (active_path.read_bytes()!=active_before or
+        sha256(active_before).hexdigest() not in (ISLAND_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2_SHA,P2DL2B_SHA,S1P1E_SHA,*SPRITE_L2B_HISTORICAL_SHAS)):
         raise ValueError('Active installable Lib was changed during source-only build')
     return image, dict(
         sha256=sha256(image).hexdigest(), size=len(image),
