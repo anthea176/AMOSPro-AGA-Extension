@@ -6,7 +6,7 @@
 
 ## 24 novembre 2026 — L2 : résultats Runtime positifs, poursuite sans nouvelle compilation
 
-**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et deux journaux bruts](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les indications « non testées » ci-dessous décrivent les checkpoints historiques ; ce résultat fait foi pour l'état courant.
+**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL Runtime PASS (240/240, 241 swaps, 120 refus tous récupérés, 128 pixels de bord valides, ERR 0). T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et trois journaux bruts](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les indications « non testées » ci-dessous décrivent les checkpoints historiques ; ce résultat fait foi pour l'état courant.
 
 
 ## 24 novembre 2026 — P2d-L2 active, essais WinUAE attendus

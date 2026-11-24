@@ -1,6 +1,6 @@
 # P2d-L2 — préparation de la campagne WinUAE B/C
 
-**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et logs](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les paragraphes suivants décrivent la préparation de la campagne ; ne pas réexécuter les tests déjà validés ni demander une nouvelle compilation.
+**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL Runtime PASS (240/240, 241 swaps, 120 refus tous récupérés, 128 pixels de bord valides, ERR 0). T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et logs](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les paragraphes suivants décrivent la préparation de la campagne ; ne pas réexécuter les tests déjà validés ni demander une nouvelle compilation.
 
 
 **24 novembre 2026 · main uniquement. Candidate active autorisée / PREFLIGHT PASS ; B/C/D NON TESTÉES.**
