@@ -4,6 +4,10 @@
 
 **0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2 active conservée. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md). [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
 
+## 24 novembre 2026 — T06A prêt pour Runtime
+
+[ASC T06_PATTERN_TARGET.asc](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc) et [protocole](../tests/proto/t06_pattern/README.md) : PREFLIGHT PASS, Gate B NON TESTEE. L2 exacte inchangée ; cible de Pattern après Swap stabilisé, pixels des deux pages (17/239 puis mire 64/128/192), banque 27 libre. Journal RAM:T06_PATTERN_RUNTIME.TXT. Pas de Pattern sous Safe pending dans cette première sonde. Aucun Compiler, aucune ressource externe. EDGE sans pré-VBL acquis, ne pas le rejouer. L3 ensuite.
+
 ## 24 novembre 2026 — L2 : résultats Runtime positifs, poursuite sans nouvelle compilation
 
 **Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL Runtime PASS (240/240, 241 swaps, 120 refus tous récupérés, 128 pixels de bord valides, ERR 0). T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et trois journaux bruts](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les indications « non testées » ci-dessous décrivent les checkpoints historiques ; ce résultat fait foi pour l'état courant.
