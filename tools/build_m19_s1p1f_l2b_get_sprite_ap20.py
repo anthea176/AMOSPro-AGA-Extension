@@ -26,7 +26,7 @@ TITLE += bytes(len(TITLE) & 1)
 def build_s1p1f(vasm: Path, native: bytes):
     active, good, _ = verify_active(ROOT)
     assert sha256(good).hexdigest() == P2DL2B_SHA
-    assert active == good or sha256(active).hexdigest() in (*SPRITE_L2B_HISTORICAL_SHAS)
+    assert active == good or sha256(active).hexdigest() in SPRITE_L2B_HISTORICAL_SHAS
     base, meta = build_l2b(vasm)
     assert base == good and len(base) == 136708
     assert (meta['commands'], meta['entries']) == (100, 203)

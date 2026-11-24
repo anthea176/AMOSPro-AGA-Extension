@@ -28,7 +28,7 @@ def main():
     active = (root / 'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (root / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert sha256(good).hexdigest() == P2DL2B_SHA
-    assert active == good or sha256(active).hexdigest() in (*SPRITE_L2B_HISTORICAL_SHAS)
+    assert active == good or sha256(active).hexdigest() in SPRITE_L2B_HISTORICAL_SHAS
     prior, _ = build_l2(a.vasm)
     image, meta = build_s1p1f(a.vasm, a.native.read_bytes())
     if sha256(active).hexdigest() == S1P1F_SHA:

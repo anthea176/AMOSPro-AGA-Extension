@@ -68,7 +68,7 @@ def main():
             assert len(image) == 142000 and len(active_units) == 208
             assert active_units[:203] == units, 'S1-P1e altered inherited P2d AP20 entries'
             assert active_units[142] == units[142], 'S1-P1e altered input-state unit'
-        elif digest in (*SPRITE_L2B_HISTORICAL_SHAS):
+        elif digest in SPRITE_L2B_HISTORICAL_SHAS:
             # verify_active authenticated the exact candidate and its Sprite unit.
             # Independently require byte-identical inherited L2b AGA/State units.
             assert sha256(frozen).hexdigest() == P2DL2B_SHA

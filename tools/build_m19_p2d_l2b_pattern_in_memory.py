@@ -116,7 +116,7 @@ def build_l2b(vasm: Path):
     verify_p2d_l2b(image, base)
     if active_sha == P2DL2B_SHA:
         need(image == active, 'installed L2b differs from exact source rebuild')
-    elif active_sha in (*SPRITE_L2B_HISTORICAL_SHAS):
+    elif active_sha in SPRITE_L2B_HISTORICAL_SHAS:
         need(image == protected, 'protected L2b differs from exact source rebuild')
     return image, dict(meta, sha256=sha256(image).hexdigest(), bytes=len(image),
                        unit142=len(new), pattern_appended=len(new)-PRIOR_SIZE,
