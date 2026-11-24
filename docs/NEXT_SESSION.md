@@ -2,6 +2,8 @@
 
 ## 24 novembre 2026 — S1-P1i audit et qualification source-only
 
+**Avancement :** [38 scénarios contrat natif P1i PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492009978) ; cinq défauts reproduits sur P1h. Six nouveaux modules source 31f3e5d. [Gate intégration et reconstruction complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) déclenchée par 4957095, résultat non acquis à la rédaction ; CI historiques en requalification. **Pas de livraison P1i, pas de nouvel essai WinUAE.** Lib active P1h rejetée, LAST_GOOD L2b et ASC/IFF intacts.
+
 **P1h Runtime B FAIL : ERR 9, CAPTURED 0 ; banque 29 AGASPRT présente, 32 octets.** Auteur : « ok fait ca » après le plan de refiabilisation complet. Ne plus faire tester P1h. Ne pas changer la Lib active ni LAST_GOOD avant qualification de P1i. [Audit et plan de gates](M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md). Le run de livraison bb2999f a 24 CI en échec sur 27 ; une racine commune est le verrou SHA historique R82 qui ne connaissait pas P1h. Corriger la provenance sans désactiver les assertions. Aucun PASS général anticipé, aucun changement ASC/IFF, aucune promotion.
 
 ## 24 novembre 2026 — S1-P1h publisher AGSP

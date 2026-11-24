@@ -23,3 +23,12 @@ Références : [AMOS365 +B.s](https://github.com/marc365/AMOS-Professional-365/b
 4. Livraison conditionnée aux résultats.
 
 **Etat initial :** audit statique, registre SHA lignée Sprite centralisé pour R82. Aucun PASS P1i revendiqué. Ne pas relancer P1h. T06A, ASC Sprite et IFF inchangés. Aucun changement de dist.
+
+## Etat de qualification source-only
+
+- Commit 7ecae4d puis d1a4a9c : [oracle négatif P1h PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45491590241), cinq défauts reproduits dans les deux modèles AP20. Vraie fixture IFF, comparaison indépendante et registres volatils.
+- Commit 31f3e5d : six nouveaux modules natifs P1i. [Gate contrat P1i PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492009978), 38 scénarios. [CPU/delivery PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492010167). Ni Runtime réel, ni Compiler réel, ni DMA validés.
+- Commit 4957095 : constructeur complet P1i en mémoire, intégration native L2b Double Buffer/IFF Load/Swap (écran et appels OS simulés), 184 Pattern, 172 writers, 10 suites Bob exigés. [Gate complète](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) lancée, résultat complet non acquis à la rédaction. Seule unité 207 peut changer, les 207 précédentes et les tokens sont verrouillés.
+- CI historiques : gardes d'identité R82/R84, R87/R88, AP20, CBlock adaptées aux identités exactes ; requalification générale non acquise. Les gardes ne sont pas supprimées ; les archives et les binaires ne sont pas modifiés.
+
+**Décision : P1i non livrée dans dist.** P1h rejetée reste le fichier de travail ; ne pas la relancer. LAST_GOOD L2b inchangée. Aucune modification ASC/IFF. Bloquer la livraison jusqu'à la Gate complète PASS et la résolution des CI encore en échec. L'intégration n'est pas un essai WinUAE ni une preuve de matériel Sprite.

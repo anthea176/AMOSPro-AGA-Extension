@@ -46,12 +46,13 @@ jobs:
           import sys
           root = Path.cwd()
           sys.path.insert(0, str(root/'tools'))
-          from active_library import P2D_SHA, R87_SHA, verify_active
+          from active_library import P2D_SHA, P2DL2B_SHA, R87_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
           current, good, _ = verify_active(root)
-          assert sha256(current).hexdigest() == P2D_SHA and current == good
+          assert sha256(good).hexdigest() in (P2D_SHA, P2DL2B_SHA)
+          assert sha256(current).hexdigest() in (P2D_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
           archive = (root/'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
           assert sha256(archive).hexdigest() == R87_SHA
-          print('R88 historical inputs PASS: promoted P2d and R87 predecessor')
+          print('R88 historical inputs PASS: verified current lineage, protected P2d/L2b and R87 predecessor')
           PY
       - name: AGAPIC original v1 and v2 parser/source contracts
         run: |
