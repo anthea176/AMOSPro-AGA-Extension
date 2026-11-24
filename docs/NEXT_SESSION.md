@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — L1 correctif SafePort source-only en qualification
+
+Autorisation auteur « ok go » après L0. [Rapport L1](AGA_L1_SAFEPORT_SOURCE_GATE_A_2026-11-24.md). AGA-001 IFF Load et AGA-010 Back Fill : overlay natif MC68020 `src/native/m19_p2d_l1/`, builder in-memory `tools/build_m19_p2d_l1_safeport_in_memory.py`, Gate A dédiée. Le master historique P2d et les deux Lib sont conservés. Deux relais de six octets, helper ajouté en fin de UNIT142, contrôle de taille, octets, AP20 et PC16. **IFF retourne 0 sans écriture si Safe indisponible ; Back Fill instruction sans retour, 3 WaitTOF maximum, puis aucune écriture si refus.** Screen Pattern reste VM ; L2 B8 non modifié. Vérifier les CI exactes avant toute décision de livraison de binaire. L0 : ASM/Bobs/docs PASS, Artifact integrity encore à confirmer après adaptation des exporteurs. **Aucune bascule dist ni promotion autorisée.**
+
+
 ## 24 novembre 2026 — L0 corrections CI / provenance (source-only)
 
 Après les 21 passages d'audit, l'auteur répond « super allons y » à la proposition de phase de correction. **L0 : corrections des outils et CI uniquement**, aucun remplacement de bibliothèque, aucune promotion, aucun test WinUAE nouveau. [Rapport L0](AGA_L0_PROVENANCE_CI_2026-11-24.md). Les contrôles historiques P2d ciblent maintenant LAST_GOOD SHA P2d ; les contrôles courants S1-P1e conservent sa SHA et vérifient le préfixe AP20 P2d. Les archives et l'ASC actif restent intacts. **Gate A de cette modification à confirmer par CI ; L1 SafePort natif non commencé.** Les résultats de CI doivent être lus avant la prochaine étape. Sprite gelé.
