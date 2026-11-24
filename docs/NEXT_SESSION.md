@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — S1-P1i audit et qualification source-only
+
+**P1h Runtime B FAIL : ERR 9, CAPTURED 0 ; banque 29 AGASPRT présente, 32 octets.** Auteur : « ok fait ca » après le plan de refiabilisation complet. Ne plus faire tester P1h. Ne pas changer la Lib active ni LAST_GOOD avant qualification de P1i. [Audit et plan de gates](M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md). Le run de livraison bb2999f a 24 CI en échec sur 27 ; une racine commune est le verrou SHA historique R82 qui ne connaissait pas P1h. Corriger la provenance sans désactiver les assertions. Aucun PASS général anticipé, aucun changement ASC/IFF, aucune promotion.
+
 ## 24 novembre 2026 — S1-P1h publisher AGSP
 
 Runtime P1g ERR 7 ; syntaxe, écran, IFF et palette passés, aucune capture. **S1-P1h livrée**, 142720 octets, SHA256 `900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb`, blob `ee7b6bb6ecec3207d193c1e95641b1d9abe8cb62`, 102 commandes / 208 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45481353847) exacte PASS. Gate A native MC68020 PASS (184 Pattern, 172 writers, 10 suites Bob). Les deux CI AGSP annexes corrigées sont PASS (45484855000 et 45484854747). L'audit Input State corrigé dans dfb178f est PASS (étape du run 45484855065) ; le run Artifact integrity complet et la requalification CI historique sur la nouvelle livraison ne sont pas déclarés PASS. [Rapport](M19_S1_P1H_CUR_BANKS_FIX_2026-11-24.md). Prochain essai : [GET_AGA_SPRITE.asc et IFF](../tests/proto/agsp_capture/README.md) inchangés, banque 29 libre, Runtime WinUAE 68030/JIT ON/AGA PAL, redémarrer AMOS. P1g non relançable. B/C/D P1h non testées ; LAST_GOOD L2b intacte.

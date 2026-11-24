@@ -55,6 +55,7 @@ P2DL2B_SHA="a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc"  #
 S1P1F_SHA="dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931"  # Exact MC68020 Gate A run 45466155974; B/C/D pending
 S1P1G_SHA="29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66"  # S1-P1g AP20 instruction-signature correction, 24/11/2026
 S1P1H_SHA="900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb"  # Exact native Gate A 45481353847; B/C/D pending
+SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA)
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL

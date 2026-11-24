@@ -1,5 +1,7 @@
 # S1-P1h — Prototype Runtime Get AGA Sprite (non distribué)
 
+> **Runtime FAIL (ERR 9) le 24/11/2026. Ne pas relancer P1h.** Banque 29 AGASPRT créée (32 octets), première capture refusée. Révision P1i source-only en qualification ; voir [audit](../../../docs/M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md). Le protocole ci-dessous est conservé comme historique et futur test inchangé, pas une instruction d'installation actuelle.
+
 > **P1g rejetée en Runtime (ERR 7).** P1h corrige le publisher et le mock Cur_Banks. Ne pas relancer P1g ; utiliser uniquement P1h livrée après Gate A native PASS. L'IFF est présente dans ce dossier.
 
 Ces fichiers sont des **tests en développement**, exclusivement sous `tests/proto/`. Ne jamais les copier dans `examples/` tant qu'ils ne sont pas approuvés comme exemples de release.
