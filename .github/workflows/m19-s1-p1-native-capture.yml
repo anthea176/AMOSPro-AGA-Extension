@@ -71,10 +71,10 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA
+          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS
           active, protected, label = verify_active(Path('.'))
           assert sha256(protected).hexdigest() == P2DL2B_SHA
-          assert sha256(active).hexdigest() in (P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA)
+          assert sha256(active).hexdigest() in (P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
           assert sha256(frozen_p2d(protected)).hexdigest() == P2D_SHA
           print('Exact active identity, protected L2b and frozen P2d source PASS:', label)
           PY

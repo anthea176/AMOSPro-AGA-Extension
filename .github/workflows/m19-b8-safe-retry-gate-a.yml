@@ -50,9 +50,9 @@ jobs:
           from hashlib import sha256
           from sys import path
           path.insert(0,'tools')
-          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA
+          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS
           active,good,label=verify_active(Path('.'))
-          assert sha256(active).hexdigest() in (P2DL2B_SHA,S1P1F_SHA,S1P1G_SHA,S1P1H_SHA)
+          assert sha256(active).hexdigest() in (P2DL2B_SHA,*SPRITE_L2B_HISTORICAL_SHAS)
           assert len(good)==136708 and sha256(good).hexdigest()==P2DL2B_SHA
           assert sha256(frozen_p2d(good)).hexdigest()==P2D_SHA
           print('PASS historical B8 native tests; exact current and protected L2b:', label)

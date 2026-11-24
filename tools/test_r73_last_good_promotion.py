@@ -68,7 +68,7 @@ def main():
     assert not promoted_report["issues"]
     named=[t for t in promoted_report['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
     assert len(named)==100 and named[-1]['name']=='aga bob auto update'
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d","M19 S1-P1e","M19 S1-P1f","M19 S1-P1g","M19 S1-P1h"))
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d","M19 S1-P1e","M19 S1-P1f","M19 S1-P1g","M19 S1-P1h","M19 S1-P1i"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()

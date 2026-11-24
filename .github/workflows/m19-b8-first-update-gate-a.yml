@@ -57,9 +57,9 @@ jobs:
           import subprocess
           import tempfile
           from hashlib import sha1
-          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA
+          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS
           current,good,label=verify_active(Path('.'))
-          assert sha256(current).hexdigest() in (P2DL2B_SHA,S1P1F_SHA,S1P1G_SHA,S1P1H_SHA)
+          assert sha256(current).hexdigest() in (P2DL2B_SHA,*SPRITE_L2B_HISTORICAL_SHAS)
           assert len(good)==136708 and sha256(good).hexdigest()==P2DL2B_SHA
           assert sha256(frozen_p2d(good)).hexdigest()==P2D_SHA
           # Recheck the exact historical P1e campaign without touching current/.
