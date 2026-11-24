@@ -1,0 +1,17 @@
+# L3 T14C — End avec B8/C2P/Copper/Font
+
+24/11/2026. P2d-L2b, 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, Git blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. LAST_GOOD P2d inchangée. [ASC](T14_END_FONT.asc), 5873 octets ASCII LF, SHA256 `d6cb8ad728422d0c41ef04e3e2f27f2bf99823d310a9ca9c66a3522903e5181b`, blob `a842c4cbb95bb9917ffa6681e05ce7ec28f3bf52`. Préflight local scripts/amos_preflight.py PASS sur ces octets exacts (263 lignes, max 70 caractères). Gate B NON TESTÉE. Même Lib, pas de Compiler.
+
+## Lancer
+
+WinUAE 68030/JIT ON/AGA PAL. Banques 12 et 24 initialement libres, LIBS:c2p.library compatible et topaz.font taille 9 (déjà utilisée dans M14 R37). Pas de fichier graphique externe. Projet vierge -> Merge ASCII -> Runtime. Même programme lancé deux fois consécutivement, ne pas redémarrer AMOS/WinUAE, ne pas modifier ni effacer de banque entre les deux. Si le premier lancement ne revient pas normalement, ne pas poursuivre le second ; transmettre le journal et le symptôme. Aucune injection dangereuse.
+
+### 1 — PREPARE AND END
+
+Saisir 1. Créer la banque chunky 12, ouvrir DB, C2P Open/Convert, sélectionner Topaz 9, refuser taille 0, dessiner le texte, capturer une image opaque AGBO 24, activer Bob1 et Copper, Update puis Swap. Contrôle par Close explicite, vérification des retours hors écran, Erase des banques initialement libres, mesure mémoire. Refaire le même montage, puis écrire le journal **avant End**. Ne pas appeler Screen Close, C2P Close, Copper Off ou Font reset dans le chemin final de succès. Le programme appelle End alors que les ressources sont actives. Journal RAM:T14_END_BEFORE_RUNTIME.TXT : RUN 1, ERR 0, PREP_OK=FONT_OK=BOB_OK=C2P_OK=COPPER_OK=2, CLOSE_OK=1, END_READY=1, VERDICT READY_FOR_END. RESULT reste 0 volontairement : le fichier ne peut pas attester un retour après End.
+
+### 2 — CHECK AND REOPEN
+
+Après retour normal, relancer exactement le même programme, saisir 2. Avant toute réouverture, Mouse X=-1, I Bob(1)=-32769, C2P Close/Convert et Font Select sans écran doivent renvoyer 0. Si banques DATA encore présentes, vérifier longueur et marqueurs (AGBO magic et count, chunky deux octets limites), puis effacer seulement ces banques du premier lancement ; si elles ont disparu naturellement, ne pas traiter cela comme erreur. Mesurer Chip/Fast. Refaire le montage complet et Close explicite, vérifier retours hors écran, Erase, mesurer. Journal RAM:T14_END_AFTER_RUNTIME.TXT : RUN 2, ERR 0, POST_END_OK=1, PREP_OK=FONT_OK=BOB_OK=C2P_OK=COPPER_OK=CLOSE_OK=1, CLOSED_MOUSE_X=-1, RESULT 1 VERDICT PASS.
+
+Comparer la mémoire libre après le Close témoin et après End, sans imposer l'égalité Fast entre deux exécutions (fichiers RAM, allocations runtime et caches OS). Les mesures mémoire sont diagnostiques, non un inventaire exhaustif des allocations. Le second PASS n'a de valeur que si l'auteur a constaté le retour normal du premier lancement sans redémarrage. Font Select/Text sont vérifiés par leurs retours ; pas de comparaison pixel de la fonte ni de BankFont AMCAF. Le test ne force pas un timeout Safe/Disp ni un changement de propriétaire ou une erreur OS. Les cas injectés restent à traiter en Gate A, pas au prix d'une manipulation mémoire arbitraire sous WinUAE. ERR1..8 préconditions, 10..26 montage, 30..33 Copper/Bob/Swap, 60..61 fermeture. Pas de PASS supposé avant les deux journaux et le retour observé.

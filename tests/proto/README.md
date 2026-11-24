@@ -15,7 +15,8 @@
 
 | [`l3_cache/`](l3_cache/README.md) | T11A FICON/FICHIP : Runtime PASS 7/7, restaging et mémoire stable |
 | [`l3_banks/`](l3_banks/README.md) | T10A AGBO Bank Free et Close B8 : Runtime PASS 5/5, données et mémoire préservées |
-| [`l3_integrated/`](l3_integrated/README.md) | T10B/T14B/T16A AGPC, C2P, Copper : banc groupé, préflight PASS, Runtime à exécuter |
+| [`l3_integrated/`](l3_integrated/README.md) | T10B/T14B/T16A AGPC, C2P, Copper : Runtime PASS 4/4, mémoire stable |
+| [`l3_end/`](l3_end/README.md) | T14C End/Font et réouverture, préflight PASS, deux lancements Runtime à exécuter |
 
 Ne pas confondre ce dossier avec `tests/current/` (un seul ASC de campagne) ni `tests/passed/` (archives protégées). Les cinq fichiers ASC/ABK déplacés conservent leurs blobs Git **strictement identiques** ; seuls les README et les chemins des scripts sont adaptés.
 

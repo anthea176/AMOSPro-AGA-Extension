@@ -66,3 +66,7 @@ Instrumentation : **protocole d'injection validé, après autorisation**. Pour l
 **Aucun nouveau test/compilation/émulation**, aucune modification de code natif, binaire, journal, ASC ou branche. **S1 Sprite GELÉE, P2d LAST_GOOD intacte.**
 
 [Rapport transversal](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) · [Registre de preuves](AUDIT_AGA_PREUVES_ET_CLOTURE_2026-11-24.md) · [Cahier des 19 tests](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md).
+
+## Addendum — L3 groupé Runtime L2b
+
+Banc groupé T10B/T14B/T16A Runtime PASS sur L2b : 4/4 cycles, FAST_REFUSED=AGPC_OK=4, PIXELS_OK=24, CACHE_CHIP_MIN=384, C2P_OK=C2P_EXPLICIT=C2P_AUTO=4, COPPER_ON=4, COPPER_OFF=COPPER_AUTO=2, 4 Swaps/Close, aucun retry Capture/Swap, banques préservées 4/4, Mouse X=-1. Chip Free=1791304, Fast Free=138087696 aux quatre mesures après Erase ; CHIP_LOSS=FAST_LOSS=DIFF_CYCLES=0, MEM_STABLE=1, RESULT 1 ERR 0. Chemins normaux qualifiés ; aucun contrôle visuel de raster Copper ni injection OS, aucun Erase/Load ABA, aucun callback End testé. [Preuve](evidence/L3_FINAL_RUNTIME_PASS_L2B_2026-11-24.TXT). Journal original 682 octets, 36 CRLF, SHA256 `51d7d18e495dd56cbf9e66bf166fe8ac469e541d974c98a18f6bb64d47ad84b4`, blob `2e2f8af9259ae61846c9480d4853a24e2f1109c6`. [T14C](../tests/proto/l3_end/README.md) préparé : End/Font et réouverture ; injections/ABA non clos.
