@@ -17,7 +17,8 @@ from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
 
-from active_library import P2D_SHA
+from active_library import P2D_SHA, P2DL2B_SHA
+from build_m19_p2d_in_memory import build_p2d
 from compiler_relocation import unpack_ap20
 from generate_aga_multiunit_source import native_unit_source
 from m18_cblock_copy_emit import emit_cblock_copy_core
@@ -29,7 +30,9 @@ CBLOCK_SPANS = ((0x0ABC6, 0x0AF3A), (0x0B58A, 0x0B8FE), (0x0BF52, 0x0C2C6))
 
 
 def check(vasm: Path, emit_base64: bool = False) -> None:
-    binary = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    assert (len(protected), sha256(protected).hexdigest()) in ((136020, P2D_SHA), (136708, P2DL2B_SHA))
+    binary, _ = build_p2d()
     assert len(binary) == 136020 and sha256(binary).hexdigest() == P2D_SHA
     _tokens, units, _title = unpack_ap20(binary)
     unit = units[GROUP]
