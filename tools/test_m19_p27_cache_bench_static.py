@@ -146,11 +146,13 @@ def main() -> None:
     if not args.source_only:
         candidate = (ROOT / 'dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib').read_bytes()
         active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
-        from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA
-        assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA),(124444,P1E_SHA))
+        from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA,verify_active
+        assert (len(active),sha256(active).hexdigest()) in ((102400,B7M2_SHA),(115744,B8_SHA),(116104,B8S1_SHA),(117896,P0_FREE_SHA),(124444,P1E_SHA),(136020,P2D_SHA),(142000,S1P1E_SHA),(136332,P2DL2_SHA),(136708,P2DL2B_SHA))
         lastgood = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
         assert len(candidate) == 73184 and sha256(candidate).hexdigest() == R87_SHA
-        assert len(lastgood) == 124444 and sha256(lastgood).hexdigest() == P1E_SHA
+        checked, protected, _ = verify_active(ROOT)
+        assert (checked, protected) == (active, lastgood)
+        assert (len(lastgood), sha256(lastgood).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA))
     s = raw.decode('latin-1')
     assert not any(x in s for x in ('Aga Bob Probe', 'ElseIf', 'Pop Proc'))
     assert 'Aga Bank Image Capture(12,0,0,16,16,0,1)' in s

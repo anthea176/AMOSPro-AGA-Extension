@@ -25,7 +25,9 @@ def blob_sha(b:bytes)->str:
 def main()->None:
     good=(ROOT/"dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     active=(ROOT/"dist/experimental/AMOSPro_AGA_R87_v0.13.32_M19_P25_BC_PASS.Lib").read_bytes()
-    assert len(good)==124444 and sha256(good).hexdigest()==P1E_SHA, "Promoted P1e LAST_GOOD changed"
+    from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+    checked, protected, _ = verify_active(ROOT)
+    assert protected == good and (len(good), sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA))
     from build_aga_r84_agapic import build as build_r84
     historic,r84meta=build_r84()
     assert len(historic)==67904 and r84meta['sha256']==R84_SHA
@@ -33,11 +35,13 @@ def main()->None:
     active_candidate=(ROOT/"dist/AMOSPro_AGA.Lib").read_bytes()
     from active_library import B7M2_SHA,B8_SHA,B8S1_SHA,verify_active
     active_digest=sha256(active_candidate).hexdigest()
-    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA), 'Unknown active canonical library'
+    assert active_digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA), 'Unknown active canonical library'
     from build_m19_b8_first_update_in_memory import build_b8_first_update
     b8,report=build_b8_first_update()
     assert len(b8)==115744 and report['sha256']==B8_SHA
-    if active_digest==P1E_SHA:
+    if active_digest in (P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA):
+        assert active_candidate == checked and sha256(good).hexdigest() == P2D_SHA
+    elif active_digest==P1E_SHA:
         from build_m19_p1e_bank_edit_in_memory import build_p1e
         candidate,info=build_p1e()
         assert active_candidate==good==candidate and info["sha256"]==P1E_SHA
@@ -78,7 +82,7 @@ def main()->None:
     assert "PARITY_OK" not in s and "PIXEL_OK" not in s
     assert max(map(len,s.splitlines()))<=220
     assert s.endswith("End\n")
-    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one B7/B8/P1e active ASC,"
+    print("M19 P2.5 ARCHIVED SMOKE PASS: R87 SHA, R84 frozen, one SHA-verified current ASC,"
           " bank ownership, 3 batch draws, 3 invalid calls and RAM logs.")
     print("M19 P2.5 R87 Runtime B and Compiled C PASS in user-provided logs; P2.6 benchmark NOT TESTED.")
 

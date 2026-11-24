@@ -40,7 +40,13 @@ jobs:
           python -B tools/test_current_ram_log.py
           python -B tools/amos_preflight.py --strict-target tests/current/*.asc
           python -B tools/test_readme_api_coverage.py
-      - name: Verify historical P1d source and promoted P1e LAST_GOOD
+      - name: Verify historical P1d source and exact promoted LAST_GOOD
         run: |
-          printf '%s  %s\n' 7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42 dist/AMOSPro_AGA_LAST_GOOD.Lib | sha256sum -c
+          PYTHONPATH=tools python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from active_library import P1E_SHA,P2D_SHA,verify_active
+          active,good,_=verify_active(Path('.'))
+          assert (len(good),sha256(good).hexdigest()) in ((124444,P1E_SHA),(136020,P2D_SHA))
+          PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
