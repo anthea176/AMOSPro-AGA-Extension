@@ -32,3 +32,9 @@ Références : [AMOS365 +B.s](https://github.com/marc365/AMOS-Professional-365/b
 - CI historiques : gardes d'identité R82/R84, R87/R88, AP20, CBlock adaptées aux identités exactes ; requalification générale non acquise. Les gardes ne sont pas supprimées ; les archives et les binaires ne sont pas modifiés.
 
 **Décision : P1i non livrée dans dist.** P1h rejetée reste le fichier de travail ; ne pas la relancer. LAST_GOOD L2b inchangée. Aucune modification ASC/IFF. Bloquer la livraison jusqu'à la Gate complète PASS et la résolution des CI encore en échec. L'intégration n'est pas un essai WinUAE ni une preuve de matériel Sprite.
+
+## Livraison de la candidate corrigée
+
+S1-P1i livrée, 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, blob `c7e13993bc32e17cb96c8e8ee68e8b5a1dffeb1b`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) : 38 scénarios Sprite, chaîne native L2b Double Buffer/IFF/Swap/capture dans deux modèles AP20, 184 Pattern, 172 writers, 10 suites Bob. Seule unité 207 changée par rapport à P1h ; tokens et 207 premières unités byte-exacts. B/C/D P1i non testées ; LAST_GOOD L2b intacte.
+
+Source qualifiée : commit 4957095, modules P1i du commit 31f3e5d. Résultat complet confirmé dans le job 138794718442 (21:39:46 UTC le 24/11/2026). Octets natifs 6126, SHA256 `8b4b9b2c664d152fea4d516c936877e87e133bc79cfb6dbdea8bc9953ba3a245`. Reconstruction indépendante du conteneur à partir de l'ancêtre P1h authentifié et du delta source VASM CI : SHA256 et blob Git identiques aux résultats Gate A. Autorisation auteur « continue jusqu a me fournir la lib corrigé... ». La décision de blocage source-only ci-dessus est levée pour cette identité exacte ; requalification historique globale non déclarée PASS. Le test reste strictement Runtime AGSP, aucun changement des ASC ni IFF, aucune promotion de LAST_GOOD.

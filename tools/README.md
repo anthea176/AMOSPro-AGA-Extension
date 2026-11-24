@@ -1,8 +1,8 @@
 # Outils Python — builder actif et historique versionne
 
-## Candidate active S1-P1h (24/11/2026)
+## Candidate active S1-P1i (24/11/2026)
 
-`dist/AMOSPro_AGA.Lib` : 142720 octets, SHA256 `900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb`, 102 commandes / 208 AP20, [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45481353847). Builder source `build_m19_s1p1h_l2b_bank_fix_ap20.py` (VASM MC68020), vérification exacte avec `test_m19_s1p1h_bank_gate_a.py`. Base protégée L2b SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Runtime B / vrai Compiler C / matériel D non testés. Les anciens builders restent reproductibles et les sections ci-dessous sont historiques.
+`dist/AMOSPro_AGA.Lib` : 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, 102 commandes / 208 AP20, [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401). Builder source `build_m19_s1p1i_l2b_contract_in_memory.py` (VASM MC68020), vérification exacte avec `test_m19_s1p1i_l2b_integration_gate_a.py`. Base protégée L2b SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Runtime B / vrai Compiler C / matériel D non testés. Les anciens builders restent reproductibles et les sections ci-dessous sont historiques.
 
 ## Historique P2d-L2 (24/11/2026)
 
