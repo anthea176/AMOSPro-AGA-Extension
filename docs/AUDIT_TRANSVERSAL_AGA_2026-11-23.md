@@ -250,3 +250,16 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **AGBO Bank Free ≠ AMOS Erase Bank :** le chemin natif contrôle `frame_guard_state` et le propriétaire, désactive les slots de la banque puis purge son cache ; le contenu de la banque DATA reste sous propriété AMOS. `Load`/`Erase Bank` externes et éventuelle réutilisation de même adresse ne sont **pas** une conformité démontrée : T10 affinée.
 
 **Aucun nouvel essai Gate A/B/C/D ; aucune correction native, de Lib, d'ASC ni de journal.** L'audit reste OUVERT, Sprite S1-P1e GELÉ. Les 19 scénarios T01–T19 restent non exécutés pour la présente campagne.
+
+## 12. Passage 8 — 24 novembre 2026 : Screen Pattern, images/cache, C2P et ABI des entrées
+
+**Audit détaillé et graphe d'interactions :** [`AUDIT_AGA_DEPENDANCES_CACHE_C2P_2026-11-24.md`](AUDIT_AGA_DEPENDANCES_CACHE_C2P_2026-11-24.md).
+
+- **AGA-011 P1 à qualifier** : `Aga Screen Pattern`, AP20 14 → UNIT142+$00764, peint directement via `Screen.RastPort` (`SetAPen(-342)` puis `RectFill(-306)`) et change le ColorMap par `LoadRGB32(-852)`, **sans sélectionner `DBState.back_sb`, ni acquitter SafePort**. Quel BitMap est réellement touché après `ChangeScreenBuffer` reste inconnu : **pas de corruption front affirmée**. Ajouter sa variante au T06 existant. `Aga Demo` AP20 10 crée/ferme son **propre Screen** (151 WaitTOF bornés).
+- **FICON8 → FICHIP8 :** la capture FICON (AP20 123) lit le back avec `GetMsg` + `WaitBlit`, `Aga F Chip Stage` reconstruit le slot Chip en passant son `ready` de 0 à 1 **après** copie complète. Après `F Icon Bank Put` ou `F Icon Capture`, un **restaging explicite** est contractuellement nécessaire avant `F Blit`. **Aucun rafraîchissement implicite ne peut être présumé**.
+- **AGPC Cache Blit (AP20 162) :** chemin source vérifie `GetMsg` avant le dessin et `TypeOfMem/MEMF_CHIP` des plages DMA ; les flags ABK Chip **ne garantissent pas** la résidence mémoire réelle. Les rejets Fast observés au jalon **R88** sont des **preuves historiques**, non une Gate B de P2d.
+- **AGAPIC Image Draw/Bank Image Draw/Image Region :** les chemins natifs liés utilisent `GetMsg(SafePort)` avant modification du back (voir rapport détaillé) ; cela n'invalide pas automatiquement un snapshot B8. Le contrat reste `Clear → décor → Swap`.
+- **C2P :** `Blit/Zoom` manipulent le tampon **chunky DATA/WORK**, pas le back planaire ; la conversion `C2P Convert` effectue l'accès au back avec garde Safe. Contrôler Close/End et ressource propriétaire T14.
+- **AGA-005 élargie** : la régression R74/R75 antérieure avait effacé du code natif à cause de **sept LEA de données clavier/souris déplacées**. Le test `tools/test_current_input_state_offsets.py` vérifie 7 LEA + 8 mutations sur lignées historiques ; sa politique SHA active doit reconnaître S1-P1e à l'avenir, **sans modifier code/test pendant le gel**.
+
+**Audit toujours ouvert.** Les 102 commandes restent inventoriées, 19 scénarios spécifiés et non exécutés ici. **Aucun correctif / binaire / ASC / journal modifié ; S1-P1e Sprite GELÉE.**

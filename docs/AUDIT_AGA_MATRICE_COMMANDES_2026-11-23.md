@@ -53,22 +53,22 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 43 | `Aga Box` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 44 | `Aga Circle` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 45 | `Aga Mouse Cursor` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 46 | `Aga Bank Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A003 VM contrat Clear |
-| 47 | `Aga Image Region` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A003 VM contrat Clear |
+| 46 | `Aga Bank Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | wrapper Image Draw/GetMsg ; A003 VM |
+| 47 | `Aga Image Region` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | GetMsg natif ; A003 VM |
 | 48 | `Aga F Icon` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | A003 VM contrat Clear |
-| 49 | `Aga F Blit` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | A003 VM contrat Clear |
+| 49 | `Aga F Blit` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | A003 VM Clear ; cache Stage T11 VM |
 | 50 | `Aga F Icon Bank Create` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
-| 51 | `Aga F Icon Bank Put` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
+| 51 | `Aga F Icon Bank Put` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | restaging FICHIP requis ; T11 VM |
 | 52 | `Aga F Chip Bank Create` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
-| 53 | `Aga F Chip Stage` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
-| 54 | `Aga F Icon Capture` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
+| 53 | `Aga F Chip Stage` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | ready 0/1 et Chip reel ; T11 VM |
+| 54 | `Aga F Icon Capture` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | capture GetMsg ; restaging FICHIP T11 VM |
 | 55 | `Aga C Block Capture` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; B8 VM |
 | 56 | `Aga C Block Draw` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; A003 VM |
 | 57 | `Aga C Block Restore` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; A003 VM |
 | 58 | `Aga Bank Image Info` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 59 | `Aga Bank Image Capture` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 60 | `Aga Bob Batch` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | A003 VM contrat Clear |
-| 61 | `Aga Cache Blit` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
+| 61 | `Aga Cache Blit` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | GetMsg et MEMF_CHIP natifs ; A003 VM |
 | 62 | `Aga Sprite Bank` | Sprite S1 geles | DATA AGSP, RGB24, lecture de plans, allocations | Arriere lecture (Get) | GEL; Gate A seule, WaitBlit/Safe a revisiter ; T15 (suspendu) | GEL |
 | 63 | `Get AGA Sprite` | Sprite S1 geles | DATA AGSP, RGB24, lecture de plans, allocations | Arriere lecture (Get) | GEL; Gate A seule, WaitBlit/Safe a revisiter ; T15 (suspendu) | GEL |
 | 64 | `Aga Bob Bank` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | VM |
@@ -95,19 +95,19 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 85 | `Aga I Bob` | Bobs persistants B8/P2 | Registre 64 Bobs, snapshots CPU des 2 pages | Arriere / physique par Bitmap | Safe, CLEAN/READY/DIRTY, Clear/Update, epoch ; T02,T03,T05,T07,T08 | VM |
 | 86 | `Aga Iff To Chunky` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 87 | `Aga C2P Open` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
-| 88 | `Aga C2P Blit` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
-| 89 | `Aga C2P Zoom` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
+| 88 | `Aga C2P Blit` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Chunky CPU uniquement | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | Chunky CPU, Convert protege DB ; T06 VM |
+| 89 | `Aga C2P Zoom` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Chunky CPU uniquement | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | Chunky CPU, Convert protege DB ; T06 VM |
 | 90 | `Aga C2P Convert` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | GetMsg+WaitBlit local ; A003 VM |
 | 91 | `Aga C2P Close` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | WaitBlit avant Free ; End VM |
 | 92 | `Aga Probe` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
-| 93 | `Aga Demo` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
-| 94 | `Aga Screen Pattern` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
+| 93 | `Aga Demo` | Legacy | Etat diagnostic, ecran selon chemin | Screen Intuition independant | OpenScreen/CloseScreen, WaitTOF borne ; T14 | demo autonome ; interaction VM |
+| 94 | `Aga Screen Pattern` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Screen.RastPort (page physique DB inconnue) | Pas de GetMsg ; SetAPen/RectFill et LoadRGB32 ; T06 | AGA-011 P1 a qualifier |
 | 95 | `Aga Back Fill` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | SetRast entier ; aucun Safe avant appel ; WaitBlit + B8 ; T03,T05,T06,T09,T19 | A010 P0 statique ; A003 VM contrat Clear |
 | 96 | `Aga Palette Bank Init` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 97 | `Aga Palette Bank Capture` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 98 | `Aga Palette Bank Apply` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | ColorMap seulement, B8 non invalidé ; T09 VM |
 | 99 | `Aga Fade To Bank` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
-| 100 | `Aga Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A003 VM contrat Clear |
+| 100 | `Aga Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | GetMsg natif ; A003 VM |
 | 101 | `Aga Image Capture` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 102 | `Aga Font Bank Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | release OS/BankFont local ; Close VM |
 
@@ -147,3 +147,9 @@ Le [dossier de contrôle CBlock/C2P/Copper/Close/Fonts](AUDIT_AGA_LIFECYCLE_COPP
 ## Passage 7 — 24 novembre 2026 : P0 après Swap et séparation palettes / plans
 
 [Rapport P2d IFF/Back Fill/AGBO/Palette](AUDIT_AGA_SWAP_IFF_BACKFILL_B8_PALETTES_2026-11-24.md) : `Aga Swap` réussi arme `DB+20=3` ; `Aga Iff Load` écrit le BODY sans acquisition Safe et `Aga Back Fill` appelle **SetRast(-234)** sans garde. L'ancienne attribution de ce vecteur à `RectFill` était une erreur de lecture LVO. **Palette Set/Bank Apply/Cycle** agissent sur `ColorMap`, pas sur les plans de pixels B8 : leur absence de notification de contenu B8 n'est **pas** une anomalie. `Aga Bob Bank Free` garde CLEAN et purge un cache, pas la banque AMOS DATA ; `Load/Erase Bank` externes gardent le statut VM (T10). 102/102 commandes inventoriées, aucune Gate nouvelle.
+
+## Passage 8 — 24 novembre 2026 : dépendances et caches
+
+[Audit des dépendances graphiques/caches](AUDIT_AGA_DEPENDANCES_CACHE_C2P_2026-11-24.md). **AGA-011** : `Aga Screen Pattern` peint `Screen.RastPort` sans acquittement Safe ni sélection back explicite, **page physique après Swap inconnue** (T06). `Aga Demo` ouvre son propre Screen Intuition temporaire. AGAPIC Draw/Region, FICON Capture et Cache Blit ont des protections locales visibles ; FICHIP doit être **explicitement re-stagé** après modification FICON. `C2P Blit/Zoom` touchent le chunky, alors que `C2P Convert` accède au bitmap arrière.
+
+**GetMsg natif / MEMF_CHIP / ready=1 décrivent seulement des chemins source inspectés**, jamais un PASS Runtime/Compiler du socle complet. Les 102 noms restent inventoriés, T01–T19 non exécutés lors de cette passe, Sprite gelé.
