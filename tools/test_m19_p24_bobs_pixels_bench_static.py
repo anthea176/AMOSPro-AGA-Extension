@@ -22,7 +22,7 @@ R84_SHA = "46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d"
 P0_FREE_SHA = 'f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
 R87_SHA = "02d97cfaea9949f9a5d5a5ae6ce4ac4754cde353667a8c5b0b821f1aeb03c302"
 import build_m19_p25_no_probe as historical_r87
-from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, frozen_p2d, verify_active
 
 
 def git_blob_sha(raw: bytes) -> str:
@@ -171,11 +171,11 @@ def main():
     # but accept the author-promoted P2d as the active official library.
     active_is_p2d = (len(active_islands) == 136020 and
                      sha256(active_islands).hexdigest() == P2D_SHA)
-    active_is_p2d_descendant = sha256(active_islands).hexdigest() in (S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
+    active_is_p2d_descendant = sha256(active_islands).hexdigest() in (S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA)
     if active_is_p2d_descendant:
         verified, frozen, _ = verify_active(ROOT)
         assert verified == active_islands and frozen == last_good
-        assert sha256(frozen).hexdigest() == P2D_SHA and len(frozen) == 136020
+        assert sha256(frozen_p2d(frozen)).hexdigest() == P2D_SHA
     assert active_is_p2d or active_is_p2d_descendant or active_islands in (active_m2,active_b8,active_s1,active_p0), \
         'Unknown active B7/B8/S1/P0/P2d candidate'
     assert m2meta['sha256'] == '242e5ed7e8f732bf4e613a462b8dd266269f8d6977911bac867f5db26f8c39c6' and m2meta['predecessor_sha'] == m1meta['sha256']

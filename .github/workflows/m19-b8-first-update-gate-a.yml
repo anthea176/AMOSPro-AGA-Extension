@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -46,26 +47,31 @@ jobs:
         run: |
           python -B tools/test_m19_b8_atomic_integrated_b7_gate_a.py
           python -B tools/test_m19_b8_b7_trampoline_gate_a.py
-      - name: Confirm exact B7-m2 or authorized B8 active and P0 protected
+      - name: Confirm exact current candidate, frozen B8/P1e source and protected L2b
         run: |
           python -B - <<'PY'
           import sys
           sys.path.insert(0, 'tools')
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA
+          import subprocess
+          import tempfile
+          from hashlib import sha1
+          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA
           current,good,label=verify_active(Path('.'))
-          digest=sha256(current).hexdigest()
-          assert digest in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA)
-          assert sha256(good).hexdigest()==P1E_SHA
-          if digest==B7M2_SHA:
-              asc=Path('tests/current/M19_B7M1_BOB_LIFECYCLE_RUNTIME_01.asc')
-              assert sha256(asc.read_bytes()).hexdigest()=='a5b5325b677984fd18114e6983df1bebb3f04e3ce626a482fb4ef5a50665cdec'
-          else:
-              asc=Path('tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
-              from test_m19_b8_clear_update_asc_static import verify
+          assert sha256(current).hexdigest() in (P2DL2B_SHA,S1P1F_SHA,S1P1G_SHA,S1P1H_SHA)
+          assert len(good)==136708 and sha256(good).hexdigest()==P2DL2B_SHA
+          assert sha256(frozen_p2d(good)).hexdigest()==P2D_SHA
+          # Recheck the exact historical P1e campaign without touching current/.
+          raw=subprocess.check_output(['git','show','a4d3b09af5553b4381a0971aaa93f33d17645894:tests/current/M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'])
+          assert sha1(f'blob {len(raw)}'.encode()+bytes([0])+raw).hexdigest()=='e1f53b952b900708a10d9297567ebb775c48825e'
+          from test_m19_b8_clear_update_asc_static import verify
+          with tempfile.TemporaryDirectory() as temp:
+              asc=Path(temp)/'M19_B8_BOB_CLEAR_UPDATE_BC_01.asc'
+              asc.write_bytes(raw)
               verify(asc)
-          print('PASS active verified B7/B8 candidate + sole ASC + P1e LAST_GOOD protected')
+          assert len(list(Path('tests/current').glob('*.asc')))==1
+          print('PASS frozen B8/P1e ASC, exact current candidate and L2b LAST_GOOD:',label)
           PY
       - name: Static AMOS Professional preflight when B8 is active
         run: |

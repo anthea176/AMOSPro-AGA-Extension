@@ -167,14 +167,15 @@ def main():
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert len(p0)==117896 and sha256(p0).hexdigest()==info['p0_sha'], "Historical P0 fixture must remain unchanged"
-    from active_library import P2D_SHA
-    assert len(good)==136020 and sha256(good).hexdigest()==P2D_SHA, "Promoted P2d LAST_GOOD must be exact"
+    from active_library import P2D_SHA, P2DL2B_SHA, frozen_p2d
+    assert (len(good),sha256(good).hexdigest()) in ((136020,P2D_SHA),(136708,P2DL2B_SHA))
+    assert sha256(frozen_p2d(good)).hexdigest()==P2D_SHA
     assert len(candidate)==118816 and sha256(candidate).hexdigest()==info['sha256']
-    from active_library import P1B_SHA, P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+    from active_library import P1B_SHA, P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, verify_active
     verified, _, _ = verify_active(ROOT)
     assert active == verified and active != candidate
-    assert sha256(good).hexdigest() == P2D_SHA
-    assert sha256(active).hexdigest() in (P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA)
+    assert sha256(good).hexdigest() in (P2D_SHA, P2DL2B_SHA)
+    assert sha256(active).hexdigest() in (P2D_SHA,S1P1E_SHA,P2DL2_SHA,P2DL2B_SHA,S1P1F_SHA,S1P1G_SHA,S1P1H_SHA)
     if sha256(active).hexdigest()==P2D_SHA:
         assert active==good
     print('M19 P1a BOB X/Y/I PUBLIC NUMERIC GATE A PASS',checks,'checks;',

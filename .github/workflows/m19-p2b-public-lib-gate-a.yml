@@ -37,11 +37,12 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P2D_SHA, P2B_SHA
+          from active_library import verify_active, frozen_p2d, P2DL2B_SHA, P2D_SHA, P2B_SHA
           from build_m19_p2b_in_memory import build_p2b
           active, protected, label = verify_active(Path('.'))
           assert sha256(build_p2b()[0]).hexdigest() == P2B_SHA
-          assert len(protected) == 136020 and sha256(protected).hexdigest() == P2D_SHA
+          assert len(protected) == 136708 and sha256(protected).hexdigest() == P2DL2B_SHA
+          assert sha256(frozen_p2d(protected)).hexdigest() == P2D_SHA
           print(label)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
