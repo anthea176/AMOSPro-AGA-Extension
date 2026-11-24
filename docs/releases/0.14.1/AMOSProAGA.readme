@@ -8,8 +8,6 @@ Architecture: m68k-amigaos
 Distribution: Aminet
 
 Description:
-  PUBLICATION CANDIDATE - NOT FOR UPLOAD UNTIL APPROVED.
-
   AMOSPro AGA Extension is an unofficial extension for AMOS
   Professional on AGA Amiga computers and AGA-enabled WinUAE.
   Version 0.14.1 is a stability and bug-fix update to 0.14.0.
