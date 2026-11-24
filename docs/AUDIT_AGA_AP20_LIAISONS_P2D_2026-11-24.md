@@ -12,7 +12,7 @@ Lecture de `C_Tk` (jetons) et de `C_Lib` (entrées) du [master P2d MC68020](http
 
 | Commande / usage | Entrée AP20 | Unité et cible réelle | Source native et statut |
 |---|---:|---|---|
-| `Aga Back Fill` | 22 | `142:$00C9E` | [Bloc Back Fill](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_00C9E_MC68020.s) : bitmap arrière + RastPort/RectFill/WaitBlit, **sans GetMsg Safe**. Limitation legacy déjà décrite dans [R27](../docs/M12_SAFE_BLITTER_R27.md), maintenant **AGA-010 P0 risque** en double buffer |
+| `Aga Back Fill` | 22 | `142:$00C9E` | [Bloc Back Fill](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_00C9E_MC68020.s) : bitmap arrière + RastPort/**SetRast(-234)**/WaitBlit, **sans GetMsg Safe**. Limitation legacy déjà décrite dans [R27](../docs/M12_SAFE_BLITTER_R27.md), maintenant **AGA-010 P0 risque** en double buffer |
 | `Aga Iff Load` | 24 | `142:$00D3C` | [IFF BODY](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_IFF_LOAD_BODY_MC68020.s) : sélection back puis copie directe des plans, **aucun GetMsg Safe dans ce chemin** ; **AGA-001 P0** |
 | `Aga Blit Copy` | 31 | `142:$0219C` | [Bloc $0219C](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_0219C_MC68020.s), `GetMsg(-372)` avant `BltBitMap(-30)` |
 | `Aga Blit Fill` | 33 | `142:$02360` | [Relais $02360](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_02360_MC68020.s) vers [moteur $078E6](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_078A4_MC68020.s) : `GetMsg(-372)` avant `RectFill/WaitBlit` |
@@ -145,3 +145,7 @@ Le test **ne conclut pas** que les autres appels sont conformes : la matrice ci-
 4. **Aucun essai WinUAE/Compiler nouveau**, aucune assertion d'intégrité globale, **aucune validation de la capture Sprite S1** : candidate S1-P1e préservée et chantier gelé.
 
 [Audit transversal](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) · [Matrice commande → mémoire](AUDIT_AGA_MATRICE_COMMANDES_2026-11-23.md) · [Scénarios](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md)
+
+## Rectification du 24 novembre 2026 — LVO SetRast et contraintes palettes
+
+Dans la table ci-dessus, `Aga Back Fill` utilise **graphics.library SetRast (-234)**, contrairement à `Aga Blit Fill` qui passe par `RectFill (-306)` ; le premier nom figurait incorrectement dans la version antérieure de cet audit. Le défaut d'acquisition SafePort **n'est pas remis en cause**. La table des vecteurs est documentée dans [LVOs.i](https://github.com/jotd666/amiga68ktools/blob/master/tools/LVOs.i). Voir [passage 7](AUDIT_AGA_SWAP_IFF_BACKFILL_B8_PALETTES_2026-11-24.md) pour la séquence `Swap → DB+20=3 → Back Fill/IFF` et la distinction pixels/snapshots B8/ColorMap.

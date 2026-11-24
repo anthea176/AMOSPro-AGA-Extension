@@ -4,7 +4,7 @@
 
 Référence des **102 commandes publiques** : [README.md figé au HEAD](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/README.md). Ordre ci-dessous identique au tableau d'API du README. Les appels à des fonctions AMOS natives non préfixées `Aga` ne sont **pas** des entrées de ces 102 tokens.
 
-**Légende :** `VM` = validation manquante, aucun verdict ; `A001 P0 statique` = lacune Safe IFF observée dans la source, effet WinUAE non reproduit ; `A010 P0 statique` = Back Fill legacy sans garde Safe avant RectFill ; `A003 VM contrat Clear` = absence d'invalidation automatique conforme à la séquence P2d Clear→décor→Swap, régression légale restant à vérifier ; `Axxx P1 risque/interaction` = séquence potentiellement problématique, **non** preuve que la commande isolée est incorrecte ; `GEL` = aucune action Sprite. Les descriptions de garde disent **ce qu'il faut auditer**, pas ce qui a été prouvé pour chaque token.
+**Légende :** `VM` = validation manquante, aucun verdict ; `A001 P0 statique` = lacune Safe IFF observée dans la source, effet WinUAE non reproduit ; `A010 P0 statique` = Back Fill legacy sans garde Safe avant **SetRast(-234)** ; `A003 VM contrat Clear` = absence d'invalidation automatique conforme à la séquence P2d Clear→décor→Swap, régression légale restant à vérifier ; `Axxx P1 risque/interaction` = séquence potentiellement problématique, **non** preuve que la commande isolée est incorrecte ; `GEL` = aucune action Sprite. Les descriptions de garde disent **ce qu'il faut auditer**, pas ce qui a été prouvé pour chaque token.
 
 | # | Commande | Famille | Mémoire utilisée | Page(s) | Garde / dépendances à vérifier | Statut |
 |---:|---|---|---|---|---|---|
@@ -14,9 +14,9 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 4 | `Aga Double Buffer` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 a qualifier |
 | 5 | `Aga Swap` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 structure conditionnelle |
 | 6 | `Aga Pic Info` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
-| 7 | `Aga Iff Load` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A001 P0 statique |
+| 7 | `Aga Iff Load` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A001 P0 statique ; palette RGB32 globale |
 | 8 | `Aga Palette Load` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
-| 9 | `Aga Palette Set` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
+| 9 | `Aga Palette Set` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | ColorMap seulement, B8 non invalidé ; T09 VM |
 | 10 | `Aga Palette Get` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 11 | `Aga Palette Save` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 12 | `Aga Bank Palette Init` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
@@ -25,7 +25,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 15 | `Aga Bank Palette Fade` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 16 | `Aga Fade To Black` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 17 | `Aga Fade To White` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
-| 18 | `Aga Palette Cycle` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
+| 18 | `Aga Palette Cycle` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | ColorMap seulement, B8 non invalidé ; T09 VM |
 | 19 | `Aga Key` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 20 | `Aga Wait Key` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 21 | `Aga Wait Vbl` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | VM |
@@ -72,7 +72,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 62 | `Aga Sprite Bank` | Sprite S1 geles | DATA AGSP, RGB24, lecture de plans, allocations | Arriere lecture (Get) | GEL; Gate A seule, WaitBlit/Safe a revisiter ; T15 (suspendu) | GEL |
 | 63 | `Get AGA Sprite` | Sprite S1 geles | DATA AGSP, RGB24, lecture de plans, allocations | Arriere lecture (Get) | GEL; Gate A seule, WaitBlit/Safe a revisiter ; T15 (suspendu) | GEL |
 | 64 | `Aga Bob Bank` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | VM |
-| 65 | `Aga Bob Bank Free` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | A004 P1 a qualifier |
+| 65 | `Aga Bob Bank Free` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | garde CLEAN/owner ; rechargement T10 VM |
 | 66 | `Get AGA Bob` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | VM |
 | 67 | `Make AGA Bob Mask` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | VM |
 | 68 | `No AGA Bob Mask` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | VM |
@@ -102,10 +102,10 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 92 | `Aga Probe` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 93 | `Aga Demo` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 94 | `Aga Screen Pattern` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
-| 95 | `Aga Back Fill` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09,T19 | A010 P0 statique ; A003 VM contrat Clear |
+| 95 | `Aga Back Fill` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | SetRast entier ; aucun Safe avant appel ; WaitBlit + B8 ; T03,T05,T06,T09,T19 | A010 P0 statique ; A003 VM contrat Clear |
 | 96 | `Aga Palette Bank Init` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 97 | `Aga Palette Bank Capture` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
-| 98 | `Aga Palette Bank Apply` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
+| 98 | `Aga Palette Bank Apply` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | ColorMap seulement, B8 non invalidé ; T09 VM |
 | 99 | `Aga Fade To Bank` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 100 | `Aga Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A003 VM contrat Clear |
 | 101 | `Aga Image Capture` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
@@ -143,3 +143,7 @@ Les appels publiés `Aga Swap` (AP20 181 → BOBS+$0B606) et `Aga Bob Auto Updat
 ## Passage 6 — 24 novembre 2026 : preuves locales, pas de validation globale
 
 Le [dossier de contrôle CBlock/C2P/Copper/Close/Fonts](AUDIT_AGA_LIFECYCLE_COPPER_CBLOCK_C2P_2026-11-24.md) donne la liaison AP20 et les lignes source MC68020 : **GetMsg avant copie dans CBlock et C2P**, `WaitBlit` avant libération C2P, rollback Copper prévu, et **Screen Close atteint le Close historique même sans root B8**. Les statuts mis à jour désignent exclusivement une **présence de garde locale** ou un **comportement contractuel intentionnel**, **jamais une conformité Runtime/Compiler**. AGA-004 reste ouverte pour les chemins d'échec, callback End et réouverture ; T09/T13/T14/T16 affinés, tous non exécutés.
+
+## Passage 7 — 24 novembre 2026 : P0 après Swap et séparation palettes / plans
+
+[Rapport P2d IFF/Back Fill/AGBO/Palette](AUDIT_AGA_SWAP_IFF_BACKFILL_B8_PALETTES_2026-11-24.md) : `Aga Swap` réussi arme `DB+20=3` ; `Aga Iff Load` écrit le BODY sans acquisition Safe et `Aga Back Fill` appelle **SetRast(-234)** sans garde. L'ancienne attribution de ce vecteur à `RectFill` était une erreur de lecture LVO. **Palette Set/Bank Apply/Cycle** agissent sur `ColorMap`, pas sur les plans de pixels B8 : leur absence de notification de contenu B8 n'est **pas** une anomalie. `Aga Bob Bank Free` garde CLEAN et purge un cache, pas la banque AMOS DATA ; `Load/Erase Bank` externes gardent le statut VM (T10). 102/102 commandes inventoriées, aucune Gate nouvelle.
