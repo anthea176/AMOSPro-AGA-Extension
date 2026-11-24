@@ -46,6 +46,10 @@ jobs:
           python -B -m py_compile tools/test_m19_s1p1i_contract_gate_a.py
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1h.bin" src/native/m19_s1/M19_S1P1H_BANK_PUBLIC_MC68020.s
           PYTHONPATH=tools python -B tools/test_m19_s1p1i_contract_gate_a.py --historical "$RUNNER_TEMP/p1h.bin"
+      - name: Assemble P1i MC68020 source and qualify the same contracts
+        run: |
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1i.bin" src/native/m19_s1/M19_S1P1I_BANK_PUBLIC_MC68020.s
+          PYTHONPATH=tools python -B tools/test_m19_s1p1i_contract_gate_a.py --historical "$RUNNER_TEMP/p1h.bin" --candidate "$RUNNER_TEMP/p1i.bin"
       - name: Preserve installed and protected libraries
         run: |
           printf '%s  %s\n' '900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
