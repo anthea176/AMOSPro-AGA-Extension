@@ -1,10 +1,8 @@
 # Outils Python — builder actif et historique versionne
 
-## Candidate active S1-P1e Get AGA Sprite (23/11/2026)
+## Candidate active P2d-L2 (24/11/2026)
 
-Après autorisation expresse, la seule `dist/AMOSPro_AGA.Lib` de travail contient S1-P1e : **142 000 octets**, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106`, 102 commandes et 208 entrées AP20. La référence `dist/AMOSPro_AGA_LAST_GOOD.Lib` reste P2d, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f` (136 020 octets). Builder natif : `tools/build_m19_s1p1e_get_sprite_ap20.py` plus `src/native/m19_s1/M19_S1P1D_BANK_PUBLIC_MC68020.s` assemblé avec vasm MC68020. La CI S1 reconstruit S1-P1e octet pour octet et compare à `dist/`. `tools/active_library.py` et `tools/build_aga_current.py --verify` distinguent la candidate de la `LAST_GOOD`. Gate A PASS, Gates B/C/D de la capture non testées. [Protocole Runtime](../tests/proto/agsp_capture/README.md).
-
-
+`dist/AMOSPro_AGA.Lib` : 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20, Gate A 172 cas writers + 10 suites Bob PASS. Builder source `build_m19_p2d_l2_first_bind_in_memory.py` (vasm MC68020), reconstruit L1 puis L2 et compare à la Lib active exacte. `active_library.py` vérifie les deux SHA et les plages natives append-only. LAST_GOOD P2d protégée. B/C/D NON TESTÉES. [Protocole](../docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). S1-P1e gelée et reconstructible depuis son builder historique ; aucune commande Sprite active.
 
 ## Migration ASM P2d — source entierement classifiee (22/11/2026)
 

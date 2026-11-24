@@ -16,7 +16,7 @@ from struct import unpack_from
 import subprocess
 import tempfile
 
-from active_library import P2D_SHA, S1P1E_SHA, verify_active
+from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, verify_active
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_in_memory import build_p2d
@@ -61,8 +61,8 @@ def build_l1(vasm: Path):
     vasm = vasm.resolve()
     need(vasm.is_file(), 'pinned vasm executable required')
     active, protected, _ = verify_active(ROOT)
-    need(sha256(active).hexdigest() == S1P1E_SHA,
-         'active S1-P1e frozen identity changed; new authorization required')
+    need(sha256(active).hexdigest() in (S1P1E_SHA, P2DL2_SHA),
+         'active S1-P1e/L2 identity changed; new authorization required')
     base, meta = build_p2d()
     need(base == protected and sha256(base).hexdigest() == P2D_SHA,
          'P2d protected SHA/source mismatch')

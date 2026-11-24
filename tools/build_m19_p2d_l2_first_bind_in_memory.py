@@ -13,7 +13,7 @@ import shutil
 from struct import unpack_from
 import tempfile
 
-from active_library import P2D_SHA, S1P1E_SHA, verify_active
+from active_library import P2D_SHA, S1P1E_SHA, P2DL2_SHA, verify_active, verify_p2d_l2
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse
 from build_m19_p2d_in_memory import build_p2d
@@ -61,7 +61,7 @@ def source_branch(unit):
 def build_l2(vasm: Path):
     vasm = vasm.resolve()
     active, protected, _ = verify_active(ROOT)
-    need(sha256(active).hexdigest() == S1P1E_SHA, 'active candidate changed')
+    need(sha256(active).hexdigest() in (S1P1E_SHA, P2DL2_SHA), 'active candidate changed')
     base, baseinfo = build_p2d()
     need(base == protected and sha256(base).hexdigest() == P2D_SHA,
          'P2d source/protected provenance changed')
@@ -115,6 +115,9 @@ def build_l2(vasm: Path):
     image = repack_ap20(base,tokens,parts,TITLE)
     need(unpack_ap20(image) == (tokens,parts,TITLE), 'AP20 round trip')
     need(not inspect(parse(image))['issues'], 'AP20 audit issues')
+    verify_p2d_l2(image, protected)
+    if sha256(active).hexdigest() == P2DL2_SHA:
+        need(image == active, 'installed L2 differs from exact source rebuild')
     need((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes() == active
          and (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == protected,
          'protected binaries changed')

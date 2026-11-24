@@ -1,6 +1,6 @@
 # Architecture technique — extension AMOS Professional 365 AGA
 
-> **Reference actuelle (22/11/2026)** : M19 P2d MC68020, [Lib active](../dist/AMOSPro_AGA.Lib) et [LAST_GOOD](../dist/AMOSPro_AGA_LAST_GOOD.Lib) identiques, **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 entrees AP20**. Gates A et B/C du banc integre P2 ALL IN ONE validees ; Gate D non testee. [Suivi courant](NEXT_SESSION.md) et [migration ASM partielle](../src/native/m19_p2d/README.md). Les sections B8/B7 ci-dessous documentent leurs **jalons historiques** ; leurs Lib, ASC et LAST_GOOD ne sont plus les actifs.
+> **Référence actuelle (24/11/2026)** : M19 P2d-L2 active (136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20), Gate A PASS ; B/C/D non testées. [LAST_GOOD P2d protégée](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, conserve ses preuves historiques. [L2 source](AGA_L2_FIRST_BIND_SOURCE_GATE_A_2026-11-24.md) · [Suivi](NEXT_SESSION.md). Sections B8/B7 et P2d ci-dessous historiques, ne pas confondre avec L2.
 
 ## M20 P0 — prototype hôte de scrolling, non natif
 

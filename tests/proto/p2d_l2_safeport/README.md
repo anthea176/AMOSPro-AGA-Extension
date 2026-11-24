@@ -1,3 +1,3 @@
-# P2d-L2 SafePort — sonde non distribuée
+# P2d-L2 — sonde préparatoire conservée
 
-**PREPARE / PREFLIGHT PASS uniquement.** [Sonde ASC](M19_P2D_L2_SAFEPORT_BC.asc), [protocole, SHA, résultats attendus et limites](../../../docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). Candidate L2 Gate A PASS en mémoire, non installée. Ne pas remplacer tests/current ni lancer cette sonde comme test officiel sans bascule autorisée. Les banques 24/27 doivent être libres ; utiliser la ressource IFF existante de tests/current, aucun asset dupliqué.
+La sonde préparée est désormais activée **octet pour octet** sous [tests/current/M19_P2D_L2_SAFEPORT_BC.asc](../../current/M19_P2D_L2_SAFEPORT_BC.asc). Utiliser uniquement cet ASC de campagne et la [Lib active](../../../dist/AMOSPro_AGA.Lib). [Protocole](../../../docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). Gate A PASS, B/C/D non testées. Cette copie reste non distribuée, aucune deuxième campagne active.

@@ -487,18 +487,18 @@ def verified_current_compiler_seeds(parsed):
     authenticates the current and LAST_GOOD Compiler wrappers. No altered,
     independently rebuilt, or future unknown binary receives these seeds.
     """
-    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA
+    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA
     from compiler_relocation import native_from_promoted, repack_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
-    if sha(current) in (R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA):
+    if sha(current) in (R83_SHA,R84_SHA,R85_SHA,R86_SHA,R87_SHA,R88_SHA,P0C_SHA,P0D_SHA,AP20_ISLANDS_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,S1P1E_SHA,P2DL2_SHA):
         # This exporter only disassembles historical single-unit sources.
         # P0c, P0d, AP20 islands, B7 and B8 are audited multi-unit AP20 V2 libraries: stub 8 targets
         # their separate BOBS groups, so monolithic unwrap must NOT be attempted.
         # verify_active() has checked the exact active source-built candidate
         # and the protected LAST_GOOD. Use the pinned R82 ancestor only for
         # historical CFG seeds; never interpret P2d as a single native unit.
-        if sha(current) == S1P1E_SHA:
+        if sha(current) in (S1P1E_SHA, P2DL2_SHA):
             need(sha(last_good) == P2D_SHA and current != last_good,
                  'Strict source: S1/P2d distinct pinned identities lost')
         else:

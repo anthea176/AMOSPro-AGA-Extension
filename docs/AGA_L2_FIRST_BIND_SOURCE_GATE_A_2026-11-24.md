@@ -33,3 +33,7 @@ T02 et T05 visés en Gate A ; T17 RPG, T06 Screen Pattern (RastPort réel de l'O
 | Gates B/C/D | NON TESTÉES |
 
 [Artifact integrity 45402936026](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402936026) PASS, [P2d Bob 45402935803](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935803) PASS, [L1 45402935919](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935919) PASS et [CPU 45402936095](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402936095) PASS. La candidate reste en mémoire. AGA-002 corrigée/qualifiée en A pour le chemin premier Bind ; ne pas attribuer sans preuve l'ERR15 du RPG à cette seule cause. [Campagne WinUAE préparée](AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md) ; nouvelle autorisation de bascule requise.
+
+## 6. Bascule de test autorisée (24/11/2026)
+
+« allons y » autorise la Lib P2d-L2 et la campagne unique. [Reconstruction et Gate A répétée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45428031730) ; [Lib active](../dist/AMOSPro_AGA.Lib) blob `d9bc3d015c4f396b2f2d674315fff4918fa0610e`, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, [ASC actif](../tests/current/M19_P2D_L2_SAFEPORT_BC.asc). [Protocole](AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). Les sections source-only précédentes décrivent l'étape historique avant livraison. Aucun transfert de B/C, aucune promotion.

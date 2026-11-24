@@ -1,4 +1,4 @@
-"""One active M19 P2d validated Lib in dist/ promoted as protected LAST_GOOD.
+"""Canonical active test candidate and SHA-pinned protected LAST_GOOD.
 
 M19 B7-m2 is the authorized active TEST candidate (Gate A PASS; Runtime repeat-launch B pending). Historical B7-m1 remains source-built.
 P0d remains source-reproducible by its frozen builder and Git history.
@@ -34,6 +34,7 @@ B8_SHA="00969199df0be556c53a2dcce03609127810216c28a3180c1aa97795621299ae"  # fro
 B8S1_SHA="3d00b745591533a66d76c8c6e28fc8eca86da795e2e5e0cee06a6e22f548292a"  # new bounded-SafePort Clear, 119 MC68020 checks PASS, WinUAE B/C pending
 P1E_SHA="7922f558af378c07ff0ac339e3baeca11861c3e7feb3114d8f0c6c380158cd42"
 P2D_SHA="ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f"
+P2DL2_SHA="b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1"  # Exact L1+L2 Gate A 172 writer cases + 10 Bob suites; B/C/D pending
 S1P1E_SHA="1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106"  # Author-approved active AGSP capture test candidate; Gate A only
 P2C_SHA="eebd7175035f6e6afbd7ed4d2bf5363bd6f816887993db22b848f8d5cfe48d3d"
 P2B_SHA="96f4bc7e1d604d57d615e198eb43ca6abc800cdc3853c6e9ac2827ad6a86e448"
@@ -100,6 +101,33 @@ CANDIDATE_HASHES={
     "dist/experimental/AMOSPro_AGA_M16_v0.12.7_R52_FNONE_TARGET_PROBE.Lib":
         "09ec9797fdea8f1b4694b2c8a9052776ff5cdcf7b959f2f1533c0b41151ea82e",
 }
+def verify_p2d_l2(candidate: bytes, baseline: bytes):
+    """Check exact Gate-A SHA and source-proven append-only ranges without vasm.
+
+    The dedicated L2 workflow independently rebuilds and compares the
+    entire installed image against the editable assembly sources.
+    """
+    from compiler_relocation import unpack_ap20
+    from ap20_v2_island_dispatch import pc16_displacements
+    from audit_ap20 import inspect, parse
+    assert len(baseline) == 136020 and sha256(baseline).hexdigest() == P2D_SHA
+    assert len(candidate) == 136332 and sha256(candidate).hexdigest() == P2DL2_SHA
+    oldtok, old, _ = unpack_ap20(baseline)
+    tok, new, title = unpack_ap20(candidate)
+    assert tok == oldtok and len(new) == len(old) == 203
+    assert b'$VER: AMOSPro_AGA M19 P2d-L2' in title
+    assert [i for i, (a,b) in enumerate(zip(old,new)) if a != b] == [142,202]
+    assert len(old[142]) == 62740 and len(new[142]) == 62960
+    assert len(old[202]) == 60928 and len(new[202]) == 61008
+    for group, patches in ((142, ((0xce8,6),(0xe88,6))), (202, ((48958,4),))):
+        restored = bytearray(new[group][:len(old[group])])
+        for offset, size in patches:
+            restored[offset:offset+size] = old[group][offset:offset+size]
+        assert bytes(restored) == old[group], 'L2 changed legacy code or State data'
+    assert pc16_displacements(new) == pc16_displacements(old)
+    assert not inspect(parse(candidate))['issues']
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -111,6 +139,12 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == P2DL2_SHA:
+        from build_m19_p2d_in_memory import build_p2d
+        expected, meta = build_p2d()
+        assert good == expected and meta['sha256'] == P2D_SHA
+        verify_p2d_l2(cur, good)
+        return cur, good, "M19 P2d-L2 ACTIVE TEST CANDIDATE; Gate A MC68020 172 writer cases + 10 Bob suites PASS; WinUAE B, true Compiler C and physical D NOT TESTED; P2d LAST_GOOD protected"
     if current_sha == S1P1E_SHA:
         from build_m19_p2d_in_memory import build_p2d
         from compiler_relocation import GETP, RBSR, unpack_ap20

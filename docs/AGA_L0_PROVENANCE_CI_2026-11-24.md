@@ -40,3 +40,5 @@ Artifact integrity 45399337115 : les anciens contrôles d'export sont franchis ;
 ## Retour final de la CI globale
 
 [Artifact integrity 45402936026](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402936026) PASS sur a6065ac. [OPT020 45402935929](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935929) : les trois tests historiques passent, mais la dernière étape SHA impose encore P2d dans dist/AMOSPro_AGA.Lib. Le workflow m19-opt020-legacy-current.yml est aligné sur verify_active, avec SHA P2d stricte pour LAST_GOOD et active P2d/S1-P1e strictement reconnue. Aucun test ni garde supprimé. Résultat de ce dernier ajustement à relever. Pas de transfert de PASS au futur binaire L2 installé.
+
+[OPT020 historique 45417306846](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45417306846) PASS. Les contrôles L0 sont clos sur S1-P1e avant la bascule P2d-L2. La nouvelle CI vérifie L2 exactement et les références historiques séparément ; résultats de distribution à relever.
