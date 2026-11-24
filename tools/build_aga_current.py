@@ -50,7 +50,11 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 P2d-L2b"):
+    if active.startswith("M19 S1-P1f"):
+        from active_library import verify_s1p1f
+        verify_s1p1f(current, LAST_GOOD.read_bytes())
+        print("CURRENT S1-P1f: exact Gate A candidate, 102 commands / 208 AP20; B/C/D pending; L2b protected")
+    elif active.startswith("M19 P2d-L2b"):
         from active_library import P2DL2B_SHA, verify_p2d_l2b, frozen_p2d
         assert sha256(current).hexdigest() == P2DL2B_SHA
         assert current == LAST_GOOD.read_bytes()

@@ -14,7 +14,7 @@ from ap20_v2_island_dispatch import dispatch_islands, pc16_displacements
 from compiler_relocation import unpack_ap20
 from audit_ap20 import inspect, parse
 from build_m19_p0f_public_bound_in_memory import build as build_p0f
-from active_library import P1E_SHA, P2D_SHA, P2DL2_SHA, P2DL2B_SHA
+from active_library import P1E_SHA, P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA
 
 P0F_SHA = '6175705e22ed0c3f52c1ba317b2fad7aaca5af0db507c63a1ed629a724609a45'
 P0D_SHA = 'bc13229fdc38b2420f6680aa000f58e1480d867a53c32fa4290139142eb919be'
@@ -36,7 +36,7 @@ def build():
     root = Path(__file__).resolve().parents[1]
     current = (root/'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    if (sha256(current).hexdigest() not in (P0D_SHA,ISLAND_SHA,UNIT5_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2_SHA, P2DL2B_SHA)
+    if (sha256(current).hexdigest() not in (P0D_SHA,ISLAND_SHA,UNIT5_SHA,B7_SHA,B7M1_SHA,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1E_SHA,P2D_SHA,P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA)
             or sha256(good).hexdigest() not in KNOWN_LAST_GOOD_SHAS
             or (sha256(current).hexdigest() in (P1E_SHA,P2D_SHA,P2DL2B_SHA) and current!=good)):
         raise ValueError('Unknown active P0d/AP20 islands/five-unit/B7 candidate or LAST_GOOD changed: refuse reconstruction')

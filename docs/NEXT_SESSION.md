@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — S1-P1f Gate A PASS, candidate livrée
+
+**24 novembre 2026 — S1-P1f active**, 142684 octets, SHA256 `dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931`, blob `3aa3fff1d5715d671e55abf2795c65b9345a1527`, 102 commandes / 208 AP20, MC68020+. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45466155974) : source L2b exacte, S1-P1e historique exacte, deux stubs Sprite, 184 Pattern, 172 writers, 10 suites Bob. B/C/D S1-P1f non testées. LAST_GOOD L2b protégée, 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. [Jalon](M19_S1_P1F_L2B_REBASE_2026-11-24.md). Prochain essai : [GET_AGA_SPRITE.asc](../tests/proto/agsp_capture/GET_AGA_SPRITE.asc) original P1e, fixture générée localement, banque 29 libre, Runtime WinUAE 68030/JIT ON/AGA PAL. Log et 2 ABK P1E à fournir avec identité de la nouvelle Lib. Ne pas rejouer T06 pour ce test. Aucun Sprite DMA. L0 post-bascule : anciennes gardes SHA adaptées, CI générale à requalifier ; Gate A spécifique acquise. 0.14.1 doit être publiée depuis le socle protégé, pas la candidate Sprite.
+
 ## 24 novembre 2026 — reprise M19 Sprite S1-P1f
 
 Accord auteur « on peux y aller » après promotion L2b. [Jalon S1-P1f](M19_S1_P1F_L2B_REBASE_2026-11-24.md) : reprendre le source S1-P1e exact, ajouter uniquement ses deux tokens/entrées sur les 203 entrées inchangées de L2b. Gate A en mémoire avant toute bascule. Les CI de promotion ont révélé des gardes historiques P0a/R83 et deux workflows encore épinglés à P2d ; corrections ciblées, requalification nécessaire. Lib active et LAST_GOOD identiques L2b, ASC T06 inchangé. 0.14.1 reste non publiée ; 0.15.0 est le jalon Sprite. B/C/D de S1-P1f non testées.

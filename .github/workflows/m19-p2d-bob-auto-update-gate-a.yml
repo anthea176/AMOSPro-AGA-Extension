@@ -41,7 +41,7 @@ jobs:
           PYTHONPATH=tools python -B - <<'PY'
           from hashlib import sha256
           from pathlib import Path
-          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA
           from build_m19_p2d_in_memory import build_p2d
           raw, info = build_p2d()
           assert sha256(raw).hexdigest() == P2D_SHA
@@ -49,14 +49,14 @@ jobs:
           assert sha256(protected).hexdigest() == P2DL2B_SHA and len(protected) == 136708
           from active_library import verify_p2d_l2b
           verify_p2d_l2b(protected, raw)
-          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA)
           current = list(Path('tests/current').glob('*.asc'))
           assert len(current) == 1
-          expected = {P2DL2_SHA: 'M19_P2D_L2_SAFEPORT_BC.asc', P2DL2B_SHA: 'T06_PATTERN_TARGET.asc'}.get(sha256(active).hexdigest(), 'M19_P2_ALL_IN_ONE.asc')
+          expected = {P2DL2_SHA: 'M19_P2D_L2_SAFEPORT_BC.asc', P2DL2B_SHA: 'T06_PATTERN_TARGET.asc', S1P1F_SHA: 'T06_PATTERN_TARGET.asc'}.get(sha256(active).hexdigest(), 'M19_P2_ALL_IN_ONE.asc')
           assert current[0].name == expected
           if sha256(active).hexdigest() == P2DL2_SHA:
               assert sha256(current[0].read_bytes()).hexdigest() == '720348897fd0f939dc413687ccc69ed524fd7edff863dcc89f320a1f68e0f974'
-          if sha256(active).hexdigest() == P2DL2B_SHA:
+          if sha256(active).hexdigest() in (P2DL2B_SHA, S1P1F_SHA):
               assert sha256(current[0].read_bytes()).hexdigest() == '55f295a3bc78d38ad349f08e5d28e36e388d1cfd3333e700d91bcba5fcf4e795'
           print(info, label)
           PY

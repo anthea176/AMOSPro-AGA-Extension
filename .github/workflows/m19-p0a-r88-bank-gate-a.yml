@@ -43,7 +43,7 @@ jobs:
           P0='f4db949114517f8d3b4d39b70c60b4f63d8d51a6433fecdadbbbfce96bf6689d'
           R84='46f274c6051f171132f4dcf6f0e8c3a8ccef16162dfa6a804cab6c3a7bf08e6d'
           assert digest('dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib')==R88
-          assert digest('dist/AMOSPro_AGA.Lib')=='a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc'
+          assert digest('dist/AMOSPro_AGA.Lib') in ('a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc', 'dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931')
           assert digest('dist/AMOSPro_AGA_LAST_GOOD.Lib')=='a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc'
           from build_aga_r84_agapic import build as build_r84
           historical,meta=build_r84()

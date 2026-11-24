@@ -52,6 +52,7 @@ P0C_SHA="277802d4aefbe007b86cb8a4dbb9f0703f3a24014971a1824ba38f82d7d7b51a"
 C1_SHA="d2d26884eca532f4ab78c7e6db665230d8d76ce8939b3a7a7b722e09e0b6037b"
 C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE.Lib"
 P2DL2B_SHA="a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc"  # Exact L2b MC68020 Gate A: 184 Pattern + 172 writers + 10 Bob suites
+S1P1F_SHA="dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931"  # Exact MC68020 Gate A run 45466155974; B/C/D pending
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -165,6 +166,34 @@ def frozen_p2d(protected: bytes) -> bytes:
     return baseline
 
 
+def verify_s1p1f(candidate: bytes, protected: bytes):
+    """Authenticate the Gate-A exact S1-P1f additive extension of L2b."""
+    from compiler_relocation import GETP, RBSR, unpack_ap20
+    from compiler_bridge_v2_probe import DISPATCH_V2
+    from ap20_v2_island_dispatch import pc16_displacements
+    from audit_ap20 import inspect, parse, token
+    assert len(protected) == 136708 and sha256(protected).hexdigest() == P2DL2B_SHA
+    assert len(candidate) == 142684 and sha256(candidate).hexdigest() == S1P1F_SHA
+    oldtok, old, _ = unpack_ap20(protected)
+    tok, parts, title = unpack_ap20(candidate)
+    assert len(old) == 203 and len(parts) == 208 and parts[:203] == old
+    assert tok == (oldtok[:-6] + token('aga sprite bank', 204, 1, 'I0')
+                   + token('get aga sprite', 206, 1, '00,0,0,0,0,0') + oldtok[-6:])
+    assert parts[203] == parts[205] == GETP
+    assert parts[204] == RBSR + bytes.fromhex('00cf00004e75')
+    assert parts[206] == RBSR + bytes.fromhex('00cf00084e75')
+    assert parts[207].startswith(DISPATCH_V2)
+    native = parts[207][len(DISPATCH_V2):]
+    assert len(native) == 5840
+    assert sha256(native).hexdigest() == '5306ac51845f03cc15d5743c84528d1cb0eff1c6f82eae4979fd14a947c735ff'
+    assert b'$VER: AGSP S1-P1f L2b non-distributed' in title
+    links = pc16_displacements(parts)
+    baseline = pc16_displacements(old)
+    assert set(links) == set(baseline) | {204, 206}
+    assert all(links[k] == v for k, v in baseline.items())
+    assert not inspect(parse(candidate))['issues']
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -176,6 +205,10 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S1P1F_SHA:
+        frozen_p2d(good)
+        verify_s1p1f(cur, good)
+        return cur, good, "M19 S1-P1f L2b Get AGA Sprite ACTIVE TEST CANDIDATE; MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == P2DL2B_SHA:
         from build_m19_p2d_in_memory import build_p2d
         expected, meta = build_p2d()

@@ -19,16 +19,16 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P2d-L2b — promoted LAST_GOOD (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **136,708 bytes**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commands / 203 AP20 entries**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS: 184 Pattern cases, 172 writers, 10 Bob suites. L2b Pattern, normal resource-lifecycle and integrated Bob Runtime checks PASS; Compiler/physical Amiga not retested. [Qualification and limits](docs/releases/0.14.1_QUALIFICATION.md). [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), byte-identical to the active library, 136,708 bytes. Author-approved promotion 24 November 2026; 0.14.1 not published.
+**M19 S1-P1f — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **142,684 bytes**, SHA256 `dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931`, **102 commands / 208 AP20 entries**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45466155974) PASS, including inherited Pattern/SafePort/Bob regressions. WinUAE B, Compiler C, physical D not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commands / 203 AP20. [Qualification and limits](docs/releases/0.14.1_QUALIFICATION.md).
 
-**Active test:** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocol](tests/current/README.md). Pattern back-buffer/SafePort fix. No external resources. Runtime only. Sprite work frozen.
+**Preserved 2D regression:** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocol](tests/current/README.md). Pattern back-buffer/SafePort fix. No external resources. Runtime only on its original L2b evidence. **Next Runtime test:** [Get AGA Sprite](tests/proto/agsp_capture/README.md), AGSP capture only; no DMA yet.
 
 **Historical regression:** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc), validated on P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [Installation](INSTALL.md) · [Progress](docs/NEXT_SESSION.md).
-**Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands; hardware Sprites frozen (planned 0.15.0).
+**Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands in 0.14.1; S1-P1f development for 0.15.0 is separate.
 
 ## Main AMOS commands
 
-**Current library API M19 P2d-L2b** — **100 commands / 203 AP20 entries**, MC68020 minimum; P2d signatures unchanged.
+**Protected 0.14.1 API M19 P2d-L2b** — **100 commands / 203 AP20 entries**, MC68020 minimum; P2d signatures unchanged.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |

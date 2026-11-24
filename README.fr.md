@@ -19,16 +19,16 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 P2d-L2b — LAST_GOOD promue (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS : 184 cas Pattern, 172 writers, 10 suites Bob. Runtime L2b Pattern, cycles normaux de ressources et régression Bob PASS ; Compiler/Amiga physique non retestés. [Qualification et limites](docs/releases/0.14.1_QUALIFICATION.md). [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, identique octet pour octet à la Lib active, 136 708 octets. Promotion autorisée le 24 novembre 2026 ; 0.14.1 non publiée.
+**M19 S1-P1f — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **142 684 octets**, SHA256 `dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931`, **102 commandes / 208 entrées AP20**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45466155974) PASS, y compris régressions Pattern/SafePort/Bob. WinUAE B, Compiler C, D physique non testées. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 AP20. [Qualification et limites](docs/releases/0.14.1_QUALIFICATION.md).
 
-**Test actif :** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocole](tests/current/README.md). Correctif Pattern : back buffer et SafePort. Aucune ressource externe. Runtime uniquement. Sprite gelé.
+**Régression 2D conservée :** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocole](tests/current/README.md). Correctif Pattern : back buffer et SafePort. Aucune ressource externe. Preuves Runtime L2b historiques. **Prochain test Runtime :** [Get AGA Sprite](tests/proto/agsp_capture/README.md), capture AGSP uniquement ; aucune DMA.
 
 **Régression historique :** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [Installation](INSTALL.fr.md) · [Suivi](docs/NEXT_SESSION.md).
-**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande ; Sprites gelés (cible 0.15.0).
+**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande dans la 0.14.1 ; développement S1-P1f séparé pour 0.15.0.
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 P2d-L2b** — **100 commandes / 203 entrées AP20**, MC68020 minimum ; signatures P2d inchangées.
+**API du socle protégé 0.14.1 M19 P2d-L2b** — **100 commandes / 203 entrées AP20**, MC68020 minimum ; signatures P2d inchangées.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
