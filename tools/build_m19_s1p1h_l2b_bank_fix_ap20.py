@@ -10,7 +10,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 
-from active_library import P2DL2B_SHA, S1P1G_SHA, verify_s1p1g
+from active_library import P2DL2B_SHA, S1P1G_SHA, S1P1H_SHA, verify_s1p1g, verify_s1p1h
 from audit_ap20 import inspect, parse, token_role_issues
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_s1p1g_l2b_get_sprite_ap20 import build_s1p1g
@@ -49,6 +49,9 @@ def build_s1p1h(vasm: Path):
     parts=old[:207]+[DISPATCH_V2+native]
     title=title.replace(b'S1-P1g',b'S1-P1h')
     image=repack_ap20(parent,tok,parts,title)
+    verify_s1p1h(image,good)
+    if sha256(active).hexdigest()==S1P1H_SHA:
+        assert image==active, 'Installed P1h differs from source reconstruction'
     assert unpack_ap20(image)==(tok,parts,title)
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])

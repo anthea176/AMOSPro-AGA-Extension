@@ -54,6 +54,7 @@ C1_ARCHIVE="dist/experimental/AMOSPro_AGA_COMPILER_GATE_C_R46_MONOLITH_CANDIDATE
 P2DL2B_SHA="a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc"  # Exact L2b MC68020 Gate A: 184 Pattern + 172 writers + 10 Bob suites
 S1P1F_SHA="dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931"  # Exact MC68020 Gate A run 45466155974; B/C/D pending
 S1P1G_SHA="29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66"  # S1-P1g AP20 instruction-signature correction, 24/11/2026
+S1P1H_SHA="900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb"  # Exact native Gate A 45481353847; B/C/D pending
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -224,6 +225,38 @@ def verify_s1p1g(candidate: bytes, protected: bytes) -> bytes:
     return parent
 
 
+def verify_s1p1h(candidate: bytes, protected: bytes):
+    """Verify the exact source-assembled P1h candidate, independently of P1g."""
+    from audit_ap20 import inspect, parse, token, token_role_issues, walk_tokens
+    from compiler_relocation import GETP, RBSR, unpack_ap20
+    from compiler_bridge_v2_probe import DISPATCH_V2
+    from ap20_v2_island_dispatch import pc16_displacements
+    from build_m19_s1p1f_l2b_get_sprite_ap20 import TITLE as parent_title
+
+    assert len(candidate) == 142720 and sha256(candidate).hexdigest() == S1P1H_SHA
+    assert len(protected) == 136708 and sha256(protected).hexdigest() == P2DL2B_SHA
+    oldtok, old, _ = unpack_ap20(protected)
+    tok, parts, title = unpack_ap20(candidate)
+    assert len(old) == 203 and len(parts) == 208 and parts[:203] == old
+    assert tok == oldtok[:-6] + token('aga sprite bank', 204, 1, 'I0') + token(
+        'get aga sprite', 206, 1, 'I0,0,0,0,0,0') + oldtok[-6:]
+    assert title == parent_title.replace(b'S1-P1f', b'S1-P1h')
+    assert parts[203] == parts[205] == GETP
+    assert parts[204] == RBSR + bytes.fromhex('00cf00004e75')
+    assert parts[206] == RBSR + bytes.fromhex('00cf00084e75')
+    assert parts[207].startswith(DISPATCH_V2)
+    native = parts[207][len(DISPATCH_V2):]
+    assert len(native) == 5878
+    assert sha256(native).hexdigest() == '5aa8554db81399699a7e943066084f00753750e6fc93194906a3ce6db6b90be5'
+    links = pc16_displacements(parts)
+    baseline = pc16_displacements(old)
+    assert set(links) == set(baseline) | {204, 206}
+    assert all(links[k] == v for k, v in baseline.items())
+    audit = inspect(parse(candidate))
+    assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    assert len([row for row in walk_tokens(tok) if row['signature']]) == 102
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -235,6 +268,10 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S1P1H_SHA:
+        frozen_p2d(good)
+        verify_s1p1h(cur, good)
+        return cur, good, "M19 S1-P1h L2b Get AGA Sprite ACTIVE TEST CANDIDATE; MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S1P1G_SHA:
         frozen_p2d(good)
         verify_s1p1g(cur, good)

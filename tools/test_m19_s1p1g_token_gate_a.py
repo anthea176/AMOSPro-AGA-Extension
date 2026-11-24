@@ -6,8 +6,9 @@ from __future__ import annotations
 import argparse
 from hashlib import sha1, sha256
 from pathlib import Path
+import subprocess
 
-from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, verify_s1p1g
+from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, verify_s1p1g, verify_s1p1h
 from audit_ap20 import inspect, parse, token_role_issues, walk_tokens
 from build_m19_s1p1g_l2b_get_sprite_ap20 import correct_s1p1f
 from compiler_relocation import unpack_ap20
@@ -28,8 +29,17 @@ def main():
         parent = active
     elif digest == S1P1G_SHA:
         parent = verify_s1p1g(active, good)
+    elif digest == S1P1H_SHA:
+        verify_s1p1h(active, good)
+        # Historical AP20-only oracle, not a new production source or distribution.
+        historical = subprocess.check_output(
+            ['git', 'show', 'eb2b22119420196f44184a4b36035de18989fe44:dist/AMOSPro_AGA.Lib'],
+            cwd=ROOT)
+        parent = verify_s1p1g(historical, good)
+        assert unpack_ap20(active)[0] == unpack_ap20(historical)[0]
+        assert unpack_ap20(active)[1][:207] == unpack_ap20(historical)[1][:207]
     else:
-        raise AssertionError('Expected exact P1f or P1g active candidate')
+        raise AssertionError('Expected exact P1f, P1g or P1h candidate')
     assert sha256(parent).hexdigest() == S1P1F_SHA
     oldtok, oldparts, oldtitle = unpack_ap20(parent)
     bad = token_role_issues(list(walk_tokens(oldtok)))

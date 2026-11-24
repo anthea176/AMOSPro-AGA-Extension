@@ -66,8 +66,16 @@ jobs:
           AGSP_NATIVE_BIN: ${{ runner.temp }}/agsp_capture_mc68020.bin
         run: |
           PYTHONPATH=tools python -B -m unittest discover -s tools -p 'test_m19_s1p1_native_capture.py' -v
-      - name: Protect P2d, LAST_GOOD and validated active probes
+      - name: Protect exact current candidate, frozen P2d, LAST_GOOD and validated probes
         run: |
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          PYTHONPATH=tools python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from active_library import verify_active, frozen_p2d, P2D_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA
+          active, protected, label = verify_active(Path('.'))
+          assert sha256(protected).hexdigest() == P2DL2B_SHA
+          assert sha256(active).hexdigest() in (P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA)
+          assert sha256(frozen_p2d(protected)).hexdigest() == P2D_SHA
+          print('Exact active identity, protected L2b and frozen P2d source PASS:', label)
+          PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/ tests/design/sprites_aga/SPRITE_PROBE.asc

@@ -50,7 +50,11 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 S1-P1g"):
+    if active.startswith("M19 S1-P1h"):
+        from active_library import verify_s1p1h
+        verify_s1p1h(current, LAST_GOOD.read_bytes())
+        print("CURRENT S1-P1h: exact native Gate A candidate, 102 commands / 208 AP20; B/C/D pending; L2b protected")
+    elif active.startswith("M19 S1-P1g"):
         from active_library import verify_s1p1g
         verify_s1p1g(current, LAST_GOOD.read_bytes())
         print("CURRENT S1-P1g: exact AP20 token correction, 102 commands / 208 AP20; B/C/D pending; L2b protected")
