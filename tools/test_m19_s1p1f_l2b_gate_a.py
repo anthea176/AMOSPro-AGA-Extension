@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 import unittest
 
-from active_library import P2DL2B_SHA, S1P1F_SHA
+from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA
 from build_m19_p2d_l2_first_bind_in_memory import build_l2
 from build_m19_s1p1f_l2b_get_sprite_ap20 import build_s1p1f
 from compiler_relocation import unpack_ap20
@@ -28,10 +28,10 @@ def main():
     active = (root / 'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (root / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert sha256(good).hexdigest() == P2DL2B_SHA
-    assert active == good or sha256(active).hexdigest() == S1P1F_SHA
+    assert active == good or sha256(active).hexdigest() in (S1P1F_SHA, S1P1G_SHA)
     prior, _ = build_l2(a.vasm)
     image, meta = build_s1p1f(a.vasm, a.native.read_bytes())
-    if active != good:
+    if sha256(active).hexdigest() == S1P1F_SHA:
         assert image == active
     verify_linked_source(a.vasm, good)
     _, parts, _ = unpack_ap20(image)

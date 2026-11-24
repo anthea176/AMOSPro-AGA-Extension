@@ -1,0 +1,33 @@
+name: M19 S1-P1g AP20 instruction grammar and exact delta Gate A
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tools/audit_ap20.py'
+      - 'tools/active_library.py'
+      - 'tools/build_m19_s1p1g_l2b_get_sprite_ap20.py'
+      - 'tools/test_m19_s1p1g_token_gate_a.py'
+      - '.github/workflows/m19-s1-p1g-token-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  token-delta:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: CPU policy and Python syntax
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B -m py_compile tools/build_m19_s1p1g_l2b_get_sprite_ap20.py tools/test_m19_s1p1g_token_gate_a.py
+      - name: P1f negative oracle and P1g exact corrected identity
+        run: |
+          python -B tools/test_m19_s1p1g_token_gate_a.py
+          git diff --exit-code -- dist/ tests/current/ tests/passed/ src/native/

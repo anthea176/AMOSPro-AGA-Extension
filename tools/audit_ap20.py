@@ -83,6 +83,27 @@ def walk_tokens(tokens):
         pos = (sig_end + 2) & ~1
 
 
+def token_role_issues(rows):
+    """Strict role/grammar check for new candidates, not historical audits.
+
+    A sole instruction entry requires I; a sole function entry requires a
+    numeric/string return type. Dual-role legacy declarations need their
+    own grammar contract. The initial dummy token is intentionally skipped.
+    """
+    issues = []
+    for row in rows:
+        sig = row['signature']
+        if not sig:
+            continue
+        instruction = row['instruction'] > 1
+        function = row['function'] > 1
+        if ((instruction and not function and sig[0] != 'I') or
+                (function and not instruction and sig[0] == 'I')):
+            issues.append(dict(name=row['name'], offset=row['offset'],
+                               signature=sig, kind='token-role-signature'))
+    return issues
+
+
 def inspect(lib):
     rows, issues, parameter_checks = list(walk_tokens(lib.tokens)), [], []
     for row in rows:

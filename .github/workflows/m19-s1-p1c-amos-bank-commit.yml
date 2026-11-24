@@ -15,6 +15,9 @@ on:
       - 'tools/build_m19_s1p1e_get_sprite_ap20.py'
       - 'tools/build_m19_s1p1f_l2b_get_sprite_ap20.py'
       - 'tools/test_m19_s1p1f_l2b_gate_a.py'
+      - 'tools/build_m19_s1p1g_l2b_get_sprite_ap20.py'
+      - 'tools/test_m19_s1p1g_token_gate_a.py'
+      - 'tools/audit_ap20.py'
       - 'tools/active_library.py'
       - 'tools/build_m19_p0a_r88_bank_in_memory.py'
       - 'tools/test_m19_s1p1e_get_sprite_cpu.py'
@@ -105,11 +108,11 @@ jobs:
           from hashlib import sha256
           from pathlib import Path
           import os
-          from active_library import verify_active, P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1E_SHA
+          from active_library import verify_active, P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1E_SHA
           from build_m19_s1p1e_get_sprite_ap20 import build_get_aga_sprite_candidate
           active, protected, label = verify_active(Path('.'))
           assert sha256(protected).hexdigest() == P2DL2B_SHA
-          assert sha256(active).hexdigest() in (P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1E_SHA, S1P1F_SHA)
+          assert sha256(active).hexdigest() in (P2D_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1E_SHA, S1P1F_SHA, S1P1G_SHA)
           image, meta = build_get_aga_sprite_candidate(
               (Path(os.environ['RUNNER_TEMP']) / 'agsp_select_mc68020.bin').read_bytes())
           assert len(image) == 142000 and sha256(image).hexdigest() == S1P1E_SHA
@@ -118,8 +121,8 @@ jobs:
           print('Frozen S1-P1e source identity PASS; current:', label, meta)
           PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/
-      - name: S1-P1f on exact promoted L2b - inherited and Sprite dispatch Gate A
+      - name: S1-P1g on exact promoted L2b - inherited and Sprite dispatch Gate A
         run: |
           python -B -m py_compile tools/build_m19_s1p1f_l2b_get_sprite_ap20.py tools/test_m19_s1p1f_l2b_gate_a.py
-          python -B tools/test_m19_s1p1f_l2b_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --native "$RUNNER_TEMP/agsp_select_mc68020.bin"
+          python -B tools/test_m19_s1p1g_token_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --native "$RUNNER_TEMP/agsp_select_mc68020.bin"
           git diff --exit-code -- dist/ tests/current/ tests/passed/

@@ -9,7 +9,7 @@ import argparse
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import P2DL2B_SHA, S1P1E_SHA, S1P1F_SHA, verify_active
+from active_library import P2DL2B_SHA, S1P1E_SHA, S1P1F_SHA, S1P1G_SHA, verify_active
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_l2b_pattern_in_memory import build_l2b
@@ -26,7 +26,7 @@ TITLE += bytes(len(TITLE) & 1)
 def build_s1p1f(vasm: Path, native: bytes):
     active, good, _ = verify_active(ROOT)
     assert sha256(good).hexdigest() == P2DL2B_SHA
-    assert active == good or sha256(active).hexdigest() == S1P1F_SHA
+    assert active == good or sha256(active).hexdigest() in (S1P1F_SHA, S1P1G_SHA)
     base, meta = build_l2b(vasm)
     assert base == good and len(base) == 136708
     assert (meta['commands'], meta['entries']) == (100, 203)
@@ -62,7 +62,7 @@ def build_s1p1f(vasm: Path, native: bytes):
     assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == active
     assert (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == good
     assert sha256(image).hexdigest() == S1P1F_SHA
-    if active != good:
+    if sha256(active).hexdigest() == S1P1F_SHA:
         assert image == active
     return image, dict(meta, sha256=sha256(image).hexdigest(),
                        bytes=len(image), commands=102, entries=208,
