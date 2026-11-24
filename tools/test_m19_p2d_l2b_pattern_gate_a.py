@@ -235,7 +235,7 @@ def main():
     from build_m19_p2d_l2b_pattern_in_memory import OFFSET, PRIOR_SIZE, UNIT
     _, parts, title = unpack_ap20(image)
     evidence = dict(size=len(image), sha256=hashlib.sha256(image).hexdigest(),
-                    git_blob=hashlib.sha1(f'blob {len(image)}\\0'.encode()+image).hexdigest(),
+                    git_blob=hashlib.sha1(f'blob {len(image)}'.encode()+bytes([0])+image).hexdigest(),
                     branch=parts[UNIT][OFFSET:OFFSET+6].hex(),
                     tail=base64.b64encode(parts[UNIT][PRIOR_SIZE:]).decode('ascii'),
                     title=base64.b64encode(title).decode('ascii'))
