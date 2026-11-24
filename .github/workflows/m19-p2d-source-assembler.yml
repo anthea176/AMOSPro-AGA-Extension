@@ -12,7 +12,7 @@ on:
       - '.github/workflows/m19-p2d-source-assembler.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   source:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -29,7 +29,12 @@ jobs:
         run: python -B tools/test_export_m19_p2d_native_source.py
       - name: Build vasm Motorola MC68020 in runner temporary directory
         run: |
-          git clone --depth 1 https://github.com/rhargreaves/vasm.git "$RUNNER_TEMP/vasm"
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = "8b85ef6eb7d257bf29a56ddc63cf2be20a317256"
           make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
           test -x "$RUNNER_TEMP/vasm/vasmm68k_mot"
       - name: Produce real ASM for all P2d native groups, verify against promoted P2d
@@ -54,21 +59,4 @@ jobs:
           if-no-files-found: error
       - name: Check shipped libraries and current tests unchanged
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/
-      - name: Commit the verified ASM sources directly on main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          test "$GITHUB_REF" = "refs/heads/main"
-          mkdir -p src/asm_migration/m19_p2d
-          cp "$RUNNER_TEMP/p2d_source/"*.s src/asm_migration/m19_p2d/
-          cp "$RUNNER_TEMP/p2d_source/M19_P2D_SOURCE_MANIFEST.json" src/asm_migration/m19_p2d/
-          git add src/asm_migration/m19_p2d/
-          if ! git diff --cached --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "Publish byte-exact M19 P2d MC68020 ASM migration source"
-            git fetch origin main
-            git rebase origin/main
-            git diff --name-only origin/main HEAD | grep -v '^src/asm_migration/m19_p2d/' > "$RUNNER_TEMP/unrelated_paths.txt" || true
-            test ! -s "$RUNNER_TEMP/unrelated_paths.txt"
-            git push origin HEAD:main
-          fi
+      # Migration output is audit-only; committed historical sources remain immutable.

@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — L0 corrections CI / provenance (source-only)
+
+Après les 21 passages d'audit, l'auteur répond « super allons y » à la proposition de phase de correction. **L0 : corrections des outils et CI uniquement**, aucun remplacement de bibliothèque, aucune promotion, aucun test WinUAE nouveau. [Rapport L0](AGA_L0_PROVENANCE_CI_2026-11-24.md). Les contrôles historiques P2d ciblent maintenant LAST_GOOD SHA P2d ; les contrôles courants S1-P1e conservent sa SHA et vérifient le préfixe AP20 P2d. Les archives et l'ASC actif restent intacts. **Gate A de cette modification à confirmer par CI ; L1 SafePort natif non commencé.** Les résultats de CI doivent être lus avant la prochaine étape. Sprite gelé.
+
+
 ## 23 novembre 2026 — PRIORITÉ ABSOLUE : AUDIT TRANSVERSAL 2D, SPRITE GELÉ
 
 **Décision auteur :** interrompre toute correction native et suspendre le chantier `Get AGA Sprite` S1-P1e jusqu'à l'audit et à la correction du socle P2d. **`main` uniquement ; aucune autre branche ; ne modifier ni sources, ni tests, ni binaires, ni LAST_GOOD, ni journaux existants sans autorisation distincte.** L'enregistrement ci-dessous concerne exclusivement la documentation de l'audit.

@@ -45,9 +45,9 @@ def validate_source_build(data: bytes, root: Path):
     """Authorize ONLY the one known immutable P2d build and its real emitter."""
     need(len(data) == EXPECTED_SIZE and digest(data) == P2D_SHA,
          "unknown .Lib; expected exact M19 P2d 136020-byte SHA")
-    active, last_good, _label = verify_active(root)
-    need(bytes(active) == data and bytes(last_good) == data,
-         "active and LAST_GOOD do not match promoted P2d")
+    _active, last_good, _label = verify_active(root)
+    need(bytes(last_good) == data,
+         "LAST_GOOD does not match promoted P2d")
     rebuilt, info = build_p2d()
     need(rebuilt == data and info['sha256'] == P2D_SHA,
          "deterministic P2d Python builder does not match selected .Lib")
@@ -204,9 +204,10 @@ def linked_source(data: bytes, parts, title, files: dict[int,str]) -> str:
 
 
 def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
-    input_file = root/'dist/AMOSPro_AGA.Lib'
+    input_file = root/'dist/AMOSPro_AGA_LAST_GOOD.Lib'
+    active_file = root/'dist/AMOSPro_AGA.Lib'
     data = input_file.read_bytes()
-    previous_sha = digest((root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes())
+    previous_active_sha = digest(active_file.read_bytes())
     info = validate_source_build(data, root)
     _, parts, title, groups, refs = parse_native_groups(data)
     bobs_group, labels = p2d_symbolic_labels(parts, info)
@@ -280,7 +281,7 @@ def generate(target: Path, *, assembler: str|None=None, root: Path=ROOT):
     manifest_file.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',
                              encoding='utf-8',newline='\n')
     need(digest(input_file.read_bytes())==P2D_SHA and
-         digest((root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes())==previous_sha,
+         digest(active_file.read_bytes())==previous_active_sha,
          'source export modified protected libraries')
     return manifest
 
