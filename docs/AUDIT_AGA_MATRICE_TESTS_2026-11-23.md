@@ -171,3 +171,24 @@ T02/T04/T05/T06/T12/T17/T19 : discriminants précisés dans le rapport. Les 19 s
 **Passage 15 / 24 novembre :** [sept LEA input et saturation](AUDIT_AGA_INPUT_STATE_7_LEA_2026-11-24.md) — 7/7 opérandes source P2d pointent vers State+$2F26=$030E8, bloc 144 octets. File clavier de 16 entrées peut suspendre le pump souris/focus si non dépilée ; latence à qualifier T14. Aucun rebuild ni Gate, AGA-005 reste ouverte.
 
 T14 enrichi : aucun des 19 scénarios nouvellement exécuté, aucune correction ni promotion.
+
+
+## Passages 16–21 — 24 novembre 2026 : clôture de la lecture planifiée
+
+- [16 — banques](AUDIT_AGA_BANQUES_INTEGRITE_2026-11-24.md) : contrôles AGBO/AGPC/FICHIP, ABA conditionnel VM ; AGA-014 P2, Bank Free modifie les slots avant le retour du release, déclenchement normal non démontré.
+- [17 — Chip/Fast](AUDIT_AGA_CHIP_FAST_ALLOCATIONS_2026-11-24.md) : paires alloc/free et deux fonds B8 PUBLIC/CLEAR (pas Fast garantie), pression mémoire/fragmentation VM.
+- [18 — Bobs](AUDIT_AGA_BOBS_COLLISIONS_CLIPPING_2026-11-24.md) : géométrie/masques/Flip/clip/planes et priorité retracés ; cas limites VM, aucun nouveau bug de collision confirmé.
+- [19 — B8](AUDIT_AGA_B8_TRANSACTIONS_RECUPERATION_2026-11-24.md) : gardes READY/DIRTY et cleared/valid par page, reprise bornée ; AGA-002 maintenue, AGA-003 VM contrat.
+- [20 — ABI/CI](AUDIT_AGA_COMPILER_ABI_CI_2026-11-24.md) : contradiction SHA P2d sur les deux Lib dans le workflow ASM ; AGA-005 confirmé statiquement, aucune CI native lancée.
+- [21 — bilan et plan proposé](AUDIT_AGA_BILAN_PLAN_CORRECTION_2026-11-24.md) : périmètre de lecture planifié clos ; AGA-001/010 P0, AGA-002 P1 ; validation et correction ouvertes, gel maintenu.
+
+**Aucun nouveau test exécuté.** T07/T08/T10/T11/T14/T18 affinés sans ajouter de scénario ; T15 gelé. Le bilan 21 fait foi pour la classification consolidée, sans effacer les constats historiques. Aucune correction ni promotion autorisée.
+
+| Scénario | Variantes supplémentaires / oracles de la clôture |
+|---|---|
+| T07/T18 | Largeurs 15/16/17, contacts, masque indépendant, index zéro, Flip H/V/HV, 64 slots, priorités et plans ; distinguer -1/0/1 collision. Conserver intact le banc intégré historique, utiliser des sondes séparées uniquement après autorisation. |
+| T08 | Première/deuxième allocation B8 en échec ; root/pool, READY/DIRTY, page/epoch, refus de présentation, reprise sans écriture illégale. |
+| T10/T11 | ABA exact simulé, Bank Free release refusé après désactivation, DATA préservée, ready, cache Chip réel, pic ancien+nouveau. |
+| T14 | Symétrie alloc/free par taille/owner, fragmentation, Close après timeout et reprise, saturation input, revalidation des sept LEA sur chaque nouveau build. |
+
+Ces variantes sont des spécifications, non des tests lancés ni des PASS attendus déjà démontrés.
