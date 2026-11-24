@@ -1,10 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## S1-P1i — candidate active pour test Runtime
+## S1-P1i — Runtime capture AGSP PASS / préparation S1-P2
 
-S1-P1i livrée, 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, blob `c7e13993bc32e17cb96c8e8ee68e8b5a1dffeb1b`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) : 38 scénarios Sprite, chaîne native L2b Double Buffer/IFF/Swap/capture dans deux modèles AP20, 184 Pattern, 172 writers, 10 suites Bob. Seule unité 207 changée par rapport à P1h ; tokens et 207 premières unités byte-exacts. B/C/D P1i non testées ; LAST_GOOD L2b intacte.
+S1-P1i livrée, 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, blob `c7e13993bc32e17cb96c8e8ee68e8b5a1dffeb1b`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) : 38 scénarios Sprite, chaîne native L2b Double Buffer/IFF/Swap/capture dans deux modèles AP20, 184 Pattern, 172 writers, 10 suites Bob. Seule unité 207 changée par rapport à P1h ; tokens et 207 premières unités byte-exacts. Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA. LAST_GOOD L2b intacte.
 
-Auteur : « continue jusqu a me fournir la lib corrigé... ». [Audit et preuves](M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md). Le binaire a été reconstruit avec les octets natifs exacts validés en CI et vérifié SHA256 + blob avant livraison. **Ne plus relancer P1h (ERR 9), ni P1g (ERR 7).** Prochain essai : [GET_AGA_SPRITE.asc + IFF](../tests/proto/agsp_capture/README.md) inchangés, WinUAE 68030/JIT ON/AGA PAL, Runtime seul. Requalification CI historique et contrôle après installation séparés ; ne pas annoncer PASS général avant achèvement.
+Auteur : « continue jusqu a me fournir la lib corrigé... ». [Audit et preuves](M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md). Le binaire a été reconstruit avec les octets natifs exacts validés en CI et vérifié SHA256 + blob avant livraison. **Ne plus relancer P1h (ERR 9), ni P1g (ERR 7).** [Preuves Runtime et ABK byte-exacts](M19_S1_P1I_RUNTIME_PASS_2026-11-24.md). Auteur « ok va y » : figer ces preuves et préparer S1-P2 ; ne pas relancer la capture validée sans nécessité. Requalification CI historique et contrôle après installation séparés ; ne pas annoncer PASS général avant achèvement.
 
 ## 24 novembre 2026 — S1-P1h publisher AGSP
 

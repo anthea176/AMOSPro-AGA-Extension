@@ -1,5 +1,7 @@
 # Installation d'AMOSPro AGA Extension
 
+> S1-P1i : Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA.
+
 **Candidate de TEST active S1-P1i (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 142 968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, 102 commandes / 208 AP20, [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401), B/C/D en attente. Pour le socle 0.14.1, utiliser [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renommée AMOSPro_AGA.Lib dans APSystem. 0.14.1 non publiée.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)

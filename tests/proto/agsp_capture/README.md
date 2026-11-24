@@ -20,4 +20,4 @@ Supprimer ou archiver les anciens journaux et ABK RAM: de cette sonde avant le t
 
 **Journal visé** : `RAM:M19_S1P1E_AGSP_RUNTIME.TXT`. Un succès doit donner `RESULT 1`, `ERR 0`, `CAPTURED 3`, `REFUSED 1`, `SAVED 1`, `RELOADED 1`, `RECAPTURED 1`. Deux banques sauvegardées pour analyse : `RAM:AGSP_S1P1E_SAVED.ABK` et `RAM:AGSP_S1P1E_FINAL.ABK`.
 
-**Statut :** préflight et générateur IFF PASS dans la CI Sprite ; S1-P1i livrée, Gate A native PASS. Gate B P1i non testée ; Gate C reportée, D non testée. Aucun Sprite DMA ne s'affiche : seule la banque DATA AGSP est créée.
+**Statut :** préflight et générateur IFF PASS dans la CI Sprite ; S1-P1i livrée, Gate A native PASS. Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA. [Rapport et preuves originales](../../../docs/M19_S1_P1I_RUNTIME_PASS_2026-11-24.md). Aucun Sprite DMA ne s'affiche : seule la banque DATA AGSP est créée.

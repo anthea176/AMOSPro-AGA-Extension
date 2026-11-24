@@ -1,5 +1,7 @@
 # Campagne active — L2b / T06A Pattern
 
+> S1-P1i : Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA.
+
 > **Candidate de travail : S1-P1i livrée, 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, blob `c7e13993bc32e17cb96c8e8ee68e8b5a1dffeb1b`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) : 38 scénarios Sprite, chaîne native L2b Double Buffer/IFF/Swap/capture dans deux modèles AP20, 184 Pattern, 172 writers, 10 suites Bob. Seule unité 207 changée par rapport à P1h ; tokens et 207 premières unités byte-exacts. B/C/D P1i non testées ; LAST_GOOD L2b intacte.** T06A reste l'unique ASC de régression historique inchangé ; prochaine exécution : [prototype capture AGSP](../proto/agsp_capture/README.md). Aucun PASS Runtime L2b transféré à P1i. Requalification CI générale séparée.
 
 > **Promotion 24/11/2026 :** P2d-L2b promue LAST_GOOD (mêmes octets que dist/AMOSPro_AGA.Lib). ASC T06 inchangé. Pas de nouvelle exécution WinUAE demandée, C reportée, D non testée. [Rapport](../../docs/M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md).
