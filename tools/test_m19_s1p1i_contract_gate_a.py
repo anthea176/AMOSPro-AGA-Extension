@@ -11,8 +11,8 @@ from pathlib import Path
 from struct import pack, unpack_from
 from unicorn.m68k_const import *
 from unicorn import UC_HOOK_MEM_READ
-from active_library import S1P1H_SHA, P2DL2B_SHA
-from compiler_relocation import unpack_ap20, RBSR
+from active_library import S1P1H_SHA, S1P1I_SHA, P2DL2B_SHA, verify_s1p1i, verify_s1p1h
+from compiler_relocation import unpack_ap20, repack_ap20, RBSR
 from compiler_bridge_v2_probe import DISPATCH_V2
 from m19_s1_agsp_bank import empty_bank, put_capture
 from test_m19_s1p1e_get_sprite_cpu import GetMachine
@@ -178,9 +178,18 @@ class ContractMachine(GetMachine):
 def verify_frozen(native):
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest()==S1P1H_SHA
+    digest=sha256(active).hexdigest()
+    assert digest in (S1P1H_SHA,S1P1I_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
-    _,parts,_=unpack_ap20(active)
+    tok,parts,title=unpack_ap20(active)
+    if digest==S1P1I_SHA:
+        verify_s1p1i(active,good)
+        # Recover the historical negative oracle using exact assembled P1h source.
+        parts=parts[:207]+[DISPATCH_V2+native]
+        historical=repack_ap20(active,tok,parts,title.replace(b'S1-P1i',b'S1-P1h'))
+    else:
+        historical=active
+    verify_s1p1h(historical,good)
     assert len(parts)==208 and parts[207]==DISPATCH_V2+native
     assert parts[:203]==unpack_ap20(good)[1]
     return parts

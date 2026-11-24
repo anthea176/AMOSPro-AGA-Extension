@@ -16,7 +16,7 @@ from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
 
-from active_library import P2D_SHA
+from active_library import P2D_SHA, P2DL2B_SHA, frozen_p2d
 from compiler_relocation import unpack_ap20
 from generate_aga_multiunit_source import native_unit_source
 from m19_p0e_object_table_emit import (
@@ -37,7 +37,9 @@ def main() -> None:
     parser.add_argument("--emit-base64", action="store_true")
     args = parser.parse_args()
 
-    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    protected = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
+    assert sha256(protected).hexdigest() in (P2D_SHA,P2DL2B_SHA)
+    official = frozen_p2d(protected)
     assert len(official) == 136020
     assert sha256(official).hexdigest() == P2D_SHA
     _tokens, parts, _title = unpack_ap20(official)

@@ -14,7 +14,7 @@ import shutil
 from struct import unpack_from
 import tempfile
 
-from active_library import P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, verify_active, verify_p2d_l2, verify_p2d_l2b, frozen_p2d
+from active_library import P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active, verify_p2d_l2, verify_p2d_l2b, frozen_p2d
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, walk_tokens
 from build_m19_p2d_l1_safeport_in_memory import (
@@ -52,7 +52,7 @@ def replace_once(path, anchor, replacement):
 def build_l2b(vasm: Path):
     active, protected, _ = verify_active(ROOT)
     active_sha = sha256(active).hexdigest()
-    need(active_sha in (P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA),
+    need(active_sha in (P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS),
          'exact installed L2 or L2b required; no implicit transition')
     prior, meta = build_l2(vasm)
     need(sha256(prior).hexdigest() == P2DL2_SHA, 'L2 source rebuild drift')
@@ -116,7 +116,7 @@ def build_l2b(vasm: Path):
     verify_p2d_l2b(image, base)
     if active_sha == P2DL2B_SHA:
         need(image == active, 'installed L2b differs from exact source rebuild')
-    elif active_sha in (S1P1F_SHA, S1P1G_SHA, S1P1H_SHA):
+    elif active_sha in (*SPRITE_L2B_HISTORICAL_SHAS):
         need(image == protected, 'protected L2b differs from exact source rebuild')
     return image, dict(meta, sha256=sha256(image).hexdigest(), bytes=len(image),
                        unit142=len(new), pattern_appended=len(new)-PRIOR_SIZE,

@@ -3,7 +3,7 @@
 """Reconstruct P1i from exact P1h source; no distributed file writes."""
 from pathlib import Path
 from hashlib import sha1, sha256
-from active_library import P2DL2B_SHA, S1P1H_SHA
+from active_library import P2DL2B_SHA, S1P1H_SHA, S1P1I_SHA, verify_s1p1i
 from audit_ap20 import inspect, parse, token_role_issues
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_s1p1h_l2b_bank_fix_ap20 import assemble, build_s1p1h
@@ -16,10 +16,12 @@ MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 def build_s1p1i(vasm):
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest()==S1P1H_SHA
+    assert sha256(active).hexdigest() in (S1P1H_SHA,S1P1I_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     parent,meta=build_s1p1h(vasm)
-    assert parent==active
+    assert sha256(parent).hexdigest()==S1P1H_SHA
+    if sha256(active).hexdigest()==S1P1H_SHA:
+        assert parent==active
     tok,old,title=unpack_ap20(parent)
     native=assemble(vasm,MASTER)
     assert native[:2]==b'\x60\x00' and len(native)%2==0
@@ -32,6 +34,9 @@ def build_s1p1i(vasm):
     assert new_title!=title
     image=repack_ap20(parent,tok,parts,new_title)
     assert unpack_ap20(image)==(tok,parts,new_title)
+    verify_s1p1i(image,good)
+    if sha256(active).hexdigest()==S1P1I_SHA:
+        assert image==active
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==active
