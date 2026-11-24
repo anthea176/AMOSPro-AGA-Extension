@@ -2,7 +2,7 @@
 
 ## Objectif auteur : publication 0.14.1
 
-**0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2 active conservée. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
+**0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2 active conservée. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md). [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
 
 ## 24 novembre 2026 — L2 : résultats Runtime positifs, poursuite sans nouvelle compilation
 
