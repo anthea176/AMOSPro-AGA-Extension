@@ -298,3 +298,13 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 - **Précision AGA-002 P1** : le défaut n'est **pas** « le premier Swap après Open plante » ; la séquence risquée est **un premier Swap sans Bob réussi, puis premier Bind B8 alors que Safe est pending**, avec banque/Bob valides et sans autre GetMsg. Aucun freeze CPU ni échec EDGE relié de manière probante à cette séquence ; **Gate A/B non exécutées**.
 
 **T01/T02 A–E/T05/T17 doivent matérialiser la chronologie, les états DB et les notifications absentes, prêtes non acquittées et acquittées.** Pas de modification de l'ASC de référence ou de la Lib, Sprite gelé.
+
+## 16. Passage 12 — 24 novembre 2026 : Mouse Cursor et offsets State P2d
+
+[Rapport input/curseur/source MC68020](AUDIT_AGA_INPUT_MOUSE_CURSOR_P2D_2026-11-24.md).
+
+- **Source P2d vérifiée :** `Aga Mouse Pressed` AP20 53 → UNIT142+$02D90 et `Aga Mouse Released` AP20 55 → UNIT142+$02DFA utilisent effectivement `lea 12070(a2)` (`$2F26`) pour la zone d'état, **pas** l'ancien décalage R74/R75 de `11932` (`$2E9C`). Ce contrôle local écarte la régression exacte sur **ces deux fonctions**, pas l'obligation de revalider les **sept sites LEA** avant tout futur build.
+- **`Aga Mouse Cursor` AP20 99 → UNIT142+$0652C** possède un état privé 72 octets et un propriétaire Window ; le Close R83 source comporte un appel **`BSR.W L_UNIT142_0660A`** vers son helper de cleanup, lequel vérifie owner, libère son état et remet la référence à zéro. L'absence totale de cleanup curseur **n'est pas soutenue par ce code** ; doubles Close/End/ABA restent VM.
+- **Mouse X/Y/Buttons, Hotspot/Rect Overlap** ne sont pas des écrivains de bitplanes dans les chemins inspectés : leur sécurité concerne les identités Screen/Window, les bornes et le State, et ne requiert pas automatiquement `GetMsg(SafePort)`.
+
+**Aucune nouvelle anomalie native confirmée sur la souris P2d.** T14 inclut les ressources du curseur et les sept LEA sur chaque nouvelle disposition binaire. Aucun test ni correctif exécuté ; Sprite S1 gelé.

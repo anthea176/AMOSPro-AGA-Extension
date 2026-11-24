@@ -38,13 +38,13 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 28 | `Aga Copper End` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
 | 29 | `Aga Copper On` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | actif fail-safe R18 ; B/C VM |
 | 30 | `Aga Copper Off` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | rollback owner visible ; B/C VM |
-| 31 | `Aga Mouse X` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 32 | `Aga Mouse Y` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
+| 31 | `Aga Mouse X` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | lecture Window/Screen ; Close VM |
+| 32 | `Aga Mouse Y` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | lecture Window/Screen ; Close VM |
 | 33 | `Aga Mouse Buttons` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 34 | `Aga Mouse Pressed` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 35 | `Aga Mouse Released` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 36 | `Aga Hotspot Hit` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
-| 37 | `Aga Rect Overlap` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
+| 34 | `Aga Mouse Pressed` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | State+12070 dans natif P2d ; B/C VM |
+| 35 | `Aga Mouse Released` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | State+12070 dans natif P2d ; B/C VM |
+| 36 | `Aga Hotspot Hit` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | calcul bornes, pas de dessin DB dans chemin ; VM |
+| 37 | `Aga Rect Overlap` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | calcul bornes, pas de dessin DB dans chemin ; VM |
 | 38 | `Aga Text` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 39 | `Aga Font Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | commit font sur succes ; Close VM |
 | 40 | `Aga Bank Font Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | VM |
@@ -52,7 +52,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 42 | `Aga Draw` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 43 | `Aga Box` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 44 | `Aga Circle` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
-| 45 | `Aga Mouse Cursor` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
+| 45 | `Aga Mouse Cursor` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | owner, 72B et Close helper natif ; End VM |
 | 46 | `Aga Bank Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | wrapper Image Draw/GetMsg ; A003 VM |
 | 47 | `Aga Image Region` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | GetMsg natif ; A003 VM |
 | 48 | `Aga F Icon` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | A003 VM contrat Clear |
@@ -153,3 +153,7 @@ Le [dossier de contrôle CBlock/C2P/Copper/Close/Fonts](AUDIT_AGA_LIFECYCLE_COPP
 [Audit des dépendances graphiques/caches](AUDIT_AGA_DEPENDANCES_CACHE_C2P_2026-11-24.md). **AGA-011** : `Aga Screen Pattern` peint `Screen.RastPort` sans acquittement Safe ni sélection back explicite, **page physique après Swap inconnue** (T06). `Aga Demo` ouvre son propre Screen Intuition temporaire. AGAPIC Draw/Region, FICON Capture et Cache Blit ont des protections locales visibles ; FICHIP doit être **explicitement re-stagé** après modification FICON. `C2P Blit/Zoom` touchent le chunky, alors que `C2P Convert` accède au bitmap arrière.
 
 **GetMsg natif / MEMF_CHIP / ready=1 décrivent seulement des chemins source inspectés**, jamais un PASS Runtime/Compiler du socle complet. Les 102 noms restent inventoriés, T01–T19 non exécutés lors de cette passe, Sprite gelé.
+
+## Passage 12 — 24 novembre 2026 : Mouse/State et ownership curseur
+
+[Revue du natif P2d et des deux offsets `State+12070`](AUDIT_AGA_INPUT_MOUSE_CURSOR_P2D_2026-11-24.md). Les entrées publiques `Mouse Pressed` et `Mouse Released` montrent le déplacement corrigé **12070** et non l'ancien 11932 de R74/R75. Le `Mouse Cursor` possède un état privé, owner Window et un **helper natif appelé depuis Close R83**. Les lectures Mouse X/Y et les tests de rectangles ne sont pas des writers de bitmap ; les critères SafePort ne s'appliquent pas aveuglément à ces fonctions. **7 sites input State et Gate B/C après rebuild restent VM.** Aucune nouvelle Gate ou correction exécutée.
