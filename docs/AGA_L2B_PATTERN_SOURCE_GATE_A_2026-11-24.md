@@ -1,0 +1,19 @@
+# L2b — AGA-011 Screen Pattern : correctif source-only
+
+24/11/2026, main exclusivement. Autorisation auteur « ok go » après preuve [T06A FAIL](evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT). Objectif 0.14.1. Prédécesseur exact P2d-L2 136332 octets SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, LAST_GOOD P2d protégée 136020 octets SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Source de départ `880fc5f009d3dec8a30c99f39327d9a1e1242bdb`. Pas de nouveau binaire installé.
+
+## Correction
+
+AP20 14, UNIT142+$00764. Remplacer les six octets source à $0077A (chargement Screen et graphics.library), branche MC68020 BRA.L vers un append-only après L1. En simple buffer, restaurer A3 et reprendre le code original à $00780. En DB, sélectionner ScreenBuffer opposé à DB+8, contrôler les pointeurs et dimensions, refuser l'alias avec le front. Acquisition L1_AcquireSafe, zéro à trois WaitTOF, aucune consommation Disp. Safe absent/port nul ou impair : aucun pixel, palette ou allocation. Reprendre la convention AllocVec 128 MEMF_CLEAR / InitRastPort de Back Fill ; RP privé lié au bitmap arrière, WaitBlit avant dessin et avant FreeVec. Calcul de mire et SetRGB32 identiques à l'ancien code, palette globale. Aucun Swap implicite. ABI A3 sauvée explicitement en plus du MOVEM historique. Si allocation refusée après acquisition Safe, la seule mutation légitime est l'acquittement Safe.
+
+- [Overlay MC68020](../src/native/m19_p2d_l2b/M19_L2B_PATTERN_TAIL_MC68020.s)
+- [Builder source](../tools/build_m19_p2d_l2b_pattern_in_memory.py)
+- [Gate A](../tools/test_m19_p2d_l2b_pattern_gate_a.py)
+- [Workflow](../.github/workflows/m19-p2d-l2b-pattern-gate-a.yml)
+
+Le builder reconstruit L2 octet pour octet, réassemble le master P2d avec L1+L2b en dossier temporaire et réutilise le groupe BOBS L2 exact. Les garde-fous exigent que seuls le branchement de 6 octets et la queue append-only UNIT142 changent, que les 203 entrées et tokens restent identiques, que les liens PC16 restent inchangés, et que les deux Lib ne soient pas écrites. Cible MC68020. Aucun nouvel export de binaire ni désassemblage.
+
+## Validation attendue (non exécutée à la rédaction)
+
+184 cas Pattern sous Unicorn MC68020, deux modèles AP20, deux parités, deux profondeurs, témoin L2 qui dessine FRONT, simple buffer, Safe déjà acquis/retardé/absent, port invalide, échec allocation, invalidité écran/bitmap, indices et padding, RGB, registres, pile, mémoire et libération. Services OS simulés. Rejouer les 172 cas writers L1 et 10 suites Bob L2 sur la candidate. Gate A à lire sur le SHA exact, pas de PASS présumé. Gate B : même T06A inchangé, puis sonde Safe T06B distincte. Gate C manuelle reportée par l'auteur, D non testée. Pas de promotion ni publication.
+

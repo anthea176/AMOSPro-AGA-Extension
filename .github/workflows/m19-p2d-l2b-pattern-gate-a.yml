@@ -1,0 +1,60 @@
+name: M19 P2d L2b Pattern and inherited MC68020 Gate A
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/native/m19_p2d_l2b/**'
+      - 'src/native/m19_p2d_l2/**'
+      - 'src/native/m19_p2d_l1/**'
+      - 'src/native/m19_p2d/**'
+      - 'tools/build_m19_p2d_l1_safeport_in_memory.py'
+      - 'tools/test_m19_p2d_l1_safeport_gate_a.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tools/active_library.py'
+      - 'tools/build_m19_p2d_l2_first_bind_in_memory.py'
+      - 'tools/test_m19_p2d_l2_first_bind_gate_a.py'
+      - 'tools/build_m19_p2d_l2b_pattern_in_memory.py'
+      - 'tools/test_m19_p2d_l2b_pattern_gate_a.py'
+      - '.github/workflows/m19-p2d-l2b-pattern-gate-a.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pattern:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: CPU policy and test dependencies
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+          python -m py_compile tools/build_m19_p2d_l2b_pattern_in_memory.py tools/test_m19_p2d_l2b_pattern_gate_a.py
+      - uses: actions/cache@v4
+        id: vasm-cache
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned MC68020 assembler if needed
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = "8b85ef6eb7d257bf29a56ddc63cf2be20a317256"
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Exact L2 source identity then assemble Pattern and execute combined MC68020
+        run: python -B tools/test_m19_p2d_l2b_pattern_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Protect canonical distribution and current campaign
+        run: git diff --exit-code -- dist/ tests/current/ tests/passed/ src/native/m19_p2d/

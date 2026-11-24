@@ -4,6 +4,10 @@
 
 **0.14.1 = fiabilisation 2D**, après L0 CI, T06 Pattern, L3 ressources et régression finale selon les preuves. L2 active conservée. Pas de compilation manuelle supplémentaire demandée, pas de reprise Sprite, pas de promotion ni publication automatique. [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Aminet](releases/0.14.1/AMOSProAGA.readme) · [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md). [Complément L0](AGA_L0_PROVENANCE_CI_2026-11-24.md).
 
+## 24 novembre 2026 — L2b source-only autorisée, Gate A à établir
+
+Auteur « ok go » après T06A FRONT FAIL. [L2b source, builder et Gate A](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) : correction ciblée de Pattern en double buffer, simple buffer inchangé, RastPort privé, garde Safe et reprise bornée. L2b en mémoire uniquement, aucun binaire installé ou promotion. Rejouer le même T06A après Gate A PASS et bascule autorisée ; T06B reste à préparer. L3 après qualification.
+
 ## 24 novembre 2026 — T06A FAIL / AGA-011 confirmé
 
 T06A Runtime FAIL sur P2d-L2 : PROBE_COMPLETE=1, TARGET FRONT, ERR 50, back 17/17/17 inchangé, ancien front 64/128/192. Trois Swaps sans refus, fermeture correcte. Écriture de la page présentée confirmée, pas une simple modification de palette. Défaut bloquant 0.14.1 ; aucune preuve d'écriture du back sous Safe pending (non testé). [Journal](evidence/T06_PATTERN_RUNTIME_FAIL_L2_2026-11-24.TXT) · [Protocole et suite](../tests/proto/t06_pattern/README.md). Correction native proposée, à autoriser : conserver l'instruction sans argument et le mode simple buffer ; en double buffer, sélectionner explicitement le back et utiliser son RastPort de dessin vérifié, acquérir Safe avant toute écriture de pixels ou palette, reprise bornée comme Back Fill, refus sans mutation si délai épuisé, ne pas permuter implicitement. Conserver ABI, registres, état de dessin, L1/L2 et archives. Gate A native MC68020 : simple buffer, deux parités DB, Safe absent/disponible/acquitté, refus sans mutation, intégrité des pixels et état. Rejouer T06A à l'identique, puis T06B Safe sur candidate corrigée, avant L3. Aucun patch ni changement de Lib dans ce lot.
