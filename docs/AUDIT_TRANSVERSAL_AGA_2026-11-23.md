@@ -225,3 +225,15 @@ Ce n'est **pas** un gel CPU démontré, ni un freeze WinUAE reproduit. Les ancie
 **Décision envisagée après validation de l'audit, PAS appliquée :** définir un protocole Safe commun **avant le Bind initial**, sans attendre de notification de manière non bornée et sans rendre possible une écriture sur la page encore affichée. Réutiliser si possible la routine existante de consommation Safe, avec contrôle owner/DB et préservation de Disp ; vérifier par Gate A/B/C et régression intégrée. La compatibilité Sprite S1 sera seulement étudiée **après** la correction P2d autorisée.
 
 **Statut global : audit ouvert, aucun test supplémentaire exécuté, aucun correctif appliqué, S1-P1e gelée.**
+
+## 10. Passage 6 — 24 novembre 2026 : CBlock/C2P/Copper/Close/Font (audit statique)
+
+**Dossier détaillé sourcé, lignes du natif P2d :** [`AUDIT_AGA_LIFECYCLE_COPPER_CBLOCK_C2P_2026-11-24.md`](AUDIT_AGA_LIFECYCLE_COPPER_CBLOCK_C2P_2026-11-24.md).
+
+1. **CBlock Capture/Draw/Restore** : les **trois entrées AP20 125/127/129** acquièrent un `GetMsg(SafePort)` lorsqu'il est pending **avant** `WaitBlit` et leur coeur de copie respectif. La capture ne publie les coordonnées du CBlock qu'après succès du coeur. **Protection locale présente ; interaction avec B8 encore VM.**
+2. **C2P Convert** : AP20 146, UNIT153+$00372, préflight 320×256 profondeur 4–8, `GetMsg` avant `BltBitMap`, `WaitBlit` avant/après la copie. **C2P Close** : AP20 148, UNIT153+$0094A, l'état interne est vidé, le Blitter synchronisé, puis le bitmap et son contexte libérés. Ces preuves ne prouvent pas l'appel de ce nettoyage depuis tous les chemins Screen Close/End.
+3. **Copper On/Off** : `On` positionne le flag actif **avant** `MakeScreen`/`RethinkDisplay` ; ce comportement est **intentionnel en R18**, verrouillant toute écriture dans une liste potentiellement installée. `Off` possède une voie de rollback conservant la propriété des allocations. **Ne pas créer de nouveau P1 sur la seule base du flag** ; tester les retours d'erreur OS et le cycle de vie.
+4. **AGA-004 nuancée :** `Aga Screen Close` AP20 182 → BOBS+$0718E appelle **inconditionnellement** `b7m2_close_reset_entry` → `guarded_close_entry` → véritable Close R83, **avant** le contrôle du root B8. Un écran sans B8 n'est donc pas condamné à un Close inopérant par un root nul. Le post-Close B8 ne s'applique qu'au propriétaire enregistré. **Gates B/C de fermeture/réouverture croisées restent manquantes.**
+5. **Polices** : `Aga Font Select` n'engage le nouveau pointeur qu'après ouverture réussie, puis libère l'ancien ; `Font Bank Select` dispose d'une libération selon provenance OS/BankFont. **Le raccordement exact de tous ces hooks à Close/End reste à prouver dans P2d**, et T09/T14 continuent de couvrir ce risque.
+
+**Statut :** audit statique documenté, aucune Gate A/B/C/D nouvelle, aucune correction/Lib/ASC. T09/T13/T14/T16 affinés sans ajouter de scénario. Le chantier S1-P1e reste GELÉ.

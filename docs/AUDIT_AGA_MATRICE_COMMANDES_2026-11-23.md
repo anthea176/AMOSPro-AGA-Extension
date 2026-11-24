@@ -10,7 +10,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 |---:|---|---|---|---|---|---|
 | 1 | `Aga Detect` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | VM |
 | 2 | `Aga Screen Open` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | VM |
-| 3 | `Aga Screen Close` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A004 P1 a qualifier |
+| 3 | `Aga Screen Close` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A004 VM ; vrai Close lie |
 | 4 | `Aga Double Buffer` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 a qualifier |
 | 5 | `Aga Swap` | Ecran / synchronisation | Screen Intuition, DBState, ScreenBuffers | Avant+arriere (controle) | Safe/Disp, GetMsg, READY/DIRTY, Close ; T01,T02,T08,T14 | A002 P1 structure conditionnelle |
 | 6 | `Aga Pic Info` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
@@ -36,8 +36,8 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 26 | `Aga Copper Wait` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
 | 27 | `Aga Copper Move` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
 | 28 | `Aga Copper End` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
-| 29 | `Aga Copper On` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
-| 30 | `Aga Copper Off` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | VM |
+| 29 | `Aga Copper On` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | actif fail-safe R18 ; B/C VM |
+| 30 | `Aga Copper Off` | Copper | UserCopperList / OS display | Affichage (pas copie de plan) | On/Off, Close, fenetre et OS Copper ; T14,T16 | rollback owner visible ; B/C VM |
 | 31 | `Aga Mouse X` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 32 | `Aga Mouse Y` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 33 | `Aga Mouse Buttons` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
@@ -46,7 +46,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 36 | `Aga Hotspot Hit` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 37 | `Aga Rect Overlap` | Entrees / fenetre | IDCMP, input.device, fenetre et souris | Aucune (sauf curseur OS) | Ressource ouverte, End/Close ; T14 | VM |
 | 38 | `Aga Text` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
-| 39 | `Aga Font Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | VM |
+| 39 | `Aga Font Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | commit font sur succes ; Close VM |
 | 40 | `Aga Bank Font Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | VM |
 | 41 | `Aga Plot` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
 | 42 | `Aga Draw` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
@@ -62,9 +62,9 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 52 | `Aga F Chip Bank Create` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
 | 53 | `Aga F Chip Stage` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
 | 54 | `Aga F Icon Capture` | FICON / FICHIP | DATA FICON8/FICHIP8, Chip cache, bitplanes | Arriere pour dessin/capture | Type/len banque, resid. Chip, Safe, WaitBlit ; T06,T10,T11 | VM |
-| 55 | `Aga C Block Capture` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | VM |
-| 56 | `Aga C Block Draw` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | A003 VM contrat Clear |
-| 57 | `Aga C Block Restore` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | A003 VM contrat Clear |
+| 55 | `Aga C Block Capture` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; B8 VM |
+| 56 | `Aga C Block Draw` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; A003 VM |
+| 57 | `Aga C Block Restore` | CBlock | DATA AGACBLK en Chip, Bitmap pages | Arriere lecture/ecriture | Safe, WaitBlit, dimensions, dernier XY ; T06,T10,T13 | GetMsg+WaitBlit local ; A003 VM |
 | 58 | `Aga Bank Image Info` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 59 | `Aga Bank Image Capture` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
 | 60 | `Aga Bob Batch` | AGBO / edition banques | DATA AGBO, masques, caches Chip, registre Bob | Arriere pour capture/blit | Epoch, validite, Safe, liste 64, READY/DIRTY ; T07,T10,T11 | A003 VM contrat Clear |
@@ -97,8 +97,8 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 87 | `Aga C2P Open` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
 | 88 | `Aga C2P Blit` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
 | 89 | `Aga C2P Zoom` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
-| 90 | `Aga C2P Convert` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | A003 VM contrat Clear |
-| 91 | `Aga C2P Close` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | VM |
+| 90 | `Aga C2P Convert` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | GetMsg+WaitBlit local ; A003 VM |
+| 91 | `Aga C2P Close` | C2P | DATA chunky + Bitmap temporaire Chip, c2p.library | Arriere pour Convert | Safe, WaitBlit, banques/bitmap, Close ; T06,T10,T14 | WaitBlit avant Free ; End VM |
 | 92 | `Aga Probe` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 93 | `Aga Demo` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 94 | `Aga Screen Pattern` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 VM contrat Clear |
@@ -109,7 +109,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 99 | `Aga Fade To Bank` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 100 | `Aga Image Draw` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | A003 VM contrat Clear |
 | 101 | `Aga Image Capture` | IFF / AGAPIC | DOS/ILBM, RAM, banques AGAPIC, bitplanes | Variable: arriere pour draw/capture | Validation ILBM, Safe, plans, banque, B8 ; T04,T05,T10,T12 | VM |
-| 102 | `Aga Font Bank Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | VM |
+| 102 | `Aga Font Bank Select` | Polices | Font systeme / bank font AMCAF / Chip | Aucune (selection), puis Text | Propriete, chargement, remplacement, Close ; T09,T14 | release OS/BankFont local ; Close VM |
 
 ## Références source pour vérifier les gardes individuels
 
@@ -139,3 +139,7 @@ Le [modèle P2d](M19_P2D_BOB_AUTO_UPDATE_MODEL.md) exige **`Aga Bob Clear` avant
 ## 24 novembre 2026 — AGA-002 confirmée par chaîne native
 
 Les appels publiés `Aga Swap` (AP20 181 → BOBS+$0B606) et `Aga Bob Auto Update` (AP20 195 → BOBS+$0B58C) sont liés à [`M19_P2D_CONTROLS_MC68020.s`](../src/native/m19_p2d/M19_P2D_CONTROLS_MC68020.s). Le premier Bind B8 utilise le [sélecteur natif `L_BOBS_0BE32`](../src/native/m19_p2d/M19_P2D_SUPPORT_TAIL_MC68020.s) qui refuse Safe pending **sans GetMsg**, avant le Swap original. Statut **P1 anomalie structurelle conditionnelle de progression**, pas freeze WinUAE confirmé ; [cas T02 A–E](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md).
+
+## Passage 6 — 24 novembre 2026 : preuves locales, pas de validation globale
+
+Le [dossier de contrôle CBlock/C2P/Copper/Close/Fonts](AUDIT_AGA_LIFECYCLE_COPPER_CBLOCK_C2P_2026-11-24.md) donne la liaison AP20 et les lignes source MC68020 : **GetMsg avant copie dans CBlock et C2P**, `WaitBlit` avant libération C2P, rollback Copper prévu, et **Screen Close atteint le Close historique même sans root B8**. Les statuts mis à jour désignent exclusivement une **présence de garde locale** ou un **comportement contractuel intentionnel**, **jamais une conformité Runtime/Compiler**. AGA-004 reste ouverte pour les chemins d'échec, callback End et réouverture ; T09/T13/T14/T16 affinés, tous non exécutés.
