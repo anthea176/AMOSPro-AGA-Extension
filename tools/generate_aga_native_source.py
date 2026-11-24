@@ -487,7 +487,7 @@ def verified_current_compiler_seeds(parsed):
     authenticates the current and LAST_GOOD Compiler wrappers. No altered,
     independently rebuilt, or future unknown binary receives these seeds.
     """
-    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, SPRITE_L2B_HISTORICAL_SHAS
+    from active_library import verify_active, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, SPRITE_L2B_HISTORICAL_SHAS
     from compiler_relocation import native_from_promoted, repack_ap20
     from compiler_bridge_v2_probe import is_v2_wrapped, unwrap_native_parts_v2
     current, last_good, _ = verify_active(ROOT)
@@ -498,7 +498,10 @@ def verified_current_compiler_seeds(parsed):
         # verify_active() has checked the exact active source-built candidate
         # and the protected LAST_GOOD. Use the pinned R82 ancestor only for
         # historical CFG seeds; never interpret P2d as a single native unit.
-        if sha(current) == S1P1H_SHA:
+        if sha(current) == S1P1I_SHA:
+            from active_library import verify_s1p1i
+            verify_s1p1i(current, last_good)
+        elif sha(current) == S1P1H_SHA:
             from active_library import verify_s1p1h
             verify_s1p1h(current, last_good)
         elif sha(current) == S1P1G_SHA:

@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -26,7 +26,7 @@ def main() -> None:
     original = tuple(p.read_bytes() for p in paths)
     assert original[:2] == (current, last_good)
     for path, wrapped in zip(paths, original):
-        if exp.sha(wrapped) in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA):
+        if exp.sha(wrapped) in (P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS):
             # P2d has multiple Compiler V2 native islands. The old strict
             # single-unit exporter must reject it, but the maintained
             # source builder must reproduce the official image exactly.
@@ -42,7 +42,11 @@ def main() -> None:
             assert meta['commands'] == 100 and meta['entries'] == 203
             _, groups, title = unpack_ap20(wrapped)
             _, reference, _ = unpack_ap20(candidate)
-            if exp.sha(wrapped) == S1P1H_SHA:
+            if exp.sha(wrapped) == S1P1I_SHA:
+                from active_library import verify_s1p1i
+                assert wrapped == current
+                verify_s1p1i(wrapped, last_good)
+            elif exp.sha(wrapped) == S1P1H_SHA:
                 from active_library import verify_s1p1h
                 assert wrapped == current
                 verify_s1p1h(wrapped, last_good)

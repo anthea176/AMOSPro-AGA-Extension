@@ -8,7 +8,7 @@ from hashlib import sha1, sha256
 from pathlib import Path
 import subprocess
 
-from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, verify_s1p1g, verify_s1p1h
+from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, verify_s1p1g, verify_s1p1h, verify_s1p1i
 from audit_ap20 import inspect, parse, token_role_issues, walk_tokens
 from build_m19_s1p1g_l2b_get_sprite_ap20 import correct_s1p1f
 from compiler_relocation import unpack_ap20
@@ -29,8 +29,8 @@ def main():
         parent = active
     elif digest == S1P1G_SHA:
         parent = verify_s1p1g(active, good)
-    elif digest == S1P1H_SHA:
-        verify_s1p1h(active, good)
+    elif digest in (S1P1H_SHA,S1P1I_SHA):
+        (verify_s1p1h if digest==S1P1H_SHA else verify_s1p1i)(active, good)
         # Historical AP20-only oracle, not a new production source or distribution.
         historical = subprocess.check_output(
             ['git', 'show', 'eb2b22119420196f44184a4b36035de18989fe44:dist/AMOSPro_AGA.Lib'],
