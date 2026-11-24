@@ -4,6 +4,10 @@
 
 > **Passage 13 / 24 novembre :** [écrivains et SafePort](AUDIT_AGA_SAFEPORT_WRITERS_2026-11-24.md) — Blit Fill possède déjà un chemin plein bitmap **SetRast sécurisé**, plus RectFill ; acquisition Safe seule, Disp préservé. Back Fill/IFF restent P0 statiques, Pattern P1 à qualifier ; stratégie de garde proposée, aucun correctif ni essai.
 
+> **Passage 14 / 24 novembre :** [Close/End, C2P et timeout](AUDIT_AGA_CLOSE_END_C2P_TIMEOUT_2026-11-24.md) — deux chemins natifs reliés au même helper C2P avant SafeWait. En cas de timeout, écran/DB peuvent subsister avec C2P déjà détruit ; B7 reset préalable historique voulu. T14 : reprise, réarmement, absence de double destruction et refus OS à qualifier. AGA-004 VM, aucun test.
+>
+> **Passage 15 / 24 novembre :** [sept LEA input et saturation](AUDIT_AGA_INPUT_STATE_7_LEA_2026-11-24.md) — 7/7 opérandes source P2d pointent vers State+$2F26=$030E8, bloc 144 octets. File clavier de 16 entrées peut suspendre le pump souris/focus si non dépilée ; latence à qualifier T14. Aucun rebuild ni Gate, AGA-005 reste ouverte.
+
 > **23/11/2026 — Distribution :** `examples/` est réservé aux exemples **livrés avec la Lib** ; [`tests/proto/`](../tests/proto/README.md) reçoit les prototypes non distribués (AGSP, AGTM, Sprite S0). L'ancien état détaillé est conservé dans [l'archive intégrale](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md).
 
 ## 1. État actuel
