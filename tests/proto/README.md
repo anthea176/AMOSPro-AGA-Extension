@@ -10,7 +10,8 @@
 | [`agtm_prototype/`](agtm_prototype/README.fr.md) | Banque DATA AGTM et benchmark mosaïque (essais WinUAE reçus le 23/11/2026) |
 
 | [`t06_pattern/`](t06_pattern/README.md) | T06A : cible bitmap, FAIL L2 puis PASS L2b Runtime, source inchangée |
-| [`t06_pattern_safe/`](t06_pattern_safe/README.md) | T06B : Pattern immédiatement après Swap, 12 cycles, préflight PASS, Runtime à exécuter |
+| [`t06_pattern_safe/`](t06_pattern_safe/README.md) | T06B : Pattern après Swap, Runtime PASS 12/12, 36 swaps |
+| [`l3_resources/`](l3_resources/README.md) | T14A : 26 Open/Close, curseur, mesures Chip/Fast ; préflight PASS, Runtime à exécuter |
 
 Ne pas confondre ce dossier avec `tests/current/` (un seul ASC de campagne) ni `tests/passed/` (archives protégées). Les cinq fichiers ASC/ABK déplacés conservent leurs blobs Git **strictement identiques** ; seuls les README et les chemins des scripts sont adaptés.
 

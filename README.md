@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 P2d-L2b — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **136,708 bytes**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commands / 203 AP20 entries**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS: 184 Pattern cases, 172 writers, 10 Bob suites. L2b T06A Runtime PASS; T06B pending; Compiler/physical Amiga not tested. [Protected P2d LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,020 bytes.
+**M19 P2d-L2b — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **136,708 bytes**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commands / 203 AP20 entries**. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) PASS: 184 Pattern cases, 172 writers, 10 Bob suites. L2b T06A/T06B Runtime PASS; L3 resource checks pending; Compiler/physical Amiga not tested. [Protected P2d LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,020 bytes.
 
 **Active test:** [T06_PATTERN_TARGET.asc](tests/current/T06_PATTERN_TARGET.asc) · [Protocol](tests/current/README.md). Pattern back-buffer/SafePort fix. No external resources. Runtime only. Sprite work frozen.
 
