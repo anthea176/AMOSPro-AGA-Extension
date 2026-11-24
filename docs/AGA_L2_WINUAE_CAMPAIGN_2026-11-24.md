@@ -1,5 +1,8 @@
 # P2d-L2 — préparation de la campagne WinUAE B/C
 
+**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et logs](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les paragraphes suivants décrivent la préparation de la campagne ; ne pas réexécuter les tests déjà validés ni demander une nouvelle compilation.
+
+
 **24 novembre 2026 · main uniquement. Candidate active autorisée / PREFLIGHT PASS ; B/C/D NON TESTÉES.**
 
 Candidate L1+L2 : **136 332 octets**, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 AP20 ; [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935866), [commit source a6065ac](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/a6065ac83fd648934b98598aae86b8fa5d31b437). 172 cas writers + 10 suites Bob, deux modèles AP20. Bascule autorisée par « allons y » : [Lib active](../dist/AMOSPro_AGA.Lib), blob d9bc3d015c4f396b2f2d674315fff4918fa0610e. LAST_GOOD P2d reste protégée. Aucun changement Sprite.

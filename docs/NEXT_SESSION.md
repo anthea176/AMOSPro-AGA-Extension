@@ -1,5 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — L2 : résultats Runtime positifs, poursuite sans nouvelle compilation
+
+**Résultats du 24/11/2026 :** SafePort IFF / Back Fill / premier Bind B8 B/C PASS rapportés, P2 ALL IN ONE Runtime PASS rapporté (240/240, 252 swaps, 120 refus récupérés), EDGE SAFE 20x18 Runtime PASS (240/240, 0 refus), RPG V9 Runtime PASS (250 frames, 2 retries). Identité L2 confirmée par l'auteur. Les autres Gates C sont reportées par choix auteur ; D non testée. EDGE sans pré-VBL, T06 et L3 restent ouverts. LAST_GOOD intacte. Sprite gelé. [Rapport et deux journaux bruts](AGA_L2_WINUAE_RESULTS_2026-11-24.md). Les indications « non testées » ci-dessous décrivent les checkpoints historiques ; ce résultat fait foi pour l'état courant.
+
+
 ## 24 novembre 2026 — P2d-L2 active, essais WinUAE attendus
 
 Auteur « allons y » autorise la bascule L2. `dist/AMOSPro_AGA.Lib` P2d-L2 : **136 332 octets**, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, blob `d9bc3d015c4f396b2f2d674315fff4918fa0610e`, 100 commandes/203 AP20 ; [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45402935866) 172 cas writers + 10 suites Bob, [reconstruction et réexécution PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45428031730). ASC actif unique [M19_P2D_L2_SAFEPORT_BC.asc](../tests/current/M19_P2D_L2_SAFEPORT_BC.asc), SHA256 `720348897fd0f939dc413687ccc69ed524fd7edff863dcc89f320a1f68e0f974`, blob `024a69d90ac09af71c8fd55c306fefe2d99a9c84`. IFF existant [AGA_DEMO_320x256_256c.iff](../tests/current/AGA_DEMO_320x256_256c.iff) à copier dans RAM:. [Protocole et résultats attendus](AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md). **Gate B/C/D NON TESTÉES.** LAST_GOOD P2d protégée et archives inchangées. S1-P1e historique, Sprite gelé. L0 Artifact integrity et OPT020 PASS avant bascule, nouvelles CI de distribution à lire. Les anciens paragraphes ci-dessous sont historiques. Ne pas modifier l'ASC, promouvoir, ni reprendre Sprite avant décision. Ensuite T07/EDGE sur les sources historiques identiques, T06 Pattern et L3 ressources.
