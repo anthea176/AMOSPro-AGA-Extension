@@ -139,3 +139,40 @@ C'est une **boucle bornée**, non une preuve de freeze infini. Dans une configur
 - **Font Select :** [routines de fermeture de police](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/tools/m14_font_select_r37_emit.py#L162-L181) propres au contexte texte. Elles devront être testées avec Close/End, mais la simple possession d'un CloseFont ne valide pas le cycle B8.
 
 **État à l'issue du passage 2 :** ajout de preuves statiques et d'un risque de latence Close ; **aucun nouveau test, aucune modification du moteur, aucune nouvelle conformité globale prononcée**.
+
+## 7. Passage 3 — 24 novembre 2026 : trace AP20 réelle et écrivains concurrents
+
+**Livrable spécifique :** [cartographie AP20 des 100 tokens P2d, entrées 0..203](AUDIT_AGA_AP20_LIAISONS_P2D_2026-11-24.md). Les 100 commandes de P2d utilisent quatre unités natives : **UNIT142 (68), UNIT153 (5), UNIT156 (1), BOBS/202 (26)**. Chaque déplacement RBSR est rapporté au dispatcher de $22 octets ; le token public est ainsi suivi jusqu'à l'entrée effective, au lieu de déduire sa présence d'un nom de builder historique. Les **2 tokens Sprite** supplémentaires n'appartiennent pas à P2d ; S1-P1e demeure gelée.
+
+### AGA-010 — `Aga Back Fill` : écriture sans garde Safe — **P0 sécurité potentielle ; limitation legacy déjà documentée**
+
+- **Liaison prouvée :** token instruction `Aga Back Fill` → entrée AP20 22 → stub `FE31, UNIT142, $0C7C` → cible native **UNIT142+$00C9E**.
+- **Code réel :** [`M19_UNIT142_BLOCK_00C9E_MC68020.s`](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_00C9E_MC68020.s) sélectionne le `sb_BitMap` de la page arrière puis utilise `InitRastPort(-198)`, `RectFill(-234)` et `WaitBlit(-228)`. Aucune vérification de `DB+20 bit0`, aucun `GetMsg(SafePort,-372)` sur ce chemin avant RectFill.
+- **Contraste prouvé :** `Aga Blit Fill` → AP20 33 → UNIT142+$02360 → [BRA vers $078E6](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_02360_MC68020.s) → [`GetMsg(-372)` avant dessin](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_078A4_MC68020.s). `Aga Blit Clear` (AP20 35) réutilise cette entrée sécurisée.
+- **Antériorité :** la [note R27 M12](M12_SAFE_BLITTER_R27.md) et le [README](../README.md) indiquaient déjà que la commande legacy `Aga Back Fill` n'était **pas protégée** par le correctif R27. **Ce n'est pas une régression nouvellement introduite par P2d**, mais un danger connu à prendre en compte dans les enchaînements DB/B8. L'absence de garde est **confirmée statiquement** ; une corruption effective **n'est pas reproduite**.
+
+**Priorité P0 préventive** parce que le contrat de non-écriture sur page non Safe peut être violé. Dans la matrice de tests : **T19 (Back Fill après Swap, Safe pending)**, à spécifier et exécuter *uniquement après autorisation distincte*. Aucune modification de la commande n'est autorisée pendant le gel.
+
+### AGA-001 — `Aga Iff Load` : absence de garde sur le chemin directement lié **confirmée**
+
+- Token fonction `Aga Iff Load` → AP20 24 → groupe 142, stub `$0D1A` → **UNIT142+$00D3C**, [entrée native IFF BODY](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_IFF_LOAD_BODY_MC68020.s). Il n'existe donc **aucune hypothétique garde R27 dans un autre stub** entre cette entrée et la sélection du back/copie BODY examinées.
+- `L_UNIT142_01254` vérifie et choisit le bitmap arrière, puis `L_UNIT142_01360` écrit les octets du BODY directement dans les plans, **sans lecture de `DB+20` ni GetMsg Safe**. La protection locale manquante est confirmée **sur l'entrée AP20 effectivement publiée**.
+- **Statut identique : P0 statique ;** impact Runtime après Swap / Safe pending toujours à reproduire. La commande traite aussi une palette : contrôler l'effet d'un refus sur l'état d'affichage lors de T04/T12.
+
+### AGA-007 — Nuance sur l'atomicité du décodeur IFF : **risque à déclasser si déterminisme démontré**
+
+La même [routine IFF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_IFF_LOAD_BODY_MC68020.s) fait une **première passe de validation BODY** avec `100(a5)=0`, puis une **seconde passe d'écriture** avec `100(a5)=1`, à partir du **même bloc de données déjà chargé en mémoire**. En l'absence de mutation externe de ce bloc entre les passes, le décodeur suit normalement les mêmes branchements et devrait respecter les bornes déjà validées. **Il serait excessif de présenter un décodage partiel pour IFF tronqué comme anomalie certaine.** Aucun cas déclencheur de divergence n'a été identifié. Conserver T12 comme vérification de non-régression et, si les deux passes sont prouvées déterministes, rétrograder AGA-007 au rang de risque non avéré.
+
+### Traçage complémentaire : protections locales et interactions B8 toujours ouvertes
+
+| Chemin lié | Constats source MC68020 | Portée / limite |
+|---|---|---|
+| `Aga Blit Copy` AP20 31 | [UNIT142+$0219C](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_0219C_MC68020.s) : `GetMsg(-372)` avant `BltBitMap(-30)`, `WaitBlit(-228)` | Garde Safe local présent ; ne notifie pas B8 d'une modification du décor |
+| `Aga F Icon` AP20 111 | [corps $08618](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_08618_MC68020.s) : `GetMsg(-372)` avant copie | Lecture du statut Bank/Chip, clipping et interaction B8 encore à étudier |
+| `Aga F Blit` AP20 113 | [corps $08D78](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_08D78_MC68020.s) : `GetMsg(-372)`, puis `BltMaskBitMapRastPort/BltBitMapRastPort` et `WaitBlit` | Garde Safe local visible ; interaction snapshots B8 encore ouverte |
+| `Aga Bank Image Draw` AP20 105 | [wrapper $0781C](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_0781C_MC68020.s) appelle `ENTRY_UNIT142_06678` (`Aga Image Draw`) | Protège la transaction via son dessinateur, **pas preuve d'invalidation des snapshots** |
+| `Aga Image Capture` AP20 103 | [suite native $0725A](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_0725A_MC68020.s) : `GetMsg(-372)` sur lecture du back | Capture seulement ; les banques doivent être revalidées séparément |
+| `Aga Bank Image Capture` AP20 141 | [suite native $0D694](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_0D694_MC68020.s) : `GetMsg(-372)` sur lecture du back | Capture seulement ; ne prouve pas cohérence avec Bob snapshot |
+| `Aga Screen Pattern` AP20 14 | [bloc $00764](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45911ae8e7816cba9c8f7d1a087091355d5127aa/src/native/m19_p2d/M19_UNIT142_BLOCK_00764_MC68020.s) agit sur le RastPort de l'écran | Diagnostic legacy : effet sur les pages DB/snapshots à caractériser, pas à traiter comme writer back Safe par défaut |
+
+**Bilan transversal après passage 3 :** les **contrôles Safe locaux existent** dans plusieurs sous-systèmes, mais aucun protocole d'invalidation **commun** B8 n'a été démontré pour toutes les écritures externes du décor. Ne pas conclure de conformité globale. L'inventaire AP20 (100/100 P2d) est un résultat de traçabilité **statique**, pas 100 tests fonctionnels. Aucun programme AMOS, aucun test CPU, aucune Gate B/C/D, aucune compilation native exécutée lors de ce passage ; moteur, `LAST_GOOD` et S1-P1e inchangés.

@@ -4,7 +4,7 @@
 
 Référence des **102 commandes publiques** : [README.md figé au HEAD](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/45516f8772a24b5d7ad887d2a0f2b7cee5203e98/README.md). Ordre ci-dessous identique au tableau d'API du README. Les appels à des fonctions AMOS natives non préfixées `Aga` ne sont **pas** des entrées de ces 102 tokens.
 
-**Légende :** `VM` = validation manquante, aucun verdict ; `A001 P0 statique` = lacune Safe IFF observée dans la source, effet WinUAE non reproduit ; `Axxx P1 risque/interaction` = séquence potentiellement problématique, **non** preuve que la commande isolée est incorrecte ; `GEL` = aucune action Sprite. Les descriptions de garde disent **ce qu'il faut auditer**, pas ce qui a été prouvé pour chaque token.
+**Légende :** `VM` = validation manquante, aucun verdict ; `A001 P0 statique` = lacune Safe IFF observée dans la source, effet WinUAE non reproduit ; `A010 P0 statique` = Back Fill legacy sans garde Safe avant RectFill ; `Axxx P1 risque/interaction` = séquence potentiellement problématique, **non** preuve que la commande isolée est incorrecte ; `GEL` = aucune action Sprite. Les descriptions de garde disent **ce qu'il faut auditer**, pas ce qui a été prouvé pour chaque token.
 
 | # | Commande | Famille | Mémoire utilisée | Page(s) | Garde / dépendances à vérifier | Statut |
 |---:|---|---|---|---|---|---|
@@ -102,7 +102,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 | 92 | `Aga Probe` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 93 | `Aga Demo` | Legacy | Etat diagnostic, ecran selon chemin | A determiner | API historique a tracer ; T14 | VM |
 | 94 | `Aga Screen Pattern` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 P1 interaction |
-| 95 | `Aga Back Fill` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09 | A003 P1 interaction |
+| 95 | `Aga Back Fill` | Blit / dessin / texte | Bitmap planar Chip, RastPort, cache AGPC | Arriere (ecriture) | Verifier SafePort + WaitBlit + clips + B8 ; T03,T05,T06,T09,T19 | A010 P0 statique ; A003 P1 interaction |
 | 96 | `Aga Palette Bank Init` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 97 | `Aga Palette Bank Capture` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
 | 98 | `Aga Palette Bank Apply` | Palettes | ColorMap, AGAPAL, DATA, etat palette | Couleurs communes aux pages | Ecran/banque vivants, index, Close ; T09,T10,T14 | VM |
@@ -127,3 +127,7 @@ Référence des **102 commandes publiques** : [README.md figé au HEAD](https://
 Remplacer `VM` ou `P1 risque` par `conforme` ou `anomalie confirmée` uniquement après lecture du chemin **réellement lié** (sélection du token AP20 → unité native → sortie) et preuve adaptée, Gate A puis B/C pour les chemins concernés. Tous les états provisoires restent **ouverts**.
 
 Voir [rapport transversal](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) et [cahier de tests](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md).
+
+## 24 novembre 2026 — liaison AP20 et nouvelle priorité
+
+[Cartographie native exacte des 100 commandes P2d](AUDIT_AGA_AP20_LIAISONS_P2D_2026-11-24.md) : les index AP20, groupes et offsets du dispatcher $22 sont désormais retrouvés. La matrice conserve **102 entrées S1**, mais seuls les **100 tokens P2d** ont été tracés au niveau du master P2d ; les 2 tokens Sprite restent **gelés**. `Aga Back Fill` a été reclassé AGA-010 (P0 statique, limitation déjà documentée dans R27), sans test Runtime ni correction. Ajouter le cas T19 au cahier.

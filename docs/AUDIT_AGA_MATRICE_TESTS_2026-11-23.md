@@ -15,7 +15,7 @@ Ce document fixe les campagnes **avant** de programmer des sondes. Les scénario
 - **Gate D** : Amiga AGA physique, hors portée actuelle ; ne jamais l'annoncer PASS.
 - **Gel strict** : ne pas ajouter de tests sous `tests/current/` et ne pas modifier de Lib tant que le protocole, le bilan d'audit et l'autorisation spécifique ne sont pas validés.
 
-## 18 scénarios à implémenter, comparer et journaliser
+## 19 scénarios à implémenter, comparer et journaliser (T19 ajouté le 24 novembre)
 
 | ID | Scénario | Séquence minimale | Variantes / injection | Gates | PASS attendu | FAIL / alerte |
 |---|---|---|---|---|---|---|
@@ -37,8 +37,9 @@ Ce document fixe les campagnes **avant** de programmer des sondes. Les scénario
 | T16 | Copper et affichage | Copper Clear/Wait/Move/End/On/Off + Swap/Close | UserCopperList installée, écran fermé/rouvert, absence de pending message | A,B,C | Liste retirée/restaurée, aucune écriture fantôme, pas d'ownership stale | Copper reste actif au Close ou interfère avec page non Safe |
 | T17 | Séquence RPG réelle de décor | Open → IFF Load du décor → Bob Bank/Mask → Bob Auto Update → 240 Swap/animations | Sans pré-Init par Fill ; puis contrôle avec Fill sur les deux pages | A,B,C | Écran et snapshot corrects dès 1ère frame ; pas de refus non récupéré ; mêmes pixels en B/C | Le pré-remplissage masque la panne, les deux versions ne convergent pas |
 | T18 | RPG bord opaque / VBL différentiel | Comparer P2_DIM_20X18, P2_EDGE_20X18, P2_SWAP_VBL_20X18 et P2_EDGE_SWAPVBL_20X18 sans modifier leur source | Côté arrière local (19,17), compteur refus Swap, Safe et DIRTY | B,C | Conserver échecs et succès séparés, comptages cohérents ; si un refus dépasse 4 tentatives, cause attribuée par instrumentation | Classifier un pixel valide comme succès de tout le programme ou confondre ERR15 et erreur interne |
+| T19 | Back Fill legacy sans Safe après Swap | Open/Double Buffer → Swap réussi → aucun Fill/GetMsg intermédiaire → Aga Back Fill couleur, puis inspection séparée des deux BitMap | Safe pending sans message ; puis message disponible ; scénario témoin utilisant Aga Blit Fill protégée | A,B,C | **Critère de sécurité cible** : aucune écriture sur page non Safe, front inchangé, reprise explicite après acquisition Safe ; distinguer la commande legacy sans valeur de retour de la fonction Blit Fill | Le code P2d actuel ne contient pas de garde Safe dans Back Fill : un essai qui atteint RectFill pendant pending doit être traité comme **FAIL de sécurité**, même si l'image paraît correcte |
 
-**Statut général de T01–T18 dans cet audit : NON EXÉCUTÉS.** T07 et T18 réutilisent des **preuves historiques** ci-dessous, sans les requalifier automatiquement pour la nouvelle matrice. T15 est **SUSPENDU**.
+**Statut général de T01–T19 dans cet audit : NON EXÉCUTÉS.** T07 et T18 réutilisent des **preuves historiques** ci-dessous, sans les requalifier automatiquement pour la nouvelle matrice. T15 est **SUSPENDU**.
 
 ## Matrice de variantes obligatoires pour chaque commande liée à l'écran
 
@@ -108,3 +109,7 @@ Les journaux et sources de PASS/FAIL déjà présents dans `docs/evidence/`, `te
 **Aucune nouvelle commande native, aucune correction, aucun lancement de test et aucune promotion de Lib** ne sont autorisés par ce document.
 
 [Rapport transversal](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) · [Matrice des 102 commandes](AUDIT_AGA_MATRICE_COMMANDES_2026-11-23.md)
+
+## Ajout 24 novembre 2026 — provenance T19
+
+T19 découle du lien AP20 réel de `Aga Back Fill` : [index 22 → UNIT142+$00C9E](AUDIT_AGA_AP20_LIAISONS_P2D_2026-11-24.md), contrairement à `Aga Blit Fill` qui possède le garde Safe dans la routine native. Cette absence de garde était **déjà documentée dans R27**, mais n'était pas isolée par un scénario du présent cahier. **T19 est uniquement une spécification, non un ASC écrit ou un test lancé.** Il ne saurait autoriser une écriture risquée sur matériel physique ; toutes les prochaines sondes nécessitent un accord distinct.

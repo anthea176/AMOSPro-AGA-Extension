@@ -6,7 +6,8 @@
 
 - [Rapport technique transversal du 23/11/2026](AUDIT_TRANSVERSAL_AGA_2026-11-23.md) — anomalie de garde Safe IFF (P0 risque), amorçage B8 et Swap (P1), snapshots et décor (P1), cycle Close/End à auditer, CI historique SHA S1-P1e rejeté ; sources précises, preuves et incertitudes.
 - [Matrice **102 commandes sur 102**](AUDIT_AGA_MATRICE_COMMANDES_2026-11-23.md) — mémoire, page, mécanisme de sécurité à auditer, statut individuel **non validé par simple inventaire**.
-- [Cahier de **18 scénarios de non-régression**](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md) — critères PASS/FAIL et Gates A/B/C ; **aucun test nouvellement exécuté**, S1 suspendu.
+- [Cahier de **19 scénarios de non-régression**](AUDIT_AGA_MATRICE_TESTS_2026-11-23.md) — ajout T19 pour le Back Fill legacy après Swap ; critères PASS/FAIL et Gates A/B/C ; **aucun test nouvellement exécuté**, S1 suspendu.
+- [Audit **AP20 des 100 commandes natives P2d** (24/11/2026)](AUDIT_AGA_AP20_LIAISONS_P2D_2026-11-24.md) — index, groupe, offset réel ; **Aga Back Fill = AGA-010 P0 statique déjà connu dès R27**, IFF Load = AGA-001 P0 statique ; aucun changement au moteur.
 - **Lib candidate S1-P1e conservée** : `dist/AMOSPro_AGA.Lib` (142 000 octets, SHA256 `1491ad72712bdee3761f0eb74818220db5daa8aaa5be0a526dc4d0888f252106`). **LAST_GOOD P2d protégée** : `dist/AMOSPro_AGA_LAST_GOOD.Lib` (136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`).
 - **Audit ouvert** : lecture systématique des chemins effectivement liés et préservation des journaux, puis décision d'architecture. Aucune correction sans accord nouveau.
 
