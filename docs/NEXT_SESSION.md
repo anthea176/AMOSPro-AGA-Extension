@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — reprise M19 Sprite S1-P1f
+
+Accord auteur « on peux y aller » après promotion L2b. [Jalon S1-P1f](M19_S1_P1F_L2B_REBASE_2026-11-24.md) : reprendre le source S1-P1e exact, ajouter uniquement ses deux tokens/entrées sur les 203 entrées inchangées de L2b. Gate A en mémoire avant toute bascule. Les CI de promotion ont révélé des gardes historiques P0a/R83 et deux workflows encore épinglés à P2d ; corrections ciblées, requalification nécessaire. Lib active et LAST_GOOD identiques L2b, ASC T06 inchangé. 0.14.1 reste non publiée ; 0.15.0 est le jalon Sprite. B/C/D de S1-P1f non testées.
+
 ## 24 novembre 2026 — promotion LAST_GOOD L2b
 
 **24 novembre 2026 — promotion L2b autorisée par l'auteur.** « attend avant ca il faudrait promoubvoir la courrante » : promotion interne de P2d-L2b, 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, blob `2809b4b409eea9e234df1b96bf2b08bd393d8c85`. Les deux Lib de dist/ sont identiques. P2d historique (136020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, blob `8a849b89aae57c2cda0b4db8771034a0978d3e78`) reste reconstructible depuis ses sources et conservée dans Git. Gate A et Runtime documentés sur L2b ; Compiler reporté, D physique non testée. Requalification CI après promotion et disposition des risques résiduels avant publication. Aucune publication, aucun tag ni reprise Sprite automatique.

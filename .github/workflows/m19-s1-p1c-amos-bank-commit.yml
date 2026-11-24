@@ -13,6 +13,10 @@ on:
       - 'tools/test_m19_s1p1d_public_ap20.py'
       - 'src/native/m19_s1/M19_S1P1E_GET_PUBLIC_MC68020.s'
       - 'tools/build_m19_s1p1e_get_sprite_ap20.py'
+      - 'tools/build_m19_s1p1f_l2b_get_sprite_ap20.py'
+      - 'tools/test_m19_s1p1f_l2b_gate_a.py'
+      - 'tools/active_library.py'
+      - 'tools/build_m19_p0a_r88_bank_in_memory.py'
       - 'tools/test_m19_s1p1e_get_sprite_cpu.py'
       - 'tools/test_m19_s1p1e_get_sprite_ap20.py'
       - 'tools/m19_s1p1e_make_fixture.py'
@@ -34,7 +38,7 @@ permissions:
 jobs:
   agsp-amos-data-publisher:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout read-only
         uses: actions/checkout@v4
@@ -78,7 +82,7 @@ jobs:
           test -s "$RUNNER_TEMP/agsp_validate_mc68020.bin"
           test -s "$RUNNER_TEMP/agsp_publish_mc68020.bin"
       - name: Install Unicorn MC68020 emulator
-        run: python -m pip install --disable-pip-version-check 'unicorn>=2.1,<2.2'
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Execute real publisher with mocked AMOS Main services
         env:
           AGSP_PUBLISH_BIN: ${{ runner.temp }}/agsp_publish_mc68020.bin
@@ -113,4 +117,9 @@ jobs:
               assert image == active
           print('Frozen S1-P1e source identity PASS; current:', label, meta)
           PY
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
+      - name: S1-P1f on exact promoted L2b - inherited and Sprite dispatch Gate A
+        run: |
+          python -B -m py_compile tools/build_m19_s1p1f_l2b_get_sprite_ap20.py tools/test_m19_s1p1f_l2b_gate_a.py
+          python -B tools/test_m19_s1p1f_l2b_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --native "$RUNNER_TEMP/agsp_select_mc68020.bin"
           git diff --exit-code -- dist/ tests/current/ tests/passed/

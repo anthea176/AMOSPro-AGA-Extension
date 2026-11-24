@@ -57,7 +57,7 @@ jobs:
               'dist/experimental/AMOSPro_AGA_R88_v0.13.33_M19_P28_GATE_A_ONLY.Lib':
                   (75040, '69e47f8571dc5e7e50c1aa341bfed9f65ef3f973c015788668f2034041632fbc'),
               'dist/AMOSPro_AGA_LAST_GOOD.Lib':
-                  (136020, 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f'),
+                  (136708, 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc'),
           }
           for path, (size, digest) in expected.items():
               data = Path(path).read_bytes()
@@ -83,7 +83,7 @@ jobs:
           if sha==P1A_SHA:
               assert len(active)==118816 and active!=good
               assert sha256(good).hexdigest()==P0_FREE_SHA
-          print('PASS: one canonical Lib, one active ASC, R88 archive and promoted P2d LAST_GOOD verified')
+          print('PASS: one canonical Lib, one active ASC, R88 archive and promoted P2d-L2b LAST_GOOD verified')
           PY
       - name: Run host, AP20 and MC68020 Gate A checks
         run: |

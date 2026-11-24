@@ -2,7 +2,7 @@
 
 ## 1. État actuel et objectif
 
-**Priorité : 0.14.1 — Stability & Bug Fixes**, sans nouvelle commande. [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md) · [Qualification](releases/0.14.1_QUALIFICATION.md) · [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](releases/0.14.1/AMOSProAGA.readme).
+**Socle protégé : 0.14.1 — Stability & Bug Fixes** (publication distincte). Développement repris : M19 Sprite, cible 0.15.0. [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md) · [Qualification](releases/0.14.1_QUALIFICATION.md) · [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](releases/0.14.1/AMOSProAGA.readme).
 
 | Domaine | Statut |
 | --- | --- |
@@ -21,7 +21,7 @@
 
 ## 3. Sprites matériels AGA après levée du gel
 
-S1-P1e gelée (102 commandes / 208 AP20, historique Gate A PASS). Sprite S0d B/C PASS historique, détachement DMA et D non prouvés. AGSP v1 : capture indexée RGB24, transparence explicite, S1 simple 3 couleurs opaques, S2 attaché 15 ; refus au-delà. DATA AGSP Save/Load B PASS, C délibérément sautée. Reprendre wrapper AP20, contrôle Safe/mémoire, transaction de banque et capture native après décision. Avant activation DMA : palette, propriété canaux et arrêt sûr. [Audit S0](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) · [AGSP](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [contrat S1](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) · [preuves DATA](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
+S1-P1e (102 commandes / 208 AP20, historique Gate A PASS) reprise par accord auteur. **S1-P1f : réintégration source sur L2b**, préqualification en mémoire uniquement ; les deux Lib restent L2b. [Jalon](M19_S1_P1F_L2B_REBASE_2026-11-24.md). Sprite S0d B/C PASS historique, détachement DMA et D non prouvés. AGSP v1 : capture indexée RGB24, transparence explicite, S1 simple 3 couleurs opaques, S2 attaché 15 ; refus au-delà. DATA AGSP Save/Load B PASS, C délibérément sautée. Qualifier le wrapper AP20 réintégré, puis le banc de capture Runtime ; aucune DMA à ce stade. Avant activation DMA : palette, propriété canaux et arrêt sûr. [Audit S0](AGA_HARDWARE_SPRITES_S0_INTEGRATION_2026-11-21.md) · [AGSP](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [contrat S1](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md) · [preuves DATA](M19_S1_P1B_AGSP_DATA_AMOS_SAVELOAD_2026-11-22.md).
 
 ## 4. Après Sprite : M21 puis M20
 
