@@ -2,9 +2,9 @@
 
 **Statut 23/11/2026 : banque AGTM Runtime B PASS ; benchmark tuiles Runtime B et vrai Compiler C PASS.** [Rapport, journaux d'origine et ABK](../../../docs/AGTM_WINUAE_PROTOTYPES_2026-11-23.md). **Prototypes non distribués avec la Lib.**
 
-Ces deux fichiers sont des **prototypes autonomes** pour étudier AGTM sans modifier l'extension installée. Ils emploient des instructions AMOS et des commandes AGA **déjà existantes dans M19 P2d**, sans nouveau token, moteur ASM ou format graphique natif. Le lancement du chantier natif M20 reste prévu **après Dual Playfield M21**.
+Ces fichiers sont des **prototypes autonomes** pour étudier AGTM sans modifier l'extension installée. Ils emploient des instructions AMOS et des commandes AGA **déjà existantes dans M19 P2d**, sans nouveau token, moteur ASM ou format graphique natif. Le lancement du chantier natif M20 reste prévu **après Dual Playfield M21**.
 
-Version de référence : `dist/AMOSPro_AGA.Lib` **M19 P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f` ; `LAST_GOOD` identique et protégée. Les chaînes `LIBRARY_EXPECTED` des logs indiquent une attente, **pas une preuve du binaire réellement installé**.
+Version de référence historique des deux premiers bancs (23/11) : **M19 P2d**, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. Pour le nouveau banc de scrolling fin, voir la référence L2b en section 4. Ne pas assimiler la Lib de travail courante à l'ancienne P2d. Les chaînes `LIBRARY_EXPECTED` des logs indiquent une attente, **pas une preuve du binaire réellement installé**.
 
 ## 1. Prototypes disponibles
 
@@ -53,8 +53,46 @@ Ce banc ne teste **ni le scrolling de 1 pixel non aligné, ni plusieurs couches,
 
 ## 3. Provenance et limites de validation
 
-Les deux fichiers `.asc` sont en ASCII pur, **préflight strict `amos_preflight.py --strict-target --fail-on-warnings` PASS localement**. Les **21 tests du préflight** passent. Un modèle de pixels Python indépendant a également confirmé l'équivalence logique du décalage 16 px avant exécution Amiga, sans prouver le comportement de `BltBitMap`.
+Les deux premiers fichiers `.asc` sont en ASCII pur, **préflight strict `amos_preflight.py --strict-target --fail-on-warnings` PASS localement**. Les **21 tests du préflight** passent. Un modèle de pixels Python indépendant a également confirmé l'équivalence logique du décalage 16 px avant exécution Amiga, sans prouver le comportement de `BltBitMap`.
 
 **Gates par source :** banque DATA AGTM `AGTM_BANK_ROUNDTRIP.asc` : B Runtime PASS, C Compiler non testée. Benchmark `AGTM_TILE_BENCH.asc` : B Runtime PASS et C vrai Compiler PASS. **Aucun moteur natif M20 testé ; D physique non testée.** La version binaire P2d installée reste à vérifier indépendamment de `LIBRARY_EXPECTED`. `tests/current/`, `tests/passed/`, `dist/`, `LAST_GOOD`, tokens et sources ASM inchangés.
 
 [Spécification AGTM v1](../../../docs/RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [Roadmap](../../../docs/ROADMAP.md).
+
+## 4. Scrolling fin : nouveau prototype AMOS du 24/11/2026
+
+**[AGTM_FINE_SCROLL_BENCH.asc](AGTM_FINE_SCROLL_BENCH.asc)** — **PREFLIGHT PASS + modèle hôte PASS ; WinUAE Runtime B et Compiler C NON TESTÉS.** Aucun changement de Lib, aucun token AGTM.
+
+### Référence et lancement
+
+- Cible recommandée : socle protégé **P2d-L2b**, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, [LAST_GOOD](../../../dist/AMOSPro_AGA_LAST_GOOD.Lib), promu le 24/11. Le chantier Sprite utilise une candidate distincte : utiliser de préférence une installation WinUAE/AMOS séparée, sans modifier la Lib du dépôt ni perturber les essais Sprite. Indiquer le binaire réellement installé ; le texte `LIBRARY_EXPECTED` est une référence, non une preuve.
+- Configuration recommandée : AGA PAL, MC68020 14 MHz, JIT OFF. Préciser la configuration réellement utilisée et la version du Compiler. Pour comparer avec les anciens résultats P2d, conserver les différences de version et de protocole explicites.
+- Nouveau programme vierge, **Project → Merge ASCII**, banques **20 à 24 libres**. Pas de fichier externe ; les banques de travail sont générées à l'exécution, puis effacées sur sortie normale ou erreur gérée.
+- Exécuter d'abord en Runtime, puis compiler le même ASC si le premier essai passe. Ne pas relancer les tests historiques par défaut.
+
+### Géométrie et protocole
+
+Carte AGTM 64×16 (1 088 octets), 16 tuiles FICON8 16×16, une couche opaque, écran 320×256×8 plans. Toutes les données chunky originales restent en banque 20 pour l'oracle de pixels.
+
+1. **Conformité avant chronométrage :** pour chaque pas 1, 8, 16 px, deux déplacements dans chaque sens. La caméra 1 px commence à X=14 pour franchir une limite de tuile (14→15→16→15→14). Les pas 8 et 16 commencent à X=0. Après chaque mise à jour incrémentale, capture des huit plans puis redessin complet et seconde capture : 12 comparaisons intégrales, **983 040 octets comparés**, plus **1 008 pixels** relus directement dans les bitplanes et confrontés à la source chunky. Le moindre écart bloque la mesure et la présentation.
+2. **Mesure :** FULL = toutes les tuiles visibles, y compris celles partiellement visibles aux bords ; SCROLL = copie chevauchante dans la page back, puis redessin des tuiles touchant la bande découverte. Deux passes A/B puis B/A par pas. Quatre déplacements dans chaque sens par série, soit **12 séries, 96 mises à jour chronométrées**. Une seule différence de `Timer` par série, avec initialisation du décor, captures de conformité, VBL, Swap et fermeture hors mesure.
+3. **Affichage final :** un seul Swap, après les mesures, puis retour AMOS. Ce n'est **pas** encore un test d'animation alternant les pages physiques. Les pixels réécrits sur la bande incluent éventuellement un recouvrement avec la zone conservée ; aucune affirmation de trafic DMA exact.
+
+Compteurs attendus par série de huit mises à jour (`_STEPS=4`), calculés et vérifiés sur hôte :
+
+| Pas horizontal | FULL_ICONS | SCROLL_ICONS | SCROLL_COPIES |
+|---:|---:|---:|---:|
+| 1 px | 2 656 | 128 | 8 |
+| 8 px | 2 624 | 128 | 8 |
+| 16 px | 2 560 | 128 | 8 |
+
+**Critères de réception :** `RESULT 1`, `ERR 0`, `CHECKS 12`, `COMPARE_BYTES 983040`, `BYTE_MISMATCH 0`, `ORACLE_CHECKS 1008`, `ORACLE_BAD 0`, `BENCH_RUNS 12`, `SWAPS 1`, `CLOSE_RETURNED 1`. Vérifier les compteurs par série et la mémoire avant/après. Pour les mesures de vitesse, `LOW_TICK_RUNS 0` est souhaitable ; un temps de moins de cinq ticks est trop grossier pour une comparaison robuste. En cas de faible résolution, adapter la répétition dans une nouvelle révision documentée et retester les deux méthodes, sans modifier la source déjà mesurée.
+
+Les journaux à transmettre sont **`RAM:AGTM_FINE_RUNTIME.TXT`** et **`RAM:AGTM_FINE_COMPILED.TXT`** (ou `RAM:AGTM_FINE_INTERPRETED.TXT` en interprété strict). Les champs STAGE/CASE/CAM/DIR/METHOD/PASS, les premiers offsets divergents et les valeurs du premier pixel divergent permettent de localiser un échec. Les anciens fichiers AGTM_BANK/BENCH ne sont pas écrasés.
+
+### Preuves de préparation
+
+- ASC 11 102 octets, ASCII LF, Git blob `678b97867cfdd4485ea2a0517ab6c882150324f6`, SHA256 `a2d2de907f69e70a1dc86d0e7550dc5312d65a8a5ba6d6e648458be7ce70c3d6`.
+- Préflight strict PASS ; 21 tests du préflight PASS localement.
+- [Test hôte](test_agtm_fine_scroll_model.py) : `python -B tests/proto/agtm_prototype/test_agtm_fine_scroll_model.py` depuis la racine. **3 tests PASS**, dont empreinte exacte ASC, 24 transitions continues du parcours chronométré comparées à un oracle monde pixel par pixel, vérification des compteurs et des 12 captures logiques/1 008 pixels échantillonnés. Le modèle simule une copie chevauchante correcte ; il ne teste pas les instructions du chipset, les Safe réels ni le Compiler.
+- **Runtime et Compiler de ce nouveau banc : NON TESTÉS ; aucun gain chiffré revendiqué.** L'étude n'ouvre pas M20 natif ; la prochaine étape après réception de ces mesures sera le suivi de deux pages physiques avec modifications dynamiques de tuiles.
