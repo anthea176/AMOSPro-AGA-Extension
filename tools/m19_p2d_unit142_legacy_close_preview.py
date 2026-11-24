@@ -29,7 +29,7 @@ STATE_SIZE = 40
 
 
 def probe(vasm: Path, emit_base64: bool = False) -> None:
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
     _tokens, groups, _title = unpack_ap20(official)
     unit = groups[142]
@@ -92,7 +92,7 @@ def probe_following_close(vasm: Path, emit_base64: bool = False) -> None:
     This is not a code migration. Trace from confirmed entry points only.
     Vasm exactness does not prove an execution path, memory ownership, or ABI.
     """
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
     _tokens, groups, _title = unpack_ap20(official)
     assert len(groups[142]) == 62740 and sha256(groups[142]).hexdigest() == UNIT_SHA

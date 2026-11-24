@@ -265,11 +265,10 @@ def checked_vasm(assembler: Path, source: Path, output: Path) -> bytes:
 @lru_cache(maxsize=1)
 def prove_source_provenance() -> tuple[bytes, int, int, int, int, int, int]:
     """Require exact P2d native builder and exact source-region boundaries."""
-    lib = (ROOT / 'dist' / 'AMOSPro_AGA.Lib').read_bytes()
-    good = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    # P2d remains the protected reference while S1-P1e is the active candidate.
+    lib = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     require(len(lib) == 136020 and sha256(lib).hexdigest() == P2D_SHA,
             'official P2d source is not the selected 136020-byte baseline')
-    require(good == lib, 'LAST_GOOD differs from P2d; refused')
     rebuilt, info = build_p2d()
     require(rebuilt == lib and info['sha256'] == P2D_SHA,
             'native Python builder does not reproduce the official P2d')
@@ -4100,10 +4099,9 @@ def test_batch_editability_staged(assembler: Path, staged: Path) -> None:
     staged = staged.resolve()
     require(staged.is_dir() and (staged / MASTER_FILE).is_file(),
             'missing previously staged P2d ASM project')
-    original = (ROOT / 'dist' / 'AMOSPro_AGA.Lib').read_bytes()
-    good = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    require(len(original) == 136020 and sha256(original).hexdigest() == P2D_SHA
-            and original == good, 'official P2d/LAST_GOOD SHA mismatch')
+    original = (ROOT / 'dist' / 'AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    require(len(original) == 136020 and sha256(original).hexdigest() == P2D_SHA,
+            'protected P2d/LAST_GOOD SHA mismatch')
     prior = staged / 'M19_P2D_ASM_REBUILT_CHECK.Lib'
     require(prior.is_file() and prior.read_bytes() == original,
             'staged project lacks a byte-exact, previously verified baseline')

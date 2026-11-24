@@ -37,7 +37,7 @@ def main() -> None:
     parser.add_argument("--emit-base64", action="store_true")
     args = parser.parse_args()
 
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020
     assert sha256(official).hexdigest() == P2D_SHA
     _tokens, parts, _title = unpack_ap20(official)

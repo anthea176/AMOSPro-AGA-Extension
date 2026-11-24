@@ -29,7 +29,7 @@ CBLOCK_SPANS = ((0x0ABC6, 0x0AF3A), (0x0B58A, 0x0B8FE), (0x0BF52, 0x0C2C6))
 
 
 def check(vasm: Path, emit_base64: bool = False) -> None:
-    binary = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    binary = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(binary) == 136020 and sha256(binary).hexdigest() == P2D_SHA
     _tokens, units, _title = unpack_ap20(binary)
     unit = units[GROUP]

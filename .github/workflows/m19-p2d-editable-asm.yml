@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/native/m19_p2d/**'
       - 'tools/build_m19_p2d_editable_asm.py'
+      - 'tools/m19_p2d_unit142_aga_bridge_preview.py'
       - 'tools/m19_p2d_unit142_source.py'
       - 'tools/m19_p2d_unit142_p0f_identity_preview.py'
       - 'tools/m19_p2d_unit142_p1cd_open_probe.py'
@@ -135,6 +136,13 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "push" && -n "$EVENT_BEFORE" && "$EVENT_BEFORE" != "0000000000000000000000000000000000000000" ]]; then
             git diff --exit-code "$EVENT_BEFORE" "$GITHUB_SHA" -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/
           fi
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
-          printf '%s  %s\n' 'ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          PYTHONPATH=tools python -B - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from active_library import verify_active, P2D_SHA, S1P1E_SHA
+          active, protected, label = verify_active(Path('.'))
+          assert sha256(protected).hexdigest() == P2D_SHA and len(protected) == 136020
+          assert sha256(active).hexdigest() in (P2D_SHA, S1P1E_SHA)
+          print(label)
+          PY
           git diff --exit-code -- dist/ tests/current/ tests/passed/ src/asm_migration/m19_p2d/

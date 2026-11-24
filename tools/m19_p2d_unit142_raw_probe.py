@@ -53,7 +53,7 @@ def compare(whole: bytes, tail: bytes, label: str, payload: bytes) -> None:
 
 
 def check() -> None:
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
     _token, groups, _title = unpack_ap20(official)
     group = groups[142]

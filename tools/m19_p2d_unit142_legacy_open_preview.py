@@ -29,7 +29,7 @@ P1C_AT = 0x0F0A4
 
 
 def probe(vasm: Path, show: bool = False) -> None:
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
     _tokens, units, _title = unpack_ap20(official)
     group = units[142]

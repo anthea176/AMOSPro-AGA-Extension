@@ -25,7 +25,7 @@ UNIT_SHA = "8627166cde406a11d4fd1c81bb03f301bb6efd91532b8796436ae8ec2543dee7"
 
 
 def check(vasm: Path, dump: bool = False) -> None:
-    official = (ROOT / "dist/AMOSPro_AGA.Lib").read_bytes()
+    official = (ROOT / "dist/AMOSPro_AGA_LAST_GOOD.Lib").read_bytes()
     assert len(official) == 136020 and sha256(official).hexdigest() == P2D_SHA
     _t, units, _title = unpack_ap20(official)
     unit = units[142]
