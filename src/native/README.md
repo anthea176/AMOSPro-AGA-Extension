@@ -1,6 +1,6 @@
 # AMOSPro AGA Extension — sources natives MC68020
 
-**Version de travail P2d-L2b (cible 0.14.1, non publiee)** : [master ASM direct](m19_p2d_l2b/M19_P2D_L2B_LINKED_EDITABLE.s) et [guide](m19_p2d_l2b/README.md). 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 AP20. Comparaison exacte exigee en CI avant de declarer le master direct valide.
+**Version de travail P2d-L2b (cible 0.14.1, non publiee)** : [master ASM direct](m19_p2d_l2b/M19_P2D_L2B_LINKED_EDITABLE.s) et [guide](m19_p2d_l2b/README.md). 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 AP20. Comparaison exacte du master direct [PASS en CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45462745139), memes 136708 octets que la Lib et le builder.
 
 | Dossier | Role |
 | --- | --- |

@@ -2,7 +2,7 @@
 
 ## 24 novembre 2026 — Préparation de clôture 0.14.1
 
-[Qualification et dispositions résiduelles proposées](releases/0.14.1_QUALIFICATION.md). Identité L2b figée et notes/notice/INSTALL/README/exemples alignés ; aucune nouvelle modification de Lib. CI L0 requalifiée partiellement, derniers jobs à lire. C reportée, D non testée. Aucun test WinUAE supplémentaire demandé ; pas de promotion/publication ni de report résiduel accepté par défaut. Le vrai LHA reste à fabriquer et extraire après accord.
+[Qualification et dispositions résiduelles proposées](releases/0.14.1_QUALIFICATION.md). Identité L2b figée et notes/notice/INSTALL/README/exemples alignés ; aucune nouvelle modification de Lib. CI L0 ciblées et master ASM direct PASS, seul Artifact integrity global encore en cours lors de la lecture ; voir [rapport](AGA_L0_PROVENANCE_CI_2026-11-24.md). C reportée, D non testée. Aucun test WinUAE supplémentaire demandé ; pas de promotion/publication ni de report résiduel accepté par défaut. Le vrai LHA reste à fabriquer et extraire après accord.
 
 ## 24 novembre 2026 — L4 Runtime PASS transmis, CI restantes
 

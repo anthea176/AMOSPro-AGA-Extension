@@ -28,3 +28,7 @@ cmp /tmp/p2d_l2b_source_check.bin ../../../dist/AMOSPro_AGA.Lib
 SHA attendu : `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Ne jamais ecrire directement dans dist/. Le [test Gate A](../../../tools/test_m19_p2d_l2b_pattern_gate_a.py) controle aussi ce master contre le builder et le binaire exact. La Gate A historique [45449139352](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45449139352) (184 Pattern, 172 writers, 10 suites Bob) porte sur le builder L2b. La comparaison directe doit passer sa propre CI ; elle ne valide pas WinUAE/Compiler.
 
 **Autorite des changements :** [builder L2b](../../../tools/build_m19_p2d_l2b_pattern_in_memory.py) et overlays existants. Conserver P2d/L1/L2 intacts ; synchroniser le master lie et le builder pour toute evolution. Ne pas utiliser les exports d'audit comme source de production. Sprite reste gele.
+
+## Resultat du master direct
+
+[CI 45462745139](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45462745139) PASS sur e74ee34 : `P2D L2B LINKED ASM BYTE-EXACT PASS 136708 a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, puis 184 Pattern, 172 writers et 10 suites Bob PASS. Aucun changement d'octet de la Lib. Gate C L2b reportee ; physique non testee. Voir [qualification](../../../docs/releases/0.14.1_QUALIFICATION.md).
