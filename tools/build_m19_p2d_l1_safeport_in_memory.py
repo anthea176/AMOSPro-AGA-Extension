@@ -114,7 +114,11 @@ def build_l1(vasm: Path):
     image = repack_ap20(base, tok, newparts, TITLE)
     need(unpack_ap20(image) == (tok,newparts,TITLE), 'AP20 round-trip failed')
     need(not inspect(parse(image))['issues'], 'AP20 audit issues')
-    need(len(list(walk_tokens(tok))) == 100, 'public command count changed')
+    # AP20 walk includes the initial unnamed dummy token; count named API
+    # exactly as the repository's bilingual README coverage gate does.
+    named = {r['name'] for r in walk_tokens(tok) if r['name'].lower().startswith(
+        ('aga ', 'get aga ', 'make aga ', 'no aga '))}
+    need(len(named) == 100, 'public command count changed')
     need((ROOT/'dist/AMOSPro_AGA.Lib').read_bytes() == active
          and (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == protected,
          'protected binary changed')
