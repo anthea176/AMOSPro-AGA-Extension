@@ -2,13 +2,13 @@
 
 [English](README.md) · [Tous les exemples](../README.fr.md) · [Installation](../../INSTALL.fr.md)
 
-**Exemple public validé en Runtime et avec AMOS Compiler sous WinUAE.** Le programme regroupe **P2a à P2e**, avec deux Bobs à silhouettes asymétriques **F et L** : animations AMAL, collisions, retournements H/V/HV, sélection de plans et mise à jour automatique en double buffering. **Aucune image, banque ABK ni ressource externe** n'est nécessaire.
+**Runtime L2b PASS transmis ; validations Runtime/Compiler historiques sur P2d.** Le programme regroupe **P2a à P2e**, avec deux Bobs à silhouettes asymétriques **F et L** : animations AMAL, collisions, retournements H/V/HV, sélection de plans et mise à jour automatique en double buffering. **Aucune image, banque ABK ni ressource externe** n'est nécessaire.
 
 ## Fichiers et version exacte
 
 - [**BOB_ALL_IN_ONE.asc**](BOB_ALL_IN_ONE.asc) — source ASCII **originale inchangée**, 25 056 octets ; Git blob `c48d334fd4508d402d28399bffdfec08d4cb4acb`, tag `P2_FULL_V1_20261121`.
-- Bibliothèque requise : [`dist/AMOSPro_AGA.Lib` M19 P2d](../../dist/AMOSPro_AGA.Lib), **136 020 octets**, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, **100 commandes / 203 AP20**, cible **MC68020/68EC020 minimum**.
-- [Archive de test exacte](../../tests/passed/M19_P2_ALL_IN_ONE.asc) — **mêmes octets que l'exemple**, sans changement de noms, d'assets ou de logique. `LAST_GOOD` P1e **non remplacée**.
+- Bibliothèque requise : [`dist/AMOSPro_AGA.Lib` M19 P2d-L2b](../../dist/AMOSPro_AGA.Lib), **136 708 octets**, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, **100 commandes / 203 AP20**, cible **MC68020/68EC020 minimum**.
+- [Archive de test exacte](../../tests/passed/M19_P2_ALL_IN_ONE.asc) — **mêmes octets que l'exemple**, sans changement de noms, d'assets ou de logique. `LAST_GOOD` P2d protégée.
 
 ## Phases affichées
 
@@ -23,9 +23,9 @@ L'écran AGA est affiché directement via `Amos To Back`, puis fermé et rendu �
 
 ## Installation et lancement
 
-1. Installer la Lib **P2d** dans le slot AGA d'`APSystem` et **redémarrer AMOS Professional** ; sélectionner WinUAE AGA, CPU 68020 ou supérieur.
+1. Installer la Lib **P2d-L2b** dans le slot AGA d'`APSystem` et **redémarrer AMOS Professional** ; sélectionner WinUAE AGA, CPU 68020 ou supérieur.
 2. Ouvrir un programme AMOS **vierge**. Vérifier que les banques **24, 27 et 28** sont libres (elles seront utilisées et nettoyées par le programme).
-3. Choisir **Project → Merge ASCII** pour importer `BOB_ALL_IN_ONE.asc`. Exécuter en Runtime ou compiler **ce même ASC inchangé** avec AMOS Compiler.
+3. Choisir **Project → Merge ASCII** pour importer `BOB_ALL_IN_ONE.asc`. Exécuter en Runtime ; Compiler sur L2b reste à qualifier.
 4. Après exécution, sauvegarder le journal `RAM:` pertinent **avant tout reset ou nouvel essai**.
 
 | Mode | Journal |
@@ -55,3 +55,5 @@ Les **deux journaux transmis par l'auteur** présentent exactement les mêmes co
 **Attention :** les **121 refus initiaux de `Aga Swap`** ont été **tous récupérés après un VBL supplémentaire** ; ce compteur n'est pas nul et le diagnostic ne doit pas disparaître des futures versions. Cette réussite ne valide pas les performances ni l'absence de défaut sur toutes les configurations.
 
 **Statut : Gates B (Runtime) et C (vrai Compiler) PASS pour cet ASC et la Lib P2d testés sous WinUAE**, d'après les journaux fournis ; Gate D (matériel AGA physique) et interprétation stricte non testées. Aucune promotion de `LAST_GOOD`, aucune modification du binaire et aucune revalidation implicite des autres APIs.
+
+**24/11/2026 — L2b :** journal Runtime PASS transmis après la demande de régression sur la candidate exacte ; fichier identique au journal P2d du 21/11, attribution L2b par contexte (aucun SHA Lib dans le journal). 240 samples, 252 swaps, 121 refus récupérés, 8 collisions, 20 Flip, 10 Planes. Compiler L2b reporté ; les mesures historiques ci-dessus sont conservées comme P2d. [Qualification](../../docs/releases/0.14.1_QUALIFICATION.md).

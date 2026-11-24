@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## 24 novembre 2026 — Préparation de clôture 0.14.1
+
+[Qualification et dispositions résiduelles proposées](releases/0.14.1_QUALIFICATION.md). Identité L2b figée et notes/notice/INSTALL/README/exemples alignés ; aucune nouvelle modification de Lib. CI L0 requalifiée partiellement, derniers jobs à lire. C reportée, D non testée. Aucun test WinUAE supplémentaire demandé ; pas de promotion/publication ni de report résiduel accepté par défaut. Le vrai LHA reste à fabriquer et extraire après accord.
+
 ## 24 novembre 2026 — L4 Runtime PASS transmis, CI restantes
 
 L4 P2 ALL IN ONE Runtime : journal transmis par l'auteur à la suite de la demande de régression L2b, RESULT1 ERR0 PHASE_LAST4 PRG_STATE1, VALID_SAMPLES240 SWAPS252, PIX0/1=29/29, COL_CHECKS8, FLIP_PIX0/1=8/12, PLANES_PIX0/1=5/5, AUTO_ENABLE/DISABLE=1/1, 121 refus récupérés sur 121 en une VBL chacun, CLOSE_RETURNED1, VERDICT PASS. Source gelée c48d334fd4508d402d28399bffdfec08d4cb4acb. Le fichier fourni est strictement identique au journal P2d du 21/11 : 1632 octets, 97 CRLF, SHA256 864f6b17652033b99f06ec34df3ce85f3a1579bbb52c033d67d62e178852c627, blob 4bf3931fbaf487f7cee92b0768c22e925f981fe2. La nouvelle exécution est associée à L2b par le protocole et le contexte de transmission ; le journal ne porte pas le SHA de la Lib et ne permet pas d'attester seul une exécution distincte. Ne pas dupliquer les octets historiques, ni transférer le PASS Compiler P2d à L2b. [Journal identique](evidence/M19_P2_ALL_IN_ONE_RUNTIME_PASS_2026-11-21.TXT).

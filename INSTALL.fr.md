@@ -1,6 +1,6 @@
 # Installation d'AMOSPro AGA Extension
 
-**Candidate de test active M19 P2d-L2 (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 332 octets, SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, 100 commandes / 203 entrées AP20. Gate A PASS ; SafePort B/C PASS rapportés ; autres scénarios Runtime L2 PASS, Compiler reporté ; D physique non testée. **LAST_GOOD P2d protégée** : [136 020 octets](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`, preuves B/C historiques. Pas de release 0.14.1 ni promotion.
+**Candidate active M19 P2d-L2b (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, 100 commandes / 203 entrées AP20. Gate A PASS ; Pattern, cycles normaux de ressources et régression Bob Runtime PASS. Compiler L2b reporté, D physique non testée. [Qualification](docs/releases/0.14.1_QUALIFICATION.md). LAST_GOOD P2d protégée, 136 020 octets, SHA256 `ce5fb614c7acae9b1bb88e1d793d73dbe7ba747edc285acb7d9e72ac3104176f`. 0.14.1 non publiée.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 
@@ -9,7 +9,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 ## 1. Installer l'extension
 
 1. **Sauvegarder** ta configuration AMOS et toute ancienne bibliothèque, notamment le fichier de configuration de l'interpréteur (généralement `S:AMOSPro_Interpreter_Config`).
-2. Pour tester L2, sauvegarder la Lib installée, copier [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) sous APSystem: sous le même nom et dans le même slot, vérifier SHA256 `b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1`, redémarrer AMOS. WinUAE fonctionnel : 68030, JIT ON, AGA PAL. [Test et protocole](docs/AGA_L2_WINUAE_CAMPAIGN_2026-11-24.md).
+2. Pour tester L2b, sauvegarder la Lib installée, copier [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) sous APSystem: sous le même nom et dans le même slot, vérifier SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, redémarrer AMOS. WinUAE fonctionnel : 68030, JIT ON, AGA PAL. [Test et protocole](docs/releases/0.14.1_QUALIFICATION.md).
 3. Démarrer **AMOS Professional**. Dans **Config → Set Interpreter**, charger la configuration actuelle, puis ouvrir **Set Loaded Extensions**.
 4. Enregistrer `AMOSPro_AGA.Lib` dans le **slot d'extension 14 s'il est libre** (c'est le slot utilisé par les tests historiques du projet). Si le 14 est déjà pris, ne pas remplacer l'autre extension : choisir un slot libre en sachant que les anciens fichiers AMOS tokenisés dépendent du slot utilisé. Saisir le nom exact ou le chemin AmigaDOS complet, selon la configuration.
 5. **Sauvegarder la configuration de l'interpréteur**, quitter AMOS puis le relancer. Vérifier dans **AMOS → About Loaded Extensions** que l'extension AGA apparaît.
@@ -18,7 +18,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## 2. Prérequis et dépendance C2P
 
-**Prérequis de la candidate de test P2d-L2 (même CPU minimal que P2d) :** Amiga à chipset **AGA** (A1200/A4000 ou WinUAE configuré en AGA), processeur **Motorola 68020/68EC020 minimum** (pas de 68000 seul), AMOS Professional installé et suffisamment de **Chip RAM** pour l'écran AGA privé et ses buffers.
+**Prérequis de la candidate de test P2d-L2b (même CPU minimal que P2d) :** Amiga à chipset **AGA** (A1200/A4000 ou WinUAE configuré en AGA), processeur **Motorola 68020/68EC020 minimum** (pas de 68000 seul), AMOS Professional installé et suffisamment de **Chip RAM** pour l'écran AGA privé et ses buffers.
 
 **Bibliothèque supplémentaire pour le C2P :** [**c2p.library v1.9 d'Alimede Informatica sur Aminet**](https://aminet.net/package/dev/misc/c2plib) ([sources officielles](https://github.com/alimede/c2p.library)). C'est une bibliothèque partagée AmigaOS, **pas** une extension AMOS et elle n'est **pas** intégrée à `AMOSPro_AGA.Lib`.
 
@@ -55,7 +55,7 @@ Extension **non officielle** d'AMOS Professional pour les Amiga AGA (A1200/A4000
 
 ## Statut et droits
 
-**Statut actuel :** P2d-L2 candidate de test, Gate A PASS ; SafePort B/C PASS rapportés ; autres scénarios Runtime L2 PASS, Compiler reporté ; D physique non testée. LAST_GOOD P2d intacte. Sprites gelés. Aucune publication ni promotion.
+**Statut actuel :** P2d-L2b, validation native et scénarios Runtime documentés PASS. Compiler L2b reporté, Amiga physique non testé. LAST_GOOD P2d protégée ; Sprite gelé. Voir [qualification et limites](docs/releases/0.14.1_QUALIFICATION.md).
 
 **Code et exemples en ASCII :** [MIT](LICENSE). **`demo.iff` et autres graphismes :** [licence distincte](ASSETS_LICENSE.md), **pas sous MIT**. Aucun fan art tiers n'est nécessaire aux exemples.
 

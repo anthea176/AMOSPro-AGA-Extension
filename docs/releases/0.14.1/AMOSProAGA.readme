@@ -1,4 +1,4 @@
-Short:        AGA graphics and Bob engine fixes for AMOS Pro
+Short:        AGA graphics/Bob fixes for AMOS Pro
 Author:       HWARF (Jerome)
 Uploader:     amethist rumor786 passinbox com (Jerome)
 Type:         dev/amos
@@ -8,54 +8,50 @@ Architecture: m68k-amigaos
 Distribution: Aminet
 
 Description:
-  DRAFT - NOT FOR UPLOAD. Final library and validation pending.
+  PUBLICATION CANDIDATE - NOT FOR UPLOAD UNTIL APPROVED.
 
-  AMOSPro AGA Extension is an unofficial graphics extension for
-  AMOS Professional on AGA Amiga computers and AGA-enabled WinUAE.
-  Version 0.14.1 focuses on stability of the software Bob engine
-  and existing AGA graphics. No new commands are planned.
-  100 commands/functions, 203 AP20 entries, MC68020 minimum.
+  AMOSPro AGA Extension is an unofficial extension for AMOS
+  Professional on AGA Amiga computers and AGA-enabled WinUAE.
+  Version 0.14.1 is a stability and bug-fix update to 0.14.0.
+  No new commands: 100 commands/functions, 203 AP20 entries.
+  Motorola 68020/68EC020 minimum.
 
-  Fixes implemented in the P2d-L2 test candidate:
-    - Aga Iff Load acquires Safe before bitmap writes; returns
-      0 without drawing if Safe is unavailable.
-    - Aga Back Fill acquires Safe with up to three WaitTOF
-      retries; no drawing if Safe remains unavailable.
-    - First B8 Bob binding can acquire an available Safe reply
-      after Swap; READY/DIRTY and Swap contracts unchanged.
-    - Source provenance and regression tooling synchronization.
+  Fixes in P2d-L2b:
+    - Iff Load and Back Fill acquire Safe before bitmap writes.
+    - First B8 Bob binding acquires an available Safe reply.
+    - Screen Pattern draws on the Safe back buffer, not front,
+      with bounded waiting and no implicit Swap.
+    - Source provenance and regression tooling aligned.
 
-  Validation to date (24 Nov 2026, not final):
-    - Native Gate A: 172 writer cases and 10 Bob suites passed.
-    - Focused SafePort Runtime and Compiler PASS reported.
-    - P2 ALL IN ONE Runtime: 240 samples, 252 successful swaps,
-      120 refusals recovered. Compiler not retested on L2.
-    - EDGE SAFE with pre-VBL: 240/240, zero refusals, Runtime.
-    - RPG V9 with pre-VBL: 250 frames, 2 retries, Runtime.
-    - Full post-delivery CI and resource checks remain open.
-      Physical AGA hardware not tested.
-    - Final PASS does not mean zero initial Swap refusals.
+  Validation:
+    - Native Gate A: 184 Pattern cases, 172 writers, 10 Bob suites.
+    - WinUAE Runtime: Pattern, Open/Close, cursor, FICON/FICHIP,
+      AGBO/B8, AGPC, C2P, Copper, End and system font checks PASS.
+    - Memory stable after warmup in repeated lifecycle tests.
+    - Integrated Bob Runtime PASS supplied: 240 samples,
+      252 successful swaps, 121 initial refusals recovered.
+      Log matches historical P2d; L2b attribution contextual.
+    - Compiler, strict interpreted mode and physical Amiga
+      not requalified on L2b. Historical P2d B/C are separate.
+      Exceptional OS failures and bank ABA are not exhaustive.
+
+  Library:
+    M19 P2d-L2b, 136708 bytes, SHA256:
+    a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc
+    Internal ID: "$VER: AMOSPro_AGA M19 P2d-L2b".
 
   Installation:
-    Back up the existing AMOS library and configuration.
+    Back up the installed library and configuration.
     Install AMOSPro_AGA.Lib in APSystem, keep the existing
     extension slot, save configuration and restart AMOS.
     Import ASCII examples via Project / Merge ASCII.
-
-  Only the five C2P commands require c2p.library v1.9 in LIBS:.
+  Only the five C2P commands require c2p.library v1.9:
     https://aminet.net/package/dev/misc/c2plib
-  Aga Iff To Chunky and Bob functions do not require it.
-
-  Current test candidate (not final release identity):
-    M19 P2d-L2, 136332 bytes, SHA256:
-    b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1
-    Internal ID: "$VER: AMOSPro_AGA M19 P2d-L2".
-    Update identity and validation before upload.
+  Iff To Chunky and Bob functions do not require it.
 
   Hardware AGA Sprites are not included in this version.
-  Documentation and sources:
+  Source and docs:
     https://github.com/anthea176/AMOSPro-AGA-Extension
-
   Source and technical documentation: MIT License.
-  Artwork and other assets have separate terms; see ASSETS_LICENSE.md.
+  Artwork and assets: separate terms, see ASSETS_LICENSE.md.
   Developed by HWARF, with assistance from ChatGPT (OpenAI).

@@ -2,7 +2,7 @@
 
 ## 1. État actuel et objectif
 
-**Priorité : 0.14.1 — Stability & Bug Fixes**, sans nouvelle commande. [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md) · [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](releases/0.14.1/AMOSProAGA.readme).
+**Priorité : 0.14.1 — Stability & Bug Fixes**, sans nouvelle commande. [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md) · [Qualification](releases/0.14.1_QUALIFICATION.md) · [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](releases/0.14.1/AMOSProAGA.readme).
 
 | Domaine | Statut |
 | --- | --- |

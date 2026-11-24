@@ -50,3 +50,7 @@ L0 est un prérequis de mesure, non une permission implicite d'éditer CI. L1 es
 - Avant qualification finale : chaque anomalie critique corrigée ou explicitement démontrée non applicable, VM restantes attribuées à un test ou une décision justifiée ; journal et SHA du candidat ; régression intégrée et vrais modes B/C ; promotion distincte approuvée par l'auteur.
 
 **Décision actuelle : STOP au développement natif, pas STOP à la documentation.** Lecture planifiée terminée ; correction, exécution des tests, modification de scripts, promotion et Sprite nécessitent une nouvelle autorisation. Branches : main uniquement. Les deux Lib, tests, preuves et sources restent intacts.
+
+## Addendum — préparation de clôture 0.14.1
+
+[Qualification et dispositions résiduelles](releases/0.14.1_QUALIFICATION.md) : L1/L2/L2b, scénarios L3 normaux et L4 Runtime documentés ; L0 et décision de report des cas VM restent à établir. Cette proposition ne vaut ni nouvelle autorisation de code natif ni promotion.
