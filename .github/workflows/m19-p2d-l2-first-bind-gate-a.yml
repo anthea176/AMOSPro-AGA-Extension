@@ -51,5 +51,32 @@ jobs:
           make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
       - name: Exact L1 source identity then assemble L2 and execute combined MC68020
         run: python -B tools/test_m19_p2d_l2_first_bind_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
+      - name: Record source-assembled change ranges for exact authorized L2 delivery
+        env:
+          PYTHONPATH: tools
+        run: |
+          python -B - <<'PY'
+          import os
+          from hashlib import sha256
+          from pathlib import Path
+          from build_m19_p2d_l2_first_bind_in_memory import build_l2
+          from compiler_relocation import unpack_ap20
+          image, meta = build_l2(Path(os.environ['RUNNER_TEMP']) / 'vasm/vasmm68k_mot')
+          assert len(image) == 136332
+          assert sha256(image).hexdigest() == 'b2811e56c12be23697f0bb3c60dbf67f01bdecae0cfb23a787e2d349070f44a1'
+          _, p, title = unpack_ap20(image)
+          # Only the source-assembled changed instructions and helpers, never
+          # a downloadable library, workflow artifact or repository write.
+          for name, data in (
+              ('BACK_ENTRY', p[142][0xce8:0xcee]),
+              ('IFF_ENTRY', p[142][0xe88:0xe8e]),
+              ('UNIT142_TAIL', p[142][62740:]),
+              ('BOBS_ENTRY', p[202][48958:48962]),
+              ('BOBS_TAIL', p[202][60928:]),
+              ('TITLE', title),
+          ):
+              print('L2_SOURCE_DELTA', name, data.hex())
+          print('L2_EXACT_SHA', meta['sha256'])
+          PY
       - name: Protect canonical distribution and current campaign
         run: git diff --exit-code -- dist/ tests/current/ tests/passed/ src/native/m19_p2d/
