@@ -81,7 +81,13 @@ def build_s1p2k(vasm):
     prior_tok,prior_parts,prior_title=unpack_ap20(exact)
     assert updated==prior_tok and title==prior_title.replace(b'S1-P2j',b'S1-P2k')
     assert [i for i,(x,y) in enumerate(zip(prior_parts,newparts)) if x!=y]==[142,207]
-    assert pc16_displacements(prior_parts)==links
+    # Existing links are byte-stable; the three Sprite stubs move by
+    # exactly the group-207 size delta. Validate their actual signed PC16.
+    prior_links=pc16_displacements(prior_parts)
+    growth=len(newparts[207])-len(prior_parts[207])
+    assert set(prior_links)==set(links)
+    assert all(links[k]==v-(growth if k in (209,211,213) else 0)
+               for k,v in prior_links.items())
     return out,dict(meta,sha256=sha256(out).hexdigest(),bytes=len(out),
         git_blob=sha1(f'blob {len(out)}'.encode()+b'\0'+out).hexdigest(),
         commands=105,entries=214,native_sprite=len(native),sprite_at=at,

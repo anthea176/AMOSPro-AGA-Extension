@@ -10,3 +10,7 @@ P2h retenait AttemptSemaphore de la publication jusqu'au CloseScreen réussi. Sa
 
 ## Qualification
 Sources [public](../src/native/m19_s1/M19_S1P2K_PUBLIC_MC68020.s), [root](../src/native/m19_s1/M19_S1P2K_PERSIST_ROOT_MC68020.s), [Close/End](../src/native/m19_s1/M19_S1P2K_CLOSE_GUARD_MC68020.s), [reclaim](../src/native/m19_s1/M19_S1P2K_RECLAIM_MC68020.s). [Builder](../tools/build_m19_s1p2k_in_memory.py), [banc](../tools/test_m19_s1p2k_gate_a.py). Assemblage VASM MC68020 et tests CPU en attente de la CI ; OS simulé. Tests hérités P2j, timeout Safe/Disp Close/End, emprunt abandonné, refus OS, autre Task, schema v1. Aucun résultat Gate A P2k annoncé avant vérification. B/C/D P2k non testées. Aucun nouvel ASC actif, binaire ou archive. L'unique ASC P2j et ABK ne changent pas. Ne pas tester P2k avant qualification et autorisation de bascule.
+
+## Revue de raccordement
+
+r2 (c509b48) rétablit les deux spans de dispatch CloseScreen omis par le premier builder et la sortie sur débordement vers Leave. r3 ajuste la preuve PC16 : les trois stubs Sprite doivent suivre exactement la variation de taille du groupe207, tandis que tous les autres déplacements restent identiques. Aucun assouplissement de la limite PC16 ni des checks AP20. La perte d'un lien local pendant un écran encore ouvert (rechargement forcé) reste hors contrat : le registre n'est ni libéré ni réattaché par déduction d'adresse ; ce scénario doit faire l'objet d'un garde spécifique avant toute affirmation de sécurité sur un tel rechargement.
