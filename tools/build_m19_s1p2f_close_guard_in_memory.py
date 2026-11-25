@@ -116,7 +116,7 @@ def build_s1p2f(vasm, reclaim=False, persistent=False):
             shutil.copyfile(SRC/glue,folder/glue)
             g=folder/GUARD
             s=g.read_text(encoding='ascii')
-            old='    lea p2f_root(pc),a3\n    move.l (a3),d0\n    beq.w p2f_allow\n'
+            anchor_text='    lea p2f_root(pc),a3\n    move.l (a3),d0\n    beq.w p2f_allow\n'
             new=('    movea.l p2f_root(pc),a3\n    move.l a3,d0\n    beq.w p2f_allow\n'
                  '    movea.l $0004.w,a6\n    suba.l a1,a1\n    jsr -294(a6)\n'
                  '    tst.l d0\n    beq.w p2f_deny\n'
@@ -128,12 +128,12 @@ def build_s1p2f(vasm, reclaim=False, persistent=False):
                  '    move.l (a2),d0\n    beq.w p2f_deny\n'
                  '    cmp.l 12(a3),d0\n    bne.w p2f_deny\n'
                  '    move.l (a3),d0\n    beq.w p2f_deny\n')
-            assert s.count(old)==1
-            s=s.replace(old,new)
-            old='p2f_root:\n    dcb.b 16,0\n'
+            assert s.count(anchor_text)==1
+            s=s.replace(anchor_text,new)
+            anchor_text='p2f_root:\n    dcb.b 16,0\n'
             new='    include "'+glue+'"\np2f_root:\n    dc.l 0,$41475349,$00010010,0\n'
-            assert s.count(old)==1
-            g.write_text(s.replace(old,new),encoding='ascii')
+            assert s.count(anchor_text)==1
+            g.write_text(s.replace(anchor_text,new),encoding='ascii')
             g=folder/RECLAIM
             replace_once(g,'    lea p2f_root(pc),a3\n    tst.l (a3)\n',
                 '    movea.l p2f_root(pc),a3\n    move.l a3,d0\n')

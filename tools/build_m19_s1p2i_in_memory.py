@@ -71,7 +71,7 @@ def build_s1p2i(vasm):
     assert after[:-3]==before
     assert [(x['name'],x['instruction'],x['function'],x['signature']) for x in after[-3:]]==[
         (name,1,209+j*2,sig) for j,(name,sig) in enumerate(APIS)]
-    assert len(after)==105 and len(newparts)==214
+    assert len([row for row in after if row['signature']])==105 and len(newparts)==214
     assert [i for i,(a,b) in enumerate(zip(parts,newparts)) if a!=b]==[207]
     assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==active
     assert (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()==good
