@@ -22,3 +22,9 @@ Aucune nouvelle commande AMOS, aucun nouveau binaire de Lib, aucun ASC changé. 
 ## Qualification du composant et sonde suivante
 
 [Gate A composant](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634775) PASS : 44 scénarios, SAVED 2 images, FINAL 3 images, SHA256 du code VASM `e2eea0ba260089e2fbf80dc076dce45999fc85027ea5da031067dd3ebc1cb348`. [CPU/delivery](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634909) PASS. Les deux Lib passent le contrôle SHA256. Nouveau [banc palette](../tests/proto/sprite_s1_palette/README.md) source-only et préflight strict PASS, pas de nouvelle Lib. Le banc mesure le contexte V39 avant et après DB/cursor. Runtime de la sonde et preuve DMA toujours à établir.
+
+## Sonde palette et étape P2b
+
+**Sonde palette Runtime PASS (25/11/2026).** Journal original [1105 octets CRLF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2_PALETTE_RUNTIME_2026-11-25.TXT), SHA256 `dc332e6c6a17e05c9960bd65d3e3b75f07a7c5dc4483bb1da63876402b7b1b50`, blob `362878799bcaae3b1a70fe84ea34b0d81904de2d`. PRG_STATE 1, RESULT 1, ERR 0, SAMPLES 4, CLOSE_RETURNED 1. V40, VP Modes $5000, bases EVEN/ODD 16, résolution demandée 255, défaut 1, PF1_PRI 4. Les quatre états mesurés sont identiques. Attribution à P1i par contexte ; pas de SHA installé dans le log. Aucun transfert de PASS vers l'affichage ou le retrait DMA.
+
+[Affichage AGSP P2b préparé](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) : préflight PASS, Runtime NON TESTÉ. Pas de nouvelle Lib.

@@ -30,3 +30,7 @@ M21 Dual Playfield avant M20 AGTM : plans indépendants, palettes, DB, défileme
 ## 5. Règles et historique
 
 Un seul ASC actif, tests/passed protégés, prototypes uniquement tests/proto, exemples publics exclusivement examples. [Règles](../EXTENSION_SOURCE_RULES.md). [ROADMAP_HISTORY_2026-11-17.md](ROADMAP_HISTORY_2026-11-17.md) · [archive 23/11](history/ROADMAP_BEFORE_PROTOTYPE_SPLIT_2026-11-23.md) · [état détaillé avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/e7216b51960220d03561c1a6874849bdf104fec4/docs/ROADMAP.md). Les preuves datées restent dans les rapports et NEXT_SESSION.md ; ne pas recopier les journaux dans la roadmap.
+
+### S1-P2 — 25 novembre 2026
+
+Sonde palette Runtime PASS, [preuve originale](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2_PALETTE_RUNTIME_2026-11-25.TXT). [S1-P2b](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) sonde visuelle préparée sur P1i ; non testée. P2a reste source-only. Retrait DMA non prouvé, aucune bascule de Lib ni promotion. 

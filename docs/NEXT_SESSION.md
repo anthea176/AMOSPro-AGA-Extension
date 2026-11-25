@@ -1,8 +1,14 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2b — première image AGSP matérielle, sonde préparée
+
+**Sonde palette Runtime PASS (25/11/2026).** Journal original [1105 octets CRLF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2_PALETTE_RUNTIME_2026-11-25.TXT), SHA256 `dc332e6c6a17e05c9960bd65d3e3b75f07a7c5dc4483bb1da63876402b7b1b50`, blob `362878799bcaae3b1a70fe84ea34b0d81904de2d`. PRG_STATE 1, RESULT 1, ERR 0, SAMPLES 4, CLOSE_RETURNED 1. V40, VP Modes $5000, bases EVEN/ODD 16, résolution demandée 255, défaut 1, PF1_PRI 4. Les quatre états mesurés sont identiques. Attribution à P1i par contexte ; pas de SHA installé dans le log. Aucun transfert de PASS vers l'affichage ou le retrait DMA.
+
+[Rapport P2b](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) et [protocole test unique](../tests/proto/sprite_s1_display/README.md). Préflight strict local PASS ; WinUAE NON TESTÉ. Conserver P1i. Charger FINAL.ABK d'origine, image 3, copie Chip indépendante, Erase 29 avant affichage, paire 2/3 acquise par OS, 100 déplacements, blank, fermeture. **244 octets volontairement retenus après acquisition ; snapshot obligatoire et restauration après sauvegarde du log/captures.** Aucune preuve de libération DMA. Pas de nouvelle Lib ni de promotion.
+
 ## S1-P2a — préparation Chip source-only
 
-[Rapport et contrat](M19_S1_P2A_CHIP_PREPARATION_2026-11-24.md) : nouvelle routine MC68020 indépendante, validation AGSP P1i, allocation Chip privée, image entrelacée et blank, aucun pointeur source conservé. Banc CPU utilisant les ABK Runtime d'origine : [44 scénarios PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634775), [CPU/delivery PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634909). Prochain essai unique : [sonde palette GET](../tests/proto/sprite_s1_palette/README.md) sur la même Lib P1i (préflight strict local PASS, Runtime non testé). Aucun canal activé, aucune Lib remplacée. Verrou S0 de retrait DMA et palette réel avant API d'affichage. P1i capture PASS et LAST_GOOD L2b inchangées.
+[Rapport et contrat](M19_S1_P2A_CHIP_PREPARATION_2026-11-24.md) : nouvelle routine MC68020 indépendante, validation AGSP P1i, allocation Chip privée, image entrelacée et blank, aucun pointeur source conservé. Banc CPU utilisant les ABK Runtime d'origine : [44 scénarios PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634775), [CPU/delivery PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45497634909). [Sonde palette GET](../tests/proto/sprite_s1_palette/README.md) Runtime PASS ; voir P2b ci-dessus. Aucun canal activé, aucune Lib remplacée. Verrou S0 de retrait DMA et palette réel avant API d'affichage. P1i capture PASS et LAST_GOOD L2b inchangées.
 
 ## S1-P1i — Runtime capture AGSP PASS / préparation S1-P2
 
