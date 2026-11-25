@@ -26,12 +26,16 @@ UNIT=142
 SRC=ROOT/'src/native/m19_s1'
 GUARD='M19_S1P2F_CLOSE_GUARD_MC68020.s'
 RETIRE='M19_S1P2E_RETIRE_MC68020.s'
+RECLAIM='M19_S1P2G_RECLAIM_MC68020.s'
+P2F_SHA='fe054ed9a55804ea5427a6b10f749f5d1329b1910520c5aaff722b0f23037279'
+RECLAIM_PATCHES=((0x128,bytes.fromhex('4eaeffbe4292')),
+                 (0x886,bytes.fromhex('61004a424292')))
 WAIT='M19_UNIT142_R83_TARGET_WAIT_MC68020.s'
 END='M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s'
 PATCHES=((0x9d4,bytes.fromhex('6100000e6000ff46')),
          (0x9dc,bytes.fromhex('610000066000f808')))
 
-def build_s1p2f(vasm):
+def build_s1p2f(vasm, reclaim=False):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -42,7 +46,8 @@ def build_s1p2f(vasm):
     tok,old,title=unpack_ap20(parent)
     assert len(old)==208 and old[:203]==unpack_ap20(good)[1]
     prior=old[UNIT]
-    for offset,expected in PATCHES:
+    patches=PATCHES+RECLAIM_PATCHES if reclaim else PATCHES
+    for offset,expected in patches:
         assert prior[offset:offset+8]==expected,hex(offset)
     assert prior[0x5a:0x66]==bytes.fromhex('48e7fffe246d01c860000978')
     assert prior[0x7fa:0x806]==bytes.fromhex('48e7fffe246d01c8600001d0')
@@ -90,6 +95,21 @@ def build_s1p2f(vasm):
             shutil.copyfile(SRC/name,folder/name)
         with master.open('a',encoding='ascii') as f:
             f.write('\n    include "'+GUARD+'"\n')
+        if reclaim:
+            # Source-only, preserve each legacy six-byte span.
+            file=folder/'M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s'
+            old_close=('    jsr -66(a6)                                        ; +$000CE: 4EAEFFBE\n'
+                       '    clr.l (a2)                                         ; +$000D2: 4292\n')
+            replace_once(file,old_close,'    bra.l p2g_end_close\n')
+            file=folder/'M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s'
+            replace_once(file,
+                '    bsr.w ENTRY_LEGACY_HELPER_052CA_00000+UNIT142_R83_TARGET_BSR_52CA_DELTA\n',
+                '    bra.l p2g_public_close\n')
+            file=folder/'M19_UNIT142_R83_TARGET_BODY_MC68020.s'
+            replace_once(file,'    clr.l (a2)                                         ; +$00094: 4292\n','')
+            shutil.copyfile(SRC/RECLAIM,folder/RECLAIM)
+            replace_once(folder/GUARD,'p2f_root:\n',
+                         '    include "'+RECLAIM+'"\np2f_root:\n')
         new_image=assemble(vasm,folder)
     nt,np,ntitle=unpack_ap20(new_image)
     assert (nt,ntitle,len(np))==(bt,btitle,len(bp))
@@ -99,17 +119,19 @@ def build_s1p2f(vasm):
     assert new[-16:]==bytes(16)
     restored=bytearray(new[:len(prior)])
     targets=[]
-    for offset,original in PATCHES:
-        assert new[offset:offset+2]==b'\x60\xff' and new[offset+6:offset+8]==b'\x4e\x71'
+    for offset,original in patches:
+        assert new[offset:offset+2]==b'\x60\xff'
+        if len(original)==8:
+            assert new[offset+6:offset+8]==b'\x4e\x71'
         target=offset+2+unpack_from('>i',new,offset+2)[0]
         assert len(prior)<=target<len(new)-16 and target%2==0
         targets.append(target)
-        restored[offset:offset+8]=original
-    assert targets[0]!=targets[1] and bytes(restored)==prior
+        restored[offset:offset+len(original)]=original
+    assert len(set(targets))==len(targets) and bytes(restored)==prior
     parts=list(old)
     parts[UNIT]=new
     assert pc16_displacements(parts)==pc16_displacements(old)
-    candidate_title=title.replace(b'S1-P1i',b'S1-P2f')
+    candidate_title=title.replace(b'S1-P1i',b'S1-P2g' if reclaim else b'S1-P2f')
     assert candidate_title!=title
     candidate=repack_ap20(parent,tok,parts,candidate_title)
     assert unpack_ap20(candidate)==(tok,parts,candidate_title)
@@ -118,6 +140,8 @@ def build_s1p2f(vasm):
     assert [i for i,(a,b) in enumerate(zip(parts,old)) if a!=b]==[UNIT]
     assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==active
     assert (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()==good
+    if not reclaim:
+        assert sha256(candidate).hexdigest()==P2F_SHA, 'P2f source reconstruction drift'
     return candidate,dict(sha256=sha256(candidate).hexdigest(),bytes=len(candidate),
         unit142=len(new),root=len(new)-16,targets=targets,commands=102,entries=208,
         installable=False,runtime_tested=False,compiler_tested=False)
@@ -125,5 +149,7 @@ def build_s1p2f(vasm):
 if __name__=='__main__':
     cli=argparse.ArgumentParser(description=__doc__)
     cli.add_argument('--vasm',type=Path,required=True)
-    _,info=build_s1p2f(cli.parse_args().vasm)
-    print('S1P2F_CLOSE_END_SOURCE_IN_MEMORY',info,flush=True)
+    cli.add_argument('--reclaim',action='store_true')
+    args=cli.parse_args()
+    _,info=build_s1p2f(args.vasm,reclaim=args.reclaim)
+    print('S1P2G_RECLAIM_SOURCE_IN_MEMORY' if args.reclaim else 'S1P2F_CLOSE_END_SOURCE_IN_MEMORY',info,flush=True)

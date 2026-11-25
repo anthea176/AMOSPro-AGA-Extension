@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2g — réclamation Chip expérimentale après vrai CloseScreen, CI à relever
+
+[Rapport](M19_S1_P2G_RECLAIM_2026-11-25.md) · [source](../src/native/m19_s1/M19_S1P2G_RECLAIM_MC68020.s) · [banc CPU](../tools/test_m19_s1p2g_reclaim_cpu.py). P2f [40 scénarios MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915), candidate SHA256 fe054ed9a55804ea5427a6b10f749f5d1329b1910520c5aaff722b0f23037279, UNIT142 64450. Builder P2f option reclaim=True ; deux wrappers CloseScreen réels, reçu BOOL, refus si fermeture échoue. Après succès : condition stricte ActiView=0 / LOF-SHF attente / Sprite neutre, P2e et relecture, FreeVec privé seulement si garde réussie ; sinon pending. Pas de preuve DMA universelle, pas de producteur public, persistance hors code en cas d'unload encore à réaliser. CI P2g à relever, aucun test WinUAE demandé, P1i/LAST_GOOD inchangées.
+
 ## S1-P2f — Close/End guard intégré en source, CI à relever
 
 [Rapport](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md) · [builder](../tools/build_m19_s1p2f_close_guard_in_memory.py) · [banc CPU](../tools/test_m19_s1p2f_close_guard_cpu.py). P2e Gate A composant [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45674243613), politique CPU/livraison PASS. P2f reconstitution source de UNIT142 sur P1i exacte, deux BRA.L/NOP dans les spans $9D4/$9DC, signatures Close/End et autres unités conservées ; garde propriétaire Sprite avant teardown VP, pas de changement callbacks Bob. Racine sans producteur public, refus si canaux encore détenus, conservation du record et de la Chip exposée. Pas de FreeVec, réclamation et producteur encore bloquants. P2f CI à relever, B/C/D non testées. Lib P1i et LAST_GOOD intactes ; aucun test WinUAE demandé. Roadmap condensée pour corriger son garde de longueur.

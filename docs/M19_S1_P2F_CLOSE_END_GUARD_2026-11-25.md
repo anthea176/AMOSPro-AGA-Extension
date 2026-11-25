@@ -17,3 +17,7 @@ Racine privée (record, propriétaire A5, State, Screen) initialisée à zéro e
 ## Tests et reste à faire
 
 [Banc de routes](../tools/test_m19_s1p2f_close_guard_cpu.py) : exécute réellement les deux entrées Close/End reassemblées et la routine P2e sur MC68020, OS simulé ; intercepte la continuation historique avant destruction OS, revient par son vrai épilogue. Vérifie ABI/stack/canaries, appel du helper original uniquement si autorisé, root conservée, états privés/retirés, absence de record, acquisition partielle, refus de propriétaire, VP, gfx, layout, blank, reprise après restitution, référence post-release et canal réacquis par un tiers. CI P2f à relever ; aucune preuve réelle de fermeture de cette candidate et aucune Gate B/C/D. Aucun nouveau test manuel. La prochaine étape reste le mécanisme de réclamation de la Chip exposée (y compris End/unload, listes dynamiques et preuve OS), la politique de palette, puis le producteur et les tokens approuvés. Pas de livraison installable avec une quarantaine non bornée ; ne pas faire passer ce garde source-only pour un moteur Sprite achevé.
+
+## Qualification P2f
+
+[CI PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915) sur 80768607dc2e1625cb5d1a652d5a499489035657. P2a 44, P2e 32, P2f 40 scénarios MC68020, SHA256 P2f fe054ed9a55804ea5427a6b10f749f5d1329b1910520c5aaff722b0f23037279, 144084 octets, UNIT142 64450, root 64434, 102 commandes/208 AP20. Pas de Runtime ni Compiler. Suite : [P2g](M19_S1_P2G_RECLAIM_2026-11-25.md).
