@@ -1,10 +1,12 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## S1-P2b — première image AGSP matérielle, sonde préparée
+## S1-P2b — affichage AGSP Runtime PASS / S1-P2c à qualifier
 
 **Sonde palette Runtime PASS (25/11/2026).** Journal original [1105 octets CRLF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2_PALETTE_RUNTIME_2026-11-25.TXT), SHA256 `dc332e6c6a17e05c9960bd65d3e3b75f07a7c5dc4483bb1da63876402b7b1b50`, blob `362878799bcaae3b1a70fe84ea34b0d81904de2d`. PRG_STATE 1, RESULT 1, ERR 0, SAMPLES 4, CLOSE_RETURNED 1. V40, VP Modes $5000, bases EVEN/ODD 16, résolution demandée 255, défaut 1, PF1_PRI 4. Les quatre états mesurés sont identiques. Attribution à P1i par contexte ; pas de SHA installé dans le log. Aucun transfert de PASS vers l'affichage ou le retrait DMA.
 
-[Rapport P2b](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) et [protocole test unique](../tests/proto/sprite_s1_display/README.md). Préflight strict local PASS ; WinUAE NON TESTÉ. Conserver P1i. Charger FINAL.ABK d'origine, image 3, copie Chip indépendante, Erase 29 avant affichage, paire 2/3 acquise par OS, 100 déplacements, blank, fermeture. **244 octets volontairement retenus après acquisition ; snapshot obligatoire et restauration après sauvegarde du log/captures.** Aucune preuve de libération DMA. Pas de nouvelle Lib ni de promotion.
+[Rapport P2b](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) et [protocole test unique](../tests/proto/sprite_s1_display/README.md). Préflight strict local PASS ; Runtime P2b PASS pour la séquence visuelle. Conserver P1i. Charger FINAL.ABK d'origine, image 3, copie Chip indépendante, Erase 29 avant affichage, paire 2/3 acquise par OS, 100 déplacements, blank, fermeture. **244 octets volontairement retenus après acquisition ; snapshot obligatoire et restauration après sauvegarde du log/captures.** Aucune preuve de libération DMA. Pas de nouvelle Lib ni de promotion.
+
+**25/11/2026 — Gate B Runtime P2b PASS, scénario d'affichage/retrait visuel uniquement.** [Journal original](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2B_AGSP_RUNTIME_2026-11-25.TXT) : 379 octets, 14 CRLF, SHA256 `ed3d5be70927342eabf6cca6915eda8fe153cd5648296d21d1915d0f24028d5d`, blob `bda744907449d40819ba6f02dc44258a2c3712d0`. PRG_STATE 1, RESULT 1, ERR 0, SOURCE_ERASED 1, PALETTE_OK 1, MOVES 100, BLANK_SET 1, BLANK_VBL 150, FREES 2, CLOSE_RETURNED 1, CHIP_HELD 244, DMA_FREE_PROVEN 0. L'auteur confirme oralement dans la conversation (réponse « oui ») le déplacement visible à droite, la disparition et le retour AMOS ; aucune capture fournie. Lib P1i attribuée par le contexte, SHA installé non mesuré. Aucun transfert de PASS au détachement DMA, au natif P2a, au Compiler ou au matériel. ASC P2b blob `8927457a659d16a25d4f63138eeefe75dece1a84` conservé. P2c autorisée par « go! » : audit DMA et Copper, aucune nouvelle Lib ni promotion.
 
 ## S1-P2a — préparation Chip source-only
 
