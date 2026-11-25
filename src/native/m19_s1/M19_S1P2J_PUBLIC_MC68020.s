@@ -79,6 +79,10 @@ p2i_sprite:
     move.l I_IMAGE(a2),d0
     cmp.l 36(a4),d0
     bne.w p2i_end
+    ; No second publication after any retirement in this candidate.
+    move.l #-140,I_PHASE(a2)
+    cmpi.l #15,12(a4)
+    bne.w p2i_end
     move.l #-128,I_PHASE(a2)
     bsr.w p2i_geometry
     tst.l d0
@@ -86,12 +90,7 @@ p2i_sprite:
     bsr.w p2i_palette
     tst.l d0
     beq.w p2i_end
-    movea.l I_REC(a2),a4
-    cmpi.l #15,12(a4)
-    beq.w p2i_move
-    ; No second publication after any retirement in this candidate.
-    move.l #-140,I_PHASE(a2)
-    bra.w p2i_end
+    bra.w p2i_move
 
 p2i_new:
     move.l #-120,I_PHASE(a2)

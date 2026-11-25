@@ -1,11 +1,11 @@
 ; AGA_NATIVE_MIN_CPU: MC68020
 ; P2j: only private, NEVER exposed allocations can be freed.
 ; Uses P2f root and P2e. Included before p2f_root in disposable source.
-; No public producer. Future producer MUST own two separate AllocVec
-; allocations (P2e Chip and 28-byte record), with a persistent receipt.
+; P2j producer owns two separate AllocVec allocations (Chip + 40-byte
+; record), with a persistent receipt. No reclaim after exposure.
 ; Only OS-managed SimpleSprite 2/3; no private pointer export, external
 ; ChangeSprite, custom DMA/Copper publication or concurrent owner calls.
-; Closed-view predicate is deliberately restrictive, pending real gates.
+; Successful CloseScreen alone does not prove that DMA has detached.
 ; root+12 becomes zero ONLY on receipt of successful CloseScreen.
 ; FreeVec is not a result of FreeSprite alone or of a caller's Screen=0.
 
@@ -110,7 +110,7 @@ p2g_release:
     bcs.w p2g_reject
     bra.w p2g_clear
 p2g_record_below:
-    addi.l #28,d1
+    addi.l #40,d1
     bcs.w p2g_reject
     cmp.l d1,d0
     bcs.w p2g_reject

@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2j — P2i rejetée en Runtime, correctif diagnostique source-only
+
+[Audit et correctif](M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md). [Journal original](evidence/M19_S1_PUBLIC_RUNTIME_2026-11-25.TXT) FAIL ERR10, 0 mouvements, Chip -170744, Fast -9128, fermeture non documentée. Auteur « ok go » : corriger le natif et la campagne, ne pas modifier LAST_GOOD. P2j reproduit l'ordre P2b, retire la vérification prématurée de la table privée, retourne les motifs de refus, ne libère AUCUNE Chip exposée, conserve un seul ensemble pending (reset pour nouvel essai). Gate A P2j réelle ABK image3, DB/window, publication différée et régressions ; CI à relever. ASC préflight PASS sous tests/proto/sprite_s1_p2j ; ne pas exécuter avec P2i. B/C/D NON TESTÉES. Dist P2i rejetée encore présente pendant qualification. Ancien état ci-dessous historique.
+
 ## S1-P2i — intégration publique, Lib livrée
 
 S1-P2i livrée sur main dans dist/AMOSPro_AGA.Lib : 149384 octets, SHA256 `89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96`, blob `fde85e98c3209e8affc6044532d68bfa8bba4006`, 105 commandes / 214 AP20, MC68020+. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541) sur 7bf4504f845892b9cab7d0fca40569bfde49ea2e : 34 scénarios Sprite (17 dans chaque modèle AP20), 184 Pattern, 172 SafePort, 10 suites Bob, chaîne DB/IFF/Swap/capture dans les deux modèles. UNIT142 65194 octets, groupe Sprite natif 10558 octets. B/C/D réelles non testées ; aucune preuve DMA matérielle nouvelle. LAST_GOOD L2b inchangée (blob 2809b4b409eea9e234df1b96bf2b08bd393d8c85). Test actif : tests/current/SPRITE_PUBLIC.asc et AGSP_S1P1E_FINAL.ABK ; T06 conservé dans tests/proto/t06_pattern.

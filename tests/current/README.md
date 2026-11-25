@@ -1,3 +1,7 @@
+# S1-P2i — banc public Sprite REJETÉ
+
+**Ne pas relancer.** [Journal Runtime FAIL](../../docs/evidence/M19_S1_PUBLIC_RUNTIME_2026-11-25.TXT), ERR10, 0 déplacements. [Audit P2j](../../docs/M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md). La candidate de remplacement est en qualification, aucune promotion. Ancien protocole conservé ci-dessous comme référence historique.
+
 # S1-P2i — banc public Sprite
 
 **Lib S1-P2i active : 149 384 octets, SHA256 89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541).** Ce banc utilise les trois nouveaux tokens S1-P2i. Source : SPRITE_PUBLIC.asc (4 049 octets, SHA256 35eeedccf9acf979a0a15bf64c3025459d335346b63396deb9f6e01b470f10b3), préflight strict local PASS. Runtime/Compiler non testés.
