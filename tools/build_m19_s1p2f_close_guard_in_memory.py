@@ -35,8 +35,9 @@ END='M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s'
 PATCHES=((0x9d4,bytes.fromhex('6100000e6000ff46')),
          (0x9dc,bytes.fromhex('610000066000f808')))
 
-def build_s1p2f(vasm, reclaim=False, persistent=False):
+def build_s1p2f(vasm, reclaim=False, persistent=False, probe=False):
     assert not persistent or reclaim
+    assert not probe or persistent
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -93,7 +94,8 @@ def build_s1p2f(vasm, reclaim=False, persistent=False):
         assert s.count('    bra.w ENTRY_LEGACY_CLOSE_CORE_00190+UNIT142_R83_TARGET_WAIT_BRA_DELTA')==1
         f.write_text('    bra.l p2f_program_end\n    nop\n',encoding='ascii')
         for name in (GUARD,RETIRE):
-            shutil.copyfile(SRC/name,folder/name)
+            origin='M19_S1P2J_RETIRE_MC68020.s' if probe and name==RETIRE else name
+            shutil.copyfile(SRC/origin,folder/name)
         with master.open('a',encoding='ascii') as f:
             f.write('\n    include "'+GUARD+'"\n')
         if reclaim:
@@ -108,7 +110,8 @@ def build_s1p2f(vasm, reclaim=False, persistent=False):
                 '    bra.l p2g_public_close\n')
             file=folder/'M19_UNIT142_R83_TARGET_BODY_MC68020.s'
             replace_once(file,'    clr.l (a2)                                         ; +$00094: 4292\n','')
-            shutil.copyfile(SRC/RECLAIM,folder/RECLAIM)
+            origin='M19_S1P2J_RECLAIM_MC68020.s' if probe else RECLAIM
+            shutil.copyfile(SRC/origin,folder/RECLAIM)
             replace_once(folder/GUARD,'p2f_root:\n',
                          '    include "'+RECLAIM+'"\np2f_root:\n')
         if persistent:
@@ -160,7 +163,7 @@ def build_s1p2f(vasm, reclaim=False, persistent=False):
     parts=list(old)
     parts[UNIT]=new
     assert pc16_displacements(parts)==pc16_displacements(old)
-    candidate_title=title.replace(b'S1-P1i',b'S1-P2i' if persistent else (b'S1-P2g' if reclaim else b'S1-P2f'))
+    candidate_title=title.replace(b'S1-P1i',b'S1-P2j' if probe else (b'S1-P2i' if persistent else (b'S1-P2g' if reclaim else b'S1-P2f')))
     assert candidate_title!=title
     candidate=repack_ap20(parent,tok,parts,candidate_title)
     assert unpack_ap20(candidate)==(tok,parts,candidate_title)
