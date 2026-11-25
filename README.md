@@ -19,11 +19,9 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 S1-P2j — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **148,296 bytes**, SHA256 `47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45690711843); actual B/C/D not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2j — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **148,296 bytes**, SHA256 `47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45690711843); limited Runtime PASS after reset; actual Compiler/hardware not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
-**Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), same folder. [Protocol](tests/current/README.md). [Preserved T06](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc).
-
-**P2j diagnostic only:** one trial per reset/snapshot, deliberate DMA retention. [Report](docs/M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md). P2i rejected ERR10.
+**Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), same folder. [Protocol](tests/current/README.md). [Preserved T06](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). One trial per reset/snapshot; deliberate DMA retention. [Diagnostic report](docs/M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md).
 
 **Historical regression:** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc), validated on P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [Installation](INSTALL.md) · [Progress](docs/NEXT_SESSION.md).
 **Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands in 0.14.1; S1-P2j development for 0.15.0 is separate.

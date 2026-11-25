@@ -2,7 +2,7 @@
 
 ## S1-P2k — verrou transactionnel, développement source-only
 
-[Rapport](M19_S1_P2K_TRANSACTION_2026-11-25.md). Auteur « ok oui ». P2j Runtime PASS après reset (100 mouvements, Close confirmé, rétention 200 Chip/168 Fast ; DMA_FREE_PROVEN 0), premier essai sans reset FAIL -132. P2k source-only : un emprunt par appel, propriétaire de vie distinct, libération sur timeout Close/End et CloseScreen FALSE, même registre nommé schema v2, refus des emprunts interrompus, aucune récupération exposée. P2k r4 traite également la perte du lien local : refus conservateur Off/Close si le Screen appartient encore à un registre orphelin ; garde CPU/livraison PASS sur r3, Gate A intégrée r4 à relever. B/C/D P2k non testées. P2j et LAST_GOOD L2b protégées ; ASC courant inchangé. Aucune bascule ni promotion.
+[Rapport](M19_S1_P2K_TRANSACTION_2026-11-25.md). Auteur « ok oui ». P2j Runtime PASS après reset (100 mouvements, Close confirmé, rétention 200 Chip/168 Fast ; DMA_FREE_PROVEN 0), premier essai sans reset FAIL -132. P2k source-only : un emprunt par appel, propriétaire de vie distinct, libération sur timeout Close/End et CloseScreen FALSE, même registre nommé schema v2, refus des emprunts interrompus, aucune récupération exposée. P2k r4 traite également la perte du lien local : refus conservateur Off/Close si le Screen appartient encore à un registre orphelin ; garde CPU/livraison PASS sur r4 ; Gate A r3 PASS (54+8 Sprite/transaction, 184 Pattern, 172 SafePort, 10 suites Bob). r4 : Gate A intégrée en cours au dernier contrôle ; aucun résultat revendiqué. B/C/D P2k non testées. P2j et LAST_GOOD L2b protégées ; ASC courant inchangé. Aucune bascule ni promotion.
 
 ## S1-P2j — Lib active, Gate A PASS / Gate B limitée PASS après reset
 
