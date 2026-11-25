@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2d — audit OS automatique prêt, NON TESTÉ
+
+[Deux fichiers et protocole](../tests/proto/sprite_s1_os_audit/README.md) · [Rapport](M19_S1_P2D_OS_AUDIT_2026-11-25.md). P1i inchangée, Runtime uniquement, snapshot puis exécution sans debugger, transmettre RAM:M19_S1P2D_OS_RUNTIME.TXT. Six relevés copinit/SimpleSprites (positifs image et blank, puis retrait). LOF/SHF adresses seules, pas de parcours non borné. Préflight local strict PASS. DMA_FREE_PROVEN 0, 244 octets retenus. P2c preuve et source intactes. Aucun nouveau binaire.
+
 ## S1-P2c — séquence Runtime PASS, observation DMA INCONCLUSIVE
 
 [P2c : protocole et deux fichiers](../tests/proto/sprite_s1_dma/README.md), [rapport](M19_S1_P2C_DMA_OBSERVATION_2026-11-25.md). P1i inchangée. Préflight strict local PASS sur l'ASC exact. Reprendre le test unique P2c avec JIT OFF, 68030/AGA PAL, snapshot, marqueurs 01 actif / 02 fermé / 03 après 300 WaitTOF. Contrôle positif sur les lectures Sprite DMA, puis surveillance de la même plage de 248 octets après fermeture. Journal et preuves debugger obligatoires ; pas de FreeVec après exposition, DMA_FREE_PROVEN 0. Aucune Gate B/C/D sur P2c, aucun changement de Lib ni promotion. L'ASC P2b validé est conservé intégralement.
