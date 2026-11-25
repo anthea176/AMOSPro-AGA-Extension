@@ -11,7 +11,7 @@ from ap20_v2_island_dispatch import pc16_displacements
 from compiler_relocation import GETP,RBSR,repack_ap20,unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from build_m19_s1p2f_close_guard_in_memory import build_s1p2f,ROOT,SRC
-from active_library import S1P1I_SHA,P2DL2B_SHA
+from active_library import S1P1I_SHA,S1P2I_SHA,P2DL2B_SHA,verify_s1p2i
 MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 APIS=(('aga sprite','00,0,0,0'),('aga sprite off','00'),('aga sprite bank free','00'))
 
@@ -19,7 +19,7 @@ def build_s1p2i(vasm):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest()==S1P1I_SHA
+    assert sha256(active).hexdigest() in (S1P1I_SHA,S1P2I_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     parent,meta=build_s1p2f(vasm,reclaim=True,persistent=True)
     tok,parts,title=unpack_ap20(parent)
@@ -75,6 +75,9 @@ def build_s1p2i(vasm):
     assert [i for i,(a,b) in enumerate(zip(parts,newparts)) if a!=b]==[207]
     assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==active
     assert (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()==good
+    verify_s1p2i(out,good)
+    if sha256(active).hexdigest()==S1P2I_SHA:
+        assert out==active
     return out,dict(meta,sha256=sha256(out).hexdigest(),bytes=len(out),
         git_blob=sha1(f'blob {len(out)}'.encode()+b'\0'+out).hexdigest(),
         commands=105,entries=214,native_sprite=len(native),sprite_at=at,

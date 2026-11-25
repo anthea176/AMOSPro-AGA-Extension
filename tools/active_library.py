@@ -56,8 +56,9 @@ S1P1F_SHA="dffe70c5550a4387b99901a2431892a2a7d6fe67328ab7cff8f69afd7ad91931"  # 
 S1P1G_SHA="29788993d299c47d923ddce45ae2c9ae2cc3c98e510989a6975db3a3d10c6f66"  # S1-P1g AP20 instruction-signature correction, 24/11/2026
 S1P1H_SHA="900646cc208cc99095c81c209276579a28dbcbbcbd43dd10c4e93be35d2e05eb"  # Historical P1h Gate A 45481353847; Runtime B FAIL ERR 9
 S1P1I_SHA="2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3"  # Full native Gate A 45492646401; real B/C/D pending
-SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA)
-SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA))
+S1P2I_SHA="89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96"  # Exact integrated Gate A 45682158541
+SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA)
+SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA))
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -292,6 +293,57 @@ def verify_s1p1i(candidate: bytes, protected: bytes):
     assert len([row for row in walk_tokens(tok) if row['signature']]) == 102
 
 
+def frozen_s1p1i(candidate: bytes, protected: bytes) -> bytes:
+    """Recover exact historical P1i from protected L2b and the pinned P2i prefix."""
+    from audit_ap20 import token
+    from compiler_relocation import repack_ap20, unpack_ap20
+    from compiler_bridge_v2_probe import DISPATCH_V2
+    from build_m19_s1p1f_l2b_get_sprite_ap20 import TITLE as parent_title
+    assert sha256(candidate).hexdigest() == S1P2I_SHA
+    assert sha256(protected).hexdigest() == P2DL2B_SHA
+    oldtok, old, _ = unpack_ap20(protected)
+    _, parts, _ = unpack_ap20(candidate)
+    assert len(old)==203 and len(parts)==214
+    tok=oldtok[:-6]+token('aga sprite bank',204,1,'I0')+token(
+        'get aga sprite',206,1,'I0,0,0,0,0,0')+oldtok[-6:]
+    p=[*old,*parts[203:207],parts[207][:len(DISPATCH_V2)+6126]]
+    prior=repack_ap20(protected,tok,p,parent_title.replace(b'S1-P1f',b'S1-P1i'))
+    verify_s1p1i(prior,protected)
+    return prior
+
+
+def verify_s1p2i(candidate: bytes, protected: bytes):
+    """Verify the exact integrated Sprite binary qualified by Gate A."""
+    from audit_ap20 import inspect, parse, token, token_role_issues, walk_tokens
+    from compiler_relocation import GETP, RBSR, unpack_ap20
+    from compiler_bridge_v2_probe import DISPATCH_V2
+    from ap20_v2_island_dispatch import pc16_displacements
+    from struct import pack
+    assert len(candidate)==149384 and sha256(candidate).hexdigest()==S1P2I_SHA
+    prior=frozen_s1p1i(candidate,protected)
+    ot,old,otitle=unpack_ap20(prior)
+    tok,parts,title=unpack_ap20(candidate)
+    assert len(parts)==214 and len(parts[142])==65194
+    assert [i for i,(x,y) in enumerate(zip(old,parts)) if x!=y]==[142,207]
+    assert parts[207].startswith(old[207])
+    assert len(parts[207])==len(DISPATCH_V2)+10558
+    assert parts[142][-16:]==bytes.fromhex('00000000414753490001001000000000')
+    assert title==otitle.replace(b'S1-P1i',b'S1-P2i')
+    apis=(('aga sprite','00,0,0,0'),('aga sprite off','00'),('aga sprite bank free','00'))
+    assert tok==ot[:-6]+b''.join(token(n,1,209+2*j,sig) for j,(n,sig) in enumerate(apis))+ot[-6:]
+    for j in range(3):
+        assert parts[208+j*2]==GETP
+        assert parts[209+j*2]==RBSR+pack('>HH',207,6126+4*j)+bytes.fromhex('4e75')
+    baseline=pc16_displacements(old)
+    links=pc16_displacements(parts)
+    assert set(links)==set(baseline)|{209,211,213}
+    assert all(links[k]==v for k,v in baseline.items())
+    assert max(map(abs,links.values()))==10622
+    audit=inspect(parse(candidate))
+    assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    assert len([row for row in walk_tokens(tok) if row['signature']])==105
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -303,6 +355,10 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S1P2I_SHA:
+        frozen_p2d(good)
+        verify_s1p2i(cur, good)
+        return cur, good, "M19 S1-P2i integrated Sprite ACTIVE TEST CANDIDATE; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S1P1I_SHA:
         frozen_p2d(good)
         verify_s1p1i(cur, good)

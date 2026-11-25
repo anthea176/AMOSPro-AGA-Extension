@@ -1,8 +1,10 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## S1-P2i — intégration publique, Gate A complète en cours
+## S1-P2i — intégration publique, Lib livrée
 
-Auteur autorise la livraison de la Lib de travail après Gate A, LAST_GOOD intacte. [Rapport](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) · [builder](../tools/build_m19_s1p2i_in_memory.py) · [banc](../tools/test_m19_s1p2i_gate_a.py). Trois fonctions Sprite, Off, Bank Free, copie Chip P2a, retrait P2e, récupération conditionnelle P2g, registre P2h et pont Close/End. Palette explicite 21..23 déjà concordante, aucun changement palette, paire 2/3, un N/I par écran. Candidate en mémoire, CI à relever ; dist P1i encore active, B/C/D non testées.
+S1-P2i livrée sur main dans dist/AMOSPro_AGA.Lib : 149384 octets, SHA256 `89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96`, blob `fde85e98c3209e8affc6044532d68bfa8bba4006`, 105 commandes / 214 AP20, MC68020+. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541) sur 7bf4504f845892b9cab7d0fca40569bfde49ea2e : 34 scénarios Sprite (17 dans chaque modèle AP20), 184 Pattern, 172 SafePort, 10 suites Bob, chaîne DB/IFF/Swap/capture dans les deux modèles. UNIT142 65194 octets, groupe Sprite natif 10558 octets. B/C/D réelles non testées ; aucune preuve DMA matérielle nouvelle. LAST_GOOD L2b inchangée (blob 2809b4b409eea9e234df1b96bf2b08bd393d8c85). Test actif : tests/current/SPRITE_PUBLIC.asc et AGSP_S1P1E_FINAL.ABK ; T06 conservé dans tests/proto/t06_pattern.
+
+[Rapport](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) · [Protocole Runtime](../tests/current/README.md) · [builder](../tools/build_m19_s1p2i_in_memory.py). Prochaine action : Runtime seul, sans debugger. Journal RAM:M19_S1_PUBLIC_RUNTIME.TXT. CI après activation à relever.
 
 ## S1-P2h — registre persistant, étape CPU PASS
 

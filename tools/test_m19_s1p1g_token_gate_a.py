@@ -8,7 +8,7 @@ from hashlib import sha1, sha256
 from pathlib import Path
 import subprocess
 
-from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, verify_s1p1g, verify_s1p1h, verify_s1p1i
+from active_library import P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, verify_s1p1g, verify_s1p1h, verify_s1p1i, S1P2I_SHA, frozen_s1p1i
 from audit_ap20 import inspect, parse, token_role_issues, walk_tokens
 from build_m19_s1p1g_l2b_get_sprite_ap20 import correct_s1p1f
 from compiler_relocation import unpack_ap20
@@ -24,6 +24,9 @@ def main():
     active = (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes()
     good = (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert sha256(good).hexdigest() == P2DL2B_SHA
+    installed=active
+    if sha256(active).hexdigest()==S1P2I_SHA:
+        active=frozen_s1p1i(active,good)
     digest = sha256(active).hexdigest()
     if digest == S1P1F_SHA:
         parent = active
@@ -63,7 +66,7 @@ def main():
     assert blob == 'b45ea91d9d2133ed90704305a8da34cbee339507'
     if digest == S1P1G_SHA:
         assert image == active
-    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == active
+    assert (ROOT / 'dist/AMOSPro_AGA.Lib').read_bytes() == installed
     assert (ROOT / 'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes() == good
     print('S1P1G_TOKEN_GATE_A_PASS', len(rows), len(parts), len(image),
           sha256(image).hexdigest(), blob, flush=True)

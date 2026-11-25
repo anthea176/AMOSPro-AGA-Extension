@@ -6,9 +6,9 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [S1-P1i](../dist/AMOSPro_AGA.Lib), 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, 102 commandes / 208 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401) ; B capture AGSP PASS, C/D non testées. |
-| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P1i ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
-| ASC unique | [T06_PATTERN_TARGET.asc](../tests/current/T06_PATTERN_TARGET.asc), T06A/T06B Runtime PASS. Les sondes complémentaires restent dans tests/proto. [Campagne](../tests/current/README.md). |
+| Lib de travail | [S1-P2i](../dist/AMOSPro_AGA.Lib), 149384 octets, SHA256 `89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96`, 105 commandes / 214 AP20, MC68020+. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541) ; B/C/D réelles non testées. |
+| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P2i ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
+| ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](../tests/current/AGSP_S1P1E_FINAL.ABK). Runtime à tester ; [T06 conservé](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
 
 ## 2. Clôture du socle 2D
@@ -30,7 +30,7 @@
 - [P2f](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md) garde Close/End source-only, [40 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915).
 - [P2g](M19_S1_P2G_RECLAIM_2026-11-25.md) récupération expérimentale après vrai CloseScreen et garde Copper/OS ; r1 FAIL builder (8/6 octets), r2 [30 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45679517861). Persistance pending après unload, palette, producteur et API restent à qualifier. Aucun nouveau token/binaire, pas de debugger manuel.
 - [P2h](M19_S1_P2H_PERSISTENT_ROOT_2026-11-25.md) registre Exec persistant source-only, suppression si vide, emprunt non bloquant ; [étape CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45680011267), raccordement aux chemins Close/End et producteur à réaliser (marge UNIT142 504 octets).
-- [P2i](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) première intégration publique, Gate A complète à relever avant bascule autorisée de la seule Lib de travail. P2h CI complète PASS.
+- [P2i](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) : intégration complète, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541), candidate livrée ; Runtime/Compiler/DMA réels à qualifier.
 - Historique détaillé : [roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/17d710693a3ae26a6ab94775c9af1b8bd5428232/docs/ROADMAP.md), rapports de jalon et NEXT_SESSION.md. Aucun transfert de PASS à la libération DMA, au Compiler ou au matériel.
 
 
