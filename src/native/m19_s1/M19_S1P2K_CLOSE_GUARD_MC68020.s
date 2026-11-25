@@ -44,7 +44,7 @@ p2f_gate:
     movem.l d1-d7/a0-a6,-(sp)
     movea.l p2f_root(pc),a3
     move.l a3,d0
-    beq.w p2f_allow
+    beq.w p2k_unlinked_close
     moveq #0,d0
     bsr.w p2h_enter
     tst.l d0
@@ -106,6 +106,30 @@ p2f_call:
     cmpi.l #4,12(a4)
     beq.w p2f_allow
     bra.w p2k_unlock_deny
+p2k_unlinked_close:
+    ; No local link is NOT evidence of no Sprite after a forced reload.
+    ; Inspect only a locked, named registry, never a former VP or record.
+    move.l a2,d0
+    beq.w p2f_allow
+    tst.l (a2)
+    beq.w p2f_allow
+    moveq #0,d0
+    bsr.w p2h_enter
+    tst.l d0
+    bne.s p2k_unlinked_found
+    cmpi.l #1,d1          ; absent registry is the ordinary non-Sprite path
+    beq.w p2f_allow
+    bra.w p2f_deny       ; unknown/busy registry: fail closed
+p2k_unlinked_found:
+    movea.l d0,a3
+    move.l (a2),d0
+    cmp.l 12(a3),d0
+    beq.w p2k_unlock_deny ; same Screen without a live link: quarantine
+    movea.l a3,a0
+    bsr.w p2h_leave
+    tst.l d0
+    beq.w p2f_deny
+    bra.w p2f_allow
 p2k_unlock_deny:
     movea.l a3,a0
     bsr.w p2h_leave

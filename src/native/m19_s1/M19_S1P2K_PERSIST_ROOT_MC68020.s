@@ -140,8 +140,10 @@ p2h_leave:
     bne.w p2h_leave_busy
     cmp.l 40(a4),d3
     bne.w p2h_leave_busy
-    tst.w 14(a4)
-    ble.w p2h_leave_busy
+    cmpi.w #1,14(a4)      ; one exact private borrow, never claim nested release
+    bne.w p2h_leave_busy
+    tst.w 44(a4)           ; no foreign waiter in the private protocol
+    bne.w p2h_leave_busy
     ; Only remove a truly empty and exclusively held registry. Never
     ; free a semaphore with waiters or an extra recursive OS lock.
     tst.l 56(a4)
@@ -153,10 +155,6 @@ p2h_leave:
     tst.l 68(a4)
     bne.w p2h_unlock
     tst.l 104(a4)
-    bne.w p2h_unlock
-    cmpi.w #1,14(a4)
-    bne.w p2h_unlock
-    tst.w 44(a4)
     bne.w p2h_unlock
     movea.l a4,a1
     jsr -606(a6)          ; RemSemaphore while exclusively locked

@@ -36,3 +36,5 @@ Premier assemblage P2j passé, test initial 45690266047 FAIL sur la tentative de
 ## Retour auteur Runtime 25/11/2026
 
 Premier essai sans redémarrage FAIL -132 (fermeture confirmée, CLEAN_ERR 0), puis après redémarrage PASS_DISPLAY_CLOSE_RETAINED_ONLY (100 mouvements, effacement banque, retrait/fermeture OK, RESULT 1 ERR 0, DMA_FREE_PROVEN 0). Chip -200, Fast -168. Gate B limitée de P2j acquise après reset ; C/D non testées. Cause exacte de -132 non instrumentée. [P2k](M19_S1_P2K_TRANSACTION_2026-11-25.md) traite la durée de vie du verrou, pas le DMA.
+
+Preuves originales : [premier Runtime FAIL](evidence/M19_S1P2J_RUNTIME_FAIL_NO_RESET_2026-11-25.TXT) et [Runtime PASS après reset](evidence/M19_S1P2J_RUNTIME_PASS_RESET_2026-11-25.TXT), conservées byte-exactes.

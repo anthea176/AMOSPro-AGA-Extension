@@ -313,7 +313,7 @@ p2i_off:
     beq.w p2i_end
     movea.l I_CELL(a2),a4
     tst.l (a4)
-    beq.w p2i_success
+    beq.w p2k_off_unlinked
     bsr.w p2i_live
     tst.l d0
     beq.w p2i_end
@@ -323,6 +323,23 @@ p2i_off:
     bne.w p2i_end
     bsr.w p2i_retire
     bra.w p2i_end
+
+p2k_off_unlinked:
+    ; A missing link must not turn an active orphan into a false Off PASS.
+    moveq #0,d0
+    bsr.w p2h_enter
+    tst.l d0
+    bne.s p2k_off_found
+    cmpi.l #1,d1
+    beq.w p2i_success
+    bra.w p2i_end
+p2k_off_found:
+    move.l d0,I_ROOT(a2)
+    movea.l d0,a0
+    move.l I_SCREEN(a2),d0
+    cmp.l 12(a0),d0
+    beq.w p2i_end
+    bra.w p2i_success
 
 p2i_bank_free:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(sp)

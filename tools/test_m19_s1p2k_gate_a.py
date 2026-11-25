@@ -90,6 +90,12 @@ def transactions(image,info):
         m.put32(m.cell,cell+4)
         assert m.sprite(x=38)==-139 and m.off()==0
         m.close();assert m.get(STATE)!=0
+        m.put32(m.cell,0)
+        assert m.off()==0
+        m.close();assert m.get(STATE)!=0
+        assert m.sprite(x=40)==-123
+        assert m.read(p2j.GFX+166,1)[0]&12==12
+        assert not m.close_resources
         m.put32(m.cell,cell)
         m.closed();count+=1
         # Recreated code-local cell must not create a second DMA block.
@@ -102,6 +108,17 @@ def transactions(image,info):
         m.put32(a+52,0x00010070)
         assert m.bankfree()==0 and m.named==a
         assert len(m.temp_allocs)==before
+        count+=1
+        # No Sprite registry: ordinary Off/Close must still succeed.
+        m=new(False);assert m.off()==1;m.close()
+        assert m.get(STATE)==0;m.empty();count+=1
+        # A foreign nested lock cannot produce a successful release.
+        m=new(False);assert m.sprite()==1
+        m.expect_busy=True
+        a=m.named
+        m.put32(a+40,TASK);m.put16(a+14,1);m.put16(a+44,0)
+        assert m.sprite(x=34)==-132
+        assert m.get(a+40)==TASK and m.get(a+72)==0
         count+=1
     print('S1P2K_TRANSACTION_CPU_PASS',count,flush=True)
 
