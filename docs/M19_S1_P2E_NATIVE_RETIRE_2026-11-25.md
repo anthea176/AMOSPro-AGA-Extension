@@ -24,3 +24,7 @@ La chaîne existante L2b/P1i est conservée octet pour octet. Le [builder L2b](.
 ## Tests
 
 [Banc MC68020](../tools/test_m19_s1p2e_retire_cpu.py), exécuté par le workflow P2a étendu, assemble avec VASM -m68020 et exécute les transitions sur Unicorn MC68020 ; graphics.library simulée. Cas nominal et blank déjà actif, acquisition partielle, idempotence après restitution, réutilisation externe des canaux, référence tardive, échec blank, perte de réservation, garde de record/structure Copper, ABI/canaries et refus sans effets. Les deux empreintes Lib sont vérifiées en CI. Gate A du composant à relever après exécution réelle de la CI ; pas de prétendu PASS avant résultat. Gates B/C/D non exécutées. Aucun nouveau test manuel demandé à l'auteur pour P2e.
+
+## Qualification réelle du composant
+
+[CI P2a/P2e PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45674243613) et [politique CPU/livraison PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45674243782) sur 17d710693a3ae26a6ab94775c9af1b8bd5428232. VASM et Unicorn MC68020, OS simulé, pas de DMA matériel. Suite : [P2f](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md).

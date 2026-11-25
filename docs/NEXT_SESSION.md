@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2f — Close/End guard intégré en source, CI à relever
+
+[Rapport](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md) · [builder](../tools/build_m19_s1p2f_close_guard_in_memory.py) · [banc CPU](../tools/test_m19_s1p2f_close_guard_cpu.py). P2e Gate A composant [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45674243613), politique CPU/livraison PASS. P2f reconstitution source de UNIT142 sur P1i exacte, deux BRA.L/NOP dans les spans $9D4/$9DC, signatures Close/End et autres unités conservées ; garde propriétaire Sprite avant teardown VP, pas de changement callbacks Bob. Racine sans producteur public, refus si canaux encore détenus, conservation du record et de la Chip exposée. Pas de FreeVec, réclamation et producteur encore bloquants. P2f CI à relever, B/C/D non testées. Lib P1i et LAST_GOOD intactes ; aucun test WinUAE demandé. Roadmap condensée pour corriger son garde de longueur.
+
 ## S1-P2e — retrait natif logique source-only
 
 [Rapport et contrat](M19_S1_P2E_NATIVE_RETIRE_2026-11-25.md) · [routine MC68020](../src/native/m19_s1/M19_S1P2E_RETIRE_MC68020.s) · [banc CPU](../tools/test_m19_s1p2e_retire_cpu.py). ChangeSprite blank, deux WaitTOF, FreeSprite 3/2 selon reçus, deux WaitTOF, contrôle copinit et SimpleSprites. État propriétaire conservé en cas de refus, retrait idempotent, aucun FreeVec sur allocation exposée. Tests CPU avec OS simulé en CI à relever, pas de test manuel. Close/End : contrat établi, hooks non modifiés ; intégration et réclamation sûre restent à faire. P1i et LAST_GOOD intactes, aucun nouveau token/binaire.
