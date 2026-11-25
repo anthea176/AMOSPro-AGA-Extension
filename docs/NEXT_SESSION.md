@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2e — retrait natif logique source-only
+
+[Rapport et contrat](M19_S1_P2E_NATIVE_RETIRE_2026-11-25.md) · [routine MC68020](../src/native/m19_s1/M19_S1P2E_RETIRE_MC68020.s) · [banc CPU](../tools/test_m19_s1p2e_retire_cpu.py). ChangeSprite blank, deux WaitTOF, FreeSprite 3/2 selon reçus, deux WaitTOF, contrôle copinit et SimpleSprites. État propriétaire conservé en cas de refus, retrait idempotent, aucun FreeVec sur allocation exposée. Tests CPU avec OS simulé en CI à relever, pas de test manuel. Close/End : contrat établi, hooks non modifiés ; intégration et réclamation sûre restent à faire. P1i et LAST_GOOD intactes, aucun nouveau token/binaire.
+
 ## S1-P2d r2 — séquence Runtime et références OS échantillonnées PASS
 
 [Rapport](M19_S1_P2D_OS_AUDIT_2026-11-25.md). P2d r2 a terminé. Pas de relance à l'identique. DMA_FREE_PROVEN 0 ; prochaine étape contrat de retrait et intégration source-only, sans debugger.

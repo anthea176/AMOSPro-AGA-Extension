@@ -1,4 +1,4 @@
-name: M19 S1-P2a detached Chip preparation MC68020 (source only)
+name: M19 S1-P2a/P2e Chip preparation and logical retirement MC68020 (source only)
 on:
   push:
     branches: [main]
@@ -6,6 +6,8 @@ on:
       - 'src/native/m19_s1/M19_S1P2A_CHIP_PREPARE_MC68020.s'
       - 'src/native/m19_s1/M19_S1P1C_AGSP_VALIDATE_MC68020.s'
       - 'tools/test_m19_s1p2a_chip_prepare_cpu.py'
+      - 'src/native/m19_s1/M19_S1P2E_RETIRE_MC68020.s'
+      - 'tools/test_m19_s1p2e_retire_cpu.py'
       - 'tools/m19_s1_agsp_bank.py'
       - 'docs/evidence/M19_S1P1I_AGSP_*'
       - '.github/workflows/m19-s1-p2a-chip-prepare.yml'
@@ -45,6 +47,11 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p2a.bin" "src/native/m19_s1/M19_S1P2A_CHIP_PREPARE_MC68020.s"
           PYTHONPATH=tools python -B "tools/test_m19_s1p2a_chip_prepare_cpu.py" "$RUNNER_TEMP/p2a.bin"
+      - name: Assemble and execute logical retirement (mocked OS)
+        run: |
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p2e.bin" "src/native/m19_s1/M19_S1P2E_RETIRE_MC68020.s"
+          python -B "tools/test_m19_s1p2e_retire_cpu.py" "$RUNNER_TEMP/p2e.bin"
+          python -B tools/native_cpu_policy.py --self-test
       - name: Preserve exact installed P1i and protected L2b
         run: |
           printf '%s  %s\n' '2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
