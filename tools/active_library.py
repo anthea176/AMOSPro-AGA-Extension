@@ -358,7 +358,7 @@ def verify_active(root: Path):
     if current_sha == S1P2I_SHA:
         frozen_p2d(good)
         verify_s1p2i(cur, good)
-        return cur, good, "M19 S1-P2i integrated Sprite ACTIVE TEST CANDIDATE; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
+        return cur, good, "M19 S1-P2i integrated Sprite REJECTED Runtime ERR 10; historical MC68020 Gate A PASS; C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S1P1I_SHA:
         frozen_p2d(good)
         verify_s1p1i(cur, good)

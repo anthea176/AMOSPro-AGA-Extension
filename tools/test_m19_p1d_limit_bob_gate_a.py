@@ -215,11 +215,11 @@ def check_public_pages(layout, parts, meta):
 def main():
     binary, meta = build_p1d()
     assert binary == build_p1d()[0]
-    from active_library import P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+    from active_library import P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
     from hashlib import sha256
     active, _, _ = verify_active(ROOT)
     assert sha256(binary).hexdigest() == P1D_SHA
-    assert sha256(active).hexdigest() in (P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
+    assert sha256(active).hexdigest() in (P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
     # Native P1d checks still execute the exact historical P1d rebuild.
     _, parts, _ = unpack_ap20(binary)
     assert parts[179] == GETP

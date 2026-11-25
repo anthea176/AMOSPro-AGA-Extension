@@ -143,10 +143,10 @@ def main():
     binary, meta = build_p1c()
     _, parts, _ = unpack_ap20(binary)
     assert binary == build_p1c()[0]
-    from active_library import P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, verify_active
+    from active_library import P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
     from hashlib import sha256
     active, _, _ = verify_active(ROOT)
-    assert sha256(active).hexdigest() in (P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA)
+    assert sha256(active).hexdigest() in (P1C_SHA, P1D_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
     assert sha256(binary).hexdigest() == P1C_SHA
     assert parts[177] == GETP
     dispatch_models(parts, 179, meta['priority_offset'], 178)
