@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2k — verrou transactionnel, développement source-only
+
+[Rapport](M19_S1_P2K_TRANSACTION_2026-11-25.md). Auteur « ok oui ». P2j Runtime PASS après reset (100 mouvements, Close confirmé, rétention 200 Chip/168 Fast ; DMA_FREE_PROVEN 0), premier essai sans reset FAIL -132. P2k source-only : un emprunt par appel, propriétaire de vie distinct, libération sur timeout Close/End et CloseScreen FALSE, même registre nommé schema v2, refus des emprunts interrompus, aucune récupération exposée. Gate A P2k à vérifier sur CI. B/C/D P2k non testées. P2j et LAST_GOOD L2b protégées ; ASC courant inchangé. Aucune bascule ni promotion.
+
 ## S1-P2j — candidate diagnostique active, Gate A PASS
 
 S1-P2j : 148296 octets, SHA256 `47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a`, blob `29d9863a846179f43ac540d85afd7666f6405af0`, 105 commandes / 214 AP20, MC68020+. [Gate A exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45690711843) sur 51bf3bdc176feb5eccdf4ec6b700e5533c20656e : 54 scénarios Sprite, 184 Pattern, 172 SafePort, 10 suites Bob et chaîne DB/IFF/Swap/capture dans les deux modèles AP20. UNIT142 64560 octets, groupe Sprite natif 10104 octets. B/C/D réelles NON TESTÉES. Un seul ensemble exposé conservé (192 octets Chip, 152 octets registre/record pour l'image 3, hors overhead). Aucune preuve DMA free ; aucun réaffichage après Off, reset avant nouvel essai. LAST_GOOD L2b inchangée, blob 2809b4b409eea9e234df1b96bf2b08bd393d8c85.
