@@ -83,7 +83,15 @@ def transactions(image,info):
         m.task=TASK+0x100
         assert m.sprite(x=36)==-139 and m.off()==0
         m.close();assert m.get(STATE)!=0
-        m.task=TASK;m.closed();count+=1
+        m.task=TASK
+        # A mismatched local link is not trusted, but the acquired registry
+        # must be released even on rejection.
+        cell=m.get(m.cell)
+        m.put32(m.cell,cell+4)
+        assert m.sprite(x=38)==-139 and m.off()==0
+        m.close();assert m.get(STATE)!=0
+        m.put32(m.cell,cell)
+        m.closed();count+=1
         # Recreated code-local cell must not create a second DMA block.
         m=new(False);assert m.sprite()==1;m.closed()
         a=m.named;before=len(m.temp_allocs)

@@ -88,22 +88,12 @@ p2f_gate:
     cmpi.l #15,d2
     bne.w p2k_unlock_deny
 p2f_context:
-    move.l a5,d0
-    cmp.l 4(a3),d0
-    bne.w p2k_unlock_deny
-    move.l a2,d0
-    beq.w p2k_unlock_deny
-    cmp.l 8(a3),d0
-    bne.w p2k_unlock_deny
-    move.l (a2),d0
-    beq.w p2k_unlock_deny
-    cmp.l 12(a3),d0
-    bne.w p2k_unlock_deny
+    move.l (a2),d0     ; lifetime and exact screen already validated above
     btst #3,d2
     beq.w p2f_call
     ; Screen.ViewPort = +44, source-proven screen layout (NDK V39).
     addi.l #44,d0
-    bcs.w p2f_deny
+    bcs.w p2k_unlock_deny
     cmp.l 8(a4),d0
     bne.w p2k_unlock_deny
 p2f_call:

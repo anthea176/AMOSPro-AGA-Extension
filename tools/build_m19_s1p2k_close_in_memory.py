@@ -98,6 +98,17 @@ def build_s1p2k_close(vasm):
             shutil.copyfile(SRC/origin,folder/name)
         with master.open('a',encoding='ascii') as f:
             f.write('\n    include "'+GUARD+'"\n')
+        # Source-only, preserve each legacy six-byte span.
+        file=folder/'M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s'
+        old_close=('    jsr -66(a6)                                        ; +$000CE: 4EAEFFBE\n'
+                   '    clr.l (a2)                                         ; +$000D2: 4292\n')
+        replace_once(file,old_close,'    bra.l p2g_end_close\n')
+        file=folder/'M19_UNIT142_R83_TARGET_BSR_52CA_MC68020.s'
+        replace_once(file,
+            '    bsr.w ENTRY_LEGACY_HELPER_052CA_00000+UNIT142_R83_TARGET_BSR_52CA_DELTA\n',
+            '    bra.l p2g_public_close\n')
+        file=folder/'M19_UNIT142_R83_TARGET_BODY_MC68020.s'
+        replace_once(file,'    clr.l (a2)                                         ; +$00094: 4292\n','')
         new_image=assemble(vasm,folder)
     nt,np,ntitle=unpack_ap20(new_image)
     assert (nt,ntitle,len(np))==(bt,btitle,len(bp))
