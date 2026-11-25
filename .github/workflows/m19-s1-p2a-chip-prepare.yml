@@ -1,4 +1,4 @@
-name: M19 S1-P2a/P2e/P2f/P2g Sprite lifecycle MC68020 (source only)
+name: M19 S1-P2a/P2e/P2f/P2g/P2h Sprite lifecycle MC68020 (source only)
 on:
   push:
     branches: [main]
@@ -13,6 +13,8 @@ on:
       - 'tools/test_m19_s1p2f_close_guard_cpu.py'
       - 'src/native/m19_s1/M19_S1P2G_RECLAIM_MC68020.s'
       - 'tools/test_m19_s1p2g_reclaim_cpu.py'
+      - 'src/native/m19_s1/M19_S1P2H_PERSIST_ROOT_MC68020.s'
+      - 'tools/test_m19_s1p2h_persist_root_cpu.py'
       - 'tools/m19_s1_agsp_bank.py'
       - 'docs/evidence/M19_S1P1I_AGSP_*'
       - '.github/workflows/m19-s1-p2a-chip-prepare.yml'
@@ -57,6 +59,10 @@ jobs:
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p2e.bin" "src/native/m19_s1/M19_S1P2E_RETIRE_MC68020.s"
           python -B "tools/test_m19_s1p2e_retire_cpu.py" "$RUNNER_TEMP/p2e.bin"
           python -B tools/native_cpu_policy.py --self-test
+      - name: Assemble and execute persistent root (mocked Exec)
+        run: |
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p2h.bin" "src/native/m19_s1/M19_S1P2H_PERSIST_ROOT_MC68020.s"
+          python -B "tools/test_m19_s1p2h_persist_root_cpu.py" "$RUNNER_TEMP/p2h.bin"
       - name: Rebuild exact P1i in memory and exercise both Close End routes
         run: |
           PYTHONPATH=tools python -B "tools/test_m19_s1p2f_close_guard_cpu.py" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
