@@ -35,7 +35,8 @@ END='M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s'
 PATCHES=((0x9d4,bytes.fromhex('6100000e6000ff46')),
          (0x9dc,bytes.fromhex('610000066000f808')))
 
-def build_s1p2f(vasm, reclaim=False):
+def build_s1p2f(vasm, reclaim=False, persistent=False):
+    assert not persistent or reclaim
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -110,13 +111,41 @@ def build_s1p2f(vasm, reclaim=False):
             shutil.copyfile(SRC/RECLAIM,folder/RECLAIM)
             replace_once(folder/GUARD,'p2f_root:\n',
                          '    include "'+RECLAIM+'"\np2f_root:\n')
+        if persistent:
+            glue='M19_S1P2I_CLOSE_ROOT_MC68020.s'
+            shutil.copyfile(SRC/glue,folder/glue)
+            g=folder/GUARD
+            s=g.read_text(encoding='ascii')
+            old='    lea p2f_root(pc),a3\n    move.l (a3),d0\n    beq.w p2f_allow\n'
+            new=('    movea.l p2f_root(pc),a3\n    move.l a3,d0\n    beq.w p2f_allow\n'
+                 '    movea.l $0004.w,a6\n    suba.l a1,a1\n    jsr -294(a6)\n'
+                 '    tst.l d0\n    beq.w p2f_deny\n'
+                 '    cmp.l 16(a3),d0\n    bne.w p2f_deny\n'
+                 '    cmp.l -16(a3),d0\n    bne.w p2f_deny\n'
+                 '    move.l a5,d0\n    cmp.l 4(a3),d0\n    bne.w p2f_deny\n'
+                 '    move.l a2,d0\n    beq.w p2f_deny\n'
+                 '    cmp.l 8(a3),d0\n    bne.w p2f_deny\n'
+                 '    move.l (a2),d0\n    beq.w p2f_deny\n'
+                 '    cmp.l 12(a3),d0\n    bne.w p2f_deny\n'
+                 '    move.l (a3),d0\n    beq.w p2f_deny\n')
+            assert s.count(old)==1
+            s=s.replace(old,new)
+            old='p2f_root:\n    dcb.b 16,0\n'
+            new='    include "'+glue+'"\np2f_root:\n    dc.l 0,$41475349,$00010010,0\n'
+            assert s.count(old)==1
+            g.write_text(s.replace(old,new),encoding='ascii')
+            g=folder/RECLAIM
+            replace_once(g,'    lea p2f_root(pc),a3\n    tst.l (a3)\n',
+                '    movea.l p2f_root(pc),a3\n    move.l a3,d0\n')
+            replace_once(g,'    bsr.w AGSP_P2G_RECLAIM\n    ; If pending',
+                '    bsr.w AGSP_P2G_RECLAIM\n    bsr.w p2i_close_leave\n    ; If pending')
         new_image=assemble(vasm,folder)
     nt,np,ntitle=unpack_ap20(new_image)
     assert (nt,ntitle,len(np))==(bt,btitle,len(bp))
     assert all(a==b for i,(a,b) in enumerate(zip(np,bp)) if i!=UNIT)
     new=np[UNIT]
     assert len(prior)<len(new)<=MAX_UNIT_BYTES and len(new)%2==0
-    assert new[-16:]==bytes(16)
+    assert new[-16:]==(bytes.fromhex('00000000414753490001001000000000') if persistent else bytes(16))
     restored=bytearray(new[:len(prior)])
     targets=[]
     for offset,original in patches:
@@ -131,7 +160,7 @@ def build_s1p2f(vasm, reclaim=False):
     parts=list(old)
     parts[UNIT]=new
     assert pc16_displacements(parts)==pc16_displacements(old)
-    candidate_title=title.replace(b'S1-P1i',b'S1-P2g' if reclaim else b'S1-P2f')
+    candidate_title=title.replace(b'S1-P1i',b'S1-P2i' if persistent else (b'S1-P2g' if reclaim else b'S1-P2f'))
     assert candidate_title!=title
     candidate=repack_ap20(parent,tok,parts,candidate_title)
     assert unpack_ap20(candidate)==(tok,parts,candidate_title)
