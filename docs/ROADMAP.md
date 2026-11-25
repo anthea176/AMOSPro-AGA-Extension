@@ -30,6 +30,7 @@
 - [P2f](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md) garde Close/End source-only, [40 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915).
 - [P2g](M19_S1_P2G_RECLAIM_2026-11-25.md) récupération expérimentale après vrai CloseScreen et garde Copper/OS ; r1 FAIL builder (8/6 octets), r2 [30 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45679517861). Persistance pending après unload, palette, producteur et API restent à qualifier. Aucun nouveau token/binaire, pas de debugger manuel.
 - [P2h](M19_S1_P2H_PERSISTENT_ROOT_2026-11-25.md) registre Exec persistant source-only, suppression si vide, emprunt non bloquant ; [étape CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45680011267), raccordement aux chemins Close/End et producteur à réaliser (marge UNIT142 504 octets).
+- [P2i](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) première intégration publique, Gate A complète à relever avant bascule autorisée de la seule Lib de travail. P2h CI complète PASS.
 - Historique détaillé : [roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/17d710693a3ae26a6ab94775c9af1b8bd5428232/docs/ROADMAP.md), rapports de jalon et NEXT_SESSION.md. Aucun transfert de PASS à la libération DMA, au Compiler ou au matériel.
 
 

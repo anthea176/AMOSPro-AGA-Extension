@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2i — intégration publique, Gate A complète en cours
+
+Auteur autorise la livraison de la Lib de travail après Gate A, LAST_GOOD intacte. [Rapport](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) · [builder](../tools/build_m19_s1p2i_in_memory.py) · [banc](../tools/test_m19_s1p2i_gate_a.py). Trois fonctions Sprite, Off, Bank Free, copie Chip P2a, retrait P2e, récupération conditionnelle P2g, registre P2h et pont Close/End. Palette explicite 21..23 déjà concordante, aucun changement palette, paire 2/3, un N/I par écran. Candidate en mémoire, CI à relever ; dist P1i encore active, B/C/D non testées.
+
 ## S1-P2h — registre persistant, étape CPU PASS
 
 [Rapport](M19_S1_P2H_PERSISTENT_ROOT_2026-11-25.md) · [source](../src/native/m19_s1/M19_S1P2H_PERSIST_ROOT_MC68020.s) · [tests CPU](../tools/test_m19_s1p2h_persist_root_cpu.py). P2g r2 [30 cas CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45679517861), UNIT142 65030, marge 504 octets. P2h : sémaphore Exec nommé privé, allocation 112 octets, root P2f/P2g 16 octets, nom embarqué, emprunt non bloquant, double lookup anti-course, suppression/free lorsque root complètement vide. Pending retrouvé après rechargement sans pointeur code ; aucun vol de lock mort. CI composant à relever, pas encore raccordé à UNIT142, vérifier plafond AP20 avant intégration. Aucune preuve DMA nouvelle. P1i et LAST_GOOD intactes, pas de test manuel.
