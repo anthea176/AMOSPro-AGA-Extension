@@ -48,7 +48,7 @@ def build_s1p2f(vasm, reclaim=False):
     prior=old[UNIT]
     patches=PATCHES+RECLAIM_PATCHES if reclaim else PATCHES
     for offset,expected in patches:
-        assert prior[offset:offset+8]==expected,hex(offset)
+        assert prior[offset:offset+len(expected)]==expected, (hex(offset), prior[offset:offset+len(expected)].hex(), expected.hex())
     assert prior[0x5a:0x66]==bytes.fromhex('48e7fffe246d01c860000978')
     assert prior[0x7fa:0x806]==bytes.fromhex('48e7fffe246d01c8600001d0')
     with tempfile.TemporaryDirectory(prefix='aga-s1p2f-') as temp:

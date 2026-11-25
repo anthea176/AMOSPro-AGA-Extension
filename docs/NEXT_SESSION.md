@@ -1,8 +1,8 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-## S1-P2g — réclamation Chip expérimentale après vrai CloseScreen, CI à relever
+## S1-P2g r2 — correction du builder, CI à relever
 
-[Rapport](M19_S1_P2G_RECLAIM_2026-11-25.md) · [source](../src/native/m19_s1/M19_S1P2G_RECLAIM_MC68020.s) · [banc CPU](../tools/test_m19_s1p2g_reclaim_cpu.py). P2f [40 scénarios MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915), candidate SHA256 fe054ed9a55804ea5427a6b10f749f5d1329b1910520c5aaff722b0f23037279, UNIT142 64450. Builder P2f option reclaim=True ; deux wrappers CloseScreen réels, reçu BOOL, refus si fermeture échoue. Après succès : condition stricte ActiView=0 / LOF-SHF attente / Sprite neutre, P2e et relecture, FreeVec privé seulement si garde réussie ; sinon pending. Pas de preuve DMA universelle, pas de producteur public, persistance hors code en cas d'unload encore à réaliser. CI P2g à relever, aucun test WinUAE demandé, P1i/LAST_GOOD inchangées.
+[Rapport](M19_S1_P2G_RECLAIM_2026-11-25.md) · [source](../src/native/m19_s1/M19_S1P2G_RECLAIM_MC68020.s) · [banc CPU](../tools/test_m19_s1p2g_reclaim_cpu.py). P2f [40 scénarios MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915), candidate SHA256 fe054ed9a55804ea5427a6b10f749f5d1329b1910520c5aaff722b0f23037279, UNIT142 64450. Builder P2f option reclaim=True ; deux wrappers CloseScreen réels, reçu BOOL, refus si fermeture échoue. Après succès : condition stricte ActiView=0 / LOF-SHF attente / Sprite neutre, P2e et relecture, FreeVec privé seulement si garde réussie ; sinon pending. Pas de preuve DMA universelle, pas de producteur public, persistance hors code en cas d'unload encore à réaliser. CI r1 FAIL sur longueur de signature du builder ($128), P2a/e/f PASS ; r2 compare chaque span sur len(expected), critères inchangés. CI r2 à relever, aucun test WinUAE demandé, P1i/LAST_GOOD inchangées.
 
 ## S1-P2f — Close/End guard intégré en source, CI à relever
 
