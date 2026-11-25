@@ -26,3 +26,9 @@ P2i vérifiait la table SimpleSprites avant le premier MoveSprite et supposait u
 - -131..-135 raison P2h (absent, occupé, incompatible, alloc, contexte Exec).
 - -139 identité de ressource existante ; -140 réaffichage interdit ; -141 canal 2 indisponible ; -142 canal 3 indisponible ; -143 reçu incohérent.
 - -150 VideoControl ; -151 bases/résolution/priorité ; -152 résolution par défaut ; -153 RGB ; -160 descripteur/publication.
+
+## Qualification et activation
+
+S1-P2j : 148296 octets, SHA256 `47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a`, blob `29d9863a846179f43ac540d85afd7666f6405af0`, 105 commandes / 214 AP20, MC68020+. [Gate A exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45690711843) sur 51bf3bdc176feb5eccdf4ec6b700e5533c20656e : 54 scénarios Sprite, 184 Pattern, 172 SafePort, 10 suites Bob et chaîne DB/IFF/Swap/capture dans les deux modèles AP20. UNIT142 64560 octets, groupe Sprite natif 10104 octets. B/C/D réelles NON TESTÉES. Un seul ensemble exposé conservé (192 octets Chip, 152 octets registre/record pour l'image 3, hors overhead). Aucune preuve DMA free ; aucun réaffichage après Off, reset avant nouvel essai. LAST_GOOD L2b inchangée, blob 2809b4b409eea9e234df1b96bf2b08bd393d8c85.
+
+Premier assemblage P2j passé, test initial 45690266047 FAIL sur la tentative de réaffichage après Off (contrôle palette avant vérification flags4). Corrigé : état retrait vérifié avant palette. Gate A finale ci-dessus PASS. ASC préflight statique PASS. Blob extrait des 97 fragments base64 de la CI, identique au blob annoncé. Vérificateurs d'identité historiques et journal ASC corrigés ; CI post-activation à relever séparément. Aucun PASS WinUAE extrapolé.

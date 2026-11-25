@@ -73,9 +73,9 @@ jobs:
       - name: Rebuild P2g and exercise actual CloseScreen result and guarded FreeVec
         run: |
           PYTHONPATH=tools python -B "tools/test_m19_s1p2g_reclaim_cpu.py" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot"
-      - name: Preserve exact installed P2i and protected L2b
+      - name: Preserve exact installed P2j and protected L2b
         run: |
-          printf '%s  %s\n' '89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' '47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
           printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
           git diff --exit-code
 
@@ -111,8 +111,8 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1i.bin" src/native/m19_s1/M19_S1P1I_BANK_PUBLIC_MC68020.s
           PYTHONPATH=tools python -B "tools/test_m19_s1p2i_gate_a.py" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1i.bin" --full
-      - name: Preserve exact installed P2i and protected L2b
+      - name: Preserve exact installed P2j and protected L2b
         run: |
-          printf '%s  %s\n' '89b7a9ead30152d2088ca761e81f7016a47bab451024c637009426d7ba777b96' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' '47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
           printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
           git diff --exit-code

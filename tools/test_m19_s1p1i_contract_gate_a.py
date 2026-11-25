@@ -11,7 +11,7 @@ from pathlib import Path
 from struct import pack, unpack_from
 from unicorn.m68k_const import *
 from unicorn import UC_HOOK_MEM_READ
-from active_library import S1P1H_SHA, S1P1I_SHA, P2DL2B_SHA, verify_s1p1i, verify_s1p1h, S1P2I_SHA, frozen_s1p1i
+from active_library import S1P1H_SHA, S1P1I_SHA, P2DL2B_SHA, verify_s1p1i, verify_s1p1h, S1P2I_SHA, S1P2J_SHA, frozen_s1p1i
 from compiler_relocation import unpack_ap20, repack_ap20, RBSR
 from compiler_bridge_v2_probe import DISPATCH_V2
 from m19_s1_agsp_bank import empty_bank, put_capture
@@ -178,7 +178,7 @@ class ContractMachine(GetMachine):
 def verify_frozen(native):
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    if sha256(active).hexdigest()==S1P2I_SHA:
+    if sha256(active).hexdigest() in (S1P2I_SHA,S1P2J_SHA):
         active=frozen_s1p1i(active,good)
     digest=sha256(active).hexdigest()
     assert digest in (S1P1H_SHA,S1P1I_SHA)
