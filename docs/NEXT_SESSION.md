@@ -1,5 +1,9 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+## S1-P2c — observation DMA WinUAE préparée, NON TESTÉE
+
+[P2c : protocole et deux fichiers](../tests/proto/sprite_s1_dma/README.md), [rapport](M19_S1_P2C_DMA_OBSERVATION_2026-11-25.md). P1i inchangée. Préflight strict local PASS sur l'ASC exact. Reprendre le test unique P2c avec JIT OFF, 68030/AGA PAL, snapshot, marqueurs 01 actif / 02 fermé / 03 après 300 WaitTOF. Contrôle positif sur les lectures Sprite DMA, puis surveillance de la même plage de 248 octets après fermeture. Journal et preuves debugger obligatoires ; pas de FreeVec après exposition, DMA_FREE_PROVEN 0. Aucune Gate B/C/D sur P2c, aucun changement de Lib ni promotion. L'ASC P2b validé est conservé intégralement.
+
 ## S1-P2b — affichage AGSP Runtime PASS / S1-P2c à qualifier
 
 **Sonde palette Runtime PASS (25/11/2026).** Journal original [1105 octets CRLF](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/main/docs/evidence/M19_S1P2_PALETTE_RUNTIME_2026-11-25.TXT), SHA256 `dc332e6c6a17e05c9960bd65d3e3b75f07a7c5dc4483bb1da63876402b7b1b50`, blob `362878799bcaae3b1a70fe84ea34b0d81904de2d`. PRG_STATE 1, RESULT 1, ERR 0, SAMPLES 4, CLOSE_RETURNED 1. V40, VP Modes $5000, bases EVEN/ODD 16, résolution demandée 255, défaut 1, PF1_PRI 4. Les quatre états mesurés sont identiques. Attribution à P1i par contexte ; pas de SHA installé dans le log. Aucun transfert de PASS vers l'affichage ou le retrait DMA.
