@@ -252,11 +252,14 @@ def main():
     p.add_argument('--suite',choices=('all','public-runtime','public-compiled',
                    'lifetime-runtime','lifetime-compiled','chain','pattern',
                    'safeport','bob'),default='all')
+    p.add_argument('--expected-sha')
     a=p.parse_args()
     for k in ('AGSP_GET_BIN','AGSP_PUBLISH_BIN','AGSP_PIPELINE_BIN'):
         os.environ[k]=str(a.historical)
     before=protected()
     image,info=build_s2a(a.vasm)
+    if a.expected_sha:
+        assert info['sha256']==a.expected_sha
     print('S2A_BUILT '+json.dumps(info,sort_keys=True),flush=True)
     suite=a.suite
     if suite=='all' or suite.startswith('public-'):

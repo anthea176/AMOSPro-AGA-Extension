@@ -56,8 +56,7 @@ jobs:
         if: matrix.suite != 'prepare'
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1i.bin" src/native/m19_s1/M19_S1P1I_BANK_PUBLIC_MC68020.s"
-          PYTHONPATH=tools python -B tools/test_m19_s2a_public_gate_a.py --suite "${{ matrix.suite }}" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1i.bin" | tee "$RUNNER_TEMP/s2a.log"
-          grep -F 'S2A_SUITE_PASS ${{ matrix.suite }} ' "$RUNNER_TEMP/s2a.log" | grep -F '"sha256": "1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2"'
+          PYTHONPATH=tools python -B tools/test_m19_s2a_public_gate_a.py --suite ${{ matrix.suite }} --expected-sha 1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2 --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1i.bin"
         shell: bash
       - name: Reconstruct candidate and prepare single future ASC and bank
         if: matrix.suite == 'prepare'
