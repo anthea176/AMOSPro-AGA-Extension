@@ -1,14 +1,16 @@
 # Roadmap — AMOSPro AGA Extension
 
+**26/11/2026 — P2l-c : ÉCHEC FONCTIONNEL de la relance sans reset (ERR10, SPRITE_RC=-123).** Gate A PASS ; les PASS Runtime phases 1/2 sont uniquement des PASS de scénario de quarantaine, pas une validation du cycle de vie. [Journaux et correctif P2m](M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). P2m en qualification source, Lib/ASC actifs P2l-c inchangés, LAST_GOOD protégée. Ne plus relancer le test P2l-c.
+
 ## 1. État actuel et objectif
 
 **Socle protégé : 0.14.1 — Stability & Bug Fixes** (publication distincte). Développement repris : M19 Sprite, cible 0.15.0. [Checklist](releases/0.14.1_RELEASE_CHECKLIST.md) · [Qualification](releases/0.14.1_QUALIFICATION.md) · [Notes GitHub](releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](releases/0.14.1/AMOSProAGA.readme).
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [S1-P2l-c](../dist/AMOSPro_AGA.Lib), 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, 105 commandes / 214 AP20, MC68020+. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) ; 532 contrôles, [reconstruction exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895), B Runtime à effectuer, C reportée, D non testée. Diagnostic DMA seulement. [Rapport](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md). |
+| Lib de travail | [S1-P2l-c](../dist/AMOSPro_AGA.Lib), 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, 105 commandes / 214 AP20, MC68020+. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) ; 532 contrôles, [reconstruction exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895), Runtime quarantaine PASS / relance fonctionnelle FAIL, C reportée, D non testée. Diagnostic DMA seulement. [Rapport](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md). |
 | LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P2l-c ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
-| ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](../tests/current/AGSP_S1P1E_FINAL.ABK). Runtime P2l-c : deux phases à effectuer, pas de réemploi ; [T06 conservé](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). [Campagne](../tests/current/README.md). |
+| ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](../tests/current/AGSP_S1P1E_FINAL.ABK). Runtime P2l-c : deux phases quarantaine PASS, relance FAIL ; test suspendu ; [T06 conservé](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
 
 ## 2. Clôture du socle 2D

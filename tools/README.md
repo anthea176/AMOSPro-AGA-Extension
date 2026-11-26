@@ -1,5 +1,7 @@
 # Outils Python — builder actif et historique versionne
 
+**26/11/2026 — P2l-c : ÉCHEC FONCTIONNEL de la relance sans reset (ERR10, SPRITE_RC=-123).** Gate A PASS ; les PASS Runtime phases 1/2 sont uniquement des PASS de scénario de quarantaine, pas une validation du cycle de vie. [Journaux et correctif P2m](../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). P2m en qualification source, Lib/ASC actifs P2l-c inchangés, LAST_GOOD protégée. Ne plus relancer le test P2l-c.
+
 > S1-P1i : Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA.
 
 ## Candidate active S1-P2l-c (26/11/2026)

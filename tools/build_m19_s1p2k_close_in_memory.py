@@ -35,7 +35,7 @@ END='M19_UNIT142_R83_TARGET_BRA_WAIT_MC68020.s'
 PATCHES=((0x9d4,bytes.fromhex('6100000e6000ff46')),
          (0x9dc,bytes.fromhex('610000066000f808')))
 
-def build_s1p2k_close(vasm):
+def build_s1p2k_close(vasm, *, lifecycle=False):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -95,6 +95,13 @@ def build_s1p2k_close(vasm):
                             (RETIRE,'M19_S1P2J_RETIRE_MC68020.s'),
                             (RECLAIM,'M19_S1P2K_RECLAIM_MC68020.s'),
                             ('M19_S1P2K_PERSIST_ROOT_MC68020.s','M19_S1P2K_PERSIST_ROOT_MC68020.s')):
+            if lifecycle:
+                origin={
+                    'M19_S1P2K_CLOSE_GUARD_MC68020.s':'M19_S1P2M_CLOSE_GUARD_MC68020.s',
+                    'M19_S1P2J_RETIRE_MC68020.s':'M19_S1P2M_RETIRE_MC68020.s',
+                    'M19_S1P2K_RECLAIM_MC68020.s':'M19_S1P2M_RECLAIM_MC68020.s',
+                    'M19_S1P2K_PERSIST_ROOT_MC68020.s':'M19_S1P2M_PERSIST_ROOT_MC68020.s',
+                }[origin]
             shutil.copyfile(SRC/origin,folder/name)
         with master.open('a',encoding='ascii') as f:
             f.write('\n    include "'+GUARD+'"\n')

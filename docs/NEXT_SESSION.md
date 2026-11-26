@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**26/11/2026 — P2l-c : ÉCHEC FONCTIONNEL de la relance sans reset (ERR10, SPRITE_RC=-123).** Gate A PASS ; les PASS Runtime phases 1/2 sont uniquement des PASS de scénario de quarantaine, pas une validation du cycle de vie. [Journaux et correctif P2m](M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). P2m en qualification source, Lib/ASC actifs P2l-c inchangés, LAST_GOOD protégée. Ne plus relancer le test P2l-c.
+
 ## S1-P2l-c — candidate active, Gate A PASS, Runtime à effectuer
 
 **S1-P2l-c active (26/11/2026).** Autorisation auteur « va y ct inplicite! » après Gate A PASS. Lib 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, blob `86d9497e3a2d5446001b9b41fc25d2e6a878ae50`, 105 commandes / 214 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) : 532 contrôles (496 hérités + 36 détail idle). [Reconstruction exacte et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895). UNIT142 65276, marge 258 ; UNIT207 11178, PC16 max 11208, marge 21556 ; helper natif 114 octets, patch 8 octets à 10978. ASC unique 6425 octets SHA256 `25a50fd84962dcdd0a52a45d496ad3413676d37aa4b3df4c2d74391d18c4a89e`, blob `fad7c3f78a20907f25a0e8072508c5c2c9e9b409`. ABK inchangée (532 octets) et LAST_GOOD L2b protégée. B/C/D NON TESTÉES sur P2l-c ; CI post-activation à relever. Aucune libération ni réemploi DMA.
