@@ -1,0 +1,28 @@
+# S1-P2l-b — accès de diagnostic à l'observateur DMA (26/11/2026)
+
+Auteur « super continu » après travail de qualification P2l-a. Développement source-only MC68020 sur main ; pas de bascule, pas de nouvelle API de production, pas de libération/réutilisation DMA, pas de promotion. P2k r4 A/B/C reste l'unique Lib active ; SHA256 ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41, LAST_GOOD L2b, ASC/ABK inchangés.
+
+## Base exacte et décision
+
+**[Gate A complète P2l-a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45865653811)** sur d467a131d7628842d14c1368995db725f615a195, job 140067676803, 149892 octets, SHA256 `c94a75424c03c236c33a3b4e6356978878dd04ae769ea3d25e8ec114fd9e6060`, blob `f44083d21ba84f403dfee8e84a9653a45373a3d6`, 105 commandes / 214 entrées AP20. UNIT142 65276 (258 octets libres) inchangée, UNIT207 11020 (10986 natifs + 34 dispatcher), observation 812 octets, PC16 max 11050, marge PC16 restante 21714 ; réserve +16384 testée (PC16 27434) dans les deux modèles. 54 Sprite, 12 transactions, 42 observations, 2 croissance, 184 Pattern, 172 SafePort, 10 suites Bob = 476 contrôles, et chaîne DB/IFF/Swap/capture deux layouts. MC68020, OS simulé, B/C/D non testées. Aucune preuve DMA ni nouvelle Lib installable.
+
+Le probe P2l-a est seulement appelable par le banc CPU, pas par AMOS. Il faut relever ses retours dans un contexte réel avant d'utiliser ses observations pour une politique de durée de vie. Les registres de pointeurs Sprite sont rechargés par le Copper/CPU pour chaque champ, et WaitTOF attend la VBL et les interruptions VBL. Cela ne prouve pas qu'une ancienne liste inactive ne pourra jamais republier un pointeur. Sources : [Hardware Reference Manual — sprite DMA pointers](https://amigadev.grimore.org/Hardware_Manual_guide/node00bf.html), [WaitTOF autodoc](https://d0.se/autodocs/graphics.library/WaitTOF), [Hardware Sprites RKM](https://wiki.amigaos.net/wiki/Hardware_Sprites), [audit réel P2d](M19_S1_P2D_OS_AUDIT_2026-11-25.md). FreeSprite restitue le canal ; aucun contrat explicite de vidage universel des références DMA dans ces documents. Ne pas désactiver globalement SPRITE DMA (curseur et autres propriétaires). Les lectures basses et l'état de View après retour à AMOS doivent être confrontés au réel, pas supposés.
+
+## Route temporaire
+
+[Source](../src/native/m19_s1/M19_S1P2LB_DMA_DIAG_ROUTE_MC68020.s), [builder](../tools/build_m19_s1p2l_b_in_memory.py), [banc](../tools/test_m19_s1p2l_b_gate_a.py). Reconstruire P2l-a exact depuis source et imposer ses SHA256/blob, puis réassembler son groupe207 avec un append. Préfixe P2l-a byte-exact, UNIT142 intégralement byte-exact. Seuls UNIT207 et stub 213 (Bank Free) diffèrent ; tokens/105 commandes/214 entrées inchangés. Garder 16 KiB de réserve PC16 et vérifier le rejet à la frontière.
+
+- Arguments ordinaires de Bank Free : tail-call de P2k, même retour 0/1, aucune nouvelle gestion. Même les autres arguments invalides conservent leur ancien comportement.
+- Argument de **test exclusivement hors domaine -19000**, distinct d'un numéro de banque : appelle le probe du record unique, sans demander une libération ni changer la sélection. Retour -190 si les deux observations sont compatibles ; autres refus -131..-136, -180..-189 tels que définis en P2l-a. Jamais 1 pour l'argument de test. Aucun export de pointeur. Cette route est temporaire et doit disparaître dans la candidate de production ; aucune documentation README API ne la présente comme commande publique. Pas de changement du schéma de racine.
+
+Aucun FreeVec exposé ni écriture record/Chip/Copper, aucune nouvelle allocation. Le chemin d'affichage et la fermeture P2k ne sont pas changés. La route ne constitue pas un certificat DMA, même si elle renvoie -190. En cas de registre incompatible/busy ou de changement de bases, garder toutes les allocations.
+
+## Validation
+
+20 contrôles de route publique prévus (10 par modèle AP20), dont registre absent, écran actif, après Close, répétition, Gfx indisponible, référence conservée, mutation pendant WaitTOF, retry, comportement Bank Free normal et emprunt inachevé. ABI/stack, allocations/frees, état, record et Chip inchangés. Relancer 476 contrôles hérités P2l-a et chaînes d'intégration. Gate A P2l-b à relever. B/C/D non testées. Aucune installation autorisée.
+
+## Contrat de future campagne réelle
+
+Après Gate A P2l-b et autorisation distincte de bascule seulement : dériver le banc actif exact P2k, passer préflight strict, conserver l'unique ASC actif. Une phase d'affichage/100 déplacements après reset, lecture du diagnostic pendant Sprite actif (refus attendu -180), Off puis Close confirmé. Relever diagnostic juste après Close avant le retour explicite à AMOS, puis après Amos To Front et 4 Wait Vbl ; ne pas présumer que les deux observations sont idle. Un -190 confirme uniquement la compatibilité des champs sondés. Si refus -185/-186, investiguer le contexte View et la disponibilité de la mémoire basse sans relâcher les gardes. Conserver le retour normal Bank Free(29)=0, DMA_FREE_PROVEN=0. Rejouer la seconde phase sans reset avec refus -123 attendu. Aucun debugger manuel. Ne pas interpréter un refus du probe comme échec de l'affichage. Pas de nouveau test réel tant que la candidate n'est pas qualifiée et autorisée.
+
+Le réemploi et la libération d'allocations exposées restent explicitement non implémentés. Prochain choix après observations réelles : détachement OS démontré ou pool borné sans libération avec preuve de réemploi, qualification de l'absence d'anciennes publications et des 100 cycles. Ne pas simplement remplacer le garde P2k par le résultat -190.

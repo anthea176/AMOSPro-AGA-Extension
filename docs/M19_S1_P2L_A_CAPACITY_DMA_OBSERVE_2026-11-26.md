@@ -36,3 +36,11 @@ Suite après Gate A : définir un moyen de relever les observations sur la machi
 ## Suivi CI 26/11 — contrôles historiques
 
 Sur d467a131d7628842d14c1368995db725f615a195 : Bob Auto Update [PASS 45865653766](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45865653766) ; export strict P2k/L2b et refus de monolithisation PASS dans Artifact integrity 45865653804. Ce dernier a ensuite échoué dans `test_current_input_state_offsets.py:77` : ancien test S1-P1f..i attendait 208 entrées et UNIT142 identique, alors que P2i/j/k ont 214 entrées et quatre spans Close/End autorisés. Le contrôle corrigé exige l'identité exacte de chaque variante, la comparaison de toutes les entrées héritées sauf UNIT142, la restauration des seuls quatre spans source-proven, les BRA.L et cibles dans le tail, puis l'égalité stricte du préfixe L2b et les sept LEA/huit cas négatifs historiques. Aucun assouplissement d'offset. Nouvelle CI à relever. P2l-a initiale 45865653811 encore en cours lors du relevé.
+
+## Qualification exacte P2l-a
+
+**[Gate A complète P2l-a PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45865653811)** sur d467a131d7628842d14c1368995db725f615a195, job 140067676803, 149892 octets, SHA256 `c94a75424c03c236c33a3b4e6356978878dd04ae769ea3d25e8ec114fd9e6060`, blob `f44083d21ba84f403dfee8e84a9653a45373a3d6`, 105 commandes / 214 entrées AP20. UNIT142 65276 (258 octets libres) inchangée, UNIT207 11020 (10986 natifs + 34 dispatcher), observation 812 octets, PC16 max 11050, marge PC16 restante 21714 ; réserve +16384 testée (PC16 27434) dans les deux modèles. 54 Sprite, 12 transactions, 42 observations, 2 croissance, 184 Pattern, 172 SafePort, 10 suites Bob = 476 contrôles, et chaîne DB/IFF/Swap/capture deux layouts. MC68020, OS simulé, B/C/D non testées. Aucune preuve DMA ni nouvelle Lib installable.
+
+## Suite autorisée
+
+Auteur « super continu ». [P2l-b](M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md) : adapter temporairement le seul argument hors domaine -19000 de Bank Free pour appeler l'observateur depuis le véritable stub AP20, sans changer le comportement des appels de banque valides. Aucun réemploi/libération tant que le diagnostic réel et son contrat ne sont pas qualifiés. Aucun nouveau token ni bascule.
