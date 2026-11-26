@@ -59,7 +59,11 @@ def check_active_pair():
         '225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93')
     assert [x.name for x in (root/'tests/current').glob('*.asc')]==['SPRITE_PUBLIC.asc']
     from verify_m19_s1p2l_c_delivery import P2LC_SHA, recover_p2lb, verify_asc
-    if sha256(current).hexdigest()==P2LC_SHA:
+    from verify_m19_s1p2m_delivery import P2M_SHA, verify_library, verify_asc as verify_p2m_asc
+    if sha256(current).hexdigest()==P2M_SHA:
+        verify_library(current,good)
+        verify_p2m_asc(asc)
+    elif sha256(current).hexdigest()==P2LC_SHA:
         recover_p2lb(current,good)
         verify_asc(asc)
     elif sha256(current).hexdigest()==P2LB_SHA:
@@ -68,7 +72,7 @@ def check_active_pair():
     else:
         verify_s1p2k(current,good)
         assert len(asc)==4630 and sha256(asc).hexdigest()=='987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e'
-    print("P2K/P2LB/P2LC exact active pair PASS",sha256(current).hexdigest())
+    print("P2K/P2LB/P2LC/P2M exact active pair PASS",sha256(current).hexdigest())
 
 if __name__=='__main__':
     check_active_pair()

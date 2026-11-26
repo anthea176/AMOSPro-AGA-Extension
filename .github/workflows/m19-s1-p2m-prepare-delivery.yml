@@ -46,7 +46,8 @@ jobs:
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
           python -B tools/verify_m19_s1p2l_b_delivery.py
-          python -B tools/prepare_m19_s1p2m_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          git show 04dca65dc3adde7336d211c6d151a0d0dc952442:tests/current/SPRITE_PUBLIC.asc > "$RUNNER_TEMP/P2LC_SOURCE.asc"
+          python -B tools/prepare_m19_s1p2m_campaign.py "$RUNNER_TEMP/P2LC_SOURCE.asc" "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           PYTHONPATH=tools python -B - <<'PY'
           import base64, json, os
@@ -55,13 +56,16 @@ jobs:
           from build_m19_s1p2m_in_memory import build_s1p2m, protected
           before=protected()
           tmp=Path(os.environ['RUNNER_TEMP'])
-          assert tuple(sha256(x).hexdigest() for x in before)==(
+          from verify_m19_s1p2m_delivery import pre_p2m_pair, verify_asc
+          assert tuple(sha256(x).hexdigest() for x in pre_p2m_pair(before))==(
               '148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5',
               'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc',
               '25a50fd84962dcdd0a52a45d496ad3413676d37aa4b3df4c2d74391d18c4a89e',
               '225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93')
           out,meta=build_s1p2m(tmp/'vasm/vasmm68k_mot')
           asc=(tmp/'SPRITE_PUBLIC.asc').read_bytes()
+          assert sha256(out).hexdigest()=='5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be'
+          verify_asc(asc)
           assert meta['commands']==105 and meta['entries']==214
           assert meta['sha256']==sha256(out).hexdigest()
           assert meta['bytes']==len(out)

@@ -21,6 +21,8 @@ def build_s1p2k(vasm):
     installed=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     active=installed
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    from verify_m19_s1p2m_delivery import pre_p2m_library
+    active=pre_p2m_library(active,good)
     if sha256(active).hexdigest()==S1P2LC_SHA:
         from verify_m19_s1p2l_c_delivery import recover_p2lb
         active=recover_p2lb(active,good)

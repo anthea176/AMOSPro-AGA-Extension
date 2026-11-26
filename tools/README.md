@@ -1,10 +1,16 @@
 # Outils Python — builder actif et historique versionne
 
-**26/11/2026 — P2l-c : ÉCHEC FONCTIONNEL de la relance sans reset (ERR10, SPRITE_RC=-123).** Gate A PASS ; les PASS Runtime phases 1/2 sont uniquement des PASS de scénario de quarantaine, pas une validation du cycle de vie. [Journaux et correctif P2m](../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). P2m en qualification source, Lib/ASC actifs P2l-c inchangés, LAST_GOOD protégée. Ne plus relancer le test P2l-c.
+**26/11/2026 — S1-P2m active sur main, Gate A complète PASS.** Lib 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, blob `a29e86a6414021e19b87615681dcc08fe406518c`, 105 commandes / 214 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257) (source ee70cdf84e4ec1896eb657b07e2a2876d2244932) : 100 cycles et 10 fermetures par modèle AP20, cas négatifs, 184 Pattern, 172 SafePort, 10 suites Bob, DB/IFF/Swap/capture ; reconstruction identique et préflight strict PASS. [Reconstruction indépendante](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891360197). UNIT142 65424 (110 libres), UNIT207 10380 (22354 libres PC16), PC16 max 10410. ASC 6700 octets SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`, blob `ddd9b676b9a3d4c0f4cccf08ca058cade61df9aa`. B/C/D réelles NON TESTÉES. LAST_GOOD L2b et ABK inchangées. Autorisation auteur « continu livre moi cette lib ». P2l-c historique rejetée en relance fonctionnelle.
+
+[Rapport et protocole fonctionnel](../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md).
 
 > S1-P1i : Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA.
 
-## Candidate active S1-P2l-c (26/11/2026)
+## Candidate active S1-P2m (26/11/2026)
+
+Builder `build_m19_s1p2m_in_memory.py`, vérificateur `verify_m19_s1p2m_delivery.py`, ASC `prepare_m19_s1p2m_campaign.py`. Les anciens builders reconstruisent les parents vérifiés depuis l'historique Git (clone complet), en mémoire, sans écrire dans dist/. Gate B fonctionnelle à effectuer.
+
+## Historique S1-P2l-c (26/11/2026)
 
 Builder `build_m19_s1p2l_c_in_memory.py`, Gate A 532 PASS, reconstruction exacte PASS ; `verify_m19_s1p2l_c_delivery.py` et `active_library.py` contrôlent la paire exacte et la récupération du parent P2l-b. ASC via `prepare_m19_s1p2l_c_campaign.py` depuis P2l-b historique (préflight strict PASS). B à effectuer, C reportée, D non testée. [Rapport](../docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md). Aucun changement de LAST_GOOD.
 

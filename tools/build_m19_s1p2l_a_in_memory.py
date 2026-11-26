@@ -49,7 +49,9 @@ def headroom(parts):
 
 def build_s1p2la(vasm):
     vasm=Path(vasm).resolve()
-    original=protected()
+    from verify_m19_s1p2m_delivery import pre_p2m_pair
+    installed=protected()
+    original=pre_p2m_pair(installed)
     from verify_m19_s1p2l_b_delivery import P2LB_ASC_SHA, recover_p2k
     identities=tuple(sha256(x).hexdigest() for x in original)
     assert identities[1]==P2DL2B_SHA
@@ -106,7 +108,7 @@ def build_s1p2la(vasm):
     assert unpack_ap20(image)==(tok,newparts,newtitle)
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
-    assert protected()==original
+    assert protected()==installed
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+bytes(1)+image).hexdigest(),
         unit142=65276,unit142_free=258,native_sprite=len(native),

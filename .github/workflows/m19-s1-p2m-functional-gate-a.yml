@@ -52,8 +52,10 @@ jobs:
           PYTHONPATH=tools python -B tools/test_m19_s1p2m_gate_a.py --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1i.bin"
       - name: Strict preflight of future functional ASC
         run: |
-          python -B tools/prepare_m19_s1p2m_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          git show 04dca65dc3adde7336d211c6d151a0d0dc952442:tests/current/SPRITE_PUBLIC.asc > "$RUNNER_TEMP/P2LC_SOURCE.asc"
+          python -B tools/prepare_m19_s1p2m_campaign.py "$RUNNER_TEMP/P2LC_SOURCE.asc" "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          printf '%s  %s\n' '84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684' "$RUNNER_TEMP/SPRITE_PUBLIC.asc" | sha256sum -c -
       - name: Preserve active pair and protected LAST_GOOD
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py

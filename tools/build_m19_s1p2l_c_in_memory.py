@@ -20,7 +20,9 @@ NEW_RETURN='p2l_not_idle:\n    bra.w p2lc_idle_detail\n    nop\n    nop\n'
 
 def build_s1p2lc(vasm):
     vasm=Path(vasm).resolve()
-    original=protected()
+    from verify_m19_s1p2m_delivery import pre_p2m_pair
+    installed=protected()
+    original=pre_p2m_pair(installed)
     parent,meta=build_s1p2lb(vasm)
     from verify_m19_s1p2l_c_delivery import P2LC_SHA, recover_p2lb
     expected_parent=recover_p2lb(original[0],original[1]) if sha256(original[0]).hexdigest()==P2LC_SHA else original[0]
@@ -86,7 +88,7 @@ def build_s1p2lc(vasm):
     assert recover_p2lb(image,original[1])==parent
     if sha256(original[0]).hexdigest()==P2LC_SHA:
         assert image==original[0]
-    assert protected()==original
+    assert protected()==installed
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+bytes(1)+image).hexdigest(),
         native_sprite=len(native),unit207=len(group),unit207_pc16_free=remaining,

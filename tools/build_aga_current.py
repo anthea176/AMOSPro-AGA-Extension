@@ -50,7 +50,11 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 S1-P2l-c"):
+    if active.startswith("M19 S1-P2m"):
+        from active_library import verify_s1p2m
+        verify_s1p2m(current,LAST_GOOD.read_bytes())
+        print("CURRENT S1-P2m: exact functional Gate A candidate; 105 commands / 214 AP20; B/C/D pending; L2b protected")
+    elif active.startswith("M19 S1-P2l-c"):
         from active_library import verify_s1p2lc
         verify_s1p2lc(current,LAST_GOOD.read_bytes())
         print("CURRENT S1-P2l-c: exact diagnostic Gate A candidate; 105 commands / 214 AP20; B/C/D pending; DMA retained; L2b protected")

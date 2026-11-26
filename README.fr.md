@@ -19,16 +19,16 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 S1-P2l-c — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **150 056 octets**, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) ; 532 contrôles ; Runtime, Compiler et matériel non testés ; DMA conservée. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2m — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **149 400 octets**, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257) ; 200 cycles Sprite modélisés et régressions PASS ; Runtime, Compiler et matériel réels non testés. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
-**Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), même dossier. [Protocole](tests/current/README.md). [T06 historique conservé](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset initial, puis deux lancements sans reset ; quatre observations diagnostiques, aucune libération DMA. [Rapport](docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md).
+**Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), même dossier. [Protocole](tests/current/README.md). [T06 historique conservé](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset initial, puis trois lancements sans reset ; 100 cycles Off/réaffichage et 10 fermetures actives par lancement. [Rapport](docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md).
 
 **Régression historique :** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [Installation](INSTALL.fr.md) · [Suivi](docs/NEXT_SESSION.md).
-**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande dans la 0.14.1 ; développement S1-P2l-c séparé pour 0.15.0.
+**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande dans la 0.14.1 ; développement S1-P2m séparé pour 0.15.0.
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 S1-P2l-c** — **105 commandes / 214 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
+**API de la bibliothèque courante M19 S1-P2m** — **105 commandes / 214 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -113,9 +113,9 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | En double buffer AGA, 1 prépare les Bobs à chaque `Aga Swap` et 0 rétablit le mode manuel (défaut). Le réglage exige une page CLEAN. Une page READY est réutilisée au prochain Swap. Retour 1 sur succès, 0 sur refus. |
 | **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | Test S1-P1i uniquement. Sélectionne ou crée une banque DATA AMOS AGSP ; refuse les banques étrangères ou invalides. Aucune allocation DMA. Gate A native et Runtime capture PASS ; Compiler en attente. |
 | **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Test S1-P1i uniquement. Capture le buffer AGA inactif Safe vers la banque AGSP sélectionnée ; bornes inclusives, largeur 16, hauteur 1..256, au maximum 3 couleurs opaques RGB24. Remplace l'ID sans effacer les autres images ; aucun affichage DMA. Gate A native et Runtime capture PASS ; Compiler en attente. |
-| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Diagnostic P2l-b : affiche ou déplace le même objet/image, 16 pixels, 3 couleurs opaques maximum. Palette 21..23, paire 2/3. Retour 1 ou code négatif de diagnostic ; tester =1. |
-| **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire les canaux possédés ; réaffichage désactivé dans P2l-b. Retour 1/0. |
-| **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Arguments de banque ordinaires : 1/0, allocations exposées conservées. Diagnostic temporaire limité au banc actif. |
+| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Affiche ou déplace le même objet/image actif, 16 pixels, 3 couleurs opaques maximum. Palette 21..23, paire 2/3. Retour 1 ou code négatif de diagnostic ; tester =1. |
+| **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire les canaux possédés et libère les allocations confirmées ; réaffichage depuis la banque sélectionnée. Retour 1/0. |
+| **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Libère les ressources Sprite associées après retraite confirmée, sans effacer la banque DATA AMOS. Retour 1/0. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Fonction numérique de lecture du Y d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Fonction numérique de lecture du numéro d'image 1..4096 d'un Bob actif `N` (1..64), ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |

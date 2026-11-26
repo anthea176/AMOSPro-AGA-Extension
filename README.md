@@ -19,16 +19,16 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 S1-P2l-c — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **150,056 bytes**, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385); 532 checks; Runtime, Compiler and hardware not tested; DMA retained. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2m — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **149,400 bytes**, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257); 200 modeled Sprite cycles and inherited regressions PASS; real Runtime, Compiler and hardware not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
-**Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), same folder. [Protocol](tests/current/README.md). [Preserved T06](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset once, then two launches without reset; four diagnostic observations, no DMA free. [Report](docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md).
+**Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), same folder. [Protocol](tests/current/README.md). [Preserved T06](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset once, then three launches without reset; 100 Off/re-show cycles and 10 active closes per launch. [Report](docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md).
 
 **Historical regression:** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc), validated on P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.md) · [Installation](INSTALL.md) · [Progress](docs/NEXT_SESSION.md).
-**Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands in 0.14.1; S1-P2l-c development for 0.15.0 is separate.
+**Latest public GitHub release:** 0.14.0. **Next: 0.14.1 — Stability & Bug Fixes (draft, not published).** [GitHub notes](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Aminet draft](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). No new commands in 0.14.1; S1-P2m development for 0.15.0 is separate.
 
 ## Main AMOS commands
 
-**Current library API M19 S1-P2l-c** — **105 commands / 214 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
+**Current library API M19 S1-P2m** — **105 commands / 214 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -113,9 +113,9 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | In AGA double buffering, 1 prepares Bobs at each `Aga Swap` and 0 restores manual mode (default). Configuration requires a CLEAN page. A READY page is reused on the next Swap. Returns 1 on success and 0 on refusal. |
 | **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | S1-P1i test only. Select or create an AMOS DATA AGSP bank; rejects foreign or invalid banks. No DMA allocation. Native Gate A and capture Runtime PASS; Compiler pending. |
 | **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | S1-P1i test only. Capture the safe inactive AGA buffer into the selected AGSP bank; inclusive bounds, width 16, height 1..256, at most 3 opaque RGB24 colours. Replaces the selected image ID without destroying other images; no DMA display. Native Gate A and capture Runtime PASS; Compiler pending. |
-| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | P2l-b diagnostic: display or move the same object/image, width 16, up to 3 opaque colours. Palette 21..23, pair 2/3. Returns 1 or negative diagnostic code; test =1. |
-| **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire owned channels; redisplay disabled in P2l-b. Returns 1/0. |
-| **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Normal bank arguments: 1/0, exposed allocations retained. Temporary diagnostic restricted to the active test. |
+| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Display or move the same active object/image, width 16, up to 3 opaque colours. Palette 21..23, pair 2/3. Returns 1 or negative diagnostic code; test =1. |
+| **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire owned channels and release confirmed private allocations; redisplay from the selected bank. Returns 1/0. |
+| **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Release matching Sprite resources after confirmed retirement, without erasing the AMOS data bank. Returns 1/0. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga Y Bob`** | `_Y=Aga Y Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed Y in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |
 | **`Aga I Bob`** | `_I=Aga I Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns image ID 1..4096 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |

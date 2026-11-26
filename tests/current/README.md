@@ -1,39 +1,17 @@
-# S1-P2l-c — diagnostic DMA détaillé actif unique
+# S1-P2m — cycle de vie Sprite, campagne active unique
 
-**26/11/2026 — P2l-c : ÉCHEC FONCTIONNEL de la relance sans reset (ERR10, SPRITE_RC=-123).** Gate A PASS ; les PASS Runtime phases 1/2 sont uniquement des PASS de scénario de quarantaine, pas une validation du cycle de vie. [Journaux et correctif P2m](../../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). P2m en qualification source, Lib/ASC actifs P2l-c inchangés, LAST_GOOD protégée. Ne plus relancer le test P2l-c.
+**26/11/2026 — S1-P2m active sur main, Gate A complète PASS.** Lib 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, blob `a29e86a6414021e19b87615681dcc08fe406518c`, 105 commandes / 214 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257) (source ee70cdf84e4ec1896eb657b07e2a2876d2244932) : 100 cycles et 10 fermetures par modèle AP20, cas négatifs, 184 Pattern, 172 SafePort, 10 suites Bob, DB/IFF/Swap/capture ; reconstruction identique et préflight strict PASS. [Reconstruction indépendante](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891360197). UNIT142 65424 (110 libres), UNIT207 10380 (22354 libres PC16), PC16 max 10410. ASC 6700 octets SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`, blob `ddd9b676b9a3d4c0f4cccf08ca058cade61df9aa`. B/C/D réelles NON TESTÉES. LAST_GOOD L2b et ABK inchangées. Autorisation auteur « continu livre moi cette lib ». P2l-c historique rejetée en relance fonctionnelle.
 
-**S1-P2l-c active (26/11/2026).** Autorisation auteur « va y ct inplicite! » après Gate A PASS. Lib 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, blob `86d9497e3a2d5446001b9b41fc25d2e6a878ae50`, 105 commandes / 214 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) : 532 contrôles (496 hérités + 36 détail idle). [Reconstruction exacte et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895). UNIT142 65276, marge 258 ; UNIT207 11178, PC16 max 11208, marge 21556 ; helper natif 114 octets, patch 8 octets à 10978. ASC unique 6425 octets SHA256 `25a50fd84962dcdd0a52a45d496ad3413676d37aa4b3df4c2d74391d18c4a89e`, blob `fad7c3f78a20907f25a0e8072508c5c2c9e9b409`. ABK inchangée (532 octets) et LAST_GOOD L2b protégée. B/C/D NON TESTÉES sur P2l-c ; CI post-activation à relever. Aucune libération ni réemploi DMA.
+## Fichiers
+- [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`.
+- [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 6700 octets, SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`.
+- [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), 532 octets, SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`.
 
-[Lib](../../dist/AMOSPro_AGA.Lib) · [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc) · [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), ABK SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`.
+## Gate B — Runtime réel
+1. Copier la Lib dans APSystem, conserver le slot d'extension. WinUAE AGA PAL, 68030 JIT ON. Redémarrage complet unique sans Save State lors du changement de Lib (schéma de registre v3).
+2. Placer ASC et ABK ensemble. Importer l'ASC exact par Merge ASCII. Exécuter en Runtime (PRG_STATE=1). Aucun Erase All ni reset entre lancements.
+3. Faire trois lancements successifs. Sauvegarder chaque journal RAM:M19_P2M_RUNTIME.TXT séparément avant écrasement. Vérifier visuellement affichage, déplacement, disparition et retour à AMOS.
+4. Attendu par lancement : OPENED=10, CLOSED=10, SHOWN=100, MOVED=100, OFF_COUNT=100, AUTO_CLOSE=10, SPRITE_RC=MOVE_RC=OFF_RC=FREE_RC=1, CHIP_CYCLE_LOSS=FAST_CYCLE_LOSS=CHIP_SCREEN_LOSS=FAST_SCREEN_LOSS=0, RESULT=1 ERR=0 CLEAN_ERR=0, VERDICT PASS_FUNCTIONAL_LIFECYCLE. Comparer Chip/Fast avant/après et entre lancements. Premier Close référence stabilisée, pas une preuve de fuite nulle au premier passage.
+5. Si échec, conserver le premier journal et ne pas poursuivre les lancements. Gate C vrai AMOS Compiler seulement après Gate B fonctionnelle. D matériel distincte.
 
-## Exécution Runtime uniquement
-
-1. Installer la Lib P2l-c dans APSystem, fermer WinUAE complètement puis redémarrer sans restaurer de Save State (AGA PAL, 68030/JIT ON). Relancer AMOS. Ne pas utiliser un ancien programme tokenisé/compilé.
-2. Placer l'ASC et l'ABK dans le même dossier, Project → Merge ASCII. Lancer Runtime, saisir 1. Observer le Sprite se déplacer 100 fois et disparaître. Sauvegarder `RAM:M19_P2LC_P1_RUNTIME.TXT`.
-3. **Uniquement si RESULT=1 et DIAG_ROUTE_OK=1**, relancer le même programme sans reset ni réinstallation, saisir 2. Aucun nouveau Sprite attendu. Sauvegarder `RAM:M19_P2LC_P2_RUNTIME.TXT`.
-4. Transmettre les deux journaux. En cas de Guru/FAIL/DIAG_ROUTE_FAIL, arrêter et conserver les preuves. Pas de Compiler à ce jalon ni de debugger.
-
-Ne pas relancer la phase 1 sans reset : le refus -123 et ERR10 restent attendus après rétention.
-
-| Champ | Phase 1 | Phase 2 |
-| --- | --- | --- |
-| SOURCE_TAG | M19_S1P2LC_IDLE_DETAIL_V1 | M19_S1P2LC_IDLE_DETAIL_V1 |
-| PRG_STATE | 1 | 1 |
-| SPRITE_RC | 1 | -123 attendu |
-| MOVE_RC / MOVES | 1 / 100 | -999 / 0 |
-| SOURCE_ERASED | 1 | 1 |
-| OFF_RC / CURSOR_RC / CLOSE_RETURNED / CLOSED | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
-| BANK_FREE_RC | 0 | 0 |
-| CLEAN_ERR / ERR / RESULT | 0 / 0 / 1 | 0 / 0 / 1 |
-| DIAG_START | -131 | relever |
-| DIAG_ACTIVE | -180 | relever |
-| DIAG_CLOSE / DIAG_FRONT | relever / relever | relever / relever |
-| DIAG_ROUTE_OK | 1 | 1 |
-| DMA_FREE_PROVEN | 0 | 0 |
-| VERDICT | PASS_DISPLAY_CLOSE_RETAINED_ONLY | PASS_QUARANTINE_NO_NEW_DISPLAY |
-
-## Observations DMA
-
-DIAG_CLOSE immédiatement après Close, DIAG_FRONT après Amos To Front et quatre Wait Vbl. Le détail -256-MASK (1 à 63) cumule les bits : 1 ActiView non nul (-257), 2 LOF (-258), 4 SHF (-260), 8 WAIT terminal (-264), 16 copinit non vérifiable (-272), 32 copinit changé (-288). Si base non vérifiable, pas d'évaluation LOF/SHF/WAIT ; si base change, relevé incomplet. -185 reste possible si transitoire. Retours P2l-b préservés : -180 reçu Close/record manquant, -181 record non mappé, -182 flags, -183 géométrie, -184 Gfx, -186 layout, -187 référence privée/canal, -188 changement de bases, -189 restitution du verrou refusée (anormal), -190 deux observations compatibles seulement.
-
-OBS_PENDING et OBS_COMPATIBLE_ONLY ne prouvent aucune libération DMA. Le diagnostic temporaire Bank Free(-19000) n'est pas une API de production. Aucun nouveau réemploi ; le refus -123 reste volontaire. [Rapport P2l-c](../../docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md) · [Historique P2l-b, Runtime PASS 2/2 et FAIL initial](../../docs/M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md). Logs distincts par phase et mode ; préserver les originaux.
+[Rapport technique et journaux historiques P2l-c](../../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). Aucun test de quarantaine P2l-c à relancer.

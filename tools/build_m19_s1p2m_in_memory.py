@@ -18,7 +18,8 @@ def build_s1p2m(vasm):
     vasm=Path(vasm).resolve()
     before=protected()
     parent,old_info=build_s1p2lc(vasm)
-    assert parent==before[0]
+    from verify_m19_s1p2m_delivery import pre_p2m_pair, P2M_SHA, verify_library
+    assert parent==pre_p2m_pair(before)[0]
     assert sha256(parent).hexdigest()=='148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5'
     tok,old,title=unpack_ap20(parent)
     base,meta=build_s1p2k_close(vasm,lifecycle=True)
@@ -64,6 +65,9 @@ def build_s1p2m(vasm):
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([row for row in walk_tokens(tok) if row['signature']])==105
+    verify_library(image,before[1])
+    if sha256(before[0]).hexdigest()==P2M_SHA:
+        assert image==before[0]
     assert protected()==before
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
