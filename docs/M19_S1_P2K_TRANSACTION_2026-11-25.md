@@ -40,3 +40,28 @@ Auteur « va y » : bascule r4 exacte et ASC actif à deux phases autorisés. Le
 ## Activation autorisée — 26/11/2026
 
 Reconstruction lecture seule [CI 45786061729 / job 139792996563](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786061729) PASS : Lib exacte 149080 octets, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, blob `0841bdc692006e7eb18ae5cc2b1df4a9fc4135f8` ; ASC exact 4630 octets, SHA256 `987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e`, blob `497fc8733ca3cc4a285db6e413da43a2b5f3ebdb`, préflight strict PASS. Les deux blobs extraits des logs ont été recréés via Git et comparés aux empreintes Git avant bascule conjointe. P2j antérieure conservée dans Git au commit f3c063ae9b2162c35bc08f25e242f9dc46776b12. P2k active uniquement dans dist/AMOSPro_AGA.Lib, ABK et LAST_GOOD inchangées, B/C/D non testées. Vérificateurs exacts et builders historiques adaptés à P2k sans changer les sources natives r4 ; refus d'export monolithique maintenu. CI post-activation à relever ; autres échecs historiques non déclarés résolus. [Protocole Runtime](../tests/current/README.md).
+
+## Gate B — résultats Runtime auteur, 26/11/2026
+
+Les deux journaux transmis en réponse à la campagne r4 sont conservés octet pour octet (CRLF) dans docs/evidence :
+
+- [phase 1](evidence/M19_S1P2K_PHASE1_RUNTIME_2026-11-26.TXT) : 408 octets, SHA256 `fdc09c5c3ea78c3b04bc04589cf6383a0a468009a47a49a5effc6cd0ffcbb662`, blob `fff44b614aa2811062f913926c718b28581571dd`.
+- [phase 2](evidence/M19_S1P2K_PHASE2_RUNTIME_2026-11-26.TXT) : 408 octets, SHA256 `181db87a20e26cbb07d43e616f9435885836f637980c8f503a8bcbbab39178ed`, blob `d4e37085f39501b294342670f793ee6e9fe22c12`.
+
+Identité de campagne SOURCE_TAG M19_S1P2K_R4_TRANSACTION_V1, PRG_STATE 1, RUN_MODE RUNTIME, CPU_ATTNFLAGS 32823 dans les deux journaux ; Lib r4 et ASC attribués par le protocole et le contexte de livraison, pas par un SHA mesuré sur Amiga. Résultats :
+
+| Champ | Phase 1 | Phase 2 |
+| --- | --- | --- |
+| SPRITE_RC / MOVE_RC | 1 / 1 | -123 / -999 |
+| MOVES / SOURCE_ERASED | 100 / 1 | 0 / 1 |
+| OFF_RC / CURSOR_RC / CLOSE_RETURNED / CLOSED | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
+| BANK_FREE_RC / CLEAN_ERR | 0 / 0 | 0 / 0 |
+| CHIP_BEFORE / CHIP_AFTER | 1793432 / 1793232 | 1793232 / 1793232 |
+| FAST_BEFORE / FAST_AFTER | 138106536 / 138106368 | 138105824 / 138105824 |
+| DMA_FREE_PROVEN | 0 | 0 |
+| RESULT / ERR | 1 / 0 | 1 / 0 |
+| VERDICT | PASS_DISPLAY_CLOSE_RETAINED_ONLY | PASS_QUARANTINE_NO_NEW_DISPLAY |
+
+**Gate B PASS limitée à la campagne deux lancements.** Phase 1 retient 200 octets Chip et 168 Fast (368 octets), mêmes variations qu'en P2j après reset. Phase 2 variations nettes Chip/Fast nulles, aucune allocation supplémentaire persistante observée pendant cet essai. Fast Free diminue de 544 octets ENTRE les phases (138106368 -> 138105824), origine indéterminée ; ne pas conclure à une absence générale de fuite. Le code -123 démontre que la relance atteint le contrôle du record persistant, et non le refus -132 ; ne pas extrapoler à un task tué pendant un appel, à des rechargements forcés, à une preuve de libération DMA ni à la possibilité de réaffichage. Aucun contrôle visuel distinct n'a été fourni. Le schéma v2 et la quarantaine restent inchangés. Gate C vraie compilation et D physique non testées. Aucun changement de Lib, d'ASC ou de LAST_GOOD.
+
+CI post-activation sur 48255098dc35d4fe08b1de7c132d29b4a7d26515 : 27/29 workflows PASS, notamment Gate A P2k [45786663228](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663228), identité canonique [45786662594](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662594), politique CPU/livraison [45786662775](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662775) et documentation [45786662973](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662973). Deux FAIL restent ouverts : Bob Auto Update [45786663144](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663144), assertion à la vérification d'identité P2d et chemins officiels ; Artifact integrity [45786663138](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663138), export strict, `author-promoted P0/P1e/P2d LAST_GOOD identity lost`. Ne pas présenter ces échecs de contrôles comme des régressions natives démontrées, ni comme résolus. Prochaine qualification proposée : conserver r4 intacte et réaliser Gate C du même scénario, puis traiter la capacité UNIT142 et le réemploi/reclaim DMA sur une candidate séparée. Aucune promotion ni développement autorisé par ces résultats seuls.

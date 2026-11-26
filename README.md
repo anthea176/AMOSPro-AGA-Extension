@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 S1-P2k — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **149,080 bytes**, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562); Runtime, Compiler and hardware not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2k — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), **149,080 bytes**, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, **105 commands / 214 AP20 entries**. [Integrated Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562); [Two-phase Runtime PASS](docs/M19_S1_P2K_TRANSACTION_2026-11-25.md); DMA retained, Compiler and hardware not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
 **Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), same folder. [Protocol](tests/current/README.md). [Preserved T06](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset once, then two launches without reset between phases; deliberate DMA retention. [Protocol and report](docs/M19_S1_P2K_TRANSACTION_2026-11-25.md).
 
