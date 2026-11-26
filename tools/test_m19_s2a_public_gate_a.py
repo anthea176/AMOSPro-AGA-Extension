@@ -194,7 +194,7 @@ def animation_cases(image,info):
         assert m.sprite(image=4)==-204
         assert snapshot(m)==before
         assert m.off()==1;m.no_sprite()
-        for address in (GFX+34,GFX+38,GFX+50,GFX+208,VIEW,SCREEN+56,
+        for address in (GFX+34,GFX+38,GFX+50,GFX+54,GFX+208,VIEW,SCREEN+56,
                         FAST_TABLE+8,FAST_TABLE+12,CI+104,CI+106,CI+110):
             m=new()
             size=2 if address in (CI+104,CI+106,CI+110) else 4

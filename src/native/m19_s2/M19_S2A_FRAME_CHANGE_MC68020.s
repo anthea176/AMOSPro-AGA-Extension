@@ -250,6 +250,18 @@ s2a_refs:
     bsr.w s2a_context_now
     tst.l d0
     beq.w p2i_no
+    ; Corroborate mapped Copper list starts without traversing them.
+    ; A stable but invalid pointer is not an acceptable snapshot.
+    movea.l S_LOF(a2),a0
+    moveq #2,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
+    movea.l S_SHF(a2),a0
+    moveq #2,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
     movea.l S_VIEW(a2),a0
     moveq #18,d0
     bsr.w AGSP_I_SPAN

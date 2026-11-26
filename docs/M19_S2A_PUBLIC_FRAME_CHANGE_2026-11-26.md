@@ -27,3 +27,7 @@ Les validations P2m de coordonnées, palette, propriétaire et retraite restent 
 [Gate A publique](../tools/test_m19_s2a_public_gate_a.py) : 100 alternances par mode DB simple/double et par modèle AP20, déplacement sans changement supplémentaire, invariants d'allocation et d'écriture du slot inactif, contenu exact de la frame, refus de banque/palette/hauteur/hotspot, OOM, changement de référence tardif, frontière 64 Kio, échec ChangeSprite/MoveSprite, quarantaine, Off/Bank Free/Close/End depuis les deux slots. Rejouer la suite P2m inchangée, la chaîne DB/IFF/Swap/capture et les régressions Pattern/SafePort/Bob. [CI dédiée](../.github/workflows/m19-s2a-public-gate-a.yml).
 
 **Statut au commit : sources et tests intégrés, Gate A à relever.** Les modèles CPU ne prouvent pas l'instant réel des lectures DMA. P2m reste le seul binaire actif ; aucun test WinUAE S2a à lancer avant qualification et livraison de la paire exacte.
+
+## Revue source après intégration
+
+Le snapshot doit refuser également un pointeur LOF/SHF déjà invalide et stable. Vérification TypeOfMem des deux débuts de listes (2 octets, sans parcours ni modification), test négatif sur les deux champs. Cette corroboration ne démontre pas l'absence de références dans les listes dynamiques. La Gate A du commit précédent ne peut pas qualifier les octets corrigés.
