@@ -140,7 +140,7 @@ Commande depuis la racine du dépôt :
 python -B -m unittest discover -s tools/prototypes -p 'test_agtm_format_proto.py' -v
 ```
 
-**9 tests hôtes PASS lors de l'exécution locale.** Aucun test WinUAE, AMOS Compiler ou Amiga physique n'a été effectué pour AGTM.
+**9 tests hôtes PASS lors de l'exécution locale du codec.** Ce résultat hôte n'est pas une validation WinUAE, Compiler ou Amiga physique ; voir les sections 13 et 14 pour les résultats séparés des prototypes AMOS.
 
 ## 10. Questions de performance encore ouvertes
 
@@ -193,3 +193,15 @@ Deux sources **AMOS Professional autonomes** sont prêtes, sans aucune modificat
 - **Mise à jour 23/11/2026 :** banque AGTM **Gate B Runtime PASS** (Save/Load, 352 cellules exactes) ; benchmark tuiles **Gates B Runtime et C vrai Compiler PASS** (`PIXEL_BAD=0` pour 81 920 octets, fermeture OK). Pour un décalage de **16 px**, SCROLL 33 ticks contre FULL 177 en Runtime et 31 contre 140 en Compiler. [Rapport et journaux originaux](AGTM_WINUAE_PROTOTYPES_2026-11-23.md). Aucun test du futur moteur AGTM natif, scrolling 1 pixel ou couches multiples.
 
 Ces prototypes sont **préliminaires** : ils ne constituent ni une commande native de tilemap, ni un bench du scrolling au pixel près, ni une preuve de performance pour deux couches ou les Bobs. Le chantier de développement natif AGTM/M20 reste planifié **après M21**.
+
+## 14. Scrolling fin WinUAE — résultats reçus le 26/11/2026
+
+[Prototype AMOS](../tests/proto/agtm_prototype/AGTM_FINE_SCROLL_BENCH.asc) : **Runtime B et vrai Compiler C PASS**, 12 comparaisons de bitplanes (983 040 octets), 1 008 pixels contrôlés indépendamment et zéro divergence dans chaque mode. Sur la scène 320×256, une couche et déplacement horizontal 1/8/16 px, les gains FULL/SCROLL mesurés en ticks sont respectivement **5,59/5,30/5,42 en Runtime** et **4,63/4,34/4,47 en Compiler**. Un seul Swap hors mesure ; la configuration CPU/JIT et la SHA installée ne sont pas attestées par les logs. Le rapport conserve les deux journaux originaux et les mesures brutes : [AGTM_FINE_SCROLL_WINUAE_2026-11-26](AGTM_FINE_SCROLL_WINUAE_2026-11-26.md).
+
+## 15. Deux pages et carte dynamique — prototype préparé le 26/11/2026
+
+[AGTM_DB_DIRTY_BENCH.asc](../tests/proto/agtm_prototype/AGTM_DB_DIRTY_BENCH.asc), [protocole](../tests/proto/agtm_prototype/README.fr.md), [modèle hôte](../tests/proto/agtm_prototype/test_agtm_db_dirty_model.py). Carte AGTM v1 64×32, deux couches, 16 tuiles, vue 320×256. Une caméra et une révision par page ; copie chevauchante de la région commune, redessin des bandes, puis des cellules éditées (fond et overlay). Alternance uniquement après Swap réussi. Validation prévue : 12 comparaisons intégrales avant présentation, 72 pixels échantillonnés, quatre séries chronométrées de 12 frames, 70 swaps au total. Mesurer le dessin et la série présentée séparément.
+
+**PREFLIGHT PASS, modèle hôte 3 tests PASS** : deux méthodes comparées à l'oracle monde sur 12 frames chacune, suivi des deux pages et compteurs de dessin (FULL 4 116 fond + 1 011 overlay ; SCROLL 480 fond + 127 overlay + 11 copies et 21 patches). **Runtime/Compiler NON TESTÉS pour ce nouvel ASC**. Limites : historique fixé à ce scénario, pas de Bobs, pas de scrolling matériel, pas de qualification M20 native.
+
+Le développement natif AGTM reste planifié après M21. Aucun changement de Lib, LAST_GOOD, tokens, ASM ou campagne Sprite.
