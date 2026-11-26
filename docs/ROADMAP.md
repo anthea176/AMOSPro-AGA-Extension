@@ -1,10 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**26/11/2026 — clôture fonctionnelle P2m, accord auteur « oui passons a la suite du chantier sprite » puis « ok go ».** Gate B Runtime fonctionnelle validée (trois derniers PASS stricts), Gate C Compiler fonctionnelle 2/2 (PASS strict 1/2 ; ERR14 sur écart Fast temporaire 128 octets). Aucun écart net de Chip/Fast par exécution. D physique non testée. Auteur accepte la clôture fonctionnelle avec réserve ; aucune promotion LAST_GOOD. Les fichiers RAM conservés expliquent les différences entre lancements selon l'auteur ; leur coût exact n'a pas été isolé. La Lib et l'ASC exacts restent actifs, LAST_GOOD L2b protégée. Prochaine étape S2a : changement d'image à chaud, source-only avant Gate A, sans nouveau token. [Résultats et journaux originaux](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md).
-
-**26/11/2026 — S1-P2m active sur main, Gate A complète PASS.** Lib 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, blob `a29e86a6414021e19b87615681dcc08fe406518c`, 105 commandes / 214 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257) (source ee70cdf84e4ec1896eb657b07e2a2876d2244932) : 100 cycles et 10 fermetures par modèle AP20, cas négatifs, 184 Pattern, 172 SafePort, 10 suites Bob, DB/IFF/Swap/capture ; reconstruction identique et préflight strict PASS. [Reconstruction indépendante](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891360197). UNIT142 65424 (110 libres), UNIT207 10380 (22354 libres PC16), PC16 max 10410. ASC 6700 octets SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`, blob `ddd9b676b9a3d4c0f4cccf08ca058cade61df9aa`. À la livraison : B/C/D non testées (voir actualisation ci-dessus). LAST_GOOD L2b et ABK inchangées. Autorisation auteur « continu livre moi cette lib ». P2l-c historique rejetée en relance fonctionnelle.
-
-[Rapport et protocole fonctionnel](M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md).
+**26/11/2026 — P2m clôture fonctionnelle acceptée, B PASS, C fonctionnelle 2/2 (strict 1/2), D non testée.** [Résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md). S2a engagé en sources seulement ; Lib et ASC inchangés, LAST_GOOD protégée.
 
 ## 1. État actuel et objectif
 
@@ -25,22 +21,14 @@
 - L3 : T14A Open/Close/curseur, T11A FICON/FICHIP, T10A AGBO/B8, AGPC Fast/Chip/C2P/Copper PASS Runtime L2b ; mémoire stable sur chacun. [T14C End/Font](../tests/proto/l3_end/README.md) Runtime PASS ; ABA, BankFont et injections natives encore à disposer. Aucune anomalie nouvelle observée, pas de preuve exhaustive.
 - L4 : [P2 ALL IN ONE](../tests/passed/M19_P2_ALL_IN_ONE.asc) Runtime PASS transmis sur L2b (journal identique à P2d historique, attribution contextuelle), B/C distinctes ; C manuelle reportée par l'auteur, D séparée. L5 : promotion interne L2b autorisée et effectuée ; publication distincte, CI post-promotion à requalifier. Aucune promotion automatique. [Audit et critères](AUDIT_AGA_BILAN_PLAN_CORRECTION_2026-11-24.md).
 
-## 3. Sprites matériels AGA après levée du gel
+## 3. Sprites matériels AGA
 
-**S1-P1i** : capture AGSP Runtime PASS, Gate A complète PASS. P1e–P1h historiques : voir [correctif P1i](M19_S1_P1I_CONTRACT_AUDIT_2026-11-24.md) et [preuves](M19_S1_P1I_RUNTIME_PASS_2026-11-24.md). AGSP v1 DATA multi-images Save/Load, 3 opaques S1, 15 S2, transparence explicite, RGB24. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [Contrat S1](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md).
+S1 : banque AGSP v1 DATA multi-images, capture RGB24 avec transparence explicite, Sprite 16px/3 couleurs, cycle de vie P2m fonctionnel. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [Historique et résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md) · [Contrat S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Réserve Fast transitoire documentée, pas de promotion.
 
-- P2a préparation Chip source-only, Gate A composant PASS ; palette GET V40 et [P2b affichage/mouvements/retrait visuel](M19_S1_P2B_AGSP_DISPLAY_PROBE_2026-11-25.md) Runtime PASS.
-- [P2c](M19_S1_P2C_DMA_OBSERVATION_2026-11-25.md) séquence Runtime PASS, DMA INCONCLUSIVE (pas de debugger manuel).
-- [P2d r2](M19_S1_P2D_OS_AUDIT_2026-11-25.md) : six snapshots valides, références copinit et SimpleSprites retirées, contrôle positif réévalué hors ligne ; journal brut INCONCLUSIVE conservé. DMA_FREE_PROVEN 0.
-- [P2e](M19_S1_P2E_NATIVE_RETIRE_2026-11-25.md) retrait natif logique, [Gate A composant PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45674243613) (OS simulé).
-- [P2f](M19_S1_P2F_CLOSE_END_GUARD_2026-11-25.md) garde Close/End source-only, [40 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45675885915).
-- [P2g](M19_S1_P2G_RECLAIM_2026-11-25.md) récupération expérimentale après vrai CloseScreen et garde Copper/OS ; r1 FAIL builder (8/6 octets), r2 [30 scénarios CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45679517861). Persistance pending après unload, palette, producteur et API restent à qualifier. Aucun nouveau token/binaire, pas de debugger manuel.
-- [P2h](M19_S1_P2H_PERSISTENT_ROOT_2026-11-25.md) registre Exec persistant source-only, suppression si vide, emprunt non bloquant ; [étape CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45680011267), raccordement aux chemins Close/End et producteur à réaliser (marge UNIT142 504 octets).
-- [P2i](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) : intégration complète, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541), candidate livrée ; Runtime/Compiler/DMA réels à qualifier.
-- [P2j](M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md) : P2i rejetée, reprise séquence P2b, erreurs détaillées et verrou DMA rétabli ; Gate A à relever avant nouvelle Lib.
-- [P2l-c](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md) : détail du refus -185, Gate A complète PASS, paire active, Runtime à effectuer ; réemploi DMA et validation multi-cycles encore bloqués.
-- Historique détaillé : [roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/17d710693a3ae26a6ab94775c9af1b8bd5428232/docs/ROADMAP.md), rapports de jalon et NEXT_SESSION.md. Aucun transfert de PASS à la libération DMA, au Compiler ou au matériel.
-
+- **S2a en cours :** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). Préparation de l'image suivante dans un slot inactif, sans nouveau token. Publication OS et receipt de réutilisation à qualifier. UNIT142 à préserver (110 octets libres), travail UNIT207.
+- S2b : plusieurs objets, propriété des canaux et palettes ; S2c : attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
+- S3 : multiplexage vertical, collisions, animation multi-objets, AMAL facultatif après validation du moteur classique.
+- Les jalons P2a–P2l-c, leurs preuves et refus sont conservés dans [NEXT_SESSION.md](NEXT_SESSION.md), leurs rapports et [la roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/57a1a9d2085e5d887a1fccc5300a0de5eaeef709/docs/ROADMAP.md).
 
 ## 4. Après Sprite : M21 puis M20
 

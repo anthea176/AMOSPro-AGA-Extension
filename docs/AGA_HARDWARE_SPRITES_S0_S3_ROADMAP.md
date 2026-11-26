@@ -1,5 +1,7 @@
 # Sprites matériels AGA — feuille de route S0 à S3
 
+**26/11/2026 — S2a engagé, premier composant source seul.** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). P2m reste active ; pas de nouveau token, Lib, ASC ou promotion. CI composant à relever ; intégration/publication DMA et Gates B/C/D S2a non acquises.
+
 > **Contrat auteur AGSP v1 (22/11/2026) :** banque AMOS DATA multi-images `AGSP` distincte de `AGBO` et des Sprite OCS, images capturées depuis IFF indexé à palette CMAP RGB24. 3 couleurs opaques par canal S1 (2bpp), 4..15 en S2 attaché (4bpp), >15 refus ; palette locale et hotspot par image. [Spécification testable](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) et [contrat API S1 actualisé](AGA_HARDWARE_SPRITES_S1_API_CONTRACT_DRAFT_2026-11-22.md). Modèle hôte + tests seulement, pas de DMA/WinUAE S1 validé.
 
 
