@@ -43,7 +43,7 @@ p2h_lookup:
     move.l a3,d0
     bne.w p2h_publish
     jsr -138(a6)          ; Permit before AllocVec
-    move.l #112,d0
+    moveq #112,d0
     move.l #$00010001,d1  ; MEMF_PUBLIC | MEMF_CLEAR
     jsr -684(a6)
     tst.l d0
@@ -58,14 +58,14 @@ p2h_copy_name:
     move.b (a0)+,d0
     move.b d0,(a1)+
     tst.b d0
-    bne.w p2h_copy_name
+    bne.s p2h_copy_name
     bra.w p2h_lookup      ; race-safe second lookup before publication
 p2h_publish:
     movea.l a3,a4
     movea.l a4,a1
     jsr -600(a6)          ; AddSemaphore initializes and publishes
     suba.l a3,a3          ; anchor now belongs to named registry
-    bra.w p2h_try_lock
+    bra.s p2h_try_lock
 p2h_found:
     movea.l d0,a4
     bsr.w p2h_validate
@@ -79,30 +79,30 @@ p2h_try_lock:
     movea.l a4,a0
     jsr -576(a6)          ; AttemptSemaphore: never block under Forbid
     tst.l d0
-    beq.w p2h_busy
+    beq.s p2h_busy
     move.l d3,72(a4)
     lea 56(a4),a0
     move.l a0,d5
     moveq #0,d4
-    bra.w p2h_enter_permit
+    bra.s p2h_enter_permit
 p2h_absent:
     moveq #1,d4
-    bra.w p2h_enter_permit
+    bra.s p2h_enter_permit
 p2h_bad_anchor:
     moveq #3,d4
-    bra.w p2h_enter_permit
+    bra.s p2h_enter_permit
 p2k_unfinished:
     moveq #6,d4
-    bra.w p2h_enter_permit
+    bra.s p2h_enter_permit
 p2h_busy:
     moveq #2,d4
 p2h_enter_permit:
     jsr -138(a6)
     move.l a3,d0
-    beq.w p2h_enter_return
+    beq.s p2h_enter_return
     movea.l a3,a1        ; losing unpublished allocation, not registry
     jsr -690(a6)
-    bra.w p2h_enter_return
+    bra.s p2h_enter_return
 p2h_oom:
     moveq #4,d4
 p2h_enter_return:
@@ -147,15 +147,15 @@ p2h_leave:
     ; Only remove a truly empty and exclusively held registry. Never
     ; free a semaphore with waiters or an extra recursive OS lock.
     tst.l 56(a4)
-    bne.w p2h_unlock
+    bne.s p2h_unlock
     tst.l 60(a4)
-    bne.w p2h_unlock
+    bne.s p2h_unlock
     tst.l 64(a4)
-    bne.w p2h_unlock
+    bne.s p2h_unlock
     tst.l 68(a4)
-    bne.w p2h_unlock
+    bne.s p2h_unlock
     tst.l 104(a4)
-    bne.w p2h_unlock
+    bne.s p2h_unlock
     movea.l a4,a1
     jsr -606(a6)          ; RemSemaphore while exclusively locked
     movea.l a4,a2        ; no client can find it after Permit
@@ -165,16 +165,16 @@ p2h_unlock:
     jsr -570(a6)          ; ReleaseSemaphore, matching successful Attempt
     moveq #1,d5
     moveq #0,d4
-    bra.w p2h_leave_permit
+    bra.s p2h_leave_permit
 p2h_leave_bad:
     moveq #3,d4
-    bra.w p2h_leave_permit
+    bra.s p2h_leave_permit
 p2h_leave_busy:
     moveq #2,d4
 p2h_leave_permit:
     jsr -138(a6)
     move.l a2,d0
-    beq.w p2h_leave_return
+    beq.s p2h_leave_return
     movea.l a2,a1
     jsr -690(a6)          ; removed, unlocked, no registered borrower
 p2h_leave_return:
@@ -186,13 +186,13 @@ p2h_leave_return:
 p2h_exec_task:
     movea.l $0004.w,a6
     move.l a6,d0
-    beq.w p2h_exec_bad
+    beq.s p2h_exec_bad
     btst #0,d0
-    bne.w p2h_exec_bad
+    bne.s p2h_exec_bad
     cmpi.w #39,20(a6)
-    bcs.w p2h_exec_bad
+    bcs.s p2h_exec_bad
     cmpi.w #690,16(a6)
-    bcs.w p2h_exec_bad
+    bcs.s p2h_exec_bad
     suba.l a1,a1
     jsr -294(a6)          ; FindTask(NULL)
     rts
@@ -222,17 +222,17 @@ p2h_validate:
     movea.l a4,a1
     jsr -534(a6)
     tst.l d0
-    beq.w p2h_invalid
+    beq.s p2h_invalid
     cmpi.b #15,8(a4)     ; NT_SIGNALSEM
-    bne.w p2h_invalid
+    bne.s p2h_invalid
     lea 76(a4),a0
     move.l a0,d0
     cmp.l 10(a4),d0
-    bne.w p2h_invalid
+    bne.s p2h_invalid
     cmpi.l #$41475350,48(a4)
-    bne.w p2h_invalid
+    bne.s p2h_invalid
     cmpi.l #$00030070,52(a4)
-    bne.w p2h_invalid
+    bne.s p2h_invalid
     moveq #1,d0
     rts
 p2h_invalid:

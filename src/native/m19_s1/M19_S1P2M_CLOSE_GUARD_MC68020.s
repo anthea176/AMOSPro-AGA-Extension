@@ -6,12 +6,12 @@ p2f_screen_close:
     move.l d0,-(sp)
     bsr.w p2f_gate
     tst.l d0
-    beq.w p2f_close_refused
+    beq.s p2f_close_refused
     move.l (sp)+,d0
     bsr.l L_LEGACY_CLOSE_TARGET_001EE
     bsr.l L_LEGACY_CLOSE_TARGET_00140
     tst.l d0
-    beq.w p2k_close_timeout
+    beq.s p2k_close_timeout
     bsr.l L_LEGACY_CLOSE_TARGET_000D8
     bra.l L_LEGACY_CLOSE_TARGET_00010
 p2k_close_timeout:
@@ -25,12 +25,12 @@ p2f_program_end:
     move.l d0,-(sp)
     bsr.w p2f_gate
     tst.l d0
-    beq.w p2f_end_refused
+    beq.s p2f_end_refused
     move.l (sp)+,d0
     bsr.l L_LEGACY_CLOSE_TARGET_001EE
     bsr.l L_LEGACY_CLOSE_CORE_001A6
     tst.l d0
-    beq.w p2k_end_timeout
+    beq.s p2k_end_timeout
     bsr.l L_LEGACY_CLOSE_CORE_00116
     bra.l L_LEGACY_CLOSE_CORE_0000C
 p2k_end_timeout:
@@ -82,17 +82,17 @@ p2f_gate:
     cmpi.l #20,d2
     beq.w p2f_allow
     cmpi.l #5,d2
-    beq.w p2f_context
+    beq.s p2f_context
     cmpi.l #7,d2
-    beq.w p2f_context
+    beq.s p2f_context
     cmpi.l #13,d2
-    beq.w p2f_context
+    beq.s p2f_context
     cmpi.l #15,d2
     bne.w p2k_unlock_deny
 p2f_context:
     move.l (a2),d0     ; lifetime and exact screen already validated above
     btst #3,d2
-    beq.w p2f_call
+    beq.s p2f_call
     ; Screen.ViewPort = +44, source-proven screen layout (NDK V39).
     addi.l #44,d0
     bcs.w p2k_unlock_deny
@@ -128,19 +128,19 @@ p2k_unlinked_found:
     movea.l d0,a3
     move.l (a2),d0
     cmp.l 12(a3),d0
-    beq.w p2k_unlock_deny ; same Screen without a live link: quarantine
+    beq.s p2k_unlock_deny ; same Screen without a live link: quarantine
     movea.l a3,a0
     bsr.w p2h_leave
     tst.l d0
-    beq.w p2f_deny
-    bra.w p2f_allow
+    beq.s p2f_deny
+    bra.s p2f_allow
 p2k_unlock_deny:
     movea.l a3,a0
     bsr.w p2h_leave
-    bra.w p2f_deny
+    bra.s p2f_deny
 p2f_allow:
     moveq #1,d0
-    bra.w p2f_return
+    bra.s p2f_return
 p2f_deny:
     moveq #0,d0
 p2f_return:

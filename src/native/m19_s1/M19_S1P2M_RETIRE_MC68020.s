@@ -50,13 +50,13 @@ AGSP_P2E_RETIRE:
     cmpi.l #20,d2
     beq.w p2j_retired
     cmpi.l #4,d2
-    beq.w p2e_validate_gfx
+    beq.s p2e_validate_gfx
     cmpi.l #5,d2
-    beq.w p2e_validate_gfx
+    beq.s p2e_validate_gfx
     cmpi.l #7,d2
-    beq.w p2e_validate_gfx
+    beq.s p2e_validate_gfx
     cmpi.l #13,d2
-    beq.w p2e_validate_gfx
+    beq.s p2e_validate_gfx
     cmpi.l #15,d2
     bne.w p2e_bad_flags
 p2e_validate_gfx:
@@ -87,7 +87,7 @@ p2e_validate_gfx:
     cmpi.w #2,10(a4)
     bne.w p2e_bad_owner
     btst #1,d2
-    beq.w p2j_guard_ok
+    beq.s p2j_guard_ok
     cmpi.w #3,26(a3)
     bne.w p2e_bad_owner
 p2j_guard_ok:
@@ -95,14 +95,14 @@ p2j_guard_ok:
     ; neutral data. Do not republish a private blank or touch the old VP.
 p2j_release:
     btst #1,d2
-    beq.w p2j_release_two
+    beq.s p2j_release_two
     moveq #3,d0
     jsr -414(a6)
     andi.l #$fffffffd,d2
     move.l d2,12(a3)
 p2j_release_two:
     btst #0,d2
-    beq.w p2j_release_done
+    beq.s p2j_release_done
     moveq #2,d0
     jsr -414(a6)
     andi.l #$fffffff6,d2
@@ -128,20 +128,20 @@ p2m_confirm:
 p2j_retired:
     moveq #1,d0
     moveq #0,d1
-    bra.w p2e_return
+    bra.s p2e_return
 p2e_private:
     moveq #2,d0
     moveq #0,d1
-    bra.w p2e_return
+    bra.s p2e_return
 p2e_bad_record:
     moveq #1,d1
-    bra.w p2e_refuse
+    bra.s p2e_refuse
 p2e_bad_gfx:
     moveq #2,d1
-    bra.w p2e_refuse
+    bra.s p2e_refuse
 p2e_bad_flags:
     moveq #3,d1
-    bra.w p2e_refuse
+    bra.s p2e_refuse
 p2e_bad_owner:
     moveq #5,d1
     bra.w p2e_refuse

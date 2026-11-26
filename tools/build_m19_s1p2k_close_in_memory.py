@@ -121,7 +121,10 @@ def build_s1p2k_close(vasm, *, lifecycle=False):
     assert (nt,ntitle,len(np))==(bt,btitle,len(bp))
     assert all(a==b for i,(a,b) in enumerate(zip(np,bp)) if i!=UNIT)
     new=np[UNIT]
-    assert len(prior)<len(new)<=MAX_UNIT_BYTES and len(new)%2==0
+    if lifecycle:
+        print(f'S1P2M_UNIT142 prior={len(prior)} new={len(new)} max={MAX_UNIT_BYTES} free={MAX_UNIT_BYTES-len(new)}', flush=True)
+    assert len(prior)<len(new)<=MAX_UNIT_BYTES and len(new)%2==0, (
+        'UNIT142 size/alignment', len(prior), len(new), MAX_UNIT_BYTES)
     assert new[-16:]==bytes.fromhex('00000000414753490001001000000000')
     restored=bytearray(new[:len(prior)])
     targets=[]
