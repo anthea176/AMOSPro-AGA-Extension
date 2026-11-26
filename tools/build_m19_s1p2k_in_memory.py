@@ -12,14 +12,18 @@ from compiler_relocation import GETP,RBSR,repack_ap20,unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from build_m19_s1p2k_close_in_memory import build_s1p2k_close,ROOT,SRC
 from build_m19_s1p2j_in_memory import build_s1p2j
-from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j,verify_s1p2k
+from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA, S1P2LB_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j,verify_s1p2k
 MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 APIS=(('aga sprite','00,0,0,0'),('aga sprite off','00'),('aga sprite bank free','00'))
 
 def build_s1p2k(vasm):
     vasm=Path(vasm).resolve()
-    active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
+    installed=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
+    active=installed
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    if sha256(installed).hexdigest()==S1P2LB_SHA:
+        from verify_m19_s1p2l_b_delivery import recover_p2k
+        active=recover_p2k(installed,good)
     assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA)
     exact,_=build_s1p2j(vasm)
     verify_s1p2j(exact,good)
@@ -80,7 +84,7 @@ def build_s1p2k(vasm):
         (name,1,209+j*2,sig) for j,(name,sig) in enumerate(APIS)]
     assert len([row for row in after if row['signature']])==105 and len(newparts)==214
     assert [i for i,(a,b) in enumerate(zip(parts,newparts)) if a!=b]==[207]
-    assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==active
+    assert (ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()==installed
     assert (ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()==good
     prior_tok,prior_parts,prior_title=unpack_ap20(exact)
     assert updated==prior_tok and title==prior_title.replace(b'S1-P2j',b'S1-P2k')

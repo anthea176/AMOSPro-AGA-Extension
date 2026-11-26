@@ -9,7 +9,7 @@ from ap20_v2_island_dispatch import pc16_displacements
 from compiler_relocation import repack_ap20, unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2, MAX_UNIT_BYTES
 from build_m19_s1p2k_in_memory import build_s1p2k, ROOT, SRC, MASTER
-from active_library import S1P2K_SHA, P2DL2B_SHA, verify_s1p2k
+from active_library import S1P2K_SHA, S1P2LB_SHA, P2DL2B_SHA, verify_s1p2k
 
 PROBE='M19_S1P2L_DMA_OBSERVE_MC68020.s'
 GROUP=207
@@ -50,11 +50,14 @@ def headroom(parts):
 def build_s1p2la(vasm):
     vasm=Path(vasm).resolve()
     original=protected()
-    assert tuple(sha256(x).hexdigest() for x in original)==(
-        S1P2K_SHA,P2DL2B_SHA,ACTIVE_ASC,
-        '225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93')
+    from verify_m19_s1p2l_b_delivery import P2LB_ASC_SHA, recover_p2k
+    identities=tuple(sha256(x).hexdigest() for x in original)
+    assert identities[1]==P2DL2B_SHA
+    assert identities[3]=='225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93'
+    assert (identities[0],identities[2]) in ((S1P2K_SHA,ACTIVE_ASC),(S1P2LB_SHA,P2LB_ASC_SHA))
+    predecessor=original[0] if identities[0]==S1P2K_SHA else recover_p2k(original[0],original[1])
     base,meta=build_s1p2k(vasm)
-    assert base==original[0]
+    assert base==predecessor
     verify_s1p2k(base,original[1])
     tok,parts,title=unpack_ap20(base)
     assert len(parts)==214 and len(parts[142])==65276

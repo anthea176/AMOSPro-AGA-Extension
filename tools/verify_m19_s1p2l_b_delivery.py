@@ -46,3 +46,25 @@ def verify_prepared(candidate,good,asc,original):
     assert b'SOURCE_TAG M19_S1P2LB_DMA_DIAG_V1' in asc
     assert b'DMA_FREE_PROVEN 0' in asc
     return True
+
+def check_active_pair():
+    """Exact canonical P2k or P2l-b, paired ASC, protected fixture/L2b."""
+    from pathlib import Path
+    root=Path(__file__).resolve().parents[1]
+    current=(root/'dist/AMOSPro_AGA.Lib').read_bytes()
+    good=(root/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+    asc=(root/'tests/current/SPRITE_PUBLIC.asc').read_bytes()
+    assert sha256(good).hexdigest()==P2DL2B_SHA
+    assert sha256((root/'tests/current/AGSP_S1P1E_FINAL.ABK').read_bytes()).hexdigest()==(
+        '225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93')
+    assert [x.name for x in (root/'tests/current').glob('*.asc')]==['SPRITE_PUBLIC.asc']
+    if sha256(current).hexdigest()==P2LB_SHA:
+        recover_p2k(current,good)
+        assert len(asc)==5998 and sha256(asc).hexdigest()==P2LB_ASC_SHA
+    else:
+        verify_s1p2k(current,good)
+        assert len(asc)==4630 and sha256(asc).hexdigest()=='987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e'
+    print("P2K/P2LB exact active pair PASS",sha256(current).hexdigest())
+
+if __name__=='__main__':
+    check_active_pair()

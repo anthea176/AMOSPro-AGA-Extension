@@ -77,6 +77,12 @@ def build_s1p2lb(vasm):
     assert unpack_ap20(image)==(tok,newparts,newtitle)
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    from verify_m19_s1p2l_b_delivery import P2LB_SHA, recover_p2k
+    predecessor=recover_p2k(image,original[1])
+    if sha256(original[0]).hexdigest()==P2LB_SHA:
+        assert image==original[0]
+    else:
+        assert predecessor==original[0]
     assert protected()==original
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+bytes(1)+image).hexdigest(),
