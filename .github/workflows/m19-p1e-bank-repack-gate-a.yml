@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p1e-bank-repack-gate-a.yml'
       - 'tools/*m19*p1e*bank_repack*.py'
       - 'tools/*m19*p1e*bank_edit*.py'

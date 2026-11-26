@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p1b-hotspot-source-gate-a.yml'
       - 'tools/m19_p1b_hotspot_origin_emit.py'
       - 'tools/m19_p1b_hotspot_draw_model.py'

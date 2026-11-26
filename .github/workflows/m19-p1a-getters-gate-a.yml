@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p1a-getters-gate-a.yml'
       - 'tools/m19_p1a_bob_getters_emit.py'
       - 'tools/build_m19_p1a_getters_in_memory.py'

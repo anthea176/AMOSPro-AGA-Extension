@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/test_current_ram_log.py'
       - 'tools/*m19_p2c*.py'
       - 'tools/build_m19_p2b_in_memory.py'
       - 'tools/test_m19_p2b_bob_flip_gate_a.py'

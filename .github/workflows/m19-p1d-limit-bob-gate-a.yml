@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p1d-limit-bob-gate-a.yml'
       - 'tools/*m19*p1d*limit_bob*.py'
       - 'tools/m19_p0d_private_blit_emit.py'

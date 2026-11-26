@@ -5,6 +5,7 @@ on:
     branches: [main]
     # Future M19 P0 files are included without editing this list.
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p0a-r88-get-gate-a.yml'
       - 'tools/m19_p0*.py'
       - 'tools/ap20_v2_island_dispatch.py'

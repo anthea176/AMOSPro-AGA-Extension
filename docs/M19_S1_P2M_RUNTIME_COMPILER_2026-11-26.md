@@ -34,3 +34,7 @@ SHA256 des fichiers originaux :
 - CI après livraison 57a1a9d : 13 workflows ont échoué sur le même contrôle statique `test_current_ram_log.py`, champ close, car le nouveau journal imprime OPENED/CLOSED. Les 13 traces ont été vérifiées. Le contrôle accepte désormais les deux compteurs exacts et exige la fermeture et l'incrément correspondants ; trois mutations négatives prévues. Requalification CI à relever, ne pas la déclarer PASS par anticipation.
 
 Décision auteur : « oui passons a la suite du chantier sprite » puis « ok go ». Conserver P2m et l'ASC exacts, engager S2a. Aucune promotion LAST_GOOD, nouvelle Lib, nouveau test actif, archive installable, release ou autre branche.
+
+## Requalification des CI de provenance
+
+Le nouveau contrôle RAM log a passé les workflows [P2b](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896056681), [P1e](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896056687) et [P2.4](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896056641). Le dépassement de 9000 caractères de la roadmap au premier commit de clôture a été corrigé par condensation sans effacer les rapports ; [documentation PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382933). Neuf workflows consommant directement le contrôle RAM log ont maintenant le fichier dans leurs filtres push pour éviter une requalification partielle après sa modification. Les autres résultats doivent être relevés ; aucun PASS global anticipé. La Gate A exacte P2m et la Lib/ASC sont inchangées.

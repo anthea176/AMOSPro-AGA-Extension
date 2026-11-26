@@ -8,6 +8,7 @@ on:
     # Source-only M19 changes already run the dedicated native Gate A workflow.
     # This independent check is for changes to the real installable Lib.
     paths:
+      - 'tools/test_current_ram_log.py'
       - '.github/workflows/m19-p0a-publish-github.yml'
       - 'dist/AMOSPro_AGA.Lib'
       - 'dist/AMOSPro_AGA_LAST_GOOD.Lib'

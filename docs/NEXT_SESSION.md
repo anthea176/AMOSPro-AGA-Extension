@@ -1,6 +1,6 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
-**26/11/2026 — S2a engagé, premier composant source seul.** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). P2m reste active ; pas de nouveau token, Lib, ASC ou promotion. CI composant à relever ; intégration/publication DMA et Gates B/C/D S2a non acquises.
+**26/11/2026 — S2a engagé, premier composant source seul.** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). P2m reste active ; pas de nouveau token, Lib, ASC ou promotion. CI composant [PASS 148 cas MC68020](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382931) ; intégration/publication DMA et Gates B/C/D S2a non acquises.
 
 **26/11/2026 — clôture fonctionnelle P2m, accord auteur « oui passons a la suite du chantier sprite » puis « ok go ».** Gate B Runtime fonctionnelle validée (trois derniers PASS stricts), Gate C Compiler fonctionnelle 2/2 (PASS strict 1/2 ; ERR14 sur écart Fast temporaire 128 octets). Aucun écart net de Chip/Fast par exécution. D physique non testée. Auteur accepte la clôture fonctionnelle avec réserve ; aucune promotion LAST_GOOD. Les fichiers RAM conservés expliquent les différences entre lancements selon l'auteur ; leur coût exact n'a pas été isolé. La Lib et l'ASC exacts restent actifs, LAST_GOOD L2b protégée. Prochaine étape S2a : changement d'image à chaud, source-only avant Gate A, sans nouveau token. [Résultats et journaux originaux](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md).
 
