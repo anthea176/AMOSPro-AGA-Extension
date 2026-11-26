@@ -65,3 +65,28 @@ Identité de campagne SOURCE_TAG M19_S1P2K_R4_TRANSACTION_V1, PRG_STATE 1, RUN_M
 **Gate B PASS limitée à la campagne deux lancements.** Phase 1 retient 200 octets Chip et 168 Fast (368 octets), mêmes variations qu'en P2j après reset. Phase 2 variations nettes Chip/Fast nulles, aucune allocation supplémentaire persistante observée pendant cet essai. Fast Free diminue de 544 octets ENTRE les phases (138106368 -> 138105824), origine indéterminée ; ne pas conclure à une absence générale de fuite. Le code -123 démontre que la relance atteint le contrôle du record persistant, et non le refus -132 ; ne pas extrapoler à un task tué pendant un appel, à des rechargements forcés, à une preuve de libération DMA ni à la possibilité de réaffichage. Aucun contrôle visuel distinct n'a été fourni. Le schéma v2 et la quarantaine restent inchangés. Gate C vraie compilation et D physique non testées. Aucun changement de Lib, d'ASC ou de LAST_GOOD.
 
 CI post-activation sur 48255098dc35d4fe08b1de7c132d29b4a7d26515 : 27/29 workflows PASS, notamment Gate A P2k [45786663228](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663228), identité canonique [45786662594](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662594), politique CPU/livraison [45786662775](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662775) et documentation [45786662973](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786662973). Deux FAIL restent ouverts : Bob Auto Update [45786663144](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663144), assertion à la vérification d'identité P2d et chemins officiels ; Artifact integrity [45786663138](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786663138), export strict, `author-promoted P0/P1e/P2d LAST_GOOD identity lost`. Ne pas présenter ces échecs de contrôles comme des régressions natives démontrées, ni comme résolus. Prochaine qualification proposée : conserver r4 intacte et réaliser Gate C du même scénario, puis traiter la capacité UNIT142 et le réemploi/reclaim DMA sur une candidate séparée. Aucune promotion ni développement autorisé par ces résultats seuls.
+
+## Gate C — résultats Compiler auteur, 26/11/2026
+
+Les deux fichiers compilés fournis après la campagne Runtime sont distincts et conservés octet pour octet (CRLF) :
+
+- [phase 1](evidence/M19_S1P2K_PHASE1_COMPILED_2026-11-26.TXT) : 409 octets, SHA256 `fe7b18ebf44a67b97e1552733517aefaf3249e02cb4437459281903777fa40e6`, blob `25d44b3547370c5181a0945d94b80a003a3dc7de`.
+- [phase 2](evidence/M19_S1P2K_PHASE2_COMPILED_2026-11-26.TXT) : 409 octets, SHA256 `f1706f76fd047d026f1c5a5db45a53f568183c978eb70e6ce4682e07f64293c9`, blob `3f4c2233b3c4605f9744be1fcf9e02e4df00f3b3`.
+
+Les deux journaux portent SOURCE_TAG M19_S1P2K_R4_TRANSACTION_V1, PRG_STATE -1, RUN_MODE COMPILED et CPU_ATTNFLAGS 32823. Attribution de la Lib r4 et de l'ASC par le contexte de la campagne, sans SHA de la Lib embarquée dans l'exécutable ni version précise du Compiler relevée sur Amiga. Aucun contrôle visuel distinct fourni.
+
+| Champ | Phase 1 compilée | Phase 2 compilée |
+| --- | --- | --- |
+| SPRITE_RC / MOVE_RC | 1 / 1 | -123 / -999 |
+| MOVES / SOURCE_ERASED | 100 / 1 | 0 / 1 |
+| OFF_RC / CURSOR_RC / CLOSE_RETURNED / CLOSED | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
+| BANK_FREE_RC / CLEAN_ERR | 0 / 0 | 0 / 0 |
+| CHIP_BEFORE / CHIP_AFTER | 1900344 / 1900144 | 1900136 / 1900136 |
+| FAST_BEFORE / FAST_AFTER | 140675040 / 140674872 | 140674264 / 140674264 |
+| DMA_FREE_PROVEN | 0 | 0 |
+| RESULT / ERR | 1 / 0 | 1 / 0 |
+| VERDICT | PASS_DISPLAY_CLOSE_RETAINED_ONLY | PASS_QUARANTINE_NO_NEW_DISPLAY |
+
+**Gate C PASS limitée à la campagne deux phases en compilé.** Variations mémoire pendant chaque phase identiques au Runtime : phase 1 Chip -200 et Fast -168, phase 2 zéro variation nette. Entre phases compilées : Chip Free 1900144 -> 1900136 (-8), Fast Free 140674872 -> 140674264 (-608), origine indéterminée. Ne pas déduire une absence générale de fuite. Le refus -123 confirme le contrôle du record conservé, sans refus -132/-136/-137 dans cette campagne. Aucune preuve de récupération DMA, de réaffichage ou de robustesse après arrêt forcé au milieu d'un appel natif.
+
+**État consolidé r4 : A PASS, B PASS, C PASS (périmètre décrit), D non testée.** CI post-activation : 27/29 PASS selon relevé précédent, les deux échecs historiques restent ouverts. Prochaine étape proposée : traiter la capacité de UNIT142 (258 octets libres), puis isoler le chantier de récupération/réemploi DMA, avec preuve avant réaffichage et tests répétés. Le présent enregistrement ne modifie aucun ASC, source native, builder, Lib, LAST_GOOD, test passé ni archive et n'autorise pas une promotion ou un changement de campagne.

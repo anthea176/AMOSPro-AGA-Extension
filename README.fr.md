@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 S1-P2k — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **149 080 octets**, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562) ; [Runtime deux phases PASS](docs/M19_S1_P2K_TRANSACTION_2026-11-25.md) ; DMA conservée, Compiler réel et matériel non testés. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2k — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **149 080 octets**, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562) ; [Runtime et compilé deux phases PASS (Gates B/C)](docs/M19_S1_P2K_TRANSACTION_2026-11-25.md) ; DMA conservée, Amiga physique non testé. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
 **Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), même dossier. [Protocole](tests/current/README.md). [T06 historique conservé](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset initial, puis deux lancements sans reset intermédiaire ; rétention DMA volontaire. [Rapport](docs/M19_S1_P2K_TRANSACTION_2026-11-25.md).
 
