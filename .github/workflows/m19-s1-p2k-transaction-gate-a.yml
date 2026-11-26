@@ -7,6 +7,7 @@ on:
       - 'tools/build_m19_s1p2k_close_in_memory.py'
       - 'tools/build_m19_s1p2k_in_memory.py'
       - 'tools/test_m19_s1p2k_gate_a.py'
+      - 'tools/prepare_m19_s1p2k_campaign.py'
       - '.github/workflows/m19-s1-p2k-transaction-gate-a.yml'
       - 'tests/proto/sprite_s1_public/**'
   workflow_dispatch:
@@ -53,4 +54,56 @@ jobs:
         run: |
           printf '%s  %s\n' '47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
           printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          git diff --exit-code
+
+  extract-qualified-bytes:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[p2k-delivery]')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore pinned VASM
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM on cache miss
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Rebuild exact r4 and preflight the proposed ASC (read-only)
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B tools/prepare_m19_s1p2k_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          PYTHONPATH=tools python -B - <<'PY'
+          import base64, os
+          from pathlib import Path
+          from hashlib import sha256, sha1
+          from build_m19_s1p2k_in_memory import build_s1p2k
+          out, meta = build_s1p2k(Path(os.environ['RUNNER_TEMP'])/'vasm/vasmm68k_mot')
+          assert len(out)==149080
+          assert sha256(out).hexdigest()=='ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41'
+          assert sha1(b'blob 149080\\0'+out).hexdigest()=='0841bdc692006e7eb18ae5cc2b1df4a9fc4135f8'
+          assert meta['unit142']==65276 and meta['commands']==105 and meta['entries']==214
+          asc=(Path(os.environ['RUNNER_TEMP'])/'SPRITE_PUBLIC.asc').read_bytes()
+          for label, data in (('P2K_LIB',out),('P2K_ASC',asc)):
+              enc=base64.b64encode(data).decode('ascii')
+              print(label+'_IDENTITY',len(data),sha256(data).hexdigest(),sha1(('blob %d' % len(data)).encode()+b'\\0'+data).hexdigest())
+              for i in range(0,len(enc),2048):
+                  print(label+'_CHUNK',i//2048,enc[i:i+2048])
+          PY
           git diff --exit-code

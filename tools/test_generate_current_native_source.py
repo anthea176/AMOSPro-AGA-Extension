@@ -85,7 +85,8 @@ def main() -> None:
             try:
                 exp.source_binary_from_input(wrapped)
             except exp.ExportError as exc:
-                assert 'Unsupported V2 compiler wrapper' in str(exc)
+                assert ('Unsupported V2 compiler wrapper' in str(exc)
+                        or 'Rbsr entry without audited compiler dispatcher' in str(exc))
             else:
                 raise AssertionError('P2d/S1 multi-unit V2 exported as false monolithic ASM')
             print('STRICT P2d/S1 SOURCE PROVENANCE / V2 MONOLITH REFUSAL PASS', exp.sha(wrapped))
