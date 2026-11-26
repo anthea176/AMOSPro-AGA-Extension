@@ -12,7 +12,7 @@ from compiler_relocation import GETP,RBSR,repack_ap20,unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from build_m19_s1p2k_close_in_memory import build_s1p2k_close,ROOT,SRC
 from build_m19_s1p2j_in_memory import build_s1p2j
-from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j
+from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j,verify_s1p2k
 MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 APIS=(('aga sprite','00,0,0,0'),('aga sprite off','00'),('aga sprite bank free','00'))
 
@@ -20,9 +20,13 @@ def build_s1p2k(vasm):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest()==S1P2J_SHA
+    assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA)
     exact,_=build_s1p2j(vasm)
-    assert exact==active
+    verify_s1p2j(exact,good)
+    if sha256(active).hexdigest()==S1P2J_SHA:
+        assert exact==active
+    else:
+        verify_s1p2k(active,good)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     parent,meta=build_s1p2k_close(vasm)
     tok,parts,title=unpack_ap20(parent)
@@ -88,6 +92,9 @@ def build_s1p2k(vasm):
     assert set(prior_links)==set(links)
     assert all(links[k]==v-(growth if k in (209,211,213) else 0)
                for k,v in prior_links.items())
+    verify_s1p2k(out,good)
+    if sha256(active).hexdigest()==S1P2K_SHA:
+        assert out==active
     return out,dict(meta,sha256=sha256(out).hexdigest(),bytes=len(out),
         git_blob=sha1(f'blob {len(out)}'.encode()+b'\0'+out).hexdigest(),
         commands=105,entries=214,native_sprite=len(native),sprite_at=at,

@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 from struct import unpack_from
 import tempfile
-from active_library import S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, P2DL2B_SHA, frozen_p2d, frozen_s1p1i
+from active_library import S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, P2DL2B_SHA, frozen_p2d, frozen_s1p1i
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, token_role_issues
 from build_m19_s1p1i_l2b_contract_in_memory import build_s1p1i
@@ -39,7 +39,7 @@ def build_s1p2k_close(vasm):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest()==S1P2J_SHA
+    assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     parent,_=build_s1p1i(vasm)
     assert parent==(active if sha256(active).hexdigest()==S1P1I_SHA else frozen_s1p1i(active,good))
