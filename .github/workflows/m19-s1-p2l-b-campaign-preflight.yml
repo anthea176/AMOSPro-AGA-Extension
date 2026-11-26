@@ -1,0 +1,30 @@
+name: M19 S1-P2l-b diagnostic campaign ASC preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/prepare_m19_s1p2l_b_campaign.py'
+      - '.github/workflows/m19-s1-p2l-b-campaign-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check and prepare without activating
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B tools/prepare_m19_s1p2l_b_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          printf '%s  %s\n' 'ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
+          printf '%s  %s\n' '987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e' 'tests/current/SPRITE_PUBLIC.asc' | sha256sum -c -
+          git diff --exit-code
