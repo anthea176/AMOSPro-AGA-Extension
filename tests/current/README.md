@@ -1,9 +1,18 @@
-# S1-P2j — test de diagnostic actif unique
+# S1-P2k r4 — test Runtime transactionnel actif unique
 
-**Lib P2j de diagnostic : 148296 octets, SHA256 47d554866f1c04a63f9111dafd8bc64c9b937fc8e2ea9706ab6f20d12777b05a.** [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45690711843). Ne pas lancer avec S1-P2i ; B limitée PASS après reset ; C/D non testées. [Contrat et codes de refus](../../docs/M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md). ASC exact 3930 octets, préflight strict local PASS, SHA256 7c6cd1fdca86323271810d37f484b2bad33b70fe02c968a4d7bb306511c56084. Banque exacte AGSP_S1P1E_FINAL.ABK, 532 octets, SHA256 225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93.
+**Lib exacte :** [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 149080 octets, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, MC68020+, 105 commandes / 214 AP20. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562). ASC [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 4630 octets, SHA256 `987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e`, [préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786061729). ABK [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), 532 octets, SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`. B/C/D non testées. LAST_GOOD L2b inchangée.
 
-Après installation de la candidate exacte : snapshot/reset WinUAE AGA PAL, même configuration que P2b, redémarrer AMOS, ASC et ABK dans le même dossier, Merge ASCII. Runtime une seule fois. Un Sprite 16x16 doit se déplacer vers la droite, puis disparaître ; retour à AMOS. Journal RAM:M19_S1P2J_RUNTIME.TXT. Attendu SPRITE_RC 1 MOVE_RC 1 MOVES 100 SOURCE_ERASED 1 OFF_RC 1 CURSOR_RC 1 CLOSE_RETURNED 1 CLOSED 1 BANK_FREE_RC 0 CLEAN_ERR 0 RESULT 1 ERR 0. BANK_FREE_RC 0 signifie rétention volontaire, DMA_FREE_PROVEN 0. Les 192 octets Chip et 152 octets de registre/record restent conservés ; pas de relance sans reset. ERR10/12 avec SPRITE_RC/MOVE_RC négatif donne l'étape précise, CLEAN_ERR bit0 Off, bit1 curseur, bit2 Close non confirmé, bit3 rétention inattendue. Aucun debugger. Ne pas interpréter PASS_DISPLAY_CLOSE_RETAINED_ONLY comme preuve de récupération DMA.
+Installer la Lib dans APSystem, **reset WinUAE une fois** (AGA PAL, 68030/JIT ON), redémarrer AMOS, placer ASC et ABK dans le même dossier et Merge ASCII. Lancer en Runtime, saisir 1. Voir le Sprite 16x16 se déplacer 100 fois, disparaître puis revenir à AMOS. Sauvegarder le journal `RAM:M19_S1P2K_PHASE1.TXT`. Seulement si PASS, relancer le même programme en Runtime sans reset ni réinstallation, saisir 2. Aucun Sprite ne doit apparaître ; retour à AMOS. Sauvegarder `RAM:M19_S1P2K_PHASE2.TXT`. Transmettre les deux journaux.
 
-Ancien banc P2i rejeté conservé dans [tests/proto/sprite_s1_public](../proto/sprite_s1_public/SPRITE_PUBLIC.asc). LAST_GOOD intacte.
+| Champ | Phase 1 | Phase 2 |
+| --- | --- | --- |
+| SPRITE_RC | 1 | -123 |
+| MOVE_RC | 1 | -999 (non exécuté) |
+| MOVES | 100 | 0 |
+| SOURCE_ERASED | 1 | 1 |
+| OFF_RC / CURSOR_RC / CLOSE_RETURNED / CLOSED | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
+| BANK_FREE_RC | 0 | 0 |
+| CLEAN_ERR / ERR / RESULT | 0 / 0 / 1 | 0 / 0 / 1 |
+| VERDICT | PASS_DISPLAY_CLOSE_RETAINED_ONLY | PASS_QUARANTINE_NO_NEW_DISPLAY |
 
-**Retour Runtime auteur 25/11/2026 :** FAIL -132 sans reset ; après reset PASS_DISPLAY_CLOSE_RETAINED_ONLY, 100 mouvements, fermeture et nettoyage OK, rétention Chip -200/Fast -168. B limitée PASS ; C/D non testées. Ne pas relancer P2j sans reset. [P2k source-only](../../docs/M19_S1_P2K_TRANSACTION_2026-11-25.md) en qualification, pas de nouvelle Lib installable.
+-123 est le refus attendu de la nouvelle allocation quand le record exposé est conservé. -132/-136/-137 sont anormaux ; ERR10/13 identifient un mauvais résultat Sprite en phase 1/2. ERR12 = Move. CLEAN_ERR bits 0 Off, 1 curseur, 2 Close, 3 rétention inattendue. DMA_FREE_PROVEN 0, pas de réaffichage, pas de récupération DMA. Les mesures Chip/Fast sont informatives : aucun seuil de variation OS n'est inventé. Ne pas confondre PASS de quarantaine et affichage. Si Guru/échec, ne pas poursuivre, conserver le journal. Aucun debugger requis. [Rapport détaillé](../../docs/M19_S1_P2K_TRANSACTION_2026-11-25.md). Ancien banc P2j exact conservé dans Git et tests/proto/sprite_s1_p2j.
