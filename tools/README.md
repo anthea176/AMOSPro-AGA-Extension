@@ -2,7 +2,11 @@
 
 > S1-P1i : Gate B Runtime capture AGSP PASS (journal auteur du 24/11/2026, PRG_STATE 1, RESULT 1, ERR 0) ; attribution à P1i par contexte, empreinte de la Lib installée non consignée. C reportée, D non testée ; aucune DMA.
 
-## Candidate active S1-P1i (24/11/2026)
+## Candidate active S1-P2l-b (26/11/2026)
+
+Builder `build_m19_s1p2l_b_in_memory.py`, Gate A exacte 496 PASS, B Runtime 2/2 quarantaine, C reportée, D non testée. [Rapport](../docs/M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md). `build_m19_s1p2l_c_in_memory.py` dérive le détail idle source-only ; Gate A à relever, aucune Lib alternative et aucune activation. [P2l-c](../docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md).
+
+## Historique S1-P1i (24/11/2026)
 
 `dist/AMOSPro_AGA.Lib` : 142968 octets, SHA256 `2f3cb4adf56121f62aeccf9916d680ba3e2857c9bdbe0fda777d1d7eaed7ffc3`, 102 commandes / 208 AP20, [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45492646401). Builder source `build_m19_s1p1i_l2b_contract_in_memory.py` (VASM MC68020), vérification exacte avec `test_m19_s1p1i_l2b_integration_gate_a.py`. Base protégée L2b SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Runtime B / vrai Compiler C / matériel D non testés. Les anciens builders restent reproductibles et les sections ci-dessous sont historiques.
 

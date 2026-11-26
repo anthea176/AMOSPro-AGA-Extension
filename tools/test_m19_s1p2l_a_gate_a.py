@@ -58,7 +58,7 @@ class ObserveMachine(TransactionMachine):
         value=uc.reg_read(UC_M68K_REG_D0)
         return value-(1<<32) if value&0x80000000 else value
 
-def observer_cases(image,info):
+def observer_cases(image,info,idle=(-185,-185,-185)):
     count=0
     for layout in ('runtime','compiled'):
         def new():
@@ -82,8 +82,8 @@ def observer_cases(image,info):
         m.fail_gfx_open=True;check(-184);m.fail_gfx_open=False;count+=1
         cases=[
             (a+68,4,-180),(rec+12,5,-182),(rec+4,71,-183),
-            (GFX+34,1,-185),(GFX+50,CI+160,-185),
-            (CI+164,0,-185),(GFX+208,0,-186),
+            (GFX+34,1,idle[0]),(GFX+50,CI+160,idle[1]),
+            (CI+164,0,idle[2]),(GFX+208,0,-186),
             (FAST_TABLE+8,chip,-187),(FAST_TABLE+16,rec+8,-187),
             (FAST_TABLE+28,chip+191,-187),
         ]
