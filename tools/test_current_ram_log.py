@@ -52,8 +52,18 @@ def verify(source):
         r'(?im)^\s*Print\s*#\s*\d+\s*,\s*"CLOSE\s*"\s*;\s*_CLOSED\b',
         source,
     )
+    # P2m counts actual Open/Close results, not a one-shot boolean.
+    lifecycle_close = re.search(
+        r'(?im)^\s*Print\s*#\s*\d+\s*,\s*"OPENED\s*"\s*;\s*_OPENED\s*;\s*"\s*CLOSED\s*"\s*;\s*_CLOSED\b',
+        source,
+    )
+    lifecycle_witness = lifecycle_close and re.search(
+        r'(?im)^\s*Aga\s+Screen\s+Close\s*$', source
+    ) and re.search(
+        r'(?im)^\s*_CLOSED\s*=\s*_CLOSED\s*\+\s*1\s*$', source
+    )
     assert ("CLOSE_RETURNED" in source.upper() or all(
-        marker in source.upper() for marker in close_markers) or p0d_close), (
+        marker in source.upper() for marker in close_markers) or p0d_close or lifecycle_witness), (
         "missing AMOS RAM log","close field")
     executable=[line.strip() for line in source.splitlines()
                 if line.strip() and not line.lstrip().startswith("'")]
@@ -62,6 +72,7 @@ def verify(source):
     end_marker=max(
         [source.upper().rfind(m) for m in ("CLOSE_RETURNED",)+close_markers]
         + ([p0d_close.start()] if p0d_close else [])
+        + ([lifecycle_close.start()] if lifecycle_witness else [])
     )
     after_status=source[end_marker:]
     assert not re.search(r"(?im)^\s*Do\s*\r?\n\s*(?:Aga\s+)?Wait\s+Vbl\s*\r?\n\s*Loop\s*$",after_status), (
@@ -112,7 +123,22 @@ def main():
         print("CURRENT RAM LOG PRE-END CONTRACT PASS:",scripts[0],
               "post-End success requires WinUAE observation")
         return
-    verify(scripts[0].read_bytes().decode("latin-1"))
+    source=scripts[0].read_bytes().decode("latin-1")
+    verify(source)
+    if "SOURCE_TAG M19_S1P2M_FUNCTIONAL_V1" in source:
+        # Mutating any actual closure witness must fail the static check.
+        for old,new in (
+            ('" CLOSED ";_CLOSED','" UNUSED ";_CLOSED'),
+            ('" CLOSED ";_CLOSED','" CLOSED ";_OPENED'),
+            ('_CLOSED=_CLOSED+1','_CLOSED=_CLOSED+0'),
+        ):
+            assert source.count(old)==1
+            try:
+                verify(source.replace(old,new))
+            except AssertionError as exc:
+                assert exc.args[0]==("missing AMOS RAM log","close field")
+            else:
+                raise AssertionError("P2m invalid closure witness accepted")
     print("CURRENT RAM LOG STATIC PASS:",scripts[0])
 
 if __name__=="__main__":

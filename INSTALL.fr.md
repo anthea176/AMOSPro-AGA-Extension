@@ -1,7 +1,7 @@
 # Installation d'AMOSPro AGA Extension
 
 
-**Candidate de TEST active S1-P2m (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 149 400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, 105 commandes / 214 AP20, [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257), B/C/D en attente. Pour le socle 0.14.1, utiliser [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renommée AMOSPro_AGA.Lib dans APSystem. 0.14.1 non publiée.
+**Candidate de TEST active S1-P2m (MC68020+) :** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 149 400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, 105 commandes / 214 AP20, [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257), B fonctionnelle PASS, C fonctionnelle 2/2 (stricte 1/2), D non testée. Pour le socle 0.14.1, utiliser [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renommée AMOSPro_AGA.Lib dans APSystem. 0.14.1 non publiée.
 
 [English](INSTALL.md) | **Français** · [Exemples](examples/README.fr.md)
 
