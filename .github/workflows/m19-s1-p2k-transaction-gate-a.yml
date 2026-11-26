@@ -97,12 +97,12 @@ jobs:
           out, meta = build_s1p2k(Path(os.environ['RUNNER_TEMP'])/'vasm/vasmm68k_mot')
           assert len(out)==149080
           assert sha256(out).hexdigest()=='ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41'
-          assert sha1(b'blob 149080\\0'+out).hexdigest()=='0841bdc692006e7eb18ae5cc2b1df4a9fc4135f8'
+          assert sha1(b'blob 149080'+bytes(1)+out).hexdigest()=='0841bdc692006e7eb18ae5cc2b1df4a9fc4135f8'
           assert meta['unit142']==65276 and meta['commands']==105 and meta['entries']==214
           asc=(Path(os.environ['RUNNER_TEMP'])/'SPRITE_PUBLIC.asc').read_bytes()
           for label, data in (('P2K_LIB',out),('P2K_ASC',asc)):
               enc=base64.b64encode(data).decode('ascii')
-              print(label+'_IDENTITY',len(data),sha256(data).hexdigest(),sha1(('blob %d' % len(data)).encode()+b'\\0'+data).hexdigest())
+              print(label+'_IDENTITY',len(data),sha256(data).hexdigest(),sha1(('blob %d' % len(data)).encode()+bytes(1)+data).hexdigest())
               for i in range(0,len(enc),2048):
                   print(label+'_CHUNK',i//2048,enc[i:i+2048])
           PY
