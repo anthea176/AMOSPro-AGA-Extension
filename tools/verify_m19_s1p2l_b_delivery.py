@@ -23,7 +23,10 @@ def recover_p2k(candidate, good):
     assert len(parts)==214 and len(parts[142])==65276
     assert len(parts[207])==11064 and parts[212]==GETP
     assert parts[213]==RBSR+pack('>HH',207,10986)+bytes.fromhex('4e75')
-    assert title.count(b'S1-P2l-b')==1
+    # The AP20 title includes multiple version strings. Restore every
+    # occurrence, exactly inverse to both source builders. The recovered
+    # parent SHA and byte equality remain mandatory.
+    assert b'S1-P2l-b' in title and b'S1-P2k' not in title
     assert max(map(abs,pc16_displacements(parts).values()))==11094
     prior=list(parts)
     prior[207]=prior[207][:10208]
