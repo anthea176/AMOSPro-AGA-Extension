@@ -498,7 +498,17 @@ def verified_current_compiler_seeds(parsed):
         # verify_active() has checked the exact active source-built candidate
         # and the protected LAST_GOOD. Use the pinned R82 ancestor only for
         # historical CFG seeds; never interpret P2d as a single native unit.
-        if sha(current) == S1P1I_SHA:
+        from active_library import S1P2I_SHA, S1P2J_SHA, S1P2K_SHA
+        if sha(current) == S1P2K_SHA:
+            from active_library import verify_s1p2k
+            verify_s1p2k(current, last_good)
+        elif sha(current) == S1P2J_SHA:
+            from active_library import verify_s1p2j
+            verify_s1p2j(current, last_good)
+        elif sha(current) == S1P2I_SHA:
+            from active_library import verify_s1p2i
+            verify_s1p2i(current, last_good)
+        elif sha(current) == S1P1I_SHA:
             from active_library import verify_s1p1i
             verify_s1p1i(current, last_good)
         elif sha(current) == S1P1H_SHA:
