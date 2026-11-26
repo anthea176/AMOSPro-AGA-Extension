@@ -61,7 +61,7 @@ Les deux premiers fichiers `.asc` sont en ASCII pur, **préflight strict `amos_p
 
 ## 4. Scrolling fin : nouveau prototype AMOS du 24/11/2026
 
-**[AGTM_FINE_SCROLL_BENCH.asc](AGTM_FINE_SCROLL_BENCH.asc)** — **PREFLIGHT PASS + modèle hôte PASS ; WinUAE Runtime B et Compiler C NON TESTÉS.** Aucun changement de Lib, aucun token AGTM.
+**[AGTM_FINE_SCROLL_BENCH.asc](AGTM_FINE_SCROLL_BENCH.asc)** — **PREFLIGHT PASS + modèle hôte PASS ; Runtime B et Compiler C PASS (journaux reçus le 26/11/2026).** [Rapport et preuves](../../../docs/AGTM_FINE_SCROLL_WINUAE_2026-11-26.md). Aucun changement de Lib, aucun token AGTM.
 
 ### Référence et lancement
 
@@ -95,4 +95,56 @@ Les journaux à transmettre sont **`RAM:AGTM_FINE_RUNTIME.TXT`** et **`RAM:AGTM_
 - ASC 11 102 octets, ASCII LF, Git blob `678b97867cfdd4485ea2a0517ab6c882150324f6`, SHA256 `a2d2de907f69e70a1dc86d0e7550dc5312d65a8a5ba6d6e648458be7ce70c3d6`.
 - Préflight strict PASS ; 21 tests du préflight PASS localement.
 - [Test hôte](test_agtm_fine_scroll_model.py) : `python -B tests/proto/agtm_prototype/test_agtm_fine_scroll_model.py` depuis la racine. **3 tests PASS**, dont empreinte exacte ASC, 24 transitions continues du parcours chronométré comparées à un oracle monde pixel par pixel, vérification des compteurs et des 12 captures logiques/1 008 pixels échantillonnés. Le modèle simule une copie chevauchante correcte ; il ne teste pas les instructions du chipset, les Safe réels ni le Compiler.
-- **Runtime et Compiler de ce nouveau banc : NON TESTÉS ; aucun gain chiffré revendiqué.** L'étude n'ouvre pas M20 natif ; la prochaine étape après réception de ces mesures sera le suivi de deux pages physiques avec modifications dynamiques de tuiles.
+- **Runtime B et Compiler C PASS** : 12 contrôles, 983 040 octets planaires sans écart, 1 008 pixels de l'oracle conformes ; gains FULL/SCROLL pour 1, 8, 16 px de 5,59/5,30/5,42 en Runtime et 4,63/4,34/4,47 en Compiler. La configuration effective et la SHA installée restent non attestées par les logs. [Rapport détaillé](../../../docs/AGTM_FINE_SCROLL_WINUAE_2026-11-26.md). La source est conservée à l'identique.
+
+## 5. Deux pages physiques, scrolling 2D et modifications — prototype du 26/11/2026
+
+**[AGTM_DB_DIRTY_BENCH.asc](AGTM_DB_DIRTY_BENCH.asc) — PREPARE, PREFLIGHT PASS, modèle hôte 3/3 PASS. WinUAE Runtime B / Compiler C NON TESTÉS.**
+
+### Lancement
+
+- Cible recommandée identique au banc précédent : **P2d-L2b LAST_GOOD**, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Utiliser une installation AMOS de test séparée pour ne pas perturber le chantier Sprite. Indiquer le binaire et la configuration WinUAE réellement utilisés (CPU, fréquence, JIT, mémoire, PAL/NTSC, Compiler).
+- Programme vierge : Project → Merge ASCII, sélectionner le nouvel ASC. Banques 20 à 24 libres, aucun fichier externe. Lancer Runtime puis, s'il passe, le même ASC compilé. Ne pas modifier les tests antérieurs.
+- Journaux : **`RAM:AGTM_DB_RUNTIME.TXT`** et **`RAM:AGTM_DB_COMPILED.TXT`** ; variante INTERPRETED si Prg State=0. Transmettre les logs même en cas d'échec.
+
+### Scène et séquence
+
+Écran 320×256×8 plans. Carte AGTM 64×32, deux couches de 2 048 octets (payload complet 4 160 octets). Seize tuiles FICON8 16×16 : fond opaque mode 0, overlay non vide mode 1 et pen 0 transparent. Banque 20 : pixels chunky d'origine ; 21 : carte ; 22 : FICON8 ; 23 et 24 : captures planaires.
+
+Chaque série réinitialise carte et deux pages (deux Swap hors chrono). Une révision et une caméra par page ; le rôle logique BACK change uniquement après réussite de Swap. Douze frames avec trajectoire horizontale, verticale, diagonale, retours, déplacement nul pour une page et un edit par frame. Six edits du fond (dont un hors écran), trois suppressions et trois insertions d'overlay. Le scrolling copie dans **la même page back**, répare les bandes en dessinant les tuiles qui les touchent (coins éventuellement redondants), puis repeint les cellules visibles modifiées depuis la révision propre à la page. Les cellules sont recomposées du fond à l'overlay. Aucun acteur/Bob dans ce banc.
+
+- **Validation hors chronométrage (12 frames)** : capture du back incrémental, redessin complet sur la même page, comparaison de tous les octets planaires ; 6 pixels par frame relus indépendamment depuis la capture incrémentale et comparés à la carte et aux pixels chunky, notamment autour des edits visibles. Le redessin de référence rétablit un fond identique avant présentation ; une erreur interdit Swap.
+- **Mesure sans captures de validation** : quatre séries de 12 frames, FULL/SCROLL puis SCROLL/FULL ; carte et deux pages remises à zéro hors chrono. `DRAW_TICKS` somme des différences Timer par frame autour du dessin uniquement (résolution grossière, quantification à chaque frame). `FRAME_TICKS` différence Timer sur toute la série, inclut edits, dessin, bookkeeping, Swap, reprises Swap et un VBL explicite après chaque présentation. Cette deuxième mesure est la référence la plus robuste du coût complet dans ce protocole. Aucun résultat de vitesse Amiga n'est préjugé.
+- Initialisation Safe avec Fill et reprises bornées ; chaque Swap a des reprises bornées. Après Swap, attente VBL explicite. Un retour de dessin 0 après cette attente est un échec journalisé, pas une validation ni une reprise aveugle d'une frame potentiellement partielle.
+
+### Réception
+
+| Champ | Attendu |
+|---|---:|
+| RESULT / ERR | 1 / 0 |
+| CHECKS / COMPARE_BYTES / BYTE_MISMATCH | 12 / 983040 / 0 |
+| ORACLE_CHECKS / ORACLE_BAD | 72 / 0 |
+| BENCH_RUNS / FRAMES_PER_RUN | 4 / 12 |
+| SWAPS (10 init + 60 frames) | 70 |
+| CLOSE_RETURNED | 1 |
+
+Compteurs par série de 12 frames, déterminés par le modèle hôte :
+
+| Méthode | GROUND | OVER | COPIES | PATCHES |
+|---|---:|---:|---:|---:|
+| FULL (0) | 4116 | 1011 | 0 | 0 |
+| SCROLL (1) | 480 | 127 | 11 | 21 |
+
+Contrôler aussi mémoire Chip/Fast, temps bruts et attentes de Swap. La comparaison ne démontre ni une cadence 50 FPS ni une performance A1200 standard. Pas de gros saut, historique perdu, gestion générique de dirty rects, Bobs, scrolling matériel ou moteur M20 natif.
+
+### Provenance
+
+ASC 12 012 octets ASCII LF, Git blob `8aa8776e15b4f071c7c5d3069e028f922d80155c`, SHA256 `5a2749c931cb3317a39de478b4c0d1bb0dcbf19d1a30414cc3ecd632fbcee80e`. Préflight strict local PASS, 21 tests du préflight PASS. [Modèle hôte et tests](test_agtm_db_dirty_model.py), 3 tests PASS ; vérification de la SHA source, 12 frames par méthode comparées à l'oracle monde pixel par pixel et préservation de l'autre page du modèle, compteurs et éditions transparentes. La simulation n'est pas un test réel de Safe/Disp, du Blitter ou de la compilation.
+
+Depuis la racine du dépôt :
+
+~~~sh
+python -B tests/proto/agtm_prototype/test_agtm_db_dirty_model.py
+~~~
+
+M20 natif reste prévu après M21. Aucun nouveau token, binaire, ASC actif ni changement de LAST_GOOD.
