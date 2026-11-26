@@ -99,7 +99,7 @@ Les journaux à transmettre sont **`RAM:AGTM_FINE_RUNTIME.TXT`** et **`RAM:AGTM_
 
 ## 5. Deux pages physiques, scrolling 2D et modifications — prototype du 26/11/2026
 
-**[AGTM_DB_DIRTY_BENCH.asc](AGTM_DB_DIRTY_BENCH.asc) — PREPARE, PREFLIGHT PASS, modèle hôte 3/3 PASS. WinUAE Runtime B / Compiler C NON TESTÉS.**
+**[AGTM_DB_DIRTY_BENCH.asc](AGTM_DB_DIRTY_BENCH.asc) — Runtime B PASS, Compiler C PASS (26/11/2026).** [Rapport et journaux originaux](../../../docs/AGTM_DB_DIRTY_WINUAE_2026-11-26.md). 70 swaps, 983 040 octets comparés, 72 pixels oracle, zéro erreur et mémoire stable dans chaque mode. Gain global FULL/SCROLL : ×5,17 Runtime, ×4,68 Compiler. Source inchangée ; configuration et SHA de la Lib installée non attestées par les logs.
 
 ### Lancement
 
@@ -148,3 +148,39 @@ python -B tests/proto/agtm_prototype/test_agtm_db_dirty_model.py
 ~~~
 
 M20 natif reste prévu après M21. Aucun nouveau token, binaire, ASC actif ni changement de LAST_GOOD.
+
+## 6. Comparatif CPU / Blitter / hybride — prototype du 26/11/2026
+
+**[AGTM_BACKEND_BENCH.asc](AGTM_BACKEND_BENCH.asc) — PREFLIGHT PASS, modèle hôte 3/3 PASS ; Runtime B / Compiler C NON TESTÉS.**
+
+### Lancement
+
+- Même cible que le banc précédent : **P2d-L2b LAST_GOOD**, 136 708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. Installation de test AMOS séparée de la candidate Sprite. Relever CPU, fréquence, JIT, PAL/NTSC, RAM et SHA installée.
+- Programme vierge, Project → Merge ASCII ; banques **20 à 25 libres**. Aucun fichier externe. La banque 25 reçoit le cache FICHIP8 créé en Chip par `Aga F Chip Bank Create`, puis les 16 tuiles sont préparées par `Aga F Chip Stage`. Payload 4636 octets (hors overhead). Les marqueurs ready sont vérifiés. Aucun restaging pendant les edits, qui changent les indices de carte, pas les images.
+- Runtime puis Compiler du même ASC si PASS ; récupérer `RAM:AGTM_BACKEND_RUNTIME.TXT` et `RAM:AGTM_BACKEND_COMPILED.TXT`. Conserver le log de tout échec.
+
+### Protocole
+
+Même carte, mêmes tuiles et overlays, mêmes 12 déplacements, mêmes edits, mêmes dimensions et révisions de pages que le banc DB validé. Toutes les méthodes utilisent le scrolling incrémental et les mêmes copies du décor. Initialisation des pages CPU identique hors chrono. Seul le choix de la commande qui dessine chaque tuile change.
+
+| METHOD | Commande / règle | CPU_CALLS | BLIT_CALLS |
+|---:|---|---:|---:|
+| 0 | CPU, Aga F Icon | 607 | 0 |
+| 1 | Blitter, Aga F Blit | 0 | 607 |
+| 2 | Hybride expérimental : Blitter pour les tuiles opaques entièrement visibles (X 0..304, Y 0..240), CPU pour les tuiles masquées et celles coupées aux bords | 389 | 218 |
+
+Les trois méthodes doivent donner par série GROUND=480, OVER=127, COPIES=11, PATCHES=21. Les patches sont inclus dans les appels de tuiles. La règle hybride ne prétend pas être optimale ; elle isole le clipping et le masque. Elle inclut aussi des tuiles opaques à X non aligné.
+
+Trois parcours de conformité (CPU, Blitter, hybride) : à chaque frame, capture planaire de la page incrémentale, redessin CPU de référence, comparaison intégrale et six pixels relus par oracle chunky. Puis six parcours chronométrés, ordre ABC/CBA, chacun de 12 frames présentées. Les captures de contrôle sont exclues des temps. `DRAW_TICKS` = somme des temps par frame, quantification Timer à chaque frame. `FRAME_TICKS` = temps de la série complète, y compris edits, sélection du backend, Swap et Wait Vbl. Privilégier FRAME pour la comparaison. La branche de choix et les compteurs font partie de la mesure AMOS ; ce n'est pas un microbenchmark isolé de la DMA.
+
+`CREATE_TICKS`, `STAGE_TICKS`, `CACHE_CHIP_DELTA` et `CACHE_FAST_DELTA` sont relevés séparément avant toute série ; si Timer renvoie zéro, la durée est sous sa résolution. Le cache est alloué pour toutes les méthodes afin de garder le contexte mémoire identique ; le coût Chip additionnel doit être considéré pour décider d'un moteur final.
+
+### Réception
+
+RESULT=1, ERR=0, CHECKS=36, COMPARE_BYTES=2949120, BYTE_MISMATCH=0, ORACLE_CHECKS=216, ORACLE_BAD=0, BENCH_RUNS=6, FRAMES_PER_RUN=12, SWAPS=126 (18 init + 108 frames), STAGED=16, CACHE_BYTES=4636, CLOSE_RETURNED=1. Compteurs de chaque série conformes au tableau. Les erreurs 21/22/23 concernent la création, le staging, les ready du cache ; 24/25 concernent les compteurs.
+
+### Provenance et limites
+
+ASC ASCII LF, 14098 octets, blob `56568ed5752a38ca13f392640cc1aa71c0c041d0`, SHA256 `1bdffdc5faf4f60808f36711a94a233e4df10ae217f404469a49d7659fd90c4a`. Préflight strict PASS et 21 tests du préflight PASS. [Modèle hôte](test_agtm_backend_model.py), 3 tests PASS : SHA exacte, 36 frames simulées comparées à l'oracle monde avec préservation de l'autre page, compteurs et protocole. Le modèle ne mesure ni la DMA, ni le CPU, ni Safe/Disp réels. Exécuter depuis la racine : `python -B tests/proto/agtm_prototype/test_agtm_backend_model.py`.
+
+Aucune performance du nouveau banc n'est revendiquée avant réception des journaux. Pas de Bobs, scrolling matériel, commande native AGTM ni changement du chantier M20 après M21. Lib et LAST_GOOD protégées.
