@@ -42,7 +42,8 @@ def main():
     p.add_argument("source",type=Path)
     p.add_argument("output",type=Path)
     a=p.parse_args()
-    assert a.source.resolve()==ROOT/"tests/current/SPRITE_PUBLIC.asc"
+    # Historical source can be extracted into RUNNER_TEMP from its pinned Git commit.
+    # prepare() still requires its exact original SHA256.
     assert not a.output.resolve().is_relative_to(ROOT), "qualification output must be temporary"
     raw=a.source.read_bytes()
     result=prepare(raw)

@@ -1,20 +1,24 @@
-# S1-P2k r4 — test Runtime transactionnel actif unique
+# S1-P2l-b — diagnostic DMA actif unique
 
-**Lib exacte :** [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 149080 octets, SHA256 `ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41`, MC68020+, 105 commandes / 214 AP20. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45705955562). ASC [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 4630 octets, SHA256 `987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e`, [préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45786061729). ABK [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), 532 octets, SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`. B Runtime et C Compiler deux phases PASS (26/11/2026) ; D non testée. LAST_GOOD L2b inchangée.
+**Lib exacte :** [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 149940 octets, SHA256 `d9b690287c82c52a766d5ab4b015bb29d25057cbe55a630c0e30d88d46bd4ab1`, MC68020+, 105 commandes / 214 AP20. [Gate A PASS (496 contrôles)](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45867701424). [Reconstruction et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45874276747). ASC [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 5998 octets, SHA256 `a4ab96585d9e95c65dfaf42b76d9ba8b764c4e50e5cbd2d97d56a1947712d239`. ABK [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), 532 octets, SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`. B/C/D non testées. LAST_GOOD L2b inchangée. Parent P2k r4 validé B/C, [preuves](../../docs/M19_S1_P2K_TRANSACTION_2026-11-25.md).
 
-Installer la Lib dans APSystem, **reset WinUAE une fois** (AGA PAL, 68030/JIT ON), redémarrer AMOS, placer ASC et ABK dans le même dossier et Merge ASCII. Lancer en Runtime, saisir 1. Voir le Sprite 16x16 se déplacer 100 fois, disparaître puis revenir à AMOS. Sauvegarder le journal `RAM:M19_S1P2K_PHASE1.TXT`. Seulement si PASS, relancer le même programme en Runtime sans reset ni réinstallation, saisir 2. Aucun Sprite ne doit apparaître ; retour à AMOS. Sauvegarder `RAM:M19_S1P2K_PHASE2.TXT`. Transmettre les deux journaux.
+Installer la nouvelle Lib dans APSystem, **reset WinUAE une seule fois** (AGA PAL, 68030/JIT ON), redémarrer AMOS, placer ASC et ABK dans le même dossier et Project -> Merge ASCII. Lancer en Runtime, saisir 1. Observer le Sprite 16x16 se déplacer 100 fois, disparaître, puis revenir à AMOS. Sauvegarder `RAM:M19_S1P2LB_PHASE1.TXT`. Si RESULT=1 et DIAG_ROUTE_OK=1, relancer le même programme **sans reset ni réinstallation**, saisir 2. Aucun nouveau Sprite ne doit apparaître. Sauvegarder `RAM:M19_S1P2LB_PHASE2.TXT`. Transmettre les deux journaux. Si Guru, FAIL ou DIAG_ROUTE_FAIL, ne pas poursuivre, conserver la trace. Pas de debugger.
 
 | Champ | Phase 1 | Phase 2 |
 | --- | --- | --- |
-| SPRITE_RC | 1 | -123 |
-| MOVE_RC | 1 | -999 (non exécuté) |
-| MOVES | 100 | 0 |
+| SPRITE_RC | 1 | -123 attendu |
+| MOVE_RC / MOVES | 1 / 100 | -999 / 0 |
 | SOURCE_ERASED | 1 | 1 |
 | OFF_RC / CURSOR_RC / CLOSE_RETURNED / CLOSED | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
 | BANK_FREE_RC | 0 | 0 |
 | CLEAN_ERR / ERR / RESULT | 0 / 0 / 1 | 0 / 0 / 1 |
+| DIAG_START | -131 (registre absent) | relever |
+| DIAG_ACTIVE | -180 (record actif) | relever |
+| DIAG_CLOSE / DIAG_FRONT | relever / relever | relever / relever |
+| DIAG_ROUTE_OK | 1 | 1 |
+| DMA_FREE_PROVEN | 0 | 0 |
 | VERDICT | PASS_DISPLAY_CLOSE_RETAINED_ONLY | PASS_QUARANTINE_NO_NEW_DISPLAY |
 
--123 est le refus attendu de la nouvelle allocation quand le record exposé est conservé. -132/-136/-137 sont anormaux ; ERR10/13 identifient un mauvais résultat Sprite en phase 1/2. ERR12 = Move. CLEAN_ERR bits 0 Off, 1 curseur, 2 Close, 3 rétention inattendue. DMA_FREE_PROVEN 0, pas de réaffichage, pas de récupération DMA. Les mesures Chip/Fast sont informatives : aucun seuil de variation OS n'est inventé. Ne pas confondre PASS de quarantaine et affichage. Si Guru/échec, ne pas poursuivre, conserver le journal. Aucun debugger requis. [Rapport détaillé](../../docs/M19_S1_P2K_TRANSACTION_2026-11-25.md). Ancien banc P2j exact conservé dans Git et tests/proto/sprite_s1_p2j.
+## Observations indépendantes
 
-**Résultats réels Runtime du 26/11/2026 :** [phase 1](../../docs/evidence/M19_S1P2K_PHASE1_RUNTIME_2026-11-26.TXT) et [phase 2](../../docs/evidence/M19_S1P2K_PHASE2_RUNTIME_2026-11-26.TXT) correspondent au tableau. Chip -200 et Fast -168 en phase 1 ; aucune variation nette en phase 2 ; Fast -544 entre les phases, origine indéterminée. Gate B PASS sur cette campagne seulement, DMA_FREE_PROVEN=0. Les journaux d'origine sont protégés par leurs empreintes dans le rapport. Le même scénario a ensuite été validé en compilé : [phase 1](../../docs/evidence/M19_S1P2K_PHASE1_COMPILED_2026-11-26.TXT) et [phase 2](../../docs/evidence/M19_S1P2K_PHASE2_COMPILED_2026-11-26.TXT), PRG_STATE -1 / COMPILED. Tous les résultats correspondent au tableau, avec les mêmes variations mémoire pendant chaque phase. Entre phases compilées, Chip -8 et Fast -608, origine indéterminée. Gate C PASS sur ce scénario seulement. Aucun nouveau banc, aucune libération DMA et aucune promotion.
+DIAG_CLOSE est relevé immédiatement après Close ; DIAG_FRONT après Amos To Front et quatre Wait Vbl. Phase 2 : le registre conservé doit être sondable, sans présumer d'un View idle. Codes : -180 reçu Close/record manquant, -181 record non mappé, -182 flags, -183 géométrie, -184 Gfx, -185 View non idle, -186 layout, -187 référence privée/canal, -188 changement de bases, -189 restitution du verrou refusée (anormal), -190 deux observations compatibles. -190 ne prouve pas le détachement universel du DMA. OBS_COMPATIBLE_ONLY et OBS_PENDING sont des observations indépendantes du verdict d'affichage ; DIAG_ROUTE_FAIL indique un retour inattendu. Aucun FreeVec exposé, aucun réemploi. Ne pas traiter Bank Free(-19000) comme une API de production ; diagnostic temporaire limité à ce banc. Les retours normaux de Bank Free(29) restent 0. Mesures Chip/Fast informatives. La Gate C nécessitera un nouvel exécutable compilé avec cette Lib, reset initial puis mêmes deux phases et journaux distincts. [Rapport détaillé](../../docs/M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md).

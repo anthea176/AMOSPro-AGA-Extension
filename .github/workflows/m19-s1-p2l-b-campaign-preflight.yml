@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -22,9 +23,10 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/prepare_m19_s1p2l_b_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          git show dc73ab6a055e6e02d991568b134ee5975b1c0a11:tests/current/SPRITE_PUBLIC.asc > "$RUNNER_TEMP/P2K_SOURCE.asc"
+          python -B tools/prepare_m19_s1p2l_b_campaign.py "$RUNNER_TEMP/P2K_SOURCE.asc" "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
-          printf '%s  %s\n' 'ecfee351e9afbff95dfbfd16ab805b896e8c4889147f70136dd5b1c8dcbdee41' 'dist/AMOSPro_AGA.Lib' | sha256sum -c -
+          python -B tools/verify_m19_s1p2l_b_delivery.py
           printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -
-          printf '%s  %s\n' '987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e' 'tests/current/SPRITE_PUBLIC.asc' | sha256sum -c -
+          # Exact active ASC checked together with the Lib by the pair verifier.
           git diff --exit-code

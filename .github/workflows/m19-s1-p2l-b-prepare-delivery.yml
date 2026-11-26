@@ -42,7 +42,8 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B tools/prepare_m19_s1p2l_b_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          git show dc73ab6a055e6e02d991568b134ee5975b1c0a11:tests/current/SPRITE_PUBLIC.asc > "$RUNNER_TEMP/P2K_SOURCE.asc"
+          python -B tools/prepare_m19_s1p2l_b_campaign.py "$RUNNER_TEMP/P2K_SOURCE.asc" "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           PYTHONPATH=tools python -B - <<'PY'
           import base64, os
@@ -50,12 +51,14 @@ jobs:
           from hashlib import sha256, sha1
           from build_m19_s1p2l_b_in_memory import build_s1p2lb
           from build_m19_s1p2l_a_in_memory import protected
-          from verify_m19_s1p2l_b_delivery import verify_prepared
+          from verify_m19_s1p2l_b_delivery import verify_prepared, P2LB_SHA, recover_p2k
           before=protected()
           tmp=Path(os.environ['RUNNER_TEMP'])
           out, meta=build_s1p2lb(tmp/'vasm/vasmm68k_mot')
           asc=(tmp/'SPRITE_PUBLIC.asc').read_bytes()
-          assert verify_prepared(out,before[1],asc,before[0])
+          original=(recover_p2k(before[0],before[1])
+                    if sha256(before[0]).hexdigest()==P2LB_SHA else before[0])
+          assert verify_prepared(out,before[1],asc,original)
           assert meta['commands']==105 and meta['entries']==214
           assert meta['unit142']==65276 and meta['unit207']==11064
           assert protected()==before
@@ -63,7 +66,7 @@ jobs:
           for candidate,source in ((out[:-1]+bytes([out[-1]^1]),asc),
                                    (out,asc[:-1]+bytes([asc[-1]^1]))):
               try:
-                  verify_prepared(candidate,before[1],source,before[0])
+                  verify_prepared(candidate,before[1],source,original)
               except AssertionError:
                   pass
               else:
