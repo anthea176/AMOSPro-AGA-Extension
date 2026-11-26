@@ -22,7 +22,9 @@ def build_s1p2lc(vasm):
     vasm=Path(vasm).resolve()
     original=protected()
     parent,meta=build_s1p2lb(vasm)
-    assert parent==original[0] and len(parent)==149940
+    from verify_m19_s1p2l_c_delivery import P2LC_SHA, recover_p2lb
+    expected_parent=recover_p2lb(original[0],original[1]) if sha256(original[0]).hexdigest()==P2LC_SHA else original[0]
+    assert parent==expected_parent and len(parent)==149940
     assert sha256(parent).hexdigest()==PARENT_SHA
     assert sha1(b'blob 149940'+bytes(1)+parent).hexdigest()==PARENT_BLOB
     tok,parts,title=unpack_ap20(parent)
@@ -80,6 +82,10 @@ def build_s1p2lc(vasm):
     assert unpack_ap20(image)==(tok,newparts,newtitle)
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    assert len(image)==150056 and sha256(image).hexdigest()==P2LC_SHA
+    assert recover_p2lb(image,original[1])==parent
+    if sha256(original[0]).hexdigest()==P2LC_SHA:
+        assert image==original[0]
     assert protected()==original
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+bytes(1)+image).hexdigest(),

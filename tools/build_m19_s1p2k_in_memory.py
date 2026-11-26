@@ -12,7 +12,7 @@ from compiler_relocation import GETP,RBSR,repack_ap20,unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from build_m19_s1p2k_close_in_memory import build_s1p2k_close,ROOT,SRC
 from build_m19_s1p2j_in_memory import build_s1p2j
-from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA, S1P2LB_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j,verify_s1p2k
+from active_library import S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA, S1P2LB_SHA,S1P2LC_SHA,P2DL2B_SHA,verify_s1p2i,verify_s1p2j,verify_s1p2k
 MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 APIS=(('aga sprite','00,0,0,0'),('aga sprite off','00'),('aga sprite bank free','00'))
 
@@ -21,9 +21,12 @@ def build_s1p2k(vasm):
     installed=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     active=installed
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    if sha256(installed).hexdigest()==S1P2LB_SHA:
+    if sha256(active).hexdigest()==S1P2LC_SHA:
+        from verify_m19_s1p2l_c_delivery import recover_p2lb
+        active=recover_p2lb(active,good)
+    if sha256(active).hexdigest()==S1P2LB_SHA:
         from verify_m19_s1p2l_b_delivery import recover_p2k
-        active=recover_p2k(installed,good)
+        active=recover_p2k(active,good)
     assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA)
     exact,_=build_s1p2j(vasm)
     verify_s1p2j(exact,good)

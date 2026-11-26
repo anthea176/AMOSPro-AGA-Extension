@@ -19,16 +19,16 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 S1-P2l-b — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **149 940 octets**, SHA256 `d9b690287c82c52a766d5ab4b015bb29d25057cbe55a630c0e30d88d46bd4ab1`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45867701424) ; 496 contrôles ; Runtime, Compiler et matériel non testés ; DMA conservée. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
+**M19 S1-P2l-c — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), **150 056 octets**, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, **105 commandes / 214 entrées AP20**. [Gate A intégrée PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) ; 532 contrôles ; Runtime, Compiler et matériel non testés ; DMA conservée. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`.
 
-**Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), même dossier. [Protocole](tests/current/README.md). [T06 historique conservé](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset initial, puis deux lancements sans reset ; quatre observations diagnostiques, aucune libération DMA. [Rapport](docs/M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md).
+**Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](tests/current/AGSP_S1P1E_FINAL.ABK), même dossier. [Protocole](tests/current/README.md). [T06 historique conservé](tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). Reset initial, puis deux lancements sans reset ; quatre observations diagnostiques, aucune libération DMA. [Rapport](docs/M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md).
 
 **Régression historique :** [P2 ALL IN ONE](tests/passed/M19_P2_ALL_IN_ONE.asc) validé sur P2d · [LIBRARY_TEST_HISTORY](docs/LIBRARY_TEST_HISTORY.fr.md) · [Installation](INSTALL.fr.md) · [Suivi](docs/NEXT_SESSION.md).
-**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande dans la 0.14.1 ; développement S1-P2l-b séparé pour 0.15.0.
+**Dernière release publique GitHub :** 0.14.0. **Prochaine cible : 0.14.1 — Stability & Bug Fixes (brouillons, non publiée).** [Notes GitHub](docs/releases/0.14.1_GITHUB_RELEASE.md) · [Notice Aminet](docs/releases/0.14.1/AMOSProAGA.readme) · [Checklist](docs/releases/0.14.1_RELEASE_CHECKLIST.md). Aucune nouvelle commande dans la 0.14.1 ; développement S1-P2l-c séparé pour 0.15.0.
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 S1-P2l-b** — **105 commandes / 214 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
+**API de la bibliothèque courante M19 S1-P2l-c** — **105 commandes / 214 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |

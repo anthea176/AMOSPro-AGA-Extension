@@ -63,11 +63,35 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1i.bin" src/native/m19_s1/M19_S1P1I_BANK_PUBLIC_MC68020.s
           PYTHONPATH=tools python -B "tools/test_m19_s1p2l_c_gate_a.py" --vasm "$RUNNER_TEMP/vasm/vasmm68k_mot" --historical "$RUNNER_TEMP/p1i.bin"
-      - name: Prepare and strict-preflight future ASC without activation
+      - name: Reconstruct and strict-preflight exact P2l-c ASC from pinned parent
         run: |
-          python -B tools/prepare_m19_s1p2l_c_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          git show 0b92f04326793727b4fdee67cdbc9400f2679c19:tests/current/SPRITE_PUBLIC.asc > "$RUNNER_TEMP/P2LB_SOURCE.asc"
+          python -B tools/prepare_m19_s1p2l_c_campaign.py "$RUNNER_TEMP/P2LB_SOURCE.asc" "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
-      - name: Preserve exact active P2l-b and LAST_GOOD
+      - name: Check exact qualified ASC and protected canonical pair
+        run: |
+          printf '%s  %s\n' '25a50fd84962dcdd0a52a45d496ad3413676d37aa4b3df4c2d74391d18c4a89e' "$RUNNER_TEMP/SPRITE_PUBLIC.asc" | sha256sum -c -
+          PYTHONPATH=tools python -B - <<'PY'
+          from pathlib import Path
+          from verify_m19_s1p2l_c_delivery import recover_p2lb, verify_asc, P2LC_SHA
+          from hashlib import sha256
+          import os
+          cur=Path('dist/AMOSPro_AGA.Lib').read_bytes()
+          good=Path('dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
+          asc=(Path(os.environ['RUNNER_TEMP'])/'SPRITE_PUBLIC.asc').read_bytes()
+          assert verify_asc(asc)
+          if sha256(cur).hexdigest()==P2LC_SHA:
+              recover_p2lb(cur,good)
+              assert asc==Path('tests/current/SPRITE_PUBLIC.asc').read_bytes()
+              for fn,data in ((lambda x: recover_p2lb(x,good),cur),(verify_asc,asc)):
+                  try:
+                      fn(data[:-1]+bytes([data[-1]^1]))
+                  except AssertionError:
+                      pass
+                  else:
+                      raise AssertionError('mutated qualified payload accepted')
+          PY
+      - name: Preserve exact canonical pair and LAST_GOOD
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py
           printf '%s  %s\n' 'a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc' 'dist/AMOSPro_AGA_LAST_GOOD.Lib' | sha256sum -c -

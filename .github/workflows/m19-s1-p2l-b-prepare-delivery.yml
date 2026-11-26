@@ -56,8 +56,10 @@ jobs:
           tmp=Path(os.environ['RUNNER_TEMP'])
           out, meta=build_s1p2lb(tmp/'vasm/vasmm68k_mot')
           asc=(tmp/'SPRITE_PUBLIC.asc').read_bytes()
-          original=(recover_p2k(before[0],before[1])
-                    if sha256(before[0]).hexdigest()==P2LB_SHA else before[0])
+          from verify_m19_s1p2l_c_delivery import P2LC_SHA, recover_p2lb
+          active=recover_p2lb(before[0],before[1]) if sha256(before[0]).hexdigest()==P2LC_SHA else before[0]
+          original=(recover_p2k(active,before[1])
+                    if sha256(active).hexdigest()==P2LB_SHA else active)
           assert verify_prepared(out,before[1],asc,original)
           assert meta['commands']==105 and meta['entries']==214
           assert meta['unit142']==65276 and meta['unit207']==11064

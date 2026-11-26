@@ -79,7 +79,10 @@ def build_s1p2lb(vasm):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     from verify_m19_s1p2l_b_delivery import P2LB_SHA, recover_p2k
     predecessor=recover_p2k(image,original[1])
-    if sha256(original[0]).hexdigest()==P2LB_SHA:
+    from verify_m19_s1p2l_c_delivery import P2LC_SHA, recover_p2lb
+    if sha256(original[0]).hexdigest()==P2LC_SHA:
+        assert image==recover_p2lb(original[0],original[1])
+    elif sha256(original[0]).hexdigest()==P2LB_SHA:
         assert image==original[0]
     else:
         assert predecessor==original[0]

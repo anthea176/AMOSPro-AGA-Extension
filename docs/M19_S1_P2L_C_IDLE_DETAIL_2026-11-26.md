@@ -1,6 +1,6 @@
 # S1-P2l-c — distinguer le refus idle sans changer la politique DMA
 
-Auteur « ok va y » après Gate B P2l-b et retour ERR10 en relance. Accord pour poursuivre le développement, Compiler reporté. Source-only sur main : aucun remplacement de la Lib active ni de l'ASC, aucune promotion.
+Auteur « ok va y » après Gate B P2l-b et retour ERR10 en relance. Accord pour poursuivre le développement, Compiler reporté. Développement initial source-only sur main ; autorisation de bascule et résultats exacts ci-dessous. Aucune promotion.
 
 ## Base vérifiée
 
@@ -33,4 +33,10 @@ Gate A P2l-b héritée 496 contrôles (trois attentes privées -185 paramétrée
 
 ## Suite
 
-Une fois Gate A et préflight exacts PASS, demander la bascule explicite de la paire Lib/ASC. Une campagne Runtime ciblée relèvera les refus détaillés ; inutile de refaire P2l-b ou de compiler ce diagnostic. À partir des observations, déterminer si l'exigence idle est trop forte ou si une réelle référence subsiste. Étudier le réemploi sans libération prématurée, puis tests 100 cycles Off/On, ouvertures/fermetures répétées sans reset et stabilité mémoire, enfin Gate C du jalon fonctionnel. Aucune garantie DMA ni réemploi déduite d'un masque.
+Gate A et préflight exacts PASS ; bascule explicitement autorisée et paire active. Une campagne Runtime ciblée relèvera les refus détaillés ; inutile de refaire P2l-b ou de compiler ce diagnostic. À partir des observations, déterminer si l'exigence idle est trop forte ou si une réelle référence subsiste. Étudier le réemploi sans libération prématurée, puis tests 100 cycles Off/On, ouvertures/fermetures répétées sans reset et stabilité mémoire, enfin Gate C du jalon fonctionnel. Aucune garantie DMA ni réemploi déduite d'un masque.
+
+## Qualification et activation canonique — 26/11/2026
+
+**S1-P2l-c active (26/11/2026).** Autorisation auteur « va y ct inplicite! » après Gate A PASS. Lib 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, blob `86d9497e3a2d5446001b9b41fc25d2e6a878ae50`, 105 commandes / 214 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) : 532 contrôles (496 hérités + 36 détail idle). [Reconstruction exacte et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895). UNIT142 65276, marge 258 ; UNIT207 11178, PC16 max 11208, marge 21556 ; helper natif 114 octets, patch 8 octets à 10978. ASC unique 6425 octets SHA256 `25a50fd84962dcdd0a52a45d496ad3413676d37aa4b3df4c2d74391d18c4a89e`, blob `fad7c3f78a20907f25a0e8072508c5c2c9e9b409`. ABK inchangée (532 octets) et LAST_GOOD L2b protégée. B/C/D NON TESTÉES sur P2l-c ; CI post-activation à relever. Aucune libération ni réemploi DMA.
+
+Reconstruction exacte depuis les sources du parent sur GitHub Actions en lecture seule : 98 fragments Lib et 5 fragments ASC récupérés, longueur et blob identiques aux identités CI. Les consommateurs de provenance reconnaissent uniquement cette paire exacte, reconstituent P2l-b et P2k pour les vérifications historiques (pas de synthèse de source à partir du binaire). Le nouveau test reproduit l'ASC historique avec SHA strict. Les adaptations de vérification ne changent aucun octet natif qualifié ; requalification post-activation distincte. [Campagne Runtime](../tests/current/README.md).

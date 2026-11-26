@@ -6,9 +6,9 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [S1-P2l-b](../dist/AMOSPro_AGA.Lib), 149940 octets, SHA256 `d9b690287c82c52a766d5ab4b015bb29d25057cbe55a630c0e30d88d46bd4ab1`, 105 commandes / 214 AP20, MC68020+. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45867701424) ; 496 contrôles, B Runtime PASS 2/2 (quarantaine), C reportée, D non testée. Diagnostic DMA seulement, parent P2k r4 A/B/C validé. [Rapport](M19_S1_P2L_B_DIAG_ROUTE_2026-11-26.md). |
-| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P2l-b ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
-| ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](../tests/current/AGSP_S1P1E_FINAL.ABK). Runtime P2l-b : deux phases PASS, pas de réemploi ; [T06 conservé](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). [Campagne](../tests/current/README.md). |
+| Lib de travail | [S1-P2l-c](../dist/AMOSPro_AGA.Lib), 150056 octets, SHA256 `148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5`, 105 commandes / 214 AP20, MC68020+. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45877952385) ; 532 contrôles, [reconstruction exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45880559895), B Runtime à effectuer, C reportée, D non testée. Diagnostic DMA seulement. [Rapport](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md). |
+| LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S1-P2l-c ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
+| ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S1P1E_FINAL.ABK](../tests/current/AGSP_S1P1E_FINAL.ABK). Runtime P2l-c : deux phases à effectuer, pas de réemploi ; [T06 conservé](../tests/proto/t06_pattern/T06_PATTERN_TARGET.asc). [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
 
 ## 2. Clôture du socle 2D
@@ -32,7 +32,7 @@
 - [P2h](M19_S1_P2H_PERSISTENT_ROOT_2026-11-25.md) registre Exec persistant source-only, suppression si vide, emprunt non bloquant ; [étape CPU PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45680011267), raccordement aux chemins Close/End et producteur à réaliser (marge UNIT142 504 octets).
 - [P2i](M19_S1_P2I_INTEGRATED_SPRITE_2026-11-25.md) : intégration complète, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45682158541), candidate livrée ; Runtime/Compiler/DMA réels à qualifier.
 - [P2j](M19_S1_P2J_RUNTIME_REPAIR_2026-11-25.md) : P2i rejetée, reprise séquence P2b, erreurs détaillées et verrou DMA rétabli ; Gate A à relever avant nouvelle Lib.
-- [P2l-c](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md) : détail du refus -185, source-only en Gate A ; réemploi DMA et validation multi-cycles encore bloqués.
+- [P2l-c](M19_S1_P2L_C_IDLE_DETAIL_2026-11-26.md) : détail du refus -185, Gate A complète PASS, paire active, Runtime à effectuer ; réemploi DMA et validation multi-cycles encore bloqués.
 - Historique détaillé : [roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/17d710693a3ae26a6ab94775c9af1b8bd5428232/docs/ROADMAP.md), rapports de jalon et NEXT_SESSION.md. Aucun transfert de PASS à la libération DMA, au Compiler ou au matériel.
 
 
