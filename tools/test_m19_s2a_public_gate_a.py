@@ -8,9 +8,9 @@ from unicorn.m68k_const import *
 from build_m19_s2a_in_memory import build_s2a, protected
 import test_m19_s1p2m_gate_a as p2m
 from test_m19_s1p2m_gate_a import LifecycleMachine
-from test_m19_s1p2i_gate_a import STATE, CI, TASK
+from test_m19_s1p2i_gate_a import STATE, CI, TASK, GROUP
 from test_m19_s1p2j_gate_a import FAST_TABLE
-from test_m19_s1p1c_amos_bank_commit import EXEC
+from test_m19_s1p1c_amos_bank_commit import EXEC, CODE
 from test_m19_s1p1c_pipeline import SCREEN,GFX
 from m19_s1_agsp_bank import empty_bank, put_capture, parse_payload, s0_interleaved_image
 
@@ -33,6 +33,10 @@ class AnimationMachine(LifecycleMachine):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.put32(VIEW,SCREEN+44)
+        # CPU instructions are still executed. Only avoid calling the Python
+        # OS mock chain on native instructions that cannot be pseudo-calls.
+        self.pseudo_sites={CODE+i for i in range(0,len(self.code)-1,2)
+                           if self.code[i:i+2]==bytes.fromhex('fe11')}
         self.last_publication={}
         self.switches=0
         self.stage_writes=0
@@ -68,6 +72,10 @@ class AnimationMachine(LifecycleMachine):
                 self.stage_writes+=size
 
     def on_code(self,uc,address,size,user):
+        if CODE<=address<CODE+len(self.code) and address not in self.pseudo_sites:
+            return
+        if GROUP<=address<GROUP+65424:
+            return
         a0=uc.reg_read(UC_M68K_REG_A0)
         a1=uc.reg_read(UC_M68K_REG_A1)
         d0=uc.reg_read(UC_M68K_REG_D0)
@@ -128,8 +136,8 @@ def snapshot(m):
     return (m.read(rec,40),m.read(chip,m.allocations[chip]),dict(m.allocations),
             m.switches,m.stage_writes)
 
-def animation_cases(image,info):
-    for layout in ('runtime','compiled'):
+def animation_cases(image,info,layouts=('runtime','compiled')):
+    for layout in layouts:
         def new(extra=False,db=False,crossing=False):
             m=AnimationMachine(image,info,layout,db)
             m.install_animation(extra)
@@ -241,22 +249,35 @@ def main():
     p.add_argument('--vasm',required=True,type=Path)
     p.add_argument('--historical',required=True,type=Path)
     p.add_argument('--full',action='store_true')
+    p.add_argument('--suite',choices=('all','public-runtime','public-compiled',
+                   'lifetime-runtime','lifetime-compiled','chain','pattern',
+                   'safeport','bob'),default='all')
     a=p.parse_args()
     for k in ('AGSP_GET_BIN','AGSP_PUBLISH_BIN','AGSP_PIPELINE_BIN'):
         os.environ[k]=str(a.historical)
     before=protected()
     image,info=build_s2a(a.vasm)
     print('S2A_BUILT '+json.dumps(info,sort_keys=True),flush=True)
-    animation_cases(image,info)
-    # Run the original P2m lifetime suite unchanged on the S2a candidate.
-    p2m.LifecycleMachine=AnimationMachine
-    p2m.functional_cases(image,info)
-    if a.full:
+    suite=a.suite
+    if suite=='all' or suite.startswith('public-'):
+        animation_cases(image,info,('runtime','compiled') if suite=='all'
+                        else (suite.split('-')[1],))
+    if suite=='all' or suite.startswith('lifetime-'):
+        # Original P2m test counts and cases, same modeled OS behavior.
+        p2m.LifecycleMachine=AnimationMachine
+        p2m.functional_cases(image,info,('runtime','compiled') if suite=='all'
+                             else (suite.split('-')[1],))
+    all_regressions=suite=='all' and a.full
+    if all_regressions or suite=='chain':
         p2m.chain(image)
-        prior,meta=p2m.build_l2(a.vasm)
+    if all_regressions or suite=='pattern':
+        prior,_=p2m.build_l2(a.vasm)
         p2m.verify_linked_source(a.vasm,before[1])
         assert p2m.run_pattern_cases(prior,image)==184
+    if all_regressions or suite=='safeport':
         assert p2m.run_cases(image,info)==172
+    if all_regressions or suite=='bob':
+        _,meta=p2m.build_l2(a.vasm)
         p2m.l2_gate.IMAGE,p2m.l2_gate.META=image,meta
         result=unittest.TextTestRunner(verbosity=2).run(
             unittest.defaultTestLoader.loadTestsFromTestCase(p2m.l2_gate.L2GateA))
@@ -264,7 +285,6 @@ def main():
     second,second_info=build_s2a(a.vasm)
     assert second==image and second_info==info
     assert protected()==before
-    print(('S2A_FULL_GATE_A_PASS ' if a.full else 'S2A_PUBLIC_GATE_A_PASS ')
-          +json.dumps(info,sort_keys=True),flush=True)
+    print('S2A_SUITE_PASS '+suite+' '+json.dumps(info,sort_keys=True),flush=True)
 
 if __name__=='__main__':main()

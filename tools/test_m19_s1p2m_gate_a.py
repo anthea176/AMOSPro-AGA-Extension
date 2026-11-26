@@ -79,8 +79,8 @@ class LifecycleMachine(TransactionMachine):
         assert self.read(GFX+166,1)[0]&12==0
         assert self.get(FAST_TABLE+8)==self.get(FAST_TABLE+12)==0
 
-def functional_cases(image,info):
-    for layout in ('runtime','compiled'):
+def functional_cases(image,info,layouts=('runtime','compiled')):
+    for layout in layouts:
         def new(db=False):
             m=LifecycleMachine(image,info,layout,db)
             assert m.select(29)==1

@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**26/11/2026 — S2a-P1 construit, 400 changements publics et négatifs PASS ; Gate A 30 min annulée pendant la suite héritée.** Requalification parallèle à SHA exact `1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2`, ASC et ABK futurs préparés en CI lecture seule. Autorisation auteur « ol continu jusqua la lib » ; livrer uniquement après PASS complet.
+
 **26/11/2026 — S2a-P1 intégré en sources.** [Contrat, builder, Gate A publique](M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md). P2m active et protégée ; CI S2a à relever, aucune nouvelle Lib ni ASC.
 
 **26/11/2026 — S2a engagé, premier composant source seul.** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). P2m reste active ; pas de nouveau token, Lib, ASC ou promotion. CI composant [PASS 148 cas MC68020](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382931) ; intégration/publication DMA et Gates B/C/D S2a non acquises.
