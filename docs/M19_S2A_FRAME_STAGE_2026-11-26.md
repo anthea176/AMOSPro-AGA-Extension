@@ -33,3 +33,8 @@ P2m reste le seul binaire de test actif. Rien n'est installé par ce jalon.
 [CI 45896382931](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382931), source `3362f71dcf7519a2d61ade2b1a284c708d252e10`, VASM épinglé, MC68020 Unicorn. **148 cas PASS**, dont 100 alternances avec reçu simulé, vérification des écritures et de l'ABI ; 9 autotests de politique CPU et 17 de livraison PASS. Vérification stricte de la paire P2m avant/après PASS. Documentation/roadmap [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382933), politique CPU/livraison [PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45896382947). Aucun nouveau binaire installé.
 
 **Point de sécurité pour la publication (pas encore implémentée) :** le MoveSprite V40 écrit le mot bas du pointeur copinit puis le mot haut. Pour la première intégration, ne permettre une bascule que si les deux pointeurs de frame partagent le même mot haut (ou après preuve d'une publication sûre à la frontière de frame). Cette restriction évite un pointeur hybride lors des deux écritures mais ne remplace pas le contrôle des références OS et le fence de réutilisation. Tester une allocation à cheval sur une frontière de 64 Kio ; refus sans destruction de l'image active. Le composant de staging seul ne publie aucun pointeur et n'a pas ce contrôle. Pas de réutilisation du slot précédent tant que la transition n'est pas confirmée. Intégration native publique et Gate A complète S2a encore à faire ; B/C/D non testées.
+
+
+## Intégration publique suivante
+
+Voir [S2a-P1](M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md), sources et Gate A publique, pas de bascule canonique.

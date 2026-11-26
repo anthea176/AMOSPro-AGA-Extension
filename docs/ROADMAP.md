@@ -25,7 +25,7 @@
 
 S1 : banque AGSP v1 DATA multi-images, capture RGB24 avec transparence explicite, Sprite 16px/3 couleurs, cycle de vie P2m fonctionnel. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [Historique et résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md) · [Contrat S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Réserve Fast transitoire documentée, pas de promotion.
 
-- **S2a en cours :** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). Préparation de l'image suivante dans un slot inactif, sans nouveau token. Publication OS et receipt de réutilisation à qualifier. UNIT142 à préserver (110 octets libres), travail UNIT207.
+- **S2a en cours :** [S2a — staging et contrat](M19_S2A_FRAME_STAGE_2026-11-26.md). Préparation de l'image suivante dans un slot inactif, sans nouveau token. [Intégration publique S2a-P1](M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md) en sources, Gate A à relever ; publication réelle à qualifier. UNIT142 à préserver (110 octets libres), travail UNIT207.
 - S2b : plusieurs objets, propriété des canaux et palettes ; S2c : attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
 - S3 : multiplexage vertical, collisions, animation multi-objets, AMAL facultatif après validation du moteur classique.
 - Les jalons P2a–P2l-c, leurs preuves et refus sont conservés dans [NEXT_SESSION.md](NEXT_SESSION.md), leurs rapports et [la roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/57a1a9d2085e5d887a1fccc5300a0de5eaeef709/docs/ROADMAP.md).
