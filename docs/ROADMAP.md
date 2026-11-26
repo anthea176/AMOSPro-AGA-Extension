@@ -38,7 +38,7 @@
 
 ## 4. Après Sprite : M21 puis M20
 
-M21 Dual Playfield avant M20 AGTM : plans indépendants, palettes, DB, défilement. Prototypes AGTM DATA Save/Load Runtime B PASS ; benchmark de tuiles B/C historique PASS, déplacement 16 px FULL/SCROLL 177/33 ticks Runtime, 140/31 ticks Compiler, pas de qualification scrolling 1px/multicouches. [Spécification](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md) · [preuves](AGTM_WINUAE_PROTOTYPES_2026-11-23.md). Après M21 et avant M20 : Aga Print, procédure IFF/fermeture, accès C2P simplifié. Puis input/joystick M22, C2P/Copper M23/M24 et optimisations mesurées.
+M21 Dual Playfield avant M20 AGTM : plans indépendants, palettes, DB, défilement. Prototypes AGTM DATA Save/Load Runtime B PASS ; benchmark de tuiles B/C historique PASS. Scrolling fin horizontal 1/8/16 px **B Runtime et C Compiler PASS** (26/11), 983 040 octets planaires sans écart par mode. [Preuves initiales](AGTM_WINUAE_PROTOTYPES_2026-11-23.md) · [preuves scrolling fin](AGTM_FINE_SCROLL_WINUAE_2026-11-26.md). [Prototype deux pages/scrolling 2D/édits/overlays](../tests/proto/agtm_prototype/AGTM_DB_DIRTY_BENCH.asc) : préflight et modèle hôte PASS, Runtime/Compiler non testés. [Spécification](RPG_ENGINE_AGTM_V1_SPEC_DRAFT.md). Après M21 et avant M20 : Aga Print, procédure IFF/fermeture, accès C2P simplifié. Puis input/joystick M22, C2P/Copper M23/M24 et optimisations mesurées.
 
 ## 5. Règles et historique
 
