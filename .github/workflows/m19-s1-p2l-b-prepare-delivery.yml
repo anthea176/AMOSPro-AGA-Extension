@@ -1,0 +1,81 @@
+name: M19 S1-P2l-b exact delivery preparation (read only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/m19-s1-p2l-b-prepare-delivery.yml'
+      - 'tools/verify_m19_s1p2l_b_delivery.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-and-extract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore pinned VASM
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM on cache miss
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Install pinned verification tools
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Rebuild exact qualified bytes and preflight ASC
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B tools/prepare_m19_s1p2l_b_campaign.py tests/current/SPRITE_PUBLIC.asc "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/SPRITE_PUBLIC.asc"
+          PYTHONPATH=tools python -B - <<'PY'
+          import base64, os
+          from pathlib import Path
+          from hashlib import sha256, sha1
+          from build_m19_s1p2l_b_in_memory import build_s1p2lb
+          from build_m19_s1p2l_a_in_memory import protected
+          from verify_m19_s1p2l_b_delivery import verify_prepared
+          before=protected()
+          tmp=Path(os.environ['RUNNER_TEMP'])
+          out, meta=build_s1p2lb(tmp/'vasm/vasmm68k_mot')
+          asc=(tmp/'SPRITE_PUBLIC.asc').read_bytes()
+          assert verify_prepared(out,before[1],asc,before[0])
+          assert meta['commands']==105 and meta['entries']==214
+          assert meta['unit142']==65276 and meta['unit207']==11064
+          assert protected()==before
+          # Reject a single-byte mutation of either qualified output.
+          for candidate,source in ((out[:-1]+bytes([out[-1]^1]),asc),
+                                   (out,asc[:-1]+bytes([asc[-1]^1]))):
+              try:
+                  verify_prepared(candidate,before[1],source,before[0])
+              except AssertionError:
+                  pass
+              else:
+                  raise AssertionError('mutated qualified payload accepted')
+          print('P2LB_EXACT_PARENT_AND_NEGATIVES_PASS',flush=True)
+          # Byte transport for the authorized canonical-slot commit only.
+          # No installable artifact and no repository write from CI.
+          for label,data in (('P2LB_LIB',out),('P2LB_ASC',asc)):
+              print(label+'_IDENTITY',len(data),sha256(data).hexdigest(),
+                    sha1(('blob %d' % len(data)).encode()+bytes(1)+data).hexdigest())
+              enc=base64.b64encode(data).decode('ascii')
+              for i in range(0,len(enc),2048):
+                  print(label+'_CHUNK',i//2048,enc[i:i+2048])
+          PY
+          git diff --exit-code

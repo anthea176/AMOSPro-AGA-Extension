@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# AGA_NATIVE_MIN_CPU: MC68020
+"""Verify the exact P2l-b diagnostic lineage before any canonical activation.
+No files are installed. Restore the verified P2k parent in memory only.
+"""
+from hashlib import sha256, sha1
+from struct import pack
+from compiler_relocation import GETP, RBSR, unpack_ap20, repack_ap20
+from ap20_v2_island_dispatch import pc16_displacements
+from audit_ap20 import inspect, parse, token_role_issues
+from active_library import S1P2K_SHA, P2DL2B_SHA, verify_s1p2k
+
+P2LB_SHA = 'd9b690287c82c52a766d5ab4b015bb29d25057cbe55a630c0e30d88d46bd4ab1'
+P2LB_BLOB = '17136bee1d0ac8ae1e5d9431c51fd1bdf24129f2'
+P2LB_ASC_SHA = 'a4ab96585d9e95c65dfaf42b76d9ba8b764c4e50e5cbd2d97d56a1947712d239'
+
+def recover_p2k(candidate, good):
+    """Strict identity and exact predecessor recovery, not source synthesis."""
+    assert len(candidate)==149940 and sha256(candidate).hexdigest()==P2LB_SHA
+    assert sha1(b'blob 149940'+bytes(1)+candidate).hexdigest()==P2LB_BLOB
+    assert sha256(good).hexdigest()==P2DL2B_SHA
+    tok,parts,title=unpack_ap20(candidate)
+    assert len(parts)==214 and len(parts[142])==65276
+    assert len(parts[207])==11064 and parts[212]==GETP
+    assert parts[213]==RBSR+pack('>HH',207,10986)+bytes.fromhex('4e75')
+    assert title.count(b'S1-P2l-b')==1
+    assert max(map(abs,pc16_displacements(parts).values()))==11094
+    prior=list(parts)
+    prior[207]=prior[207][:10208]
+    prior[213]=RBSR+pack('>HH',207,6134)+bytes.fromhex('4e75')
+    predecessor=repack_ap20(candidate,tok,prior,title.replace(b'S1-P2l-b',b'S1-P2k'))
+    assert len(predecessor)==149080 and sha256(predecessor).hexdigest()==S1P2K_SHA
+    verify_s1p2k(predecessor,good)
+    audit=inspect(parse(candidate))
+    assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    return predecessor
+
+def verify_prepared(candidate,good,asc,original):
+    assert recover_p2k(candidate,good)==original
+    assert len(asc)==5998 and sha256(asc).hexdigest()==P2LB_ASC_SHA
+    assert asc.count(b'Aga Sprite Bank Free(-19000)')==4
+    assert asc.count(b'Aga Sprite Bank Free(29)')==1
+    assert b'SOURCE_TAG M19_S1P2LB_DMA_DIAG_V1' in asc
+    assert b'DMA_FREE_PROVEN 0' in asc
+    return True
