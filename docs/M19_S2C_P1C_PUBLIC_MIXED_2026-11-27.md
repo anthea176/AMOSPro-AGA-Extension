@@ -10,3 +10,9 @@ Statut : source et banc de qualification engagés, **pas de Lib installée**. La
 - Off, Bank Free, Close, End utilisent la même retraite v5. Deux fences ne constituent pas une preuve DMA réelle. Les tests CPU/OS modélisés ne remplacent ni WinUAE ni le vrai Compiler.
 - CI : reconstruction exacte, capture, régressions historiques et combinaisons 2/4 plans, animation, Move, Off, Bank Free et Close/End. Les bancs hérités résolvent maintenant l'index AP20 depuis le stub et le stride depuis les métadonnées (défauts historiques conservés).
 - Avant livraison : Gate A intégrée PASS, campagne ASC dédiée source vérifiée et préflight, autorisation explicite de bascule. Puis Gates B/C et test DMA. Aucun changement de branche.
+
+## Future campagne B/C (sans activation)
+
+Le générateur `tools/prepare_m19_s2c_campaign.py` dérive l'unique ASC de l'exact S2r et construit le futur AGSP_S2C_MIXED.ABK dans RUNNER_TEMP. Trois écrans : 3 simples, 2 simples + 1 attaché, 3 attachés. 450 Change et 450 Move, trois Off ciblés/recréations, trois Close avec objets actifs, six captures AGAPIC, six captures AGSP 4 plans (dont trois de 1 ligne) et trois refus 16 couleurs ; égalité des mémoires finales et contrôle inter-écrans. Préflight et CI à relever avant proposition de livraison.
+
+Premier assemblage P1c : erreur VASM 2029 sur `bra.s s2c_active_failed`, corrigée par `5efc907`. Aucun binaire installé.
