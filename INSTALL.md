@@ -1,7 +1,7 @@
 # Installing AMOSPro AGA Extension
 
 
-**Active TEST candidate S2r-P1 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 154,352 bytes, SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a`, 105 commands / 219 AP20 entries, [native MC68020 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46059388877), B/C/D pending. For the 0.14.1 protected base use [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renamed AMOSPro_AGA.Lib in APSystem. 0.14.1 not released.
+**Active TEST candidate S2r-P1 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 154,352 bytes, SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a`, 105 commands / 219 AP20 entries, [native MC68020 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46059388877), B/C functional PASS on the test campaign (128-byte temporary Runtime Fast variation recovered); physical D pending. [Evidence](docs/M19_S2R_RUNTIME_COMPILER_2026-11-27.md). For the 0.14.1 protected base use [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renamed AMOSPro_AGA.Lib in APSystem. 0.14.1 not released.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 

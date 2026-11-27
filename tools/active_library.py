@@ -472,7 +472,7 @@ def verify_active(root: Path):
     if current_sha == S2R_SHA:
         frozen_p2d(good)
         verify_s2r(cur,good)
-        return cur,good,"M19 S2r-P1 AP20 repartition ACTIVE TEST CANDIDATE; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
+        return cur,good,"M19 S2r-P1 AP20 repartition ACTIVE TEST CANDIDATE; full MC68020 Gate A PASS; Runtime B and real Compiler C functional PASS (128 temporary Fast bytes recovered in B); D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S2B_SHA:
         frozen_p2d(good)
         verify_s2b(cur,good)
