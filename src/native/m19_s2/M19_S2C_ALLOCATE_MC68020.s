@@ -17,16 +17,16 @@ AGSP_S2B_PICK:
     move.l d1,d6
     move.l d2,d7
     cmpi.l #1,d0
-    bcs.s s2b_pick_bad
+    bcs.w s2b_pick_bad
     cmpi.l #7,d6
-    bhi.s s2b_pick_bad
+    bhi.w s2b_pick_bad
     cmpi.l #255,d7
-    bhi.s s2b_pick_bad
+    bhi.w s2b_pick_bad
     bsr.w AGSP_S2B_SCAN
     tst.l d1
-    bmi.s s2b_pick_bad
+    bmi.w s2b_pick_bad
     tst.l d0
-    bne.s s2b_pick_bad
+    bne.w s2b_pick_bad
     and.l d1,d6
     lea 52(a2),a3
     moveq #2,d5
