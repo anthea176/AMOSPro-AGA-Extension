@@ -5,6 +5,7 @@ import argparse
 from hashlib import sha256
 from pathlib import Path
 import shutil
+import re
 from struct import unpack_from
 import tempfile
 from active_library import S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, P2DL2B_SHA, frozen_p2d, frozen_s1p1i
@@ -57,7 +58,82 @@ def close_registry(s):
     bne.s s2b_drain_closed_flags
 '''+s[b:]
     assert 's2b_drain_bank' not in s
+    # Close never looks up an ID or consumes the free-slot mask.
+    # Preserve the complete three-slot count/identity/extent validation.
+    s=once(s,'    move.l d0,d7\n    cmpi.l #64,d7\n    bhi.w s2b_scan_bad\n','')
+    s=once(s,'    cmpi.l #3,(a2)\n    bhi.w s2b_scan_bad\n','')
+    s=once(s,'    moveq #0,d6          ; matching record\n    moveq #0,d5          ; free slots\n','')
+    s=once(s,'    bset d3,d5\n','')
+    s=once(s,'    cmp.l d7,d0\n    bne.s s2b_scan_channel\n    move.l a3,d6\ns2b_scan_channel:\n','')
+    s=once(s,'    move.l d6,d0\n    move.l d5,d1\n','    moveq #1,d0\n    moveq #0,d1\n')
+    s=once(s,'    move.l d1,d3\n    cmpi.l #1,d2','    cmpi.l #1,d2')
     return s
+
+def compact_retire(s):
+    # Exact same permitted receipt states as the long compare chain.
+    old="""    cmpi.l #4,d2
+    beq.s s2b_p2e_validate_gfx
+    cmpi.l #5,d2
+    beq.s s2b_p2e_validate_gfx
+    cmpi.l #7,d2
+    beq.s s2b_p2e_validate_gfx
+    cmpi.l #13,d2
+    beq.s s2b_p2e_validate_gfx
+    cmpi.l #15,d2
+    bne.w s2b_p2e_bad_flags
+"""
+    s=once(s,old,"""    cmpi.l #15,d2
+    bhi.w s2b_p2e_bad_flags
+    move.l #$0000a0b0,d0 ; bits 4,5,7,13,15 only
+    btst d2,d0
+    beq.w s2b_p2e_bad_flags
+""")
+    s=once(s,"""    cmp.w (a0),d1
+    bne.s s2b_p2m_bad
+    addq.w #2,d1
+    cmp.w 4(a0),d1
+    bne.s s2b_p2m_bad
+    addq.w #2,d1
+    cmp.w 8(a0),d1
+    bne.s s2b_p2m_bad
+    addq.w #2,d1
+    cmp.w 12(a0),d1
+    bne.s s2b_p2m_bad
+""","""    moveq #3,d0
+s2b_neutral_regs:
+    cmp.w (a0),d1
+    bne.s s2b_p2m_bad
+    addq.w #2,d1
+    addq.l #4,a0
+    dbra d0,s2b_neutral_regs
+    lea -16(a0),a0
+""")
+    return s
+
+def compact_root(s):
+    old="""    tst.l 56(a4)
+    bne.s s2b_p2h_unlock
+    tst.l 60(a4)
+    bne.s s2b_p2h_unlock
+    tst.l 64(a4)
+    bne.s s2b_p2h_unlock
+    tst.l 68(a4)
+    bne.s s2b_p2h_unlock
+    tst.l 104(a4)
+    bne.s s2b_p2h_unlock
+"""
+    return once(s,old,"""    move.l 56(a4),d0
+    or.l 60(a4),d0
+    or.l 64(a4),d0
+    or.l 68(a4),d0
+    or.l 104(a4),d0
+    bne.s s2b_p2h_unlock
+""")
+
+def relax_local(s):
+    # Only branches wholly inside the new Sprite tail. The legacy prefix,
+    # four fixed dispatch spans and long branches to old labels stay exact.
+    return re.sub(r'(?m)^(\s+b[a-z]+)\.w(\s+(?:s2b_|p2[fgk]_|AGSP_S2B_)[A-Za-z0-9_]+)',r'\1\2',s)
 
 def build_s2b_close(vasm):
     vasm=Path(vasm).resolve()
@@ -65,8 +141,12 @@ def build_s2b_close(vasm):
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
     assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
-    parent,_=build_s1p1i(vasm)
-    assert parent==(active if sha256(active).hexdigest()==S1P1I_SHA else frozen_s1p1i(active,good))
+    # The full editable L2b UNIT142 is reassembled below. The S2a
+    # integrated builder separately authenticates and reconstructs UNIT207.
+    assert sha256(active).hexdigest()==S2A_SHA
+    from verify_m19_s2a_delivery import verify_library
+    verify_library(active,good)
+    parent=frozen_s1p1i(active,good)
     tok,old,title=unpack_ap20(parent)
     assert len(old)==208 and old[:203]==unpack_ap20(good)[1]
     prior=old[UNIT]
@@ -126,8 +206,18 @@ def build_s2b_close(vasm):
         p=folder/'M19_S2B_PERSIST_ROOT_MC68020.s'
         p.write_text(once(p.read_text(encoding='ascii'),
              '    bra.w s2b_p2h_enter\n    bra.w s2b_p2h_leave\n',''),encoding='ascii')
+        p=folder/'M19_S2B_RETIRE_PAIR_MC68020.s'
+        p.write_text(compact_retire(p.read_text(encoding='ascii')),encoding='ascii')
+        p=folder/'M19_S2B_PERSIST_ROOT_MC68020.s'
+        p.write_text(compact_root(p.read_text(encoding='ascii')),encoding='ascii')
+        for p in folder.glob('M19_S2B_*.s'):
+            p.write_text(relax_local(p.read_text(encoding='ascii')),encoding='ascii')
         with master.open('a',encoding='ascii') as f:
-            f.write('\n    include "M19_S2B_CLOSE_GUARD_MC68020.s"\n')
+            # VASM pinned source supports Devpac OPT directives. Limit
+            # branch/displacement/quick optimizations to this new tail.
+            f.write('\n    opt o-,o1+,o2+,o4+,o5+,o8+,o9+,o10+,o11+,o12+\n')
+            f.write('    include "M19_S2B_CLOSE_GUARD_MC68020.s"\n')
+            f.write('    opt o-\n')
         # Source-only, preserve each legacy six-byte span.
         file=folder/'M19_UNIT142_R83_CLOSE_CLEANUP_MC68020.s'
         old_close=('    jsr -66(a6)                                        ; +$000CE: 4EAEFFBE\n'

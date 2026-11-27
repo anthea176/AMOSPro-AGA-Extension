@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**27/11/2026 — S2b-P1 composants PASS 2179 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46038863865)), raccordement public et Close/End en sources.** Premier UNIT142 à 65732 (+198 sur limite) refusé ; compaction locale source appliquée, nouvelle construction intégrée à relever. [Rapport](M19_S2B_MULTI_SPRITE_2026-11-27.md). Aucune nouvelle Lib ni ASC ; S2a reste active. La Gate A publique complète reste requise.
+
 **27/11/2026 — S2b-P1 composants sources :** registre v4 inline (240 octets), allocation de paires/palette et retrait collectif/ID/banque écrits. [Contrat et CI](M19_S2B_MULTI_SPRITE_2026-11-27.md). Gate composant à relever ; aucun raccordement AP20/Close legacy ni nouvelle Lib. S2a et LAST_GOOD intactes.
 
 **27/11/2026 — S2b-P0 retrait par paire : [114 cas MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46037779887).** Source `b7e7b2e71c3393cfd81cad080f3ecc25422f7b3e`, politique CPU/delivery et paire active S2a vérifiées avant/après. Retrait indépendant des paires 2/3, 4/5, 6/7, six ordres de retrait des trois paires actives, reçus partiels, références tardives et retry. Seulement composant CPU + OS modélisé ; intégration registry/Close/End, Gate A intégrée et B/C/D S2b encore à faire. S2a validée A/B/C reste active, LAST_GOOD inchangée.
