@@ -55,12 +55,11 @@ p2f_gate:
     move.l 16(a3),d0
     cmp.l 48(a3),d0
     bne.w p2k_unlock_deny
-    move.l a5,d0
-    cmp.l 4(a3),d0
+    cmpa.l 4(a3),a5
     bne.w p2k_unlock_deny
     move.l a2,d0
     beq.w p2k_unlock_deny
-    cmp.l 8(a3),d0
+    cmpa.l 8(a3),a2
     bne.w p2k_unlock_deny
     move.l (a2),d0
     beq.w p2k_unlock_deny
@@ -68,8 +67,7 @@ p2f_gate:
     bne.w p2k_unlock_deny
     movea.l a3,a0
     movea.l 8(a2),a1
-    moveq #0,d0
-    moveq #0,d1
+    moveq #0,d0        ; collective preclose ignores selector D1
     bsr.w AGSP_S2B_DRAIN
     tst.l d0
     beq.w p2k_unlock_deny

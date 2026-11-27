@@ -26,32 +26,26 @@ p2g_closed:
     ; A2=State, A5=owner, (A2)=screen BEFORE legacy clear.
     ; D0=real CloseScreen result. Preserve all except decision D0.
     movem.l d1-d7/a0-a6,-(sp)
-    move.l d0,d7
-    tst.l d7
+    tst.l d0
     beq.w p2g_close_failed
     movea.l p2f_root(pc),a3
     move.l a3,d0
     beq.w p2g_continue
     tst.l (a3)
     beq.w p2k_close_unlink
-    move.l a5,d0
-    cmp.l 4(a3),d0
+    cmpa.l 4(a3),a5
     bne.w p2k_close_unlink
-    move.l a2,d0
-    cmp.l 8(a3),d0
+    cmpa.l 8(a3),a2
     bne.s p2k_close_unlink
     move.l (a2),d0
     beq.s p2k_close_unlink
     cmp.l 12(a3),d0
     bne.s p2k_close_unlink
-    tst.l d7
-    beq.s p2g_close_failed
     clr.l 12(a3)         ; durable receipt of this successful close
     clr.l 48(a3)         ; no longer a live lifetime owner
     movea.l a3,a0
     movea.l 8(a2),a1     ; still-open graphics.library
-    moveq #1,d0
-    moveq #0,d1
+    moveq #1,d0        ; closed reclaim ignores selector D1
     bsr.w AGSP_S2B_DRAIN
     ; Pending records remain pinned; finish the real closed screen.
 p2k_close_unlink:
