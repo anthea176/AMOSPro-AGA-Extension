@@ -65,7 +65,7 @@ jobs:
               assert len(data) == size and sha256(data).hexdigest() == digest, path
           import sys
           sys.path.insert(0,'tools')
-          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA, P2C_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, SPRITE_L2B_HISTORICAL_SHAS
+          from active_library import verify_active,B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA, P2C_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, SPRITE_L2B_HISTORICAL_SHAS
           active,good,label=verify_active(Path('.'))
           sha=sha256(active).hexdigest()
           assert sha in (B7M2_SHA,B8_SHA,B8S1_SHA,P0_FREE_SHA,P1A_SHA,P1B_SHA,P1C_SHA, P1D_SHA, P1E_SHA, P2A_SHA, P2B_SHA, P2C_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, *SPRITE_L2B_HISTORICAL_SHAS)
@@ -83,10 +83,14 @@ jobs:
               S1P2LB_SHA: 'SPRITE_PUBLIC.asc',
               S1P2LC_SHA: 'SPRITE_PUBLIC.asc',
               S1P2M_SHA: 'SPRITE_PUBLIC.asc',
-              S2A_SHA: 'SPRITE_PUBLIC.asc',
+              S2A_SHA: 'SPRITE_PUBLIC.asc', S2B_SHA: 'SPRITE_PUBLIC.asc',
               S1P1E_SHA: 'M19_P2_ALL_IN_ONE.asc'}.get(sha, 'M19_B8_BOB_CLEAR_UPDATE_BC_01.asc')
           assert asc==[expected_asc],asc
-          if sha==S2A_SHA:
+          if sha==S2B_SHA:
+              from verify_m19_s2b_delivery import verify_asc, verify_abk
+              verify_asc((Path('tests/current')/asc[0]).read_bytes())
+              verify_abk(Path('tests/current/AGSP_S2B_MULTI.ABK').read_bytes())
+          elif sha==S2A_SHA:
               from verify_m19_s2a_delivery import verify_asc, verify_abk
               verify_asc((Path('tests/current')/asc[0]).read_bytes())
               verify_abk(Path('tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes())

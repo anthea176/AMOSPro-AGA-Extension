@@ -169,7 +169,10 @@ def main():
     args=p.parse_args()
     before=protected()
     image,info=build_s2b(args.vasm)
-    asc,abk=prepare(before[2])
+    from verify_m19_s2b_delivery import pre_s2b_pair,verify_asc as verify_s2b_asc,verify_abk
+    asc,abk=prepare(pre_s2b_pair(before)[2])
+    verify_s2b_asc(asc)
+    verify_abk(abk)
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_S2B_MULTI.ABK',abk)):
         with (args.temp/name).open('xb') as f:f.write(data)
     assert protected()==before

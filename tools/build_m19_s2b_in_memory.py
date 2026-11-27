@@ -23,7 +23,8 @@ def build_s2b(vasm):
     vasm=Path(vasm).resolve()
     before=protected()
     bank=(ROOT/'tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes()
-    parent,good,asc,abk=before
+    from verify_m19_s2b_delivery import pre_s2b_pair,S2B_SHA,verify_library as verify_s2b
+    parent,good,asc,abk=pre_s2b_pair(before)
     assert sha256(parent).hexdigest()==S2A_SHA
     verify_library(parent,good);verify_asc(asc);verify_abk(bank)
     reconstructed,_=build_s2a(vasm)
@@ -68,6 +69,8 @@ def build_s2b(vasm):
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
+    verify_s2b(image,good)
+    if sha256(before[0]).hexdigest()==S2B_SHA:assert image==before[0]
     assert protected()==before
     assert (ROOT/'tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes()==bank
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),

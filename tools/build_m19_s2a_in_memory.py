@@ -152,8 +152,10 @@ def build_s2a(vasm):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
     verify_s2a(out,good)
-    if sha256(before[0]).hexdigest()==S2A_SHA:
-        assert out==before[0]
+    from verify_m19_s2b_delivery import pre_s2b_library
+    installed_parent=pre_s2b_library(before[0],before[1])
+    if sha256(installed_parent).hexdigest()==S2A_SHA:
+        assert out==installed_parent
     assert protected()==before
     return out,dict(parent_sha=P2M_SHA,sha256=sha256(out).hexdigest(),
         git_blob=sha1(f'blob {len(out)}'.encode()+b'\0'+out).hexdigest(),
