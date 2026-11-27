@@ -21,7 +21,7 @@ from compiler_relocation import GETP, RBSR, repack_ap20, unpack_ap20
 from build_m19_s2b_in_memory import build_s2b, MASTER, protected
 from build_m19_s2b_close_in_memory import assemble, once, PATCHES, RECLAIM_PATCHES
 from build_m19_s1p2l_a_in_memory import headroom, RESERVE
-from active_library import S2B_SHA, P2DL2B_SHA
+from active_library import S2B_SHA, S2R_SHA, P2DL2B_SHA
 
 ROOT=Path(__file__).resolve().parents[1]
 U=142
@@ -105,7 +105,9 @@ def prepare_close(vasm,folder,original):
 def build_s2r(vasm):
     vasm=Path(vasm).resolve()
     before=protected()
-    assert sha256(before[0]).hexdigest()==S2B_SHA
+    from verify_m19_s2r_delivery import pre_s2r_pair, verify_library
+    historical=pre_s2r_pair(before)
+    assert sha256(historical[0]).hexdigest()==S2B_SHA
     assert sha256(before[1]).hexdigest()==P2DL2B_SHA
     campaign=ROOT/'tests/current/AGSP_S2B_MULTI.ABK'
     abk=campaign.read_bytes()
@@ -129,7 +131,7 @@ def build_s2r(vasm):
 
     parent,info=build_s2b(vasm,close_source_observer=close_source,
                           sprite_source_observer=sprite_source)
-    assert parent==before[0] and info['sha256']==S2B_SHA
+    assert parent==historical[0] and info['sha256']==S2B_SHA
     tok,parts,title=unpack_ap20(parent)
     assert len(parts)==NEW_GROUP and info['root']==OLD_ROOT
     assert parts[U][START:END]==seen['pic'][len(DISPATCH_V2):]
@@ -170,6 +172,8 @@ def build_s2r(vasm):
     assert [(r['name'],r['signature']) for r in rows]==[(r['name'],r['signature']) for r in result['tokens']]
     assert len([r for r in rows if r['signature']])==105
     assert unpack_ap20(image)==(nt,new,nz)
+    verify_library(image,before[1])
+    if sha256(before[0]).hexdigest()==S2R_SHA:assert image==before[0]
     assert protected()==before and campaign.read_bytes()==abk
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),

@@ -64,8 +64,9 @@ S1P2LC_SHA="148b4d06702f84dd6de3eacd069a55c4759164bb4dd3c74f319f81e6f077f3f5"  #
 S1P2M_SHA="5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be"  # Exact MC68020 Gate A 45891037257; B/C/D pending
 S2A_SHA="1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2"  # Exact S2a-P1 Gate A 45907171922
 S2B_SHA="b44edbbcf4b3c02cb6527ea0f002bee863c992dd4b670636e7431a1b69e1a2fa"  # Exact S2b-P1 Gate A 46041721740
-SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA)
-SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA))
+S2R_SHA="7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a"  # Exact S2r-P1 Gate A 46059388877
+SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA)
+SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA),(154352,S2R_SHA))
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -306,6 +307,9 @@ def frozen_s1p1i(candidate: bytes, protected: bytes) -> bytes:
     from compiler_relocation import repack_ap20, unpack_ap20
     from compiler_bridge_v2_probe import DISPATCH_V2
     from build_m19_s1p1f_l2b_get_sprite_ap20 import TITLE as parent_title
+    if sha256(candidate).hexdigest()==S2R_SHA:
+        from verify_m19_s2r_delivery import pre_s2r_library
+        candidate=pre_s2r_library(candidate,protected)
     if sha256(candidate).hexdigest()==S1P2LC_SHA:
         from verify_m19_s1p2l_c_delivery import recover_p2lb
         candidate=recover_p2lb(candidate,protected)
@@ -449,6 +453,11 @@ def verify_s2b(candidate: bytes, protected: bytes):
     return verify_library(candidate,protected)
 
 
+def verify_s2r(candidate: bytes, protected: bytes):
+    from verify_m19_s2r_delivery import verify_library
+    return verify_library(candidate,protected)
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -460,6 +469,10 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S2R_SHA:
+        frozen_p2d(good)
+        verify_s2r(cur,good)
+        return cur,good,"M19 S2r-P1 AP20 repartition ACTIVE TEST CANDIDATE; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S2B_SHA:
         frozen_p2d(good)
         verify_s2b(cur,good)

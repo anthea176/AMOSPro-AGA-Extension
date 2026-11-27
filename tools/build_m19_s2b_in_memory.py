@@ -72,7 +72,9 @@ def build_s2b(vasm, *, close_source_observer=None, sprite_source_observer=None):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
     verify_s2b(image,good)
-    if sha256(before[0]).hexdigest()==S2B_SHA:assert image==before[0]
+    from verify_m19_s2r_delivery import pre_s2r_library
+    installed_parent=pre_s2r_library(before[0],before[1])
+    if sha256(installed_parent).hexdigest()==S2B_SHA:assert image==installed_parent
     assert protected()==before
     assert (ROOT/'tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes()==bank
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),

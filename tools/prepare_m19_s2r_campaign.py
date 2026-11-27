@@ -133,8 +133,11 @@ def main():
     verify_abk(bank)
     image,meta=build_s2r(a.vasm)
     assert sha256(image).hexdigest()==EXPECTED and meta['sha256']==EXPECTED
-    asc=prepare(before[2])
-    assert asc==prepare(before[2])
+    from verify_m19_s2r_delivery import pre_s2r_pair, verify_asc as verify_s2r_asc
+    parent=pre_s2r_pair(before)
+    asc=prepare(parent[2])
+    assert asc==prepare(parent[2])
+    verify_s2r_asc(asc)
     with (a.temp/'SPRITE_PUBLIC.asc').open('xb') as f:f.write(asc)
     assert protected()==before
     assert (ROOT/'tests/current/AGSP_S2B_MULTI.ABK').read_bytes()==bank

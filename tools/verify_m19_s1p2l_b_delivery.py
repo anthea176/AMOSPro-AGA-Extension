@@ -62,7 +62,13 @@ def check_active_pair():
     from verify_m19_s1p2m_delivery import P2M_SHA, verify_library, verify_asc as verify_p2m_asc
     from verify_m19_s2a_delivery import S2A_SHA, verify_library as verify_s2a, verify_asc as verify_s2a_asc, verify_abk
     from verify_m19_s2b_delivery import S2B_SHA,verify_library as verify_s2b,verify_asc as verify_s2b_asc,verify_abk as verify_s2b_abk
-    if sha256(current).hexdigest()==S2B_SHA:
+    from verify_m19_s2r_delivery import S2R_SHA,verify_library as verify_s2r,verify_asc as verify_s2r_asc
+    if sha256(current).hexdigest()==S2R_SHA:
+        verify_s2r(current,good)
+        verify_s2r_asc(asc)
+        verify_s2b_abk((root/'tests/current/AGSP_S2B_MULTI.ABK').read_bytes())
+        verify_abk((root/'tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes())
+    elif sha256(current).hexdigest()==S2B_SHA:
         verify_s2b(current,good)
         verify_s2b_asc(asc)
         verify_s2b_abk((root/'tests/current/AGSP_S2B_MULTI.ABK').read_bytes())
@@ -83,7 +89,7 @@ def check_active_pair():
     else:
         verify_s1p2k(current,good)
         assert len(asc)==4630 and sha256(asc).hexdigest()=='987d45cd1f14aa62df944c7af35eda6884b0a44a70d3b7f0415e0ff2dd8a2c1e'
-    print("P2K/P2LB/P2LC/P2M/S2A/S2B exact active pair PASS",sha256(current).hexdigest())
+    print("P2K/P2LB/P2LC/P2M/S2A/S2B/S2R exact active pair PASS",sha256(current).hexdigest())
 
 if __name__=='__main__':
     check_active_pair()

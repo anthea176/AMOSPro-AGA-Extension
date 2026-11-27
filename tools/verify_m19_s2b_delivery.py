@@ -78,6 +78,8 @@ def historical(path):
     return check_output(['git','show',S2A_REF+':'+path],cwd=ROOT)
 
 def pre_s2b_library(candidate,good):
+    from verify_m19_s2r_delivery import pre_s2r_library
+    candidate=pre_s2r_library(candidate,good)
     if sha256(candidate).hexdigest()!=S2B_SHA:return candidate
     verify_library(candidate,good)
     from verify_m19_s2a_delivery import verify_library as verify_s2a
@@ -90,6 +92,8 @@ def pre_s2b_library(candidate,good):
     return parent
 
 def pre_s2b_pair(original):
+    from verify_m19_s2r_delivery import pre_s2r_pair
+    original=pre_s2r_pair(original)
     candidate,good,asc,abk=original
     if sha256(candidate).hexdigest()!=S2B_SHA:return original
     verify_asc(asc)

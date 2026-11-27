@@ -3,7 +3,7 @@
 """Reconstruct P1i from exact P1h source; no distributed file writes."""
 from pathlib import Path
 from hashlib import sha1, sha256
-from active_library import P2DL2B_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, frozen_s1p1i, verify_s1p1i
+from active_library import P2DL2B_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, frozen_s1p1i, verify_s1p1i
 from audit_ap20 import inspect, parse, token_role_issues
 from ap20_v2_island_dispatch import pc16_displacements
 from build_m19_s1p1h_l2b_bank_fix_ap20 import assemble, build_s1p1h
@@ -16,7 +16,7 @@ MASTER='M19_S1P1I_BANK_PUBLIC_MC68020.s'
 def build_s1p1i(vasm):
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest() in (S1P1H_SHA,S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA)
+    assert sha256(active).hexdigest() in (S1P1H_SHA,S1P1I_SHA,S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA,S2R_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     parent,meta=build_s1p1h(vasm)
     assert sha256(parent).hexdigest()==S1P1H_SHA
@@ -37,7 +37,7 @@ def build_s1p1i(vasm):
     verify_s1p1i(image,good)
     if sha256(active).hexdigest()==S1P1I_SHA:
         assert image==active
-    elif sha256(active).hexdigest() in (S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA):
+    elif sha256(active).hexdigest() in (S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA,S2R_SHA):
         assert image==frozen_s1p1i(active,good)
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
