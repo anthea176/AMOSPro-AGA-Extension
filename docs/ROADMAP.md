@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**Priorité : S2r-P1, A/B/C fonctionnelles PASS, CI post-activation à terminer avant S2c.** [Résultats et journaux](M19_S2R_RUNTIME_COMPILER_2026-11-27.md) (128 octets Fast temporaires récupérés en Runtime). Historique détaillé et décisions dans [NEXT_SESSION.md](NEXT_SESSION.md).
+**Priorité : S2c-P0, capture/repack AGSP 2/4 plans source-only ; S2r-P1 A/B/C fonctionnelles PASS.** [S2c composant](M19_S2C_P0_CAPTURE_REPACK_2026-11-27.md). CI corrective S2r à terminer avant intégration. [Résultats et journaux](M19_S2R_RUNTIME_COMPILER_2026-11-27.md) (128 octets Fast temporaires récupérés en Runtime). Historique détaillé et décisions dans [NEXT_SESSION.md](NEXT_SESSION.md).
 
 ## 1. État actuel et objectif
 
@@ -26,7 +26,7 @@
 S1 : banque AGSP v1 DATA multi-images, capture RGB24 avec transparence explicite, Sprite 16px/3 couleurs, cycle de vie P2m fonctionnel. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [Historique et résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md) · [Contrat S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Réserve Fast transitoire documentée, pas de promotion.
 
 - **S2a-P1 validée A/B/C :** [résultats](M19_S2A_RUNTIME_COMPILER_2026-11-27.md). UNIT142 inchangée (110 octets libres), UNIT207 12142 octets, marge PC16 20592.
-- **S2b-P1 Gates A/B/C PASS (D non testée) :** [trois Sprites indépendants](M19_S2B_RUNTIME_COMPILER_2026-11-27.md), UNIT142 65524 (10 libres), UNIT207 13756 (18978 libres PC16). [S2r-P1](M19_S2R_REPARTITION_2026-11-27.md) : UNIT142 2184 libres (+2174), UNIT207 18978 libres PC16 ; B/C fonctionnelles PASS ; terminer la CI post-activation avant S2c. S2c : attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
+- **S2b-P1 Gates A/B/C PASS (D non testée) :** [trois Sprites indépendants](M19_S2B_RUNTIME_COMPILER_2026-11-27.md), UNIT142 65524 (10 libres), UNIT207 13756 (18978 libres PC16). [S2r-P1](M19_S2R_REPARTITION_2026-11-27.md) : UNIT142 2184 libres (+2174), UNIT207 18978 libres PC16 ; B/C fonctionnelles PASS ; terminer la CI post-activation avant S2c. S2c : [capture/repack 2/4 plans engagé](M19_S2C_P0_CAPTURE_REPACK_2026-11-27.md), puis affichage attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
 - S3 : multiplexage vertical, collisions, animation multi-objets, AMAL facultatif après validation du moteur classique.
 - Les jalons P2a–P2l-c, leurs preuves et refus sont conservés dans [NEXT_SESSION.md](NEXT_SESSION.md), leurs rapports et [la roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/57a1a9d2085e5d887a1fccc5300a0de5eaeef709/docs/ROADMAP.md).
 
