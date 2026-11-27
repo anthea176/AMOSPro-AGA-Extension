@@ -5,6 +5,7 @@ on:
     paths:
       - 'src/native/m19_s2/M19_S2C_AGSP_*.s'
       - 'tools/test_m19_s2c_capture_repack_cpu.py'
+      - 'tools/test_m19_s2c_chip_pair_cpu.py'
       - 'tools/m19_s1_agsp_bank.py'
       - '.github/workflows/m19-s2c-capture-repack-gate-a.yml'
   workflow_dispatch:
@@ -26,7 +27,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B -m py_compile tools/test_m19_s2c_capture_repack_cpu.py
+          python -B -m py_compile tools/test_m19_s2c_capture_repack_cpu.py tools/test_m19_s2c_chip_pair_cpu.py
           python -B tools/verify_m19_s1p2l_b_delivery.py
       - name: Restore pinned VASM Motorola assembler
         id: vasm-cache
@@ -70,6 +71,10 @@ jobs:
           AGSP_REPACK_BIN: ${{ runner.temp }}/s2c_repack.bin
           AGSP_VALIDATE_BIN: ${{ runner.temp }}/agsp_validate.bin
         run: PYTHONPATH=tools python -B tools/test_m19_s2c_capture_repack_cpu.py
+      - name: Qualify detached Chip pair preparation and allocation rollback
+        run: |
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2c_pair.bin" src/native/m19_s2/M19_S2C_AGSP_CHIP_PAIR_MC68020.s
+          PYTHONPATH=tools python -B tools/test_m19_s2c_chip_pair_cpu.py "$RUNNER_TEMP/s2c_pair.bin"
       - name: Confirm canonical pair and protected files were not changed
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py
