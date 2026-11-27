@@ -14,3 +14,15 @@
 ## Tests
 
 [Banc](../tools/test_m19_s2c_attached_frame_cpu.py), [workflow](../.github/workflows/m19-s2c-attached-lifecycle-gate-a.yml). MC68020 Unicorn et vasm épinglés, services OS simulés. Alternances dans les trois paires, hauteur 1/16/255/256, 4/15 couleurs ; modèle V40 de propagation even/odd, copie exacte inactive et préservation des pixels actifs/source/voisins, contrôle ID seulement après succès, refus alias/hauteur/palette/génération/pointeurs/terminateurs, modifications du contexte pendant WaitTOF, défauts hide/Change even/odd/reveal, retrait après échec et trois paires actives. Régressions P0c et S2b inchangées. Gate A composant à relever ; pas d'intégration publique, AP20, WinUAE ou matériel physique. Suite : adapter le capture/commit 2/4 plans et le registry versionné, Close/End, construire candidate en mémoire et mesurer réserve PC16 avant autorisation de livraison.
+
+## Gate A composant — PASS
+
+[CI 46069964921](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46069964921), source `b9147043a6b3817784635fb1b63910ef23233f3a`, job 140744276184, log du 27/11/2026 :
+
+```text
+S2C_ATTACHED_LIFECYCLE_CPU_PASS 420 checks; modeled OS only
+S2B_RETIRE_PAIR_CPU_PASS 114 cases; no real DMA or multi-record integration
+S2C_ATTACHED_FRAME_CPU_PASS 330 changes; 138 additional cases; modeled OS, no DMA proof
+```
+
+Assemblage VASM MC68020, Unicorn 2.1.4, protection paire canonique avant/après et [politique CPU/chemins PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46069964920). Les 330 alternances incluent 90 changements sur trois paires actives et les hauteurs 1/16/255/256 ; les 138 cas complémentaires incluent les refus et échecs injectés. La CI historique [S2a](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46069964938) et [Artifact integrity](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46069964918) restaient en cours au relevé. Aucun test d'affichage réel, d'atomicité raster ou de vitesse réelle ; les deux WaitTOF par appel limitent le débit séquentiel. Le nouveau composant n'est pas encore lié dans la Lib active. S2r, LAST_GOOD, ASC et ABK identités Git inchangées. Prochain lot : raccordement capture/commit public 2/4 plans et registre versionné avec retrait Close/End ; budget AP20 et qualification intégrée avant livraison.
