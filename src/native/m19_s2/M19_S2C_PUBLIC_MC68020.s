@@ -831,7 +831,7 @@ s2c_active:
     bsr.w AGSP_S2C_MOVE
     tst.l d0
     bne.w p2i_success
-    bra.s s2c_active_failed
+    bra.w s2c_active_failed
 s2c_change_public:
     clr.l S_SCRATCH(a2)
     move.l #-201,I_PHASE(a2)
