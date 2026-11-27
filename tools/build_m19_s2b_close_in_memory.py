@@ -135,7 +135,7 @@ def relax_local(s):
     # four fixed dispatch spans and long branches to old labels stay exact.
     return re.sub(r'(?m)^(\s+b[a-z]+)\.w(\s+(?:s2b_|p2[fgk]_|AGSP_S2B_)[A-Za-z0-9_]+)',r'\1\2',s)
 
-def build_s2b_close(vasm):
+def build_s2b_close(vasm, *, source_observer=None):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
@@ -232,6 +232,8 @@ def build_s2b_close(vasm):
         file=folder/'M19_UNIT142_R83_TARGET_BODY_MC68020.s'
         replace_once(file,'    clr.l (a2)                                         ; +$00094: 4292\n','')
         new_image=assemble(vasm,folder)
+        if source_observer is not None:
+            source_observer(folder,new_image)
     nt,np,ntitle=unpack_ap20(new_image)
     assert (nt,ntitle,len(np))==(bt,btitle,len(bp))
     assert all(a==b for i,(a,b) in enumerate(zip(np,bp)) if i!=UNIT)

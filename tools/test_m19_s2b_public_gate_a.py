@@ -293,14 +293,25 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--vasm',required=True,type=Path)
     p.add_argument('--historical',required=True,type=Path)
-    p.add_argument('--suite',required=True,choices=('runtime','compiled','chain','pattern','safeport','bob'))
+    p.add_argument('--suite',required=True,choices=('runtime','compiled','chain','pattern','safeport','bob','agapic'))
+    p.add_argument('--repartition',action='store_true')
     a=p.parse_args()
     for k in ('AGSP_GET_BIN','AGSP_PUBLISH_BIN','AGSP_PIPELINE_BIN'):
         os.environ[k]=str(a.historical)
     before=protected()
-    image,info=build_s2b(a.vasm)
+    if a.repartition:
+        from build_m19_s2r_in_memory import build_s2r
+        image,info=build_s2r(a.vasm)
+    else:
+        assert a.suite!='agapic'
+        image,info=build_s2b(a.vasm)
     print('S2B_BUILT '+json.dumps(info,sort_keys=True),flush=True)
-    if a.suite in ('runtime','compiled'):cases(image,info,a.suite)
+    if a.suite=='agapic':
+        from test_m19_s2r_agapic_gate_a import cases as agapic_cases
+        for layout in ('runtime','compiled'):agapic_cases(image,layout)
+        rebuilt,other=build_s2r(a.vasm)
+        assert rebuilt==image and other==info
+    elif a.suite in ('runtime','compiled'):cases(image,info,a.suite)
     elif a.suite=='chain':regress.chain(image)
     elif a.suite=='pattern':
         prior,_=regress.build_l2(a.vasm)

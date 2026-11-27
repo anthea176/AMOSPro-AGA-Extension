@@ -19,7 +19,7 @@ FILES=('M19_S2B_PUBLIC_MC68020.s','M19_S2B_RETIRE_PAIR_MC68020.s',
        'M19_S2B_PERSIST_ROOT_MC68020.s','M19_S2B_FRAME_CHANGE_MC68020.s',
        'M19_S2B_FRAME_STAGE_MC68020.s')
 
-def build_s2b(vasm):
+def build_s2b(vasm, *, close_source_observer=None, sprite_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
     bank=(ROOT/'tests/current/AGSP_S2A_ANIMATION.ABK').read_bytes()
@@ -30,7 +30,7 @@ def build_s2b(vasm):
     reconstructed,_=build_s2a(vasm)
     assert reconstructed==parent
     tok,old,title=unpack_ap20(parent)
-    close,info=build_s2b_close(vasm)
+    close,info=build_s2b_close(vasm,source_observer=close_source_observer)
     _,units,_=unpack_ap20(close)
     root=info['root']
     delta=root-0x1c2
@@ -55,6 +55,8 @@ def build_s2b(vasm):
                         '-quiet','-o',str(out),str(folder/MASTER)],cwd=folder,
                        check=True,timeout=120)
         native=out.read_bytes()
+        if sprite_source_observer is not None:
+            sprite_source_observer(folder,native,delta)
     assert native[:at]==old[207][len(DISPATCH_V2):len(DISPATCH_V2)+at]
     assert all(native[at+i:at+i+2]==bytes.fromhex('6000') for i in (0,4,8))
     parts=list(old);parts[142]=units[142];parts[207]=DISPATCH_V2+native

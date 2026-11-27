@@ -1,5 +1,7 @@
 # Roadmap — AMOSPro AGA Extension
 
+**27/11/2026 — S2r-P1 engagé en sources, qualification à relever.** Déplacement source des deux fonctions AGAPIC vers un îlot V2 ; réemploi de l'espace pour Close/End sans déplacer les tables Bobs. S2b-P1 reste seule Lib active A/B/C, LAST_GOOD protégée. Aucune bascule. [Rapport](M19_S2R_REPARTITION_2026-11-27.md).
+
 **27/11/2026 — S2b-P1 : Gates A/B/C PASS pour le banc multi-Sprites.** B Runtime (`PRG_STATE=1`) 1/1 et C vrai Compiler (`-1`) 1/1, 300 changements et 300 déplacements chacun, 2/2 ouvertures/fermetures, 6 retraits automatiques, saturation -206 conforme, ERR/CLEAN_ERR=0, pertes Chip/Fast par cycle et écran nulles. CI post-activation `502739d` : 42 succès, 1 skipped, 0 échec. D physique non testée ; observation visuelle, relance Runtime indépendante sans reset et SHA installé non attestés par les logs. Lib/ASC/ABK et LAST_GOOD L2b inchangées. Auteur « ok allons y » : consigner preuves puis audit/répartition source-only sans nouvelle API, préserver ABI et requalifier avant S2c ; aucune promotion ni bascule de nouvelle Lib autorisée par ce relevé. [Résultats et journaux](M19_S2B_RUNTIME_COMPILER_2026-11-27.md).
 
 **27/11/2026 — S2b-P1 active, A/B/C PASS selon banc.** [Qualification](M19_S2B_MULTI_SPRITE_2026-11-27.md) ; D à qualifier. S2a-P1 [A/B/C PASS historique](M19_S2A_RUNTIME_COMPILER_2026-11-27.md), LAST_GOOD protégée.

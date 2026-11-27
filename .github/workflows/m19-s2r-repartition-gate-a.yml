@@ -1,0 +1,63 @@
+name: M19 S2r source repartition Gate A (source only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/*m19_s2r*.py'
+      - 'tools/*m19_s2b*.py'
+      - '.github/workflows/m19-s2r-repartition-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [runtime, compiled, chain, pattern, safeport, bob, agapic]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore pinned VASM
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM on cache miss
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Install pinned MC68020 test tools
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
+      - name: Validate policy and exact active S2b parent
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+      - name: Execute exact candidate regression shard
+        env:
+          S2R_SUITE: ${{ matrix.suite }}
+        run: python -B tools/run_m19_s2r_gate.py
+      - name: Preserve canonical S2b and LAST_GOOD
+        run: |
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+          git diff --exit-code
+  complete:
+    needs: qualify
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo 'S2R_REPARTITION_AND_2D_GATE_A_PASS'
