@@ -102,7 +102,7 @@ def prepare_close(vasm,folder,original):
     assert bytes(normalized)==old[:OLD_PREFIX]
     return dict(unit142=new,pic=pic,root=len(new)-16,targets=targets)
 
-def build_s2r(vasm):
+def build_s2r(vasm, *, sprite_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
     from verify_m19_s2r_delivery import pre_s2r_pair, verify_library
@@ -128,6 +128,8 @@ def build_s2r(vasm):
         assert native.count(old_operand)==1
         assert split==native.replace(old_operand,new_operand)
         seen['sprite']=DISPATCH_V2+split
+        if sprite_source_observer is not None:
+            sprite_source_observer(folder,split,new_delta)
 
     parent,info=build_s2b(vasm,close_source_observer=close_source,
                           sprite_source_observer=sprite_source)
