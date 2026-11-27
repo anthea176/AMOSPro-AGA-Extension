@@ -1,6 +1,8 @@
 # Roadmap — AMOSPro AGA Extension
 
-**Priorité : S2c-P1c active, Gate A intégrée PASS ; qualification WinUAE B/C à effectuer.** [Rapport](M19_S2C_P1C_PUBLIC_MIXED_2026-11-27.md). S2r A/B/C fonctionnelles PASS conservées dans Git. Historique détaillé dans [NEXT_SESSION.md](NEXT_SESSION.md).
+**28/11/2026 — S2c-P1c Gate B Runtime FAIL** (`PRG_STATE=1`, ERR10, SPRITE_RC=-153, CLEAN_ERR=0). Écran 1 simple complet ; 150 Change/Move ; écran 2 premier attaché ID42/image9 refusé après le premier simple ; écran 3 non atteint. AGAPIC 4/4, capture AGSP 4 plans 4/4, refus 2/2, 2 Close, mémoire finale identique. S2c-P1c reste active (SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`), C/D non testées, LAST_GOOD protégée. Auteur « vaa y fait moi tous le diag » : P1d instrumentée source-only, Gate A et reconstruction à relever avant activation. Ne pas lancer le Compiler P1c. [Diagnostic et journal](M19_S2C_P1D_DIAGNOSTIC_2026-11-28.md).
+
+**Priorité : S2c-P1d diagnostic ; P1c Gate B FAIL.** [Rapport](M19_S2C_P1D_DIAGNOSTIC_2026-11-28.md). S2r A/B/C historiques. Ne pas avancer à S2d avant qualification attachée.
 
 ## 1. État actuel et objectif
 

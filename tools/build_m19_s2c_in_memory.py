@@ -21,7 +21,7 @@ MAP={209:208,211:210,213:212}
 COMMON=dict(zip(('M19_S2B_PERSIST_ROOT_MC68020.s','M19_S2B_REGISTRY_MC68020.s',
                  'M19_S2B_RETIRE_PAIR_MC68020.s','M19_S2B_ALLOCATE_MC68020.s'),NAMES))
 
-def build_s2c(vasm):
+def build_s2c(vasm, *, diagnostic=False):
     vasm=Path(vasm).resolve()
     before=protected()
     staged={}
@@ -68,6 +68,16 @@ def build_s2c(vasm):
         s=once(s,'    bset #7,3(a0)\n','    bset #7,3(a0)\n'
             '    movea.l CF_PUBLIC(sp),a2\n    move.l I_X(a2),d2\n    move.l I_Y(a2),d3\n')
         p.write_text(s,encoding='ascii')
+        if diagnostic:
+            from m19_s2c_diagnostic_emit import instrument
+            public=folder/'M19_S2B_PUBLIC_MC68020.s'
+            lifecycle=folder/'s2c_v5_lifecycle.s'
+            frame=p
+            outputs=instrument(public.read_text(encoding='ascii'),
+                               lifecycle.read_text(encoding='ascii'),
+                               frame.read_text(encoding='ascii'))
+            for path,source in zip((public,lifecycle,frame),outputs):
+                path.write_text(source,encoding='ascii')
         master=folder/MASTER
         with master.open('a',encoding='ascii') as out:
             out.write('\n    include "M19_S2C_AGSP_CHIP_PAIR_MC68020.s"\n    include "s2c_v5_lifecycle.s"\n')
@@ -106,7 +116,7 @@ def build_s2c(vasm):
     trial=list(new);trial[SPR]+=bytes(RESERVE)
     assert len(trial[SPR])<=MAX_UNIT_BYTES
     reserve_links=pc16_displacements(trial)
-    nz=title.replace(b'S2c-P1',b'S2c-P2')
+    nz=title.replace(b'S2c-P1',b'S2c-D1' if diagnostic else b'S2c-P2')
     assert nz!=title and len(nz)==len(title)
     image=repack_ap20(parent,nt,new,nz)
     assert unpack_ap20(image)==(nt,new,nz)
@@ -116,8 +126,15 @@ def build_s2c(vasm):
     assert len([r for r in rows if r['signature']])==105
     from verify_m19_s2c_delivery import S2C_SHA, verify_library
     if sha256(before[0]).hexdigest()==S2C_SHA:
-        verify_library(image,before[1])
-        assert image==before[0]
+        if diagnostic:
+            verify_library(before[0],before[1])
+            ct,cp,cz=unpack_ap20(before[0])
+            assert nt==ct and nz==cz.replace(b'S2c-P2',b'S2c-D1')
+            assert len(cp)==len(new)
+            assert [i for i,(a,b) in enumerate(zip(cp,new)) if a!=b]==[SPR]
+        else:
+            verify_library(image,before[1])
+            assert image==before[0]
     assert protected()==before
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),

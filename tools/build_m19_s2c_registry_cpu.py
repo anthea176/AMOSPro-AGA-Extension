@@ -42,8 +42,10 @@ def prepare_lifecycle(folder):
 
 def build(vasm,folder):
     before=protected()
-    assert sha256(before[0]).hexdigest()==S2R_SHA
-    verify_library(before[0],before[1])
+    from verify_m19_s2c_delivery import pre_s2c_library
+    parent=pre_s2c_library(before[0],before[1])
+    assert sha256(parent).hexdigest()==S2R_SHA
+    verify_library(parent,before[1])
     for name in NAMES:shutil.copyfile(S2/name,folder/name)
     prepare_lifecycle(folder)
     labels=('s2b_p2h_enter','s2b_p2h_leave','AGSP_S2B_SCAN','AGSP_S2B_PICK',

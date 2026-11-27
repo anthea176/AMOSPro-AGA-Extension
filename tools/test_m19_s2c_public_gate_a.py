@@ -118,20 +118,27 @@ def main():
     p.add_argument('--vasm',required=True,type=Path)
     p.add_argument('--historical',required=True,type=Path)
     p.add_argument('--suite',required=True,choices=('capture','runtime','compiled','chain','pattern','safeport','bob','agapic','mixed-runtime','mixed-compiled'))
+    p.add_argument('--diagnostic',action='store_true')
     a=p.parse_args()
     for k in ('AGSP_GET_BIN','AGSP_PUBLISH_BIN','AGSP_PIPELINE_BIN'):
         os.environ[k]=str(a.historical)
     before=protected()
-    image,info=build_s2c(a.vasm)
+    image,info=build_s2c(a.vasm,diagnostic=a.diagnostic)
     print('S2C_P1C_BUILT '+json.dumps(info,sort_keys=True),flush=True)
     if a.suite=='capture':
         for layout in ('runtime','compiled'):capture_cases(image,layout)
-        rebuilt,other=build_s2c(a.vasm)
+        rebuilt,other=build_s2c(a.vasm,diagnostic=a.diagnostic)
         assert rebuilt==image and other==info
+        if a.diagnostic:
+            from prepare_m19_s2a_campaign import identify
+            identify('S2CD_LIB',image)
     elif a.suite in ('runtime','compiled'):sprite_cases(image,info,a.suite)
     elif a.suite.startswith('mixed-'):
         from test_m19_s2c_mixed_public_cpu import mixed_cases
         mixed_cases(image,info,a.suite[6:])
+        if a.diagnostic:
+            from test_m19_s2c_diagnostic_cpu import cases
+            cases(image,info,a.suite[6:])
     elif a.suite=='chain':chain(image)
     elif a.suite=='pattern':
         prior,_=regress.build_l2(a.vasm)
