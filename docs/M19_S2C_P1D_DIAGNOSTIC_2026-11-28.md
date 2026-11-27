@@ -1,5 +1,7 @@
 # M19 S2c-P1d — diagnostic attaché, 28/11/2026
 
+**Construction P1d exacte observée dans la CI, pas d'activation :** source `adcfa65d0f2e8ca402263eb3f0daee90d3471265` ; 160812 octets SHA256 `a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026`, blob `551674f3598c8b0c10a581d9ac7a1f7cf1155659`, 105 commandes/219 AP20, UNIT213 20216 (45318 libres), PC16 max 3658 y compris réserve 16384, UNIT142 et autres entrées byte-exactes. [CI intégrée P1d](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896471), [AGAPIC 392 PASS et identité](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896471/job/140788903118). [CPU et chemins PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896500). Relevé : 3 jobs réussis, 0 échecs, 7 en attente/exécution ; Gate A complète à établir, B/C/D P1d non testées. P1c demeure seule Lib active, FAIL B.
+
 **28/11/2026 — S2c-P1c Gate B Runtime FAIL** (`PRG_STATE=1`, ERR10, SPRITE_RC=-153, CLEAN_ERR=0). Écran 1 simple complet ; 150 Change/Move ; écran 2 premier attaché ID42/image9 refusé après le premier simple ; écran 3 non atteint. AGAPIC 4/4, capture AGSP 4 plans 4/4, refus 2/2, 2 Close, mémoire finale identique. S2c-P1c reste active (SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`), C/D non testées, LAST_GOOD protégée. Auteur « vaa y fait moi tous le diag » : P1d instrumentée source-only, Gate A et reconstruction à relever avant activation. Ne pas lancer le Compiler P1c.
 
 ## Preuve de l'échec P1c
