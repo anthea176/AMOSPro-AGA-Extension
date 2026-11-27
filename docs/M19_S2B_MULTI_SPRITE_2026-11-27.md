@@ -38,3 +38,11 @@ Autorisation auteur « ok go ». Parent S2a-P1 exact, MC68020. Choix technique :
 - [Ancre v4](../src/native/m19_s2/M19_S2B_PERSIST_ROOT_MC68020.s), dérivée du source v3 P2m. [Banc natif indépendant](../tools/test_m19_s2b_registry_cpu.py) et [CI](../.github/workflows/m19-s2b-registry.yml) : toutes les combinaisons palette/réservation (8×256), 6 ordres de création, refus et retry, Off au milieu, réutilisation, Bank Free sélectif, CloseScreen simulé refus/succès, mutation de structure, invariants ABI et absence d'écriture directe Chip/Copper. Aucun PASS avant journal CI.
 
 **Limite explicite :** ces composants exécutent un modèle OS, et ne sont pas encore raccordés au public AP20 ni aux quatre points de fermeture legacy. L'intégration UNIT142 doit être source-reconstruite et respecter la limite 65534 octets, celle d'UNIT207 doit conserver 16384 octets de réserve PC16. Aucun nouveau binaire ni ASC actif ; S2a-P1 validée reste seule candidate installable, LAST_GOOD inchangée.
+
+### Qualification composant
+
+[CI 46038863865](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46038863865), source `c1b98eeba98666d72a9341d2969294d0397ffb88` : **2179 cas PASS**, module 3032 octets. Le premier run a échoué avant les scénarios à cause de l'en-tête Exec V40 non initialisé dans le simulateur, corrigé sans changement natif. Le composant inclut toutes les combinaisons de masques palette/réservation. Les tests ne remplacent pas l'intégration AP20.
+
+### Raccordement Close/End
+
+[Guard](../src/native/m19_s2/M19_S2B_CLOSE_GUARD_MC68020.s) et [traitement CloseScreen](../src/native/m19_s2/M19_S2B_CLOSE_RECLAIM_MC68020.s), construits depuis le chemin P2m qualifié. Le gate authentifie le propriétaire, appelle DRAIN(0), puis conserve les attentes Safe/Disp et le retour BOOL CloseScreen exacts. Après succès seulement, DRAIN(1) peut libérer les blocs Chip et la racine ; les pending restent enregistrés. [Builder source](../tools/build_m19_s2b_close_in_memory.py) spécialise le DRAIN pour les deux modes Close exclusivement, sans supprimer les contrôles structurels/extent/receipts. Vérification de taille UNIT142, conservation du préfixe L2b et des quatre dispatchs historiques. Ce premier overlay n'est **pas une Lib publique** : il doit encore être couplé au groupe Sprite UNIT207 v4, qualifié en AP20 et testé en WinUAE. CI de construction à relever.
