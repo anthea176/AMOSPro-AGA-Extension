@@ -23,6 +23,8 @@ def s32(x):return x if x<0x80000000 else x-0x100000000
 class RegistryMachine(Machine):
     def __init__(self,code):
         super().__init__(code)
+        self.w16(EXEC+16,702)
+        self.w16(EXEC+20,40)
         self.named=0
         self.root_alloc=False
         self.depth=0
