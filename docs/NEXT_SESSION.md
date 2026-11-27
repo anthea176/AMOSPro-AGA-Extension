@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**27/11/2026 — S2b-P1 reconstruction exacte PASS, 152876 octets, UNIT142=65524 (10 libres), UNIT207=13756.** [CI build](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46039878902). Tests publics multi-sprites et régressions 2D intégrées ajoutés ; Gate A publique à relever. [Rapport](M19_S2B_MULTI_SPRITE_2026-11-27.md). Aucune activation ; S2a validée et LAST_GOOD conservées.
+
 **27/11/2026 — S2b-P1 composants PASS 2179 cas ([CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46038863865)), raccordement public et Close/End en sources.** Premier UNIT142 à 65732 (+198 sur limite) refusé ; compaction locale source appliquée, nouvelle construction intégrée à relever. [Rapport](M19_S2B_MULTI_SPRITE_2026-11-27.md). Aucune nouvelle Lib ni ASC ; S2a reste active. La Gate A publique complète reste requise.
 
 **27/11/2026 — S2b-P1 composants sources :** registre v4 inline (240 octets), allocation de paires/palette et retrait collectif/ID/banque écrits. [Contrat et CI](M19_S2B_MULTI_SPRITE_2026-11-27.md). Gate composant à relever ; aucun raccordement AP20/Close legacy ni nouvelle Lib. S2a et LAST_GOOD intactes.
