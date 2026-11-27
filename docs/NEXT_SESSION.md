@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**27/11/2026 — S2c-P0b Gate A PASS**, [46062479398](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46062479398), 74 cas allocation/packing pair Chip détachée, 6 groupes capture/repack S2c et 53 tests historiques. Aucune publication DMA, aucun nouveau token ou binaire actif. Prochain lot : attachement OS et palette, intégration transactionnelle 2/4 plans ; CI globale S2r à relever. [Rapport](M19_S2C_P0_CAPTURE_REPACK_2026-11-27.md).
+
 **27/11/2026 — S2c-P0 capture/repack Gate A PASS**, [46062228480](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46062228480), 6 groupes S2c + 53 tests historiques. P0b flux Chip pairs détachés engagé source-only, Gate A à relever ; aucun affichage ni changement de Lib. [Rapport](M19_S2C_P0_CAPTURE_REPACK_2026-11-27.md).
 
 **27/11/2026 — S2c-P0 engagé, composant isolé source-only.** Accord auteur « ok go ». Capture/repack AGSP v1 16px, 0..3 opaques=2 plans, 4..15=4 plans, refus 16+, oracle MC68020 et régressions S1. Gate A composant à relever ; CI S2r finale encore à relever avant intégration ; Lib S2r active A/B/C fonctionnelles, LAST_GOOD protégée. [Rapport](M19_S2C_P0_CAPTURE_REPACK_2026-11-27.md).
