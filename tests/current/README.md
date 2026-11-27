@@ -1,21 +1,26 @@
-# S1-P2m — cycle de vie Sprite, campagne active unique
+# S2a-P1 — changement d'image à chaud, campagne active unique
 
-**26/11/2026 — clôture fonctionnelle P2m, accord auteur « oui passons a la suite du chantier sprite » puis « ok go ».** Gate B Runtime fonctionnelle validée (trois derniers PASS stricts), Gate C Compiler fonctionnelle 2/2 (PASS strict 1/2 ; ERR14 sur écart Fast temporaire 128 octets). Aucun écart net de Chip/Fast par exécution. D physique non testée. Auteur accepte la clôture fonctionnelle avec réserve ; aucune promotion LAST_GOOD. Les fichiers RAM conservés expliquent les différences entre lancements selon l'auteur ; leur coût exact n'a pas été isolé. La Lib et l'ASC exacts restent actifs, LAST_GOOD L2b protégée. Prochaine étape S2a : changement d'image à chaud, source-only avant Gate A, sans nouveau token. [Résultats et journaux originaux](../../docs/M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md).
+**27/11/2026 — S2a-P1 active sur main, autorisation auteur « ol continu jusqua la lib ».** [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45907171922), commit source `91a4acf89f511420ba0a87515ec2a85b6d124277` : 10 jobs réussis, 400 changements d'image et négatifs, 200 cycles/20 fermetures P2m hérités, DB/IFF/Swap/capture, 184 Pattern, 172 SafePort, 10 suites Bob, reconstruction exacte et préflight strict PASS. Lib 151164 octets SHA256 `1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2` blob `190504fd46494224c6c32e20f17dcc3d6a027684`; ASC 7265 octets SHA256 `d191282714b43d38b07585fa1054895885f8b2d1be403abcfd9f5f76d993ebdb` blob `ac74e8773a86914a00f3a153487afe61a9803efc`; nouvelle banque de campagne AGSP_S2A_ANIMATION.ABK 372 octets SHA256 `4b13eb9ac278ad56a73c043327a11d48a3d79d65807563409d94e64aa16d50aa` blob `210179c9328e1ff032070b2dd40ffa8849e8294a`. 105 commandes / 214 AP20, MC68020+, UNIT142 65424 (110 libres) inchangée, UNIT207 12142, PC16 max 12172, marge 20592. Uniquement UNIT207 et titre changés depuis P2m. Aucun changement LAST_GOOD L2b, ancien ABK ou archive, aucun autre dépôt, branche, promotion ou release. B/C/D S2a non testées. L'ancien P2m reste dans Git.
 
-Campagne ci-dessous exécutée ; ne pas répéter les essais P2m sans anomalie nouvelle.
+## Fichiers à utiliser ensemble
 
-**26/11/2026 — S1-P2m active sur main, Gate A complète PASS.** Lib 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`, blob `a29e86a6414021e19b87615681dcc08fe406518c`, 105 commandes / 214 AP20, MC68020+. [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891037257) (source ee70cdf84e4ec1896eb657b07e2a2876d2244932) : 100 cycles et 10 fermetures par modèle AP20, cas négatifs, 184 Pattern, 172 SafePort, 10 suites Bob, DB/IFF/Swap/capture ; reconstruction identique et préflight strict PASS. [Reconstruction indépendante](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45891360197). UNIT142 65424 (110 libres), UNIT207 10380 (22354 libres PC16), PC16 max 10410. ASC 6700 octets SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`, blob `ddd9b676b9a3d4c0f4cccf08ca058cade61df9aa`. À la livraison : B/C/D non testées (voir actualisation ci-dessus). LAST_GOOD L2b et ABK inchangées. Autorisation auteur « continu livre moi cette lib ». P2l-c historique rejetée en relance fonctionnelle.
+- [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 151164 octets, SHA256 `1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2`.
+- [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 7265 octets, SHA256 `d191282714b43d38b07585fa1054895885f8b2d1be403abcfd9f5f76d993ebdb`.
+- [AGSP_S2A_ANIMATION.ABK](AGSP_S2A_ANIMATION.ABK), 372 octets, SHA256 `4b13eb9ac278ad56a73c043327a11d48a3d79d65807563409d94e64aa16d50aa`. Deux images 3/4, 16×16, palette identique, banque 29.
+- L'ancien AGSP_S1P1E_FINAL.ABK est conservé sans modification pour reconstruire P2m ; ne pas l'utiliser pour ce test.
 
-## Fichiers
-- [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 149400 octets, SHA256 `5ee0c4bf7ec526085a97287ca04ded97778bd60761a3247f969c9c045440b0be`.
-- [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 6700 octets, SHA256 `84d2dfddc753e2c05d8a05ff991fe8b4f3e6d36daa20110cc447add547aaa684`.
-- [AGSP_S1P1E_FINAL.ABK](AGSP_S1P1E_FINAL.ABK), 532 octets, SHA256 `225970dda0271260f598b5e379ee52ca2d605a19a13c6b133b46ac13edf92a93`.
+## Gate B — WinUAE Runtime
 
-## Gate B — Runtime réel
-1. Copier la Lib dans APSystem, conserver le slot d'extension. WinUAE AGA PAL, 68030 JIT ON. Redémarrage complet unique sans Save State lors du changement de Lib (schéma de registre v3).
-2. Placer ASC et ABK ensemble. Importer l'ASC exact par Merge ASCII. Exécuter en Runtime (PRG_STATE=1). Aucun Erase All ni reset entre lancements.
-3. Faire trois lancements successifs. Sauvegarder chaque journal RAM:M19_P2M_RUNTIME.TXT séparément avant écrasement. Vérifier visuellement affichage, déplacement, disparition et retour à AMOS.
-4. Attendu par lancement : OPENED=10, CLOSED=10, SHOWN=100, MOVED=100, OFF_COUNT=100, AUTO_CLOSE=10, SPRITE_RC=MOVE_RC=OFF_RC=FREE_RC=1, CHIP_CYCLE_LOSS=FAST_CYCLE_LOSS=CHIP_SCREEN_LOSS=FAST_SCREEN_LOSS=0, RESULT=1 ERR=0 CLEAN_ERR=0, VERDICT PASS_FUNCTIONAL_LIFECYCLE. Comparer Chip/Fast avant/après et entre lancements. Premier Close référence stabilisée, pas une preuve de fuite nulle au premier passage.
-5. Si échec, conserver le premier journal et ne pas poursuivre les lancements. Gate C vrai AMOS Compiler seulement après Gate B fonctionnelle. D matériel distincte.
+1. WinUAE AGA PAL, 68030 JIT ON. Installer la Lib dans APSystem, même slot, redémarrage complet unique, pas de Save State.
+2. ASC et nouvelle ABK dans le même dossier. Project > Merge ASCII, programme vierge. Banque 29 libre. Lancer en Runtime (PRG_STATE=1).
+3. Observer le déplacement des deux images alternées sur le fond sombre, sans disparition volontaire entre les frames. 100 changements, 2 ouvertures et fermetures avec Sprite actif ; un Off/réaffichage volontaire entre campagnes. Vérifier le retour à AMOS.
+4. Attendu : CHANGED=100 CHANGE_RC=1, SHOWN=3 MOVED=100 OFF_COUNT=1 AUTO_CLOSE=2, OPENED=CLOSED=2, SPRITE_RC=MOVE_RC=OFF_RC=FREE_RC=1. CHIP_SCREEN_LOSS=FAST_SCREEN_LOSS=0, CHIP_BEFORE=CHIP_AFTER, FAST_BEFORE=FAST_AFTER, RESULT=1 ERR=0 CLEAN_ERR=0, VERDICT PASS_S2A_FRAME_CHANGE. Les écarts transitoires sont consignés séparément.
+5. Transmettre RAM:M19_S2A_RUNTIME.TXT. Si PASS, refaire un lancement sans reset pour confirmer la réutilisation. Sauvegarder chaque journal hors RAM: si possible.
 
-[Rapport technique et journaux historiques P2l-c](../../docs/M19_S1_P2M_FUNCTIONAL_LIFECYCLE_2026-11-26.md). Aucun test de quarantaine P2l-c à relancer.
+## Gate C — vrai Compiler
+
+Même ASC et ABK, compiler un nouvel exécutable avec la Lib exacte, lancer dans les mêmes conditions, PRG_STATE=-1. Journal RAM:M19_S2A_COMPILED.TXT. Ne pas transférer un PASS du modèle AP20 de CI vers la Gate C réelle.
+
+Si un refus : ERR=11 indique changement d'image ; relever CHANGE_RC, -200 à -205 (voir [rapport](../../docs/M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md)). Les deux frames doivent rester distinctes visuellement et la fermeture revenir à AMOS. Deux WaitTOF par changement, largeur 16, hauteur/palette identiques, et refus d'une transition traversant 64 Kio. Pas de preuve DMA physique ; Gate D distincte.
+
+[Ancienne campagne P2m conservée dans Git](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/57a1a9d2085e5d887a1fccc5300a0de5eaeef709/tests/current/README.md).

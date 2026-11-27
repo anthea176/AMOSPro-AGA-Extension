@@ -121,7 +121,8 @@ def assemble(vasm,delta,variant):
 def build_s2a(vasm):
     vasm=Path(vasm).resolve()
     before=protected()
-    parent,good,asc,abk=before
+    from verify_m19_s2a_delivery import pre_s2a_pair, S2A_SHA, verify_library as verify_s2a
+    parent,good,asc,abk=pre_s2a_pair(before)
     assert sha256(parent).hexdigest()==P2M_SHA
     verify_library(parent,good)
     verify_asc(asc)
@@ -150,6 +151,9 @@ def build_s2a(vasm):
     audit=inspect(parse(out))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
+    verify_s2a(out,good)
+    if sha256(before[0]).hexdigest()==S2A_SHA:
+        assert out==before[0]
     assert protected()==before
     return out,dict(parent_sha=P2M_SHA,sha256=sha256(out).hexdigest(),
         git_blob=sha1(f'blob {len(out)}'.encode()+b'\0'+out).hexdigest(),

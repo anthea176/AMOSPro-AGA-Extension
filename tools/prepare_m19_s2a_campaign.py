@@ -133,7 +133,10 @@ def main():
     before=protected()
     image,info=build_s2a(a.vasm)
     assert info['sha256']==EXPECTED
-    asc,abk=prepare(before[2])
+    from verify_m19_s2a_delivery import pre_s2a_pair, verify_asc as verify_s2a_asc, verify_abk
+    asc,abk=prepare(pre_s2a_pair(before)[2])
+    verify_s2a_asc(asc)
+    verify_abk(abk)
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_S2A_ANIMATION.ABK',abk)):
         with (a.temp/name).open('xb') as f:f.write(data)
     assert protected()==before

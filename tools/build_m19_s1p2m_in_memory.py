@@ -66,8 +66,10 @@ def build_s1p2m(vasm):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([row for row in walk_tokens(tok) if row['signature']])==105
     verify_library(image,before[1])
-    if sha256(before[0]).hexdigest()==P2M_SHA:
-        assert image==before[0]
+    from verify_m19_s2a_delivery import pre_s2a_library
+    active_parent=pre_s2a_library(before[0],before[1])
+    if sha256(active_parent).hexdigest()==P2M_SHA:
+        assert image==active_parent
     assert protected()==before
     return image,dict(meta,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
