@@ -19,7 +19,8 @@ def prepare(source):
     for k,pal in enumerate(PALETTES):
         a,b=payload.image(3+2*k),payload.image(4+2*k)
         assert (a.width,a.height,a.depth,a.palette)==(b.width,b.height,b.depth,b.palette)
-        assert (a.width,a.height,a.depth,a.palette)==(16,16,2,pal)
+        assert (a.width,a.height,a.depth)==(16,16,2)
+        assert a.palette==pal+bytes(48-len(pal))
         assert a.planes!=b.planes
     text=source.decode('ascii')
     text=replace(text,text.splitlines()[0],
