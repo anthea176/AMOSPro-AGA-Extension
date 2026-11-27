@@ -160,8 +160,14 @@ def main():
     p.add_argument('--temp',required=True,type=Path)
     args=p.parse_args()
     before=protected()
-    asc,abk=prepare(before[2])
-    assert (asc,abk)==prepare(before[2])
+    from verify_m19_s2c_delivery import pre_s2c_pair, S2C_SHA, verify_asc as verify_s2c_asc, verify_abk as verify_s2c_abk
+    parent=pre_s2c_pair(before)
+    asc,abk=prepare(parent[2])
+    assert (asc,abk)==prepare(parent[2])
+    verify_s2c_asc(asc)
+    verify_s2c_abk(abk)
+    if sha256(before[0]).hexdigest()==S2C_SHA:
+        assert asc==before[2] and abk==(Path(__file__).resolve().parents[1]/'tests/current/AGSP_S2C_MIXED.ABK').read_bytes()
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_S2C_MIXED.ABK',abk)):
         with (args.temp/name).open('xb') as out:out.write(data)
     # Emit generated campaign identity before building, but never install.

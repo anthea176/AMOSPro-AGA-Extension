@@ -32,7 +32,9 @@ def once(s,a,b):
 def build_s2c_capture(vasm, *, sprite_source_observer=None, close_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
-    assert sha256(before[0]).hexdigest()==S2R_SHA
+    from verify_m19_s2c_delivery import pre_s2c_library
+    installed_parent=pre_s2c_library(before[0],before[1])
+    assert sha256(installed_parent).hexdigest()==S2R_SHA
     bank=ROOT/'tests/current/AGSP_S2B_MULTI.ABK'
     bank_before=bank.read_bytes()
     staged={}
@@ -63,7 +65,7 @@ def build_s2c_capture(vasm, *, sprite_source_observer=None, close_source_observe
             sprite_source_observer(folder,full,delta,len(new))
     parent,info=build_s2r(vasm,sprite_source_observer=observer,
                           close_source_observer=close_source_observer)
-    assert parent==before[0] and info['sha256']==S2R_SHA
+    assert parent==installed_parent and info['sha256']==S2R_SHA
     tok,parts,title=unpack_ap20(parent)
     new=list(parts);new[GROUP]=staged['native']
     rows=list(walk_tokens(tok))

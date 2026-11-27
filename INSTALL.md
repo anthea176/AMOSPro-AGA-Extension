@@ -1,7 +1,7 @@
 # Installing AMOSPro AGA Extension
 
 
-**Active TEST candidate S2r-P1 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 154,352 bytes, SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a`, 105 commands / 219 AP20 entries, [native MC68020 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46059388877), B/C functional PASS on the test campaign (128-byte temporary Runtime Fast variation recovered); physical D pending. [Evidence](docs/M19_S2R_RUNTIME_COMPILER_2026-11-27.md). For the 0.14.1 protected base use [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, renamed AMOSPro_AGA.Lib in APSystem. 0.14.1 not released.
+**Active TEST candidate S2c-P1c (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 159,844 bytes, SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`, 105 commands / 219 AP20 entries, [native MC68020 Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46072322336), real B/C/D pending. [Protocol](tests/current/README.md). Protected [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`. No automatic promotion or release.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. For S2r-P1 testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same extension slot. Verify SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a`, restart WinUAE completely without restoring a save state, start AMOS and follow the [Runtime protocol](tests/current/README.md). WinUAE 68030, JIT ON, AGA PAL.
+2. For S2c-P1c testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same extension slot. Verify SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`, restart WinUAE completely without restoring a save state, start AMOS and follow the [Runtime protocol](tests/current/README.md). WinUAE 68030, JIT ON, AGA PAL.
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.

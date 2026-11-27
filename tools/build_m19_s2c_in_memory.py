@@ -114,6 +114,10 @@ def build_s2c(vasm):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert [(r['name'],r['signature']) for r in rows]==[(r['name'],r['signature']) for r in audit['tokens']]
     assert len([r for r in rows if r['signature']])==105
+    from verify_m19_s2c_delivery import S2C_SHA, verify_library
+    if sha256(before[0]).hexdigest()==S2C_SHA:
+        verify_library(image,before[1])
+        assert image==before[0]
     assert protected()==before
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),

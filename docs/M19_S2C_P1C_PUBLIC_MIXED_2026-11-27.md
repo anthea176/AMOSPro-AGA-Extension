@@ -1,5 +1,9 @@
 # M19 S2c-P1c — intégration publique mixte et Close/End (27-11-2026)
 
+**28/11/2026 — S2c-P1c, candidate de test active sur main, autorisation auteur « va y », puis « ok continu des que c bon ».** [Gate A intégrée PASS 11/11](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46072322336), source `5efc907baadd7c736345a97464023e2695e15c6b` : deux modèles mixtes 288 changements chacun, 392 contrôles AGAPIC et régressions capture, Pattern, SafePort, Bob, DB/IFF/Swap PASS. [Campagne exacte et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46072461473). Lib 159844 octets SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb` blob `7e8b5320c4098db053afb2bf8ce9f16bf611ff39` ; ASC 15459 octets SHA256 `48b9d1e47d63dd401482cfb0ecc8db0646aba68f173154c26ef2b5051f0496ec` ; nouvelle ABK AGSP_S2C_MIXED.ABK 1460 octets SHA256 `6f9a65305ca2a3ff7a65d8fc3af02afd75bc45810c94392733141bea434bc246`. 105 commandes / 219 AP20, MC68020+, UNIT142 63350, îlot Sprite 213 19246 octets, marge WORD 46288, réserve 16384 vérifiée. Titre binaire exact S2c-P2 (aucune retouche cosmétique). S2r préservée dans Git `31735f84f0da50ea4ba324f9bc63bec9313cd47a`. Gates B/C/D réelles S2c NON TESTÉES. CI post-activation à relever. LAST_GOOD L2b et anciennes ABK inchangées ; aucune promotion, branche, archive ni release.
+
+Le texte ci-dessous conserve les relevés source-only antérieurs ; leur statut d'installation est désormais historique.
+
 Statut : source et banc de qualification engagés, **pas de Lib installée**. La S2r-P1 qualifiée reste active. LAST_GOOD inchangée.
 
 - Parent P1a reconstruit et identifié par SHA256 exact. Capture 2/4 plans, mêmes arguments publics.

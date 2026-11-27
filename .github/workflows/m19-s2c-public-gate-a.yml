@@ -5,6 +5,10 @@ on:
     paths:
       - 'src/native/m19_s2/M19_S2C_*.s'
       - 'tools/build_m19_s2c_in_memory.py'
+      - 'tools/verify_m19_s2c_delivery.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/SPRITE_PUBLIC.asc'
+      - 'tests/current/AGSP_S2C_MIXED.ABK'
       - 'tools/test_m19_s2c_mixed_public_cpu.py'
       - 'src/native/m19_s2/M19_S2C_GET_PUBLIC_MC68020.s'
       - 'src/native/m19_s2/M19_S2C_AGSP_REPACK_MC68020.s'
@@ -62,7 +66,7 @@ jobs:
           VASM="$RUNNER_TEMP/vasm/vasmm68k_mot"
           "$VASM" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1h.bin" src/native/m19_s1/M19_S1P1H_BANK_PUBLIC_MC68020.s
           PYTHONPATH=tools python -B tools/test_m19_s2c_public_gate_a.py --vasm "$VASM" --historical "$RUNNER_TEMP/p1h.bin" --suite "$SUITE"
-      - name: Preserve active S2r and all protected fixtures
+      - name: Preserve the exact canonical pair and all protected fixtures
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py
           git diff --exit-code -- dist/ tests/current/ tests/passed/

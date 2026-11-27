@@ -1,27 +1,31 @@
-# S2r-P1 — répartition AP20, campagne active unique
+# S2c-P1c — campagne WinUAE active unique
 
-**27/11/2026 — S2r-P1 A/B/C fonctionnelles PASS dans le périmètre du banc.** B Runtime 1/1 (`PRG_STATE=1`, Fast transitoire 128 octets récupérés), C vrai Compiler 1/1 (`-1`, aucun écart cycle), 4/4 Capture/Meta/Negative/Draw, 300 changements/déplacements, 2/2 Open/Close, ERR=CLEAN_ERR=0, pertes nettes Chip/Fast nulles. Capture WinUAE fournie : trois rectangles rouges et trois Sprites distincts simultanés. Pas de preuve de seconde relance indépendante, de SHA installé ou Gate D physique. CI post-activation en échec sur l'accès Git superficiel au prédécesseur S2b ; [correction 21 workflows fetch-depth: 0](https://github.com/anthea176/AMOSPro-AGA-Extension/commit/5c20ee6fca24b5248a7510c29d6586dfac3bfc0f) livrée, résultat final à relever. S2r active inchangée ; LAST_GOOD L2b protégée. Autorisation auteur « oui va y » pour corriger CI et consigner les preuves ; S2c après requalification CI, pas de promotion ni nouvelle Lib. [Résultats et journaux](../../docs/M19_S2R_RUNTIME_COMPILER_2026-11-27.md).
-
-**27/11/2026 — S2r-P1 candidate active sur main, autorisation auteur « ok va y ».** [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46059388877) : 8 jobs, 1200 changements Sprite, 600 cycles Show/Off, 20 fermetures et négatifs, 392 contrôles AGAPIC déplacés, DB/IFF/Swap/capture, 184 Pattern, 172 SafePort, 10 suites Bob. [Double construction et préflight ASC strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46059623366). Lib 154352 octets SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a` blob `61d8211e449ffd9cb41e3fb2b6ec9efdf352c88c` ; ASC 11806 octets SHA256 `d06f3c296d45a8766acdf678b03675c99ee702baf776a2f2f50e2da5aa8939e3` blob `f1985251d4d37e978c4ec61b5e06f81fb3559ee4` ; même AGSP_S2B_MULTI.ABK 1012 octets blob `c122c79976bce5afad051f487d77af8cc296f2cc`. UNIT142 63350 (2184 libres), UNIT207 13756 (18978 libres PC16), nouvel îlot 214=3640, PC16 max 13786, 105 commandes / 219 AP20, MC68020+. Gates B/C/D réelles de S2r NON TESTÉES. S2b A/B/C historique dans Git ; LAST_GOOD L2b et toutes ABK protégées. Aucune promotion, autre branche, archive ou release.
+**28/11/2026 — S2c-P1c, candidate de test active sur main, autorisation auteur « va y », puis « ok continu des que c bon ».** [Gate A intégrée PASS 11/11](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46072322336), source `5efc907baadd7c736345a97464023e2695e15c6b` : deux modèles mixtes 288 changements chacun, 392 contrôles AGAPIC et régressions capture, Pattern, SafePort, Bob, DB/IFF/Swap PASS. [Campagne exacte et préflight strict PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46072461473). Lib 159844 octets SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb` blob `7e8b5320c4098db053afb2bf8ce9f16bf611ff39` ; ASC 15459 octets SHA256 `48b9d1e47d63dd401482cfb0ecc8db0646aba68f173154c26ef2b5051f0496ec` ; nouvelle ABK AGSP_S2C_MIXED.ABK 1460 octets SHA256 `6f9a65305ca2a3ff7a65d8fc3af02afd75bc45810c94392733141bea434bc246`. 105 commandes / 219 AP20, MC68020+, UNIT142 63350, îlot Sprite 213 19246 octets, marge WORD 46288, réserve 16384 vérifiée. Titre binaire exact S2c-P2 (aucune retouche cosmétique). S2r préservée dans Git `31735f84f0da50ea4ba324f9bc63bec9313cd47a`. Gates B/C/D réelles S2c NON TESTÉES. CI post-activation à relever. LAST_GOOD L2b et anciennes ABK inchangées ; aucune promotion, branche, archive ni release.
 
 ## Fichiers à utiliser ensemble
 
-- [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib), 154352 octets, SHA256 `7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a`.
-- [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc), 11806 octets, SHA256 `d06f3c296d45a8766acdf678b03675c99ee702baf776a2f2f50e2da5aa8939e3`.
-- [AGSP_S2B_MULTI.ABK](AGSP_S2B_MULTI.ABK), 1012 octets, banque 29, inchangée depuis S2b. Banque 30 doit être libre (captures AGAPIC temporaires).
+| Fichier | Octets | SHA256 |
+| --- | ---: | --- |
+| [AMOSPro_AGA.Lib](../../dist/AMOSPro_AGA.Lib) | 159844 | `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb` |
+| [SPRITE_PUBLIC.asc](SPRITE_PUBLIC.asc) | 15459 | `48b9d1e47d63dd401482cfb0ecc8db0646aba68f173154c26ef2b5051f0496ec` |
+| [AGSP_S2C_MIXED.ABK](AGSP_S2C_MIXED.ABK) | 1460 | `6f9a65305ca2a3ff7a65d8fc3af02afd75bc45810c94392733141bea434bc246` |
 
-## Gate B — WinUAE Runtime (1/1 PASS, réserve Fast transitoire)
+ABK et ASC dans le même dossier ; banques AMOS 29 et 30 libres. Installer la Lib dans APSystem, même slot ; redémarrer complètement WinUAE sans Save State, vérifier le SHA de la copie installée. Configuration fonctionnelle : AGA PAL, 68030 JIT ON. Project > Merge ASCII dans un programme vierge. Pas de nouvelle Lib alternative.
 
-1. WinUAE AGA PAL, 68030 JIT ON, même configuration que S2b. Installer la Lib exacte dans APSystem, même slot, redémarrer complètement sans Save State. Vérifier le SHA de la copie installée.
-2. ASC et ABK dans le même dossier, Project > Merge ASCII dans un programme vierge. Banques 29 et 30 libres. Runtime PRG_STATE=1.
-3. Observer trois rectangles de même couleur en haut (original + v1 + v2), puis trois Sprites distincts, trois groupes de couleurs, mouvements opposés au milieu, alternances de frames, saturation refusée. Off du Sprite central seul, réapparition sous ID 9 ; les deux autres restent visibles. Deux fermetures actives et retour à AMOS.
-4. Attendu : AGAPIC_CAPTURE 4 META 4 NEGATIVE 4 DRAW 4 ; AGAPIC_W 19 H 9 DEPTH 8 COLORS 256 MODE 135168 ; AGAPIC_RC 1 INFO_BAD -1 DUP_RC 0 DRAW_RC 1 OWN 0. OPENED=CLOSED=2, CHANGED=MOVED=300, SHOWN=8, OFF_COUNT=2, AUTO_CLOSE=6, SATURATION=2 FULL_RC=-206. SPRITE_RC=CHANGE_RC=MOVE_RC=OFF_RC=FREE_RC=1. CHIP_SCREEN_LOSS=FAST_SCREEN_LOSS=0, CHIP_BEFORE=CHIP_AFTER, FAST_BEFORE=FAST_AFTER, RESULT=1 ERR=0 CLEAN_ERR=0, VERDICT PASS_S2R_REPARTITION. Les écarts transitoires sont journalisés.
-5. Transmettre RAM:M19_S2R_RUNTIME.TXT, refaire une relance sans reset si PASS et enregistrer le second journal hors RAM: sous un nom distinct.
+## Gate B — Runtime (PRG_STATE=1)
 
-## Gate C — vrai AMOS Compiler (1/1 PASS)
+1. Observer les rectangles AGAPIC, puis trois Sprites 16 pixels : écran 1 trois simples, écran 2 deux simples et un attaché, écran 3 trois attachés. Les palettes des simples correspondent à leur paire et les attachés à 17..31. Observer les alternances de frames, les déplacements, le retrait ciblé/réaffichage, l'absence de traînées et les fermetures avec objets actifs.
+2. Attendu : OPENED=CLOSED=3, SHOWN=12, CHANGED=MOVED=450, OFF_COUNT=3, AUTO_CLOSE=9, SATURATION=3, FULL_RC=-206 ; AGAPIC_CAPTURE/META/NEGATIVE/DRAW=6 ; AGSP_CAPTURED=6, REFUSED=3, FREE_RC=1, OWN=0. SPRITE_RC/CHANGE_RC/MOVE_RC/OFF_RC/FREE_RC=1. RESULT=1 ERR=0 CLEAN_ERR=0, VERDICT PASS_S2C_MIXED. Aucune perte nette Chip/Fast ni perte par écran ; toute variation temporaire est à relever.
+3. Sauvegarder RAM:M19_S2C_RUNTIME.TXT hors RAM: et refaire une relance sans reset si PASS, avec journal distinct. Transmettre les logs et observations visuelles.
 
-Même ASC et ABK ; compiler un nouvel exécutable avec la Lib S2r exacte, PRG_STATE=-1, mêmes observations. RAM:M19_S2R_COMPILED.TXT. Pas de Gate C par simulation.
+## Gate C — véritable AMOS Compiler (PRG_STATE=-1)
 
-ERR 10=Show, 11=Change, 12=Move, 13=Off, 14=mémoire, 15=re-show, 16=saturation, 17=banque 30 occupée, 18=Fill, 19=Capture, 20=Info, 21=refus, 22=Draw, 23=Erase, 24=Swap. Relever code API exact. Aucun changement de contrat Sprite (16 px, 3 couleurs opaques, 3 objets simultanés). Pas de Gate D.
+Même ASC et ABK, construire un nouvel exécutable avec la Lib exacte. Mêmes critères et journal RAM:M19_S2C_COMPILED.TXT. Le modèle Compiler de CI est uniquement Gate A.
 
-[Rapport S2r](../../docs/M19_S2R_REPARTITION_2026-11-27.md) · [S2b historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/502739db328178d7abd47e8bc247a7c54d453139/tests/current/README.md).
+## Diagnostics
+
+ERR 10=Show, 11=Change, 12=Move, 13=Off, 14=mémoire, 15=re-show, 16=saturation, 17=banque 30 occupée, 18=Fill, 19=AGAPIC Capture, 20=Info, 21=refus, 22=Draw, 23=Erase, 24=Swap, 25=motif capture AGSP, 26=banque AGSP, 27=capture 1 ligne, 28=capture 16 lignes, 29=refus 16 opaques. CLEAN_ERR bit 64=nettoyage capture AGSP. Conserver les codes et le dernier affichage en cas de Guru.
+
+Limites : largeur 16, trois objets maximum, pas de changement 2/4 plans pendant affichage (Off puis Show), même hauteur/palette par objet, hotspot nul ; deux WaitTOF par changement attaché, pas de preuve DMA physique. Aucun benchmark de vitesse ni Gate D.
+
+[Rapport S2c](../../docs/M19_S2C_P1C_PUBLIC_MIXED_2026-11-27.md) · [Protocole S2r historique](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/31735f84f0da50ea4ba324f9bc63bec9313cd47a/tests/current/README.md).

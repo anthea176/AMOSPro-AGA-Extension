@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from compiler_bridge_v2_probe import unwrap_native_parts_v2, DISPATCH_V2
 from compiler_relocation import GETP, unpack_ap20
-from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, SPRITE_L2B_HISTORICAL_SHAS, LAST_GOOD_SHA
+from active_library import R82_SHA, R83_SHA, R84_SHA, R85_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2A_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, SPRITE_L2B_HISTORICAL_SHAS, LAST_GOOD_SHA
 
 BINARY=Path("dist/AMOSPro_AGA.Lib")
 SITES=((6,0x02e2,0x41ea),(31,0x0038,0x45ea),(31,0x0048,0x45ea),
@@ -68,11 +68,15 @@ def main():
             assert len(image) == 142000 and len(active_units) == 208
             assert active_units[:203] == units, 'S1-P1e altered inherited P2d AP20 entries'
             assert active_units[142] == units[142], 'S1-P1e altered input-state unit'
-        elif digest == S2R_SHA:
+        elif digest in (S2R_SHA,S2C_SHA):
             # Authenticate the new island AND reconstruct the entire inherited
             # L2b prefix with only the known Close/End sites and moved bytes restored.
             from verify_m19_s2r_delivery import verify_library, START, END
-            verify_library(image,frozen)
+            if digest==S2C_SHA:
+                from verify_m19_s2c_delivery import verify_library as verify_s2c_library
+                verify_s2c_library(image,frozen)
+            else:
+                verify_library(image,frozen)
             _, inherited, _ = unpack_ap20(frozen)
             _, active_units, _ = unpack_ap20(image)
             assert len(inherited)==203 and len(active_units)==219

@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - 'tools/prepare_m19_s2c_campaign.py'
+      - 'tools/verify_m19_s2c_delivery.py'
+      - 'dist/AMOSPro_AGA.Lib'
+      - 'tests/current/SPRITE_PUBLIC.asc'
+      - 'tests/current/AGSP_S2C_MIXED.ABK'
       - 'tools/build_m19_s2c_in_memory.py'
       - 'src/native/m19_s2/M19_S2C_*.s'
       - '.github/workflows/m19-s2c-prepare-campaign.yml'
