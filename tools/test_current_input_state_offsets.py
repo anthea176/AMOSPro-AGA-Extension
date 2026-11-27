@@ -72,7 +72,6 @@ def main():
             # Authenticate the new island AND reconstruct the entire inherited
             # L2b prefix with only the known Close/End sites and moved bytes restored.
             from verify_m19_s2r_delivery import verify_library, START, END
-            from compiler_bridge_v2_probe import DISPATCH_V2
             verify_library(image,frozen)
             _, inherited, _ = unpack_ap20(frozen)
             _, active_units, _ = unpack_ap20(image)
