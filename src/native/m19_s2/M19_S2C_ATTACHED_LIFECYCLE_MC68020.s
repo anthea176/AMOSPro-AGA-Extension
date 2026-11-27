@@ -13,7 +13,9 @@
 ; A0 receipt, A1 Gfx, D0 X and D1 Y for Show/Move.
 ; D0=1 OK (Retire: 2 private, 1 retired), 0 refused; D1 reason 1..7.
 ; D2-D7/A0-A6 preserved. No FreeVec, new public token, direct register
-; or user Copper write. No frame change yet. Only E0/O0 may be published.
+; or user Copper write. Change: A2 detached P0b block, D0 exact extent.
+; Change alternates E0/O0 and E1/O1, same height/generation/palette.
+; All five old entry offsets preserved; Change entry at +20.
 ; Show failure after publication leaves a sticky state 15: retire or
 ; quarantine, NEVER free merely because Show returned 0.
 ; MoveSprite calls on even propagate to odd in source-proven V40.
@@ -25,6 +27,7 @@
     bra.w AGSP_S2C_MOVE
     bra.w AGSP_S2C_RETIRE
     bra.w AGSP_S2C_PALETTE
+    bra.w AGSP_S2C_CHANGE
 
 AGSP_S2C_ACQUIRE:
     movem.l d2-d7/a0-a6,-(sp)
@@ -662,8 +665,13 @@ s2c_l_streams:
     beq.w s2c_l_no
     lea 96(a4),a2
     cmpa.l (a4),a2
+    beq.s s2c_l_stream_pair
+    adda.l d5,a2
+    adda.l d5,a2
+    cmpa.l (a4),a2
     bne.w s2c_l_no
-    lea 96(a4,d5.l),a2
+s2c_l_stream_pair:
+    adda.l d5,a2
     cmpa.l 12(a4),a2
     bne.w s2c_l_no
     bsr.w s2c_l_slots
@@ -748,3 +756,5 @@ s2c_l_span_no:
 s2c_l_span_end:
     movem.l (sp)+,d2/a0-a1/a6
     rts
+
+    include "M19_S2C_ATTACHED_FRAME_MC68020.s"
