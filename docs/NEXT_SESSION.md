@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**27/11/2026 — S2c-P1b registre mixte v5 engagé source-only.** 324 octets, 3 slots 72, unique état/reçu, type2/4 et snapshots attachés, retire commun et drain ciblé/collectif. P0c/P0d adaptés aux offsets v5 en source temporaire, aucune Lib modifiée. [Rapport](M19_S2C_P1B_MIXED_REGISTRY_2026-11-27.md). Gate A composant à relever ; P1a capture correctif hauteur 1 en CI.
+
 **27/11/2026 — S2c-P1a intégration capture publique engagée.** Reconstruction S2r exacte, bridge/commit P1i préservés, scratch +1024, noyaux 2/4 plans, offsets AP20 recalculés et réserve obligatoire. Candidate en mémoire uniquement ; Gate A intégrée capture/régressions à relever. Aga Sprite attaché pas encore raccordé. [Rapport](M19_S2C_P1A_PUBLIC_CAPTURE_2026-11-27.md).
 
 **27/11/2026 — S2c-P0d Gate A composant PASS**, [330 changements + 138 cas, régressions 420 + 114](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46069964921), CPU/chemins PASS. Staging de la paire inactive, double WaitTOF avec ancienne frame visible, bascule cachée et ATTACH/Move, ID après confirmation. Services OS modélisés, DMA réel non validé, coût 2 WaitTOF par appel. S2r Lib/ASC/ABK/LAST_GOOD protégées, CI historique en cours au relevé. Suite : intégration transactionnelle capture/commit, registry et Close/End, budget AP20. [Rapport](M19_S2C_P0D_ATTACHED_FRAME_2026-11-27.md).
