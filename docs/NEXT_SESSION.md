@@ -1,5 +1,7 @@
 # Reprise actuelle — AMOSPro AGA Extension
 
+**27/11/2026 — S2b-P1 composants sources :** registre v4 inline (240 octets), allocation de paires/palette et retrait collectif/ID/banque écrits. [Contrat et CI](M19_S2B_MULTI_SPRITE_2026-11-27.md). Gate composant à relever ; aucun raccordement AP20/Close legacy ni nouvelle Lib. S2a et LAST_GOOD intactes.
+
 **27/11/2026 — S2b-P0 retrait par paire : [114 cas MC68020 PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46037779887).** Source `b7e7b2e71c3393cfd81cad080f3ecc25422f7b3e`, politique CPU/delivery et paire active S2a vérifiées avant/après. Retrait indépendant des paires 2/3, 4/5, 6/7, six ordres de retrait des trois paires actives, reçus partiels, références tardives et retry. Seulement composant CPU + OS modélisé ; intégration registry/Close/End, Gate A intégrée et B/C/D S2b encore à faire. S2a validée A/B/C reste active, LAST_GOOD inchangée.
 
 **27/11/2026 — S2a-P1 clôturée fonctionnellement.** Gate A complète PASS, CI post-activation 39 PASS / 1 skipped / 0 échec, B Runtime 2/2 et C vrai Compiler 1/1 PASS stricts, 300 changements, 300 déplacements, six fermetures, zéro perte nette ou temporaire mesurée ; animation confirmée par l'auteur (« oui lanimation est ok on peux continuer »). D non testée. S2b engagé, S2a reste active et LAST_GOOD L2b protégée. [Résultats et journaux](M19_S2A_RUNTIME_COMPILER_2026-11-27.md). [S2b](M19_S2B_MULTI_SPRITE_2026-11-27.md).
