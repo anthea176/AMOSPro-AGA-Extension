@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**27/11/2026 — S2a-P1 active pour essais B/C.** [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45907171922). P2m clôture fonctionnelle historique [résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md). LAST_GOOD protégée.
+**27/11/2026 — S2a-P1 A/B/C PASS, animation confirmée.** [Résultats](M19_S2A_RUNTIME_COMPILER_2026-11-27.md). S2b engagé en sources ; LAST_GOOD protégée.
 
 ## 1. État actuel et objectif
 
@@ -8,7 +8,7 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [S2a-P1](../dist/AMOSPro_AGA.Lib), 151164 octets, SHA256 `1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2`, 105 commandes / 214 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45907171922) ; B/C/D non testées. [Rapport](M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md). |
+| Lib de travail | [S2a-P1](../dist/AMOSPro_AGA.Lib), 151164 octets, SHA256 `1d13ff815aa3b448e420f6783dbac967c03efca2fbb65932e783ec72502e58d2`, 105 commandes / 214 AP20, MC68020+. [Gate A complète PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/45907171922) ; B/C PASS ; D non testée. [Résultats](M19_S2A_RUNTIME_COMPILER_2026-11-27.md). |
 | LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S2a-P1 ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
 | ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2A_ANIMATION.ABK](../tests/current/AGSP_S2A_ANIMATION.ABK). 100 changements à chaud, 2 fermetures actives, vérification mémoire. [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
@@ -25,8 +25,8 @@
 
 S1 : banque AGSP v1 DATA multi-images, capture RGB24 avec transparence explicite, Sprite 16px/3 couleurs, cycle de vie P2m fonctionnel. [Format](M19_S1_AGSP_V1_FORMAT_2026-11-22.md) · [Historique et résultats](M19_S1_P2M_RUNTIME_COMPILER_2026-11-26.md) · [Contrat S0–S3](AGA_HARDWARE_SPRITES_S0_S3_ROADMAP.md). Réserve Fast transitoire documentée, pas de promotion.
 
-- **S2a-P1 active :** [staging](M19_S2A_FRAME_STAGE_2026-11-26.md) et [intégration](M19_S2A_PUBLIC_FRAME_CHANGE_2026-11-26.md). Gate A complète PASS ; animation et publication DMA réelle à qualifier. UNIT142 inchangée (110 octets libres), UNIT207 12142 octets, marge PC16 20592.
-- S2b : plusieurs objets, propriété des canaux et palettes ; S2c : attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
+- **S2a-P1 validée A/B/C :** [résultats](M19_S2A_RUNTIME_COMPILER_2026-11-27.md). UNIT142 inchangée (110 octets libres), UNIT207 12142 octets, marge PC16 20592.
+- **S2b engagé :** [allocation par paire, multi-objets et retraite](M19_S2B_MULTI_SPRITE_2026-11-27.md). S2c : attaché 15 couleurs ; S2d : largeur 32/64 via mode global ; ensuite coordonnées/hotspots, priorité/clipping, ergonomie et benchmarks.
 - S3 : multiplexage vertical, collisions, animation multi-objets, AMAL facultatif après validation du moteur classique.
 - Les jalons P2a–P2l-c, leurs preuves et refus sont conservés dans [NEXT_SESSION.md](NEXT_SESSION.md), leurs rapports et [la roadmap avant condensation](https://github.com/anthea176/AMOSPro-AGA-Extension/blob/57a1a9d2085e5d887a1fccc5300a0de5eaeef709/docs/ROADMAP.md).
 
