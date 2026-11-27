@@ -3,6 +3,7 @@
 """Exact S2r-derived candidate, public capture 2/4-plane transaction tests."""
 import argparse,json,os,unittest
 from pathlib import Path
+from struct import unpack_from
 from compiler_relocation import unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2
 from build_m19_s2c_capture_in_memory import build_s2c_capture,protected
@@ -24,7 +25,7 @@ def region(n,h=16,x=13,y=5,transparent=0):
 
 def capture_cases(image,layout):
     _,parts,_=unpack_ap20(image)
-    native=parts[207][len(DISPATCH_V2):]
+    native=parts[unpack_from('>H',parts[204],2)[0]][len(DISPATCH_V2):]
     checks=0
     def new(n=15,h=16,x=13,y=5,pen=0,**kw):
         m=ContractMachine(native,parts,layout,**kw)

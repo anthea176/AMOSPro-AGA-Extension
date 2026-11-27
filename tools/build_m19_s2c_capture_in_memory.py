@@ -29,7 +29,7 @@ def once(s,a,b):
     assert s.count(a)==1,a
     return s.replace(a,b)
 
-def build_s2c_capture(vasm):
+def build_s2c_capture(vasm, *, sprite_source_observer=None, close_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
     assert sha256(before[0]).hexdigest()==S2R_SHA
@@ -59,7 +59,10 @@ def build_s2c_capture(vasm):
         assert all(full[len(new)+i:len(new)+i+2]==b'\x60\x00' for i in (0,4,8))
         assert len(full)-len(new)==len(native)-OLD_AT
         staged.update(native=DISPATCH_V2+full,at=len(new),old_at=OLD_AT)
-    parent,info=build_s2r(vasm,sprite_source_observer=observer)
+        if sprite_source_observer is not None:
+            sprite_source_observer(folder,full,delta,len(new))
+    parent,info=build_s2r(vasm,sprite_source_observer=observer,
+                          close_source_observer=close_source_observer)
     assert parent==before[0] and info['sha256']==S2R_SHA
     tok,parts,title=unpack_ap20(parent)
     new=list(parts);new[GROUP]=staged['native']

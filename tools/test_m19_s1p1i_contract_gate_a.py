@@ -78,9 +78,9 @@ class ContractMachine(GetMachine):
         for n,entry in enumerate((204,206)):
             stub=parts[entry]
             group,offset=unpack_from('>HH',stub,2)
-            assert stub[:2]==RBSR and stub[6:8]==b'\x4e\x75' and group==207
+            assert stub[:2]==RBSR and stub[6:8]==b'\x4e\x75' and group==unpack_from('>H',parts[204],2)[0]
             if layout=='runtime':
-                pc=CODE-sum(map(len,parts[entry:207]))
+                pc=CODE-sum(map(len,parts[entry:group]))
                 self.uc.mem_write(pc,pack('>Hh',0x6100,CODE-(pc+2))+stub[4:])
             else:
                 assert layout=='compiled'

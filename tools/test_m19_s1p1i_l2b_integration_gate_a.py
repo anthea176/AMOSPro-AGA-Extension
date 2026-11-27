@@ -34,7 +34,8 @@ INFO0,INFO1=0x149000,0x149100
 class Integrated(ContractMachine):
     def __init__(self,image,layout):
         tok,parts,_=unpack_ap20(image)
-        super().__init__(parts[207][len(DISPATCH_V2):],parts,layout)
+        sg=unpack_from('>H',parts[204],2)[0]
+        super().__init__(parts[sg][len(DISPATCH_V2):],parts,layout)
         self.raw=(ROOT/'tests/proto/agsp_capture/AGSP_CAPTURE_320X256.iff').read_bytes()
         self.fixture_pixels,self.fixture_cmap=read_fixture()
         self.cmap=bytes(768)

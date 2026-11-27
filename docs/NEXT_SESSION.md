@@ -2055,3 +2055,10 @@ Les sections R83 et antérieures ci-dessous sont **historiques**.
 ---
 
 ## ÉTAT COURANT — R83 v0.13.28 PROMUE LAST_GOOD (14/11/2026)
+
+
+## 27-11-2026 — S2c P1a/P1b validés, P1c intégré en source
+
+- P1a : 114 cas, Gate A complète [46071110206](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46071110206) PASS ; correctif hauteur 1.
+- P1b : 75 scénarios de registre v5, [46071530949](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46071530949) PASS.
+- P1c : [intégration publique et Close/End](M19_S2C_P1C_PUBLIC_MIXED_2026-11-27.md), Gate A en attente. S2r active et LAST_GOOD protégée.

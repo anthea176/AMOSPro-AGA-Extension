@@ -32,6 +32,7 @@ class MultiMachine(TransactionMachine):
     def __init__(self,image,info,layout,db=False):
         super().__init__(image,info,layout,db)
         self.unit142=info['unit142']
+        self.record_bytes=info.get('record_bytes',44)
         self.put32(VIEW,SCREEN+44)
         self.erase()
         self.payload=multi_bank()
@@ -55,13 +56,13 @@ class MultiMachine(TransactionMachine):
         self.move_noop=False
         self.uc.hook_add(UC_HOOK_MEM_WRITE,self.watch_frames)
     def record(self,n):
-        return self.named+108+44*((n-2)//2)
+        return self.named+108+self.record_bytes*((n-2)//2)
     def live(self,n):
         r=self.record(n)
         return r,self.get(r),self.get(self.get(r))
     def snapshot(self,n):
         r,p,ptr=self.live(n)
-        return (self.read(r,44),self.read(p,self.allocations[p]),
+        return (self.read(r,self.record_bytes),self.read(p,self.allocations[p]),
                 self.read(FAST_TABLE+4*n,8),self.read(CI+88+8*n,16))
     def watch_frames(self,uc,access,addr,size,value,user):
         for p,n in self.published.items():

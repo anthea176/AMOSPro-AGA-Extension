@@ -102,7 +102,7 @@ def prepare_close(vasm,folder,original):
     assert bytes(normalized)==old[:OLD_PREFIX]
     return dict(unit142=new,pic=pic,root=len(new)-16,targets=targets)
 
-def build_s2r(vasm, *, sprite_source_observer=None):
+def build_s2r(vasm, *, sprite_source_observer=None, close_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
     from verify_m19_s2r_delivery import pre_s2r_pair, verify_library
@@ -114,6 +114,8 @@ def build_s2r(vasm, *, sprite_source_observer=None):
     seen={}
     def close_source(folder,original):
         seen.update(prepare_close(vasm,folder,original))
+        if close_source_observer is not None:
+            close_source_observer(folder,seen['unit142'],seen['root'])
     def sprite_source(folder,native,delta):
         assert seen['root']==OLD_PREFIX and delta==OLD_ROOT-0x1c2
         master=folder/MASTER

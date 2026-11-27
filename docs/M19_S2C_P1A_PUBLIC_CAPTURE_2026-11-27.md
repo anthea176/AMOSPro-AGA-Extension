@@ -14,3 +14,7 @@ Le v4 actuel occupe 3 records de 44 octets et son code de retrait est dupliqué 
 ## Premier relevé et correctif
 
 [CI 46070885594](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46070885594) sur `ad9a5c41f298d3fcb92ab79c0e5a3a95af1f76ae` : construction complète 154396 octets, croissance native UNIT207 +42, UNIT207=13798, PC16 max=13828, marge 18936 (réserve 16384 respectée). SafePort 172, Pattern 184 et AGAPIC 392 PASS ; capture échoue après les 34 essais 0..16 couleurs/front, au groupe des dimensions extrêmes. Cause identifiée dans le code hérité P1i : minimum arbitraire de capacité 176 dans le pipeline alors qu'une capture 1 ligne sur banque vide alloue 32+96+8=136 octets. Le minimum structurel AGSP 2 plans/1 ligne est 132 (32+48+4+48). Le repack vérifie indépendamment le besoin exact. Correction limitée à ce minimum dans le **nouveau pipeline S2c** ; l'ancien P1i et ses tests restent intacts. Rejouer les cas 1 ligne 2 et 4 plans et tous les shards ; aucun PASS intégré revendiqué à ce stade.
+
+## Correctif et qualification finale P1a
+
+Commit `644ce7a` : minimum du staging 132 octets (au lieu de 176) ; images 16 × 1 vérifiées aux deux profondeurs. [Gate A 46071110206](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46071110206) PASS, 114 cas de capture et régressions complètes. Candidate non installée : 154396 octets, SHA256 `bafb14e768ce43824cc2512493c14c0d34bbbdeb18c57fc91e3634784475423e`, UNIT207 13798, marge PC16 18936, réserve 16384 conservée.

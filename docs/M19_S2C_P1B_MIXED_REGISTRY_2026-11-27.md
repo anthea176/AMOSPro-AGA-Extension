@@ -11,3 +11,7 @@ Sources dérivées exactes : [persist](../src/native/m19_s2/M19_S2C_PERSIST_ROOT
 
 ## Suite
 Après PASS P1a/P1b : intégration dans les routes publiques (allocation selon profondeur, choix palette et dispatch, sélection de banque), dupliquer seulement le retire commun et le registre dans le guard Close/End, contrôler l'espace UNIT142. L'extension de UNIT207 risque de franchir la réserve PC16 ; séparer capture/select et display en îlots relogeables avec sélection commune sous ancre AGA si nécessaire, démontrer l'initialisation avant écran et les deux layouts. Aucun transfert automatique des Gates B/C S2r. Aucun changement de binaire ou publication.
+
+## Gate A P1b
+
+Commit `66a7e31` : élargissement de quatre branches de contrôle après extension v5. [CI 46071530949](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46071530949) PASS ; 75 scénarios, composant 7476 octets, SHA256 `b0049905dea23defb1babb04628b9b2d5ff0ae793c8450b35f6ac28dd07b5246`. Services OS modélisés. La voie simple est modélisée pour sa publication ; les voies attachées exécutent le code MC68020. Close/End public et compilation AMOS réelle restent à qualifier.

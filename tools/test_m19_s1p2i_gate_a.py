@@ -30,7 +30,8 @@ NAME=b'AMOSPro.AGA.AGSP.S1.root.v1\0'
 class SpriteMachine(ContractMachine):
     def __init__(self,image,info,layout):
         tok,parts,_=unpack_ap20(image)
-        super().__init__(parts[207][len(DISPATCH_V2):],parts,layout)
+        sg=unpack_from('>H',parts[204],2)[0]
+        super().__init__(parts[sg][len(DISPATCH_V2):],parts,layout)
         self.uc.mem_write(GROUP,parts[142])
         self.cell=GROUP+info['root']
         self.put32(AMOS+456,STATE)
@@ -84,9 +85,9 @@ class SpriteMachine(ContractMachine):
             index=api[name]['function']
             stub=parts[index]
             group,offset=unpack_from('>HH',stub,2)
-            assert group==207 and stub[:2]==RBSR
+            assert group==sg and stub[:2]==RBSR
             if layout=='runtime':
-                pc=CODE+sum(map(len,parts[207:index]))
+                pc=CODE+(sum(map(len,parts[group:index])) if index>group else -sum(map(len,parts[index:group])))
                 raw=pack('>Hh',0x6100,CODE-(pc+2))+stub[4:]
             else:
                 pc=CODE-0x400+n*0x20
