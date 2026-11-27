@@ -13,7 +13,7 @@ from hashlib import sha1,sha256
 from struct import pack,unpack_from
 from active_library import S2R_SHA
 from build_m19_s2r_in_memory import build_s2r,assemble_bin,MASTER,ROOT,protected
-from build_m19_s1p2l_a_in_memory import headroom,RESERVE
+from build_m19_s1p2l_a_in_memory import headroom,expanded,RESERVE
 from compiler_relocation import RBSR,unpack_ap20,repack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2,MAX_UNIT_BYTES
 from ap20_v2_island_dispatch import pc16_displacements
@@ -86,7 +86,9 @@ def build_s2c_capture(vasm):
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
         parent_sha=S2R_SHA,unit207=len(new[GROUP]),sprite_at=staged['at'],
-        growth=len(new[GROUP])-len(parts[GROUP]),pc16_max=max(map(abs,links.values())),
+        growth=len(new[GROUP])-len(parts[GROUP]),native_sprite=len(new[GROUP])-len(DISPATCH_V2),
+        pc16_max=max(map(abs,links.values())),
+        reserve_pc16=max(map(abs,pc16_displacements(expanded(new,RESERVE)).values())),
         unit207_pc16_free=margin,reserve_bytes=RESERVE,installable=False,
         attached_display=False,runtime_tested=False,compiler_tested=False)
 

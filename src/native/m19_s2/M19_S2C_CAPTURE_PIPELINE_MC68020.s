@@ -76,7 +76,9 @@ agsp_p1c_check_buffers:
     btst #0,d0
     bne.w agsp_p1c_pipeline_end
     move.l 64(a6),d0
-    cmpi.l #176,d0
+    ; Smallest AGSP image: 32 header + 48 directory + 4 pixels + 48 RGB.
+    ; Repack independently proves exact needed capacity before writes.
+    cmpi.l #132,d0
     bcs.w agsp_p1c_pipeline_end
     cmpi.l #$01000000,d0
     bhi.w agsp_p1c_pipeline_end

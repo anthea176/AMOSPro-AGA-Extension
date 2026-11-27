@@ -35,7 +35,7 @@ def capture_cases(image,layout):
     def capture(m,old,ident=1,x=13,y=5,h=16,pen=0,success=True):
         prev=len(m.notes)
         rc=m.get_sprite(ident,x,y,x+15,y+h-1,pen)
-        assert rc==int(success)
+        assert rc==int(success),(layout,ident,x,y,h,pen,rc,success,m.temp_allocs,m.calls_gfx)
         want=put_capture(old,ident,m.pixels,W,H,x,y,16,h,m.cmap,pen,mode='s2') if success else old
         assert m.bank(29)==want
         assert len(m.notes)==prev+int(success)
@@ -55,6 +55,8 @@ def capture_cases(image,layout):
         m=new(15,h,x,y,pen)
         capture(m,empty_bank(),x=x,y=y,h=h,pen=pen)
         checks+=1
+    m=new(3,1,304,255)
+    capture(m,empty_bank(),x=304,y=255,h=1);checks+=1
     m=new(15)
     want=capture(m,empty_bank(),ident=20)
     for n,ident in ((3,1),(4,12),(2,12),(15,1),(16,20)):
