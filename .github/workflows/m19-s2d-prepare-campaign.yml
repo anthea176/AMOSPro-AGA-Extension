@@ -1,0 +1,28 @@
+name: M19 S2d prepare future wide campaign (no activation)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/prepare_m19_s2d_campaign.py'
+      - 'tools/m19_s2d_visual_fixture.py'
+      - '.github/workflows/m19-s2d-prepare-campaign.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate and statically validate exact future campaign
+        run: |
+          mkdir -p "$RUNNER_TEMP/s2d"
+          python -B tools/prepare_m19_s2d_campaign.py --temp "$RUNNER_TEMP/s2d"
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/s2d/SPRITE_PUBLIC.asc"
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
