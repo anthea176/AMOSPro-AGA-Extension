@@ -691,42 +691,47 @@ s2d_pub_preget:
     movem.l d2-d7/a0-a6,-(sp)
     movea.l a0,a3
     movea.l a6,a5
-    bsr.w s2d_r_validate
-    tst.l d0
-    beq.w s2d_pub_preget_no
     tst.l 24(a3)
     bne.w s2d_pub_preget_no
+    bsr.w s2d_r_validate
+    tst.l d0
+    beq.w s2d_pub_preget_pending
     bsr.w s2d_r_slots
     tst.l d0
-    beq.w s2d_pub_preget_no
+    beq.w s2d_pub_preget_pending
     move.l d6,d0
     lsl.l #2,d0
     adda.l d0,a1
     move.l (a1),d0
     or.l 4(a1),d0
-    bne.w s2d_pub_preget_no
+    bne.w s2d_pub_preget_pending
     move.l d6,d0
     lsl.l #3,d0
     adda.l d0,a0
     move.l 44(a3),d0
     addi.l #176,d0
     cmp.w 6(a0),d0
-    bne.s s2d_pub_preget_no
+    bne.s s2d_pub_preget_pending
     cmp.w 14(a0),d0
-    bne.s s2d_pub_preget_no
+    bne.s s2d_pub_preget_pending
     swap d0
     cmp.w 2(a0),d0
-    bne.s s2d_pub_preget_no
+    bne.s s2d_pub_preget_pending
     cmp.w 10(a0),d0
-    bne.s s2d_pub_preget_no
+    bne.s s2d_pub_preget_pending
     bsr.w s2d_x_lists
     tst.l d0
-    beq.s s2d_pub_preget_no
+    beq.s s2d_pub_preget_pending
     bsr.w s2d_r_no_refs
     tst.l d0
-    beq.s s2d_pub_preget_no
+    beq.s s2d_pub_preget_pending
     moveq #1,d0
     bra.s s2d_pub_preget_return
+s2d_pub_preget_pending:
+    ; Absence of an OS claim is not proof of absent DMA references.
+    ; Force the observed-reference/fence path with no owned channels.
+    ; A future Off may recover if the entire proof becomes available.
+    move.l #4,24(a3)
 s2d_pub_preget_no:
     moveq #0,d0
 s2d_pub_preget_return:

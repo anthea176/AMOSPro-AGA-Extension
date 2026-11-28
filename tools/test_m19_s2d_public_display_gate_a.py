@@ -61,6 +61,7 @@ class WidePublic(TransactionMachine):
         self.fail_ext_at=0
         self.change_fail=False
         self.stale_free=0
+        self.preget_ref=False
         self.ext_events=[]
         self.pseudo_sites={CODE+i for i in range(0,len(self.code)-1,2)
                            if self.code[i:i+2]==b'\xfe\x11'}
@@ -134,6 +135,9 @@ class WidePublic(TransactionMachine):
                     raw[dst:dst+stride]=self.read(src,stride)
             self.uc.mem_write(data,bytes(raw))
             self.ext_events.append(('alloc',p))
+            if self.preget_ref and self.ext_allocs==4:
+                # Simulate a reference from a foreign slot without a Get.
+                self.put32(FAST_TABLE,p)
             result=p
         elif address==GFX-930:
             tags=unpack_from('>6I',self.read(a1,24))
@@ -240,7 +244,8 @@ class WidePublic(TransactionMachine):
         r=self.record(ch)
         return (self.read(r,REC_BYTES),self.read(FAST_TABLE+4*ch,8),self.read(CI+88+8*ch,16))
     def empty_wide(self):
-        self.empty()
+        assert not self.temp_live and not self.chip and not self.named and not self.get(self.cell), (
+            'leak',self.temp_live,self.chip,self.named,self.get(self.cell),self.ext)
         assert not self.ext and self.read(GFX+166,1)[0]==1
         assert all(self.get(FAST_TABLE+4*c)==0 and self.pointer(c)==NEUTRAL for c in range(2,8))
 
@@ -308,6 +313,23 @@ def cases(image,info,layout):
         assert m.get(STATE)==SCREEN and m.named and not m.ext
         assert m.get(m.root())==0
         m.close_ok=True;m.close();m.empty_wide();neg+=1
+        m=WidePublic(image,info,layout,w)
+        m.preget_ref=True
+        assert m.sprite(image=7)==-208 and m.named and len(m.ext)==4
+        assert m.get(m.record(2)+24)==4 and not m.ext_frees
+        assert not any(e[0] in ('get','release') for e in m.ext_events)
+        assert m.off(1)==0 and len(m.ext)==4 and not m.ext_frees
+        m.put32(FAST_TABLE,0x40002700)
+        before=m.tofs
+        assert m.off(1)==1 and m.tofs-before==2
+        m.empty_wide();neg+=1
+        m=WidePublic(image,info,layout,w)
+        assert m.sprite(image=7)==1
+        m.stale_free=2;m.close()
+        assert m.get(STATE)==SCREEN and m.named and m.ext
+        assert m.get(m.record(2)+24)==4 and not m.ext_frees
+        m.put32(FAST_TABLE+8,0);m.copper(2,NEUTRAL)
+        m.stale_free=0;m.close();m.empty_wide();neg+=1
     print('S2D_P3_PUBLIC_DISPLAY_PASS',layout,'moves',moves,'changes',changes,
           'negative',neg,'cycles',cycles,flush=True)
 
