@@ -128,26 +128,32 @@ def build_s2c(vasm, *, diagnostic=False, viewport_chain=False):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert [(r['name'],r['signature']) for r in rows]==[(r['name'],r['signature']) for r in audit['tokens']]
     assert len([r for r in rows if r['signature']])==105
-    from verify_m19_s2c_delivery import S2C_SHA, S2CD_SHA, verify_library, historical_p1c
+    from verify_m19_s2c_delivery import (S2C_SHA,S2CD_SHA,S2CE_SHA,
+                                           verify_library,historical_p1c,historical_p1d)
     digest=sha256(before[0]).hexdigest()
-    if digest in (S2C_SHA,S2CD_SHA):
+    if digest in (S2C_SHA,S2CD_SHA,S2CE_SHA):
         installed=before[0]
         verify_library(installed,before[1])
-        baseline=historical_p1c() if digest==S2CD_SHA else installed
+        baseline=installed if digest==S2C_SHA else historical_p1c()
         verify_library(baseline,before[1])
         if diagnostic:
             ct,cp,cz=unpack_ap20(baseline)
             assert nt==ct and nz==cz.replace(b'S2c-P2',b'S2c-E1' if viewport_chain else b'S2c-D1')
             assert len(cp)==len(new)
             assert [i for i,(a,b) in enumerate(zip(cp,new)) if a!=b]==[SPR]
-            if digest==S2CD_SHA:
+            if digest in (S2CD_SHA,S2CE_SHA):
+                diag=installed if digest==S2CD_SHA else historical_p1d()
+                verify_library(diag,before[1])
                 if viewport_chain:
-                    dt,dp,dz=unpack_ap20(installed)
+                    dt,dp,dz=unpack_ap20(diag)
                     assert nt==dt and nz==dz.replace(b'S2c-D1',b'S2c-E1')
                     assert [i for i,(a,b) in enumerate(zip(dp,new)) if a!=b]==[SPR]
+                    if digest==S2CE_SHA:
+                        verify_library(image,before[1])
+                        assert image==installed
                 else:
                     verify_library(image,before[1])
-                    assert image==installed
+                    assert image==diag
         else:
             verify_library(image,before[1])
             assert image==baseline

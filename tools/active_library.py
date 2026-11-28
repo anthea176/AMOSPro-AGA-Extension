@@ -67,8 +67,9 @@ S2B_SHA="b44edbbcf4b3c02cb6527ea0f002bee863c992dd4b670636e7431a1b69e1a2fa"  # Ex
 S2R_SHA="7e1dbfc26f9ae455b7cd8eca01a272c1ea1c7b83ad5a0739f631fd766959553a"  # Exact S2r-P1 Gate A 46059388877
 S2C_SHA="00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb"  # Exact S2c-P1c Gate A 46072322336
 S2CD_SHA="a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026"  # Exact S2c-P1d Gate A 46083896471
-SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA)
-SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA),(154352,S2R_SHA),(159844,S2C_SHA),(160812,S2CD_SHA))
+S2CE_SHA="7a4060cb3df1b40cad223af4640ee4be3e19ebb6add9dc0d4ab44aaf2ae1f310"  # Exact S2c-P1e Gate A 46123061368 and 46124380826
+SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA)
+SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA),(154352,S2R_SHA),(159844,S2C_SHA),(160812,S2CD_SHA),(160896,S2CE_SHA))
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -309,7 +310,7 @@ def frozen_s1p1i(candidate: bytes, protected: bytes) -> bytes:
     from compiler_relocation import repack_ap20, unpack_ap20
     from compiler_bridge_v2_probe import DISPATCH_V2
     from build_m19_s1p1f_l2b_get_sprite_ap20 import TITLE as parent_title
-    if sha256(candidate).hexdigest() in (S2R_SHA,S2C_SHA,S2CD_SHA):
+    if sha256(candidate).hexdigest() in (S2R_SHA,S2C_SHA,S2CD_SHA,S2CE_SHA):
         from verify_m19_s2r_delivery import pre_s2r_library
         candidate=pre_s2r_library(candidate,protected)
     if sha256(candidate).hexdigest()==S1P2LC_SHA:
@@ -476,10 +477,14 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S2CE_SHA:
+        frozen_p2d(good)
+        verify_s2c(cur,good)
+        return cur,good,"M19 S2c-P1e ViewPort chain Sprite ACTIVE TEST CANDIDATE; exact $VER S2c-E1; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S2CD_SHA:
         frozen_p2d(good)
         verify_s2c(cur,good)
-        return cur,good,"M19 S2c-P1d diagnostic Sprite ACTIVE TEST CANDIDATE; exact $VER S2c-D1; full MC68020 Gate A PASS; B/C/D NOT TESTED; L2b LAST_GOOD protected"
+        return cur,good,"M19 S2c-P1d diagnostic Sprite ACTIVE TEST CANDIDATE; exact $VER S2c-D1; full MC68020 Gate A PASS; Runtime B FAIL ERR10/check5; C/D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S2C_SHA:
         frozen_p2d(good)
         verify_s2c(cur,good)

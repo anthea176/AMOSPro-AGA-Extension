@@ -160,19 +160,20 @@ def main():
     p.add_argument('--temp',required=True,type=Path)
     args=p.parse_args()
     before=protected()
-    from verify_m19_s2c_delivery import pre_s2c_pair, S2C_SHA, S2CD_SHA, verify_asc as verify_s2c_asc, verify_abk as verify_s2c_abk
+    from verify_m19_s2c_delivery import pre_s2c_pair, S2C_SHA, S2CD_SHA, S2CE_SHA, verify_asc as verify_s2c_asc, verify_abk as verify_s2c_abk
     parent=pre_s2c_pair(before)
     asc,abk=prepare(parent[2])
     assert (asc,abk)==prepare(parent[2])
     verify_s2c_asc(asc)
     verify_s2c_abk(abk)
-    if sha256(before[0]).hexdigest() in (S2C_SHA,S2CD_SHA):
+    if sha256(before[0]).hexdigest() in (S2C_SHA,S2CD_SHA,S2CE_SHA):
         assert asc==before[2] and abk==(Path(__file__).resolve().parents[1]/'tests/current/AGSP_S2C_MIXED.ABK').read_bytes()
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_S2C_MIXED.ABK',abk)):
         with (args.temp/name).open('xb') as out:out.write(data)
     # Emit generated campaign identity before building, but never install.
     identify('S2C_ASC',asc);identify('S2C_ABK',abk)
-    image,info=build_s2c(args.vasm,diagnostic=sha256(before[0]).hexdigest()==S2CD_SHA)
+    digest=sha256(before[0]).hexdigest()
+    image,info=build_s2c(args.vasm,diagnostic=digest in (S2CD_SHA,S2CE_SHA),viewport_chain=digest==S2CE_SHA)
     assert sha256(image).hexdigest()==info['sha256']
     identify('S2C_LIB',image)
     assert protected()==before
