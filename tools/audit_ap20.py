@@ -61,10 +61,12 @@ def parse(raw):
 def walk_tokens(tokens):
     """Use the loader's even alignment, never a search for command substrings."""
     pos = 0
+    pending = None
     while True:
         require(pos + 6 <= len(tokens), 'missing six-byte token terminator')
         instruction, function = struct.unpack_from('>HH', tokens, pos)
         if instruction == 0:
+            require(pending is None, 'unterminated overloaded token chain')
             require(not any(tokens[pos:]), 'early terminator or unsupported metadata')
             return
         name_end = pos + 4
@@ -75,11 +77,37 @@ def walk_tokens(tokens):
         while sig_end < len(tokens) and tokens[sig_end] < 128:
             sig_end += 1
         require(sig_end < len(tokens), 'unterminated token signature')
-        require(tokens[sig_end] == 255, 'unsupported signature terminator')
-        name = bytes(x & 127 for x in tokens[pos+4:name_end+1]).decode('ascii')
+        terminator = tokens[sig_end]
+        require(terminator in (254,255), 'unsupported signature terminator')
+        raw_name = tokens[pos+4:name_end+1]
+        name = bytes(x & 127 for x in raw_name).decode('ascii')
         signature = tokens[name_end+1:sig_end].decode('ascii')
-        yield dict(offset=pos, instruction=instruction, function=function,
+        row = dict(offset=pos, instruction=instruction, function=function,
                    name=name, signature=signature)
+        # AMOS official +Compact.s and Intuition itokens.s:
+        # !name, signature, -2; immediately following $80, signature, -1.
+        # +Verif.s VerC4 steps to the following record on -2.
+        if pending is not None:
+            require(raw_name == b'\x80' and bool(signature),
+                    'overload continuation must have empty name and signature')
+            logical_name, first_type, seen = pending
+            require(signature[0] == first_type and signature not in seen,
+                    'overload type or duplicate signature')
+            seen.add(signature)
+            row.update(name=logical_name, continuation=True,
+                       more=terminator==254)
+            if terminator == 255:
+                pending = None
+        elif name.startswith('!'):
+            require(len(name)>1 and bool(signature) and terminator==254,
+                    'malformed overloaded token head')
+            row.update(name=name[1:], continuation=False, more=True)
+            pending = (name[1:],signature[0],{signature})
+        else:
+            require(terminator==255, 'continuation without overloaded token head')
+            require(raw_name!=b'\x80' or (pos==0 and not signature),
+                    'orphan unnamed token')
+        yield row
         pos = (sig_end + 2) & ~1
 
 

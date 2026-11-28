@@ -80,7 +80,7 @@ class SpriteMachine(ContractMachine):
         self.pending_view=False
         self.palette_mode=True
         self.entries_sprite={}
-        api={x['name']:x for x in walk_tokens(tok)}
+        api={x['name']:x for x in walk_tokens(tok) if not x.get('continuation')}
         for n,name in enumerate(('aga sprite','aga sprite off','aga sprite bank free')):
             index=api[name]['function']
             stub=parts[index]

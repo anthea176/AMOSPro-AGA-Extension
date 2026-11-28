@@ -20,6 +20,12 @@ class Layered(HotClip):
         super().__init__(image,info,layout,width,version)
         _,parts,_=unpack_ap20(image)
         index,group=info['private_entry'],info['sprite_group']
+        if info.get('public_overload'):
+            from audit_ap20 import walk_tokens
+            tok,_,_=unpack_ap20(image)
+            rows=[r for r in walk_tokens(tok) if r['name']=='aga sprite']
+            assert [r['signature'] for r in rows]==['00,0,0,0','00,0,0,0,0']
+            assert rows[1]['continuation'] and rows[1]['function']==index
         stub=parts[index]
         assert parts[index-1]==GETP
         assert stub[:2]==RBSR and unpack_from('>HH',stub,2)==(group,info['private_offset'])
@@ -34,7 +40,8 @@ class Layered(HotClip):
         self.layer_entry=pc
 
     def sprite5(self,n=1,x=30,y=40,image=7,layer=0):
-        return self.invoke_any(self.layer_entry,layer,(image,y,x,n))
+        result=self.invoke_any(self.layer_entry,layer,(image,y,x,n))
+        return result-(1<<32) if result&0x80000000 else result
 
     def layer_frame(self,layer,n,ident,x,y):
         self.clipped(2*layer,ident,x,y)
