@@ -11,7 +11,7 @@ permissions:
 jobs:
   prepare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,6 +20,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Restore pinned VASM
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM on cache miss
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
       - name: Install pinned MC68020 test tools
         run: python -m pip install --disable-pip-version-check unicorn==2.1.4 capstone==5.0.9
       - name: Prepare and preflight without activation
@@ -29,5 +45,36 @@ jobs:
           python -B tools/verify_m19_s2e_delivery.py
           python -B tools/prepare_m19_s2f_campaign.py --temp "$RUNNER_TEMP/s2f"
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/s2f/SPRITE_PUBLIC.asc"
+          python -B tools/verify_m19_s2e_delivery.py
+          PYTHONPATH=tools python -B - <<'PY'
+          import base64, hashlib, os
+          from pathlib import Path
+          from build_m19_s2f_in_memory import build_s2f, protected
+          root=Path(os.environ["RUNNER_TEMP"])
+          before=protected()
+          vasm=root/"vasm/vasmm68k_mot"
+          lib,meta=build_s2f(vasm)
+          other,second=build_s2f(vasm)
+          assert lib==other and meta==second and not meta['installable']
+          assert meta['parent_sha']=="3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3"
+          assert meta['unit142_free']==472 and meta['sprite_group_free']==45570
+          assert meta['commands']==105 and meta['entries']==219
+          assert meta['pc16_max']==meta['reserve_pc16']==3658
+          assert meta['reserve_bytes']==16384
+          files=[
+              ("LIB",lib,162288,"6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66","d58c985692d88b08df2d55b690b43ed47b087b13"),
+              ("ASC",(root/"s2f/SPRITE_PUBLIC.asc").read_bytes(),22943,"96c9c526f3e37d5e11d023b7ee8681e6114dc0e22f5aff1c8aaf6ff05590bb48","ece785049b2c82ad00e44455f84d7f7cbfb639af"),
+              ("ABK",(root/"s2f/AGSP_HOTSPOT_TEST.ABK").read_bytes(),6836,"df3b9af963c65ada0d294708761f9990e240aa771e58b53bf8840d8c98d15d8a","fcc7f978aa73ae755d8028905f8e4a84c001214e"),
+          ]
+          for tag,data,size,digest,blob in files:
+              assert len(data)==size and hashlib.sha256(data).hexdigest()==digest
+              assert hashlib.sha1(b"blob "+str(size).encode()+b"\x00"+data).hexdigest()==blob
+          assert protected()==before
+          for tag,data,size,digest,blob in files:
+              print("S2F_DELIVERY_ID",tag,size,digest,blob,flush=True)
+              for i in range(0,size,1536):
+                  print("S2F_PAYLOAD",tag,i//1536,base64.b64encode(data[i:i+1536]).decode(),flush=True)
+          print("S2F_DELIVERY_BYTES_PASS_NOT_QUALIFICATION_OR_ACTIVATION",flush=True)
+          PY
           python -B tools/verify_m19_s2e_delivery.py
           git diff --exit-code
