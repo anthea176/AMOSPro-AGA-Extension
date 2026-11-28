@@ -282,6 +282,7 @@ def cases(image,info,layout):
                 m.close(end=(kinds==(4,4,4)))
                 assert not m.get(STATE)
                 m.empty_wide();cycles+=1
+                print('S2D_P3_CLOSE_PASS',layout,w,version,kinds,flush=True)
         m=WidePublic(image,info,layout,w)
         assert m.sprite(n=42,image=1)==1
         assert m.sprite(n=42,image=2)==1

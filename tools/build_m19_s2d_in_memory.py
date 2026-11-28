@@ -42,8 +42,8 @@ def build_s2d(vasm):
             # lifetime header cleanup when the root count is zero.
             reclaim=work/'M19_S2B_CLOSE_RECLAIM_MC68020.s'
             reclaim.write_text(once(reclaim.read_text(encoding='ascii'),
-                '    tst.l (a3)\n    beq.w p2k_close_unlink\n',
-                '    tst.l (a3)\n    bne.w p2k_close_unlink\n'),encoding='ascii')
+                '    tst.l (a3)\n    beq p2k_close_unlink\n',
+                '    tst.l (a3)\n    bne p2k_close_unlink\n'),encoding='ascii')
             reg=(S2/P3_FILES[1]).read_text(encoding='ascii')
             (work/'M19_S2B_REGISTRY_MC68020.s').write_text(relax_local(reg),encoding='ascii')
             persist=(S2/P3_FILES[2]).read_text(encoding='ascii')
