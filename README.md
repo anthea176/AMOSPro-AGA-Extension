@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**0.15.0-alpha.1 (M19 S2d-P3e) — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 160,148 bytes, SHA256 `a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef`, 105 commands / 219 AP20 entries. Sprite capture and display at 16/32/64 pixels, 2/4 planes, three pairs, one common width per active context. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46131159222); real B/C/D not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib). [Qualification and limits](docs/M19_S2D_WIDE_SPRITES_0_15_0.md) · [Campaign](tests/current/README.md).
+**0.15.0-alpha.1 (M19 S2d-P3e) — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 160,148 bytes, SHA256 `a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef`, 105 commands / 219 AP20 entries. Sprite capture and display at 16/32/64 pixels, 2/4 planes, three pairs, one common width per active context. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46131159222); [Runtime B PASS, visual OK](docs/M19_S2D_RUNTIME_2026-11-28.md); real Compiler C deferred, D untested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib). [Qualification and limits](docs/M19_S2D_WIDE_SPRITES_0_15_0.md) · [Campaign](tests/current/README.md).
 
 **Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2C_MIXED.ABK](tests/current/AGSP_S2C_MIXED.ABK), same folder. [Protocol](tests/current/README.md). Three simple/attached Sprites, 450 frame changes and moves, capture, rejection, closure.
 

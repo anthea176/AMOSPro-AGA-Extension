@@ -486,7 +486,7 @@ def verify_active(root: Path):
     if current_sha == S2D_SHA:
         frozen_p2d(good)
         verify_s2d(cur,good)
-        return cur,good,"M19 S2d-P3e 0.15.0-alpha.1 ACTIVE TEST CANDIDATE; exact MC68020 Gate A PASS; real B/C/D NOT TESTED; L2b LAST_GOOD protected"
+        return cur,good,"M19 S2d-P3e 0.15.0-alpha.1 ACTIVE TEST CANDIDATE; exact MC68020 Gate A and Runtime B functional PASS; real Compiler C deferred, D NOT TESTED; L2b LAST_GOOD protected"
     if current_sha == S2CE_SHA:
         frozen_p2d(good)
         verify_s2c(cur,good)
