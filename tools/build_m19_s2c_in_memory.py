@@ -21,7 +21,7 @@ MAP={209:208,211:210,213:212}
 COMMON=dict(zip(('M19_S2B_PERSIST_ROOT_MC68020.s','M19_S2B_REGISTRY_MC68020.s',
                  'M19_S2B_RETIRE_PAIR_MC68020.s','M19_S2B_ALLOCATE_MC68020.s'),NAMES))
 
-def build_s2c(vasm, *, diagnostic=False, viewport_chain=False, final_sprite_source_observer=None):
+def build_s2c(vasm, *, diagnostic=False, viewport_chain=False, final_sprite_source_observer=None, final_close_source_observer=None):
     assert not viewport_chain or diagnostic
     vasm=Path(vasm).resolve()
     before=protected()
@@ -46,6 +46,8 @@ def build_s2c(vasm, *, diagnostic=False, viewport_chain=False, final_sprite_sour
             normalized[off:off+len(span)]=old[off:off+len(span)]
         assert bytes(normalized)==old and len(set(targets))==4
         staged.update(close=new,targets=targets,root=root)
+        if final_close_source_observer is not None:
+            final_close_source_observer(folder,new,root)
     def sprite_observer(folder,native,delta,at):
         assert delta==staged['root']-0x1c2
         for dst,src in COMMON.items():shutil.copyfile(S2/src,folder/dst)

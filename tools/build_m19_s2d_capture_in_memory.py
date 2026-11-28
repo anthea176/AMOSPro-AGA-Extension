@@ -22,7 +22,7 @@ FILES=('M19_S2D_GET_PUBLIC_MC68020.s','M19_S2D_CAPTURE_PIPELINE_MC68020.s',
        'M19_S2D_SCREEN_RGB24_MC68020.s','M19_S2D_AGSP_CAPTURE_MC68020.s',
        'M19_S2D_AGSP_REPACK_MC68020.s')
 
-def build_s2d_capture(vasm):
+def build_s2d_capture(vasm, *, final_source_observer=None, final_close_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
     assert sha256(before[0]).hexdigest()==S2CE_SHA
@@ -55,8 +55,11 @@ def build_s2d_capture(vasm):
             assert all(wide[new_at+i:new_at+i+2]==b'\x60\x00' for i in (0,4,8))
             assert len(wide)-new_at==len(full)-at
             staged.update(old=DISPATCH_V2+full,new=DISPATCH_V2+wide,at=at,new_at=new_at)
+            if final_source_observer is not None:
+                final_source_observer(work,wide,delta,new_at)
     parent,info=build_s2c(vasm,diagnostic=True,viewport_chain=True,
-                         final_sprite_source_observer=observe)
+                         final_sprite_source_observer=observe,
+                         final_close_source_observer=final_close_source_observer)
     assert parent==before[0] and sha256(parent).hexdigest()==S2CE_SHA
     tok,parts,title=unpack_ap20(parent)
     assert len(parts)==219 and parts[SPR]==staged['old']
