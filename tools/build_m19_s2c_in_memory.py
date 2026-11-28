@@ -21,7 +21,7 @@ MAP={209:208,211:210,213:212}
 COMMON=dict(zip(('M19_S2B_PERSIST_ROOT_MC68020.s','M19_S2B_REGISTRY_MC68020.s',
                  'M19_S2B_RETIRE_PAIR_MC68020.s','M19_S2B_ALLOCATE_MC68020.s'),NAMES))
 
-def build_s2c(vasm, *, diagnostic=False, viewport_chain=False):
+def build_s2c(vasm, *, diagnostic=False, viewport_chain=False, final_sprite_source_observer=None):
     assert not viewport_chain or diagnostic
     vasm=Path(vasm).resolve()
     before=protected()
@@ -89,6 +89,8 @@ def build_s2c(vasm, *, diagnostic=False, viewport_chain=False):
         assert full[:at]==native[:at]
         assert all(full[at+i:at+i+2]==b'\x60\x00' for i in (0,4,8))
         staged.update(sprite=DISPATCH_V2+full,at=at)
+        if final_sprite_source_observer is not None:
+            final_sprite_source_observer(folder,full,delta,at)
     parent,info=build_s2c_capture(vasm,sprite_source_observer=sprite_observer,
                                     close_source_observer=close_observer)
     assert sha256(parent).hexdigest()==P1A_SHA
