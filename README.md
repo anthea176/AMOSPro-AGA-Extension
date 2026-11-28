@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**0.15.0-alpha.2 (M19 S2e) — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 160,352 bytes, SHA256 `3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3`, 105 commands / 219 AP20 entries. Signed per-image Sprite hotspots with 16/32/64 pixel widths and 2/4 planes. [Contract](docs/M19_S2E_HOTSPOT_0_15_0.md) · [Campaign](tests/current/README.md). [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib).
+**0.15.0-alpha.3 (M19 S2f) — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 162,288 bytes, SHA256 `6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66`, 105 commands / 219 AP20 entries. Fixed-width Sprite clipping and signed per-image hotspots, 16/32/64 pixels, 2/4 planes. [Contract](docs/M19_S2F_CLIPPING_0_15_0.md) · [Campaign](tests/current/README.md). [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib).
 
 **Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2C_MIXED.ABK](tests/current/AGSP_S2C_MIXED.ABK), same folder. [Protocol](tests/current/README.md). Three simple/attached Sprites, 450 frame changes and moves, capture, rejection, closure.
 
@@ -28,7 +28,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API 0.15.0-alpha.2** — **105 commands / 219 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
+**Current library API 0.15.0-alpha.3** — **105 commands / 219 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -113,7 +113,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | In AGA double buffering, 1 prepares Bobs at each `Aga Swap` and 0 restores manual mode (default). Configuration requires a CLEAN page. A READY page is reused on the next Swap. Returns 1 on success and 0 on refusal. |
 | **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | S2c test candidate. Select or create an AMOS DATA AGSP bank; rejects foreign or invalid banks. No DMA allocation. |
 | **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Capture the safe inactive AGA buffer into the selected AGSP bank; inclusive bounds, width 16/32/64, height 1..256, 0..3 opaque RGB24 colours use 2 planes, 4..15 use 4 planes, 16 or more rejected without altering the bank. Replaces image ID, no DMA display. |
-| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Display, move or change a logical object's frame (ID 1..64, up to three objects, common width 16/32/64 for active objects, signed hotspot per image). 2 planes: 3 opaque colours; 4 attached planes: 15 opaque colours, pens 17..31. Pairs 2/3, 4/5, 6/7, matching simple palettes 21..23, 25..27, 29..31. Same height, depth and palette per object; Off then Show to change depth; retire every object before switching width. graphics.library V39/40 only in this candidate. No ColorMap writes. X/Y is the logical anchor; origin = X/Y minus the current image hotspot. Zero hotspot preserves old behaviour. Refuses overflow or an image not fully inside 320x256 (-128); no clipping or public hotspot setter yet. Same-image moves use the cached hotspot even after source bank erase. Returns 1 or negative diagnostic; test =1. |
+| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Display, move or change a logical object's frame (ID 1..64, up to three objects, common width 16/32/64 for active objects, signed hotspot per image). 2 planes: 3 opaque colours; 4 attached planes: 15 opaque colours, pens 17..31. Pairs 2/3, 4/5, 6/7, matching simple palettes 21..23, 25..27, 29..31. Same height, depth and palette per object; Off then Show to change depth; retire every object before switching width. graphics.library V39/40 only in this candidate. No ColorMap writes. X/Y is the logical anchor; origin = X/Y minus the current image hotspot. Zero hotspot preserves old behaviour. Clips to 320x256 without changing the DMA width; a fully outside object remains reserved and transparent, and can return. Signed overflow is refused (-128). Same-image moves use the retained original and hotspot even after source bank erase. No public hotspot setter yet. Returns 1 or negative diagnostic; test =1. |
 | **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire only the specified logical object, release confirmed private allocations; redisplay from the selected bank. Returns 1/0. |
 | **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Release matching Sprite resources after confirmed retirement, without erasing the AMOS data bank. Returns 1/0. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |

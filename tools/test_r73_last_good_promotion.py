@@ -8,7 +8,7 @@ No AMOS Compiler, WinUAE, benchmarks or binary writes.
 from hashlib import sha256
 from pathlib import Path
 
-from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active, verify_p2d_l2, verify_p2d_l2b
+from active_library import LAST_GOOD_SHA, R68_SHA, R73_SHA, R74_SHA, R75_SHA, R76_SHA, R77_SHA, R78_SHA, R79_SHA, R80_SHA, R81_SHA, R82_SHA, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, S2F_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active, verify_p2d_l2, verify_p2d_l2b
 from audit_ap20 import inspect, parse
 from build_m18_r68_cblock import build as build_r68
 from build_opt020_p3_r73 import build as build_r73
@@ -68,11 +68,15 @@ def main():
     assert not promoted_report["issues"]
     named=[t for t in promoted_report['tokens'] if t['name'].startswith(('aga ','get aga ','make aga ','no aga '))]
     assert len(named)==100 and named[-1]['name']=='aga bob auto update'
-    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d","M19 S1-P1e","M19 S1-P1f","M19 S1-P1g","M19 S1-P1h","M19 S1-P1i", "M19 S1-P2i", "M19 S1-P2j", "M19 S1-P2k", "M19 S1-P2l-b", "M19 S1-P2l-c", "M19 S1-P2m", "M19 S2a-P1", "M19 S2b-P1", "M19 S2r-P1", "M19 S2c-P1c", "M19 S2c-P1d", "M19 S2c-P1e", "M19 S2d-P3e", "M19 S2e"))
+    assert label.startswith(("R84 v0.13.29", "R85 v0.13.30", "R86 v0.13.31", "R87 v0.13.32","R88 v0.13.33","M19 P0c","M19 P0d","M19 AP20 V2 ISLANDS","M19 P0j-b7","M19 B7-m2","M19 B8 Clear/Update","M19 B8 S1","M19 P0 Bank Free","M19 P1e","M19 P2d","M19 S1-P1e","M19 S1-P1f","M19 S1-P1g","M19 S1-P1h","M19 S1-P1i", "M19 S1-P2i", "M19 S1-P2j", "M19 S1-P2k", "M19 S1-P2l-b", "M19 S1-P2l-c", "M19 S1-P2m", "M19 S2a-P1", "M19 S2b-P1", "M19 S2r-P1", "M19 S2c-P1c", "M19 S2c-P1d", "M19 S2c-P1e", "M19 S2d-P3e", "M19 S2e", "M19 S2f"))
     if cur!=good:
         from c2p_r74_relink import check_cross_r74
         digest=sha256(cur).hexdigest()
-        if digest==S2E_SHA:
+        if digest==S2F_SHA:
+            from active_library import verify_s2f
+            verify_s2f(cur,good)
+            assert len(cur)==162288 and label.startswith('M19 S2f')
+        elif digest==S2E_SHA:
             from active_library import verify_s2e
             verify_s2e(cur,good)
             assert len(cur)==160352 and label.startswith('M19 S2e')

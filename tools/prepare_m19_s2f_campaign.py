@@ -101,8 +101,13 @@ def main():
     assert not temp.is_relative_to(ROOT)
     before=protected()
     bank=(ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK').read_bytes()
-    asc=prepare(before[2],bank)
-    assert asc==prepare(before[2],bank)
+    from verify_m19_s2f_delivery import S2F_SHA,pre_s2f_pair,verify_asc as verify_s2f_asc
+    source=pre_s2f_pair(before)[2]
+    asc=prepare(source,bank)
+    assert asc==prepare(source,bank)
+    if sha256(before[0]).hexdigest()==S2F_SHA:
+        verify_s2f_asc(asc)
+        assert asc==before[2]
     temp.mkdir(parents=True,exist_ok=True)
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_HOTSPOT_TEST.ABK',bank)):
         with (temp/name).open('xb') as out:out.write(data)
