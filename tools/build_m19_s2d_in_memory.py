@@ -26,7 +26,12 @@ P3_FILES=('M19_S2D_PUBLIC_MC68020.s','M19_S2D_REGISTRY_MC68020.s',
           'M19_S2D_EXT_RETIRE_MC68020.s','M19_S2D_EXT_FRAME_MC68020.s',
           'M19_S2D_EXT_HIDDEN_SHOW_MC68020.s','M19_S2D_EXT_DROP_STAGE_MC68020.s')
 
-def build_s2d(vasm):
+def build_s2d(vasm, *, hotspots=False):
+    # Default path remains the exact S2d-P3e builder.
+    if hotspots:
+        from m19_s2e_hotspot_source import transform
+    else:
+        def transform(name,source):return source
     vasm=Path(vasm).resolve()
     before=protected();staged={}
     def close_observer(folder,old,root):
@@ -44,9 +49,9 @@ def build_s2d(vasm):
             reclaim.write_text(once(reclaim.read_text(encoding='ascii'),
                 '    tst.l (a3)\n    beq p2k_close_unlink\n',
                 '    tst.l (a3)\n    bne p2k_close_unlink\n'),encoding='ascii')
-            reg=(S2/P3_FILES[1]).read_text(encoding='ascii')
+            reg=transform(P3_FILES[1],(S2/P3_FILES[1]).read_text(encoding='ascii'))
             (work/'M19_S2B_REGISTRY_MC68020.s').write_text(relax_local(reg),encoding='ascii')
-            persist=(S2/P3_FILES[2]).read_text(encoding='ascii')
+            persist=transform(P3_FILES[2],(S2/P3_FILES[2]).read_text(encoding='ascii'))
             persist=compact_root(once(persist,'    bra.w s2b_p2h_enter\n    bra.w s2b_p2h_leave\n',''))
             (work/'M19_S2B_PERSIST_ROOT_MC68020.s').write_text(relax_local(persist),encoding='ascii')
             master=work/'M19_P2D_UNIT142_EDITABLE.s'
@@ -82,7 +87,13 @@ def build_s2d(vasm):
             prefix=src.split(marker)[0]
             probe=work/'s2d_prefix.s';probe.write_text(prefix,encoding='ascii')
             assert assemble_bin(vasm,work,probe,'prefix.bin')==wide[:at]
-            for name in P3_FILES:shutil.copyfile(S2/name,work/name)
+            for name in P3_FILES:
+                if hotspots and name in (P3_FILES[0],P3_FILES[1],P3_FILES[2],P3_FILES[7]):
+                    (work/name).write_text(transform(name,(S2/name).read_text(encoding='ascii')),encoding='ascii')
+                else:
+                    shutil.copyfile(S2/name,work/name)
+            if hotspots:
+                shutil.copyfile(S2/'M19_S2E_HOTSPOT_MC68020.s',work/'M19_S2E_HOTSPOT_MC68020.s')
             prep=work/P3_FILES[3]
             prep.write_text(once(prep.read_text(encoding='ascii'),
                     '    include "M19_S1P1C_AGSP_VALIDATE_MC68020.s"\n',''),encoding='ascii')
@@ -108,7 +119,7 @@ def build_s2d(vasm):
     reserved=pc16_displacements(trial)
     # Preserve AP20 title terminators/padding; use standard version
     # at the actual integrated build, never rename historical artifacts.
-    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.1')
+    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.2' if hotspots else b'0.15.0-alpha.1')
     assert title2!=title and not len(title2)&1
     image=repack_ap20(parent,tok,parts,title2)
     assert unpack_ap20(image)==(tok,parts,title2)
@@ -117,14 +128,14 @@ def build_s2d(vasm):
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
     assert [i for i,(x,y) in enumerate(zip(old,parts)) if x!=y]==[142,213]
     from verify_m19_s2d_delivery import S2D_SHA,verify_library
-    if sha256(before[0]).hexdigest()==S2D_SHA:
+    if not hotspots and sha256(before[0]).hexdigest()==S2D_SHA:
         verify_library(image,before[1])
         assert image==before[0]
     assert protected()==before
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
         parent_sha=P1_SHA,unit142=len(parts[142]),unit142_free=MAX_UNIT_BYTES-len(parts[142]),
-        root=staged['root'],targets=staged['targets'],record_bytes=168,
+        root=staged['root'],targets=staged['targets'],record_bytes=172 if hotspots else 168,
         sprite_unit_bytes=len(parts[213]),sprite_at=staged['at'],
         sprite_group_free=MAX_UNIT_BYTES-len(parts[213]),pc16_max=max(map(abs,links.values())),
         reserve_pc16=max(map(abs,reserved.values())),wide_display=True,installable=False)
