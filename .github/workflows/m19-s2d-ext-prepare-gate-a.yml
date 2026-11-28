@@ -1,0 +1,57 @@
+name: M19 S2d P2a detached ExtSprite OS ABI (source only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/native/m19_s2/M19_S2D_EXT_PREPARE_MC68020.s'
+      - 'src/native/m19_s1/M19_S1P1C_AGSP_VALIDATE_MC68020.s'
+      - 'tools/test_m19_s2d_ext_prepare_cpu.py'
+      - '.github/workflows/m19-s2d-ext-prepare-gate-a.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  detached-ext:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate policies and exact active pair
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B -m py_compile tools/test_m19_s2d_ext_prepare_cpu.py
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+      - name: Restore pinned VASM Motorola assembler
+        id: vasm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vasm/vasmm68k_mot
+          key: vasm-m68k-mot-${{ runner.os }}-${{ runner.arch }}-ubuntu2404-8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+      - name: Build pinned VASM if not cached
+        if: steps.vasm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/vasm"
+          git -C "$RUNNER_TEMP/vasm" init
+          git -C "$RUNNER_TEMP/vasm" remote add origin https://github.com/rhargreaves/vasm.git
+          git -C "$RUNNER_TEMP/vasm" fetch --depth 1 origin 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          git -C "$RUNNER_TEMP/vasm" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/vasm" rev-parse HEAD)" = 8b85ef6eb7d257bf29a56ddc63cf2be20a317256
+          make -C "$RUNNER_TEMP/vasm" CPU=m68k SYNTAX=mot -j2
+      - name: Assemble detached ExtSprite preparation MC68020
+        run: |
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2d_ext.bin" src/native/m19_s2/M19_S2D_EXT_PREPARE_MC68020.s
+      - name: Install pinned MC68020 emulator
+        run: python -m pip install --disable-pip-version-check unicorn==2.1.4
+      - name: Validate documented graphics.library call ABI and rollback
+        run: PYTHONPATH=tools python -B tools/test_m19_s2d_ext_prepare_cpu.py "$RUNNER_TEMP/s2d_ext.bin"
+      - name: Confirm canonical pair and protected files were not changed
+        run: |
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+          git diff --exit-code -- dist/ tests/current/ tests/passed/
