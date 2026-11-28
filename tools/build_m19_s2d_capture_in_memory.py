@@ -25,7 +25,9 @@ FILES=('M19_S2D_GET_PUBLIC_MC68020.s','M19_S2D_CAPTURE_PIPELINE_MC68020.s',
 def build_s2d_capture(vasm, *, final_source_observer=None, final_close_source_observer=None):
     vasm=Path(vasm).resolve()
     before=protected()
-    assert sha256(before[0]).hexdigest()==S2CE_SHA
+    from verify_m19_s2d_delivery import pre_s2d_pair
+    lineage=pre_s2d_pair(before)
+    assert sha256(lineage[0]).hexdigest()==S2CE_SHA
     assert sha256(before[1]).hexdigest()==P2DL2B_SHA
     staged={}
     def observe(folder,full,delta,at):
@@ -60,7 +62,7 @@ def build_s2d_capture(vasm, *, final_source_observer=None, final_close_source_ob
     parent,info=build_s2c(vasm,diagnostic=True,viewport_chain=True,
                          final_sprite_source_observer=observe,
                          final_close_source_observer=final_close_source_observer)
-    assert parent==before[0] and sha256(parent).hexdigest()==S2CE_SHA
+    assert parent==lineage[0] and sha256(parent).hexdigest()==S2CE_SHA
     tok,parts,title=unpack_ap20(parent)
     assert len(parts)==219 and parts[SPR]==staged['old']
     new=list(parts);new[SPR]=staged['new']

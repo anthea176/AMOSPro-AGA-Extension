@@ -154,11 +154,15 @@ def verify_abk(abk):
     return True
 
 def pre_s2c_library(candidate,good):
+    from verify_m19_s2d_delivery import pre_s2d_library
+    candidate=pre_s2d_library(candidate,good)
     if sha256(candidate).hexdigest() not in (S2C_SHA,S2CD_SHA,S2CE_SHA):return candidate
     verify_library(candidate,good)
     return historical('dist/AMOSPro_AGA.Lib')
 
 def pre_s2c_pair(original):
+    from verify_m19_s2d_delivery import pre_s2d_pair
+    original=pre_s2d_pair(original)
     candidate,good,asc,abk=original
     if sha256(candidate).hexdigest() not in (S2C_SHA,S2CD_SHA,S2CE_SHA):return original
     verify_asc(asc)

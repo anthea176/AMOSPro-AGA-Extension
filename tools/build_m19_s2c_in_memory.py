@@ -134,9 +134,11 @@ def build_s2c(vasm, *, diagnostic=False, viewport_chain=False, final_sprite_sour
     assert len([r for r in rows if r['signature']])==105
     from verify_m19_s2c_delivery import (S2C_SHA,S2CD_SHA,S2CE_SHA,
                                            verify_library,historical_p1c,historical_p1d)
-    digest=sha256(before[0]).hexdigest()
+    from verify_m19_s2d_delivery import pre_s2d_pair
+    lineage=pre_s2d_pair(before)
+    digest=sha256(lineage[0]).hexdigest()
     if digest in (S2C_SHA,S2CD_SHA,S2CE_SHA):
-        installed=before[0]
+        installed=lineage[0]
         verify_library(installed,before[1])
         baseline=installed if digest==S2C_SHA else historical_p1c()
         verify_library(baseline,before[1])

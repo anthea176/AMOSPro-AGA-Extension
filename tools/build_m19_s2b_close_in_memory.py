@@ -8,7 +8,7 @@ import shutil
 import re
 from struct import unpack_from
 import tempfile
-from active_library import S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, P2DL2B_SHA, frozen_p2d, frozen_s1p1i
+from active_library import S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, P2DL2B_SHA, frozen_p2d, frozen_s1p1i
 from ap20_v2_island_dispatch import pc16_displacements
 from audit_ap20 import inspect, parse, token_role_issues
 from build_m19_s1p1i_l2b_contract_in_memory import build_s1p1i
@@ -139,7 +139,7 @@ def build_s2b_close(vasm, *, source_observer=None):
     vasm=Path(vasm).resolve()
     active=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()
     good=(ROOT/'dist/AMOSPro_AGA_LAST_GOOD.Lib').read_bytes()
-    assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA,S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA)
+    assert sha256(active).hexdigest() in (S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA,S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA,S2D_SHA)
     assert sha256(good).hexdigest()==P2DL2B_SHA
     # The full editable L2b UNIT142 is reassembled below. The S2a
     # integrated builder separately authenticates and reconstructs UNIT207.

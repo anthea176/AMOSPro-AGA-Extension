@@ -153,8 +153,14 @@ def main():
     assert target.is_dir() and not target.is_relative_to(ROOT)
     src=ROOT/'tests/current/SPRITE_PUBLIC.asc'
     before=src.read_bytes()
-    asc,abk=prepare(before)
-    assert (asc,abk)==prepare(before)
+    from verify_m19_s2d_delivery import pre_s2d_pair
+    from build_m19_s2d_in_memory import protected
+    canon=protected()
+    source=pre_s2d_pair(canon)[2]
+    asc,abk=prepare(source)
+    assert (asc,abk)==prepare(source)
+    if sha256(canon[0]).hexdigest()==P3_SHA:
+        assert asc==before and abk==(ROOT/'tests/current/AGSP_WIDE_TEST.ABK').read_bytes()
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_WIDE_TEST.ABK',abk)):
         with (target/name).open('xb') as out:out.write(data)
         print('S2D_CAMPAIGN',name,len(data),sha256(data).hexdigest(),

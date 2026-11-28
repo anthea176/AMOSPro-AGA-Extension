@@ -116,6 +116,10 @@ def build_s2d(vasm):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert len([x for x in walk_tokens(tok) if x['signature']])==105
     assert [i for i,(x,y) in enumerate(zip(old,parts)) if x!=y]==[142,213]
+    from verify_m19_s2d_delivery import S2D_SHA,verify_library
+    if sha256(before[0]).hexdigest()==S2D_SHA:
+        verify_library(image,before[1])
+        assert image==before[0]
     assert protected()==before
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),

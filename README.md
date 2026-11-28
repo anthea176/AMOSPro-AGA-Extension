@@ -19,7 +19,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Libraries and tests
 
-**M19 S2c-P1e — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 160,896 bytes, SHA256 `7a4060cb3df1b40cad223af4640ee4be3e19ebb6add9dc0d4ab44aaf2ae1f310`, 105 commands / 219 AP20 entries. 2/4-plane Sprite capture and display, 3 or 15 opaque colours; bounded ViewPort chain validation and detailed diagnostics. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib). [Qualification and limits](docs/M19_S2C_P1E_VIEWPORT_CHAIN_2026-11-28.md).
+**0.15.0-alpha.1 (M19 S2d-P3e) — active TEST candidate (MC68020+).** [Library](dist/AMOSPro_AGA.Lib), 160,148 bytes, SHA256 `a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef`, 105 commands / 219 AP20 entries. Sprite capture and display at 16/32/64 pixels, 2/4 planes, three pairs, one common width per active context. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46131159222); real B/C/D not tested. [Protected P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib). [Qualification and limits](docs/M19_S2D_WIDE_SPRITES_0_15_0.md) · [Campaign](tests/current/README.md).
 
 **Active Runtime test:** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2C_MIXED.ABK](tests/current/AGSP_S2C_MIXED.ABK), same folder. [Protocol](tests/current/README.md). Three simple/attached Sprites, 450 frame changes and moves, capture, rejection, closure.
 
@@ -28,7 +28,7 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 
 ## Main AMOS commands
 
-**Current library API M19 S2c-P1e** — **105 commands / 219 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
+**Current library API 0.15.0-alpha.1** — **105 commands / 219 AP20 entries**, MC68020 minimum. Five test-only Sprite commands, not included in 0.14.1.
 | Command | Exact syntax | Parameters and behaviour |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | No arguments. Returns a nonzero value when AGA is available; do not assume TRUE is always exactly 1. |
@@ -112,8 +112,8 @@ Designed and developed by **HWARF**, with assistance from **ChatGPT (OpenAI)** f
 | **`Aga Bob Planes`** | `_OK=Aga Bob Planes(_N,_MASK)` | Selects destination planes for active Bob N (1–64). Bits 0–7 select planes of the same index. Mask 255 is the default and 0 preserves every plane. The AGBO opacity mask and collisions are independent of this setting. Returns 1 on success and 0 on refusal. |
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | In AGA double buffering, 1 prepares Bobs at each `Aga Swap` and 0 restores manual mode (default). Configuration requires a CLEAN page. A READY page is reused on the next Swap. Returns 1 on success and 0 on refusal. |
 | **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | S2c test candidate. Select or create an AMOS DATA AGSP bank; rejects foreign or invalid banks. No DMA allocation. |
-| **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Capture the safe inactive AGA buffer into the selected AGSP bank; inclusive bounds, width 16, height 1..256, 0..3 opaque RGB24 colours use 2 planes, 4..15 use 4 planes, 16 or more rejected without altering the bank. Replaces image ID, no DMA display. |
-| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Display, move or change a logical object's frame (ID 1..64, up to three objects, width 16, zero hotspot). 2 planes: 3 opaque colours; 4 attached planes: 15 opaque colours, pens 17..31. Pairs 2/3, 4/5, 6/7, matching simple palettes 21..23, 25..27, 29..31. Same height, depth and palette per object; Off then Show to change depth. No ColorMap writes. Returns 1 or negative diagnostic; test =1. |
+| **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Capture the safe inactive AGA buffer into the selected AGSP bank; inclusive bounds, width 16/32/64, height 1..256, 0..3 opaque RGB24 colours use 2 planes, 4..15 use 4 planes, 16 or more rejected without altering the bank. Replaces image ID, no DMA display. |
+| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Display, move or change a logical object's frame (ID 1..64, up to three objects, common width 16/32/64 for active objects, zero hotspot). 2 planes: 3 opaque colours; 4 attached planes: 15 opaque colours, pens 17..31. Pairs 2/3, 4/5, 6/7, matching simple palettes 21..23, 25..27, 29..31. Same height, depth and palette per object; Off then Show to change depth; retire every object before switching width. graphics.library V39/40 only in this candidate. No ColorMap writes. Returns 1 or negative diagnostic; test =1. |
 | **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire only the specified logical object, release confirmed private allocations; redisplay from the selected bank. Returns 1/0. |
 | **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Release matching Sprite resources after confirmed retirement, without erasing the AMOS data bank. Returns 1/0. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Numeric getter of persistent active Bob `N` (1..64); returns signed X in -32768..32767 or **-32769** for missing/OFF/invalid-owner Bob. No redraw or Swap. P1a Gate A only; WinUAE Runtime/Compiler pending. |

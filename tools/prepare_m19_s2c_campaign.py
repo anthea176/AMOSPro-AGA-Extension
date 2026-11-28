@@ -172,7 +172,8 @@ def main():
         with (args.temp/name).open('xb') as out:out.write(data)
     # Emit generated campaign identity before building, but never install.
     identify('S2C_ASC',asc);identify('S2C_ABK',abk)
-    digest=sha256(before[0]).hexdigest()
+    from verify_m19_s2d_delivery import pre_s2d_pair
+    digest=sha256(pre_s2d_pair(before)[0]).hexdigest()
     image,info=build_s2c(args.vasm,diagnostic=digest in (S2CD_SHA,S2CE_SHA),viewport_chain=digest==S2CE_SHA)
     assert sha256(image).hexdigest()==info['sha256']
     identify('S2C_LIB',image)
