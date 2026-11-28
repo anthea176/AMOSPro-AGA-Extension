@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**Priorité : Gate B Runtime S2e — 0.15.0-alpha.2 active.** [Gate A native PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46134733533), [régressions PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46135040114), [livraison exacte PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46157121705). S2d historique Runtime PASS, rendu OK ; Compiler réel différé. Après S2e : clipping, priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
+**Priorité : S2f P1 — clipping, source-only après Gate B Runtime et visuel PASS de 0.15.0-alpha.2.** [Preuves S2e](M19_S2E_RUNTIME_2026-11-28.md) · [Contrat et étapes S2f](M19_S2F_CLIPPING_0_15_0.md). C réelle différée, D non testée. Candidate de travail inchangée. Après S2f : priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
 
 ## 1. État actuel et objectif
 
@@ -8,7 +8,7 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [0.15.0-alpha.2 S2e](../dist/AMOSPro_AGA.Lib), 160352 octets, SHA256 `3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3`, 105 commandes / 219 AP20, MC68020+. Gate A PASS ; B/C/D réelles non testées. |
+| Lib de travail | [0.15.0-alpha.2 S2e](../dist/AMOSPro_AGA.Lib), 160352 octets, SHA256 `3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3`, 105 commandes / 219 AP20, MC68020+. Gate A et B Runtime PASS, rendu OK ; C différée, D non testée. |
 | LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S2e ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
 | ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_HOTSPOT_TEST.ABK](../tests/current/AGSP_HOTSPOT_TEST.ABK). Neuf écrans 16/32/64 simples/mixtes/attachés, 324 changements et déplacements, 18 refus géométriques attendus et régressions S2d. [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
