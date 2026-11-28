@@ -170,9 +170,25 @@ def main():
                  {'length':30},{'length':len(raw)-2},{'gfx':0},{'gfx':GFX+1}):
         reject(code,raw,invoke=opts);n+=1
     reject(code,empty_bank());n+=1
-    for off in (0,5,10,20,24,32+8,32+12):
+    # Generation is an unsigned nonzero counter: flipping a high bit
+    # is still canonical. Require zero explicitly for the negative case.
+    changed=bytearray(raw)
+    changed[24:28]=pack('>I',0x01000002)
+    check(code,bytes(changed));n+=1
+    corrupt=[]
+    for off in (0,5,10,20,32+8,32+12):
         bad=bytearray(raw);bad[off]^=1
-        reject(code,bytes(bad));n+=1
+        corrupt.append((off,bytes(bad)))
+    bad=bytearray(raw);bad[24:28]=bytes(4)
+    corrupt.append((24,bytes(bad)))
+    for off,bad in corrupt:
+        try:
+            parse_payload(bad)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(('noncanonical fixture expected',off))
+        reject(code,bad);n+=1
     print('S2D_P2A_DETACHED_EXT_ABI_PASS',n,sha256(code).hexdigest(),flush=True)
 
 if __name__=='__main__':main()
