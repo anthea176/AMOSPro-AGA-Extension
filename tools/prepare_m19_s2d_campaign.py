@@ -14,6 +14,9 @@ from test_current_ram_log import verify as verify_log
 ROOT=Path(__file__).resolve().parents[1]
 ASC_SHA='48b9d1e47d63dd401482cfb0ecc8db0646aba68f173154c26ef2b5051f0496ec'
 ABK_SHA='f8816b944102c5826f9819b84747acd61fd4468423bf815c25e128a9dcfe4e64'
+P3_SHA='a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef'
+P3_BLOB='5f3c72b68c3b6b424d173a989eecf757f13f1c01'
+CAMPAIGN_ASC_SHA='520c1a8a4c964b288fc76a337b5a6389e33d28340a98a8b21b342abaddaa1a29'
 
 def prepare(source):
     assert sha256(source).hexdigest()==ASC_SHA
@@ -144,6 +147,7 @@ def prepare(source):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--temp',type=Path,required=True)
+    p.add_argument('--vasm',type=Path,help='reconstruct and identify exact P3 for future delivery, never activate')
     a=p.parse_args()
     target=a.temp.resolve()
     assert target.is_dir() and not target.is_relative_to(ROOT)
@@ -155,6 +159,21 @@ def main():
         with (target/name).open('xb') as out:out.write(data)
         print('S2D_CAMPAIGN',name,len(data),sha256(data).hexdigest(),
               sha1(f'blob {len(data)}'.encode()+b'\0'+data).hexdigest())
+    if a.vasm is not None:
+        from build_m19_s2d_in_memory import build_s2d,protected
+        from prepare_m19_s2a_campaign import identify
+        canon=protected()
+        image,info=build_s2d(a.vasm)
+        assert len(image)==160148 and sha256(image).hexdigest()==info['sha256']==P3_SHA
+        assert sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest()==info['git_blob']==P3_BLOB
+        assert info['installable'] is False
+        assert len(asc)==16576 and sha256(asc).hexdigest()==CAMPAIGN_ASC_SHA
+        assert len(abk)==6836 and sha256(abk).hexdigest()==ABK_SHA
+        # Exact bytes in read-only CI logs, not a new tracked Lib or release.
+        identify('S2D_P3_LIB',image)
+        identify('S2D_P3_ASC',asc)
+        identify('S2D_P3_ABK',abk)
+        assert protected()==canon
     assert src.read_bytes()==before
     print('S2D_CAMPAIGN_PREPARED_NO_ACTIVATION')
 if __name__=='__main__':main()
