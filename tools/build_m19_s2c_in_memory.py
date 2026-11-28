@@ -21,7 +21,8 @@ MAP={209:208,211:210,213:212}
 COMMON=dict(zip(('M19_S2B_PERSIST_ROOT_MC68020.s','M19_S2B_REGISTRY_MC68020.s',
                  'M19_S2B_RETIRE_PAIR_MC68020.s','M19_S2B_ALLOCATE_MC68020.s'),NAMES))
 
-def build_s2c(vasm, *, diagnostic=False):
+def build_s2c(vasm, *, diagnostic=False, viewport_chain=False):
+    assert not viewport_chain or diagnostic
     vasm=Path(vasm).resolve()
     before=protected()
     staged={}
@@ -76,6 +77,9 @@ def build_s2c(vasm, *, diagnostic=False):
             outputs=instrument(public.read_text(encoding='ascii'),
                                lifecycle.read_text(encoding='ascii'),
                                frame.read_text(encoding='ascii'))
+            if viewport_chain:
+                from m19_s2c_viewport_chain_emit import allow_viewport_chain
+                outputs=(outputs[0],allow_viewport_chain(outputs[1]),outputs[2])
             for path,source in zip((public,lifecycle,frame),outputs):
                 path.write_text(source,encoding='ascii')
         master=folder/MASTER
@@ -116,7 +120,7 @@ def build_s2c(vasm, *, diagnostic=False):
     trial=list(new);trial[SPR]+=bytes(RESERVE)
     assert len(trial[SPR])<=MAX_UNIT_BYTES
     reserve_links=pc16_displacements(trial)
-    nz=title.replace(b'S2c-P1',b'S2c-D1' if diagnostic else b'S2c-P2')
+    nz=title.replace(b'S2c-P1',b'S2c-E1' if viewport_chain else b'S2c-D1' if diagnostic else b'S2c-P2')
     assert nz!=title and len(nz)==len(title)
     image=repack_ap20(parent,nt,new,nz)
     assert unpack_ap20(image)==(nt,new,nz)
@@ -133,12 +137,17 @@ def build_s2c(vasm, *, diagnostic=False):
         verify_library(baseline,before[1])
         if diagnostic:
             ct,cp,cz=unpack_ap20(baseline)
-            assert nt==ct and nz==cz.replace(b'S2c-P2',b'S2c-D1')
+            assert nt==ct and nz==cz.replace(b'S2c-P2',b'S2c-E1' if viewport_chain else b'S2c-D1')
             assert len(cp)==len(new)
             assert [i for i,(a,b) in enumerate(zip(cp,new)) if a!=b]==[SPR]
             if digest==S2CD_SHA:
-                verify_library(image,before[1])
-                assert image==installed
+                if viewport_chain:
+                    dt,dp,dz=unpack_ap20(installed)
+                    assert nt==dt and nz==dz.replace(b'S2c-D1',b'S2c-E1')
+                    assert [i for i,(a,b) in enumerate(zip(dp,new)) if a!=b]==[SPR]
+                else:
+                    verify_library(image,before[1])
+                    assert image==installed
         else:
             verify_library(image,before[1])
             assert image==baseline
@@ -155,8 +164,9 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--vasm',required=True,type=Path)
     p.add_argument('--diagnostic',action='store_true')
+    p.add_argument('--viewport-chain',action='store_true')
     a=p.parse_args()
-    image,meta=build_s2c(a.vasm,diagnostic=a.diagnostic)
-    again,m2=build_s2c(a.vasm,diagnostic=a.diagnostic)
+    image,meta=build_s2c(a.vasm,diagnostic=a.diagnostic or a.viewport_chain,viewport_chain=a.viewport_chain)
+    again,m2=build_s2c(a.vasm,diagnostic=a.diagnostic or a.viewport_chain,viewport_chain=a.viewport_chain)
     assert image==again and meta==m2
-    print(('S2C_P1D_EXACT_BUILD_PASS ' if a.diagnostic else 'S2C_P1C_EXACT_BUILD_PASS ')+json.dumps(meta,sort_keys=True),flush=True)
+    print(('S2C_P1E_EXACT_BUILD_PASS ' if a.viewport_chain else 'S2C_P1D_EXACT_BUILD_PASS ' if a.diagnostic else 'S2C_P1C_EXACT_BUILD_PASS ')+json.dumps(meta,sort_keys=True),flush=True)
