@@ -22,6 +22,10 @@ ROOT=Path(__file__).resolve().parents[1]
 S2F_REF='ef8cd7c175d97f73fc058dd6d16b43da1acd0103'
 P1A_SHA='e45e5cc3ba951f2216d50c3a752a6bc9d0a6d4fec9e13ee5cec59b3df1a37de0'
 P1A_BLOB='5420d586f6178275566843d4a547e7fc36b43d22'
+S2G_SHA='7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d'
+S2G_BLOB='e657167548082be034834130fdb188c42f37f595'
+S2G_ASC_SHA='2a79bf1a996eafd25b3a3b027c2eb1aac7830a339681b8597fdfa687ce8be5aa'
+S2G_ASC_BLOB='47db0fa032e487e525d40bfd3f584a8e879bb7b4'
 VERSION=b'0.15.0-alpha.4'
 PRIVATE_VERSION=VERSION+b'.p1a'
 
@@ -32,6 +36,7 @@ def blob(data):
     return sha1(f'blob {len(data)}'.encode()+b'\0'+data).hexdigest()
 
 def verify_library(candidate,good):
+    assert len(candidate)==162432 and sha256(candidate).hexdigest()==S2G_SHA and blob(candidate)==S2G_BLOB
     from build_m19_s2g_in_memory import shifted,PRIVATE_ENTRY,NEW_GROUP
     from build_m19_s2g_public_in_memory import overload
     parent=historical('dist/AMOSPro_AGA.Lib')
@@ -69,6 +74,7 @@ def verify_library(candidate,good):
     return True
 
 def verify_asc(asc,bank=None):
+    assert len(asc)==25332 and sha256(asc).hexdigest()==S2G_ASC_SHA and blob(asc)==S2G_ASC_BLOB
     from prepare_m19_s2g_campaign import prepare
     if bank is None:
         bank=(ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK').read_bytes()
@@ -86,16 +92,17 @@ def is_s2g(candidate):
     return b'$VER: AGSP 0.15.0-alpha.4 L2b non-distributed' in title
 
 def pre_s2g_library(candidate,good):
-    if not is_s2g(candidate):return candidate
+    if sha256(candidate).hexdigest()!=S2G_SHA:return candidate
     verify_library(candidate,good)
     return historical('dist/AMOSPro_AGA.Lib')
 
 def pre_s2g_pair(original):
-    candidate,good,asc,bank=original
-    if not is_s2g(candidate):return original
+    candidate,good,asc,legacy_bank=original
+    if sha256(candidate).hexdigest()!=S2G_SHA:return original
     parent=pre_s2g_library(candidate,good)
-    verify_asc(asc,bank)
-    return parent,good,historical('tests/current/SPRITE_PUBLIC.asc'),bank
+    verify_asc(asc)
+    # Preserve original tuple's historical AGSP_S1P1E_FINAL.ABK.
+    return parent,good,historical('tests/current/SPRITE_PUBLIC.asc'),legacy_bank
 
 if __name__=='__main__':
     current=(ROOT/'dist/AMOSPro_AGA.Lib').read_bytes()

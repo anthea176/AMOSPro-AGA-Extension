@@ -28,12 +28,21 @@ def main():
         other,second=build_s2g_public(a.vasm)
         assert image==other and info==second
         assert a.campaign
-        from prepare_m19_s2g_campaign import prepare
-        asc=prepare(before[2],before[3])
+        from prepare_m19_s2g_campaign import prepare,ROOT
+        from verify_m19_s2g_delivery import verify_library,verify_asc
+        from verify_m19_s2e_delivery import verify_abk
+        # protected()[3] is the S1P1e historical ABK, not the hotspot fixture.
+        bank_path=ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK'
+        bank=bank_path.read_bytes()
+        verify_abk(bank)
+        asc=prepare(before[2],bank)
         assert asc==a.campaign.read_bytes()
+        verify_library(image,before[1])
+        verify_asc(asc,bank)
+        assert bank_path.read_bytes()==bank
         # Byte receipt for the authorized later canonical activation.
         # No artifact, alternate Lib, archive or Git write by CI.
-        for tag,data in (('LIB',image),('ASC',asc),('ABK',before[3])):
+        for tag,data in (('LIB',image),('ASC',asc),('ABK',bank)):
             digest=sha256(data).hexdigest()
             blob=sha1(f'blob {len(data)}'.encode()+b'\0'+data).hexdigest()
             print('S2G_DELIVERY_ID',tag,len(data),digest,blob,flush=True)
