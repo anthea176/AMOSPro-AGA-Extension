@@ -14,12 +14,15 @@ from test_m19_s2d_ext_prepare_cpu import CODE,STOP,GFX,STACK,EXT0,EXT1,REGS
 REC=0x160000
 class Machine:
     def __init__(self,code,width=32,kind=4,channel=2,version=40,context=0,
-                 mode='ok',state=0,negsize=1100):
+                 mode='ok',state=0,negsize=1100,possize=450,memtype=3,oldwidth=None,soft=3,reserved=3):
         self.u=Uc(UC_ARCH_M68K,UC_MODE_BIG_ENDIAN)
         self.u.ctl_set_cpu_model(UC_CPU_M68K_M68020)
         self.u.mem_map(0,0x200000)
         self.u.mem_write(CODE,code)
-        self.u.mem_write(GFX+16,pack('>HHH',negsize,34,version))
+        self.u.mem_write(GFX+16,pack('>HHH',negsize,possize,version))
+        self.u.mem_write(GFX+237,bytes([memtype]))
+        self.u.mem_write(GFX+444,pack('>H',(oldwidth if oldwidth is not None else (context or 16)//16)))
+        self.u.mem_write(GFX+448,bytes([soft]))
         for a in (GFX-390,GFX-1020,GFX-1032,GFX-930):
             self.u.mem_write(a,b'\x4e\x75')
         self.width,self.kind,self.channel=width,kind,channel
@@ -32,10 +35,13 @@ class Machine:
         self.events=[]
         self.live=set()
         self.got=set()
-        self.reserved={0,1}
+        self.reserved={i for i in range(8) if reserved & (1<<i)}
+        self.sync_reserved()
         self.allocs=self.gets=0
         self.u.hook_add(UC_HOOK_CODE,self.on_code)
         self.u.hook_add(UC_HOOK_MEM_WRITE,self.on_write)
+    def sync_reserved(self):
+        self.u.mem_write(GFX+166,bytes([sum(1<<i for i in self.reserved)]))
     def read(self,a,n):return bytes(self.u.mem_read(a,n))
     def reg(self,r):return self.u.reg_read(r)
     def get(self,a):return unpack_from('>I',self.read(a,4))[0]
@@ -85,27 +91,30 @@ class Machine:
             second=self.gets==1
             c=self.channel+int(second)
             assert p==(EXT1 if second else EXT0)
-            pair=self.kind==4
-            assert not (pair and second)
-            assert unpack_from('>6I',self.read(tag,24))==(
-                (0x82000020,c,0x82000022,EXT1,0,0) if pair
-                else (0x82000020,c,0,0,0,0))
+            # Archived V40 GetExtSpriteA rejects GSTAG_ATTACHED. Require
+            # exactly one explicit channel per call, including attached.
+            assert unpack_from('>6I',self.read(tag,24))==(0x82000020,c,0,0,0,0)
             assert self.state()==(5 if second else 4)
             self.gets+=1
-            self.events.append('GetPair' if pair else 'GetOdd' if second else 'GetEven')
+            self.events.append('GetOdd' if second else 'GetEven')
             if self.mode==('getfail2' if second else 'getfail1'):
                 self.volatile(-1);return
-            if c in self.reserved or pair and c+1 in self.reserved:
+            if c in self.reserved:
                 self.volatile(-1);return
             if self.mode==('wrong2' if second else 'wrong1'):
                 self.volatile(0);return
             self.reserved.add(c);self.got.add(c)
+            self.sync_reserved()
+            u.mem_write(GFX+444,pack('>H',self.width//16))
             u.mem_write(p+10,pack('>H',c if self.mode!='badnum1' or second else 0))
-            if pair:
-                self.reserved.add(c+1);self.got.add(c+1)
-                u.mem_write(EXT1+10,pack('>H',c+1 if self.mode!='badnum2' else 0))
-            elif second and self.mode=='badnum2':
+            if second and self.mode=='badnum2':
                 u.mem_write(EXT1+10,bytes(2))
+            if self.mode==('badwidth2' if second else 'badwidth1'):
+                u.mem_write(GFX+444,pack('>H',0))
+            if self.mode==('badmask2' if second else 'badmask1'):
+                self.reserved.remove(c);self.sync_reserved()
+            if not second and self.mode=='foreign_odd':
+                self.reserved.add(c+1);self.sync_reserved()
             self.volatile(c)
     def invoke(self,entry,gfx=GFX,rec=REC):
         u=self.u;u.reg_write(UC_M68K_REG_SR,0x2000)
@@ -122,7 +131,8 @@ class Machine:
         assert all(self.reg(r)==v for r,v in saved.items())
         assert self.read(REC,24)==self.receipt[:24] and self.read(REC+28,8)==self.receipt[28:]
         assert self.read(EXT0+12,52)==self.read(EXT1+12,52)==b'\xa5'*52
-        assert {0,1}<=self.reserved
+        # Guard never writes GfxBase; mutations occur only in our OS hook.
+        assert self.read(GFX+166,1)==bytes([sum(1<<i for i in self.reserved)])
         return self.reg(UC_M68K_REG_D0),self.reg(UC_M68K_REG_D1)
 
 def main():
@@ -137,11 +147,16 @@ def main():
                 assert m.invoke(0)==(EXT0,EXT1)
                 assert m.live=={EXT0,EXT1} and m.events==['Init','AllocEven','AllocOdd'] and m.state()==0
                 n+=1
+                if v>40:
+                    m=Machine(code,w,k,version=v)
+                    assert m.invoke(4)==(0,1) and not m.events and m.state()==0
+                    n+=1
+                    continue
                 for ch in (2,4,6):
                     for ctx in (0,w):
                         m=Machine(code,w,k,channel=ch,version=v,context=ctx)
                         assert m.invoke(4)==(1,0) and m.state()==7 and m.got=={ch,ch+1}
-                        assert m.events==(['GetPair'] if k==4 else ['GetEven','GetOdd'])
+                        assert m.events==['GetEven','GetOdd']
                         before=list(m.events)
                         assert m.invoke(4)==(0,1) and m.state()==7 and m.events==before
                         n+=1
@@ -152,23 +167,23 @@ def main():
                 assert m.invoke(0)==(0,0) and not m.live and m.events==events
                 n+=1
             for mode,flags,rc in (('getfail1',4,2),('wrong1',0x80000004,3),
-                                  ('badnum1',0x80000007 if k==4 else 0x80000005,3),
-                                  ('badnum2',0x80000007,3)):
+                                  ('badnum1',0x80000005,3),
+                                  ('badnum2',0x80000007,3),
+                                  ('badwidth1',0x80000005,3),('badwidth2',0x80000007,3),
+                                  ('badmask1',0x80000005,3),('badmask2',0x80000007,3)):
                 m=Machine(code,w,k,mode=mode)
                 assert m.invoke(4)==(0,rc) and m.state()==flags,(w,k,mode,m.state())
                 assert 'FreeDetached' not in m.events;n+=1
-            if k==2:
-                for mode,flags,rc in (('getfail2',5,2),('wrong2',0x80000005,3)):
-                    m=Machine(code,w,k,mode=mode)
-                    assert m.invoke(4)==(0,rc) and m.state()==flags and m.got=={2}
-                    n+=1
-                m=Machine(code,w,k);m.reserved.add(3)
-                assert m.invoke(4)==(0,2) and m.state()==5 and m.got=={2} and 3 in m.reserved
+            for mode,flags,rc in (('getfail2',5,2),('wrong2',0x80000005,3)):
+                m=Machine(code,w,k,mode=mode)
+                assert m.invoke(4)==(0,rc) and m.state()==flags and m.got=={2}
                 n+=1
-            else:
-                m=Machine(code,w,k);m.reserved.add(3)
-                assert m.invoke(4)==(0,2) and m.state()==4 and not m.got and 3 in m.reserved
-                n+=1
+            m=Machine(code,w,k,reserved=11)
+            assert m.invoke(4)==(0,1) and m.state()==0 and not m.events and 3 in m.reserved
+            n+=1
+            m=Machine(code,w,k,mode='foreign_odd')
+            assert m.invoke(4)==(0,2) and m.state()==5 and m.got=={2} and 3 in m.reserved
+            assert m.events==['GetEven'];n+=1
     for opts in ({'width':0},{'width':17},{'width':48},{'width':128},{'kind':3},
                  {'kind':4,'version':39},{'version':38},{'negsize':1030}):
         m=Machine(code,**opts)
@@ -179,6 +194,24 @@ def main():
                  {'state':4},{'state':0x80000004}):
         m=Machine(code,**opts);state=m.state()
         assert m.invoke(4)==(0,1) and m.state()==state and not m.events
+        n+=1
+    # Source-derived bandwidth and global width arbitration.
+    for width in (16,32,64):
+        for bw in range(4):
+            for old in (1,2,4):
+                for reserved,soft in ((3,3),(19,3),(0,0)):
+                    m=Machine(code,width=width,kind=2,memtype=bw,oldwidth=old,
+                              reserved=reserved,soft=soft)
+                    supported=width==16 or (width==32 and bw!=0) or (width==64 and bw==3)
+                    expect=supported and (old==width//16 or reserved==soft)
+                    assert m.invoke(4)==((1,0) if expect else (0,1)),(width,bw,old,reserved,soft)
+                    assert m.state()==(7 if expect else 0)
+                    if not expect:assert not m.events
+                    n+=1
+    for opts in ({'possize':449},{'oldwidth':0},{'oldwidth':3},{'oldwidth':5},
+                 {'memtype':4},{'context':32,'oldwidth':1}):
+        m=Machine(code,**opts)
+        assert m.invoke(4)==(0,1) and m.state()==0 and not m.events
         n+=1
     for off,value in ((4,0),(8,0),(8,EXT0),(4,EXT0+1),(8,EXT1+1),(32,1)):
         m=Machine(code);b=bytearray(m.receipt)

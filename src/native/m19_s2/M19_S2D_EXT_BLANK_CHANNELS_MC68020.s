@@ -19,7 +19,11 @@
 ; +20 expected even channel.L (2/4/6); +24 state.L initially 0;
 ; +28 context width.L (0 if no other live/reserved records; else same width);
 ; +32 reserved zero. Metadata comes from actual owned blank allocation.
-; Context width is an assertion of the CALLER, not an OS width probe.
+; Context width is the CALLER's registry assertion, checked against the
+; V39/V40 GfxBase width before adding to an existing context. No private
+; GfxBase reads for other versions. Only GetExtSpriteA changes OS state.
+; V40 archived simplesprites.asm (39.41) rejects GSTAG_ATTACHED despite
+; the Autodoc BUGS note. Always acquire explicitly, even and then odd.
 ; State bit0=even confirmed return, bit1=odd confirmed return,
 ; bit2=Get attempted/exposure possible (sticky), bit31=quarantine.
 ; D0=1 and D1=0 success, state7. D0=0 and D1=1 invalid/private,
@@ -36,7 +40,12 @@ S2D_B_FRAME equ 96
 S2D_B_WIDTH_TAG equ $81000000
 S2D_B_ATTACH_TAG equ $81000008
 S2D_B_NUM_TAG equ $82000020
-S2D_B_PAIR_TAG equ $82000022
+; V39/V40 gfxbase.i revision 39.33, LIB_SIZE=34, IS_SIZE=22, LH_SIZE=14.
+S2D_B_RESERVED equ 166
+S2D_B_MEMTYPE equ 237
+S2D_B_WORDWIDTH equ 444
+S2D_B_SOFT equ 448
+S2D_B_GFX_MIN equ 450
 
 AGSP_S2D_ALLOC_BLANK_PAIR:
     movem.l d2-d7/a0-a6,-(sp)
@@ -126,9 +135,47 @@ AGSP_S2D_ACQUIRE_BLANK_PAIR:
     bsr.w s2d_b_contract
     tst.l d0
     beq.w s2d_b_acquire_bad
+    ; Restrict read-only private layout to independently audited versions.
+    cmpi.w #40,20(a5)
+    bhi.w s2d_b_acquire_bad
+    cmpi.w #S2D_B_GFX_MIN,18(a5)
+    bcs.w s2d_b_acquire_bad
+    move.l d4,d2
+    lsr.l #4,d2              ; requested width in hardware words
+    moveq #0,d0
+    move.b S2D_B_MEMTYPE(a5),d0
+    cmpi.b #3,d0
+    bhi.w s2d_b_acquire_bad
+    cmpi.l #1,d2
+    beq.s s2d_b_bandwidth_ok
+    tst.b d0
+    beq.w s2d_b_acquire_bad
+    cmpi.l #4,d2
+    bne.s s2d_b_bandwidth_ok
+    cmpi.b #3,d0
+    bne.w s2d_b_acquire_bad
+s2d_b_bandwidth_ok:
+    moveq #0,d3
+    move.w S2D_B_WORDWIDTH(a5),d3
+    cmpi.w #1,d3
+    beq.s s2d_b_old_width_ok
+    cmpi.w #2,d3
+    beq.s s2d_b_old_width_ok
+    cmpi.w #4,d3
+    bne.w s2d_b_acquire_bad
+s2d_b_old_width_ok:
     move.l 28(a3),d0
-    beq.s s2d_b_context_ok
+    beq.s s2d_b_new_context
     cmp.l d4,d0
+    bne.w s2d_b_acquire_bad
+    cmp.w d2,d3
+    bne.w s2d_b_acquire_bad
+s2d_b_new_context:
+    cmp.w d2,d3
+    beq.s s2d_b_context_ok
+    ; V40 permits width negotiation only when all reservations are soft.
+    move.b S2D_B_RESERVED(a5),d0
+    cmp.b S2D_B_SOFT(a5),d0
     bne.w s2d_b_acquire_bad
 s2d_b_context_ok:
     move.l 20(a3),d6
@@ -139,6 +186,10 @@ s2d_b_context_ok:
     cmpi.l #6,d6
     bne.w s2d_b_acquire_bad
 s2d_b_channel_ok:
+    moveq #3,d0
+    lsl.l d6,d0
+    and.b S2D_B_RESERVED(a5),d0
+    bne.w s2d_b_acquire_bad
     move.l 4(a3),d0
     beq.w s2d_b_acquire_bad
     btst #0,d0
@@ -156,11 +207,8 @@ s2d_b_channel_ok:
     clr.l 12(a1)
     clr.l 16(a1)
     clr.l 20(a1)
-    cmpi.l #4,d5
-    bne.s s2d_b_acquire_even
-    move.l #S2D_B_PAIR_TAG,8(a1)
-    move.l 8(a3),12(a1)
-s2d_b_acquire_even:
+    ; Do not send GSTAG_ATTACHED: the archived V40 implementation
+    ; rejects it. Both kinds acquire the odd reservation separately.
     movea.l 4(a3),a2
     moveq #4,d7
     move.l d7,24(a3)         ; sticky BEFORE any OS attempt
@@ -170,20 +218,21 @@ s2d_b_acquire_even:
     cmp.l d6,d0
     bne.w s2d_b_quarantine
     ori.l #1,d7
-    cmpi.l #4,d5
-    bne.s s2d_b_check_even
-    ori.l #2,d7             ; documented pair receipt on success
-s2d_b_check_even:
     move.l d7,24(a3)
     movea.l 4(a3),a2
     cmp.w 10(a2),d6          ; public SimpleSprite.num, read only
     bne.w s2d_b_quarantine
-    cmpi.l #4,d5
-    beq.s s2d_b_check_both
-    ; Simple object reserves its second channel as a transparent guard.
+    cmp.w S2D_B_WORDWIDTH(a5),d2
+    bne.w s2d_b_quarantine
+    btst d6,S2D_B_RESERVED(a5)
+    beq.w s2d_b_quarantine
+    ; The OS may have yielded during width negotiation. Never claim a
+    ; neighbour that has since become reserved by another owner.
     movea.l sp,a1
     move.l d6,d0
     addq.l #1,d0
+    btst d0,S2D_B_RESERVED(a5)
+    bne.w s2d_b_os_refusal
     move.l d0,4(a1)
     movea.l 8(a3),a2
     jsr -930(a6)
@@ -195,7 +244,14 @@ s2d_b_check_even:
     bne.s s2d_b_quarantine
     ori.l #2,d7
     move.l d7,24(a3)
-s2d_b_check_both:
+    cmp.w S2D_B_WORDWIDTH(a5),d2
+    bne.s s2d_b_quarantine
+    moveq #3,d0
+    lsl.l d6,d0
+    move.l d0,d1
+    and.b S2D_B_RESERVED(a5),d1
+    cmp.b d0,d1
+    bne.s s2d_b_quarantine
     movea.l 4(a3),a2
     cmp.w 10(a2),d6
     bne.s s2d_b_quarantine
