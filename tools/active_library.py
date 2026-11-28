@@ -71,8 +71,9 @@ S2CE_SHA="7a4060cb3df1b40cad223af4640ee4be3e19ebb6add9dc0d4ab44aaf2ae1f310"  # E
 S2D_SHA="a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef"  # Exact S2d-P3e 0.15.0-alpha.1 Gate A 46131159222 / 46131265679
 S2E_SHA="3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3"  # Exact S2e 0.15.0-alpha.2 Gate A 46134733533 / 46135040114
 S2F_SHA="6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66"  # Exact S2f 0.15.0-alpha.3, CI 46163164542 / 46163387336
-SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, S2F_SHA)
-SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA),(154352,S2R_SHA),(159844,S2C_SHA),(160812,S2CD_SHA),(160896,S2CE_SHA),(160148,S2D_SHA),(160352,S2E_SHA),(162288,S2F_SHA))
+S2G_SHA="7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d"  # S2g P1b exact identity from CI 46171737275; activation requires complete Gate A
+SPRITE_L2B_HISTORICAL_SHAS=(S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, S2F_SHA, S2G_SHA)
+SPRITE_L2B_HISTORICAL_SIZES=((142684,S1P1F_SHA),(142684,S1P1G_SHA),(142720,S1P1H_SHA),(142968,S1P1I_SHA),(149384,S1P2I_SHA),(148296,S1P2J_SHA),(149080,S1P2K_SHA),(149940,S1P2LB_SHA),(150056,S1P2LC_SHA),(149400,S1P2M_SHA),(151164,S2A_SHA),(152876,S2B_SHA),(154352,S2R_SHA),(159844,S2C_SHA),(160812,S2CD_SHA),(160896,S2CE_SHA),(160148,S2D_SHA),(160352,S2E_SHA),(162288,S2F_SHA),(162432,S2G_SHA))
 LAST_GOOD_SHA=P2DL2B_SHA  # Author-approved promotion 24/11/2026; Gate A and documented Runtime B; C deferred, D untested
 R55_SHA="97f48ccb946ced9bad0b661cbabff00440a4e5a07aeef49021b215b269fcf9ad"  # Historical R55 builder identity, no separate R55 binary
 R56_SHA="df0bf2400eb9dc87e69e94f4472c05c8a7d57b496ef792a11125f7419d75ffef"  # R56 historical, compiler FAIL
@@ -313,7 +314,7 @@ def frozen_s1p1i(candidate: bytes, protected: bytes) -> bytes:
     from compiler_relocation import repack_ap20, unpack_ap20
     from compiler_bridge_v2_probe import DISPATCH_V2
     from build_m19_s1p1f_l2b_get_sprite_ap20 import TITLE as parent_title
-    if sha256(candidate).hexdigest() in (S2R_SHA,S2C_SHA,S2CD_SHA,S2CE_SHA,S2D_SHA,S2E_SHA,S2F_SHA):
+    if sha256(candidate).hexdigest() in (S2R_SHA,S2C_SHA,S2CD_SHA,S2CE_SHA,S2D_SHA,S2E_SHA,S2F_SHA,S2G_SHA):
         from verify_m19_s2r_delivery import pre_s2r_library
         candidate=pre_s2r_library(candidate,protected)
     if sha256(candidate).hexdigest()==S1P2LC_SHA:
@@ -484,6 +485,11 @@ def verify_s2f(candidate: bytes, protected: bytes):
     return verify_library(candidate,protected)
 
 
+def verify_s2g(candidate: bytes, protected: bytes):
+    from verify_m19_s2g_delivery import verify_library
+    return verify_library(candidate,protected)
+
+
 def verify_active(root: Path):
     """Return (current bytes, LAST_GOOD bytes, version label). Fail closed."""
     from audit_ap20 import parse,inspect
@@ -495,6 +501,10 @@ def verify_active(root: Path):
     assert sha256(good).hexdigest()==LAST_GOOD_SHA,"LAST_GOOD protected hash mismatch"
     cur=(root/"dist/AMOSPro_AGA.Lib").read_bytes()
     current_sha=sha256(cur).hexdigest()
+    if current_sha == S2G_SHA:
+        frozen_p2d(good)
+        verify_s2g(cur,good)
+        return cur,good,"M19 S2g 0.15.0-alpha.4 TEST CANDIDATE; exact identity verified; real B/C/D not attested; L2b LAST_GOOD protected"
     if current_sha == S2F_SHA:
         frozen_p2d(good)
         verify_s2f(cur,good)

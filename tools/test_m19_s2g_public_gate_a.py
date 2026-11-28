@@ -35,7 +35,8 @@ def main():
         bank_path=ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK'
         bank=bank_path.read_bytes()
         verify_abk(bank)
-        asc=prepare(before[2],bank)
+        from verify_m19_s2g_delivery import pre_s2g_pair
+        asc=prepare(pre_s2g_pair(before)[2],bank)
         assert asc==a.campaign.read_bytes()
         verify_library(image,before[1])
         verify_asc(asc,bank)

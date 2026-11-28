@@ -32,7 +32,8 @@ def build_s2g(vasm):
     before=protected()
     parent,old_info=build_s2f(vasm)
     assert sha256(parent).hexdigest()==S2F_SHA
-    assert parent==before[0]  # P1a source-only on active exact S2f
+    from verify_m19_s2g_delivery import pre_s2g_pair
+    assert parent==pre_s2g_pair(before)[0]  # exact historical S2f after activation
     tok,old,title=unpack_ap20(parent)
     intermediate,info=build_s2d(vasm,hotspots=True,clipping=True,priority=True)
     nt,parts,newtitle=unpack_ap20(intermediate)

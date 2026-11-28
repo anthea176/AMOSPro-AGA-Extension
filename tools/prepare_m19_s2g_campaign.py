@@ -128,7 +128,10 @@ def main():
     a=p.parse_args()
     dst=a.temp.resolve()
     assert not dst.is_relative_to(ROOT)
-    source=(ROOT/'tests/current/SPRITE_PUBLIC.asc').read_bytes()
+    from verify_m19_s2g_delivery import pre_s2g_pair
+    from build_m19_s2g_in_memory import protected
+    before=protected()
+    source=pre_s2g_pair(before)[2]
     bank=(ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK').read_bytes()
     asc=prepare(source,bank)
     assert asc==prepare(source,bank)

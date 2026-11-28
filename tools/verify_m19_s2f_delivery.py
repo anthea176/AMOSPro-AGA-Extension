@@ -53,11 +53,15 @@ def verify_asc(asc):
     return True
 
 def pre_s2f_library(candidate,good):
+    from verify_m19_s2g_delivery import pre_s2g_library
+    candidate=pre_s2g_library(candidate,good)
     if sha256(candidate).hexdigest()!=S2F_SHA:return candidate
     verify_library(candidate,good)
     return historical('dist/AMOSPro_AGA.Lib')
 
 def pre_s2f_pair(original):
+    from verify_m19_s2g_delivery import pre_s2g_pair
+    original=pre_s2g_pair(original)
     candidate,good,asc,abk=original
     if sha256(candidate).hexdigest()!=S2F_SHA:return original
     parent=pre_s2f_library(candidate,good)
@@ -71,6 +75,7 @@ if __name__=='__main__':
     from active_library import verify_active
     from verify_m19_s1p2l_b_delivery import check_active_pair
     candidate,good,label=verify_active(ROOT)
-    verify_library(candidate,good)
+    from verify_m19_s2g_delivery import pre_s2g_library
+    verify_library(pre_s2g_library(candidate,good),good)
     check_active_pair()
-    print('S2F EXACT ACTIVE TRIPLE PASS',S2F_SHA)
+    print('S2F EXACT LINEAGE AND ACTIVE PAIR PASS',S2F_SHA)
