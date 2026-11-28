@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**Priorité : S2g, [audit et contrat proposé des priorités Sprite/bitplanes](M19_S2G_PRIORITY_0_15_0.md) à approuver ; S2f 0.15.0-alpha.3 Gate B Runtime et visuel PASS.** [Résultat et journal S2f](M19_S2F_RUNTIME_2026-11-28.md). [Contrat clipping](M19_S2F_CLIPPING_0_15_0.md) · [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46163164542) · [Preuves S2e](M19_S2E_RUNTIME_2026-11-28.md). C réelle différée. Après S2f : priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
+**Priorité : S2g-P1a, [sélection de paire source-only](M19_S2G_PRIORITY_0_15_0.md) en qualification après accord auteur ; token surchargé non déclaré ; S2f 0.15.0-alpha.3 active, Gate B Runtime et visuel PASS.** [Résultat et journal S2f](M19_S2F_RUNTIME_2026-11-28.md). [Contrat clipping](M19_S2F_CLIPPING_0_15_0.md) · [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46163164542) · [Preuves S2e](M19_S2E_RUNTIME_2026-11-28.md). C réelle différée. Après S2f : priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
 
 ## 1. État actuel et objectif
 

@@ -1,6 +1,8 @@
 # M19 S2g — audit des priorités Sprite/playfield (proposition 0.15.0-alpha.4)
 
-**28/11/2026 — audit et contrat proposé, NON APPROUVÉ pour implémentation.** Auteur « ok » en réponse à la proposition d'audit matériel/API avant modification native. Aucun nouveau token, ASM, ASC, builder, binaire ou activation autorisés par ce relevé.
+**28/11/2026 — audit initial (historique, avant accord sur P1).** Auteur « ok » en réponse à la proposition d'audit matériel/API avant modification native. Aucun nouveau token, ASM, ASC, builder, binaire ou activation autorisés par ce relevé.
+
+**28/11/2026 — S2g-P1a source-only engagé après accord auteur « ok go » sur les deux signatures et P1 en premier.** Entrée native MC68020 cinq entiers (D3=layer, A3=image/Y/X/ID), frame privée +4o, rang 0 automatique, 1/2/3 filtre exact de paire, refus -210 rang invalide et -206 paire indisponible ou migration. Quatre arguments conservés ; registre v8, cache, largeur, palettes et retraite S2f inchangés. Builder privé reconstruit S2f exacte puis overlay P1a, ajoute GetP/Rbsr avant îlot Sprite (indices AP20 décalés, noms/signatures publics inchangés). Titre de développement 0.15.0-alpha.4.p1a, NON installable ; aucun token surchargé déclaré avant preuve de grammaire AMOS. [Source](../src/native/m19_s2/M19_S2G_PRIORITY_MC68020.s), [builder](../tools/build_m19_s2g_in_memory.py), [banc CPU](../tools/test_m19_s2g_priority_gate_a.py), [CI](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/workflows/m19-s2g-priority-gate-a.yml) à relever. B/C/D non testées. Alpha.3/ASC/ABK/LAST_GOOD intactes, aucun nouveau test AMOS actif, aucune bascule ni promotion.
 
 ## 1. Base exacte
 
@@ -20,7 +22,7 @@
 
 Surcharge proposée (pas une syntaxe disponible à ce jour) : `_OK=Aga Sprite(_N,_X,_Y,_I,_LAYER)`.
 - LAYER 0 = auto (identique à la forme quatre arguments) ; 1 = paire 2/3 devant, 2 = 4/5 milieu, 3 = 6/7 arrière. Valable à la création de l'objet, pas de nouvelle limite sur ID, banque ou largeur.
-- 1 succès ; négatif sur refus selon contrat de la commande existante. Un rang hors 0..3 est invalide, code exact à arrêter lors de la conception AP20. Paire demandée indisponible/incompatible : -206 proposé, aucun repli vers une autre paire ; aucune destruction des autres objets. Palette simple compatible obligatoire.
+- 1 succès ; négatif sur refus selon contrat de la commande existante. Un rang hors 0..3 est invalide (-210 dans l'entrée privée P1a). Paire demandée indisponible/incompatible : -206 proposé, aucun repli vers une autre paire ; aucune destruction des autres objets. Palette simple compatible obligatoire.
 - Objet existant : 0 conserve paire actuelle ; rang explicite identique accepté ; rang différent refusé sans effet. Changement de rang volontaire via Off puis Show à partir d'une banque encore disponible ; pas de swap de canaux, tri Y dynamique, nouvelle copie de cache ni migration implicite. La forme quatre arguments garde ses octets/sémantique publique autant que possible ; AP20 et GetP/A3 à qualifier sur les deux layouts. Aucune promesse de compatibilité syntaxique avant preuve.
 
 ### S2g-P2 : priorité du playfield
@@ -48,6 +50,6 @@ Protéger la priorité de 0/1, ne pas supposer la présence du curseur sur un ca
 2. P2 : d'abord preuve OS (lecture puis SET/GET et affichage discriminants), erreur/rollback et contrôle des références ; uniquement après ce verrou, API publique approuvée. Fond pen 0 et bandes opaques contrastées, 4 seuils, superposition des trois paires et dessin Bob dans bitplanes. Curseur et retour AMOS ; DB, plusieurs Swap et Close/reopen, avec priorité par défaut à la nouvelle ouverture. Tester explicitement refus lorsque Copper actif/pending ; ne pas déclarer cette coexistence validée. Pas de benchmark inventé.
 3. Gate A : builder reproductible depuis S2f exacte, MC68020, AP20 ABI et marges UNIT142/213/PC16, deux layouts, régressions S2f/AGAPIC/AGSP/Bob/Pattern/SafePort/DB/IFF/Swap, injections d'erreur. Gate B Runtime et contrôle visuel, Chip/Fast avant/après, journal unique ; C réelle au jalon convenu (à avancer si nouvelle ABI risquée), D séparée. Seul ASC actif après autorisation de bascule, Lib/ABK vérifiées. Aucune promotion LAST_GOOD automatique.
 
-## Décision attendue
+## Décision et suite
 
-Valider ou corriger les deux signatures et la portée P1/P2. Recommandation : P1 couche fixe à la création en premier ; P2 une fois le comportement OS établi. Aucun code natif produit par cet audit.
+Accord auteur « ok go » pour P1 et les signatures proposées. P1a implémente l'entrée privée et le test AP20 sans exposer encore la surcharge ; qualifier la CI, vérifier la grammaire native AMOS de surcharge et les offsets de token avant P1b. P2 reste soumis au verrou OS. Aucune activation de bibliothèque autorisée par cet accord.

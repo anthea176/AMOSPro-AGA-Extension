@@ -26,10 +26,13 @@ P3_FILES=('M19_S2D_PUBLIC_MC68020.s','M19_S2D_REGISTRY_MC68020.s',
           'M19_S2D_EXT_RETIRE_MC68020.s','M19_S2D_EXT_FRAME_MC68020.s',
           'M19_S2D_EXT_HIDDEN_SHOW_MC68020.s','M19_S2D_EXT_DROP_STAGE_MC68020.s')
 
-def build_s2d(vasm, *, hotspots=False, clipping=False):
+def build_s2d(vasm, *, hotspots=False, clipping=False, priority=False):
     # Both historical paths remain byte-exact; S2f is an opt-in source overlay.
     assert not clipping or hotspots
-    if clipping:
+    assert not priority or clipping
+    if priority:
+        from m19_s2g_priority_source import transform
+    elif clipping:
         from m19_s2f_clip_source import transform
     elif hotspots:
         from m19_s2e_hotspot_source import transform
@@ -106,6 +109,9 @@ def build_s2d(vasm, *, hotspots=False, clipping=False):
                     shutil.copyfile(S2/name,work/name)
             elif hotspots:
                 shutil.copyfile(S2/'M19_S2E_HOTSPOT_MC68020.s',work/'M19_S2E_HOTSPOT_MC68020.s')
+            if priority:
+                name='M19_S2G_PRIORITY_MC68020.s'
+                shutil.copyfile(S2/name,work/name)
             prep=work/P3_FILES[3]
             prep.write_text(once(prep.read_text(encoding='ascii'),
                     '    include "M19_S1P1C_AGSP_VALIDATE_MC68020.s"\n',''),encoding='ascii')
@@ -131,7 +137,8 @@ def build_s2d(vasm, *, hotspots=False, clipping=False):
     reserved=pc16_displacements(trial)
     # Preserve AP20 title terminators/padding; use standard version
     # at the actual integrated build, never rename historical artifacts.
-    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.3' if clipping else (b'0.15.0-alpha.2' if hotspots else b'0.15.0-alpha.1'))
+    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.4.p1a' if priority else
+        (b'0.15.0-alpha.3' if clipping else (b'0.15.0-alpha.2' if hotspots else b'0.15.0-alpha.1')))
     assert title2!=title and not len(title2)&1
     image=repack_ap20(parent,tok,parts,title2)
     assert unpack_ap20(image)==(tok,parts,title2)
