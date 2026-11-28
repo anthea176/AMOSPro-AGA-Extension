@@ -26,9 +26,12 @@ P3_FILES=('M19_S2D_PUBLIC_MC68020.s','M19_S2D_REGISTRY_MC68020.s',
           'M19_S2D_EXT_RETIRE_MC68020.s','M19_S2D_EXT_FRAME_MC68020.s',
           'M19_S2D_EXT_HIDDEN_SHOW_MC68020.s','M19_S2D_EXT_DROP_STAGE_MC68020.s')
 
-def build_s2d(vasm, *, hotspots=False):
-    # Default path remains the exact S2d-P3e builder.
-    if hotspots:
+def build_s2d(vasm, *, hotspots=False, clipping=False):
+    # Both historical paths remain byte-exact; S2f is an opt-in source overlay.
+    assert not clipping or hotspots
+    if clipping:
+        from m19_s2f_clip_source import transform
+    elif hotspots:
         from m19_s2e_hotspot_source import transform
     else:
         def transform(name,source):return source
@@ -49,6 +52,9 @@ def build_s2d(vasm, *, hotspots=False):
             reclaim.write_text(once(reclaim.read_text(encoding='ascii'),
                 '    tst.l (a3)\n    beq p2k_close_unlink\n',
                 '    tst.l (a3)\n    bne p2k_close_unlink\n'),encoding='ascii')
+            if clipping:
+                name='M19_S2F_RECEIPT_MC68020.s'
+                shutil.copyfile(S2/name,work/name)
             reg=transform(P3_FILES[1],(S2/P3_FILES[1]).read_text(encoding='ascii'))
             (work/'M19_S2B_REGISTRY_MC68020.s').write_text(relax_local(reg),encoding='ascii')
             persist=transform(P3_FILES[2],(S2/P3_FILES[2]).read_text(encoding='ascii'))
@@ -88,11 +94,17 @@ def build_s2d(vasm, *, hotspots=False):
             probe=work/'s2d_prefix.s';probe.write_text(prefix,encoding='ascii')
             assert assemble_bin(vasm,work,probe,'prefix.bin')==wide[:at]
             for name in P3_FILES:
-                if hotspots and name in (P3_FILES[0],P3_FILES[1],P3_FILES[2],P3_FILES[7]):
+                if (hotspots and name in (P3_FILES[0],P3_FILES[1],P3_FILES[2],P3_FILES[7])
+                    or clipping and name==P3_FILES[3]):
                     (work/name).write_text(transform(name,(S2/name).read_text(encoding='ascii')),encoding='ascii')
                 else:
                     shutil.copyfile(S2/name,work/name)
-            if hotspots:
+            if clipping:
+                for name in ('M19_S2F_RECEIPT_MC68020.s','M19_S2F_PUBLIC_MC68020.s',
+                             'M19_S2F_CLIP_KERNEL_MC68020.s','M19_S2F_CACHE_MC68020.s',
+                             'M19_S2F_PREPARE_PLANES_MC68020.s'):
+                    shutil.copyfile(S2/name,work/name)
+            elif hotspots:
                 shutil.copyfile(S2/'M19_S2E_HOTSPOT_MC68020.s',work/'M19_S2E_HOTSPOT_MC68020.s')
             prep=work/P3_FILES[3]
             prep.write_text(once(prep.read_text(encoding='ascii'),
@@ -119,7 +131,7 @@ def build_s2d(vasm, *, hotspots=False):
     reserved=pc16_displacements(trial)
     # Preserve AP20 title terminators/padding; use standard version
     # at the actual integrated build, never rename historical artifacts.
-    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.2' if hotspots else b'0.15.0-alpha.1')
+    title2=title.replace(b'S2d-P1',b'0.15.0-alpha.3' if clipping else (b'0.15.0-alpha.2' if hotspots else b'0.15.0-alpha.1'))
     assert title2!=title and not len(title2)&1
     image=repack_ap20(parent,tok,parts,title2)
     assert unpack_ap20(image)==(tok,parts,title2)
@@ -137,7 +149,7 @@ def build_s2d(vasm, *, hotspots=False):
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
         parent_sha=P1_SHA,unit142=len(parts[142]),unit142_free=MAX_UNIT_BYTES-len(parts[142]),
-        root=staged['root'],targets=staged['targets'],record_bytes=172 if hotspots else 168,
+        root=staged['root'],targets=staged['targets'],record_bytes=188 if clipping else (172 if hotspots else 168),
         sprite_unit_bytes=len(parts[213]),sprite_at=staged['at'],
         sprite_group_free=MAX_UNIT_BYTES-len(parts[213]),pc16_max=max(map(abs,links.values())),
         reserve_pc16=max(map(abs,reserved.values())),wide_display=True,installable=False)

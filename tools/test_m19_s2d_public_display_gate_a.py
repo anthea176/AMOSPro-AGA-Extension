@@ -249,7 +249,7 @@ class WidePublic(TransactionMachine):
         assert not self.ext and self.read(GFX+166,1)[0]==1
         assert all(self.get(FAST_TABLE+4*c)==0 and self.pointer(c)==NEUTRAL for c in range(2,8))
 
-def cases(image,info,layout):
+def cases(image,info,layout,*,clipping=False):
     moves=changes=neg=cycles=0
     for w in (16,32,64):
         for version in (39,40):
@@ -291,8 +291,10 @@ def cases(image,info,layout):
         assert m.sprite(n=42,image=1)==1
         m.frame(2,1,32,112)
         old=m.peer(2)
-        for kw in ({'n':9,'image':10},{'n':42,'image':10},{'n':42,'image':7},
-                   {'n':42,'image':1,'x':321-w},{'n':42,'image':1,'y':241}):
+        # S2f accepts partially visible rectangles. The positive clip
+        # oracle is separate; keep every historical negative by default.
+        edge_refusals=() if clipping else ({'n':42,'image':1,'x':321-w},{'n':42,'image':1,'y':241})
+        for kw in ({'n':9,'image':10},{'n':42,'image':10},{'n':42,'image':7})+edge_refusals:
             assert m.sprite(**kw)<0 and m.peer(2)==old;neg+=1
         assert m.off(64)==1 and m.peer(2)==old
         assert m.off(42)==1 and m.off(42)==1;m.empty_wide()
