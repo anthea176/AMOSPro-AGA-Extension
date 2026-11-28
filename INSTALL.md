@@ -1,7 +1,7 @@
 # Installing AMOSPro AGA Extension
 
 
-**Active TEST candidate 0.15.0-alpha.4 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 162,432 bytes, SHA256 `7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d`, 105 commands / 106 signatures / 221 AP20 entries. [Combined Gate A PASS](docs/M19_S2G_P1B_GATE_A_2026-11-28.md); real B/C/D pending. [Campaign](tests/current/README.md). Protected [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes. No promotion or release.
+**Active TEST candidate 0.15.0-alpha.4 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 162,432 bytes, SHA256 `7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d`, 105 commands / 106 signatures / 221 AP20 entries. [Full Gate A PASS](docs/M19_S2G_P1B_GATE_A_2026-11-28.md); [Runtime functional PASS](docs/M19_S2G_RUNTIME_2026-11-28.md), visual check and real C/D pending. [Campaign](tests/current/README.md). Protected [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes. No promotion or release.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
