@@ -177,7 +177,15 @@ def main() -> None:
     b7m2 = re.search(r"\$VER:\s*AGA\s+(M19\s+B7-m2)\b", title, re.IGNORECASE)
     b8 = re.search(r"\$VER:\s*AMOSPro_AGA\s+(M19\s+B8)\b", title, re.IGNORECASE)
     agsp = re.search(r"\$VER:\s*AGSP\s+(S1-P1e)\b", title, re.IGNORECASE)
-    if b"$VER: AGSP 0.15.0-alpha.3 L2b non-distributed" in library.title:
+    if b"$VER: AGSP 0.15.0-alpha.4 L2b non-distributed" in library.title:
+        from active_library import S2G_SHA
+        from audit_ap20 import token_role_issues
+        assert sha256(LIB.read_bytes()).hexdigest() == S2G_SHA
+        assert not token_role_issues(audit["tokens"])
+        signatures=[r["signature"] for r in audit["tokens"] if r["name"]=="aga sprite"]
+        assert signatures==["00,0,0,0","00,0,0,0,0"]
+        release = "0.15.0-alpha.4"
+    elif b"$VER: AGSP 0.15.0-alpha.3 L2b non-distributed" in library.title:
         from active_library import S2F_SHA
         from audit_ap20 import token_role_issues
         assert sha256(LIB.read_bytes()).hexdigest() == S2F_SHA

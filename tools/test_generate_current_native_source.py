@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 
-from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, S2F_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
+from active_library import C1_ARCHIVE, R83_SHA, R84_SHA, R85_SHA, R86_SHA, R87_SHA, R88_SHA, P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P1E_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, S2CE_SHA, S2D_SHA, S2E_SHA, S2F_SHA, S2G_SHA, SPRITE_L2B_HISTORICAL_SHAS, verify_active
 from compiler_relocation import wrap_native_ap20
 from compiler_bridge_v2_probe import is_v2_wrapped, wrap_native_ap20_v2
 from build_m17_r58_compiler_bridge import build as build_r58
@@ -42,7 +42,11 @@ def main() -> None:
             assert meta['commands'] == 100 and meta['entries'] == 203
             _, groups, title = unpack_ap20(wrapped)
             _, reference, _ = unpack_ap20(candidate)
-            if exp.sha(wrapped)==S2F_SHA:
+            if exp.sha(wrapped)==S2G_SHA:
+                from active_library import verify_s2g
+                assert wrapped == current and len(groups) == 221
+                verify_s2g(wrapped,last_good)
+            elif exp.sha(wrapped)==S2F_SHA:
                 from active_library import verify_s2f
                 assert wrapped == current and len(groups) == 219
                 verify_s2f(wrapped,last_good)
