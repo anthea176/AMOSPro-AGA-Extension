@@ -30,8 +30,7 @@ s2f_pub_prepare_current:
     movea.l W_R_CACHE(a4),a0
     move.l 4(a0),d0
     ; The registry validated this owned original before we arrived here.
-    bra.s s2f_pub_render
-
+    ; Fall through: BRA.s to the immediately following label is not encodable.
 s2f_pub_render:
     move.l W_KEY(a2),d1
     moveq #0,d3
