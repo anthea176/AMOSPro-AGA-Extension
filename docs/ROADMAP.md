@@ -1,18 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**28/11/2026 — P1d Gate B Runtime FAIL, diagnostic discriminant réussi :** `SPRITE_RC=-17104896` = `-$01050000`, stage 1/check 5/detail 0 : `ViewPort.Next` non nul avant acquisition. `ERR=10`, `CLEAN_ERR=0`, mêmes compteurs que P1c ; Chip 1791328 et Fast 138086880 identiques avant/après. P1d active (S2c-D1, 160812 octets, SHA256 `a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026`), B FAIL, C/D non testées. Auteur « pook go » : correction P1e source-only engagée avec diagnostic conservé, parcours borné et read-only des successeurs ; pas de bascule avant Gate A PASS. ASC/ABK/LAST_GOOD inchangés. [Rapport](M19_S2C_P1E_VIEWPORT_CHAIN_2026-11-28.md).
-
-Les statuts précédents ci-dessous sont historiques.
-
-**28/11/2026 — S2c-P1d (titre interne S2c-D1) active sur main, autorisation auteur « go ».** [Gate A intégrée PASS 11/11](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896471), source `adcfa65d0f2e8ca402263eb3f0daee90d3471265` : 288 changements + 11 injections de défauts par modèle Runtime/Compiler, capture et régressions historiques PASS ; double reconstruction et préflight ASC strict PASS. Lib 160812 octets SHA256 `a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026`, blob `551674f3598c8b0c10a581d9ac7a1f7cf1155659`. MC68020+, 105 commandes/219 AP20 ; UNIT213 seule modifiée (20216 octets, marge 45318), PC16 max 3658 avec réserve 16384. ASC 15459 octets et ABK 1460 octets strictement inchangés. P1c Runtime FAIL -153 conservée dans Git `8f490c4ee9f3609abd763e8ba2f03e4d97de49de`. P1d est un diagnostic, pas un correctif fonctionnel ; B/C/D P1d NON TESTÉES, CI post-activation à relever. LAST_GOOD L2b protégée, aucune promotion, nouvelle branche, archive ni release. [Rapport](M19_S2C_P1D_DIAGNOSTIC_2026-11-28.md).
-
-Les relevés antérieurs ci-dessous sont historiques.
-
-**Construction P1d exacte observée dans la CI, pas d'activation :** source `adcfa65d0f2e8ca402263eb3f0daee90d3471265` ; 160812 octets SHA256 `a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026`, blob `551674f3598c8b0c10a581d9ac7a1f7cf1155659`, 105 commandes/219 AP20, UNIT213 20216 (45318 libres), PC16 max 3658 y compris réserve 16384, UNIT142 et autres entrées byte-exactes. [CI intégrée P1d](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896471), [AGAPIC 392 PASS et identité](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896471/job/140788903118). [CPU et chemins PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46083896500). Relevé : 3 jobs réussis, 0 échecs, 7 en attente/exécution ; Gate A complète à établir, B/C/D P1d non testées. P1c demeure seule Lib active, FAIL B.
-
-**28/11/2026 — S2c-P1c Gate B Runtime FAIL** (`PRG_STATE=1`, ERR10, SPRITE_RC=-153, CLEAN_ERR=0). Écran 1 simple complet ; 150 Change/Move ; écran 2 premier attaché ID42/image9 refusé après le premier simple ; écran 3 non atteint. AGAPIC 4/4, capture AGSP 4 plans 4/4, refus 2/2, 2 Close, mémoire finale identique. S2c-P1c reste active (SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`), C/D non testées, LAST_GOOD protégée. Auteur « vaa y fait moi tous le diag » : P1d instrumentée source-only, Gate A et reconstruction à relever avant activation. Ne pas lancer le Compiler P1c. [Diagnostic et journal](M19_S2C_P1D_DIAGNOSTIC_2026-11-28.md).
-
-**Priorité : P1e correction ViewPort ; P1d B FAIL check 5.** Gate A P1e à établir avant la bascule.
+**Priorité : P1e correction ViewPort ; P1d B FAIL check 5.** Premier assemblage P1e exact, 8 suites historiques PASS ; deux tests de mutation à corriger selon la retraite existante. Gate A complète avant bascule. [Rapport P1e](M19_S2C_P1E_VIEWPORT_CHAIN_2026-11-28.md).
 
 ## 1. État actuel et objectif
 

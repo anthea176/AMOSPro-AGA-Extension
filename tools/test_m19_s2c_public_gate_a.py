@@ -117,7 +117,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--vasm',required=True,type=Path)
     p.add_argument('--historical',required=True,type=Path)
-    p.add_argument('--suite',required=True,choices=('capture','runtime','compiled','chain','pattern','safeport','bob','agapic','mixed-runtime','mixed-compiled'))
+    p.add_argument('--suite',required=True,choices=('capture','runtime','compiled','chain','pattern','safeport','bob','agapic','mixed-runtime','mixed-compiled','fences-runtime','fences-compiled'))
     p.add_argument('--diagnostic',action='store_true')
     p.add_argument('--viewport-chain',action='store_true')
     a=p.parse_args()
@@ -135,6 +135,10 @@ def main():
             from prepare_m19_s2a_campaign import identify
             identify('S2CE_LIB' if a.viewport_chain else 'S2CD_LIB',image)
     elif a.suite in ('runtime','compiled'):sprite_cases(image,info,a.suite)
+    elif a.suite.startswith('fences-'):
+        assert a.viewport_chain
+        from test_m19_s2c_viewport_chain_cpu import fence_case
+        fence_case(image,info,a.suite[7:])
     elif a.suite.startswith('mixed-'):
         from test_m19_s2c_mixed_public_cpu import mixed_cases
         mixed_cases(image,info,a.suite[6:])

@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [capture, runtime, compiled, mixed-runtime, mixed-compiled, chain, pattern, safeport, bob, agapic]
+        suite: [fences-runtime, fences-compiled, capture, runtime, compiled, mixed-runtime, mixed-compiled, chain, pattern, safeport, bob, agapic]
     steps:
       - uses: actions/checkout@v4
         with:
