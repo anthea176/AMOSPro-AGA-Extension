@@ -1,6 +1,6 @@
 # Roadmap — AMOSPro AGA Extension
 
-**Priorité : confirmer le rendu visuel S2f — 0.15.0-alpha.3 ; Gate B Runtime fonctionnelle PASS.** [Résultat et journal S2f](M19_S2F_RUNTIME_2026-11-28.md). [Contrat clipping](M19_S2F_CLIPPING_0_15_0.md) · [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46163164542) · [Preuves S2e](M19_S2E_RUNTIME_2026-11-28.md). C réelle différée. Après S2f : priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
+**Priorité : étudier le contrat des priorités Sprite/bitplanes ; S2f 0.15.0-alpha.3 Gate B Runtime et visuel PASS.** [Résultat et journal S2f](M19_S2F_RUNTIME_2026-11-28.md). [Contrat clipping](M19_S2F_CLIPPING_0_15_0.md) · [Gate A](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46163164542) · [Preuves S2e](M19_S2E_RUNTIME_2026-11-28.md). C réelle différée. Après S2f : priorités, ergonomie et benchmarks. Objectif public 0.15.0 puis 1.0.0.
 
 ## 1. État actuel et objectif
 
@@ -8,7 +8,7 @@
 
 | Domaine | Statut |
 | --- | --- |
-| Lib de travail | [0.15.0-alpha.3 S2f](../dist/AMOSPro_AGA.Lib), 162288 octets, SHA256 `6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66`, 105 commandes / 219 AP20, MC68020+. Gate A PASS, B Runtime fonctionnelle PASS, visuel à confirmer, C différée/D non testée. |
+| Lib de travail | [0.15.0-alpha.3 S2f](../dist/AMOSPro_AGA.Lib), 162288 octets, SHA256 `6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66`, 105 commandes / 219 AP20, MC68020+. Gate A PASS, B Runtime fonctionnelle et visuelle PASS, C différée/D non testée. |
 | LAST_GOOD | [P2d-L2b](../dist/AMOSPro_AGA_LAST_GOOD.Lib), 136708 octets, SHA256 `a7ed96e92b460e842772aed77ac35a303d8f663aaa456821c323109446dd19dc`, protégée, distincte de S2f ; promotion auteur le 24/11. [Rapport](M19_P2DL2B_LAST_GOOD_PROMOTION_2026-11-24.md). |
 | ASC unique | [SPRITE_PUBLIC.asc](../tests/current/SPRITE_PUBLIC.asc) + [AGSP_HOTSPOT_TEST.ABK](../tests/current/AGSP_HOTSPOT_TEST.ABK). 9 écrans, 216 clips, 108 sorties complètes, 27 restaurations, 54 changements, 9 déplacements après Erase. [Campagne](../tests/current/README.md). |
 | Reprise / preuves | [NEXT_SESSION.md](NEXT_SESSION.md) · [L2](AGA_L2_WINUAE_RESULTS_2026-11-24.md) · [L2b](AGA_L2B_PATTERN_SOURCE_GATE_A_2026-11-24.md) · [T10A](../tests/proto/l3_banks/README.md) · [T11A](../tests/proto/l3_cache/README.md) · [T14A](../tests/proto/l3_resources/README.md) · [L3 groupé](../tests/proto/l3_integrated/README.md). |
