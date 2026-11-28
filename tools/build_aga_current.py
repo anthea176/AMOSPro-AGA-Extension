@@ -50,7 +50,11 @@ def main() -> None:
     args = ap.parse_args()
     data, details = build()
     current,_,active=verify_active(ROOT)
-    if active.startswith("M19 S2d-P3e"):
+    if active.startswith("M19 S2e"):
+        from active_library import verify_s2e
+        verify_s2e(current,LAST_GOOD.read_bytes())
+        print("CURRENT 0.15.0-alpha.2 S2e: exact signed hotspot candidate; 105 commands / 219 AP20; Gate A PASS, B/C/D pending; L2b protected")
+    elif active.startswith("M19 S2d-P3e"):
         from active_library import verify_s2d
         verify_s2d(current,LAST_GOOD.read_bytes())
         print("CURRENT 0.15.0-alpha.1 S2d-P3e: exact 16/32/64 Sprite candidate; 105 commands / 219 AP20; Gate A and Runtime B PASS; Compiler C deferred, D untested; L2b protected")

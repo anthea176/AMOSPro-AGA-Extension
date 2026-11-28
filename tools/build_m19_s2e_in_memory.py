@@ -14,10 +14,12 @@ from audit_ap20 import inspect,parse,token_role_issues
 
 def build_s2e(vasm):
     before=protected()
-    assert sha256(before[0]).hexdigest()==S2D_SHA
+    from verify_m19_s2e_delivery import S2E_SHA,pre_s2e_pair,verify_library
+    lineage=pre_s2e_pair(before)
+    assert sha256(lineage[0]).hexdigest()==S2D_SHA
     assert sha256(before[1]).hexdigest()==P2DL2B_SHA
     parent,parent_info=build_s2d(vasm)
-    assert parent==before[0] and parent_info['sha256']==S2D_SHA
+    assert parent==lineage[0] and parent_info['sha256']==S2D_SHA
     image,info=build_s2d(vasm,hotspots=True)
     ot,old,oz=unpack_ap20(parent)
     nt,new,nz=unpack_ap20(image)
@@ -32,6 +34,9 @@ def build_s2e(vasm):
     assert new[142][info['root']:info['root']+16]==old[142][info['root']:info['root']+16]
     audit=inspect(parse(image))
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    if sha256(before[0]).hexdigest()==S2E_SHA:
+        verify_library(image,before[1])
+        assert image==before[0]
     assert protected()==before
     return image,dict(info,parent_sha=S2D_SHA,hotspots=True,
                       registry_bytes=624,registry_version=7,installable=False)

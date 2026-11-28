@@ -112,15 +112,22 @@ def main():
     a=p.parse_args()
     temp=a.temp.resolve()
     assert not temp.is_relative_to(ROOT)
-    source=(ROOT/'tests/current/SPRITE_PUBLIC.asc').read_bytes()
+    from verify_m19_s2e_delivery import S2E_SHA,pre_s2e_pair
+    from build_m19_s2e_in_memory import protected
+    canon=protected()
+    before=canon[2]
+    source=pre_s2e_pair(canon)[2]
     bank=(ROOT/'tests/current/AGSP_WIDE_TEST.ABK').read_bytes()
     asc,abk=prepare(source,bank)
     assert (asc,abk)==prepare(source,bank)
+    if sha256(canon[0]).hexdigest()==S2E_SHA:
+        assert asc==before and abk==(ROOT/'tests/current/AGSP_HOTSPOT_TEST.ABK').read_bytes()
     temp.mkdir(parents=True,exist_ok=True)
     for name,data in (('SPRITE_PUBLIC.asc',asc),('AGSP_HOTSPOT_TEST.ABK',abk)):
         with (temp/name).open('xb') as f:f.write(data)
         print('S2E_CAMPAIGN',name,len(data),sha256(data).hexdigest(),flush=True)
-    assert (ROOT/'tests/current/SPRITE_PUBLIC.asc').read_bytes()==source
+    assert (ROOT/'tests/current/SPRITE_PUBLIC.asc').read_bytes()==before
+    assert protected()==canon
     assert (ROOT/'tests/current/AGSP_WIDE_TEST.ABK').read_bytes()==bank
     print('S2E_CAMPAIGN_PREPARED_NOT_ACTIVATED',flush=True)
 if __name__=='__main__':main()

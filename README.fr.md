@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**0.15.0-alpha.1 (M19 S2d-P3e) — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), 160 148 octets, SHA256 `a216a0e9f19233cb867e4a22cb6e7af5342e9863538baad5268c95010247ebef`, 105 commandes / 219 entrées AP20. Capture et affichage Sprite 16/32/64 pixels, 2/4 plans, trois paires, largeur commune par contexte actif. [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46131159222) ; [Runtime B PASS, rendu OK](docs/M19_S2D_RUNTIME_2026-11-28.md) ; Compiler C différé, D non testée. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée. [Qualification et limites](docs/M19_S2D_WIDE_SPRITES_0_15_0.md) · [Campagne](tests/current/README.md).
+**0.15.0-alpha.2 (M19 S2e) — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), 160 352 octets, SHA256 `3135ba3973b138ec44a07ade3e190baba12a9425746252aaf88853b00d4ae7d3`, 105 commandes / 219 entrées AP20. Hotspot signé par image pour les Sprites 16/32/64 pixels, 2/4 plans. [Contrat](docs/M19_S2E_HOTSPOT_0_15_0.md) · [Campagne](tests/current/README.md). [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée.
 
 **Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2C_MIXED.ABK](tests/current/AGSP_S2C_MIXED.ABK), même dossier. [Protocole](tests/current/README.md). Trois Sprites simples/attachés, 450 changements et déplacements, capture, refus, fermeture.
 
@@ -28,7 +28,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante 0.15.0-alpha.1** — **105 commandes / 219 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
+**API de la bibliothèque courante 0.15.0-alpha.2** — **105 commandes / 219 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |
@@ -113,7 +113,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 | **`Aga Bob Auto Update`** | `_OK=Aga Bob Auto Update(_MODE)` | En double buffer AGA, 1 prépare les Bobs à chaque `Aga Swap` et 0 rétablit le mode manuel (défaut). Le réglage exige une page CLEAN. Une page READY est réutilisée au prochain Swap. Retour 1 sur succès, 0 sur refus. |
 | **`Aga Sprite Bank`** | `Aga Sprite Bank _N` | Candidate de test S2c. Sélectionne ou crée une banque DATA AMOS AGSP ; refuse les banques étrangères ou invalides. Aucune allocation DMA. |
 | **`Get AGA Sprite`** | `Get AGA Sprite _I,_X1,_Y1,_X2,_Y2,_TRANSPARENT` | Capture le buffer AGA inactif Safe vers la banque AGSP sélectionnée ; bornes inclusives, largeur 16/32/64, hauteur 1..256, 0..3 opaques RGB24 en 2 plans, 4..15 en 4 plans, refus à partir de 16 sans altérer la banque. Remplace l'ID, sans affichage DMA. |
-| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Affiche, déplace ou change l'image d'un objet logique (ID 1..64, trois objets maximum, largeur 16/32/64 commune aux objets actifs, hotspot nul). 2 plans : 3 opaques ; 4 plans attachés : 15 opaques, pens 17..31. Paires 2/3, 4/5, 6/7, palettes simples compatibles 21..23, 25..27, 29..31. Même hauteur, profondeur et palette par objet ; Off puis Show pour changer de profondeur ; retirer tous les objets avant changement de largeur. graphics.library V39/40 uniquement dans cette candidate. Aucune écriture ColorMap. Retour 1 ou diagnostic négatif ; tester =1. |
+| **`Aga Sprite`** | `_OK=Aga Sprite(_N,_X,_Y,_I)` | Affiche, déplace ou change l'image d'un objet logique (ID 1..64, trois objets maximum, largeur 16/32/64 commune aux objets actifs, hotspot signé par image). 2 plans : 3 opaques ; 4 plans attachés : 15 opaques, pens 17..31. Paires 2/3, 4/5, 6/7, palettes simples compatibles 21..23, 25..27, 29..31. Même hauteur, profondeur et palette par objet ; Off puis Show pour changer de profondeur ; retirer tous les objets avant changement de largeur. graphics.library V39/40 uniquement dans cette candidate. Aucune écriture ColorMap. X/Y est l'ancre logique ; origine = X/Y moins le hotspot de l'image courante. Hotspot nul : comportement précédent. Débordement ou image non entièrement dans 320x256 refusés (-128) ; pas encore de clipping ni setter public. Le déplacement de même image utilise le hotspot mémorisé même après effacement de la banque source. Retour 1 ou diagnostic négatif ; tester =1. |
 | **`Aga Sprite Off`** | `_OK=Aga Sprite Off(_N)` | Retire uniquement l'objet logique demandé et libère les allocations confirmées ; réaffichage depuis la banque sélectionnée. Retour 1/0. |
 | **`Aga Sprite Bank Free`** | `_OK=Aga Sprite Bank Free(_N)` | Libère les ressources Sprite associées après retraite confirmée, sans effacer la banque DATA AMOS. Retour 1/0. |
 | **`Aga X Bob`** | `_X=Aga X Bob(_N)` | Fonction numérique de lecture du X d'un Bob actif `N` (1..64) : coordonnée signée -32768..32767, ou **-32769** si Bob absent/OFF/inaccessible. Aucun dessin ni Swap. P1a Gate A seule ; tests Runtime/Compiler en attente. |

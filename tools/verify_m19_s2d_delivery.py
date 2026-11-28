@@ -84,11 +84,15 @@ def verify_abk(abk):
     return True
 
 def pre_s2d_library(candidate,good):
+    from verify_m19_s2e_delivery import pre_s2e_library
+    candidate=pre_s2e_library(candidate,good)
     if sha256(candidate).hexdigest()!=S2D_SHA:return candidate
     verify_library(candidate,good)
     return historical('dist/AMOSPro_AGA.Lib')
 
 def pre_s2d_pair(original):
+    from verify_m19_s2e_delivery import pre_s2e_pair
+    original=pre_s2e_pair(original)
     candidate,good,asc,abk=original
     if sha256(candidate).hexdigest()!=S2D_SHA:return original
     parent=pre_s2d_library(candidate,good)
