@@ -6,6 +6,9 @@ AGSP_S2D_EXT_DROP_STAGE:
     movem.l d2-d7/a0-a6,-(sp)
     movea.l a0,a3
     movea.l a6,a5
+    bsr.w s2d_r_validate
+    tst.l d0
+    beq.w s2d_drop_no
     bsr.w s2d_x_base
     tst.l d0
     beq.w s2d_drop_no

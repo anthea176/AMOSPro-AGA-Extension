@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [link]
+        suite: [link, runtime, compiled, capture, chain]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,7 +51,7 @@ jobs:
         run: |
           python -B tools/native_cpu_policy.py --self-test
           python -B tools/check_aga_delivery_paths.py --self-test
-          python -B -m py_compile tools/build_m19_s2c_in_memory.py tools/build_m19_s2d_capture_in_memory.py tools/build_m19_s2d_in_memory.py
+          python -B -m py_compile tools/build_m19_s2c_in_memory.py tools/build_m19_s2d_capture_in_memory.py tools/build_m19_s2d_in_memory.py tools/test_m19_s2d_public_display_gate_a.py
           python -B tools/verify_m19_s1p2l_b_delivery.py
       - name: Execute exact public candidate regression shard
         env:
@@ -59,7 +59,11 @@ jobs:
         run: |
           VASM="$RUNNER_TEMP/vasm/vasmm68k_mot"
           "$VASM" -I src/native/m19_s1 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/p1h.bin" src/native/m19_s1/M19_S1P1H_BANK_PUBLIC_MC68020.s
-          python -B tools/build_m19_s2d_in_memory.py --vasm "$VASM"
+          if [ "$SUITE" = link ]; then
+            python -B tools/build_m19_s2d_in_memory.py --vasm "$VASM"
+          else
+            PYTHONPATH=tools python -B tools/test_m19_s2d_public_display_gate_a.py --vasm "$VASM" --historical "$RUNNER_TEMP/p1h.bin" --suite "$SUITE"
+          fi
           python -B tools/amos_preflight.py --strict-target --fail-on-warnings tests/current/SPRITE_PUBLIC.asc
       - name: Preserve the exact canonical pair and all protected fixtures
         run: |

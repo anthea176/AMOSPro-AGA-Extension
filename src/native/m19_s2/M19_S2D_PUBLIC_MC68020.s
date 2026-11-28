@@ -80,6 +80,9 @@ p2i_sprite:
     bsr.w p2i_display_mode
     tst.l d0
     beq.w p2i_end
+    bsr.w s2d_pub_context_now
+    tst.l d0
+    beq.w p2i_end
     movea.l I_CELL(a2),a4
     tst.l (a4)
     beq.s s2d_pub_new_root
@@ -123,6 +126,9 @@ s2d_pub_new:
     beq.w p2i_end
     move.l #-206,I_PHASE(a2)
     bsr.w s2d_pub_pick
+    tst.l d0
+    beq.w p2i_end
+    bsr.w s2d_pub_context_now
     tst.l d0
     beq.w p2i_end
     move.l #-126,I_PHASE(a2)
@@ -197,6 +203,11 @@ s2d_pub_save_palette:
     clr.l W_B1(a2)
     move.l #-208,I_PHASE(a2)
     movea.l a4,a0
+    bsr.w s2d_pub_preget
+    tst.l d0
+    beq.w s2d_pub_retire_failed
+    movea.l I_REC(a2),a0
+    movea.l I_GFX(a2),a6
     bsr.w AGSP_S2D_ACQUIRE_BLANK_PAIR
     tst.l d0
     beq.w s2d_pub_retire_failed
@@ -433,6 +444,11 @@ s2d_pub_found:
     moveq #0,d0
     move.w 32(a4),d0
     move.l d0,W_COLORS(a2)
+    cmpi.l #4,I_TYPE(a2)
+    bne.s s2d_pub_color_ok
+    cmpi.l #4,d0
+    bcs.w p2i_no
+s2d_pub_color_ok:
     adda.l 20(a4),a0
     lea W_PAL(a2),a1
     moveq #11,d0
@@ -600,13 +616,38 @@ s2d_pub_context_now:
     cmp.l I_STATE(a2),d0
     bne.w p2i_no
     movea.l d0,a0
+    moveq #40,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
     move.l (a0),d0
     cmp.l I_SCREEN(a2),d0
     bne.w p2i_no
     move.l 8(a0),d0
     cmp.l I_GFX(a2),d0
     bne.w p2i_no
-    movea.l I_VP(a2),a0
+    movea.l d0,a0
+    move.l #450,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
+    movea.l 34(a0),a0
+    moveq #18,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
+    move.l (a0),d0
+    cmp.l I_VP(a2),d0
+    bne.w p2i_no
+    movea.l d0,a0
+    moveq #40,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.w p2i_no
+    cmpi.w #320,24(a0)
+    bne.w p2i_no
+    cmpi.w #256,26(a0)
+    bne.w p2i_no
     cmpi.w #$5000,32(a0)
     bne.w p2i_no
     tst.l 12(a0)
@@ -616,8 +657,84 @@ s2d_pub_context_now:
     move.l I_CM(a2),d0
     cmp.l 4(a0),d0
     bne.w p2i_no
+    ; Same bounded head/tail check as S2c-E1. No foreign writes.
+    movem.l d2/a4,-(sp)
+    movea.l a0,a4
+    moveq #15,d2
+s2d_pub_vp_next:
+    move.l (a0),d0
+    beq.s s2d_pub_vp_ok
+    cmp.l a4,d0
+    beq.s s2d_pub_vp_no
+    cmp.l a0,d0
+    beq.s s2d_pub_vp_no
+    movea.l d0,a0
+    moveq #40,d0
+    bsr.w AGSP_I_SPAN
+    tst.l d0
+    beq.s s2d_pub_vp_no
+    dbra d2,s2d_pub_vp_next
+    tst.l (a0)
+    bne.s s2d_pub_vp_no
+s2d_pub_vp_ok:
     moveq #1,d0
+    bra.s s2d_pub_vp_return
+s2d_pub_vp_no:
+    moveq #0,d0
+s2d_pub_vp_return:
+    movem.l (sp)+,d2/a4
     rts
+
+; Private receipt entered, not yet handed to Get. Validate every
+; allocation and all eight sampled slots before the first OS claim.
+s2d_pub_preget:
+    movem.l d2-d7/a0-a6,-(sp)
+    movea.l a0,a3
+    movea.l a6,a5
+    bsr.w s2d_r_validate
+    tst.l d0
+    beq.w s2d_pub_preget_no
+    tst.l 24(a3)
+    bne.w s2d_pub_preget_no
+    bsr.w s2d_r_slots
+    tst.l d0
+    beq.w s2d_pub_preget_no
+    move.l d6,d0
+    lsl.l #2,d0
+    adda.l d0,a1
+    move.l (a1),d0
+    or.l 4(a1),d0
+    bne.w s2d_pub_preget_no
+    move.l d6,d0
+    lsl.l #3,d0
+    adda.l d0,a0
+    move.l 44(a3),d0
+    addi.l #176,d0
+    cmp.w 6(a0),d0
+    bne.s s2d_pub_preget_no
+    cmp.w 14(a0),d0
+    bne.s s2d_pub_preget_no
+    swap d0
+    cmp.w 2(a0),d0
+    bne.s s2d_pub_preget_no
+    cmp.w 10(a0),d0
+    bne.s s2d_pub_preget_no
+    bsr.w s2d_x_lists
+    tst.l d0
+    beq.s s2d_pub_preget_no
+    bsr.w s2d_r_no_refs
+    tst.l d0
+    beq.s s2d_pub_preget_no
+    moveq #1,d0
+    bra.s s2d_pub_preget_return
+s2d_pub_preget_no:
+    moveq #0,d0
+s2d_pub_preget_return:
+    movem.l (sp)+,d2-d7/a0-a6
+    rts
+
+p2i_leave_only:
+    bra.w p2i_end
 
 p2i_off:
     movem.l d0-d2/d4-d7/a0-a2/a4-a6,-(sp)
