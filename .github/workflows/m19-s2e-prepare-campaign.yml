@@ -1,0 +1,31 @@
+name: M19 S2e prepare future hotspot campaign (no activation)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/prepare_m19_s2e_campaign.py'
+      - '.github/workflows/m19-s2e-prepare-campaign.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare and preflight without activation
+        run: |
+          python -B tools/native_cpu_policy.py --self-test
+          python -B tools/check_aga_delivery_paths.py --self-test
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+          python -B tools/prepare_m19_s2e_campaign.py --temp "$RUNNER_TEMP/s2e"
+          python -B tools/amos_preflight.py --strict-target --fail-on-warnings "$RUNNER_TEMP/s2e/SPRITE_PUBLIC.asc"
+          python -B tools/verify_m19_s1p2l_b_delivery.py
+          git diff --exit-code
