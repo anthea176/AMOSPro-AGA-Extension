@@ -186,6 +186,23 @@ def main():
         m=Machine(code,k=k);m.show();m.put(GFX+34,0)
         # Old View is not used by FreeSprite. Current list starts still mapped.
         m.finish();n+=1
+    # All 15 unordered descriptor pairs, both descriptor aliases and
+    # distinct descriptors pointing at the same Chip stream, for all widths.
+    # Height=1 makes either alias structurally plausible before uniqueness.
+    offsets=(4,8,52,56,72,76)
+    for w in (16,32,64):
+        for i,o in enumerate(offsets[1:],1):
+            for p in offsets[:i]:
+                for stream_alias in (False,True):
+                    for private in (False,True):
+                        m=Machine(code,w=w,k=4,h=1)
+                        if private:m.partial(0)
+                        if stream_alias:
+                            m.put(m.get(REC+o),m.get(m.get(REC+p)))
+                        else:m.put(REC+o,m.get(REC+p))
+                        assert m.call(16 if private else 12)==(0,1)
+                        assert not m.releases and not m.freed
+                        n+=1
     if CLOSE_SLICE is None:
         print('S2D_P2C3_EXT_RETIRE_CPU_PASS',n,'scenarios',sha256(code).hexdigest(),flush=True)
     else:

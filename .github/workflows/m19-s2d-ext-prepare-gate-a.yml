@@ -82,6 +82,12 @@ jobs:
           python -B tools/emit_m19_s2d_ext_close_slice.py "$RUNNER_TEMP/s2d_close_slice.s"
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2d_close_slice.bin" "$RUNNER_TEMP/s2d_close_slice.s"
           PYTHONPATH=tools python -B tools/test_m19_s2d_ext_retire_cpu.py "$RUNNER_TEMP/s2d_retire.bin" --close-slice "$RUNNER_TEMP/s2d_close_slice.bin"
+      - name: P3b compact close slice, all retirement and alias guards
+        run: |
+          python -B tools/emit_m19_s2d_ext_close_slice.py "$RUNNER_TEMP/s2d_close_compact.s" --compact
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2d_close_compact.bin" "$RUNNER_TEMP/s2d_close_compact.s"
+          PYTHONPATH=tools python -B tools/test_m19_s2d_ext_retire_cpu.py "$RUNNER_TEMP/s2d_retire.bin" --close-slice "$RUNNER_TEMP/s2d_close_compact.bin"
+          python -c 'from pathlib import Path; import sys; a,b=map(Path,sys.argv[1:]); x,y=a.stat().st_size,b.stat().st_size; print("P3B_CLOSE_COMPACT_BYTES",x,y,"saved",x-y,"raw UNIT142 remaining",2184-(y-20)); assert y<x' "$RUNNER_TEMP/s2d_close_slice.bin" "$RUNNER_TEMP/s2d_close_compact.bin"
       - name: Confirm canonical pair and protected files were not changed
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py
