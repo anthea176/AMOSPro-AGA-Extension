@@ -7,7 +7,7 @@ from hashlib import sha256, sha1
 from pathlib import Path
 from struct import pack, unpack_from
 from subprocess import check_output
-from active_library import S2C_SHA, S2R_SHA, P2DL2B_SHA
+from active_library import S2C_SHA, S2CD_SHA, S2R_SHA, P2DL2B_SHA
 from compiler_relocation import GETP, RBSR, unpack_ap20
 from compiler_bridge_v2_probe import DISPATCH_V2, MAX_UNIT_BYTES
 from ap20_v2_island_dispatch import pc16_displacements
@@ -15,6 +15,8 @@ from audit_ap20 import inspect, parse, walk_tokens, token_role_issues
 
 ROOT=Path(__file__).resolve().parents[1]
 S2R_REF='31735f84f0da50ea4ba324f9bc63bec9313cd47a'
+S2CD_BLOB='551674f3598c8b0c10a581d9ac7a1f7cf1155659'
+S2C_REF='8f490c4ee9f3609abd763e8ba2f03e4d97de49de'
 S2C_BLOB='7e8b5320c4098db053afb2bf8ce9f16bf611ff39'
 S2C_ASC_SHA='48b9d1e47d63dd401482cfb0ecc8db0646aba68f173154c26ef2b5051f0496ec'
 S2C_ASC_BLOB='6b9b4ec84b390c9041126a5231d029d126468ec3'
@@ -29,7 +31,35 @@ def identity(data, size, digest, git_blob):
 def historical(path):
     return check_output(['git','show',S2R_REF+':'+path],cwd=ROOT)
 
+def historical_p1c():
+    return check_output(['git','show',S2C_REF+':dist/AMOSPro_AGA.Lib'],cwd=ROOT)
+
+def verify_diagnostic(candidate,good):
+    identity(candidate,160812,S2CD_SHA,S2CD_BLOB)
+    parent=historical_p1c()
+    verify_library(parent,good)
+    oldtok,old,oldtitle=unpack_ap20(parent)
+    tok,parts,title=unpack_ap20(candidate)
+    assert tok==oldtok and len(parts)==len(old)==219
+    assert title==oldtitle.replace(b'S2c-P2',b'S2c-D1')
+    assert [i for i,(a,b) in enumerate(zip(old,parts)) if a!=b]==[213]
+    assert len(parts[213])==20216 and parts[213].startswith(DISPATCH_V2)
+    assert all(len(p)<=MAX_UNIT_BYTES for p in parts)
+    assert MAX_UNIT_BYTES-len(parts[213])==45318
+    links=pc16_displacements(parts)
+    assert max(map(abs,links.values()))==3658
+    trial=list(parts)
+    trial[213]+=bytes(16384)
+    assert len(trial[213])<=MAX_UNIT_BYTES
+    assert max(map(abs,pc16_displacements(trial).values()))==3658
+    audit=inspect(parse(candidate))
+    assert not audit['issues'] and not token_role_issues(audit['tokens'])
+    assert len([r for r in walk_tokens(tok) if r['signature']])==105
+    return True
+
 def verify_library(candidate,good):
+    if sha256(candidate).hexdigest()==S2CD_SHA:
+        return verify_diagnostic(candidate,good)
     identity(candidate,159844,S2C_SHA,S2C_BLOB)
     assert len(good)==136708 and sha256(good).hexdigest()==P2DL2B_SHA
     from verify_m19_s2r_delivery import verify_library as verify_s2r, START, END
@@ -94,13 +124,13 @@ def verify_abk(abk):
     return True
 
 def pre_s2c_library(candidate,good):
-    if sha256(candidate).hexdigest()!=S2C_SHA:return candidate
+    if sha256(candidate).hexdigest() not in (S2C_SHA,S2CD_SHA):return candidate
     verify_library(candidate,good)
     return historical('dist/AMOSPro_AGA.Lib')
 
 def pre_s2c_pair(original):
     candidate,good,asc,abk=original
-    if sha256(candidate).hexdigest()!=S2C_SHA:return original
+    if sha256(candidate).hexdigest() not in (S2C_SHA,S2CD_SHA):return original
     verify_asc(asc)
     verify_abk((ROOT/'tests/current/AGSP_S2C_MIXED.ABK').read_bytes())
     parent=pre_s2c_library(candidate,good)

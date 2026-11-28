@@ -19,7 +19,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Bibliothèques et tests
 
-**M19 S2c-P1c — candidate de TEST active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), 159 844 octets, SHA256 `00cdcc0de1f9f79aa1d7aac14b920875b5ed822521f7c30c223ea83f88f6a8bb`, 105 commandes / 219 entrées AP20. Capture et affichage Sprite 2/4 plans, 3 ou 15 couleurs opaques. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée. [Qualification et limites](docs/M19_S2C_P1C_PUBLIC_MIXED_2026-11-27.md).
+**M19 S2c-P1d — candidate de TEST diagnostic active (MC68020+).** [Bibliothèque](dist/AMOSPro_AGA.Lib), 160 812 octets, SHA256 `a1fefebd81763ac9b484d2fbc376e896d6ab5e0b19054bd023f4d0b280c5d026`, 105 commandes / 219 entrées AP20. Capture et affichage Sprite 2/4 plans, 3 ou 15 couleurs opaques. [LAST_GOOD P2d-L2b](dist/AMOSPro_AGA_LAST_GOOD.Lib) protégée. [Diagnostics et limites](docs/M19_S2C_P1D_DIAGNOSTIC_2026-11-28.md).
 
 **Test Runtime actif :** [SPRITE_PUBLIC.asc](tests/current/SPRITE_PUBLIC.asc) + [AGSP_S2C_MIXED.ABK](tests/current/AGSP_S2C_MIXED.ABK), même dossier. [Protocole](tests/current/README.md). Trois Sprites simples/attachés, 450 changements et déplacements, capture, refus, fermeture.
 
@@ -28,7 +28,7 @@ Projet conçu et développé par **HWARF**, avec l'assistance de **ChatGPT (Open
 
 ## Commandes AMOS principales
 
-**API de la bibliothèque courante M19 S2c-P1c** — **105 commandes / 219 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
+**API de la bibliothèque courante M19 S2c-P1d** — **105 commandes / 219 entrées AP20**, MC68020 minimum. Cinq commandes Sprite de test, absentes de la 0.14.1.
 | Commande | Syntaxe exacte | Paramètres et comportement |
 |---|---|---|
 | `Aga Detect` | `_AGA=Aga Detect` | Sans argument ; résultat non nul si AGA est présent (ne pas supposer que TRUE vaut toujours `1`). |

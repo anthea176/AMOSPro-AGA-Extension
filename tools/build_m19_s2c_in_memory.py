@@ -124,17 +124,24 @@ def build_s2c(vasm, *, diagnostic=False):
     assert not audit['issues'] and not token_role_issues(audit['tokens'])
     assert [(r['name'],r['signature']) for r in rows]==[(r['name'],r['signature']) for r in audit['tokens']]
     assert len([r for r in rows if r['signature']])==105
-    from verify_m19_s2c_delivery import S2C_SHA, verify_library
-    if sha256(before[0]).hexdigest()==S2C_SHA:
+    from verify_m19_s2c_delivery import S2C_SHA, S2CD_SHA, verify_library, historical_p1c
+    digest=sha256(before[0]).hexdigest()
+    if digest in (S2C_SHA,S2CD_SHA):
+        installed=before[0]
+        verify_library(installed,before[1])
+        baseline=historical_p1c() if digest==S2CD_SHA else installed
+        verify_library(baseline,before[1])
         if diagnostic:
-            verify_library(before[0],before[1])
-            ct,cp,cz=unpack_ap20(before[0])
+            ct,cp,cz=unpack_ap20(baseline)
             assert nt==ct and nz==cz.replace(b'S2c-P2',b'S2c-D1')
             assert len(cp)==len(new)
             assert [i for i,(a,b) in enumerate(zip(cp,new)) if a!=b]==[SPR]
+            if digest==S2CD_SHA:
+                verify_library(image,before[1])
+                assert image==installed
         else:
             verify_library(image,before[1])
-            assert image==before[0]
+            assert image==baseline
     assert protected()==before
     return image,dict(info,sha256=sha256(image).hexdigest(),bytes=len(image),
         git_blob=sha1(f'blob {len(image)}'.encode()+b'\0'+image).hexdigest(),
@@ -147,8 +154,9 @@ def build_s2c(vasm, *, diagnostic=False):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--vasm',required=True,type=Path)
+    p.add_argument('--diagnostic',action='store_true')
     a=p.parse_args()
-    image,meta=build_s2c(a.vasm)
-    again,m2=build_s2c(a.vasm)
+    image,meta=build_s2c(a.vasm,diagnostic=a.diagnostic)
+    again,m2=build_s2c(a.vasm,diagnostic=a.diagnostic)
     assert image==again and meta==m2
-    print('S2C_P1C_EXACT_BUILD_PASS '+json.dumps(meta,sort_keys=True),flush=True)
+    print(('S2C_P1D_EXACT_BUILD_PASS ' if a.diagnostic else 'S2C_P1C_EXACT_BUILD_PASS ')+json.dumps(meta,sort_keys=True),flush=True)

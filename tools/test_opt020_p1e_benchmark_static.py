@@ -15,7 +15,7 @@ from m18_image_region_emit import emit_image_region
 from test_current_amos_blocks import scan
 from build_opt020_p1e_r69 import build, IMAGE_REGION_INDEX, R68_SHA
 from build_m18_r68_cblock import build as build_r68
-from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, SPRITE_L2B_HISTORICAL_SHAS
+from active_library import P0C_SHA, P0D_SHA, AP20_ISLANDS_SHA, B7_SHA, B7M1_SHA, B7M2_SHA, B8_SHA, B8S1_SHA, P0_FREE_SHA, P2D_SHA, S1P1E_SHA, P2DL2_SHA, P2DL2B_SHA, S1P1F_SHA, S1P1G_SHA, S1P1H_SHA, S1P1I_SHA, S1P2I_SHA, S1P2J_SHA, S1P2K_SHA, S1P2LB_SHA, S1P2LC_SHA, S1P2M_SHA, S2A_SHA, S2B_SHA, S2R_SHA, S2C_SHA, S2CD_SHA, SPRITE_L2B_HISTORICAL_SHAS
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "benchmarks/opt020_p1e_r60_vs_r69.asc"
@@ -79,7 +79,7 @@ def main() -> None:
             verified_current, verified_good, _ = verify_active(ROOT)
             assert verified_current == active and sha256(frozen_p2d(verified_good)).hexdigest()==P2D_SHA
             _, current_units, _ = unpack_ap20(active)
-            assert len(current_units) == (219 if active_sha in (S2R_SHA,S2C_SHA) else 214 if active_sha in (S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA) else 208 if active_sha in (S1P1E_SHA,*SPRITE_L2B_HISTORICAL_SHAS) else 203), "P2d-derived AP20 entry count changed"
+            assert len(current_units) == (219 if active_sha in (S2R_SHA,S2C_SHA,S2CD_SHA) else 214 if active_sha in (S1P2I_SHA,S1P2J_SHA,S1P2K_SHA,S1P2LB_SHA,S1P2LC_SHA,S1P2M_SHA,S2A_SHA,S2B_SHA) else 208 if active_sha in (S1P1E_SHA,*SPRITE_L2B_HISTORICAL_SHAS) else 203), "P2d-derived AP20 entry count changed"
             # The P2d groups evolved since the historical four-island image.
             # Pin the source-backed P2d units, not the obsolete predecessor.
             pinned_groups = {

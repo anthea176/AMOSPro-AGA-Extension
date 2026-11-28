@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'tools/m19_s2c_diagnostic_emit.py'
+      - 'tools/verify_m19_s2c_delivery.py'
+      - 'dist/AMOSPro_AGA.Lib'
       - 'tools/test_m19_s2c_diagnostic_cpu.py'
       - 'tools/build_m19_s2c_in_memory.py'
       - '.github/workflows/m19-s2c-diagnostic-gate-a.yml'
