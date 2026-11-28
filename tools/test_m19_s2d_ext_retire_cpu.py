@@ -11,9 +11,15 @@ from test_m19_s2d_ext_frame_cpu import (
     CODE,STOP,EXEC,GFX,STACK,REGS,REC,VIEW,VP,CI,TAB,LOF,SHF,
     B0,B1,F0,F1,N0,N1,P2,Q0,NEUTRAL)
 
+CLOSE_SLICE=None
+CLOSE_SLICE_ADDR=0x40000
+
 class Machine(FrameMachine):
     def __init__(self,code,**kw):
         super().__init__(code,**kw)
+        if CLOSE_SLICE is not None:
+            assert len(CLOSE_SLICE)<0x10000
+            self.u.mem_write(CLOSE_SLICE_ADDR,CLOSE_SLICE)
         self.u.mem_write(GFX-414,b'\x4e\x75')
         self.u.mem_write(GFX-1032,b'\x4e\x75')
         self.u.mem_write(GFX+448,bytes([3]))
@@ -82,7 +88,8 @@ class Machine(FrameMachine):
         u.reg_write(UC_M68K_REG_A7,STACK);self.put(STACK,STOP)
         before=self.read(REC,96)
         peers=[(i,self.get(TAB+4*i),self.copper(i)) for i in range(8) if i not in self.held and i not in (self.ch,self.ch+1)]
-        u.emu_start(CODE+entry,STOP,count=400000)
+        base=CLOSE_SLICE_ADDR if CLOSE_SLICE is not None else CODE
+        u.emu_start(base+entry,STOP,count=400000)
         assert self.reg(UC_M68K_REG_PC)==STOP and self.reg(UC_M68K_REG_A7)==STACK+4
         assert all(self.reg(r)==v for r,v in saved.items())
         after=self.read(REC,96)
@@ -106,7 +113,11 @@ class Machine(FrameMachine):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('native',type=Path)
-    code=p.parse_args().native.read_bytes();n=0
+    p.add_argument('--close-slice',type=Path)
+    args=p.parse_args()
+    global CLOSE_SLICE
+    CLOSE_SLICE=args.close_slice.read_bytes() if args.close_slice else None
+    code=args.native.read_bytes();n=0
     for w in (16,32,64):
         for k in (2,4):
             for ch in (2,4,6):
@@ -175,5 +186,12 @@ def main():
         m=Machine(code,k=k);m.show();m.put(GFX+34,0)
         # Old View is not used by FreeSprite. Current list starts still mapped.
         m.finish();n+=1
-    print('S2D_P2C3_EXT_RETIRE_CPU_PASS',n,'scenarios',sha256(code).hexdigest(),flush=True)
+    if CLOSE_SLICE is None:
+        print('S2D_P2C3_EXT_RETIRE_CPU_PASS',n,'scenarios',sha256(code).hexdigest(),flush=True)
+    else:
+        print('S2D_P3A_CLOSE_SLICE_CPU_PASS',n,'scenarios',
+              'full',len(code),sha256(code).hexdigest(),
+              'slice',len(CLOSE_SLICE),sha256(CLOSE_SLICE).hexdigest(),
+              'UNIT142 raw spare',65534-63350,
+              'net code without shim',len(CLOSE_SLICE)-20,flush=True)
 if __name__=='__main__':main()

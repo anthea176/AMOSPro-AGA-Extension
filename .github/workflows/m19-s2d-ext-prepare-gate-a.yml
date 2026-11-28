@@ -15,6 +15,7 @@ on:
       - 'tools/test_m19_s2d_ext_frame_cpu.py'
       - 'src/native/m19_s2/M19_S2D_EXT_RETIRE_MC68020.s'
       - 'tools/test_m19_s2d_ext_retire_cpu.py'
+      - 'tools/emit_m19_s2d_ext_close_slice.py'
       - '.github/workflows/m19-s2d-ext-prepare-gate-a.yml'
   workflow_dispatch:
 permissions:
@@ -76,6 +77,11 @@ jobs:
         run: |
           "$RUNNER_TEMP/vasm/vasmm68k_mot" -I src/native/m19_s2 -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2d_retire.bin" src/native/m19_s2/M19_S2D_EXT_RETIRE_MC68020.s
           PYTHONPATH=tools python -B tools/test_m19_s2d_ext_retire_cpu.py "$RUNNER_TEMP/s2d_retire.bin"
+      - name: P3a exact-source close-only slice and sizing
+        run: |
+          python -B tools/emit_m19_s2d_ext_close_slice.py "$RUNNER_TEMP/s2d_close_slice.s"
+          "$RUNNER_TEMP/vasm/vasmm68k_mot" -Fbin -m68020 -no-opt -quiet -o "$RUNNER_TEMP/s2d_close_slice.bin" "$RUNNER_TEMP/s2d_close_slice.s"
+          PYTHONPATH=tools python -B tools/test_m19_s2d_ext_retire_cpu.py "$RUNNER_TEMP/s2d_retire.bin" --close-slice "$RUNNER_TEMP/s2d_close_slice.bin"
       - name: Confirm canonical pair and protected files were not changed
         run: |
           python -B tools/verify_m19_s1p2l_b_delivery.py
