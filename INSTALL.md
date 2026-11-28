@@ -1,7 +1,7 @@
 # Installing AMOSPro AGA Extension
 
 
-**Active TEST candidate 0.15.0-alpha.3 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 162,288 bytes, SHA256 `6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66`, 105 commands / 219 AP20 entries, [Gate A PASS](https://github.com/anthea176/AMOSPro-AGA-Extension/actions/runs/46163164542); B/C/D real tests pending, real Compiler deferred. [Campaign](tests/current/README.md). Protected [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes. No promotion or release.
+**Active TEST candidate 0.15.0-alpha.4 (MC68020+):** [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib), 162,432 bytes, SHA256 `7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d`, 105 commands / 106 signatures / 221 AP20 entries. [Combined Gate A PASS](docs/M19_S2G_P1B_GATE_A_2026-11-28.md); real B/C/D pending. [Campaign](tests/current/README.md). Protected [P2d-L2b LAST_GOOD](dist/AMOSPro_AGA_LAST_GOOD.Lib), 136,708 bytes. No promotion or release.
 
 **English** | [Français](INSTALL.fr.md) · [Examples](examples/README.md)
 
@@ -10,7 +10,7 @@ This is an **unofficial** extension for AMOS Professional on AGA Amiga systems (
 ## 1. Install the extension
 
 1. **Make backups** of your current AMOS Professional configuration and any existing extension library. In particular, keep a copy of the interpreter configuration (typically `S:AMOSPro_Interpreter_Config`).
-2. For 0.15.0-alpha.3 Runtime testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same slot. Verify SHA256 `6efdc6f17897de69fb7f292e131cbb31bd55626dea0566d77555f1d7f7073e66`, restart WinUAE completely without restoring a save state (AGA PAL, 68030, JIT ON). Use the new ASC and ABK together per the [protocol](tests/current/README.md).
+2. For 0.15.0-alpha.4 Runtime testing, back up the installed Lib and copy [dist/AMOSPro_AGA.Lib](dist/AMOSPro_AGA.Lib) into APSystem in the same slot. Verify SHA256 `7c68fb4ba1f903fe11a0c079b37d4f8d54a5a8dcc8bce96b6de4c791b5be9e1d`, restart WinUAE completely without restoring a save state (AGA PAL, 68030, JIT ON). Use the new ASC and ABK together per the [protocol](tests/current/README.md). **Re-Merge ASCII into an empty program: token offsets have changed.**
 3. Start **AMOS Professional**. Choose **Config → Set Interpreter**, load your existing interpreter configuration, then select **Set Loaded Extensions**.
 4. Register `AMOSPro_AGA.Lib` in **extension slot 14 if it is free** (the project's historical AMOS tests use slot 14). If slot 14 is occupied, do not overwrite someone else's extension; choose a free slot and remember that tokenized AMOS programs depend on their original slot. Enter the exact library filename or its full AmigaDOS path if your setup requires one.
 5. **Save the interpreter configuration** (not only the editor preferences), exit AMOS Professional, and restart it. Under **AMOS → About Loaded Extensions**, confirm that the AGA extension is loaded.
