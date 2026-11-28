@@ -254,11 +254,6 @@ s2d_r_channel:
     bcs.w s2d_c_no
     cmpi.w #40,20(a5)
     bhi.w s2d_c_no
-    cmpi.l #4,d5
-    bne.s s2d_r_required
-    cmpi.w #40,20(a5)
-    bcs.w s2d_c_no
-s2d_r_required:
     tst.l 4(a3)
     beq.w s2d_c_no
     tst.l 8(a3)

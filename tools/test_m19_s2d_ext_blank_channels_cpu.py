@@ -9,7 +9,8 @@ from pathlib import Path
 from struct import pack,unpack_from
 from unicorn import Uc,UC_ARCH_M68K,UC_MODE_BIG_ENDIAN,UC_HOOK_CODE,UC_HOOK_MEM_WRITE
 from unicorn.m68k_const import *
-from test_m19_s2d_ext_prepare_cpu import CODE,STOP,GFX,STACK,EXT0,EXT1,REGS
+from test_m19_s2d_ext_prepare_cpu import (CODE,STOP,EXEC,GFX,STACK,EXT0,EXT1,REGS,
+    mock_attach39,att39_type,att39_write,assert_attach39,BAD39)
 
 REC=0x160000
 class Machine:
@@ -19,14 +20,15 @@ class Machine:
         self.u.ctl_set_cpu_model(UC_CPU_M68K_M68020)
         self.u.mem_map(0,0x200000)
         self.u.mem_write(CODE,code)
+        self.u.mem_write(4,pack('>I',EXEC))
         self.u.mem_write(GFX+16,pack('>HHH',negsize,possize,version))
         self.u.mem_write(GFX+237,bytes([memtype]))
         self.u.mem_write(GFX+444,pack('>H',(oldwidth if oldwidth is not None else (context or 16)//16)))
         self.u.mem_write(GFX+448,bytes([soft]))
-        for a in (GFX-390,GFX-1020,GFX-1032,GFX-930):
+        for a in (EXEC-534,GFX-390,GFX-1020,GFX-1032,GFX-930):
             self.u.mem_write(a,b'\x4e\x75')
         self.width,self.kind,self.channel=width,kind,channel
-        self.mode=mode
+        self.mode=mode;self.version=version
         self.receipt=pack('>9I',GFX,EXT0,EXT1,width&0xffffffff,kind&0xffffffff,
                           channel&0xffffffff,state&0xffffffff,context&0xffffffff,0)
         self.u.mem_write(REC,self.receipt)
@@ -51,8 +53,12 @@ class Machine:
                     (UC_M68K_REG_A0,0xdead0002),(UC_M68K_REG_A1,0xdead0003)):
             self.u.reg_write(r,v)
     def on_write(self,u,access,a,n,value,user):
-        assert (STACK-4096<=a and a+n<=STACK+4) or (REC+24<=a and a+n<=REC+28),('forbidden write',hex(a),n)
+        if (STACK-4096<=a and a+n<=STACK+4) or (REC+24<=a and a+n<=REC+28):return
+        assert att39_write(self,a,n,value),('forbidden write',hex(a),n)
     def on_code(self,u,a,size,user):
+        if a==EXEC-534:
+            flag=att39_type(self,self.reg(UC_M68K_REG_A1))
+            self.volatile(flag or 0);return
         if a==GFX-390:
             assert tuple(self.reg(r) for r in (UC_M68K_REG_D0,UC_M68K_REG_D1,UC_M68K_REG_D2))==(self.kind,self.width,1)
             self.bm=self.reg(UC_M68K_REG_A0)
@@ -80,7 +86,9 @@ class Machine:
                 self.volatile(0)
             else:
                 p=EXT1 if second else EXT0
-                self.live.add(p);self.volatile(p)
+                self.live.add(p)
+                if attached and self.version==39:mock_attach39(self,self.width,1)
+                self.volatile(p)
         elif a==GFX-1032:
             p=self.reg(UC_M68K_REG_A2)
             assert p in self.live and not self.got
@@ -131,6 +139,7 @@ class Machine:
         assert all(self.reg(r)==v for r,v in saved.items())
         assert self.read(REC,24)==self.receipt[:24] and self.read(REC+28,8)==self.receipt[28:]
         assert self.read(EXT0+12,52)==self.read(EXT1+12,52)==b'\xa5'*52
+        if hasattr(self,'att39_raw'):assert_attach39(self)
         # Guard never writes GfxBase; mutations occur only in our OS hook.
         assert self.read(GFX+166,1)==bytes([sum(1<<i for i in self.reserved)])
         return self.reg(UC_M68K_REG_D0),self.reg(UC_M68K_REG_D1)
@@ -142,7 +151,7 @@ def main():
     n=0
     for w in (16,32,64):
         for k in (2,4):
-            for v in ((39,40,46) if k==2 else (40,46)):
+            for v in (39,40,46):
                 m=Machine(code,w,k,version=v)
                 assert m.invoke(0)==(EXT0,EXT1)
                 assert m.live=={EXT0,EXT1} and m.events==['Init','AllocEven','AllocOdd'] and m.state()==0
@@ -184,8 +193,13 @@ def main():
             m=Machine(code,w,k,mode='foreign_odd')
             assert m.invoke(4)==(0,2) and m.state()==5 and m.got=={2} and 3 in m.reserved
             assert m.events==['GetEven'];n+=1
+    for w in (16,32,64):
+        for mode in BAD39:
+            m=Machine(code,w,4,version=39,mode=mode)
+            assert m.invoke(0)==(0,0) and not m.live
+            assert m.events==['Init','AllocEven','AllocOdd','FreeDetached','FreeDetached'];n+=1
     for opts in ({'width':0},{'width':17},{'width':48},{'width':128},{'kind':3},
-                 {'kind':4,'version':39},{'version':38},{'negsize':1030}):
+                 {'version':38},{'negsize':1030}):
         m=Machine(code,**opts)
         assert m.invoke(0)==(0,0) and not m.events
         assert m.invoke(4)==(0,1) and not m.events and m.state()==0

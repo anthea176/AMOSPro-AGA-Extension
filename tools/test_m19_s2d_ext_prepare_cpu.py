@@ -29,6 +29,45 @@ def plane(im,p):
     return bytes(sum(((im.index(x+i,y)>>p)&1)<<(7-i) for i in range(8))
                  for y in range(im.height) for x in range(0,im.width,8))
 
+ATT39_DATA=0x170000
+BAD39=('bad39_align','bad39_height','bad39_desc','bad39_end','bad39_chip')
+
+def mock_attach39(m,width,height):
+    m.att39_raw=bytes((i*13+17)&0x7f for i in range((height+2)*width//4))
+    m.att39_offsets={3,width//8+1}
+    m.att39_writes=[]
+    m.u.mem_write(ATT39_DATA-8,b'\xc7'*8+m.att39_raw+b'\xd9'*8)
+    p=ATT39_DATA+int(m.mode=='bad39_align')
+    h=height+int(m.mode=='bad39_height')
+    m.u.mem_write(EXT1,pack('>IH',p,h))
+    m.att39_desc=m.read(EXT1,64)
+
+def att39_type(m,p):
+    if not hasattr(m,'att39_raw'):return None
+    if EXT1<=p<EXT1+12:
+        return int(not (m.mode=='bad39_desc' and p!=EXT1))
+    if ATT39_DATA<=p<ATT39_DATA+len(m.att39_raw):
+        if m.mode=='bad39_end' and p!=ATT39_DATA:return 0
+        return 1 if m.mode=='bad39_chip' else 3
+    return None
+
+def att39_write(m,a,n,value):
+    if not hasattr(m,'att39_raw'):return False
+    off=a-ATT39_DATA
+    assert m.mode not in BAD39
+    assert n==1 and off in m.att39_offsets and value==m.att39_raw[off]|128
+    m.att39_writes.append(off)
+    return True
+
+def assert_attach39(m):
+    if not hasattr(m,'att39_raw'):return
+    expected=bytearray(m.att39_raw)
+    offsets=set() if m.mode in BAD39 else m.att39_offsets
+    for i in offsets:expected[i]|=128
+    assert set(m.att39_writes)==offsets and len(m.att39_writes)==len(offsets)
+    assert m.read(ATT39_DATA-8,len(expected)+16)==b'\xc7'*8+expected+b'\xd9'*8
+    assert m.read(EXT1,64)==m.att39_desc
+
 class Machine:
     def __init__(self,code,payload,version=40,negsize=1100,possize=34,mode='ok'):
         self.u=Uc(UC_ARCH_M68K,UC_MODE_BIG_ENDIAN)
@@ -43,7 +82,7 @@ class Machine:
         for a in (EXEC-534,GFX-390,GFX-1020,GFX-1032):
             self.u.mem_write(a,b'\x4e\x75')
         self.payload=payload
-        self.mode=mode
+        self.mode=mode;self.version=version
         self.live=set()
         self.events=[]
         self.calls=0
@@ -56,10 +95,13 @@ class Machine:
                     (UC_M68K_REG_A0,0xdead0002),(UC_M68K_REG_A1,0xdead0003)):
             self.u.reg_write(r,v)
     def on_write(self,u,access,a,n,value,user):
-        assert STACK-4096<=a and a+n<=STACK+4,('write outside private stack',hex(a),n)
+        if STACK-4096<=a and a+n<=STACK+4:return
+        assert att39_write(self,a,n,value),('write outside private stack/owned odd data',hex(a),n)
     def on_code(self,u,a,size,user):
         if a==EXEC-534:
             p=self.reg(UC_M68K_REG_A1)
+            flag=att39_type(self,p)
+            if flag is not None:self.volatile(flag);return
             ok=SOURCE<=p<SOURCE+len(self.payload)
             if self.mode=='bad_end' and p!=SOURCE:ok=False
             self.volatile(1 if ok else 0)
@@ -97,6 +139,7 @@ class Machine:
             else:
                 out=EXT1 if attached else EXT0
                 self.live.add(out)
+                if attached and self.version==39:mock_attach39(self,im.width,im.height)
                 self.volatile(out)
         elif a==GFX-1032:
             p=self.reg(UC_M68K_REG_A2)
@@ -121,7 +164,9 @@ class Machine:
         assert self.reg(UC_M68K_REG_A7)==STACK+4
         assert all(self.reg(r)==v for r,v in saved.items()),'register ABI'
         assert self.read(SOURCE,len(self.payload))==self.payload
-        assert self.read(EXT0,64)==b'\xa5'*64 and self.read(EXT1,64)==b'\x5a'*64
+        assert self.read(EXT0,64)==b'\xa5'*64
+        if hasattr(self,'att39_raw'):assert_attach39(self)
+        else:assert self.read(EXT1,64)==b'\x5a'*64
         return self.reg(UC_M68K_REG_D0),self.reg(UC_M68K_REG_D1)
 
 def check(code,payload,ident=17,version=40):
@@ -145,10 +190,11 @@ def main():
         for height in (1,7,256):
             for colors in (0,3,4,15):
                 raw=make(width,height,colors)
-                for v in ((39,40,46) if colors<=3 else (40,46)):
+                for v in (39,40,46):
                     check(code,raw,version=v);n+=1
-                if colors>=4:
-                    reject(code,raw,version=39);n+=1
+        for mode in BAD39:
+            reject(code,make(width,7,15),version=39,mode=mode,
+                   events=('InitBitMap','AllocEven','AllocOdd','FreeDetached','FreeDetached'));n+=1
         for colors in (3,15):
             raw=make(width,9,colors)
             reject(code,raw,mode='oom1',events=('InitBitMap','AllocEven'));n+=1

@@ -86,8 +86,6 @@ s2d_c_channel_ok:
     bhi.w s2d_c_bad
     cmpi.l #4,d5
     bne.s s2d_c_simple
-    cmpi.w #40,20(a5)
-    bcs.w s2d_c_bad
     move.l 56(a3),d0
     beq.w s2d_c_bad
     cmp.l 4(a3),d0

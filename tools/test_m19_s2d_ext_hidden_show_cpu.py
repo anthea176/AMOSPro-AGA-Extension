@@ -135,7 +135,7 @@ def main():
         for k in (2,4):
             for h in (1,17,256):
                 for ch in (2,4,6):
-                    for v in ((39,40) if k==2 else (40,)):
+                    for v in (39,40):
                         for x,y in ((0,0),(320-w,256-h)):
                             m=Machine(code,w,k,h,ch,v)
                             assert m.invoke(x,y)==(1,0) and m.state()==31,(w,k,h,ch,v,m.events)
@@ -171,7 +171,7 @@ def main():
         m=Machine(code);m.u.mem_write(addr,val.to_bytes(size,'big'))
         assert m.invoke()==(0,1) and m.state()==7 and not m.events,(addr,val)
         n+=1
-    for opts in ({'version':39},{'version':46},{'mode':'no_chip'}):
+    for opts in ({'version':38},{'version':46},{'mode':'no_chip'}):
         m=Machine(code,**opts)
         assert m.invoke()==(0,1) and m.state()==7 and not m.events
         n+=1

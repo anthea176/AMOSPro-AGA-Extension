@@ -140,6 +140,11 @@ def main():
                         assert m.releases==initial
                         if peer:assert peer==(m.get(TAB+4*(ch+1)),m.copper(ch+1))
                         n+=1
+    for w in (16,32,64):
+        for ch in (2,4,6):
+            m=Machine(code,w=w,k=4,ch=ch,version=39);m.show()
+            assert m.call(8)==(1,0)
+            m.events.clear();m.finish();assert m.releases==[ch+1,ch];n+=1
     for k in (2,4):
         for fail_odd in (False,True):
             m=Machine(code,k=k);m.show()

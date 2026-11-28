@@ -12,7 +12,7 @@
 ; Return D0 even blank ExtSprite*, D1 odd blank ExtSprite*, or 0/0.
 ; Always two allocated blank descriptors: odd guard for kind2, attached for
 ; kind4. Height=1, all planes zero. On second OOM free only detached first.
-; V39 simple allowed; V39 attach deferred (documented OS bugs).
+; V39 attached blank repaired while detached (documented OS bug).
 ;
 ; ACQUIRE: A0 pinned 36-byte private receipt; A6 same pinned GfxBase.
 ; +0 GfxBase; +4 even blank*; +8 odd blank*; +12 width.L; +16 kind.L
@@ -89,7 +89,7 @@ s2d_b_planes:
     lea S2D_B_BM(a3),a2
     jsr -1020(a6)
     tst.l d0
-    beq.s s2d_b_alloc_bad
+    beq.w s2d_b_alloc_bad
     move.l d0,d7
     lea S2D_B_TAG(a3),a1
     cmpi.l #4,d5
@@ -101,9 +101,26 @@ s2d_b_second:
     jsr -1020(a6)
     tst.l d0
     beq.s s2d_b_alloc_rollback
-    move.l d0,d1
+    cmp.l d7,d0
+    beq.s s2d_b_alloc_rollback
+    move.l d0,d6
+    cmpi.l #4,d5
+    bne.s s2d_b_odd_ok
+    cmpi.w #39,20(a5)
+    bne.s s2d_b_odd_ok
+    movea.l d6,a0
+    move.l d4,d0
+    moveq #1,d1
+    bsr.w AGSP_S2D_ATTACH39
+    tst.l d0
+    beq.s s2d_b_rollback_both
+s2d_b_odd_ok:
+    move.l d6,d1
     move.l d7,d0
     bra.s s2d_b_alloc_return
+s2d_b_rollback_both:
+    movea.l d6,a2
+    jsr -1032(a6)
 s2d_b_alloc_rollback:
     movea.l d7,a2
     jsr -1032(a6)
@@ -303,11 +320,11 @@ s2d_b_width_ok:
     beq.s s2d_b_contract_yes
     cmpi.l #4,d5
     bne.s s2d_b_contract_no
-    cmpi.w #40,20(a5)
-    bcs.s s2d_b_contract_no
 s2d_b_contract_yes:
     moveq #1,d0
     rts
 s2d_b_contract_no:
     moveq #0,d0
     rts
+
+    include "M19_S2D_EXT_ATTACH_V39_MC68020.s"

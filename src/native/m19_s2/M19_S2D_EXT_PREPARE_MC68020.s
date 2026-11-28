@@ -9,8 +9,7 @@
 ; The caller owns each returned pointer and must eventually FreeSpriteData
 ; (only when detached or separately proven retired). No AMOS bank mutation,
 ; channel acquisition, FMODE, ViewPort, palette, or ExtSprite-field writes.
-; V39 single allowed; attached V39 deliberately refused in this component
-; until the documented V39 ATTACH workaround has its own qualification.
+; V39 attached uses documented control-bit repair on detached odd data.
 ; V40+ attached: SPRITEA_Attached reads planes 2 and 3 of the SAME BitMap.
 ; NDK graphics/gfx.h, graphics/sprite.h, exec/libraries.h;
 ; graphics.library InitBitMap/AllocSpriteDataA/FreeSpriteData autodocs.
@@ -89,11 +88,6 @@ s2d_ext_find:
 s2d_ext_found:
     moveq #0,d5
     move.w 6(a2),d5        ; canonical validator already proves 2 or 4
-    cmpi.w #4,d5
-    bne.s s2d_ext_version_ok
-    cmpi.w #40,20(a5)
-    bcs.w s2d_ext_bad
-s2d_ext_version_ok:
     moveq #0,d6
     move.w 2(a2),d6
     moveq #0,d7
@@ -149,9 +143,9 @@ s2d_ext_planes:
     move.l d0,d4
     moveq #0,d1
     cmpi.w #4,d5
-    bne.s s2d_ext_success
+    bne.w s2d_ext_success
 
-    ; V40+: second call converts high planes from same source bitmap.
+    ; Second call converts high planes from same source bitmap.
     lea S2D_E_TAGS(a3),a1
     move.l #S2D_E_ATTACH_TAG,8(a1)
     move.l #1,12(a1)
@@ -159,10 +153,25 @@ s2d_ext_planes:
     jsr S2D_E_ALLOC(a6)
     tst.l d0
     beq.s s2d_ext_rollback
-    move.l d0,d1
+    cmp.l d4,d0
+    beq.s s2d_ext_rollback
+    move.l d0,d3
+    cmpi.w #39,20(a5)
+    bne.s s2d_ext_odd_ok
+    movea.l d3,a0
+    move.l d6,d0
+    move.l d7,d1
+    bsr.w AGSP_S2D_ATTACH39
+    tst.l d0
+    beq.s s2d_ext_rollback_both
+s2d_ext_odd_ok:
+    move.l d3,d1
 s2d_ext_success:
     move.l d4,d0
     bra.s s2d_ext_return
+s2d_ext_rollback_both:
+    movea.l d3,a2
+    jsr S2D_E_FREE(a6)
 s2d_ext_rollback:
     movea.l d4,a2
     jsr S2D_E_FREE(a6)     ; only detached allocation, never FreeVec
@@ -175,3 +184,5 @@ s2d_ext_return:
     rts
 
     include "M19_S1P1C_AGSP_VALIDATE_MC68020.s"
+
+    include "M19_S2D_EXT_ATTACH_V39_MC68020.s"

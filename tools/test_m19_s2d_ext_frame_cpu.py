@@ -124,6 +124,12 @@ def main():
                     for x,y in ((-1,0),(0,-1),(321-w,0),(0,257-h)):
                         assert m.call(4,x,y)==(0,1) and m.state()==31 and not m.events
                         neg+=1
+    for w in (16,32,64):
+        m=Machine(code,w=w,k=4,version=39);m.show();m.events.clear()
+        for i in range(12):
+            assert m.call(4,i,i)==(1,0);moves+=1
+            assert m.call(8)==(1,0);changes+=1
+            m.live(i,i);m.events.clear()
     for k in (2,4):
         for step in range(1,7 if k==4 else 6):
             for fault in ('list','slot','width'):

@@ -262,11 +262,6 @@ s2d_x_channel:
     bcs.w s2d_c_no
     cmpi.w #40,20(a5)
     bhi.w s2d_c_no
-    cmpi.l #4,d5
-    bne.s s2d_x_base_yes
-    cmpi.w #40,20(a5)
-    bcs.w s2d_c_no
-s2d_x_base_yes:
     moveq #1,d0
     rts
 
